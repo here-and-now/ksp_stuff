@@ -38,9 +38,20 @@ def select_vessel_and_duplicates_by_name(vessels, vessel_name):
 def switch_vessel(active_vessel, vessel):
     if vessel != active_vessel:
         backup_vessel = active_vessel
-        sc.active_vessel = vessel
+        active_vessel = vessel
         print("Switched to vessel: " + vessel.name + " from " + backup_vessel.name)
-        return sc.active_vessel
+        return vessel
     else:
         print("Vessel is already active: " + vessel.name)
-        return vessel
+        return active_vessel
+
+def activate_engines_by_name(vessel, engine_name):
+    engine_list = []
+    for engine in vessel.parts.engines:
+        print(engine.part.name)
+        if engine.part.name == engine_name:
+            engine.active = True
+            engine_list.append(engine)
+            print("Activated engine: " + engine.part.name + " on vessel: " + vessel.name)
+
+    return engine_list

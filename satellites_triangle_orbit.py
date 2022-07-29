@@ -42,9 +42,16 @@ time.sleep(10)
 
 
 result = [orientate_vessel(conn, vessel, 'normal', block=False) for vessel in constellation_list]
-throttle = [0.5 for vessel in constellation_list]
-# orientate_vessel(conn, vessel, 'normal')
-    # vessel.control.throttle = 1
+# throttle = [0.5 for vessel in constellation_list]
+
+# mechanical jebediah time <3
+
+planner = mj.maneuver_planner
+aps = planner.operation_apoapsis
+aps.new_apoapsis = 5000000
+aps.make_nodes()
+
+
 
 
 

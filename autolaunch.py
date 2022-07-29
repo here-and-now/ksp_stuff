@@ -1,4 +1,9 @@
 import krpc
+import time
+import sys
+import time
+import os
+import subprocess
 
 conn = krpc.connect(name="Launch into orbit")
 

@@ -55,3 +55,14 @@ def activate_engines_by_name(vessel, engine_name):
             print("Activated engine: " + engine.part.name + " on vessel: " + vessel.name)
 
     return engine_list
+
+def decouple_by_name(vessel, decoupler_name):
+    decoupler_list = []
+    for decoupler in vessel.parts.decouplers:
+        print(decoupler.part.name)
+        if decoupler.part.name == decoupler_name:
+            decoupler.decouple()
+            decoupler_list.append(decoupler)
+            print("Decoupled: " + decoupler.part.name + " on vessel: " + vessel.name)
+
+    return decoupler_list

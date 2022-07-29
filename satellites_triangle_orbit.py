@@ -4,7 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import time
-from utils.handle_vessels import switch_vessel, select_vessel_and_duplicates_by_name, activate_engines_by_name
+from utils.handle_vessels import switch_vessel, select_vessel_and_duplicates_by_name, activate_engines_by_name, decouple_by_name
+from utils.handle_orientation import orientate_vessel
 
 conn = krpc.connect(name="Launch into orbit")
 print("Connected to kRPC")
@@ -12,7 +13,6 @@ print("Connected to kRPC")
 mj = conn.mech_jeb
 sc = conn.space_center
 vessels = sc.vessels
-
 
 vessel_name = 'OsNet_1.0_Ring_1'
 
@@ -24,34 +24,39 @@ control = vessel.control
 control.sas = True
 control.sas_mode = sc.SASMode.prograde
 
-direction = conn.add_stream(getattr, vessel.flight(), 'direction')
-prograde = conn.add_stream(getattr, vessel.flight(), 'prograde')
-
-motion = True
-while motion:
-    diff = np.abs(np.subtract(direction(), prograde())) < 1e-1
-    print(diff)
-    motion = np.any(diff==False)
-    print(motion)
-    time.sleep(1)
-
+orientation = 'prograde'
+vessel = orientate_vessel(conn, vessel, orientation)
 activated_engines = activate_engines_by_name(vessel, 'orbital-engine-0625')
+# decouple_by_name(vessel, 'proceduralStackDecoupler')
 
-new_vessels = control.activate_next_stage()
+constellation_name = 'TripleOs'
+constellation_list = control.activate_next_stage()
+constellation_list.append(vessel)
 
-print(new_vessels)
+for i, vessel in enumerate(constellation_list):
+    vessel.name = constellation_name + '_' + str(i)
+    # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
-for v in new_vessels:
-    print(v.name)
-    print(v.met)
-    v.control.throttle = 0.2
 
-# Set up streams for telemetry
-ut = conn.add_stream(getattr, conn.space_center, 'ut')
+time.sleep(10)
 
+
+result = [orientate_vessel(conn, vessel, 'normal', block=False) for vessel in constellation_list]
+throttle = [0.5 for vessel in constellation_list]
+# orientate_vessel(conn, vessel, 'normal')
+    # vessel.control.throttle = 1
+
+
+
+# # Set up streams for telemetry
+# ut = conn.add_stream(getattr, conn.space_center, 'ut')
+time.sleep(10)
+sc.quickload()
 conn.close()
 
 
+# direction = conn.add_stream(getattr, vessel.flight(), 'direction')
+# prograde = conn.add_stream(getattr, vessel.flight(), 'prograde')
 
 # vessel.auto_pilot.engage()
 # vessel.auto_pilot.sas = True

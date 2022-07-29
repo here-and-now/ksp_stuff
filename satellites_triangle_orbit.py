@@ -7,31 +7,36 @@ import time
 from utils.handle_vessels import switch_vessel, select_vessel_and_duplicates_by_name, activate_engines_by_name, decouple_by_name
 from utils.handle_orientation import orientate_vessel
 
-
-conn = krpc.connect(name="Launch into orbit")
+# init
+conn = krpc.connect(name="Satellites Triangle Orbit")
 print("Connected to kRPC")
 
-mj = conn.mech_jeb
 sc = conn.space_center
 vessels = sc.vessels
+mj = conn.mech_jeb
 
+# vessel
 vessel_name = 'OsNet_1.0_Ring_1'
-
 vessel = select_vessel_and_duplicates_by_name(vessels, vessel_name)
 sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 vessel = sc.active_vessel
 
+#control block
 control = vessel.control
 control.sas = True
 control.sas_mode = sc.SASMode.prograde
 
 orientation = 'prograde'
 vessel = orientate_vessel(conn, vessel, orientation)
+
+#staging
 activated_engines = activate_engines_by_name(vessel, 'orbital-engine-0625')
 # decouple_by_name(vessel, 'proceduralStackDecoupler')
 
+# wait for satellites to spread apart
+time.sleep(10)
 
-
+# triple constellation stuff
 constellation_name = 'TripleOs'
 constellation_list = control.activate_next_stage()
 constellation_list.append(vessel)
@@ -40,18 +45,16 @@ for i, vessel in enumerate(constellation_list):
     vessel.name = constellation_name + '_' + str(i)
     # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
-# wait for satellites to spread apart
-time.sleep(10)
 
 # satellite operations
 # result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in constellation_list]
 
+#solar 
 # solar = [v.parts.solar_panels for v in constellation_list]
 # solar = [item for sublist in solar for item in sublist]
 # for panel in solar:
     # panel.deployed = True
 
-# throttle = [0.5 for vessel in constellation_list]
 
 # mechanical jebediah time <3
 
@@ -67,7 +70,6 @@ def execute_nodes():
         with enabled.condition:
             while enabled():
                 enabled.wait()
-                # print("Enabled: {}".format(enabled()))
 
 node_list = []
 for vessel in constellation_list:

@@ -37,15 +37,27 @@ for i, vessel in enumerate(constellation_list):
     vessel.name = constellation_name + '_' + str(i)
     # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
+# wait for satellites to spread apart
+time.sleep(30)
 
-time.sleep(10)
+# satellite operations
+result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in constellation_list]
 
+#set deploy true for every solar panel in every vessel in constellation_list
 
-result = [orientate_vessel(conn, vessel, 'normal', block=False) for vessel in constellation_list]
+solar = [v.parts.solar_panels for v in constellation_list]
+solar = [item for sublist in solar for item in sublist]
+for panel in solar:
+    panel.deployed = True
+print(solar)
+# for sol in solar:
+    # for p in sol:
+        # p.deployed = True
+# # # solar = [s.deploy=True for s in v.parts.solar_panels for v in constellation_list]
+# solar = [True for p in sol for sol in solar for v.parts.solar_panels for v in constellation_list]
 # throttle = [0.5 for vessel in constellation_list]
 
 # mechanical jebediah time <3
-
 planner = mj.maneuver_planner
 aps = planner.operation_apoapsis
 aps.new_apoapsis = 5000000

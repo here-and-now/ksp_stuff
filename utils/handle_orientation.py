@@ -23,8 +23,10 @@ def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-2, block=
 
     if block:
         print('Blocked: Orientating vessel...' +vessel.name + ' to ' + new_orientation)
+
         direction = conn.add_stream(getattr, vessel.flight(), 'direction')
         sas_direction = conn.add_stream(getattr, vessel.flight(), new_orientation)
+
         motion = True
         while motion:
             diff = np.abs(np.subtract(direction(), sas_direction()))

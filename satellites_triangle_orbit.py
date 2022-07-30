@@ -1,7 +1,4 @@
-# import time
-mj = conn.mech_jeb
-mj = conn.mech_jeb
-
+import time
 import krpc
 import numpy as np
 import pandas as pd
@@ -19,7 +16,7 @@ from utils.handle_vessels import (
 conn = krpc.connect(name="Satellites Triangle Orbit")
 print("Connected to kRPC")
 
-sc = conn.space_center.vessels.Connectedq
+sc = conn.space_center
 vessels = sc.vessels
 mj = conn.mech_jeb
 

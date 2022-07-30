@@ -1,19 +1,28 @@
+# import time
+mj = conn.mech_jeb
+mj = conn.mech_jeb
+
 import krpc
-import tabulate
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
-import time
-from utils.handle_vessels import switch_vessel, select_vessel_and_duplicates_by_name, activate_engines_by_name, decouple_by_name
+
+import matplotlib.pyplot as plt
 from utils.handle_orientation import orientate_vessel
+from utils.handle_vessels import (
+    activate_engines_by_name,
+    decouple_by_name,
+    select_vessel_and_duplicates_by_name,
+    switch_vessel,
+)
 
 # init
 conn = krpc.connect(name="Satellites Triangle Orbit")
 print("Connected to kRPC")
 
-sc = conn.space_center
+sc = conn.space_center.vessels.Connectedq
 vessels = sc.vessels
 mj = conn.mech_jeb
+
 
 # vessel
 vessel_name = 'OsNet_1.0_Ring_1'
@@ -76,17 +85,29 @@ for vessel in constellation_list:
     sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
     planner = mj.maneuver_planner
-    aps = planner.operation_circularize
+    man = planner.operation_circularize
+    # man.time_selector.time_reference = mj.TimeReference.
+    man.time_selector.circularize_altitude = 100000
+
+    ut = conn.add_stream(getattr, conn.space_center, 'ut')
+    # aps.ut = ut() + 100000
+
     # aps.new_apoapsis = 200000
-    aps.make_nodes()
+    
+
+    man.make_nodes()
     
     no = vessel.control.nodes
-    print(no)
+
+    for x in no:
+        print(x.ut)
     node_list.append(no)
     execute_nodes()
 
-print(node_list)
-
+#print node list attributes delta_v, ut, remaining_burn_vector sort by ut
+# node_list = sorted(node_list, key=lambda x: x.ut)
+# for node in node_list:
+    # print(node.delta_v, node.ut, node.remaining_burn_vector)
 
 
 # execute_nodes()
@@ -96,7 +117,6 @@ print(node_list)
 
 
 # # Set up streams for telemetry
-# ut = conn.add_stream(getattr, conn.space_center, 'ut')
 try:
     time.sleep(30)
 except KeyboardInterrupt:

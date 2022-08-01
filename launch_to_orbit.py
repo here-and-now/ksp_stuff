@@ -33,8 +33,8 @@ surface_gravity = vessel.orbit.body.surface_gravity
 
 
 # Decoupling stages
-main_stage = 4
-booster_stage = 5
+main_stage = 2
+booster_stage = 3
 
 main_fuel_type = 'LqdHydrogen'
 booster_fuel_type='LqdHydrogen'

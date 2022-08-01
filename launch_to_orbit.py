@@ -2,6 +2,10 @@ import math
 import time
 import krpc
 
+from utils.handle_vessels import (
+    manipulate_engines_by_name,
+    )
+
 turn_start_altitude = 2500
 turn_end_altitude = 50000
 target_altitude = 150000
@@ -21,13 +25,15 @@ surface_gravity = vessel.orbit.body.surface_gravity
 
 # Decoupling stages
 main_stage = 4
+main_fuel_type = 'LqdHydrogen'
 booster_stage = 5
+booster_fuel_type='LqdHydrogen'
 
 main_seperation = vessel.resources_in_decouple_stage(stage=main_stage, cumulative=False)
-main_fuel = conn.add_stream(main_seperation.amount, 'LiquidFuel')
+main_fuel = conn.add_stream(main_seperation.amount, main_fuel_type)
 
 booster_seperation = vessel.resources_in_decouple_stage(stage=booster_stage, cumulative=False)
-booster_fuel = conn.add_stream(booster_seperation.amount, 'LiquidFuel')
+booster_fuel = conn.add_stream(booster_seperation.amount, booster_fuel_type)
 
 # Pre-launch setup
 vessel.control.sas = False
@@ -46,17 +52,16 @@ booster_separated = False
 turn_angle = 0
 while True:
 
-    thrust_to_weight_ratio = thrust() / (mass() * surface_gravity)
-    
+    #ToDo: make this an expression?
+    twr = thrust() / (mass() * surface_gravity)
+
+    # set TWR limit by altitude and set TWR accordingly
+    inrement = 0.005
     twr_limit = 1.6 if altitude() < 15000 else (1.8 if altitude() > 15000 else 2)
-
-    if thrust_to_weight_ratio < twr_limit:
-        vessel.control.throttle += .005
-    else:
-        vessel.control.throttle -= .005
-
-
-    print(thrust_to_weight_ratio)
+    vessel.control.throttle = vessel.control.throttle + inrement \
+                                if twr < twr_limit \
+                                else vessel.control.throttle - inrement
+    print(twr)
     
     # Gravity turn
     if altitude() > turn_start_altitude and altitude() < turn_end_altitude:

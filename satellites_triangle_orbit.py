@@ -6,7 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from utils.handle_orientation import orientate_vessel
 from utils.handle_vessels import (
-    activate_engines_by_name,
+    manipulate_engines_by_name,
     decouple_by_name,
     select_vessel_and_duplicates_by_name,
     switch_vessel,
@@ -36,7 +36,7 @@ orientation = 'prograde'
 vessel = orientate_vessel(conn, vessel, orientation)
 
 #staging
-activated_engines = activate_engines_by_name(vessel, 'orbital-engine-0625')
+activated_engines = manipulate_engines_by_name(vessel, 'orbital-engine-0625')
 # decouple_by_name(vessel, 'proceduralStackDecoupler')
 
 # wait for satellites to spread apart

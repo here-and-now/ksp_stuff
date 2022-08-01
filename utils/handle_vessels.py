@@ -45,14 +45,21 @@ def switch_vessel(active_vessel, vessel):
         print("Vessel is already active: " + vessel.name)
         return active_vessel
 
-def activate_engines_by_name(vessel, engine_name):
+def manipulate_engines_by_name(vessel, engine_name,action_dict=None):
     engine_list = []
     for engine in vessel.parts.engines:
         print(engine.part.name)
+        print(engine.part.resources.all)
         if engine.part.name == engine_name:
-            engine.active = True
+            if action == None:
+                print('No action selected. ' + engine.part.name + " is " + ("on" if engine.active else "off"))
+            if 'active' in action_dict.keys():
+                engine.active = action_dict['active']
+                print(engine.part.name + " is " + ("on" if engine.active else "off"))
+            if 'throttle' in action_dict.keys():
+                engine.throttle = action_dict['throttle']
+                print(engine.part.name + " throttle is " + str(engine.throttle))
             engine_list.append(engine)
-            print("Activated engine: " + engine.part.name + " on vessel: " + vessel.name)
 
     return engine_list
 

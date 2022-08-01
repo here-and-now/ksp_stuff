@@ -41,15 +41,23 @@ vessel.auto_pilot.engage()
 vessel.auto_pilot.target_pitch_and_heading(90, 90)
 
 # Main ascent loop
-stage_separated = False
+main_seperated = False
 booster_separated = False
 turn_angle = 0
 while True:
 
-    thrust_to_weight_ratio = thrust() / mass()
+    thrust_to_weight_ratio = thrust() / (mass() * surface_gravity)
+    
+    twr_limit = 1.6 if altitude() < 15000 else (1.8 if altitude() > 15000 else 2)
+
+    if thrust_to_weight_ratio < twr_limit:
+        vessel.control.throttle += .005
+    else:
+        vessel.control.throttle -= .005
+
 
     print(thrust_to_weight_ratio)
-    if 
+    
     # Gravity turn
     if altitude() > turn_start_altitude and altitude() < turn_end_altitude:
         frac = ((altitude() - turn_start_altitude) /
@@ -59,10 +67,12 @@ while True:
             turn_angle = new_turn_angle
             vessel.auto_pilot.target_pitch_and_heading(90-turn_angle, 90)
     
-    if not stage_separated:
+    if not main_seperated:
         if main_fuel() < 0.1:
             vessel.control.activate_next_stage()
-            stage_separated = True
+            time.sleep(2)
+            vessel.control.activate_next_stage()
+            main_seperated = True
             print('Stage separated')
 
     if not booster_separated:

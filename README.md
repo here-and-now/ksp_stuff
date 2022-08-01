@@ -16,11 +16,28 @@
   
   * [FAR](https://github.com/ferram4/Ferram-Aerospace-Research) - Aerodynamics model
 
+* [DeadlyReentry](https://github.com/Starwaster/DeadlyReentry) - Heat and force damage for KSP
+#### Parts
+* [ProceduralParts](https://github.com/KSP-RO/ProceduralParts) - ProceduralParts allows you to procedurally generate a number of different parts in a range of sizes and shapes. The parts are fully tweakable with multiple options for customization of the shape, surface texture, and other parameters.
+
+* [ProceduralFairings](https://github.com/KSP-RO/ProceduralFairings) - Procedural Fairings is a mod for Kerbal Space Program (KSP) that creates fairings that can automatically reshape for any attached payload.
+
+* [NearFuturePropulsion](https://github.com/post-kerbin-mining-corporation/NearFuturePropulsion) - Adds advanced electric propulsion systems to Kerbal Space Program 
+
+* [NearFutureExploration](https://github.com/post-kerbin-mining-corporation/NearFutureExploration) - Adds more probes and communication parts to Kerbal Space Program 
+
+* [NearFutureElectrical](https://github.com/post-kerbin-mining-corporation/NearFutureElectrical) - Adds nuclear reactors and power utility parts to Kerbal Space Program
+
+* [Restock+](https://github.com/PorktoberRevolution/ReStocked) - Kerbal Space Program Art Revamp
 
 #### Visual
-* [AstronomersVisualPack](https://github.com/themaster402/AstronomersVisualPack) - A comprehensive audio and visual overhaul for Kerbal Space Program, originally by Astronomer.
+* [AstronomersVisualPack](https://github.com/themaster402/AstronomersVisualPack) - A comprehensive audio and visual overhaul for Kerbal Space Program, originally by Astronomer
 
 * [Scatterer](https://github.com/LGhassen/Scatterer) - Atmospheric scattering mod for KSP
+
+* [Parallax](https://github.com/Gameslinx/Tessellation) - A Tessellation and Triplanar terrain shader for planetary terrain
+
+* [Waterfall](https://github.com/post-kerbin-mining-corporation/Waterfall) - Mesh-driven engine effect framework for Kerbal Space Program 
 
 ... and many, many more.
 

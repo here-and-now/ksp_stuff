@@ -34,21 +34,22 @@ surface_gravity = vessel.orbit.body.surface_gravity
 
 # Decoupling stages
 main_stage = 4
-main_fuel_type = 'LqdHydrogen'
 booster_stage = 5
+
+main_fuel_type = 'LqdHydrogen'
 booster_fuel_type='LqdHydrogen'
 
+#boster and main stage setup
 main_seperation = vessel.resources_in_decouple_stage(stage=main_stage, cumulative=False)
-main_fuel = conn.add_stream(main_seperation.amount, main_fuel_type)
-
 booster_seperation = vessel.resources_in_decouple_stage(stage=booster_stage, cumulative=False)
+
+main_fuel = conn.add_stream(main_seperation.amount, main_fuel_type)
 booster_fuel = conn.add_stream(booster_seperation.amount, booster_fuel_type)
 
 # Pre-launch setup
 vessel.control.sas = False
 vessel.control.rcs = False
 vessel.control.throttle = 1
-
 
 # Activate the first stage
 vessel.control.activate_next_stage()
@@ -65,7 +66,7 @@ while True:
     twr = thrust() / (mass() * surface_gravity)
 
     # set TWR limit by altitude and set TWR accordingly
-    inrement = 0.005
+    inrement = 0.001
     twr_limit = 1.6 if altitude() < 15000 else (1.8 if altitude() > 15000 else 2)
     vessel.control.throttle = vessel.control.throttle + inrement \
                                 if twr < twr_limit \
@@ -84,13 +85,14 @@ while True:
     if not main_seperated:
         if main_fuel() < 0.1:
             vessel.control.activate_next_stage()
-            time.sleep(2)
+            time.sleep(4)
             vessel.control.activate_next_stage()
             main_seperated = True
             print('Stage separated')
 
     if not booster_separated:
         if booster_fuel() < 0.1:
+            manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True, 'thrust_limit': 1.0})
             vessel.control.activate_next_stage()
             booster_separated = True
             print('Booster separated')

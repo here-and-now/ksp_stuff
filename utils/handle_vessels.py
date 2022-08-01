@@ -51,14 +51,14 @@ def manipulate_engines_by_name(vessel, engine_name,action_dict=None):
         print(engine.part.name)
         print(engine.part.resources.all)
         if engine.part.name == engine_name:
-            if action == None:
+            if action_dict == None:
                 print('No action selected. ' + engine.part.name + " is " + ("on" if engine.active else "off"))
             if 'active' in action_dict.keys():
                 engine.active = action_dict['active']
                 print(engine.part.name + " is " + ("on" if engine.active else "off"))
-            if 'throttle' in action_dict.keys():
-                engine.throttle = action_dict['throttle']
-                print(engine.part.name + " throttle is " + str(engine.throttle))
+            if 'thrust_limit' in action_dict.keys():
+                engine.thrust_limit = action_dict['thrust_limit']
+                print(engine.part.name + " thrust_limit is " + str(engine.thrust_limit))
             engine_list.append(engine)
 
     return engine_list

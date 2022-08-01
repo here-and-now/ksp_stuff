@@ -2,8 +2,8 @@ import math
 import time
 import krpc
 
-turn_start_altitude = 250
-turn_end_altitude = 45000
+turn_start_altitude = 2500
+turn_end_altitude = 50000
 target_altitude = 150000
 
 conn = krpc.connect(name='Launch into orbit')
@@ -13,12 +13,26 @@ vessel = conn.space_center.active_vessel
 ut = conn.add_stream(getattr, conn.space_center, 'ut')
 altitude = conn.add_stream(getattr, vessel.flight(), 'mean_altitude')
 apoapsis = conn.add_stream(getattr, vessel.orbit, 'apoapsis_altitude')
-stage_2_resources = vessel.resources_in_decouple_stage(stage=2, cumulative=False)
+thrust = conn.add_stream(getattr, vessel, 'thrust')
+mass = conn.add_stream(getattr, vessel, 'mass')
+
+surface_gravity = vessel.orbit.body.surface_gravity
+
+
+# Decoupling stages
+main_stage = 4
+booster_stage = 5
+
+main_seperation = vessel.resources_in_decouple_stage(stage=main_stage, cumulative=False)
+main_fuel = conn.add_stream(main_seperation.amount, 'LiquidFuel')
+
+booster_seperation = vessel.resources_in_decouple_stage(stage=booster_stage, cumulative=False)
+booster_fuel = conn.add_stream(booster_seperation.amount, 'LiquidFuel')
 
 # Pre-launch setup
 vessel.control.sas = False
 vessel.control.rcs = False
-vessel.control.throttle = 0.7
+vessel.control.throttle = 1
 
 
 # Activate the first stage
@@ -27,10 +41,15 @@ vessel.auto_pilot.engage()
 vessel.auto_pilot.target_pitch_and_heading(90, 90)
 
 # Main ascent loop
-srbs_separated = False
+stage_separated = False
+booster_separated = False
 turn_angle = 0
 while True:
 
+    thrust_to_weight_ratio = thrust() / mass()
+
+    print(thrust_to_weight_ratio)
+    if 
     # Gravity turn
     if altitude() > turn_start_altitude and altitude() < turn_end_altitude:
         frac = ((altitude() - turn_start_altitude) /
@@ -39,7 +58,20 @@ while True:
         if abs(new_turn_angle - turn_angle) > 0.5:
             turn_angle = new_turn_angle
             vessel.auto_pilot.target_pitch_and_heading(90-turn_angle, 90)
+    
+    if not stage_separated:
+        if main_fuel() < 0.1:
+            vessel.control.activate_next_stage()
+            stage_separated = True
+            print('Stage separated')
 
+    if not booster_separated:
+        if booster_fuel() < 0.1:
+            vessel.control.activate_next_stage()
+            booster_separated = True
+            print('Booster separated')
+
+        pass
     # Decrease throttle when approaching target apoapsis
     if apoapsis() > target_altitude*0.9:
         print('Approaching target apoapsis')

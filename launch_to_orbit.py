@@ -6,12 +6,21 @@ from utils.handle_vessels import (
     manipulate_engines_by_name,
     )
 
+from utils.debug import print_parts
+
 turn_start_altitude = 2500
 turn_end_altitude = 50000
 target_altitude = 150000
 
 conn = krpc.connect(name='Launch into orbit')
 vessel = conn.space_center.active_vessel
+
+debug = True
+if debug:
+    print_parts('all')
+    print_parts('engines')
+    print_parts('resources')
+
 
 # Set up streams for telemetry
 ut = conn.add_stream(getattr, conn.space_center, 'ut')

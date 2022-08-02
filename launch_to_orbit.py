@@ -15,6 +15,8 @@ target_altitude = 150000
 conn = krpc.connect(name='Launch into orbit')
 vessel = conn.space_center.active_vessel
 
+mj = conn.mech_jeb
+
 debug = True
 if debug:
     print_parts('all')
@@ -33,10 +35,18 @@ surface_gravity = vessel.orbit.body.surface_gravity
 
 
 # Decoupling stages
-main_stage = 2
-booster_stage = 3
 
+main_stage = 2
+main_seperated = False
 main_fuel_type = 'LqdHydrogen'
+
+manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True,
+                                                           'thrust_limit': 0.5,
+                                                           'gimbal_limit': 0.2,
+                                                           })
+
+booster_stage = 3
+booster_separated = True
 booster_fuel_type='LqdHydrogen'
 
 #boster and main stage setup
@@ -54,11 +64,13 @@ vessel.control.throttle = 1
 # Activate the first stage
 vessel.control.activate_next_stage()
 vessel.auto_pilot.engage()
-vessel.auto_pilot.target_pitch_and_heading(90, 90)
+
+pitch = 90
+heading = 135 #0 is north, 90 is east, 180 is south, 270 is west
+
+vessel.auto_pilot.target_pitch_and_heading(pitch, heading)
 
 # Main ascent loop
-main_seperated = False
-booster_separated = False
 turn_angle = 0
 while True:
 
@@ -71,7 +83,6 @@ while True:
     vessel.control.throttle = vessel.control.throttle + inrement \
                                 if twr < twr_limit \
                                 else vessel.control.throttle - inrement
-    print(twr)
     
     # Gravity turn
     if altitude() > turn_start_altitude and altitude() < turn_end_altitude:
@@ -80,7 +91,7 @@ while True:
         new_turn_angle = frac * 90
         if abs(new_turn_angle - turn_angle) > 0.5:
             turn_angle = new_turn_angle
-            vessel.auto_pilot.target_pitch_and_heading(90-turn_angle, 90)
+            vessel.auto_pilot.target_pitch_and_heading(90-turn_angle, heading)
     
     if not main_seperated:
         if main_fuel() < 0.1:
@@ -92,7 +103,8 @@ while True:
 
     if not booster_separated:
         if booster_fuel() < 0.1:
-            manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True, 'thrust_limit': 1.0})
+            manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True,
+                                                                       'thrust_limit': 1.0})
             vessel.control.activate_next_stage()
             booster_separated = True
             print('Booster separated')
@@ -135,3 +147,6 @@ m0 = vessel.mass
 m1 = m0 / math.exp(delta_v/Isp)
 flow_rate = F / Isp
 burn_time = (m0 - m1) / flow_rate
+
+
+

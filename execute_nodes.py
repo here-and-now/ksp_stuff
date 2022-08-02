@@ -12,10 +12,10 @@ conn = krpc.connect(name='Execute nodes')
 vessel = conn.space_center.active_vessel
 
 debug = True
-if debug:
-    print_parts('all')
-    print_parts('engines')
-    print_parts('resources')
+# if debug:
+    # print_parts('all')
+    # print_parts('engines')
+    # print_parts('resources')
 
 # Set up streams for telemetry
 ut = conn.add_stream(getattr, conn.space_center, 'ut')
@@ -25,6 +25,18 @@ thrust = conn.add_stream(getattr, vessel, 'thrust')
 mass = conn.add_stream(getattr, vessel, 'mass')
 
 surface_gravity = vessel.orbit.body.surface_gravity
+
+node = vessel.control.nodes.pop(0)
+
+# remaining_burn_vector = conn.add_stream(getattr, node.remaining_burn_vector(), 'remaining_burn_vector')
+# remaining_delta_v = conn.add_stream(getattr, node, 'remaining_delta_v')
+# # remaining_burn_time = conn.add_stream(getattr, node, 'remaining_burn_time')
+
+node.remaining_burn_vector()
+
+while True:
+    print(node.remaining_burn_vector())
+    time.sleep(1)
 
 
 

@@ -24,8 +24,7 @@
 * [AstronomersVisualPack](https://github.com/themaster402/AstronomersVisualPack) - A comprehensive audio and visual overhaul for Kerbal Space Program, originally by Astronomer
 * [Scatterer](https://github.com/LGhassen/Scatterer) - Atmospheric scattering mod for KSP
 * [Parallax](https://github.com/Gameslinx/Tessellation) - A Tessellation and Triplanar terrain shader for planetary terrain
-* [Waterfall](https://github.com/post-kerbin-mining-corporation/Waterfall) - Mesh-driven engine effect framework for Kerbal Space Program 
-
+* [Waterfall](https://github.com/post-kerbin-mining-corporation/Waterfall) - Mesh-driven engine effect framework for Kerbal Space Program
 ... and many, many more.
 
 

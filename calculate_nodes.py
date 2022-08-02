@@ -31,17 +31,22 @@ mu = vessel.orbit.body.gravitational_parameter
 
 # Time
 ut = conn.add_stream(getattr, conn.space_center, 'ut')
-
 # Orbital parameters
-altitude = conn.add_stream(getattr, vessel.flight(), 'mean_altitude')
-velocity = conn.add_stream(getattr, vessel.flight(), 'velocity')
-apoapsis = conn.add_stream(getattr, vessel.orbit, 'apoapsis_altitude')
-periapsis = conn.add_stream(getattr, vessel.orbit, 'periapsis_altitude')
-semi_major_axis = conn.add_stream(getattr, vessel.orbit, 'semi_major_axis')
-semi_minor_axis = conn.add_stream(getattr, vessel.orbit, 'semi_minor_axis')
-#Vessel parameters
-thrust = conn.add_stream(getattr, vessel, 'thrust')
-mass = conn.add_stream(getattr, vessel, 'mass')
+a1 = vessel.orbit.apoapsis
+p1 = vessel.orbit.periapsis
+r1 = vessel.orbit.radius
+sma1 = vessel.orbit.semi_major_axis
+v1 = vessel.orbit.velocity
+
+# Target orbit
+a2 = 165820
+p2 = a2
+
+v2 = math.sqrt(mu*(2./)
+
+
+
+#Vessel
 F = vessel.available_thrust
 
 # Plan circularization burn (using vis-viva equation)

@@ -1,48 +1,79 @@
 import math
 import time
 import krpc
+import utils.pid
 
 from utils.handle_vessels import (
     manipulate_engines_by_name,
     )
 
 from utils.debug import print_parts
-
-turn_start_altitude = 2500
-turn_end_altitude = 50000
-target_altitude = 150000
-
-conn = krpc.connect(name='Launch into orbit')
-vessel = conn.space_center.active_vessel
-mj = conn.mech_jeb
+from utils.pid import PID
 
 class LaunchIntoOrbit():
-    def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude,inclination, roll):
+    def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude,inclination, roll, max_q):
+        self.conn = krpc.connect(name='Launch into orbit')
+        self.vessel = self.conn.space_center.active_vessel
+
         self.target_altitude = target_altitude
         self.turn_start_altitude = turn_start_altitude
         self.turn_end_altitude = turn_end_altitude
-        self.inclination = inclination
+        self.target_inclination = inclination
 
+        self.max_q = max_q
         self.roll = roll
 
-        self.vessel = conn.space_center.active_vessel
-
-        self.ut = conn.add_stream(getattr, conn.space_center, 'ut')
-        self.altitude = conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
-        self.apoapsis = conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
-        self.periapsis = conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
-        self.eccentricity = conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
-        self.speed = conn.add_stream(getattr, self.vessel.flight(), 'speed')
-        self.apoapsis_speed = conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_speed')
-        self.periapsis_speed = conn.add_stream(getattr, self.vessel.orbit, 'periapsis_speed')
-        self.mean_speed = conn.add_stream(getattr, self.vessel.orbit, 'speed_at_periapsis')
-        self.mean_altitude = conn.add_stream(getattr, self.vessel.orbit, 'mean_altitude')
-        self.mean_inclination = conn.add_stream(getattr, self.vessel.orbit, 'inclination')
+        self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
+        self.altitude = self.conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
+        self.apoapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
+        self.periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
+        self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
+        self.inclination =self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
         
-                 
-                 
+    def ascent(self):
+        # set up PID controllers
+        thrust_controller = PID(P=.001, I=0.0001, D=0.01)
+        thrust_controller.ClampI = self.max_q
+        thrust_controller.setpoint(self.max_q)
+
+        # set ut auto_pilot
+        self.vessel.auto_pilot.engage()
+        self.vessel.auto_pilot.target_roll = self.roll
+
+        # logic for desired inclination to compass heading
+        if self.target_inclination >= 0:
+            self.vessel.auto_pilot.target_heading = 90 - self.target_inclination
+
+        elif self.target_inclination < 0:
+            self.vessel.auto_pilot.target_heading = -(self.target_inclination - 90) + 360
+            
+        while self.apoapsis() < self.target_altitude * .95:
+            # quadratic gravity turn_start_altitude
+            flight = self.vessel.flight(self.vessel.orbit.body.non_rotating_reference_frame)
+            frac = flight.mean_altitude / self.turn_end_altitude
+            self.vessel.auto_pilot.target_pitch = 90 - (-90 * frac * (frac - 2))
+
+            # linit max q
+            self.vessel.control.throttle = thrust_controller.update(flight.dynamic_pressure)
+
+            print('Altitude: %.2f' % self.altitude())
+            print('throttle: %.2f' % self.vessel.control.throttle)
 
 
+target_altitude = 100000
+turn_start_altitude = 2500
+turn_end_altitude = 60000
+inclination = 0
+roll = 90
+max_q = 10000
+
+launch = LaunchIntoOrbit(target_altitude, turn_start_altitude, turn_end_altitude,inclination, roll, max_q)
+launch.ascent()
+
+
+
+
+# monsters below
 # debug = False
 # if debug:
     # print_parts('all')

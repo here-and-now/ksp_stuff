@@ -14,139 +14,99 @@ target_altitude = 150000
 
 conn = krpc.connect(name='Launch into orbit')
 vessel = conn.space_center.active_vessel
-
 mj = conn.mech_jeb
 
-debug = True
-if debug:
-    print_parts('all')
-    print_parts('engines')
-    print_parts('resources')
+class LaunchIntoOrbit():
+    def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude,inclination, roll):
+        self.target_altitude = target_altitude
+        self.turn_start_altitude = turn_start_altitude
+        self.turn_end_altitude = turn_end_altitude
+        self.inclination = inclination
+
+        self.roll = roll
+
+        self.vessel = conn.space_center.active_vessel
+
+        self.ut = conn.add_stream(getattr, conn.space_center, 'ut')
+        self.altitude = conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
+        self.apoapsis = conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
+        self.periapsis = conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
+        self.eccentricity = conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
+        self.speed = conn.add_stream(getattr, self.vessel.flight(), 'speed')
+        self.apoapsis_speed = conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_speed')
+        self.periapsis_speed = conn.add_stream(getattr, self.vessel.orbit, 'periapsis_speed')
+        self.mean_speed = conn.add_stream(getattr, self.vessel.orbit, 'speed_at_periapsis')
+        self.mean_altitude = conn.add_stream(getattr, self.vessel.orbit, 'mean_altitude')
+        self.mean_inclination = conn.add_stream(getattr, self.vessel.orbit, 'inclination')
+        
+                 
+                 
 
 
-# Set up streams for telemetry
-ut = conn.add_stream(getattr, conn.space_center, 'ut')
-altitude = conn.add_stream(getattr, vessel.flight(), 'mean_altitude')
-apoapsis = conn.add_stream(getattr, vessel.orbit, 'apoapsis_altitude')
-thrust = conn.add_stream(getattr, vessel, 'thrust')
-mass = conn.add_stream(getattr, vessel, 'mass')
+# debug = False
+# if debug:
+    # print_parts('all')
+    # print_parts('engines')
+    # print_parts('resources')
 
-surface_gravity = vessel.orbit.body.surface_gravity
+# main_stage = 5
+# main_seperated = False
+# main_fuel_type = 'LqdHydrogen'
+# manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True,
+                                                           # 'thrust_limit': 0.3,
+                                                           # 'gimbal_limit': 1,
+                                                           # })
+# # Booster stage settings
+# booster_stage = 6
+# booster_separated = False
+# booster_fuel_type='LqdHydrogen'
 
+# #boster and main stage setup
+# main_seperation = vessel.resources_in_decouple_stage(stage=main_stage, cumulative=False)
+# booster_seperation = vessel.resources_in_decouple_stage(stage=booster_stage, cumulative=False)
 
-# Decoupling stages
+# main_fuel = conn.add_stream(main_seperation.amount, main_fuel_type)
+# booster_fuel = conn.add_stream(booster_seperation.amount, booster_fuel_type)
 
-main_stage = 2
-main_seperated = False
-main_fuel_type = 'LqdHydrogen'
+# # Pre-launch setup
+# vessel.control.sas = False
+# vessel.control.rcs = False
+# vessel.control.throttle = 1
 
-manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True,
-                                                           'thrust_limit': 0.5,
-                                                           'gimbal_limit': 0.2,
-                                                           })
+# # Activate the first stage
+# vessel.control.activate_next_stage()
+# vessel.auto_pilot.engage()
 
-booster_stage = 3
-booster_separated = True
-booster_fuel_type='LqdHydrogen'
+# pitch = 90
+# heading = 90 #0 is north, 90 is east, 180 is south, 270 is west
+# vessel.auto_pilot.target_pitch_and_heading(pitch, heading)
 
-#boster and main stage setup
-main_seperation = vessel.resources_in_decouple_stage(stage=main_stage, cumulative=False)
-booster_seperation = vessel.resources_in_decouple_stage(stage=booster_stage, cumulative=False)
-
-main_fuel = conn.add_stream(main_seperation.amount, main_fuel_type)
-booster_fuel = conn.add_stream(booster_seperation.amount, booster_fuel_type)
-
-# Pre-launch setup
-vessel.control.sas = False
-vessel.control.rcs = False
-vessel.control.throttle = 1
-
-# Activate the first stage
-vessel.control.activate_next_stage()
-vessel.auto_pilot.engage()
-
-pitch = 90
-heading = 135 #0 is north, 90 is east, 180 is south, 270 is west
-
-vessel.auto_pilot.target_pitch_and_heading(pitch, heading)
-
-# Main ascent loop
-turn_angle = 0
-while True:
-
-    #ToDo: make this an expression?
-    twr = thrust() / (mass() * surface_gravity)
-
-    # set TWR limit by altitude and set TWR accordingly
-    inrement = 0.001
-    twr_limit = 1.6 if altitude() < 15000 else (1.8 if altitude() > 15000 else 2)
-    vessel.control.throttle = vessel.control.throttle + inrement \
-                                if twr < twr_limit \
-                                else vessel.control.throttle - inrement
-    
-    # Gravity turn
-    if altitude() > turn_start_altitude and altitude() < turn_end_altitude:
-        frac = ((altitude() - turn_start_altitude) /
-                (turn_end_altitude - turn_start_altitude))
-        new_turn_angle = frac * 90
-        if abs(new_turn_angle - turn_angle) > 0.5:
-            turn_angle = new_turn_angle
-            vessel.auto_pilot.target_pitch_and_heading(90-turn_angle, heading)
-    
-    if not main_seperated:
-        if main_fuel() < 0.1:
-            vessel.control.activate_next_stage()
-            time.sleep(4)
-            vessel.control.activate_next_stage()
-            main_seperated = True
-            print('Stage separated')
-
-    if not booster_separated:
-        if booster_fuel() < 0.1:
-            manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True,
-                                                                       'thrust_limit': 1.0})
-            vessel.control.activate_next_stage()
-            booster_separated = True
-            print('Booster separated')
-
-        pass
-    # Decrease throttle when approaching target apoapsis
-    if apoapsis() > target_altitude*0.9:
-        print('Approaching target apoapsis')
-        break
-
-# Disable engines when target apoapsis is reached
-vessel.control.throttle = 0.25
-while apoapsis() < target_altitude:
-    pass
-print('Target apoapsis reached')
-vessel.control.throttle = 0.0
-
-# Wait until out of atmosphere
-print('Coasting out of atmosphere')
-while altitude() < 70500:
-    pass
+# # Main ascent loop
+# turn_angle = 0
+# while True:
+    # #ToDo: make this an expression?
+    # twr = thrust() / (mass() * surface_gravity)
 
 
-# Plan circularization burn (using vis-viva equation)
-print('Planning circularization burn')
-mu = vessel.orbit.body.gravitational_parameter
-r = vessel.orbit.apoapsis
-a1 = vessel.orbit.semi_major_axis
-a2 = r
-v1 = math.sqrt(mu*((2./r)-(1./a1)))
-v2 = math.sqrt(mu*((2./r)-(1./a2)))
-delta_v = v2 - v1
-node = vessel.control.add_node(
-    ut() + vessel.orbit.time_to_apoapsis, prograde=delta_v)
+# # Plan circularization burn (using vis-viva equation)
+# print('Planning circularization burn')
+# mu = vessel.orbit.body.gravitational_parameter
+# r = vessel.orbit.apoapsis
+# a1 = vessel.orbit.semi_major_axis
+# a2 = r
+# v1 = math.sqrt(mu*((2./r)-(1./a1)))
+# v2 = math.sqrt(mu*((2./r)-(1./a2)))
+# delta_v = v2 - v1
+# node = vessel.control.add_node(
+    # ut() + vessel.orbit.time_to_apoapsis, prograde=delta_v)
 
-# Calculate burn time (using rocket equation)
-F = vessel.available_thrust
-Isp = vessel.specific_impulse * 9.82
-m0 = vessel.mass
-m1 = m0 / math.exp(delta_v/Isp)
-flow_rate = F / Isp
-burn_time = (m0 - m1) / flow_rate
+# # Calculate burn time (using rocket equation)
+# F = vessel.available_thrust
+# Isp = vessel.specific_impulse * 9.82
+# m0 = vessel.mass
+# m1 = m0 / math.exp(delta_v/Isp)
+# flow_rate = F / Isp
+# burn_time = (m0 - m1) / flow_rate
 
 
 

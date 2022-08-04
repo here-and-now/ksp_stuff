@@ -24,7 +24,7 @@ path.turn_end_altitude = 65000
 ascent.desired_orbit_altitude = 100000
 ascent.desired_inclination = 6
 
-ascent.autostage = True
+ascent.autostage = False
 
 
     

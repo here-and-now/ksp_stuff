@@ -25,6 +25,8 @@ class LaunchIntoOrbit():
         self.turn_start_altitude = turn_start_altitude
         self.turn_end_altitude = turn_end_altitude
         self.target_inclination = inclination
+        self.node = None
+        self.precision = 0.1
 
         self.fuels = ['LqdHydrogen', 'LiquidFuel']
         self.end_stage = end_stage
@@ -50,11 +52,8 @@ class LaunchIntoOrbit():
 
     def staging(self):
         current_stage = self.vessel.control.current_stage
-        print(current_stage)
-
 
         # staging special needs
-        print(staging_options)
         if not self.staging_done_for_current_stage:
             for k,v in staging_options.items():
                 if current_stage == k:
@@ -96,37 +95,92 @@ class LaunchIntoOrbit():
         # logic for desired inclination to compass heading
         if self.target_inclination >= 0:
             self.vessel.auto_pilot.target_heading = 90 - self.target_inclination
-
         elif self.target_inclination < 0:
             self.vessel.auto_pilot.target_heading = -(self.target_inclination - 90) + 360
+
 
         # schedule 
         scheduler = BackgroundScheduler()
         scheduler.add_job(id='Autostaging', func=self.staging, trigger='interval', seconds=1)
         scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
         scheduler.start()
-        
-        # ascept loop  
+
+
+        # ascent loop  
         while self.apoapsis() < self.target_altitude * .95:
             pass
+
 
         # reschedule for more granular control
         scheduler.remove_job('Gravity turn')
         scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=0.1)
+
+
+        scheduler.remove_job('Gravity turn')
+
+        self.vessel.control.throttle = 0.05
+
         # fine tune apoapsis
+        # ToDo: implement fine tuning apoapsis function
         while self.apoapsis() < self.target_altitude:
             pass
 
-        scheduler.remove_job('Gravity turn')
         scheduler.remove_job('Autostaging')
-
         self.vessel.control.throttle = 0
-        self.create_circ()
+       
 
-        print("Finish")
+        while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
+            pass
+        print('Leaving atmosphere the atmosphere ...')
+        
+
+        # stage until final stage
+        while self.vessel.control.current_stage >= self.end_stage:
+            self.vessel.control.activate_next_stage()
+
+        # node creation burn vector targeting
+        self.node, burn_time = self.create_circularization_burn()
+        reference_frame = self.vessel.orbit.body.reference_frame
+        
+        self.vessel.auto_pilot.reference_frame = reference_frame
+        self.vessel.auto_pilot.engage()
+        self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(reference_frame)
+        self.vessel.auto_pilot.wait()
 
 
-    def create_circ(self):
+        # warp 
+        self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
+        while self.node.time_to > (burn_time / 2.0):
+            pass
+        self.vessel.auto_pilot.wait()
+
+        
+        # circularization burn
+        while self.node.remaining_delta_v > self.precision:
+
+            self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
+            self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
+
+
+        # cleanup
+        self.vessel.auto_pilot.disengage()
+        self.vessel.control.throttle = 0
+        self.node.remove()
+
+
+    def orbit_thrust_controller(self, remaining_delta_v):
+        twr = self.vessel.max_thrust / self.vessel.mass
+        if remaining_delta_v < twr / 3:
+            return 0.05
+        elif remaining_delta_v < twr / 2:
+            return 0.1
+        elif remaining_delta_v < twr:
+            return 0.25
+        else:
+            return 1
+
+
+    def create_circularization_burn(self):
         # Plan circularization burn (using vis-viva equation)
         print('Planning circularization burn')
         mu = self.vessel.orbit.body.gravitational_parameter
@@ -136,20 +190,21 @@ class LaunchIntoOrbit():
         v1 = math.sqrt(mu*((2./r)-(1./a1)))
         v2 = math.sqrt(mu*((2./r)-(1./a2)))
         delta_v = v2 - v1
-        node = self.vessel.control.add_node(
+        self.node = self.vessel.control.add_node(
             self.ut() + self.vessel.orbit.time_to_apoapsis, prograde=delta_v)
 
         # Calculate burn time (using rocket equation)
         F = self.vessel.available_thrust
-        Isp = self.vessel.specific_impulse * 9.82
+        Isp = self.vessel.specific_impulse * self.vessel.orbit.body.surface_gravity
         m0 = self.vessel.mass
         m1 = m0 / math.exp(delta_v/Isp)
         flow_rate = F / Isp
         burn_time = (m0 - m1) / flow_rate
 
+        return self.node, burn_time
 
 # launch parameters
-target_altitude = 100000
+target_altitude = 150000
 turn_start_altitude = 2500
 turn_end_altitude = 70000
 inclination = 0
@@ -157,14 +212,11 @@ roll = 90
 max_q = 20000
 end_stage = 4
 
-staging_options = {7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .3}},
+staging_options = {7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .3},
+                       'cryoengine-vesuvius-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': 1.0}},
+
                    6: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
                  }
-
-for k,v in staging_options.items():
-    for k2,v2 in v.items():
-        print(k2, v2)
-
 
 # Go for launch!
 launch = LaunchIntoOrbit(target_altitude,

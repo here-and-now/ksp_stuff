@@ -35,6 +35,8 @@ class LaunchIntoOrbit():
 
         # telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
+        self.flight_mean_altitude = self.conn.add_stream(getattr, self.vessel.flight(self.vessel.orbit.body.non_rotating_reference_frame), 'mean_altitude')
+        self.flight_dynamic_pressure = self.conn.add_stream(getattr, self.vessel.flight(self.vessel.orbit.body.non_rotating_reference_frame), 'dynamic_pressure')
         self.altitude = self.conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
         self.apoapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
         self.periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
@@ -44,28 +46,35 @@ class LaunchIntoOrbit():
 
     def staging(self):
         current_stage = self.vessel.control.current_stage
+        print(current_stage)
+        if current_stage == 6:
+            manipulate_engines_by_name(self.vessel, 'cryoengine-erebus-1', {'active': True,
+                                                                       'thrust_limit': 1,
+                                                                       'gimbal_limit': 1,
+                                                                       })
+
         if self.end_stage < current_stage:
             resources = self.vessel.resources_in_decouple_stage(current_stage - 1, cumulative=False)
+
+            # check for interstages by checking if there is any fuel in the next decouple stage
+            interstage_check = [True if resources.amount(fuel_type) == 0 else False for fuel_type in self.fuels]
+            if all(interstage_check):
+                time.sleep(1)
+                self.vessel.control.activate_next_stage()
+
+
             for fuel_type in self.fuels:
                 if resources.amount(fuel_type) < 1 and resources.max(fuel_type) > 0:
                     # print('Decoupling stage %d to stage %d to empty %s' % (current_stage, current_stage - 1, fuel_type))
                     self.vessel.control.activate_next_stage()
 
-            # check for interstages by if there is any fuel in the next decouple stage
-            interstage_check = [True if resources.amount(fuel_type) == 0 else False for fuel_type in self.fuels]
-            if all(interstage_check):
-                print("Interstage detected: Waiting 1 seconds for staging")
-                time.sleep(1)
-                self.vessel.control.activate_next_stage()
-
-
+            
     def gravity_turn(self):
         # quadratic gravity turn_start_altitude
-        flight = self.vessel.flight(self.vessel.orbit.body.non_rotating_reference_frame)
-        frac = flight.mean_altitude / self.turn_end_altitude
+        frac = self.flight_mean_altitude() / self.turn_end_altitude
         self.vessel.auto_pilot.target_pitch = 90 - (-90 * frac * (frac - 2))
         # linit max q
-        self.vessel.control.throttle = self.thrust_controller.update(flight.dynamic_pressure)
+        self.vessel.control.throttle = self.thrust_controller.update(self.flight_dynamic_pressure())
 
     
     def ascent(self):
@@ -82,14 +91,54 @@ class LaunchIntoOrbit():
 
         # schedule 
         scheduler = BackgroundScheduler()
-        scheduler.add_job(id='Autostaging', func=self.staging, trigger='interval', seconds=2)
-        scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=2)
+        scheduler.add_job(id='Autostaging', func=self.staging, trigger='interval', seconds=1)
+        scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
         scheduler.start()
         
         # ascept loop  
         while self.apoapsis() < self.target_altitude * .95:
             pass
+
+        # reschedule for more granular control
+        scheduler.remove_job('Gravity turn')
+        scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=0.1)
+        # fine tune apoapsis
+        while self.apoapsis() < self.target_altitude:
+            pass
+
+        scheduler.remove_job('Gravity turn')
+        scheduler.remove_job('Autostaging')
+
+        self.vessel.control.throttle = 0
+        self.create_circ()
+
         print("Finish")
+    def create_circ(self):
+        # Plan circularization burn (using vis-viva equation)
+        print('Planning circularization burn')
+        mu = self.vessel.orbit.body.gravitational_parameter
+        r = self.vessel.orbit.apoapsis
+        a1 = self.vessel.orbit.semi_major_axis
+        a2 = r
+        v1 = math.sqrt(mu*((2./r)-(1./a1)))
+        v2 = math.sqrt(mu*((2./r)-(1./a2)))
+        delta_v = v2 - v1
+        node = self.vessel.control.add_node(
+            self.ut() + self.vessel.orbit.time_to_apoapsis, prograde=delta_v)
+
+        # Calculate burn time (using rocket equation)
+        F = self.vessel.available_thrust
+        Isp = self.vessel.specific_impulse * 9.82
+        m0 = self.vessel.mass
+        m1 = m0 / math.exp(delta_v/Isp)
+        flow_rate = F / Isp
+        burn_time = (m0 - m1) / flow_rate
+
+
+
+
+
+
 
     
 # launch parameters
@@ -161,26 +210,6 @@ finally:
     # #ToDo: make this an expression?
     # twr = thrust() / (mass() * surface_gravity)
 
-
-# # Plan circularization burn (using vis-viva equation)
-# print('Planning circularization burn')
-# mu = vessel.orbit.body.gravitational_parameter
-# r = vessel.orbit.apoapsis
-# a1 = vessel.orbit.semi_major_axis
-# a2 = r
-# v1 = math.sqrt(mu*((2./r)-(1./a1)))
-# v2 = math.sqrt(mu*((2./r)-(1./a2)))
-# delta_v = v2 - v1
-# node = vessel.control.add_node(
-    # ut() + vessel.orbit.time_to_apoapsis, prograde=delta_v)
-
-# # Calculate burn time (using rocket equation)
-# F = vessel.available_thrust
-# Isp = vessel.specific_impulse * 9.82
-# m0 = vessel.mass
-# m1 = m0 / math.exp(delta_v/Isp)
-# flow_rate = F / Isp
-# burn_time = (m0 - m1) / flow_rate
 
 
 

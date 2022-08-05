@@ -8,7 +8,7 @@ from utils.handle_vessels import (
     manipulate_engines_by_name,
     )
 
-from utils.debug import print_parts
+# from utils.debug import print_parts
 from utils.pid import PID
 
 class LaunchIntoOrbit():
@@ -48,13 +48,15 @@ class LaunchIntoOrbit():
             resources = self.vessel.resources_in_decouple_stage(current_stage - 1, cumulative=False)
             for fuel_type in self.fuels:
                 if resources.amount(fuel_type) < 1 and resources.max(fuel_type) > 0:
+                    # print('Decoupling stage %d to stage %d to empty %s' % (current_stage, current_stage - 1, fuel_type))
                     self.vessel.control.activate_next_stage()
 
+            # check for interstages by if there is any fuel in the next decouple stage
             interstage_check = [True if resources.amount(fuel_type) == 0 else False for fuel_type in self.fuels]
-            print(interstage_check)
             if all(interstage_check):
+                print("Interstage detected: Waiting 1 seconds for staging")
+                time.sleep(1)
                 self.vessel.control.activate_next_stage()
-                print("Interstage")
 
 
     def gravity_turn(self):
@@ -93,7 +95,7 @@ class LaunchIntoOrbit():
 # launch parameters
 target_altitude = 100000
 turn_start_altitude = 2500
-turn_end_altitude = 60000
+turn_end_altitude = 70000
 inclination = 0
 roll = 90
 max_q = 20000
@@ -101,7 +103,13 @@ end_stage = 4
 
 # Go for launch!
 launch = LaunchIntoOrbit(target_altitude, turn_start_altitude, turn_end_altitude, end_stage, inclination, roll, max_q)
-launch.ascent()
+
+try:
+    launch.ascent()
+finally:
+    launch.conn.close()
+    print("Connection closed")
+
 
 
 

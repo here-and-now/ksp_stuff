@@ -13,16 +13,18 @@ from utils.pid import PID
 
 class LaunchIntoOrbit():
     def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude, end_stage,inclination, roll, max_q):
+        # initilize vessel
         self.conn = krpc.connect(name='Launch into orbit')
         self.vessel = self.conn.space_center.active_vessel
 
+         # ascent parameters
+        self.roll = roll
+        self.max_q = max_q
         self.target_altitude = target_altitude
         self.turn_start_altitude = turn_start_altitude
         self.turn_end_altitude = turn_end_altitude
         self.target_inclination = inclination
 
-        self.max_q = max_q
-        self.roll = roll
         self.fuels = ['LqdHydrogen', 'LiquidFuel']
         self.end_stage = end_stage
 
@@ -31,7 +33,7 @@ class LaunchIntoOrbit():
         self.thrust_controller.ClampI = self.max_q
         self.thrust_controller.setpoint(self.max_q)
 
-
+        # telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
         self.altitude = self.conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
         self.apoapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
@@ -48,7 +50,22 @@ class LaunchIntoOrbit():
                 if resources.amount(fuel_type) < 1 and resources.max(fuel_type) > 0:
                     self.vessel.control.activate_next_stage()
 
-        
+            interstage_check = [True if resources.amount(fuel_type) == 0 else False for fuel_type in self.fuels]
+            print(interstage_check)
+            if all(interstage_check):
+                self.vessel.control.activate_next_stage()
+                print("Interstage")
+
+
+    def gravity_turn(self):
+        # quadratic gravity turn_start_altitude
+        flight = self.vessel.flight(self.vessel.orbit.body.non_rotating_reference_frame)
+        frac = flight.mean_altitude / self.turn_end_altitude
+        self.vessel.auto_pilot.target_pitch = 90 - (-90 * frac * (frac - 2))
+        # linit max q
+        self.vessel.control.throttle = self.thrust_controller.update(flight.dynamic_pressure)
+
+    
     def ascent(self):
         # set ut auto_pilot
         self.vessel.auto_pilot.engage()
@@ -60,7 +77,8 @@ class LaunchIntoOrbit():
 
         elif self.target_inclination < 0:
             self.vessel.auto_pilot.target_heading = -(self.target_inclination - 90) + 360
-        
+
+        # schedule 
         scheduler = BackgroundScheduler()
         scheduler.add_job(id='Autostaging', func=self.staging, trigger='interval', seconds=2)
         scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=2)
@@ -71,29 +89,26 @@ class LaunchIntoOrbit():
             pass
         print("Finish")
 
-    def gravity_turn(self):
-        # quadratic gravity turn_start_altitude
-        flight = self.vessel.flight(self.vessel.orbit.body.non_rotating_reference_frame)
-        frac = flight.mean_altitude / self.turn_end_altitude
-        self.vessel.auto_pilot.target_pitch = 90 - (-90 * frac * (frac - 2))
-
-        # linit max q
-        self.vessel.control.throttle = self.thrust_controller.update(flight.dynamic_pressure)
-
+    
+# launch parameters
 target_altitude = 100000
 turn_start_altitude = 2500
 turn_end_altitude = 60000
 inclination = 0
 roll = 90
-max_q = 10000
+max_q = 20000
 end_stage = 4
 
+# Go for launch!
 launch = LaunchIntoOrbit(target_altitude, turn_start_altitude, turn_end_altitude, end_stage, inclination, roll, max_q)
 launch.ascent()
 
 
 
-# monsters below
+
+
+
+# fps sucking monstes below
 # debug = False
 # if debug:
     # print_parts('all')

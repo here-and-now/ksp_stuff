@@ -48,10 +48,7 @@ def switch_vessel(active_vessel, vessel):
 def manipulate_engines_by_name(vessel, engine_name,action_dict=None):
     engine_list = []
     for engine in vessel.parts.engines:
-        print(engine.part.name)
-        print(engine.part.resources.all)
         if engine.part.name == engine_name:
-
             if action_dict == None:
                 print('No action selected. ' + engine.part.name + " is " + ("on" if engine.active else "off"))
             

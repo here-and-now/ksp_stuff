@@ -1,6 +1,7 @@
 import math
 import time
 import krpc
+from pkg_resources import get_importer
 import utils.pid
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -12,7 +13,7 @@ from utils.handle_vessels import (
 from utils.pid import PID
 
 class LaunchIntoOrbit():
-    def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude, end_stage,inclination, roll, max_q):
+    def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude, end_stage,inclination, roll, max_q, staging_options):
         # initilize vessel
         self.conn = krpc.connect(name='Launch into orbit')
         self.vessel = self.conn.space_center.active_vessel
@@ -27,6 +28,9 @@ class LaunchIntoOrbit():
 
         self.fuels = ['LqdHydrogen', 'LiquidFuel']
         self.end_stage = end_stage
+        self.staging_done_for_current_stage = False
+
+        self.staging_options = staging_options
 
         # set up PID controllers
         self.thrust_controller = PID(P=.001, I=0.0001, D=0.01)
@@ -47,11 +51,16 @@ class LaunchIntoOrbit():
     def staging(self):
         current_stage = self.vessel.control.current_stage
         print(current_stage)
-        if current_stage == 6:
-            manipulate_engines_by_name(self.vessel, 'cryoengine-erebus-1', {'active': True,
-                                                                       'thrust_limit': 1,
-                                                                       'gimbal_limit': 1,
-                                                                       })
+
+
+        # staging special needs
+        print(staging_options)
+        if not self.staging_done_for_current_stage:
+            for k,v in staging_options.items():
+                if current_stage == k:
+                    for k2,v2 in v.items():
+                        manipulate_engines_by_name(self.vessel, k2, v2)
+            self.staging_done_for_current_stage = True
 
         if self.end_stage < current_stage:
             resources = self.vessel.resources_in_decouple_stage(current_stage - 1, cumulative=False)
@@ -61,12 +70,14 @@ class LaunchIntoOrbit():
             if all(interstage_check):
                 time.sleep(1)
                 self.vessel.control.activate_next_stage()
+                self.staging_done_for_current_stage = False
 
 
             for fuel_type in self.fuels:
                 if resources.amount(fuel_type) < 1 and resources.max(fuel_type) > 0:
                     # print('Decoupling stage %d to stage %d to empty %s' % (current_stage, current_stage - 1, fuel_type))
                     self.vessel.control.activate_next_stage()
+                    self.staging_done_for_current_stage = False
 
             
     def gravity_turn(self):
@@ -113,6 +124,8 @@ class LaunchIntoOrbit():
         self.create_circ()
 
         print("Finish")
+
+
     def create_circ(self):
         # Plan circularization burn (using vis-viva equation)
         print('Planning circularization burn')
@@ -135,12 +148,6 @@ class LaunchIntoOrbit():
         burn_time = (m0 - m1) / flow_rate
 
 
-
-
-
-
-
-    
 # launch parameters
 target_altitude = 100000
 turn_start_altitude = 2500
@@ -150,8 +157,24 @@ roll = 90
 max_q = 20000
 end_stage = 4
 
+staging_options = {7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .3}},
+                   6: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
+                 }
+
+for k,v in staging_options.items():
+    for k2,v2 in v.items():
+        print(k2, v2)
+
+
 # Go for launch!
-launch = LaunchIntoOrbit(target_altitude, turn_start_altitude, turn_end_altitude, end_stage, inclination, roll, max_q)
+launch = LaunchIntoOrbit(target_altitude,
+                        turn_start_altitude,
+                        turn_end_altitude,
+                        end_stage,
+                        inclination,
+                        roll,
+                        max_q,
+                        staging_options)
 
 try:
     launch.ascent()

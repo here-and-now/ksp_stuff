@@ -44,7 +44,7 @@ class ComSat_Network():
         auto_pilot.target_pitch_and_heading(0, 90)
         auto_pilot.wait()
         # auto_pilot.wait()
-        # auto_pilot.disengage()
+        auto_pilot.disengage()
 
     def sats(self):
         ## orbit check blabla
@@ -58,24 +58,45 @@ class ComSat_Network():
         res_orbit.resonance_denominator = 3
 
         res_orbit.make_node()
-        executor.execute_one_node()
+        executor.execute_all_nodes()
 
-        with self.conn.stream(getattr, executor, 'enabled') as enabled:
-            enabled.rate = 1
-            with enabled.condition.wait():
-                enabled.wait()
-
-
+        self.execute_nodes()
 
         recirc = self.mj.maneuver_planner.operation_circularize
         recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
         recirc.make_node()
 
+        self.execute_nodes()
+        
+        self.release_satellite()
+
+        res_orbit.make_node()
+        executor.execute_all_nodes()
+        recirc.make_node()
+        self.execute_nodes()
+        self.release_satellite()
+
+
+
+
+    def execute_nodes(self):
+        executor = self.mj.node_executor
+        executor.execute_all_nodes()
+        
         with self.conn.stream(getattr, executor, 'enabled') as enabled:
             enabled.rate = 1
             with enabled.condition:
                 while enabled():
                     enabled.wait()
+
+
+
+
+        # with self.conn.stream(getattr, executor, 'enabled') as enabled:
+            # enabled.rate = 1
+            # with enabled.condition:
+                # while enabled():
+                    # enabled.wait()
 
 
     def release_satellite(self):

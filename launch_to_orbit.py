@@ -209,14 +209,20 @@ turn_start_altitude = 2500
 turn_end_altitude = 80000
 inclination = 0
 roll = 90
-max_q = 20000
+max_q = 30000
 end_stage = 4
 
-staging_options = {8: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .3},
-                       'cryoengine-vesuvius-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': 1.0}},
+staging_options = {
+                   # 8: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},
 
                    7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
-                 }
+ 
+                   }
+# staging_options = {8: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .6},
+                       # 'cryoengine-vesuvius-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': 1.0}},
+
+                   # 7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
+#                  }
 print(staging_options)
 # Go for launch!
 launch = LaunchIntoOrbit(target_altitude,

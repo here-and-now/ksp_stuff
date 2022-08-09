@@ -20,7 +20,6 @@ class ComSat_Network():
         self.sc = self.conn.space_center
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
-
         
         self.mj = self.conn.mech_jeb
 
@@ -32,10 +31,7 @@ class ComSat_Network():
         self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
         self.inclination =self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
 
-
-
     def prepare(self):
-        
         auto_pilot = self.vessel.auto_pilot
 
         auto_pilot.engage()
@@ -48,43 +44,62 @@ class ComSat_Network():
 
     def sats(self):
         ## orbit check blabla
+        # assume near perfect eccentric orbit
+
         self.release_satellite()
-        
-        executor = self.mj.node_executor
 
-            
-        res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
-        res_orbit.resonance_numerator = 4
-        res_orbit.resonance_denominator = 3
+        self.resonant_orbit()
+        self.recircularize()
+        self.release_satellite()
 
-        res_orbit.make_node()
-        executor.execute_all_nodes()
 
+        self.resonant_orbit()
+        self.recircularize()
+        self.release_satellite()
+
+        print('ComSats Deployed')
+
+    def resonant_orbit(self):
+        # set up resonant orbit with 4/3 period and execution after 10 seconds
+        self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
+
+        self.res_orbit.resonance_numerator = 4
+        self.res_orbit.resonance_denominator = 3
+        # self.res_orbit.time_selector.lead_time = 10
+        # self.mj.TimeSelector.lead_time = 120
+        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
+        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
+        # self.res_orbit.ti
+        self.res_orbit.make_node()
         self.execute_nodes()
 
+
+    def recircularize(self):
+        # recircularize at periapsis
         recirc = self.mj.maneuver_planner.operation_circularize
-        recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
-        recirc.make_node()
-
-        self.execute_nodes()
         
-        self.release_satellite()
 
-        res_orbit.make_node()
-        executor.execute_all_nodes()
+        if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
+            recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
+        else:
+            recirc.time_selector.time_reference = self.mj.TimeReference.apoapsis
+
         recirc.make_node()
         self.execute_nodes()
         self.release_satellite()
+
+
 
 
 
 
     def execute_nodes(self):
         executor = self.mj.node_executor
+        executor.tolerance = 0.001
         executor.execute_all_nodes()
         
         with self.conn.stream(getattr, executor, 'enabled') as enabled:
-            enabled.rate = 1
+            enabled.rate = 30
             with enabled.condition:
                 while enabled():
                     enabled.wait()

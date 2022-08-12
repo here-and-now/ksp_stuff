@@ -35,6 +35,46 @@ class ComSat_Network():
         self.inclination =self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
 
 
+    def execute_nodes(self):
+        executor = self.mj.node_executor
+        executor.tolerance = 0.001
+        executor.execute_all_nodes()
+        
+        with self.conn.stream(getattr, executor, 'enabled') as enabled:
+            enabled.rate = 30
+            with enabled.condition:
+                while enabled():
+                    enabled.wait()
+
+    
+    def resonant_orbit(self):
+        # set up resonant orbit with 4/3 period and execution after 10 seconds
+        self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
+
+        self.res_orbit.resonance_numerator = 4
+        self.res_orbit.resonance_denominator = 3
+        # self.res_orbit.time_selector.lead_time = 10
+        self.mj.TimeSelector.lead_time = 120
+        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
+
+        print(self.res_orbit.time_selector.time_reference)
+        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
+        # self.res_orbit.ti
+        self.res_orbit.make_node()
+        self.execute_nodes()
+   
+
+    def recircularize(self):
+        recirc = self.mj.maneuver_planner.operation_circularize
+        if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
+            recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
+        else:
+            recirc.time_selector.time_reference = self.mj.TimeReference.apoapsis
+
+        recirc.make_node()
+        self.execute_nodes()
+
+
     def sats(self):
         ## orbit check blabla
         # assume near perfect eccentric orbit
@@ -50,53 +90,17 @@ class ComSat_Network():
         self.recircularize()
         self.release_satellite()
 
-        print('ComSats Deployed')
-
-    def resonant_orbit(self):
-        # set up resonant orbit with 4/3 period and execution after 10 seconds
-        self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
-
-        self.res_orbit.resonance_numerator = 4
-        self.res_orbit.resonance_denominator = 3
-        # self.res_orbit.time_selector.lead_time = 10
-        # self.mj.TimeSelector.lead_time = 120
-        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
-        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
-        # self.res_orbit.ti
-        self.res_orbit.make_node()
-        self.execute_nodes()
-
-
-    def recircularize(self):
-        recirc = self.mj.maneuver_planner.operation_circularize
-        if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
-            recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
-        else:
-            recirc.time_selector.time_reference = self.mj.TimeReference.apoapsis
-
-        recirc.make_node()
-        self.execute_nodes()
-
-    def execute_nodes(self):
-        executor = self.mj.node_executor
-        executor.tolerance = 0.01
-        executor.execute_all_nodes()
-        
-        with self.conn.stream(getattr, executor, 'enabled') as enabled:
-            enabled.rate = 30
-            with enabled.condition:
-                while enabled():
-                    enabled.wait()
-
-
+       
     def release_satellite(self):
         print('Deploying ComSat')
 
         self.auto_pilot.sas = False
         self.auto_pilot.reference_frame = self.vessel.orbital_reference_frame
 
-        self.auto_pilot.target_direction = (0, 1, 0)
-        self.auto_pilot.stopping_time = (1,1,1)
+        self.auto_pilot.target_roll = 0
+
+        self.auto_pilot.target_direction = (0, 0, -1)
+        self.auto_pilot.stopping_time = (1,0.1,1)
 
         self.auto_pilot.engage()
         self.auto_pilot.wait()
@@ -107,12 +111,14 @@ class ComSat_Network():
 
         self.satellite_list.append(released_satellite)
 
-        time.sleep(15)
+        time.sleep(3)
 
     def tune_orbital_period(self):
         for sat in self.satellite_list:
             period = sat[0].orbit.period
             print(period)
+
+
 
 nw = ComSat_Network()
 nw.sats()

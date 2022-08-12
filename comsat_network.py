@@ -20,6 +20,9 @@ class ComSat_Network():
         self.sc = self.conn.space_center
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
+        self.auto_pilot = self.vessel.auto_pilot
+
+        self.satellite_list = []
         
         self.mj = self.conn.mech_jeb
 
@@ -31,16 +34,6 @@ class ComSat_Network():
         self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
         self.inclination =self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
 
-    def prepare(self):
-        auto_pilot = self.vessel.auto_pilot
-
-        auto_pilot.engage()
-        # auto_pilot.target_roll = -90
-        # auto_pilot.wait()
-        auto_pilot.target_pitch_and_heading(0, 90)
-        auto_pilot.wait()
-        # auto_pilot.wait()
-        auto_pilot.disengage()
 
     def sats(self):
         ## orbit check blabla
@@ -75,10 +68,7 @@ class ComSat_Network():
 
 
     def recircularize(self):
-        # recircularize at periapsis
         recirc = self.mj.maneuver_planner.operation_circularize
-        
-
         if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
             recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
         else:
@@ -86,16 +76,10 @@ class ComSat_Network():
 
         recirc.make_node()
         self.execute_nodes()
-        self.release_satellite()
-
-
-
-
-
 
     def execute_nodes(self):
         executor = self.mj.node_executor
-        executor.tolerance = 0.001
+        executor.tolerance = 0.01
         executor.execute_all_nodes()
         
         with self.conn.stream(getattr, executor, 'enabled') as enabled:
@@ -105,22 +89,34 @@ class ComSat_Network():
                     enabled.wait()
 
 
-
-
-        # with self.conn.stream(getattr, executor, 'enabled') as enabled:
-            # enabled.rate = 1
-            # with enabled.condition:
-                # while enabled():
-                    # enabled.wait()
-
-
     def release_satellite(self):
-        self.vessel.control.activate_next_stage()
+        print('Deploying ComSat')
 
+        self.auto_pilot.sas = False
+        self.auto_pilot.reference_frame = self.vessel.orbital_reference_frame
+
+        self.auto_pilot.target_direction = (0, 1, 0)
+        self.auto_pilot.stopping_time = (1,1,1)
+
+        self.auto_pilot.engage()
+        self.auto_pilot.wait()
+        self.auto_pilot.disengage()
+
+
+        released_satellite = self.vessel.control.activate_next_stage()
+
+        self.satellite_list.append(released_satellite)
+
+        time.sleep(15)
+
+    def tune_orbital_period(self):
+        for sat in self.satellite_list:
+            period = sat[0].orbit.period
+            print(period)
 
 nw = ComSat_Network()
-nw.prepare()
 nw.sats()
+nw.tune_orbital_period()
 
 
 

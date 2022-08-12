@@ -1,10 +1,11 @@
 import numpy as np
 import time
 
-def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-2, block=True):
+def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-1, block=True):
     control = vessel.control
     control.sas = True
     if new_orientation == 'prograde':
+        print('Orientating vessel to prograde')
         control.sas_mode = conn.space_center.SASMode.prograde
     elif new_orientation == 'retrograde':
         control.sas_mode = conn.space_center.SASMode.retrograde
@@ -32,7 +33,8 @@ def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-2, block=
             diff = np.abs(np.subtract(direction(), sas_direction()))
             diff_bool = diff < accuracy_cutoff
             motion = np.any(diff_bool==False)
-            time.sleep(1)
+            # print(diff)
+            # time.sleep(1)
     else:
         print('Non-blocked: Orientating vessel...' +vessel.name + ' to ' + new_orientation)
         

@@ -54,7 +54,7 @@ class LaunchIntoOrbit():
         current_stage = self.vessel.control.current_stage
 
         # staging special needs
-        if not self.staging_done_for_current_stage:
+        if not self.staging_done_for_current_stage and staging_options != None:
             for k,v in staging_options.items():
                 if current_stage == k:
                     for k2,v2 in v.items():
@@ -107,7 +107,7 @@ class LaunchIntoOrbit():
 
 
         # ascent loop  
-        while self.apoapsis() < self.target_altitude * .95:
+        while self.apoapsis() < self.target_altitude * .98:
             pass
 
 
@@ -129,14 +129,14 @@ class LaunchIntoOrbit():
         self.vessel.control.throttle = 0
        
 
-        while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
-            pass
-        print('Leaving atmosphere the atmosphere ...')
+        # while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
+            # pass
+        # print('Leaving atmosphere the atmosphere ...')
         
 
         # stage until final stage
-        while self.vessel.control.current_stage > self.end_stage:
-            self.vessel.control.activate_next_stage()
+        # while self.vessel.control.current_stage > self.end_stage:
+            # self.vessel.control.activate_next_stage()
 
         # node creation burn vector targeting
         self.node, burn_time = self.create_circularization_burn()
@@ -152,7 +152,7 @@ class LaunchIntoOrbit():
         self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
         while self.node.time_to > (burn_time / 2.0):
             pass
-        self.vessel.auto_pilot.wait()
+        # self.vessel.auto_pilot.wait()
 
         
         # circularization burn
@@ -204,25 +204,25 @@ class LaunchIntoOrbit():
         return self.node, burn_time
 
 # launch parameters
-target_altitude = 150000
+target_altitude = 120000
 turn_start_altitude = 2500
 turn_end_altitude = 80000
 inclination = 0
 roll = 90
 max_q = 30000
-end_stage = 4
+end_stage = 5
+staging_options = None
+# staging_options = {
+                   # 5: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},
 
-staging_options = {
-                   # 8: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},
-
-                   7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
+                   # 6: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.4, 'thrust_limit': 1.0}},
  
-                   }
+                   # }
 # staging_options = {8: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .6},
                        # 'cryoengine-vesuvius-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': 1.0}},
 
                    # 7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
-#                  }
+                 # }
 print(staging_options)
 # Go for launch!
 launch = LaunchIntoOrbit(target_altitude,

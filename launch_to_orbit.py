@@ -209,8 +209,8 @@ turn_start_altitude = 2500
 turn_end_altitude = 80000
 inclination = 0
 roll = 90
-max_q = 30000
-end_stage = 5
+max_q = 20000
+end_stage = 6
 staging_options = None
 # staging_options = {
                    # 5: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},

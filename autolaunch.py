@@ -22,9 +22,10 @@ path.turn_start_velocity = 120
 path.turn_end_altitude = 65000
 
 ascent.desired_orbit_altitude = 220000
-ascent.desired_inclination = -90
+ascent.desired_inclination = 90
 
 ascent.autostage = False
+# ascent.staging_controller = 
 
 
     

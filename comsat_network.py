@@ -54,11 +54,11 @@ class ComSat_Network():
         self.res_orbit.resonance_numerator = 4
         self.res_orbit.resonance_denominator = 3
         # self.res_orbit.time_selector.lead_time = 10
-        self.mj.TimeSelector.lead_time = 120
-        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
+        # self.mj.TimeSelector.lead_time = 120
+        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
 
-        print(self.res_orbit.time_selector.time_reference)
-        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
+        # print(self.res_orbit.time_selector.time_reference)
+        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
         # self.res_orbit.ti
         self.res_orbit.make_node()
         self.execute_nodes()
@@ -93,24 +93,16 @@ class ComSat_Network():
     def release_satellite(self):
         print('Deploying ComSat')
 
-        self.auto_pilot.sas = False
-        self.auto_pilot.reference_frame = self.vessel.orbital_reference_frame
-
-        self.auto_pilot.target_roll = 0
-
-        self.auto_pilot.target_direction = (0, 0, -1)
-        self.auto_pilot.stopping_time = (1,0.1,1)
-
-        self.auto_pilot.engage()
-        self.auto_pilot.wait()
-        self.auto_pilot.disengage()
+        self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
+        self.mj.smart_ass.update(False)
+        time.sleep(15)
 
 
         released_satellite = self.vessel.control.activate_next_stage()
 
         self.satellite_list.append(released_satellite)
 
-        time.sleep(3)
+        time.sleep(10)
 
     def tune_orbital_period(self):
         for sat in self.satellite_list:

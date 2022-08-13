@@ -16,6 +16,8 @@ class LaunchIntoOrbit():
     def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude, end_stage,inclination, roll, max_q, staging_options):
         # initilize vessel
         self.conn = krpc.connect(name='Launch into orbit')
+
+        self.mj = self.conn.mech_jeb
         self.vessel = self.conn.space_center.active_vessel
 
          # ascent parameters
@@ -116,56 +118,75 @@ class LaunchIntoOrbit():
         scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=0.1)
 
 
-        scheduler.remove_job('Gravity turn')
 
-        self.vessel.control.throttle = 0.05
+        # self.vessel.control.throttle = 0.5
 
         # fine tune apoapsis
         # ToDo: implement fine tuning apoapsis function
         while self.apoapsis() < self.target_altitude:
             pass
 
+        scheduler.remove_job('Gravity turn')
+
         scheduler.remove_job('Autostaging')
+        # self.vessel.auto_pilot.disengage()
         self.vessel.control.throttle = 0
+
        
 
-        # while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
-            # pass
-        # print('Leaving atmosphere the atmosphere ...')
+        while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
+            pass
+        print('Leaving atmosphere the atmosphere ...')
         
 
         # stage until final stage
-        # while self.vessel.control.current_stage > self.end_stage:
-            # self.vessel.control.activate_next_stage()
+        while self.vessel.control.current_stage > self.end_stage:
+            self.vessel.control.activate_next_stage()
+
+        self.vessel.auto_pilot.disengage()
+        circ = self.mj.maneuver_planner.operation_circularize
+        circ.make_node()
+        self.execute_nodes()
+
 
         # node creation burn vector targeting
-        self.node, burn_time = self.create_circularization_burn()
-        reference_frame = self.vessel.orbit.body.reference_frame
-        
-        self.vessel.auto_pilot.reference_frame = reference_frame
-        self.vessel.auto_pilot.engage()
-        self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(reference_frame)
-        self.vessel.auto_pilot.wait()
+        # self.node, burn_time = self.create_circularization_burn()
+        # # reference_frame = self.vessel.orbit.body.reference_frame
+        # # self.vessel.auto_pilot.engage()
+        # self.vessel.auto_pilot.reference_frame = self.node.reference_frame
+        # # self.vessel.auto_pilot.reference_frame = reference_frame
+        # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.node.reference_frame)
+        # self.vessel.auto_pilot.wait()
 
 
         # warp 
-        self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
-        while self.node.time_to > (burn_time / 2.0):
-            pass
+        # self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
+        # while self.node.time_to > (burn_time / 2.0):
+            # pass
         # self.vessel.auto_pilot.wait()
 
         
         # circularization burn
-        while self.node.remaining_delta_v > self.precision:
-
-            self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
-            self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
+        # while self.node.remaining_delta_v > self.precision:
+            # self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
+            # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
 
 
         # cleanup
-        self.vessel.auto_pilot.disengage()
-        self.vessel.control.throttle = 0
-        self.node.remove()
+        # self.vessel.auto_pilot.disengage()
+        # self.vessel.control.throttle = 0
+        # self.node.remove()
+
+    def execute_nodes(self):
+        executor = self.mj.node_executor
+        executor.tolerance = 0.001
+        executor.execute_all_nodes()
+
+        with self.conn.stream(getattr, executor, 'enabled') as enabled:
+            enabled.rate = 30
+            with enabled.condition:
+                while enabled():
+                    enabled.wait()
 
 
     def orbit_thrust_controller(self, remaining_delta_v):
@@ -205,12 +226,12 @@ class LaunchIntoOrbit():
 
 # launch parameters
 target_altitude = 120000
-turn_start_altitude = 2500
+turn_start_altitude = 25000
 turn_end_altitude = 80000
-inclination = 0
+inclination = 90
 roll = 90
 max_q = 20000
-end_stage = 6
+end_stage = 5
 staging_options = None
 # staging_options = {
                    # 5: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},

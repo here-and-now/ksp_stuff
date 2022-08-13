@@ -78,7 +78,6 @@ class ComSat_Network():
     def sats(self):
         ## orbit check blabla
         # assume near perfect eccentric orbit
-
         self.release_satellite()
 
         self.resonant_orbit()

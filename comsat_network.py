@@ -38,10 +38,10 @@ class ComSat_Network():
     def execute_nodes(self):
         executor = self.mj.node_executor
         executor.tolerance = 0.001
-        executor.execute_all_nodes()
+        executor.execute_one_node()
         
         with self.conn.stream(getattr, executor, 'enabled') as enabled:
-            enabled.rate = 30
+            enabled.rate = 0.1
             with enabled.condition:
                 while enabled():
                     enabled.wait()
@@ -53,25 +53,41 @@ class ComSat_Network():
 
         self.res_orbit.resonance_numerator = 4
         self.res_orbit.resonance_denominator = 3
-        # self.res_orbit.time_selector.lead_time = 10
-        # self.mj.TimeSelector.lead_time = 120
-        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
 
-        # print(self.res_orbit.time_selector.time_reference)
+        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
+        # self.res_orbit.time_selector.lead_time = 100
+
         self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
         # self.res_orbit.ti
         self.res_orbit.make_node()
         self.execute_nodes()
+
+        self.adjust_orbit_after_resonant()
    
 
     def recircularize(self):
         recirc = self.mj.maneuver_planner.operation_circularize
         if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
             recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
+            
         else:
             recirc.time_selector.time_reference = self.mj.TimeReference.apoapsis
+        recirc.time_selector.lead_time = 100
+        # recirc = self.mj.maneuver_planner.operation_circularize
+        # recirc.time_selector.time_reference = self.mj.TimeReference.altitude
+
+        # recirc.time_selector.circularize_altitude = 245000
 
         recirc.make_node()
+        self.execute_nodes()
+
+
+    def adjust_orbit_after_resonant(self):
+        tune = self.mj.maneuver_planner.operation_periapsis
+        tune.time_selector.time_reference = self.mj.TimeReference.apoapsis
+        tune.new_periapsis = 245000
+
+        tune.make_node()
         self.execute_nodes()
 
 

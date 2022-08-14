@@ -225,9 +225,9 @@ class LaunchIntoOrbit():
         return self.node, burn_time
 
 # launch parameters
-target_altitude = 120000
-turn_start_altitude = 25000
-turn_end_altitude = 80000
+target_altitude = 145000
+turn_start_altitude = 2500
+turn_end_altitude = 120000
 inclination = 90
 roll = 90
 max_q = 20000

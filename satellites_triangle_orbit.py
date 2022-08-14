@@ -32,8 +32,6 @@ period_mean = sum(
 print('Average period is {}'.format(period_mean))
 
 
-# print(tabulate.tabulate(constellation_list, headers='keys', tablefmt='fancy_grid'))
-
 def get_telemetry():
 
     table = tabulate.tabulate([[i, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude, v.orbit.inclination, v.orbit.period, (v.orbit.period - period_mean)]
@@ -49,8 +47,37 @@ get_telemetry()
 
 vessel = constellation_list[0]
 
-mj.smart_ass.autopilot_mode = mj.SmartASSAutopilotMode.prograde
-mj.smart_ass.update(False)
+for vessel in constellation_list:
+    sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
+    vessel.control.rcs = False
+    
+
+    if vessel.orbit.period < period_mean:
+        mj.smart_ass.autopilot_mode = mj.SmartASSAutopilotMode.prograde
+        mj.smart_ass.update(False)
+        time.sleep(25)
+        while vessel.orbit.period < period_mean:
+            vessel.control.rcs = True
+            vessel.control.throttle = 0.05
+
+    elif vessel.orbit.period > period_mean:
+        mj.smart_ass.autopilot_mode = mj.SmartASSAutopilotMode.retrograde
+        mj.smart_ass.update(False)
+        time.sleep(25)
+        while vessel.orbit.period > period_mean:
+            vessel.control.rcs = True
+            vessel.control.throttle = 0.05
+
+
+    vessel.control.rcs = False
+    vessel.control.throttle = 0
+
+get_telemetry()
+
+
+
+
+
 
 
 

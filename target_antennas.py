@@ -45,32 +45,30 @@ get_telemetry()
     # # ccvessel.name = constellation_name + '_' + str(i)
     # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
-vessel = constellation_list[0]
 
+#distance between each vesel in constellation_list
 for vessel in constellation_list:
-    sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
-    vessel.control.rcs = False
+    for target_vessel in constellation_list:
+        if vessel is not target_vessel:
+            sc.target_vessel = target_vessel
+            dist = sc.target_vessel.orbit.distance_at_closest_approach(vessel.orbit)
+            print('{} - {}: {}'.format(vessel.name, target_vessel.name, dist))
+
+
+# or vessel in constellation_list:
+
+    # for target_vessel in constellation_list[:-1]:
+
+
+
+        # if vessel.name != target_vessel.name:
+
+            # for part in vessel.parts.with_tag('relay'):
+                # antenna = conn.remote_tech.antenna(part)
+                # antenna.target_vessel = target_vessel
+
+
     
-
-    if vessel.orbit.period < period_mean:
-        mj.smart_ass.autopilot_mode = mj.SmartASSAutopilotMode.prograde
-        mj.smart_ass.update(False)
-        time.sleep(25)
-        while vessel.orbit.period < period_mean:
-            vessel.control.rcs = True
-            vessel.control.throttle = 0.05
-
-    elif vessel.orbit.period > period_mean:
-        mj.smart_ass.autopilot_mode = mj.SmartASSAutopilotMode.retrograde
-        mj.smart_ass.update(False)
-        time.sleep(25)
-        while vessel.orbit.period > period_mean:
-            vessel.control.rcs = True
-            vessel.control.throttle = 0.05
-
-
-    vessel.control.rcs = False
-    vessel.control.throttle = 0
 
 get_telemetry()
 

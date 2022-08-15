@@ -118,16 +118,50 @@ class ComSat_Network():
 
         time.sleep(10)
 
-    def tune_orbital_period(self):
-        for sat in self.satellite_list:
-            period = sat[0].orbit.period
-            print(period)
+    def setup_communications(self):
+        # constellation stuff setup
+        distance_dict = {}
+        
+        if not self.satellite_list:
+            self.constellation_name = 'Comsat_0.38_RingZero Relay'
+            for vessel in self.conn.space_center.vessels:
+                if vessel.name == self.constellation_name:
+                    self.satellite_list.append(vessel)
+           
+
+        for vessel in self.satellite_list:
+            distance_dict[vessel] = {}
+            for target_vessel in self.satellite_list:
+                if vessel is not target_vessel:
+                    self.sc.target_vessel = target_vessel
+                    distance = self.sc.target_vessel.orbit.distance_at_closest_approach(vessel.orbit)
+                    distance_dict[vessel].update({target_vessel: distance})
+
+
+        for vessel, distance_to_vessel_dict in distance_dict.items():
+            self.sc.active_vessel = vessel
+            antenna_parts = vessel.parts.with_tag('target_whatever')
+
+            sorted_distance_to_vessel_dict = sorted(distance_to_vessel_dict.items(), key=lambda x: x[1])
+
+            for i, antenna_part in enumerate(antenna_parts):
+                antenna = self.conn.remote_tech.antenna(antenna_part)
+                for module in antenna_part.modules:
+                    if module.name == 'ModuleRTAntenna':
+                        module.set_action('Activate')
+                # even target nearest satellite
+                if i % 2 == 0:
+                    antenna.target_vessel = sorted_distance_to_vessel_dict[0][0]
+                # uneven target 2nd nearest satellite
+                else:
+                    antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
 
 
 
 nw = ComSat_Network()
-nw.sats()
-nw.tune_orbital_period()
+# nw.sats()
+# nw.tune_orbital_period()
+nw.setup_communications()
 
 
 
@@ -153,19 +187,19 @@ nw.tune_orbital_period()
 
 # # triple constellation stuff
 # constellation_name = 'TripleOs'
-# constellation_list = control.activate_next_stage()
-# constellation_list.append(vessel)
+# satellite_list = control.activate_next_stage()
+# satellite_list.append(vessel)
 
-# for i, vessel in enumerate(constellation_list):
+# for i, vessel in enumerate(satellite_list):
     # vessel.name = constellation_name + '_' + str(i)
     # # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
 
 # # satellite operations
-# # result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in constellation_list]
+# # result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in satellite_list]
 
 # #solar 
-# # solar = [v.parts.solar_panels for v in constellation_list]
+# # solar = [v.parts.solar_panels for v in satellite_list]
 # # solar = [item for sublist in solar for item in sublist]
 # # for panel in solar:
     # # panel.deployed = True
@@ -187,7 +221,7 @@ nw.tune_orbital_period()
                 # enabled.wait()
 
 # node_list = []
-# for vessel in constellation_list:
+# for vessel in satellite_list:
     # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
     # planner = mj.maneuver_planner
@@ -218,7 +252,7 @@ nw.tune_orbital_period()
 
 # # execute_nodes()
 
-# # for vessel in constellation_list:
+# # for vessel in satellite_list:
 
 
 
@@ -247,3 +281,5 @@ nw.tune_orbital_period()
 # # apo = planner.operation_apoapsis
 # # apo.new_apoapsis = 1000000000
 # # apo.make_nodes()
+
+

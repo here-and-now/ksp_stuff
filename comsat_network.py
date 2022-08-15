@@ -2,6 +2,7 @@ import time
 import krpc
 import numpy as np
 import pandas as pd
+import tabulate
 
 import matplotlib.pyplot as plt
 from utils.handle_orientation import orientate_vessel
@@ -93,8 +94,6 @@ class ComSat_Network():
 
 
     def sats(self):
-        ## orbit check blabla
-        # assume near perfect eccentric orbit
         self.release_satellite()
 
         self.resonant_orbit()
@@ -107,33 +106,32 @@ class ComSat_Network():
 
        
     def release_satellite(self):
+
         print('Deploying ComSat')
+        
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
         self.mj.smart_ass.update(False)
         time.sleep(15)
 
         released_satellite = self.vessel.control.activate_next_stage()
-
         self.satellite_list.append(released_satellite)
-
         time.sleep(10)
 
     def setup_communications(self):
         # constellation stuff setup
         distance_dict = {}
         
-        if not self.satellite_list:
-            self.constellation_name = 'Comsat_0.38_RingZero Relay'
-            for vessel in self.conn.space_center.vessels:
-                if vessel.name == self.constellation_name:
-                    self.satellite_list.append(vessel)
-           
-
+        print(self.satellite_list)
         for vessel in self.satellite_list:
             distance_dict[vessel] = {}
             for target_vessel in self.satellite_list:
+
+                print('vessel', vessel)
+                
+                print('tarvessel', target_vessel)
                 if vessel is not target_vessel:
                     self.sc.target_vessel = target_vessel
+                    print('Target', self.sc.target_vessel)
                     distance = self.sc.target_vessel.orbit.distance_at_closest_approach(vessel.orbit)
                     distance_dict[vessel].update({target_vessel: distance})
 
@@ -156,11 +154,69 @@ class ComSat_Network():
                 else:
                     antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
 
+    def fine_tune_orbital_period(self):
 
+        self.get_telemetry()
+
+        for vessel in self.satellite_list:
+            self.sc.active_vessel = vessel
+            vessel.control.rcs = False
+            
+
+            if vessel.orbit.period < self.period_mean:
+                self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
+                self.mj.smart_ass.update(False)
+                time.sleep(25)
+                while vessel.orbit.period < self.period_mean:
+                    vessel.control.rcs = True
+                    vessel.control.throttle = 0.05
+
+            elif vessel.orbit.period > self.period_mean:
+                self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.retrograde
+                self.mj.smart_ass.update(False)
+                time.sleep(25)
+                while vessel.orbit.period > self.period_mean:
+                    vessel.control.rcs = True
+                    vessel.control.throttle = 0.05
+
+
+            vessel.control.rcs = False
+            vessel.control.throttle = 0
+
+        self.get_telemetry()
+
+
+    def get_telemetry(self):
+
+        if self.satellite_list:
+            self.period_mean = sum(
+                        vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
+            print('Average period is {}'.format(self.period_mean))
+
+            table = tabulate.tabulate([[i, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude, v.orbit.inclination, v.orbit.period, (v.orbit.period - self.period_mean)]
+                                      for i, v in enumerate(self.satellite_list)], headers=['Index', 'Name', 'Body', 'Apoapsis', 'Periapsis', 'Inclination', 'Period', 'Period deviation from mean'], tablefmt='fancy_grid')
+            
+            print(table)
+
+
+    def preexisting_network(self, constellation_name):
+        self.satellite_list = []
+        for vessel in self.conn.space_center.vessels:
+            if vessel.name == constellation_name:
+                self.satellite_list.append(vessel)
+        print('{} preexisting satellites found with name {}'.format(len(self.satellite_list), constellation_name))
+        self.get_telemetry()
+
+
+
+satellite_list = []
 
 nw = ComSat_Network()
 # nw.sats()
 # nw.tune_orbital_period()
+nw.preexisting_network(constellation_name='Comsat_0.38_RingZero Relay')
+# nw.fine_tune_orbital_period()
+
 nw.setup_communications()
 
 
@@ -168,102 +224,82 @@ nw.setup_communications()
 
 
 
-# trash below
-
-# #control block
-# control = vessel.control
-# control.sas = True
-# control.sas_mode = sc.SASMode.prograde
-
-# orientation = 'prograde'
-# vessel = orientate_vessel(conn, vessel, orientation)
-
-# #staging
-# activated_engines = manipulate_engines_by_name(vessel, 'orbital-engine-0625')
-# # decouple_by_name(vessel, 'proceduralStackDecoupler')
-
-# # wait for satellites to spread apart
-# time.sleep(10)
-
-# # triple constellation stuff
-# constellation_name = 'TripleOs'
-# satellite_list = control.activate_next_stage()
-# satellite_list.append(vessel)
-
-# for i, vessel in enumerate(satellite_list):
-    # vessel.name = constellation_name + '_' + str(i)
-    # # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
 
-# # satellite operations
-# # result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in satellite_list]
-
-# #solar 
-# # solar = [v.parts.solar_panels for v in satellite_list]
-# # solar = [item for sublist in solar for item in sublist]
-# # for panel in solar:
-    # # panel.deployed = True
 
 
-# # mechanical jebediah time <3
+
+# orbital period mean of constellation_list
+
+
+
+
+
+# satellite operations
+#result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in constellation_list]
+
+# solar
+# solar = [v.parts.solar_panels for v in constellation_list]
+# solar = [item for sublist in solar for item in sublist]
+# for panel in solar:
+# panel.deployed = True
+
+
+# mechanical jebediah time <3
 
 # def execute_nodes():
-    # print("Executing nodes")
-    # executor = mj.node_executor
-    # # executor.execute_all_nodes()
-    # executor.execute_one_node()
+# print("Executing nodes")
+# executor = mj.node_executor
+# # executor.execute_all_nodes()
+# executor.execute_one_node()
 
-
-    # with conn.stream(getattr, executor, 'enabled') as enabled:
-        # enabled.rate = 1
-        # with enabled.condition:
-            # while enabled():
-                # enabled.wait()
+# with conn.stream(getattr, executor, 'enabled') as enabled:
+# enabled.rate = 1
+# with enabled.condition:
+# while enabled():
+# enabled.wait()
 
 # node_list = []
-# for vessel in satellite_list:
-    # sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
+# for vessel in constellation_list:
+# sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
 
-    # planner = mj.maneuver_planner
-    # man = planner.operation_circularize
-    # # man.time_selector.time_reference = mj.TimeReference.
-    # man.time_selector.circularize_altitude = 100000
+# planner = mj.maneuver_planner
+# man = planner.operation_circularize
+# # man.time_selector.time_reference = mj.TimeReference.
+# man.time_selector.circularize_altitude = 100000
 
-    # ut = conn.add_stream(getattr, conn.space_center, 'ut')
-    # # aps.ut = ut() + 100000
+# ut = conn.add_stream(getattr, conn.space_center, 'ut')
+# # aps.ut = ut() + 100000
 
-    # # aps.new_apoapsis = 200000
-    
+# # aps.new_apoapsis = 200000
 
-    # man.make_nodes()
-    
-    # no = vessel.control.nodes
+# man.make_nodes()
 
-    # for x in no:
-        # print(x.ut)
-    # node_list.append(no)
-    # execute_nodes()
+# no = vessel.control.nodes
+
+# for x in no:
+# print(x.ut)
+# node_list.append(no)
+# execute_nodes()
 
 # #print node list attributes delta_v, ut, remaining_burn_vector sort by ut
 # # node_list = sorted(node_list, key=lambda x: x.ut)
 # # for node in node_list:
-    # # print(node.delta_v, node.ut, node.remaining_burn_vector)
+# # print(node.delta_v, node.ut, node.remaining_burn_vector)
 
 
 # # execute_nodes()
 
-# # for vessel in satellite_list:
-
+# # for vessel in constellation_list:
 
 
 # # # Set up streams for telemetry
 # try:
-    # time.sleep(30)
+# time.sleep(30)
 # except KeyboardInterrupt:
-    # sc.quickload()
+# sc.quickload()
 # finally:
-    # conn.close()
-
+# conn.close()
 
 
 # # vessel.auto_pilot.engage()
@@ -281,5 +317,3 @@ nw.setup_communications()
 # # apo = planner.operation_apoapsis
 # # apo.new_apoapsis = 1000000000
 # # apo.make_nodes()
-
-

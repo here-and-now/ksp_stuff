@@ -50,27 +50,19 @@ class ComSat_Network():
 
     
     def resonant_orbit(self):
-        # set up resonant orbit with x/n period and
         self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
+        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
 
         self.res_orbit.resonance_numerator = 2
         self.res_orbit.resonance_denominator = 3
 
-        # self.res_orbit.time_selector.time_reference = self.mj.TimeReference.x_from_now
-        # self.res_orbit.time_selector.lead_time = 100
-
-        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
-        # self.res_orbit.ti
         self.res_orbit.make_nodes()
         self.execute_nodes()
 
-        # self.adjust_orbit_after_resonant()
    
     def recircularize(self):
-
         recirc = self.mj.maneuver_planner.operation_circularize
         if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
-        # if True:
             recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
         else:
             recirc.time_selector.time_reference = self.mj.TimeReference.apoapsis
@@ -78,22 +70,12 @@ class ComSat_Network():
         recirc.make_nodes()
         self.execute_nodes()
 
-    # def adjust_orbit_after_resonant(self):
-        # tune = self.mj.maneuver_planner.operation_periapsis
-        # tune.time_selector.time_reference = self.mj.TimeReference.apoapsis
-        # tune.new_periapsis = 245000
-
-        # tune.make_nodes()
-        # self.execute_nodes()
-
-        # tune = self.mj.maneuver_planner.operation_circularize
-        # tune.time_selector.time_reference = self.mj.TimeReference.periapsis
-
-        # tune.make_nodes()
-        # self.execute_nodes()
-
-
     def sats(self):
+        # fix this, just jump resonant orbit start position before releasing
+        self.resonant_orbit()
+        self.recircularize()
+        # end bullshit
+
         self.release_satellite()
 
         self.resonant_orbit()
@@ -118,7 +100,6 @@ class ComSat_Network():
         time.sleep(10)
 
     def setup_communications(self):
-        # constellation stuff setup
         distance_dict = {}
         
         print(self.satellite_list)
@@ -126,7 +107,6 @@ class ComSat_Network():
             distance_dict[vessel] = {}
             for target_vessel in self.satellite_list:
 
-                print('vessel', vessel)
                 
                 print('tarvessel', target_vessel)
                 if vessel is not target_vessel:
@@ -154,32 +134,32 @@ class ComSat_Network():
                 else:
                     antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
 
+
     def fine_tune_orbital_period(self):
 
         self.get_telemetry()
+        accuracy_cutoff = 1e-3
 
         for vessel in self.satellite_list:
             self.sc.active_vessel = vessel
             vessel.control.rcs = False
             
-
             if vessel.orbit.period < self.period_mean:
                 self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
                 self.mj.smart_ass.update(False)
-                time.sleep(25)
+                orientate_vessel(self.conn, self.sc.active_vessel, 'prograde', accuracy_cutoff=accuracy_cutoff)
                 while vessel.orbit.period < self.period_mean:
                     vessel.control.rcs = True
                     vessel.control.throttle = 0.05
-
+            
             elif vessel.orbit.period > self.period_mean:
                 self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.retrograde
                 self.mj.smart_ass.update(False)
-                time.sleep(25)
+                orientate_vessel(self.conn, self.sc.active_vessel, 'retrograde', accuracy_cutoff=accuracy_cutoff)
                 while vessel.orbit.period > self.period_mean:
                     vessel.control.rcs = True
                     vessel.control.throttle = 0.05
-
-
+           
             vessel.control.rcs = False
             vessel.control.throttle = 0
 
@@ -189,13 +169,19 @@ class ComSat_Network():
     def get_telemetry(self):
 
         if self.satellite_list:
-            self.period_mean = sum(
-                        vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
-            print('Average period is {}'.format(self.period_mean))
+            self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
+            print(f'Average period is {self.period_mean}')
 
-            table = tabulate.tabulate([[i, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude, v.orbit.inclination, v.orbit.period, (v.orbit.period - self.period_mean)]
-                                      for i, v in enumerate(self.satellite_list)], headers=['Index', 'Name', 'Body', 'Apoapsis', 'Periapsis', 'Inclination', 'Period', 'Period deviation from mean'], tablefmt='fancy_grid')
-            
+            table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
+                                        v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
+                                        v.orbit.inclination, v.orbit.period,
+                                        (v.orbit.period - self.period_mean)]
+                                      for i, v in enumerate(self.satellite_list)],
+                                      headers=['Index', 'Name', 'Body',
+                                          'Apoapsis', 'Periapsis',
+                                          'Inclination', 'Period',
+                                          'Period deviation from mean'],
+                                      tablefmt='fancy_grid')
             print(table)
 
 
@@ -204,20 +190,37 @@ class ComSat_Network():
         for vessel in self.conn.space_center.vessels:
             if vessel.name == constellation_name:
                 self.satellite_list.append(vessel)
-        print('{} preexisting satellites found with name {}'.format(len(self.satellite_list), constellation_name))
+        print(f'{len(self.satellite_list)} preexisting satellites found with name {constellation_name}')
         self.get_telemetry()
 
 
+    def get_comm_status(self):
+        # ToDo: fix this stuff
+        table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
+                                            v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
+                                            v.orbit.inclination, v.orbit.period,
+                                            (v.orbit.period - self.period_mean)]
+                                          for i, v in enumerate(self.satellite_list)],
+                                          headers=['Index', 'Name', 'Body',
+                                              'Apoapsis', 'Periapsis',
+                                              'Inclination', 'Period',
+                                              'Period deviation from mean'],
+                                          tablefmt='fancy_grid')
+        print(table)
 
-satellite_list = []
 
-nw = ComSat_Network()
-# nw.sats()
-# nw.tune_orbital_period()
-nw.preexisting_network(constellation_name='Comsat_0.38_RingZero Relay')
-# nw.fine_tune_orbital_period()
 
-nw.setup_communications()
+        for vessel in self.satellite_list:
+            comms = self.conn.remote_tech.comms(vessel)
+            print(comms.signal_delay)
+
+network = ComSat_Network()
+# network.sats()
+network.preexisting_network(constellation_name='Comsat_0.38_RingZero_Polar Relay')
+network.fine_tune_orbital_period()
+
+network.setup_communications()
+network.get_comm_status()
 
 
 

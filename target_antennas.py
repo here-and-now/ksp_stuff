@@ -21,25 +21,12 @@ mj = conn.mech_jeb
 # constellation stuff setup
 constellation_name = 'Comsat_0.38_RingZero Relay'
 constellation_list = []
+distance_dict = {}
 
 for vessel in conn.space_center.vessels:
     if vessel.name == constellation_name:
         constellation_list.append(vessel)
 
-# orbital period mean of constellation_list
-period_mean = sum(
-    vessel.orbit.period for vessel in constellation_list) / len(constellation_list)
-
-
-def get_telemetry():
-
-    table = tabulate.tabulate([[i, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude, v.orbit.inclination, v.orbit.period, (v.orbit.period - period_mean)]
-                              for i, v in enumerate(constellation_list)], headers=['Name', 'Body', 'MET', 'Apo', 'Per', 'Inclination', 'Period', 'Deviation'], tablefmt='fancy_grid')
-
-
-get_telemetry()
-
-distance_dict = {}
 #distance between each vesel in constellation_list
 for vessel in constellation_list:
     distance_dict[vessel] = {}
@@ -52,11 +39,8 @@ for vessel in constellation_list:
 
 for vessel, distance_to_vessel_dict in distance_dict.items():
     sc.active_vessel = vessel
-    # switch_vessel(sc.active_vessel, vessel)
-    print('Switch to vessel' , vessel)
 
     sorted_distance_to_vessel_dict = sorted(distance_to_vessel_dict.items(), key=lambda x: x[1])
-
     antenna_parts = vessel.parts.with_tag('target_whatever')
 
     for i, antenna_part in enumerate(antenna_parts):

@@ -133,7 +133,17 @@ class ComSat_Network():
                 # uneven target 2nd nearest satellite
                 else:
                     antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
+    
+    def get_antennas(self):
+        antennas = []
+        for vessel in self.satellite_list:
+            antenna_parts = vessel.parts.with_name('RelayAntenna5')
+            for antenna_part in antenna_parts:
+                antennas.append(self.conn.remote_tech.antenna(antenna_part))
 
+
+        print(antennas)
+        return antennas
 
     def fine_tune_orbital_period(self):
 
@@ -195,31 +205,24 @@ class ComSat_Network():
 
 
     def get_comm_status(self):
-        # ToDo: fix this stuff
-        table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
-                                            v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
-                                            v.orbit.inclination, v.orbit.period,
-                                            (v.orbit.period - self.period_mean)]
-                                          for i, v in enumerate(self.satellite_list)],
-                                          headers=['Index', 'Name', 'Body',
-                                              'Apoapsis', 'Periapsis',
-                                              'Inclination', 'Period',
-                                              'Period deviation from mean'],
-                                          tablefmt='fancy_grid')
-        print(table)
-
-
-
         for vessel in self.satellite_list:
-            comms = self.conn.remote_tech.comms(vessel)
-            print(comms.signal_delay)
+            print(vessel.name)
+            
+            table = tabulate.tabulate([[i,antenna.target]
+                                              for i, antenna in enumerate(self.conn.remote_tech.comms(vessel).antennas)],
+                                              headers=['Index,', 'Target'],
+                                              tablefmt='fancy_grid')
+            print(table)
+
 
 network = ComSat_Network()
 # network.sats()
-network.preexisting_network(constellation_name='Comsat_0.38_RingZero_Polar Relay')
-network.fine_tune_orbital_period()
+network.preexisting_network(constellation_name='Comsat_0.4_RingZero')
+# network.fine_tune_orbital_period()
 
-network.setup_communications()
+# network.setup_communications()
+network.get_antennas()
+
 network.get_comm_status()
 
 

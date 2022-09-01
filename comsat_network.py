@@ -19,13 +19,14 @@ class ComSat_Network():
         print("Connected to kRPC")
 
         self.sc = self.conn.space_center
+
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
-        self.auto_pilot = self.vessel.auto_pilot
-
+        self.constellation_name = self.vessel_name
         self.satellite_list = []
         
         self.mj = self.conn.mech_jeb
+        self.auto_pilot = self.vessel.auto_pilot
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
@@ -196,6 +197,7 @@ class ComSat_Network():
 
 
     def preexisting_network(self, constellation_name):
+        self.constellation_name = constellation_name
         self.satellite_list = []
         for vessel in self.conn.space_center.vessels:
             if vessel.name == constellation_name:
@@ -206,13 +208,27 @@ class ComSat_Network():
 
     def get_comm_status(self):
         for vessel in self.satellite_list:
-            print(vessel.name)
-            
-            table = tabulate.tabulate([[i,antenna.target]
-                                              for i, antenna in enumerate(self.conn.remote_tech.comms(vessel).antennas)],
-                                              headers=['Index,', 'Target'],
-                                              tablefmt='fancy_grid')
-            print(table)
+            antennas = self.conn.remote_tech.comms(vessel).antennas
+            table = tabulate.tabulate([[i,
+                                        self.constellation_name,
+                                        vessel.name,
+                                        a.target_body.name if a.target.name == 'celestial_body' else a.target,
+                                        a.has_connection
+                                        ]
+                                        for i, a in enumerate(antennas)],
+                                        headers=['Index',
+                                            'Constellation',
+                                            'Vessel name',
+                                            'Target',
+                                            'Connection status',
+                                            ],
+                                    tablefmt='fancy_grid')
+        #list and count antennas that have no target
+            no_target_antennas = [a for a in antennas if a.target is self.conn.remote_tech.Target.none]
+
+        print('Vessel name: ', vessel.name)
+        print(table)
+        print(no_target_antennas)
 
 
 network = ComSat_Network()

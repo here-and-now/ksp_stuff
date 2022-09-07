@@ -54,6 +54,7 @@ class LaunchIntoOrbit():
 
     def staging(self):
         current_stage = self.vessel.control.current_stage
+        go_to_next_stage = False
 
         # staging special needs
         if not self.staging_done_for_current_stage and staging_options != None:
@@ -68,19 +69,18 @@ class LaunchIntoOrbit():
 
             # check for interstages by checking if there is any fuel in the next decouple stage
             interstage_check = [True if resources.amount(fuel_type) == 0 else False for fuel_type in self.fuels]
-            if all(interstage_check):
-                time.sleep(1)
-                self.vessel.control.activate_next_stage()
-                self.staging_done_for_current_stage = False
 
+            if all(interstage_check):
+                go_to_next_stage = True
 
             for fuel_type in self.fuels:
                 if resources.amount(fuel_type) < 1 and resources.max(fuel_type) > 0:
-                    # print('Decoupling stage %d to stage %d to empty %s' % (current_stage, current_stage - 1, fuel_type))
-                    self.vessel.control.activate_next_stage()
-                    self.staging_done_for_current_stage = False
+                    go_to_next_stage = True
 
-            
+            if go_to_next_stage:
+                self.vessel.control.activate_next_stage()
+                self.staging_done_for_current_stage = False
+        
     def gravity_turn(self):
         # quadratic gravity turn_start_altitude
         frac = self.flight_mean_altitude() / self.turn_end_altitude
@@ -119,9 +119,11 @@ class LaunchIntoOrbit():
 
 
 
-        # self.vessel.control.throttle = 0.5
-
         # fine tune apoapsis
+        while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
+            pass
+        print('Leaving atmosphere the atmosphere ...')
+        
         # ToDo: implement fine tuning apoapsis function
         while self.apoapsis() < self.target_altitude:
             pass
@@ -132,16 +134,10 @@ class LaunchIntoOrbit():
         # self.vessel.auto_pilot.disengage()
         self.vessel.control.throttle = 0
 
-       
-
-        while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
-            pass
-        print('Leaving atmosphere the atmosphere ...')
         
-
         # stage until final stage
-        while self.vessel.control.current_stage > self.end_stage:
-            self.vessel.control.activate_next_stage()
+        # while self.vessel.control.current_stage > self.end_stage:
+            # self.vessel.control.activate_next_stage()
 
         self.vessel.auto_pilot.disengage()
         circ = self.mj.maneuver_planner.operation_circularize
@@ -224,6 +220,9 @@ class LaunchIntoOrbit():
 
         return self.node, burn_time
 
+
+
+
 # launch parameters
 target_altitude = 145000
 turn_start_altitude = 2500
@@ -233,6 +232,7 @@ roll = 90
 max_q = 20000
 end_stage = 5
 staging_options = None
+
 # staging_options = {
                    # 5: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},
 
@@ -244,7 +244,12 @@ staging_options = None
 
                    # 7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
                  # }
-print(staging_options)
+
+if staging_options:
+    print('Staging options: {}'.format(staging_options))
+else:
+    print('No staging options')
+
 # Go for launch!
 launch = LaunchIntoOrbit(target_altitude,
                         turn_start_altitude,

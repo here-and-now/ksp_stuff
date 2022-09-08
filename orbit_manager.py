@@ -23,7 +23,7 @@ class OrbitManager():
         self.sc = self.conn.space_center
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
-        self.satellite_list = []
+        self.satellite_list = [self.vessel]
         self.period_mean = None
 
         self.mj = self.conn.mech_jeb
@@ -31,11 +31,17 @@ class OrbitManager():
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
-        self.altitude = self.conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
         self.apoapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
         self.periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
+
+        # keplerian elements
         self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
-        self.inclination = self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
+        self.semi_major_axis = self.conn.add_stream(getattr, self.vessel.orbit, 'semi_major_axis')
+        self.inclination = self.conn.add_stream(getattr, self.vessel.orbit, 'inclination')
+        self.longitude_of_ascending_node = self.conn.add_stream(getattr, self.vessel.orbit, 'longitude_of_ascending_node')
+        self.argument_of_periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'argument_of_periapsis')
+        self.true_anomaly = self.conn.add_stream(getattr, self.vessel.orbit, 'true_anomaly')
+
  
     def execute_nodes(self):
         executor = self.mj.node_executor
@@ -49,10 +55,16 @@ class OrbitManager():
                 while enabled():
                     enabled.wait()
 
-    def fine_tune_orbital_period(self):
 
-        self.get_telemetry()
-        accuracy_cutoff = 1e-3
+    def fine_tune_orbital_period(self, accuracy_cutoff=1e-3):
+        """
+        Fine tune orbital period for each satelitte in satellite list
+        to the mean orbital period with RCS thrusters 
+        """ 
+
+        print("Fine tuning orbital period ...")
+        print("Orbit before fine tuning: ")
+        print(self.get_telemetry())
 
         for vessel in self.satellite_list:
             self.sc.active_vessel = vessel
@@ -77,49 +89,51 @@ class OrbitManager():
             vessel.control.rcs = False
             vessel.control.throttle = 0
 
-        self.get_telemetry()
+        print("Orbit after fine tuning: ")
+        print(self.get_telemetry())
 
     def get_telemetry(self):
+        """Get telemetry from all satellites in satellite list"""
 
-        if self.satellite_list:
-            self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
-            print(f'Average period is {self.period_mean}')
+        self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
+        print(f'Average period is {self.period_mean}')
 
-            table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
-                                        v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
-                                        v.orbit.inclination, v.orbit.period,
-                                        (v.orbit.period - self.period_mean)]
-                                      for i, v in enumerate(self.satellite_list)],
-                                      headers=['Index', 'Name', 'Body',
-                                          'Apoapsis', 'Periapsis',
-                                          'Inclination', 'Period',
-                                          'Period deviation from mean'],
-                                      tablefmt='fancy_grid')
-            print(table)
 
+        table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
+                                    v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
+                                    v.orbit.inclination, v.orbit.period,
+                                    (v.orbit.period - self.period_mean)]
+                                  for i, v in enumerate(self.satellite_list)],
+                                  headers=['Index', 'Name', 'Body',
+                                      'Apoapsis', 'Periapsis',
+                                      'Inclination', 'Period',
+                                      'Period deviation from mean'],
+                                  tablefmt='fancy_grid')
+        return table
     
     def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
-
+        # inclination
         if abs(self.inclination() * (180 / math.pi)  - desired_inclination) > 0.001:
             inclination_change = self.mj.maneuver_planner.operation_inclination
             # inclination_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
             inclination_change.new_inclination = desired_inclination
-            inclination_change.make_nodes()
 
+            inclination_change.make_nodes()
             self.execute_nodes()
 
+        # set apoapsis
         if self.apoapsis() < desired_altitude:
             altitude_change = self.mj.maneuver_planner.operation_apoapsis
             altitude_change.new_apoapsis= desired_altitude
-            altitude_change.make_nodes()
 
+            altitude_change.make_nodes()
             self.execute_nodes()
 
+        # circularize
         if self.eccentricity() > 0.001:
             eccentricity_change = self.mj.maneuver_planner.operation_circularize
             eccentricity_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
-            eccentricity_change.make_nodes()
 
+            eccentricity_change.make_nodes()
             self.execute_nodes()
 
-            # self.execute_nodes()

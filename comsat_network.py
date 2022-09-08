@@ -78,8 +78,8 @@ class ComSatNetwork():
 
     def release_sats_triangle_orbit(self):
         # fix this, just jump resonant orbit start position before releasing
-        self.resonant_orbit()
-        self.recircularize()
+        # self.resonant_orbit()
+        # self.recircularize()
         # end bullshit
 
         self.release_satellite()
@@ -94,7 +94,10 @@ class ComSatNetwork():
 
        
     def release_satellite(self):
-
+        '''
+        Orientates the spacecraft, activates next stage and adds
+        released satellite to a list
+        '''
         print('Deploying ComSat')
         
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
@@ -103,6 +106,8 @@ class ComSatNetwork():
 
         released_satellite = self.vessel.control.activate_next_stage()
         self.satellite_list.append(released_satellite)
+
+        print('ComSat deployed')
         time.sleep(10)
 
     def setup_communications(self):

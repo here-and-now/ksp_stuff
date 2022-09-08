@@ -98,7 +98,7 @@ class OrbitManager():
             print(table)
 
     
-    def desired_orbit(self, desired_inclination, desired_altitude):
+    def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
 
         if abs(self.inclination() * (180 / math.pi)  - desired_inclination) > 0.001:
             inclination_change = self.mj.maneuver_planner.operation_inclination
@@ -116,133 +116,10 @@ class OrbitManager():
             self.execute_nodes()
 
         if self.eccentricity() > 0.001:
-            eccentricity_change = self.mj.maneuver_planner.operation_ellipticize
-            eccentricity_change.new_periapsis= 10e5
-            eccentricity_change.new_apoapsis= 10e5
+            eccentricity_change = self.mj.maneuver_planner.operation_circularize
+            eccentricity_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
             eccentricity_change.make_nodes()
 
             self.execute_nodes()
 
-        # if self.apoapsis() < desired_altitude:
-            # altitude_change = self.mj.maneuver_planner.operation_apoapsis
-            # altitude_change.new_apoapsis = desired_altitude
-            # altitude_change.make_nodes()
-
             # self.execute_nodes()
-        # if self.periapsis() < desired_altitude:
-            # altitude_change = self.mj.maneuver_planner.operation_periapsis
-            # altitude_change.new_periapsis = desired_altitude
-            # altitude_change.make_nodes()
-
-            # self.execute_nodes()
-
-
-
-network = ComSat_Network()
-desired_orbit(desired_inclination=90, desired_altitude=10e5)
-# network.sats()
-# network.preexisting_network(constellation_name='Comsat_0.4_RingZero')
-# network.fine_tune_orbital_period()
-
-# network.setup_communications()
-# network.get_antennas()
-# network.get_comm_status()
-
-
-
-
-
-
-
-
-
-
-
-# orbital period mean of constellation_list
-
-
-
-
-
-# satellite operations
-#result = [orientate_vessel(conn, vessel, 'retrograde', block=False) for vessel in constellation_list]
-
-# solar
-# solar = [v.parts.solar_panels for v in constellation_list]
-# solar = [item for sublist in solar for item in sublist]
-# for panel in solar:
-# panel.deployed = True
-
-
-# mechanical jebediah time <3
-
-# def execute_nodes():
-# print("Executing nodes")
-# executor = mj.node_executor
-# # executor.execute_all_nodes()
-# executor.execute_one_node()
-
-# with conn.stream(getattr, executor, 'enabled') as enabled:
-# enabled.rate = 1
-# with enabled.condition:
-# while enabled():
-# enabled.wait()
-
-# node_list = []
-# for vessel in constellation_list:
-# sc.active_vessel = switch_vessel(sc.active_vessel, vessel)
-
-# planner = mj.maneuver_planner
-# man = planner.operation_circularize
-# # man.time_selector.time_reference = mj.TimeReference.
-# man.time_selector.circularize_altitude = 100000
-
-# ut = conn.add_stream(getattr, conn.space_center, 'ut')
-# # aps.ut = ut() + 100000
-
-# # aps.new_apoapsis = 200000
-
-# man.make_nodes()
-
-# no = vessel.control.nodes
-
-# for x in no:
-# print(x.ut)
-# node_list.append(no)
-# execute_nodes()
-
-# #print node list attributes delta_v, ut, remaining_burn_vector sort by ut
-# # node_list = sorted(node_list, key=lambda x: x.ut)
-# # for node in node_list:
-# # print(node.delta_v, node.ut, node.remaining_burn_vector)
-
-
-# # execute_nodes()
-
-# # for vessel in constellation_list:
-
-
-# # # Set up streams for telemetry
-# try:
-# time.sleep(30)
-# except KeyboardInterrupt:
-# sc.quickload()
-# finally:
-# conn.close()
-
-
-# # vessel.auto_pilot.engage()
-# # vessel.auto_pilot.sas = True
-# # auto_pilot.sas_mode = sc.SASMode.retrograde
-# # vessel.auto_pilot.wait()
-
-# # ut = 500
-# # control.add_node(ut, prograde=1.0)
-# # print(control.throttle)
-
-# #change apoapsis to desired value
-# # vessel.
-# # planner = mj.maneuver_planner
-# # apo = planner.operation_apoapsis
-# # apo.new_apoapsis = 1000000000
-# # apo.make_nodes()

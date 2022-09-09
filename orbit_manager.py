@@ -93,7 +93,7 @@ class OrbitManager():
         print(self.print_telemetry())
 
     def print_telemetry(self):
-        """Get telemetry from all satellites in satellite list"""
+        """Print telemetry from all satellites in satellite list"""
 
         self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
         print(f'Average period is {self.period_mean}')

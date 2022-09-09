@@ -12,7 +12,7 @@ if __name__ == '__main__':
     inclination = 0
     roll = 90
     max_q = 20000
-    end_stage = 5
+    end_stage = 3
 
     # Go for launch!
     launch = LaunchManager(target_altitude,

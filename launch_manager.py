@@ -73,10 +73,12 @@ class LaunchManager():
             interstage_check = [True if resources.amount(fuel_type) == 0 else False for fuel_type in self.fuels]
 
             if all(interstage_check):
+                print('Interstage detected')
                 go_to_next_stage = True
 
             for fuel_type in self.fuels:
                 if resources.amount(fuel_type) < 1 and resources.max(fuel_type) > 0:
+                    print(f'Stage {current_stage} fuel type {fuel_type} empty')
                     go_to_next_stage = True
 
             if go_to_next_stage:
@@ -123,24 +125,18 @@ class LaunchManager():
         # print('Leaving atmosphere the atmosphere ...')
         
         scheduler.remove_job('Gravity turn')
-        scheduler.remove_job('Autostaging')
-        self.vessel.control.throttle = 0
-
-        # stage until final stage
-        # while self.vessel.control.current_stage > self.end_stage:
-            # self.vessel.control.activate_next_stage()
-
-        self.vessel.auto_pilot.disengage()
+        # scheduler.remove_job('Autostaging')
 
         print('Ascent complete')
+        self.vessel.control.throttle = 0
+        self.vessel.auto_pilot.disengage()
+
         print(f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
         circ = self.mj.maneuver_planner.operation_circularize
         circ.make_node()
         self.execute_nodes()
         
         OrbitManager().print_telemetry()
-        # print(f'Orbital circularization complete - apoapsis: {self.apoapsis()} km, periapsis: {self.periapsis()} km, eccentricity: {self.eccentricity()}, inclination: {self.inclination()}')
-
 
         ##### manual burn handling #####
 

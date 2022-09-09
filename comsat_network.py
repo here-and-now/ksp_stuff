@@ -16,7 +16,7 @@ from utils.handle_vessels import (
 )
 
 class ComSatNetwork():
-    def __init__(self, desired_inclination=0, desired_eccentricity=0, desired_apoapsis=0):
+    def __init__(self):
         self.conn = krpc.connect(name="ComSat_Network")
         print("ComSatNetwork connected to KSP")
 
@@ -26,10 +26,6 @@ class ComSatNetwork():
         self.vessel_name = self.vessel.name
         self.constellation_name = self.vessel_name
         self.satellite_list = []
-
-        self.desired_inclination = desired_inclination
-        self.desired_eccentricity = desired_eccentricity
-        self.desired_apoapsis = desired_apoapsis
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot

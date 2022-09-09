@@ -15,6 +15,7 @@ from utils.handle_vessels import (
     switch_vessel,
 )
 
+
 class OrbitManager():
     def __init__(self):
         self.conn = krpc.connect(name="OrbitManager")
@@ -31,18 +32,25 @@ class OrbitManager():
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
-        self.apoapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
-        self.periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
+        self.apoapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'apoapsis_altitude')
+        self.periapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'periapsis_altitude')
 
         # keplerian elements
-        self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
-        self.semi_major_axis = self.conn.add_stream(getattr, self.vessel.orbit, 'semi_major_axis')
-        self.inclination = self.conn.add_stream(getattr, self.vessel.orbit, 'inclination')
-        self.longitude_of_ascending_node = self.conn.add_stream(getattr, self.vessel.orbit, 'longitude_of_ascending_node')
-        self.argument_of_periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'argument_of_periapsis')
-        self.true_anomaly = self.conn.add_stream(getattr, self.vessel.orbit, 'true_anomaly')
+        self.eccentricity = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'eccentricity')
+        self.semi_major_axis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'semi_major_axis')
+        self.inclination = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'inclination')
+        self.longitude_of_ascending_node = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'longitude_of_ascending_node')
+        self.argument_of_periapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'argument_of_periapsis')
+        self.true_anomaly = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'true_anomaly')
 
- 
     def execute_nodes(self):
         executor = self.mj.node_executor
         executor.tolerance = 0.001
@@ -55,12 +63,11 @@ class OrbitManager():
                 while enabled():
                     enabled.wait()
 
-
     def fine_tune_orbital_period(self, accuracy_cutoff=1e-3):
         """
         Fine tune orbital period for each satelitte in satellite list
         to the mean orbital period with RCS thrusters 
-        """ 
+        """
 
         print("Fine tuning orbital period ...")
         print("Orbit before fine tuning: ")
@@ -69,23 +76,25 @@ class OrbitManager():
         for vessel in self.satellite_list:
             self.sc.active_vessel = vessel
             vessel.control.rcs = False
-            
+
             if vessel.orbit.period < self.period_mean:
                 self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
                 self.mj.smart_ass.update(False)
-                orientate_vessel(self.conn, self.sc.active_vessel, 'prograde', accuracy_cutoff=accuracy_cutoff)
+                orientate_vessel(self.conn, self.sc.active_vessel,
+                                 'prograde', accuracy_cutoff=accuracy_cutoff)
                 while vessel.orbit.period < self.period_mean:
                     vessel.control.rcs = True
                     vessel.control.throttle = 0.05
-            
+
             elif vessel.orbit.period > self.period_mean:
                 self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.retrograde
                 self.mj.smart_ass.update(False)
-                orientate_vessel(self.conn, self.sc.active_vessel, 'retrograde', accuracy_cutoff=accuracy_cutoff)
+                orientate_vessel(self.conn, self.sc.active_vessel,
+                                 'retrograde', accuracy_cutoff=accuracy_cutoff)
                 while vessel.orbit.period > self.period_mean:
                     vessel.control.rcs = True
                     vessel.control.throttle = 0.05
-           
+
             vessel.control.rcs = False
             vessel.control.throttle = 0
 
@@ -95,7 +104,8 @@ class OrbitManager():
     def print_telemetry(self):
         """Print telemetry from all satellites in satellite list"""
 
-        self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
+        self.period_mean = sum(
+            vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
         print(f'Average period is {self.period_mean}')
 
         table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
@@ -104,15 +114,15 @@ class OrbitManager():
                                     (v.orbit.period - self.period_mean)]
                                   for i, v in enumerate(self.satellite_list)],
                                   headers=['Index', 'Name', 'Body',
-                                      'Apoapsis', 'Periapsis',
-                                      'Inclination', 'Period',
-                                      'Period deviation from mean'],
+                                           'Apoapsis', 'Periapsis',
+                                           'Inclination', 'Period',
+                                           'Period deviation from mean'],
                                   tablefmt='fancy_grid')
         print(table)
-    
+
     def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
         # inclination
-        if abs(self.inclination() * (180 / math.pi)  - desired_inclination) > 0.001:
+        if abs(self.inclination() * (180 / math.pi) - desired_inclination) > 0.001:
             inclination_change = self.mj.maneuver_planner.operation_inclination
             # inclination_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
             inclination_change.new_inclination = desired_inclination
@@ -123,7 +133,7 @@ class OrbitManager():
         # set apoapsis
         if self.apoapsis() < desired_altitude:
             altitude_change = self.mj.maneuver_planner.operation_apoapsis
-            altitude_change.new_apoapsis= desired_altitude
+            altitude_change.new_apoapsis = desired_altitude
 
             altitude_change.make_nodes()
             self.execute_nodes()
@@ -135,4 +145,3 @@ class OrbitManager():
 
             eccentricity_change.make_nodes()
             self.execute_nodes()
-

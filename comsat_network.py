@@ -15,10 +15,11 @@ from utils.handle_vessels import (
     switch_vessel,
 )
 
+
 class ComSatNetwork():
     def __init__(self):
         self.conn = krpc.connect(name="ComSat_Network")
-        print("ComSatNetwork connected to KSP")
+        print("ComSatNetwork connected ...")
 
         self.sc = self.conn.space_center
 
@@ -29,28 +30,52 @@ class ComSatNetwork():
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
-        
+
         if self.satellite_list:
             self.setup_df()
 
-
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
-        self.altitude = self.conn.add_stream(getattr, self.vessel.flight(), 'mean_altitude')
-        self.apoapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'apoapsis_altitude')
-        self.periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
-        self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
-        self.inclination = self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
-       
+        self.altitude = self.conn.add_stream(
+            getattr, self.vessel.flight(), 'mean_altitude')
+        self.apoapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'apoapsis_altitude')
+        self.periapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'periapsis_altitude')
+        self.eccentricity = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'eccentricity')
+        self.inclination = self. conn.add_stream(
+            getattr, self.vessel.orbit, 'inclination')
+
+    def return_antennas(self, vessel):
+        '''
+        Switches to vessel and returns all
+        remote tech antennas
+        '''
+        self.sc.active_vessel = vessel
+        return self.conn.remote_tech.comms(vessel).antennas
+
     def setup_df(self):
+        '''
+        Creates a pandas dataframe to store
+        telemetry data and antennas
+        '''
+        self.period_mean = sum(
+            vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
 
-        self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
-        print(f'Average period is {self.period_mean}')
+        data = [[v, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
+                 v.orbit.inclination, v.orbit.period, (
+                     v.orbit.period - self.period_mean),
+                 self.return_antennas(v)] for v in self.satellite_list]
 
+        self.df = pd.DataFrame(data, columns=['Vessel', 'Name', 'Body', 'Apoapsis', 'Periapsis',
+                                              'Inclination', 'Period', 'Period diff', 'Antennas'])
+        self.df.set_index('Vessel', inplace=True)
 
-        self.satellite_df = pd.DataFrame([[v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude, v.orbit.inclination, v.orbit.period, (v.orbit.period - self.period_mean)] for v in self.satellite_list],columns=['Name', 'Body', 'Apoapsis', 'Periapsis', 'Inclination', 'Period', 'Period deviation from mean'])
-        table = tabulate.tabulate(self.satellite_df, headers='keys', tablefmt='fancy_grid')
-        print(table)
+        print(tabulate.tabulate(self.df.drop('Antennas', axis=1),
+              headers='keys', tablefmt='fancy_grid'))
+
+        return self.df
 
     def execute_nodes(self):
         executor = self.mj.node_executor
@@ -64,7 +89,6 @@ class ComSatNetwork():
                 while enabled():
                     enabled.wait()
 
-    
     def resonant_orbit(self):
         self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
         self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
@@ -75,7 +99,6 @@ class ComSatNetwork():
         self.res_orbit.make_nodes()
         self.execute_nodes()
 
-   
     def recircularize(self):
         recirc = self.mj.maneuver_planner.operation_circularize
         if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
@@ -102,14 +125,13 @@ class ComSatNetwork():
         self.recircularize()
         self.release_satellite()
 
-       
     def release_satellite(self):
         '''
         Orientates the spacecraft, activates next stage and adds
         released satellite to a list
         '''
         print('Deploying ComSat')
-        
+
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
         self.mj.smart_ass.update(False)
         time.sleep(15)
@@ -122,7 +144,7 @@ class ComSatNetwork():
 
     def setup_communications(self):
         distance_dict = {}
-        
+
         print(self.satellite_list)
         for vessel in self.satellite_list:
             distance_dict[vessel] = {}
@@ -132,15 +154,16 @@ class ComSatNetwork():
                 if vessel is not target_vessel:
                     self.sc.target_vessel = target_vessel
                     print('Target', self.sc.target_vessel)
-                    distance = self.sc.target_vessel.orbit.distance_at_closest_approach(vessel.orbit)
+                    distance = self.sc.target_vessel.orbit.distance_at_closest_approach(
+                        vessel.orbit)
                     distance_dict[vessel].update({target_vessel: distance})
-
 
         for vessel, distance_to_vessel_dict in distance_dict.items():
             self.sc.active_vessel = vessel
             antenna_parts = vessel.parts.with_tag('target_whatever')
 
-            sorted_distance_to_vessel_dict = sorted(distance_to_vessel_dict.items(), key=lambda x: x[1])
+            sorted_distance_to_vessel_dict = sorted(
+                distance_to_vessel_dict.items(), key=lambda x: x[1])
 
             for i, antenna_part in enumerate(antenna_parts):
                 antenna = self.conn.remote_tech.antenna(antenna_part)
@@ -153,10 +176,9 @@ class ComSatNetwork():
                 # uneven target 2nd nearest satellite
                 else:
                     antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
-   
 
     def get_antennas(self):
-        ''' 
+        '''
         Returns all antennas
         '''
         antennas = []
@@ -167,7 +189,6 @@ class ComSatNetwork():
 
         return antennas
 
-    
     def init_existing_network(self, constellation_name):
         self.constellation_name = constellation_name
         self.satellite_list = []
@@ -176,36 +197,35 @@ class ComSatNetwork():
             if vessel.name == constellation_name:
                 self.satellite_list.append(vessel)
 
-        print(f'{len(self.satellite_list)} preexisting satellites found with name {constellation_name}')
+        print(
+            f'{len(self.satellite_list)} preexisting satellites found with name {constellation_name}')
         self.setup_df()
         self.get_comm_status()
-
 
     def get_comm_status(self):
         for vessel in self.satellite_list:
             self.sc.active_vessel = vessel
             antennas = self.conn.remote_tech.comms(vessel).antennas
-            
+
             table = tabulate.tabulate([[i,
-                                        a.part.name,
-                                        self.constellation_name,
-                                        vessel.name,
-                                        a.target_body.name if a.target.name == 'celestial_body' else a.target,
-                                        a.has_connection
+                                      a.part.name,
+                                      self.constellation_name,
+                                      vessel.name,
+                                      a.target_body.name if a.target.name == 'celestial_body' else a.target,
+                                      a.has_connection
                                         ]
-                                        for i, a in enumerate(antennas)],
-                                        headers=['Index',
-                                            'Constellation',
-                                            'Vessel name',
-                                            'Target',
-                                            'Connection status',
-                                            ],
-                                    tablefmt='fancy_grid')
-        #list and count antennas that have no target
-            no_target_antennas = [a for a in antennas if a.target is self.conn.remote_tech.Target.none]
+                                       for i, a in enumerate(antennas)],
+                                      headers=['Index',
+                                               'Constellation',
+                                               'Vessel name',
+                                               'Target',
+                                               'Connection status',
+                                               ],
+                                      tablefmt='fancy_grid')
+        # list and count antennas that have no target
+            no_target_antennas = [
+                a for a in antennas if a.target is self.conn.remote_tech.Target.none]
 
             print('Vessel name: ', self.vessel.name)
             print(table)
             print(no_target_antennas)
-
-

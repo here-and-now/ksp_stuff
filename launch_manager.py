@@ -3,6 +3,8 @@ import time
 import krpc
 from pkg_resources import get_importer
 import utils.pid
+
+from orbit_manager import OrbitManager
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from utils.handle_vessels import (
@@ -12,7 +14,7 @@ from utils.handle_vessels import (
 # from utils.debug import print_parts
 from utils.pid import PID
 
-class LaunchIntoOrbit():
+class LaunchManager():
     def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude, end_stage,inclination, roll, max_q, staging_options):
         # initilize vessel
         self.conn = krpc.connect(name='Launch into orbit')
@@ -57,8 +59,8 @@ class LaunchIntoOrbit():
         go_to_next_stage = False
 
         # staging special needs
-        if not self.staging_done_for_current_stage and staging_options != None:
-            for k,v in staging_options.items():
+        if not self.staging_done_for_current_stage and self.staging_options != None:
+            for k,v in self.staging_options.items():
                 if current_stage == k:
                     for k2,v2 in v.items():
                         manipulate_engines_by_name(self.vessel, k2, v2)
@@ -79,6 +81,7 @@ class LaunchIntoOrbit():
 
             if go_to_next_stage:
                 self.vessel.control.activate_next_stage()
+                print(f'Staging done - current stage: {current_stage}')
                 self.staging_done_for_current_stage = False
         
     def gravity_turn(self):
@@ -90,7 +93,7 @@ class LaunchIntoOrbit():
 
     
     def ascent(self):
-        # set ut auto_pilot
+        # set up auto_pilot
         self.vessel.auto_pilot.engage()
         self.vessel.auto_pilot.target_roll = self.roll
 
@@ -100,50 +103,46 @@ class LaunchIntoOrbit():
         elif self.target_inclination < 0:
             self.vessel.auto_pilot.target_heading = -(self.target_inclination - 90) + 360
 
-
         # schedule 
         scheduler = BackgroundScheduler()
         scheduler.add_job(id='Autostaging', func=self.staging, trigger='interval', seconds=1)
         scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
         scheduler.start()
 
-
         # ascent loop  
         while self.apoapsis() < self.target_altitude * .98:
             pass
-
 
         # reschedule for more granular control
         scheduler.remove_job('Gravity turn')
         scheduler.add_job(id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=0.1)
 
-
-
-        # fine tune apoapsis
-        while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
-            pass
-        print('Leaving atmosphere the atmosphere ...')
+        # leaving atmosphere logic
+        # while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
+            # pass
+        # print('Leaving atmosphere the atmosphere ...')
         
-        # ToDo: implement fine tuning apoapsis function
-        while self.apoapsis() < self.target_altitude:
-            pass
-
         scheduler.remove_job('Gravity turn')
-
         scheduler.remove_job('Autostaging')
-        # self.vessel.auto_pilot.disengage()
         self.vessel.control.throttle = 0
 
-        
         # stage until final stage
         # while self.vessel.control.current_stage > self.end_stage:
             # self.vessel.control.activate_next_stage()
 
         self.vessel.auto_pilot.disengage()
+
+        print('Ascent complete')
+        print(f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
         circ = self.mj.maneuver_planner.operation_circularize
         circ.make_node()
         self.execute_nodes()
+        
+        OrbitManager().print_telemetry()
+        # print(f'Orbital circularization complete - apoapsis: {self.apoapsis()} km, periapsis: {self.periapsis()} km, eccentricity: {self.eccentricity()}, inclination: {self.inclination()}')
 
+
+        ##### manual burn handling #####
 
         # node creation burn vector targeting
         # self.node, burn_time = self.create_circularization_burn()
@@ -154,24 +153,23 @@ class LaunchIntoOrbit():
         # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.node.reference_frame)
         # self.vessel.auto_pilot.wait()
 
-
         # warp 
         # self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
         # while self.node.time_to > (burn_time / 2.0):
             # pass
         # self.vessel.auto_pilot.wait()
-
         
         # circularization burn
         # while self.node.remaining_delta_v > self.precision:
             # self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
             # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
 
-
         # cleanup
         # self.vessel.auto_pilot.disengage()
         # self.vessel.control.throttle = 0
         # self.node.remove()
+
+        ##### manual burn handling #####
 
     def execute_nodes(self):
         executor = self.mj.node_executor
@@ -184,8 +182,7 @@ class LaunchIntoOrbit():
                 while enabled():
                     enabled.wait()
 
-
-    def orbit_thrust_controller(self, remaining_delta_v):
+    def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass
         if remaining_delta_v < twr / 3:
             return 0.05
@@ -219,104 +216,3 @@ class LaunchIntoOrbit():
         burn_time = (m0 - m1) / flow_rate
 
         return self.node, burn_time
-
-
-
-
-# launch parameters
-target_altitude = 145000
-turn_start_altitude = 2500
-turn_end_altitude = 120000
-inclination = 90
-roll = 90
-max_q = 20000
-end_stage = 5
-staging_options = None
-
-# staging_options = {
-                   # 5: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .5}},
-
-                   # 6: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.4, 'thrust_limit': 1.0}},
- 
-                   # }
-# staging_options = {8: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': .6},
-                       # 'cryoengine-vesuvius-1': {'active': True, 'gimbal_limit': 0.2, 'thrust_limit': 1.0}},
-
-                   # 7: {'cryoengine-erebus-1': {'active': True, 'gimbal_limit': 0.3, 'thrust_limit': 1.0}},
-                 # }
-
-if staging_options:
-    print('Staging options: {}'.format(staging_options))
-else:
-    print('No staging options')
-
-# Go for launch!
-launch = LaunchIntoOrbit(target_altitude,
-                        turn_start_altitude,
-                        turn_end_altitude,
-                        end_stage,
-                        inclination,
-                        roll,
-                        max_q,
-                        staging_options)
-
-try:
-    launch.ascent()
-finally:
-    launch.conn.close()
-    print("Connection closed")
-
-
-
-
-
-
-
-# fps sucking monstes below
-# debug = False
-# if debug:
-    # print_parts('all')
-    # print_parts('engines')
-    # print_parts('resources')
-
-# main_stage = 5
-# main_seperated = False
-# main_fuel_type = 'LqdHydrogen'
-# manipulate_engines_by_name(vessel, 'cryoengine-erebus-1', {'active': True,
-                                                           # 'thrust_limit': 0.3,
-                                                           # 'gimbal_limit': 1,
-                                                           # })
-# # Booster stage settings
-# booster_stage = 6
-# booster_separated = False
-# booster_fuel_type='LqdHydrogen'
-
-# #boster and main stage setup
-# main_seperation = vessel.resources_in_decouple_stage(stage=main_stage, cumulative=False)
-# booster_seperation = vessel.resources_in_decouple_stage(stage=booster_stage, cumulative=False)
-
-# main_fuel = conn.add_stream(main_seperation.amount, main_fuel_type)
-# booster_fuel = conn.add_stream(booster_seperation.amount, booster_fuel_type)
-
-# # Pre-launch setup
-# vessel.control.sas = False
-# vessel.control.rcs = False
-# vessel.control.throttle = 1
-
-# # Activate the first stage
-# vessel.control.activate_next_stage()
-# vessel.auto_pilot.engage()
-
-# pitch = 90
-# heading = 90 #0 is north, 90 is east, 180 is south, 270 is west
-# vessel.auto_pilot.target_pitch_and_heading(pitch, heading)
-
-# # Main ascent loop
-# turn_angle = 0
-# while True:
-    # #ToDo: make this an expression?
-    # twr = thrust() / (mass() * surface_gravity)
-
-
-
-

@@ -64,7 +64,7 @@ class OrbitManager():
 
         print("Fine tuning orbital period ...")
         print("Orbit before fine tuning: ")
-        print(self.get_telemetry())
+        print(self.print_telemetry())
 
         for vessel in self.satellite_list:
             self.sc.active_vessel = vessel
@@ -90,14 +90,13 @@ class OrbitManager():
             vessel.control.throttle = 0
 
         print("Orbit after fine tuning: ")
-        print(self.get_telemetry())
+        print(self.print_telemetry())
 
-    def get_telemetry(self):
+    def print_telemetry(self):
         """Get telemetry from all satellites in satellite list"""
 
         self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
         print(f'Average period is {self.period_mean}')
-
 
         table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
                                     v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
@@ -109,7 +108,7 @@ class OrbitManager():
                                       'Inclination', 'Period',
                                       'Period deviation from mean'],
                                   tablefmt='fancy_grid')
-        return table
+        print(table)
     
     def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
         # inclination

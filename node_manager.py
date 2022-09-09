@@ -6,6 +6,25 @@ from utils.handle_vessels import (
     manipulate_engines_by_name,
     )
 
+class NodeManager():
+    def __init__(self):
+        self.conn = krpc.connect(name="NodeManager")
+        print('NodeManager connected ...')
+
+        # self.sc = self.conn.space_center
+        self.mj = self.conn.mech_jeb
+
+    def execute_node(self):
+        executor = self.mj.node_executor
+        executor.tolerance = 0.001
+        executor.lead_time = 3
+        executor.execute_one_node()
+
+        with self.conn.stream(getattr, executor, 'enabled') as enabled:
+            enabled.rate = 1
+            with enabled.condition:
+                while enabled():
+                    enabled.wait()
 
 
 #### traaaaaaaash below

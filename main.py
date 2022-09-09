@@ -38,5 +38,5 @@ if __name__ == '__main__':
     network.init_existing_network(constellation_name='Comsat_0.5_RingZero Relay')
     # network.fine_tune_orbital_period()
     # network.setup_communications()
+    network.manage_antennas()
     # network.get_antennas()
-    # network.get_comm_status()

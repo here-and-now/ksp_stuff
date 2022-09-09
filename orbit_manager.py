@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import tabulate
 
+from node_manager import NodeManager
 from utils.handle_orientation import orientate_vessel
 from utils.handle_vessels import (
     decouple_by_name,
@@ -50,18 +51,6 @@ class OrbitManager():
             getattr, self.vessel.orbit, 'argument_of_periapsis')
         self.true_anomaly = self.conn.add_stream(
             getattr, self.vessel.orbit, 'true_anomaly')
-
-    def execute_nodes(self):
-        executor = self.mj.node_executor
-        executor.tolerance = 0.001
-        executor.lead_time = 3
-        executor.execute_one_node()
-
-        with self.conn.stream(getattr, executor, 'enabled') as enabled:
-            enabled.rate = 1
-            with enabled.condition:
-                while enabled():
-                    enabled.wait()
 
     def fine_tune_orbital_period(self, accuracy_cutoff=1e-3):
         """
@@ -128,7 +117,7 @@ class OrbitManager():
             inclination_change.new_inclination = desired_inclination
 
             inclination_change.make_nodes()
-            self.execute_nodes()
+            NodeManager().execute_node()
 
         # set apoapsis
         if self.apoapsis() < desired_altitude:
@@ -136,7 +125,7 @@ class OrbitManager():
             altitude_change.new_apoapsis = desired_altitude
 
             altitude_change.make_nodes()
-            self.execute_nodes()
+            NodeManager().execute_node()
 
         # circularize
         if self.eccentricity() > 0.001:
@@ -144,4 +133,4 @@ class OrbitManager():
             eccentricity_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
 
             eccentricity_change.make_nodes()
-            self.execute_nodes()
+            NodeManager().execute_node()

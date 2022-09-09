@@ -29,6 +29,10 @@ class ComSatNetwork():
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
+        
+        if self.satellite_list:
+            self.setup_df()
+
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
@@ -37,7 +41,17 @@ class ComSatNetwork():
         self.periapsis = self.conn.add_stream(getattr, self.vessel.orbit, 'periapsis_altitude')
         self.eccentricity = self.conn.add_stream(getattr, self.vessel.orbit, 'eccentricity')
         self.inclination = self. conn.add_stream(getattr, self.vessel.orbit, 'inclination')
-        
+       
+    def setup_df(self):
+
+        self.period_mean = sum(vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
+        print(f'Average period is {self.period_mean}')
+
+
+        self.satellite_df = pd.DataFrame([[v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude, v.orbit.inclination, v.orbit.period, (v.orbit.period - self.period_mean)] for v in self.satellite_list],columns=['Name', 'Body', 'Apoapsis', 'Periapsis', 'Inclination', 'Period', 'Period deviation from mean'])
+        table = tabulate.tabulate(self.satellite_df, headers='keys', tablefmt='fancy_grid')
+        print(table)
+
     def execute_nodes(self):
         executor = self.mj.node_executor
         executor.tolerance = 0.001
@@ -139,33 +153,41 @@ class ComSatNetwork():
                 # uneven target 2nd nearest satellite
                 else:
                     antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
-    
+   
+
     def get_antennas(self):
+        ''' 
+        Returns all antennas
+        '''
         antennas = []
         for vessel in self.satellite_list:
-            antenna_parts = vessel.parts.with_name('RelayAntenna5')
+            antenna_parts = vessel.parts.with_name('*')
             for antenna_part in antenna_parts:
                 antennas.append(self.conn.remote_tech.antenna(antenna_part))
 
-
-        print(antennas)
         return antennas
 
     
-    def preexisting_network(self, constellation_name):
+    def init_existing_network(self, constellation_name):
         self.constellation_name = constellation_name
         self.satellite_list = []
+
         for vessel in self.conn.space_center.vessels:
             if vessel.name == constellation_name:
                 self.satellite_list.append(vessel)
+
         print(f'{len(self.satellite_list)} preexisting satellites found with name {constellation_name}')
+        self.setup_df()
         self.get_comm_status()
 
 
     def get_comm_status(self):
         for vessel in self.satellite_list:
+            self.sc.active_vessel = vessel
             antennas = self.conn.remote_tech.comms(vessel).antennas
+            
             table = tabulate.tabulate([[i,
+                                        a.part.name,
                                         self.constellation_name,
                                         vessel.name,
                                         a.target_body.name if a.target.name == 'celestial_body' else a.target,

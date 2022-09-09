@@ -18,7 +18,7 @@ from utils.handle_vessels import (
 class OrbitManager():
     def __init__(self):
         self.conn = krpc.connect(name="OrbitManager")
-        print("OrbitManager connected to kRPC server")
+        print("OrbitManager connected")
 
         self.sc = self.conn.space_center
         self.vessel = self.sc.active_vessel

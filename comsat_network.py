@@ -77,6 +77,7 @@ class ComSatNetwork():
         self.sc.active_vessel = vessel
         return self.conn.remote_tech.comms(vessel).antennas
 
+
     def manage_antennas(self):
         '''
         Manage antennas of all vessels in constellation.
@@ -86,14 +87,17 @@ class ComSatNetwork():
 
         self.df['Antennas'].to_frame().apply(lambda x: self.activate_antennas(x.index, x.values))
 
+
     def activate_antennas(self, vessel, antennas):
         '''
         Activates all RT antennas in list
         '''
-        print(vessel)
-        for antenna in antennas:
+        print(vessel[0])
+        # print(antennas.values)
+        self.sc.active_vessel = vessel[0]
+        for antenna in antennas[0]:
+            print(antenna)
             # self.sc.active_vessel = antenna.part.vessel
-            print(antenna.part.vessel)
             for module in antenna.part.modules:
                 if module.name == 'ModuleRTAntenna':
                     
@@ -121,11 +125,6 @@ class ComSatNetwork():
         NodeManager().execute_node()
 
     def release_sats_triangle_orbit(self):
-        # fix this, just jump resonant orbit start position before releasing
-        # self.resonant_orbit()
-        # self.recircularize()
-        # end bullshit
-
         self.release_satellite()
 
         self.resonant_orbit()
@@ -135,6 +134,9 @@ class ComSatNetwork():
         self.resonant_orbit()
         self.recircularize()
         self.release_satellite()
+
+        self.setup_df()
+
 
     def release_satellite(self):
         '''
@@ -145,13 +147,13 @@ class ComSatNetwork():
 
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
         self.mj.smart_ass.update(False)
-        time.sleep(15)
+        time.sleep(30)
 
         released_satellite = self.vessel.control.activate_next_stage()
         self.satellite_list.append(released_satellite)
 
         print('ComSat deployed')
-        time.sleep(10)
+        time.sleep(30)
 
     def setup_communications(self):
         '''
@@ -204,7 +206,7 @@ class ComSatNetwork():
         print(
             f'{len(self.satellite_list)} preexisting satellites found with name {constellation_name}')
 
-        print("Fucking up satellite list for testing purposes ... ")
-        self.satellite_list = [self.sc.active_vessel]
+        # print("Fucking up satellite list for testing purposes ... ")
+        # self.satellite_list = [self.sc.active_vessel]
 
         self.setup_df()

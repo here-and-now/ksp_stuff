@@ -52,7 +52,7 @@ class OrbitManager():
         self.true_anomaly = self.conn.add_stream(
             getattr, self.vessel.orbit, 'true_anomaly')
 
-    def fine_tune_orbital_period(self, accuracy_cutoff=1e-3):
+    def fine_tune_orbital_period(self):
         """
         Fine tune orbital period for each satelitte in satellite list
         to the mean orbital period with RCS thrusters 
@@ -67,32 +67,30 @@ class OrbitManager():
             vessel.control.rcs = False
 
             if vessel.orbit.period < self.period_mean:
-                self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
-                self.mj.smart_ass.update(False)
-                orientate_vessel(self.conn, self.sc.active_vessel,
-                                 'prograde', accuracy_cutoff=accuracy_cutoff)
-                while vessel.orbit.period < self.period_mean:
-                    vessel.control.rcs = True
-                    vessel.control.throttle = 0.05
+                self.manage_orientation(self.mj.SmartASSAutopilotMode.prograde, 'prograde')
+            elif vessel.orbit.period >= self.period_mean:
+                self.manage_orientation(self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
 
-            elif vessel.orbit.period > self.period_mean:
-                self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.retrograde
-                self.mj.smart_ass.update(False)
-                orientate_vessel(self.conn, self.sc.active_vessel,
-                                 'retrograde', accuracy_cutoff=accuracy_cutoff)
-                while vessel.orbit.period > self.period_mean:
-                    vessel.control.rcs = True
-                    vessel.control.throttle = 0.05
-
+            while abs(vessel.orbit.period - self.period_mean) > 0:
+                vessel.control.rcs = True
+                vessel.control.throttle = 0.05
+            
             vessel.control.rcs = False
             vessel.control.throttle = 0
 
         print("Orbit after fine tuning: ")
         print(self.print_telemetry())
 
+
+    def manage_orientation(self,autopilot_mode, direction):
+
+        self.mj.smart_ass.autopilot_mode = autopilot_mode
+        self.mj.smart_ass.update(False)
+        orientate_vessel(self.conn, self.sc.active_vessel,
+                         direction, accuracy_cutoff=1e-3)
+
     def print_telemetry(self):
         """Print telemetry from all satellites in satellite list"""
-
         self.period_mean = sum(
             vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
         print(f'Average period is {self.period_mean}')

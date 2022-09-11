@@ -50,6 +50,7 @@ class LaunchManager():
 
         # telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
+        self.met = self.conn.add_stream(getattr, self.vessel, 'met')
         self.flight_mean_altitude = self.conn.add_stream(getattr, self.vessel.flight(
             self.vessel.orbit.body.non_rotating_reference_frame), 'mean_altitude')
         self.flight_dynamic_pressure = self.conn.add_stream(getattr, self.vessel.flight(
@@ -108,7 +109,7 @@ class LaunchManager():
         for s in self.vessel.parts.solar_panels:
             s.deployed = True
         self.solar_deployed = True
-        print(f'Solar panels deployed')
+        print(f'Solar panels deployed at t+{self.met():.1f}')
 
     def fairing_deployment(self):
         event_name = 'Jettison Fairing'

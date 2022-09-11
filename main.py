@@ -25,10 +25,13 @@ if __name__ == '__main__':
                             # max_q,
                             # staging_options=None)
     # launch.ascent()
-    vessel = VesselManager()
-    orbit_manager = OrbitManager()
+    vessel = VesselManager(name='Com')
+    orbits = OrbitManager(df=vessel.df)
+    orbits.print_orbit_data()
 
-    orbit_manager.print_orbit_dataframe()
+    # a = orbit_manager.setup_df()
+    # print(a)
+    # orbit_manager.print_orbit_dataframe()
 
 
 # ####

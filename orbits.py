@@ -23,16 +23,14 @@ from utils.handle_vessels import (
 
 
 class OrbitManager():
-    def __init__(self, df=VesselManager().init_vessel_dataframe(), instance_name='OrbitManager'):
-    # def __init__(self, df, instance_name='OrbitManager'):
+    def __init__(self, df=VesselManager().df, instance_name='OrbitManager'):
         self.conn = krpc.connect(name=instance_name)
-        print(f"OrbitManager: {instance_name} connected.")
         self.sc = self.conn.space_center
+        print(f"OrbitManager: {instance_name} connected.")
 
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
         self.vessel_list = [self.vessel]
-
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
@@ -58,66 +56,77 @@ class OrbitManager():
             getattr, self.vessel.orbit, 'true_anomaly')
 
         self.df = df
+        self.orbital_telemetry_dataframe()
 
-        data = [[
-            v, v.name,
-            self.conn.add_stream(getattr, v.orbit.body, 'name'),
-            self.conn.add_stream(getattr, v.orbit, 'eccentricity'),
-            self.conn.add_stream(getattr, v.orbit, 'semi_major_axis'),
-            self.conn.add_stream(getattr, v.orbit, 'inclination'),
-            self.conn.add_stream(getattr, v.orbit, 'longitude_of_ascending_node'),
-            self.conn.add_stream(getattr, v.orbit, 'argument_of_periapsis'),
-            self.conn.add_stream(getattr, v.orbit, 'true_anomaly'),
-            ] for v in self.df.index.values]
+    def orbital_telemetry_dataframe(self):
+        """ Returns telemetry data in a dataframe """
+        # streaming approach, probably inconvenient
+        df = pd.DataFrame([{
+            'vessel': v,
+            'name': v.name,
+            'body': self.conn.add_stream(getattr, v.orbit.body, 'name'),
+            'eccentricity': self.conn.add_stream(getattr, v.orbit, 'eccentricity'),
+            'semi_major_axis': self.conn.add_stream(getattr, v.orbit, 'semi_major_axis'),
+            'inclination': self.conn.add_stream(getattr, v.orbit, 'inclination'),
+            'longitude_of_ascending_node': self.conn.add_stream(getattr, v.orbit, 'longitude_of_ascending_node'),
+            'argument_of_periapsis': self.conn.add_stream(getattr, v.orbit, 'argument_of_periapsis'),
+            'true_anomaly': self.conn.add_stream(getattr, v.orbit, 'true_anomaly'),
+        }
+            for v in self.df.index.values])
 
-        df_orbit = pd.DataFrame(data, columns=['vessel', 'name', 'body', 'eccentricity', 'semi_major_axis',
-            'inclination', 'longitude_of_ascending_node', 'argument_of_periapsis', 'true_anomaly',
-        ])
-        df_orbit.set_index('vessel', inplace=True)
-         
-        self.df = pd.merge(self.df, df_orbit, how='left', left_index=True, right_index=True)
-        self.df['true_anomaly'] = self.df['true_anomaly'].apply(lambda x: x())
+        df = df.set_index('vessel')
+        self.df = pd.merge(self.df, df, how='left')
 
-    def print_orbit_dataframe(self):
-        print(self.df)
+        # call streams in dataframe
+        self.df = self.df.apply(lambda x: x.apply(
+            lambda y: y() if callable(y) else y))
+        # end streaming approach
+
+        return self.df
+
+
+    def print_orbit_data(self):
+        table=tabulate.tabulate(self.df, headers='keys', tablefmt='fancy_grid')
+        print(table)
+
     def fine_tune_orbital_period(self):
         """
         Fine tune orbital period for each satelitte in satellite list
-        to the mean orbital period with RCS thrusters 
+        to the mean orbital period with RCS thrusters
         """
         print("Fine tuning orbital period ...")
         print("Orbit before fine tuning: ")
         print(self.print_telemetry())
 
-        period_mean = self.get_orbital_period_mean()
+        period_mean=self.get_orbital_period_mean()
 
         for vessel in self.vessel_list:
-            self.sc.active_vessel = vessel
-            vessel.control.rcs = False
+            self.sc.active_vessel=vessel
+            vessel.control.rcs=False
 
             if vessel.orbit.period < period_mean:
                 self.manage_orientation(
                     self.mj.SmartASSAutopilotMode.prograde, 'prograde')
-                operator_selection = operator.lt
+                operator_selection=operator.lt
             elif vessel.orbit.period >= period_mean:
                 self.manage_orientation(
                     self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
-                operator_selection = operator.gt
+                operator_selection=operator.gt
 
             # while abs(vessel.orbit.period - period_mean) > 0:
             while operator_selection(vessel.orbit.period, period_mean):
-                vessel.control.rcs = True
-                vessel.control.throttle = 0.05
+                vessel.control.rcs=True
+                vessel.control.throttle=0.05
 
-            vessel.control.rcs = False
-            vessel.control.throttle = 0
+            vessel.control.rcs=False
+            vessel.control.throttle=0
 
         print("Orbit after fine tuning: ")
         print(self.print_telemetry())
 
     def get_orbital_period_mean(self):
         """Get mean orbital period of all satellites in satellite list"""
-        period_mean = sum(
+        period_mean=sum(
             vessel.orbit.period for vessel in self.vessel_list) / len(self.vessel_list)
         return period_mean
 
@@ -128,13 +137,11 @@ class OrbitManager():
         orientate_vessel(self.conn, self.sc.active_vessel,
                          direction, accuracy_cutoff=1e-3)
 
-
     def print_telemetry(self):
         """ Prints telemetry data in a fancy table """
         df = self.setup_df()
         table = tabulate.tabulate(df, headers='keys', tablefmt='fancy_grid')
         print(table)
-
 
     def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
         # inclination

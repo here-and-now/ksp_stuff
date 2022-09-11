@@ -19,49 +19,27 @@ from utils.handle_vessels import (
 )
 
 class VesselManager():
-    def __init__(self):
+    def __init__(self, name='active_vessel', instance_name='VesselManager'):
         self.conn = krpc.connect(name="VesselManager")
-        print('VesselManager connected ...')
-
         self.sc = self.conn.space_center
         self.vessel = self.sc.active_vessel
-        self.vessel_name = self.vessel.name
+        print('VesselManager connected ...')
 
-        self.mj = self.conn.mech_jeb
-        self.auto_pilot = self.vessel.auto_pilot
-
-
-
-        # Telemetry
-        self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
-        self.altitude = self.conn.add_stream(
-            getattr, self.vessel.flight(), 'mean_altitude')
-        self.apoapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'apoapsis_altitude')
-        self.periapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'periapsis_altitude')
-        self.eccentricity = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'eccentricity')
-        self.inclination = self. conn.add_stream(
-            getattr, self.vessel.orbit, 'inclination')
-
-    def init_vessel_dataframe(self, name='active_vessel'):
-        """Setup pandas dataframe for telemetry"""
-        
         if name == 'active_vessel':
             vessel_list = [self.sc.active_vessel]
             name = self.sc.active_vessel.name
         else:
             vessel_list = self.sc.vessels
 
-        data = [[v, v.name] for v in vessel_list]
+        self.df = pd.DataFrame([{
+                'vessel': v,
+                'name': v.name,
+            }
+            for v in vessel_list])
 
-        df = pd.DataFrame(data, columns=['vessel', 'name'])
-        df.set_index('vessel', inplace=True)
-        
-        df = df[df['name'].str.contains(name)]
+        self.df.set_index('vessel', inplace=True)
+        self.df = self.df[self.df['name'].str.contains(name)]
 
-        return df
  
 
 

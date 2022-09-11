@@ -1,7 +1,7 @@
 from comsat_network import ComSatNetwork
-from launch_manager import LaunchManager
-from orbit_manager import OrbitManager
-from vessel_manager import VesselManager
+from launch import LaunchManager
+from orbits import OrbitManager
+from vessels import VesselManager
 
 
 if __name__ == '__main__':
@@ -26,7 +26,11 @@ if __name__ == '__main__':
                             # staging_options=None)
     # launch.ascent()
     vessel = VesselManager()
-    vessel.get_vessels()
+    orbit_manager = OrbitManager()
+
+    orbit_manager.print_orbit_dataframe()
+
+
 # ####
     # orbit_manager = OrbitManager()
     # orbit_manager.print_telemetry()

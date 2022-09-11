@@ -4,8 +4,9 @@ import krpc
 from pkg_resources import get_importer
 import utils.pid
 
-from orbit_manager import OrbitManager
-from node_manager import NodeManager
+from orbits import OrbitManager
+from nodes import NodeManager
+
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from utils.handle_vessels import (

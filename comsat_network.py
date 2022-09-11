@@ -7,11 +7,10 @@ import numpy as np
 import pandas as pd
 import tabulate
 
-from orbit_manager import OrbitManager
-from node_manager import NodeManager
+from orbits import OrbitManager
+from nodes import NodeManager
 
 
-from node_manager import NodeManager
 from utils.handle_orientation import orientate_vessel
 from utils.handle_vessels import (
     decouple_by_name,

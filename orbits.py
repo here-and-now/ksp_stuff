@@ -8,7 +8,11 @@ import pandas as pd
 import tabulate
 import operator
 
-from node_manager import NodeManager
+
+from nodes import NodeManager
+from vessels import VesselManager
+
+
 from utils.handle_orientation import orientate_vessel
 from utils.handle_vessels import (
     decouple_by_name,
@@ -19,7 +23,8 @@ from utils.handle_vessels import (
 
 
 class OrbitManager():
-    def __init__(self, instance_name='OrbitManager'):
+    def __init__(self, df=VesselManager().init_vessel_dataframe(), instance_name='OrbitManager'):
+    # def __init__(self, df, instance_name='OrbitManager'):
         self.conn = krpc.connect(name=instance_name)
         print(f"OrbitManager: {instance_name} connected.")
         self.sc = self.conn.space_center
@@ -27,6 +32,7 @@ class OrbitManager():
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
         self.vessel_list = [self.vessel]
+
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
@@ -37,7 +43,6 @@ class OrbitManager():
             getattr, self.vessel.orbit, 'apoapsis_altitude')
         self.periapsis = self.conn.add_stream(
             getattr, self.vessel.orbit, 'periapsis_altitude')
-
         # keplerian elements
         self.eccentricity = self.conn.add_stream(
             getattr, self.vessel.orbit, 'eccentricity')
@@ -52,6 +57,29 @@ class OrbitManager():
         self.true_anomaly = self.conn.add_stream(
             getattr, self.vessel.orbit, 'true_anomaly')
 
+        self.df = df
+
+        data = [[
+            v, v.name,
+            self.conn.add_stream(getattr, v.orbit.body, 'name'),
+            self.conn.add_stream(getattr, v.orbit, 'eccentricity'),
+            self.conn.add_stream(getattr, v.orbit, 'semi_major_axis'),
+            self.conn.add_stream(getattr, v.orbit, 'inclination'),
+            self.conn.add_stream(getattr, v.orbit, 'longitude_of_ascending_node'),
+            self.conn.add_stream(getattr, v.orbit, 'argument_of_periapsis'),
+            self.conn.add_stream(getattr, v.orbit, 'true_anomaly'),
+            ] for v in self.df.index.values]
+
+        df_orbit = pd.DataFrame(data, columns=['vessel', 'name', 'body', 'eccentricity', 'semi_major_axis',
+            'inclination', 'longitude_of_ascending_node', 'argument_of_periapsis', 'true_anomaly',
+        ])
+        df_orbit.set_index('vessel', inplace=True)
+         
+        self.df = pd.merge(self.df, df_orbit, how='left', left_index=True, right_index=True)
+        self.df['true_anomaly'] = self.df['true_anomaly'].apply(lambda x: x())
+
+    def print_orbit_dataframe(self):
+        print(self.df)
     def fine_tune_orbital_period(self):
         """
         Fine tune orbital period for each satelitte in satellite list
@@ -99,25 +127,6 @@ class OrbitManager():
         self.mj.smart_ass.update(False)
         orientate_vessel(self.conn, self.sc.active_vessel,
                          direction, accuracy_cutoff=1e-3)
-
-    def setup_df(self):
-        """Setup pandas dataframe for telemetry"""
-
-        data = [[v, v.name, v.orbit.body.name, v.orbit.eccentricity, v.orbit.semi_major_axis,
-                 v.orbit.inclination, v.orbit.longitude_of_ascending_node, v.orbit.argument_of_periapsis, v.orbit.true_anomaly,
-                 ] for v in self.vessel_list]
-
-
-
-        df = pd.DataFrame(data, columns=[
-            'vessel', 'name', 'body', 'eccentricity', 'semi_major_axis',
-            'inclination', 'longitude_of_ascending_node', 'argument_of_periapsis', 'true_anomaly',
-        ])
-        df.set_index('vessel', inplace=True)
-        # print(df)
-        return df
-
-
 
 
     def print_telemetry(self):

@@ -7,11 +7,9 @@ import numpy as np
 import pandas as pd
 import tabulate
 
-from orbit_manager import OrbitManager
-from node_manager import NodeManager
+# from orbits import OrbitManager
+# from nodes import NodeManager
 
-
-from node_manager import NodeManager
 from utils.handle_orientation import orientate_vessel
 from utils.handle_vessels import (
     decouple_by_name,
@@ -19,7 +17,6 @@ from utils.handle_vessels import (
     select_vessel_and_duplicates_by_name,
     switch_vessel,
 )
-
 
 class VesselManager():
     def __init__(self):
@@ -30,11 +27,10 @@ class VesselManager():
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
 
-        self.orbit_manager = OrbitManager()
-        self.node_manager = NodeManager()
-        
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
+
+
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
@@ -49,7 +45,7 @@ class VesselManager():
         self.inclination = self. conn.add_stream(
             getattr, self.vessel.orbit, 'inclination')
 
-    def get_vessels(self, name='active_vessel'):
+    def init_vessel_dataframe(self, name='active_vessel'):
         """Setup pandas dataframe for telemetry"""
         
         if name == 'active_vessel':
@@ -65,9 +61,7 @@ class VesselManager():
         
         df = df[df['name'].str.contains(name)]
 
-        print(df)
         return df
-
  
 
 

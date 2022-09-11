@@ -1,6 +1,7 @@
 from comsat_network import ComSatNetwork
 from launch_manager import LaunchManager
 from orbit_manager import OrbitManager
+from vessel_manager import VesselManager
 
 
 if __name__ == '__main__':
@@ -24,23 +25,24 @@ if __name__ == '__main__':
                             # max_q,
                             # staging_options=None)
     # launch.ascent()
+    vessel = VesselManager()
+    vessel.get_vessels()
+# ####
+    # orbit_manager = OrbitManager()
+    # orbit_manager.print_telemetry()
+    # # orbit_manager.set_altitude_and_circularize(inclination, 20000000)
+
+    # network = ComSatNetwork()
+    # network.init_existing_network(constellation_name='Comsat_0.5_RingZero Relay')
+    # # network.release_sats_triangle_orbit()
+
+    # # orbit_manager.satellite_list = network.satellite_list
+    # # orbit_manager.fine_tune_orbital_period()
 
 
-    orbit_manager = OrbitManager()
-    orbit_manager.print_telemetry()
-    # orbit_manager.set_altitude_and_circularize(inclination, 20000000)
-
-    network = ComSatNetwork()
-    network.init_existing_network(constellation_name='Comsat_0.5_RingZero Relay')
-    # network.release_sats_triangle_orbit()
-
-    # orbit_manager.satellite_list = network.satellite_list
-    # orbit_manager.fine_tune_orbital_period()
 
 
-
-
-    # network.fine_tune_orbital_period()
-    # network.setup_communications()
-    network.manage_antennas()
-    # network.get_antennas()
+    # # network.fine_tune_orbital_period()
+    # # network.setup_communications()
+    # network.manage_antennas()
+#     # network.get_antennas()

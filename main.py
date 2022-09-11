@@ -33,8 +33,9 @@ if __name__ == '__main__':
     network = ComSatNetwork()
     network.init_existing_network(constellation_name='Comsat_0.5_RingZero Relay')
     # network.release_sats_triangle_orbit()
-    orbit_manager.satellite_list = network.satellite_list
-    orbit_manager.fine_tune_orbital_period()
+
+    # orbit_manager.satellite_list = network.satellite_list
+    # orbit_manager.fine_tune_orbital_period()
 
 
 

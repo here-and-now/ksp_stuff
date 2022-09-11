@@ -26,12 +26,14 @@ class ComSatNetwork():
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
         self.constellation_name = self.vessel_name
-        self.satellite_list = []
+        self.orbit_manager = OrbitManager
+        
+        self.vessel_list = []
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
 
-        if self.satellite_list:
+        if self.vessel_list:
             self.setup_df()
 
         # Telemetry
@@ -53,12 +55,12 @@ class ComSatNetwork():
         telemetry data and antennas
         '''
         self.period_mean = sum(
-            vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
+            vessel.orbit.period for vessel in self.vessel_list) / len(self.vessel_list)
 
         data = [[v, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
                  v.orbit.inclination, v.orbit.period, (
                      v.orbit.period - self.period_mean),
-                 self.return_antennas(v)] for v in self.satellite_list]
+                 self.return_antennas(v)] for v in self.vessel_list]
 
         self.df = pd.DataFrame(data, columns=['Vessel', 'Name', 'Body', 'Apoapsis', 'Periapsis',
                                               'Inclination', 'Period', 'Period diff', 'Antennas'])
@@ -150,7 +152,7 @@ class ComSatNetwork():
         time.sleep(30)
 
         released_satellite = self.vessel.control.activate_next_stage()
-        self.satellite_list.append(released_satellite)
+        self.vessel_list.append(released_satellite)
 
         print('ComSat deployed')
         time.sleep(30)
@@ -163,10 +165,10 @@ class ComSatNetwork():
         '''
 
         distance_dict = {}
-        print(self.satellite_list)
-        for vessel in self.satellite_list:
+        print(self.vessel_list)
+        for vessel in self.vessel_list:
             distance_dict[vessel] = {}
-            for target_vessel in self.satellite_list:
+            for target_vessel in self.vessel_list:
 
                 print('tarvessel', target_vessel)
                 if vessel is not target_vessel:
@@ -197,14 +199,14 @@ class ComSatNetwork():
 
     def init_existing_network(self, constellation_name):
         self.constellation_name = constellation_name
-        self.satellite_list = []
+        self.vessel_list = []
 
         for vessel in self.conn.space_center.vessels:
             if vessel.name == constellation_name:
-                self.satellite_list.append(vessel)
+                self.vessel_list.append(vessel)
 
         print(
-            f'{len(self.satellite_list)} preexisting satellites found with name {constellation_name}')
+            f'{len(self.vessel_list)} preexisting satellites found with name {constellation_name}')
 
         # print("Fucking up satellite list for testing purposes ... ")
         # self.satellite_list = [self.sc.active_vessel]

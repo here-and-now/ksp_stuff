@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tabulate
+import operator
 
 from node_manager import NodeManager
 from utils.handle_orientation import orientate_vessel
@@ -18,15 +19,14 @@ from utils.handle_vessels import (
 
 
 class OrbitManager():
-    def __init__(self):
-        self.conn = krpc.connect(name="OrbitManager")
-        print("OrbitManager connected")
-
+    def __init__(self, instance_name='OrbitManager'):
+        self.conn = krpc.connect(name=instance_name)
+        print(f"OrbitManager: {instance_name} connected.")
         self.sc = self.conn.space_center
+
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
-        self.satellite_list = [self.vessel]
-        self.period_mean = None
+        self.vessel_list = [self.vessel]
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
@@ -57,55 +57,75 @@ class OrbitManager():
         Fine tune orbital period for each satelitte in satellite list
         to the mean orbital period with RCS thrusters 
         """
-
         print("Fine tuning orbital period ...")
         print("Orbit before fine tuning: ")
         print(self.print_telemetry())
 
-        for vessel in self.satellite_list:
+        period_mean = self.get_orbital_period_mean()
+
+        for vessel in self.vessel_list:
             self.sc.active_vessel = vessel
             vessel.control.rcs = False
 
-            if vessel.orbit.period < self.period_mean:
-                self.manage_orientation(self.mj.SmartASSAutopilotMode.prograde, 'prograde')
-            elif vessel.orbit.period >= self.period_mean:
-                self.manage_orientation(self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
+            if vessel.orbit.period < period_mean:
+                self.manage_orientation(
+                    self.mj.SmartASSAutopilotMode.prograde, 'prograde')
+                operator_selection = operator.lt
+            elif vessel.orbit.period >= period_mean:
+                self.manage_orientation(
+                    self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
+                operator_selection = operator.gt
 
-            while abs(vessel.orbit.period - self.period_mean) > 0:
+            # while abs(vessel.orbit.period - period_mean) > 0:
+            while operator_selection(vessel.orbit.period, period_mean):
                 vessel.control.rcs = True
                 vessel.control.throttle = 0.05
-            
+
             vessel.control.rcs = False
             vessel.control.throttle = 0
 
         print("Orbit after fine tuning: ")
         print(self.print_telemetry())
 
+    def get_orbital_period_mean(self):
+        """Get mean orbital period of all satellites in satellite list"""
+        period_mean = sum(
+            vessel.orbit.period for vessel in self.vessel_list) / len(self.vessel_list)
+        return period_mean
 
-    def manage_orientation(self,autopilot_mode, direction):
+    def manage_orientation(self, autopilot_mode, direction):
 
         self.mj.smart_ass.autopilot_mode = autopilot_mode
         self.mj.smart_ass.update(False)
         orientate_vessel(self.conn, self.sc.active_vessel,
                          direction, accuracy_cutoff=1e-3)
 
-    def print_telemetry(self):
-        """Print telemetry from all satellites in satellite list"""
-        self.period_mean = sum(
-            vessel.orbit.period for vessel in self.satellite_list) / len(self.satellite_list)
-        print(f'Average period is {self.period_mean}')
+    def setup_df(self):
+        """Setup pandas dataframe for telemetry"""
 
-        table = tabulate.tabulate([[i, v.name, v.orbit.body.name,
-                                    v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
-                                    v.orbit.inclination, v.orbit.period,
-                                    (v.orbit.period - self.period_mean)]
-                                  for i, v in enumerate(self.satellite_list)],
-                                  headers=['Index', 'Name', 'Body',
-                                           'Apoapsis', 'Periapsis',
-                                           'Inclination', 'Period',
-                                           'Period deviation from mean'],
-                                  tablefmt='fancy_grid')
+        data = [[v, v.name, v.orbit.body.name, v.orbit.eccentricity, v.orbit.semi_major_axis,
+                 v.orbit.inclination, v.orbit.longitude_of_ascending_node, v.orbit.argument_of_periapsis, v.orbit.true_anomaly,
+                 ] for v in self.vessel_list]
+
+
+
+        df = pd.DataFrame(data, columns=[
+            'vessel', 'name', 'body', 'eccentricity', 'semi_major_axis',
+            'inclination', 'longitude_of_ascending_node', 'argument_of_periapsis', 'true_anomaly',
+        ])
+        df.set_index('vessel', inplace=True)
+        # print(df)
+        return df
+
+
+
+
+    def print_telemetry(self):
+        """ Prints telemetry data in a fancy table """
+        df = self.setup_df()
+        table = tabulate.tabulate(df, headers='keys', tablefmt='fancy_grid')
         print(table)
+
 
     def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
         # inclination

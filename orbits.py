@@ -26,40 +26,18 @@ class OrbitManager():
     def __init__(self, df=VesselManager().df, instance_name='OrbitManager'):
         self.conn = krpc.connect(name=instance_name)
         self.sc = self.conn.space_center
-        print(f"OrbitManager: {instance_name} connected.")
-
-        self.vessel = self.sc.active_vessel
-        self.vessel_name = self.vessel.name
-        self.vessel_list = [self.vessel]
-
         self.mj = self.conn.mech_jeb
-        self.auto_pilot = self.vessel.auto_pilot
+        print(f"OrbitManager: {instance_name} connected.")
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
-        self.apoapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'apoapsis_altitude')
-        self.periapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'periapsis_altitude')
-        # keplerian elements
-        self.eccentricity = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'eccentricity')
-        self.semi_major_axis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'semi_major_axis')
-        self.inclination = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'inclination')
-        self.longitude_of_ascending_node = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'longitude_of_ascending_node')
-        self.argument_of_periapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'argument_of_periapsis')
-        self.true_anomaly = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'true_anomaly')
 
+        # Dataframe 
         self.df = df
         self.orbital_telemetry_dataframe()
 
     def orbital_telemetry_dataframe(self):
-        """ Returns telemetry data in a dataframe """
+        """ Returns orbital telemetry data in a dataframe """
         # streaming approach, probably inconvenient
         df = pd.DataFrame([{
             'vessel': v,
@@ -69,21 +47,20 @@ class OrbitManager():
             'semi_major_axis': self.conn.add_stream(getattr, v.orbit, 'semi_major_axis'),
             'inclination': self.conn.add_stream(getattr, v.orbit, 'inclination'),
             'longitude_of_ascending_node': self.conn.add_stream(getattr, v.orbit, 'longitude_of_ascending_node'),
-            'argument_of_periapsis': self.conn.add_stream(getattr, v.orbit, 'argument_of_periapsis'),
-            'true_anomaly': self.conn.add_stream(getattr, v.orbit, 'true_anomaly'),
+            # 'argument_of_periapsis': self.conn.add_stream(getattr, v.orbit, 'argument_of_periapsis'),
+            # # 'true_anomaly': self.conn.add_stream(getattr, v.orbit, 'true_anomaly'),
         }
             for v in self.df.index.values])
 
         df = df.set_index('vessel')
-        self.df = pd.merge(self.df, df, how='left')
-
+        self.df = pd.merge(self.df, df, how='left', left_index=True)
+        print(self.df)
         # call streams in dataframe
         self.df = self.df.apply(lambda x: x.apply(
             lambda y: y() if callable(y) else y))
         # end streaming approach
 
         return self.df
-
 
     def print_orbit_data(self):
         table=tabulate.tabulate(self.df, headers='keys', tablefmt='fancy_grid')
@@ -168,3 +145,80 @@ class OrbitManager():
 
             eccentricity_change.make_nodes()
             NodeManager().execute_node()
+
+class Orbit():
+    def __init__(self, vessel):
+        self.conn = krpc.connect()
+        self.sc = self.conn.space_center
+
+        self.vessel = vessel
+
+        # keplerian elements
+        self.eccentricity = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'eccentricity')
+        self.inclination = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'inclination')
+        self.semi_major_axis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'semi_major_axis')
+        self.longitude_of_ascending_node = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'longitude_of_ascending_node')
+        self.argument_of_periapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'argument_of_periapsis')
+        self.true_anomaly = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'true_anomaly')
+
+        # Dataframe 
+        df = pd.DataFrame([{
+            'vessel': v,
+            'name': v.name,
+            'body': self.conn.add_stream(getattr, v.orbit.body, 'name'),
+            'eccentricity': self.conn.add_stream(getattr, v.orbit, 'eccentricity'),
+            'semi_major_axis': self.conn.add_stream(getattr, v.orbit, 'semi_major_axis'),
+            'inclination': self.conn.add_stream(getattr, v.orbit, 'inclination'),
+            'longitude_of_ascending_node': self.conn.add_stream(getattr, v.orbit, 'longitude_of_ascending_node'),
+            'argument_of_periapsis': self.conn.add_stream(getattr, v.orbit, 'argument_of_periapsis'),
+            'true_anomaly': self.conn.add_stream(getattr, v.orbit, 'true_anomaly'),
+        }
+            for v in [vessel]])
+        df = df.set_index('vessel')
+
+        self.df = pd.merge(self.df, df, how='left', left_index=True)
+        print(self.df)
+        # call streams in dataframe
+        self.df = self.df.apply(lambda x: x.apply(
+            lambda y: y() if callable(y) else y))
+        # end streaming approach
+
+        return self.df
+
+    def print_orbit_data(self):
+        table=tabulate.tabulate(self.df, headers='keys', tablefmt='fancy_grid')
+        print(table)
+
+
+
+
+
+        # Telemetry
+        self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
+        self.orbit = self.conn.add_stream(getattr, self.vessel, 'orbit')
+        self.body = self.conn.add_stream(getattr, self.orbit(), 'body')
+        self.eccentricity = self.conn.add_stream(getattr, self.orbit(), 'eccentricity')
+        self.semi_major_axis = self.conn.add_stream(getattr, self.orbit(), 'semi_major_axis')
+        self.inclination = self.conn.add_stream(getattr, self.orbit(), 'inclination')
+        self.longitude_of_ascending_node = self.conn.add_stream(getattr, self.orbit(), 'longitude_of_ascending_node')
+        self.argument_of_periapsis = self.conn.add_stream(getattr, self.orbit(), 'argument_of_periapsis')
+        self.true_anomaly = self.conn.add_stream(getattr, self.orbit(), 'true_anomaly')
+        self.period = self.conn.add_stream(getattr, self.orbit(), 'period')
+        self.apoapsis = self.conn.add_stream(getattr, self.orbit(), 'apoapsis')
+        self.periapsis = self.conn.add_stream(getattr, self.orbit(), 'periapsis')
+        self.time_to_apoapsis = self.conn.add_stream(getattr, self.orbit(), 'time_to_apoapsis')
+        self.time_to_periapsis = self.conn.add_stream(getattr, self.orbit(), 'time_to_periapsis')
+        self.mean_anomaly_at_epoch = self.conn.add_stream(getattr, self.orbit(), 'mean_anomaly_at_epoch')
+        self.epoch = self.conn.add_stream(getattr, self.orbit(), 'epoch')
+        self.mean_anomaly = self.conn.add_stream(getattr, self.orbit(), 'mean_anomaly')
+        self.eccentric_anomaly = self.conn.add_stream(getattr, self.orbit(), 'eccentric_anomaly')
+        self.true_anomaly = self.conn.add_stream(getattr, self.orbit(), 'true_anomaly')
+        self.radius = self.conn.add_stream(getattr, self.orbit(), 'radius')
+        self.speed = self.conn.add_stream(getattr, self.orbit(), 'speed')
+        self

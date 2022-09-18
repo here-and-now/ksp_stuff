@@ -1,12 +1,7 @@
-from comsat_network import ComSatNetwork
-from launch import LaunchManager
-from orbits import OrbitManager
-from vessels import VesselManager
-
 import bokeh
 from bokeh.models.widgets import Tabs, Panel
 from bokeh.plotting import figure, show, output_file
-from bokeh.models import ColumnDataSource, CustomJS, Slider, Button, Div, DataTable, TableColumn, NumberFormatter, StringFormatter, FileInput, RangeSlider, Select, TextAreaInput, TextInput, ImageURL, ImageRGBA, DataTable
+from bokeh.models import ColumnDataSource, CustomJS, Slider, Button, Div, DataTable, TableColumn, NumberFormatter, StringFormatter, RangeSlider, Select, TextInput, DataTable
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 
@@ -20,19 +15,23 @@ import sys
 
 from orbits import OrbitManager
 from vessels import VesselManager, Vessel
+from comsat_network import ComSatNetwork
+from launch import LaunchManager
 
 
 class KSPBokehApp():
     def __init__(self):
         self.active_vessel = None
 
-        self.vessel_manager = VesselManager(name='ComSat_0.33')
+        # self.vessel_manager = VesselManager(name='ComSat_0.33')
+        self.vessel_manager = VesselManager(name='')
         self.vessel_source = ColumnDataSource(
             self.bokehfy_df(self.vessel_manager.df))
 
         formatter_dict = {
             'vessel': StringFormatter(),
             'name': StringFormatter(),
+            'body': StringFormatter(),
             'eccentricity': NumberFormatter(format='0.00000'),
             'inclination': NumberFormatter(format='0.00000'),
             'semi_major_axis': NumberFormatter(format='0.00'),
@@ -41,7 +40,7 @@ class KSPBokehApp():
             'true_anomaly': NumberFormatter(format='0.00000'),
         }
 
-        
+        # reset index as TableColumns does not support index
         columns = [TableColumn(field=Ci, title=Ci, formatter=formatter_dict.get(
             Ci, None)) for Ci in self.vessel_manager.df.reset_index().columns]
         self.vessel_table = DataTable(source=self.vessel_source, columns=columns,
@@ -50,6 +49,9 @@ class KSPBokehApp():
 
         self.update_button = Button(label="Update", button_type="success")
         self.update_button.on_click(lambda: self.update_source())
+
+        # self.search_vessel_input = TextInput(value="", title="Search Vessel:")
+        # sealf.search_vessel_input.on_change('value', lambda attr, old, new: self.search_vessel(new))
 
         tabs = Tabs(tabs=[
             Panel(child=column(self.update_button,

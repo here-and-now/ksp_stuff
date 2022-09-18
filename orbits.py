@@ -165,6 +165,19 @@ class Orbit():
             getattr, self.vessel.orbit, 'argument_of_periapsis')
         self.true_anomaly = self.conn.add_stream(
             getattr, self.vessel.orbit, 'true_anomaly')
+        self.body = self.conn.add_stream(getattr, self.vessel.orbit, 'body')
+
+        # orbital elements
+        self.apoapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'apoapsis_altitude')
+        self.periapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'periapsis_altitude')
+        self.period = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'period')
+        self.time_to_apoapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'time_to_apoapsis')
+        self.time_to_periapsis = self.conn.add_stream(
+            getattr, self.vessel.orbit, 'time_to_periapsis')
 
         self.df = self.setup_orbit_df()
     
@@ -172,6 +185,7 @@ class Orbit():
         df = pd.DataFrame([{
             'vessel': self.vessel,
             # 'name': self.vessel.name,
+            'body': self.vessel.orbit.body,
             'eccentricity': self.eccentricity,
             'inclination': self.inclination,
             'semi_major_axis': self.semi_major_axis,

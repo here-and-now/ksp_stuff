@@ -1,12 +1,12 @@
 from comsat_network import ComSatNetwork
 from launch import LaunchManager
-# from orbits import OrbitManager
+from orbits import OrbitManager
 from vessels import VesselManager
 
 import bokeh
 from bokeh.models.widgets import Tabs, Panel
 from bokeh.plotting import figure, show, output_file
-from bokeh.models import ColumnDataSource, CustomJS, Slider, Button, Div, DataTable, TableColumn, NumberFormatter, FileInput, RangeSlider, Select, TextAreaInput, TextInput, ImageURL, ImageRGBA, DataTable
+from bokeh.models import ColumnDataSource, CustomJS, Slider, Button, Div, DataTable, TableColumn, NumberFormatter, StringFormatter, FileInput, RangeSlider, Select, TextAreaInput, TextInput, ImageURL, ImageRGBA, DataTable
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 
@@ -30,34 +30,55 @@ class KSPBokehApp():
         self.vessel_source = ColumnDataSource(
             self.bokehfy_df(self.vessel_manager.df))
 
-        self.vessel_table = DataTable(source=self.vessel_source, columns=[TableColumn(
-            field=Ci, title=Ci) for Ci in self.vessel_manager.df.columns], width=800, height=280)
+        formatter_dict = {
+            'vessel': StringFormatter(),
+            'name': StringFormatter(),
+            'eccentricity': NumberFormatter(format='0.00000'),
+            'inclination': NumberFormatter(format='0.00000'),
+            'semi_major_axis': NumberFormatter(format='0.00'),
+            'longitude_of_ascending_node': NumberFormatter(format='0.00000'),
+            'argument_of_periapsis': NumberFormatter(format='0.00000'),
+            'true_anomaly': NumberFormatter(format='0.00000'),
+        }
 
-        # # layout
-        self.vessel_table_layout = column(self.vessel_table)
+        
+        columns = [TableColumn(field=Ci, title=Ci, formatter=formatter_dict.get(
+            Ci, None)) for Ci in self.vessel_manager.df.reset_index().columns]
+        self.vessel_table = DataTable(source=self.vessel_source, columns=columns,
+                                      width=800, height=280)
 
-        # # tabs
-        self.vessel_tab = Panel(
-            child=self.vessel_table_layout, title='Vessels')
 
-        self.tabs = Tabs(tabs=[self.vessel_tab])
+        self.update_button = Button(label="Update", button_type="success")
+        self.update_button.on_click(lambda: self.update_source())
 
-        # # show
-        curdoc().add_root(self.tabs)
+        tabs = Tabs(tabs=[
+            Panel(child=column(self.update_button,
+                  self.vessel_table), title="Vessels"),
+        ])
+
+        curdoc().add_root(tabs)
+
+    def update_source(self):
+        ''' Updates the source of the vessel table '''
+        self.vessel_source.data = self.bokehfy_df(self.vessel_manager.df)
 
     def bokehfy_df(self, df):
-        ''' Returns dataframe with bokeh compatible data types, currently only vessel objects'''
+        ''' Returns dataframe with bokeh compatible data types, currently only vessel objects. Also calls streams if necessary '''
         df = df.apply(lambda x: x.apply(
             lambda y: y() if callable(y) else y))
+
         df = df.reset_index()
-        df['vessel'] = df['vessel'].astype(str)
-        df = df.set_index('vessel')
+        df['vessel'] = df['vessel'].apply(lambda x: str(x))
+
         return df
 
 
 if __name__ == '__main__':
     KSPBokehApp()
 
+
+
+# ooooold
 
 # if __name__ == '__main__':
 

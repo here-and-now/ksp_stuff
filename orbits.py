@@ -166,18 +166,18 @@ class Orbit():
         self.true_anomaly = self.conn.add_stream(
             getattr, self.vessel.orbit, 'true_anomaly')
 
-        self.df = self.get_orbit_df()
-
-    def get_orbit_df(self):
+        self.df = self.setup_orbit_df()
+    
+    def setup_orbit_df(self):
         df = pd.DataFrame([{
             'vessel': self.vessel,
-            'vessel_name': self.vessel.name,
-            'eccentricity': self.eccentricity(),
-            'inclination': self.inclination(),
-            'semi_major_axis': self.semi_major_axis(),
-            'longitude_of_ascending_node': self.longitude_of_ascending_node(),
-            'argument_of_periapsis': self.argument_of_periapsis(),
-            'true_anomaly': self.true_anomaly(),
+            # 'name': self.vessel.name,
+            'eccentricity': self.eccentricity,
+            'inclination': self.inclination,
+            'semi_major_axis': self.semi_major_axis,
+            'longitude_of_ascending_node': self.longitude_of_ascending_node,
+            'argument_of_periapsis': self.argument_of_periapsis,
+            'true_anomaly': self.true_anomaly,
         }])
         df = df.set_index('vessel')
         return df 

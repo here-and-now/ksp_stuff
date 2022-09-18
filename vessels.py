@@ -28,33 +28,26 @@ class VesselManager():
             self.vessel_list = [self.sc.active_vessel]
             self.name = self.sc.active_vessel.name
         else:
-            self.vessel_list = self.sc.vessels
+            self.vessel_list = [v for v in self.sc.vessels if self.name in v.name]
+
+            
     
-        self.df = self.vessels_df()
-        self.df = self.filter_df_by_name(self.df, self.name)
-        self.df = self.add_orbit_data(self.df)
+        self.df = self.setup_vessels_df()
+        # self.df = self.filter_df_by_name(self.df, self.name)
     
-    def vessels_df(self):
-        """ Returns a dataframe of all vessels """
-        # df = pd.concat([Vessel(vessel).df for vessel in self.vessel_list])
-        df = pd.concat([Vessel(vessel).df for vessel in self.vessel_list])
-        return df
-        # df = df.set_index('vessel')
-    
-    def add_orbit_data(self, df):
-        """ Returns a dataframe with orbital data """
-        # df = pd.concat([df, Orbit(vessel).df])
-        df = pd.merge(df, Orbit(vessel).df, how='left', left_index=True)
+    def setup_vessels_df(self):
+        ''' Returns a dataframe of Vessel objects '''
+
+        df = pd.concat([Vessel(v, orbit_bool=True).df for v in self.vessel_list])
         return df
 
-    def filter_df_by_name(self, df, name):
+    def filter_df_by_attr(self, df, attr, value):
         """ Returns a dataframe of vessels with a given name"""
-        return df[df['name'].str.contains(name)]
-
+        return df[df[attr].str.contains(value)]
 
 
 class Vessel():
-    def __init__(self, vessel=None):
+    def __init__(self, vessel=None,orbit_bool=False):
         if vessel == None:
             vessel = krpc.connect('Vessel').space_center.active_vessel
             print(f'Vessel: No vessel selected. Defaulting to active vessel {vessel.name}')
@@ -63,9 +56,14 @@ class Vessel():
         self.vessel = vessel
         self.vessel_name = vessel.name
         # Dataframe
-        self.df = self.get_vessel_df()
+        self.df = self.setup_df()
 
-    def get_vessel_df(self):
+        if orbit_bool:
+            self.orbit = Orbit(self.vessel)
+            self.df = pd.merge(self.df, self.orbit.df, how='left', left_index=True, right_index=True)
+
+    def setup_df(self):
+        """ Returns a dataframe of vessel attributes """
         df = pd.DataFrame([{
                 'vessel': self.vessel,
                 'name': self.vessel.name,

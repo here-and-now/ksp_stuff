@@ -1,6 +1,6 @@
 from comsat_network import ComSatNetwork
 from launch import LaunchManager
-from orbits import OrbitManager
+# from orbits import OrbitManager
 from vessels import VesselManager
 
 
@@ -25,9 +25,7 @@ if __name__ == '__main__':
                             # max_q,
                             # staging_options=None)
     # launch.ascent()
-    vessel = VesselManager(name='Com')
-    orbits = OrbitManager(df=vessel.df)
-    orbits.print_orbit_data()
+    vessels = VesselManager(name='Com')
 
     # a = orbit_manager.setup_df()
     # print(a)

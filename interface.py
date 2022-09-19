@@ -50,15 +50,20 @@ class KSPBokehApp():
         self.update_button = Button(label="Update", button_type="success")
         self.update_button.on_click(lambda: self.update_source())
 
-        # self.search_vessel_input = TextInput(value="", title="Search Vessel:")
-        # sealf.search_vessel_input.on_change('value', lambda attr, old, new: self.search_vessel(new))
+        self.search_vessel_input = TextInput(value="", title="Search Vessel:")
+        self.search_vessel_input.on_change('value', self.search_vessel)
 
         tabs = Tabs(tabs=[
-            Panel(child=column(self.update_button,
-                  self.vessel_table), title="Vessels"),
+            Panel(child=column(self.update_button, self.search_vessel_input, self.vessel_table), title='Vessels'),
         ])
 
         curdoc().add_root(tabs)
+
+
+    def search_vessel(self, attr, old, new):
+        ''' Searches for vessels containing the search string '''
+        df = self.vessel_manager.search_vessels_by_name(new)
+        self.vessel_source.data = self.bokehfy_df(df)
 
     def update_source(self):
         ''' Updates the source of the vessel table '''
@@ -70,7 +75,10 @@ class KSPBokehApp():
             lambda y: y() if callable(y) else y))
 
         df = df.reset_index()
-        df['vessel'] = df['vessel'].apply(lambda x: str(x))
+        if 'vessel' in df.columns:
+            df['vessel'] = df['vessel'].apply(lambda x: str(x))
+        if 'body' in df.columns:
+            df['body'] = df['body'].apply(lambda x: str(x))
 
         return df
 

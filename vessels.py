@@ -1,4 +1,3 @@
-import math
 import time
 
 import krpc
@@ -29,21 +28,26 @@ class VesselManager():
         else:
             self.vessel_list = [v for v in self.sc.vessels if self.name in v.name]
         self.df = self.setup_vessels_df()
+
+
+
     
     def setup_vessels_df(self):
         ''' Returns a dataframe of Vessel objects '''
-        df = pd.concat([Vessel(self.conn,v, orbit_bool=True).df for v in self.vessel_list])
-        return df
+        self.df = pd.concat([Vessel(self.conn,v, orbit_bool=True).df for v in self.vessel_list])
+        return self.df
 
     def search_vessels_by_name(self, name):
         self.vessel_list = [v for v in self.sc.vessels if name in v.name]
         try:
-            df = pd.concat([Vessel(self.conn,v, orbit_bool=False).df for v in self.vessel_list])
-            return df
+            self.df = pd.concat([Vessel(self.conn,v, orbit_bool=True).df for v in self.vessel_list])
+            return self.df
         except:
             print(f"VesselManager: No vessels found with name {name}")
             # return empty complete empty dataframe
             return pd.DataFrame()
+
+
     def filter_df_by_attr(self, df, attr, value):
         """ Returns a dataframe of vessels with a given name"""
         return df[df[attr].str.contains(value)]

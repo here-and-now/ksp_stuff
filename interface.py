@@ -24,7 +24,7 @@ class KSPBokehApp():
         self.active_vessel = None
 
         # self.vessel_manager = VesselManager(name='ComSat_0.33')
-        self.vessel_manager = VesselManager(name='')
+        self.vessel_manager = VesselManager(name=None)
         self.vessel_source = ColumnDataSource(
             self.bokehfy_df(self.vessel_manager.df))
 
@@ -43,25 +43,33 @@ class KSPBokehApp():
         # reset index as TableColumns does not support index
         columns = [TableColumn(field=Ci, title=Ci, formatter=formatter_dict.get(
             Ci, None)) for Ci in self.vessel_manager.df.reset_index().columns]
-        self.vessel_table = DataTable(source=self.vessel_source, columns=columns,
-                                      width=800, height=280)
+        self.vessel_table = DataTable(source=self.vessel_source, columns=columns)
+                                      # width=800, height=280)
 
 
         self.update_button = Button(label="Update", button_type="success")
-        self.update_button.on_click(lambda: self.update_source())
+        self.update_button.on_click(self.update_source)
 
         self.search_vessel_input = TextInput(value="", title="Search Vessel:")
-        self.search_vessel_input.on_change('value', self.search_vessel)
+        # self.search_vessel_input.on_change('value', self.search_vessel)
+        self.search_vessel_input.on_change('value', lambda attr, old, new: self.search_vessel(attr, old, new))
+        # on click update source
 
         tabs = Tabs(tabs=[
             Panel(child=column(self.update_button, self.search_vessel_input, self.vessel_table), title='Vessels'),
         ])
 
         curdoc().add_root(tabs)
+    
+    def update_on_search_vessel(self, attr, old, new):
+        self.vessel_manager.name = new
+        self.vessel_manager.df = self.vessel_manager.setup_vessels_df()
+        self.update_source()
 
 
     def search_vessel(self, attr, old, new):
         ''' Searches for vessels containing the search string '''
+
         df = self.vessel_manager.search_vessels_by_name(new)
         self.vessel_source.data = self.bokehfy_df(df)
 

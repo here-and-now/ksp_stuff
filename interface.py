@@ -28,6 +28,7 @@ class KSPBokehApp():
         self.vessel_source = ColumnDataSource(
             self.bokehfy_df(self.vessel_manager.df))
 
+
         formatter_dict = {
             'vessel': StringFormatter(),
             'name': StringFormatter(),
@@ -43,29 +44,51 @@ class KSPBokehApp():
         # reset index as TableColumns does not support index
         columns = [TableColumn(field=Ci, title=Ci, formatter=formatter_dict.get(
             Ci, None)) for Ci in self.vessel_manager.df.reset_index().columns]
-        self.vessel_table = DataTable(source=self.vessel_source, columns=columns)
+        self.vessel_table = DataTable(source=self.vessel_source, columns=columns, autosize_mode='fit_viewport')
                                       # width=800, height=280)
 
 
         self.update_button = Button(label="Update", button_type="success")
-        self.update_button.on_click(self.update_source)
+        # self.update_button.on_click(self.update_source)
+        self.update_button.on_click(self.test)
+
+
+
+        self.text_test = TextInput(value="0", title="Search Vessel:")
+        self.text_test.on_change('value', self.test)
 
         self.search_vessel_input = TextInput(value="", title="Search Vessel:")
-        # self.search_vessel_input.on_change('value', self.search_vessel)
         self.search_vessel_input.on_change('value', lambda attr, old, new: self.search_vessel(attr, old, new))
-        # on click update source
 
         tabs = Tabs(tabs=[
-            Panel(child=column(self.update_button, self.search_vessel_input, self.vessel_table), title='Vessels'),
+            Panel(child=column(self.search_vessel_input, self.vessel_table, self.update_button, self.text_test), title='Vessels'),
         ])
 
         curdoc().add_root(tabs)
+
+    # def test(self, attr, old, new):
+    def test(self):
+        # get stream from vesselman
+        df = self.vessel_manager.df
+
+        active_vessel = self.vessel_manager.active_vessel()
+        active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
+        self.vessel_table.selected.indices = [active_vessel_index]
+
+
+        # self.vessel_source.selected.indices = [int(new)]
+
     
     def update_on_search_vessel(self, attr, old, new):
         self.vessel_manager.name = new
         self.vessel_manager.df = self.vessel_manager.setup_vessels_df()
         self.update_source()
 
+    # def select_data_table_row(self, attr, old, new):
+    def select_data_table_row(self):
+        ''' Selects a row in the data table '''
+        # self.vessel_table.selected.indices = [new]
+        self.vessel_source.selected.indices = [0]
 
     def search_vessel(self, attr, old, new):
         ''' Searches for vessels containing the search string '''
@@ -85,6 +108,7 @@ class KSPBokehApp():
         df = df.reset_index()
         if 'vessel' in df.columns:
             df['vessel'] = df['vessel'].apply(lambda x: str(x))
+            # df['vessel'] = df['vessel'].apply(lambda x: str(x).split('#')[1])
         if 'body' in df.columns:
             df['body'] = df['body'].apply(lambda x: str(x))
 

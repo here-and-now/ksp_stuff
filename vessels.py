@@ -21,6 +21,9 @@ class VesselManager():
         self.conn = krpc.connect(name="VesselManager")
         self.sc = self.conn.space_center
         self.name = name
+
+        self.active_vessel = self.conn.add_stream(getattr, self.sc, 'active_vessel')
+
         print('VesselManager connected ...')
         if name == None:
             self.vessel_list = [self.sc.active_vessel]

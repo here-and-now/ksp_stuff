@@ -52,7 +52,7 @@ class KSPBokehApp():
         self.update_button.on_click(self.update_source)
 
         self.updatetest_button = Button(label="Test index", button_type="success")
-        self.updatetest_button.on_click(self.test)
+        self.updatetest_button.on_click(self.select_active_vessel_index_on_vessel_source)
 
 
         self.text_test = TextInput(value="0", title="Search Vessel:")
@@ -63,28 +63,20 @@ class KSPBokehApp():
         tabs = Tabs(tabs=[
             Panel(child=column(self.search_vessel_input, self.vessel_table, self.update_button, self.text_test, self.updatetest_button), title='Vessels'),
         ])
-
+        curdoc().add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
         curdoc().add_root(tabs)
 
-    def test(self):
-    # def test(self):
-        # get stream from vesselman
-        df = self.vessel_manager.df
-
-        df = self.bokehfy_df(df)
+    def select_active_vessel_index_on_vessel_source(self):
+        ''' Selects the active vessel on the vessel_source '''
+        df = self.bokehfy_df(self.vessel_manager.df)
         active_vessel = self.vessel_manager.active_vessel()
-        print(active_vessel)
+        try:
+            active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
+            self.vessel_source.selected.indices = [active_vessel_index]
+        except:
+            pass
+         
 
-
-        # active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
-        active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
-        # active_vessel_index = df[df['vessel'].isin([str(active_vessel)])].tolist()[0]
-        self.vessel_source.selected.indices = [active_vessel_index]
-
-
-        # self.vessel_source.selected.indices = [int(new)]
-
-    
     def update_on_search_vessel(self, attr, old, new):
         self.vessel_manager.name = new
         self.vessel_manager.df = self.vessel_manager.setup_vessels_df()

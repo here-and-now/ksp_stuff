@@ -1,3 +1,4 @@
+from abc import update_abstractmethods
 import bokeh
 from bokeh.models.widgets import Tabs, Panel
 from bokeh.plotting import figure, show, output_file
@@ -28,7 +29,6 @@ class KSPBokehApp():
         self.vessel_source = ColumnDataSource(
             self.bokehfy_df(self.vessel_manager.df))
 
-
         formatter_dict = {
             'vessel': StringFormatter(),
             'name': StringFormatter(),
@@ -49,31 +49,37 @@ class KSPBokehApp():
 
 
         self.update_button = Button(label="Update", button_type="success")
-        # self.update_button.on_click(self.update_source)
-        self.update_button.on_click(self.test)
+        self.update_button.on_click(self.update_source)
 
+        self.updatetest_button = Button(label="Test index", button_type="success")
+        self.updatetest_button.on_click(self.test)
 
 
         self.text_test = TextInput(value="0", title="Search Vessel:")
-        self.text_test.on_change('value', self.test)
 
         self.search_vessel_input = TextInput(value="", title="Search Vessel:")
-        self.search_vessel_input.on_change('value', lambda attr, old, new: self.search_vessel(attr, old, new))
+        self.search_vessel_input.on_change('value', self.search_vessel)
 
         tabs = Tabs(tabs=[
-            Panel(child=column(self.search_vessel_input, self.vessel_table, self.update_button, self.text_test), title='Vessels'),
+            Panel(child=column(self.search_vessel_input, self.vessel_table, self.update_button, self.text_test, self.updatetest_button), title='Vessels'),
         ])
 
         curdoc().add_root(tabs)
 
-    # def test(self, attr, old, new):
     def test(self):
+    # def test(self):
         # get stream from vesselman
         df = self.vessel_manager.df
 
+        df = self.bokehfy_df(df)
         active_vessel = self.vessel_manager.active_vessel()
+        print(active_vessel)
+
+
+        # active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
         active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
-        self.vessel_table.selected.indices = [active_vessel_index]
+        # active_vessel_index = df[df['vessel'].isin([str(active_vessel)])].tolist()[0]
+        self.vessel_source.selected.indices = [active_vessel_index]
 
 
         # self.vessel_source.selected.indices = [int(new)]

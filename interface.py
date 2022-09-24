@@ -64,16 +64,6 @@ class KSPBokehApp():
         # Communication network
 
         # Launch
-
-        # # launch parameters
-        # target_altitude = 250000
-        # turn_start_altitude = 2500
-        # turn_end_altitude = 120000
-        # inclination = 0
-        # roll = 90
-        # max_q = 20000
-        # end_stage = 3
-
         self.slider_target_altitude = Slider(
             start=100000, end=1000000, value=250000, step=1000, title="Target Altitude")
         self.slider_turn_start_altitude = Slider(
@@ -92,43 +82,53 @@ class KSPBokehApp():
         self.launch_button = Button(label="Launch", button_type="success")
         self.launch_button.on_click(self.go_for_launch)
 
+        self.fig_launch_telemetry = figure(plot_width=800, plot_height=400)
+
         # self.communication_network_tab = Panel(child=column(
             # self.vessel_table, self.update_button, self.test_btn, self.text_test, self.search_vessel_input), title='Communication Network')
-        self.launch_tab = Panel(child=column(
-            self.slider_target_altitude, self.slider_turn_start_altitude, self.slider_turn_end_altitude, self.slider_inclination, self.slider_roll, self.slider_max_q, self.slider_end_stage, self.launch_button), title='Launch')
+        self.launch_slider_column = column(self.slider_target_altitude, self.slider_turn_start_altitude, self.slider_turn_end_altitude, self.slider_inclination, self.slider_roll, self.slider_max_q, self.slider_end_stage, self.launch_button)
+        self.launch_telemetry_column = column(self.fig_launch_telemetry)
+        self.launch_tab = Panel(child=row(self.launch_slider_column, self.launch_telemetry_column), title='Launch')
 
-        self.vessels_tab = Panel(child=column(self.search_vessel_input, self.vessel_table,
-                                 self.update_button, self.text_test, self.test_btn), title='Vessels')
+        self.vessels_tab=Panel(child = column(self.search_vessel_input, self.vessel_table,
+                                 self.update_button, self.text_test, self.test_btn), title = 'Vessels')
 
-        self.tabs = Tabs(tabs=[self.vessels_tab, self.launch_tab])
+        self.tabs=Tabs(tabs = [self.vessels_tab, self.launch_tab])
 
         curdoc().add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
         curdoc().add_root(self.tabs)
 
     def go_for_launch(self):
         ''' Launches the vessel '''
-        launch = LaunchManager(self.slider_target_altitude.value,
+        launch=LaunchManager(self.slider_target_altitude.value,
                                self.slider_turn_start_altitude.value,
                                self.slider_turn_end_altitude.value,
                                self.slider_end_stage.value,
                                self.slider_inclination.value,
                                self.slider_roll.value,
                                self.slider_max_q.value,
-                               staging_options=None)
+                               staging_options = None)
+        launch.ascent()
+        df = self.bokehfy_df(launch.df)
+
+
+        source = ColumnDataSource(data=df)
+        self.fig_launch_telemetry.line(x='met', y='flight_mean_altitude', source=source)
+
 
         launch.ascent()
 
     def teeeest(self):
-        selected_vessel = self.vessel_source.selected.indices[0]
-        vname = self.vessel_source.data['vessel'][selected_vessel]
-        self.text_test.value = vname
+        selected_vessel=self.vessel_source.selected.indices[0]
+        vname=self.vessel_source.data['vessel'][selected_vessel]
+        self.text_test.value=vname
 
     def select_active_vessel_index_on_vessel_source(self):
         ''' Selects the active vessel on the vessel_source '''
-        df = self.bokehfy_df(self.vessel_manager.df)
-        active_vessel = self.vessel_manager.active_vessel()
+        df=self.bokehfy_df(self.vessel_manager.df)
+        active_vessel=self.vessel_manager.active_vessel()
         try:
-            active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[
+            active_vessel_index=df.index[df['vessel'] == str(active_vessel)].tolist()[
                 0]
             self.vessel_source.selected.indices = [active_vessel_index]
         except IndexError:

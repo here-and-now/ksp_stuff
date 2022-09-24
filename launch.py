@@ -3,6 +3,7 @@ import time
 import krpc
 from pkg_resources import get_importer
 import utils.pid
+import pandas as pd
 
 from orbits import OrbitManager
 from nodes import NodeManager
@@ -52,12 +53,15 @@ class LaunchManager():
         # telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
         self.met = self.conn.add_stream(getattr, self.vessel, 'met')
+
         self.flight_mean_altitude = self.conn.add_stream(getattr, self.vessel.flight(
             self.vessel.orbit.body.non_rotating_reference_frame), 'mean_altitude')
         self.flight_dynamic_pressure = self.conn.add_stream(getattr, self.vessel.flight(
             self.vessel.orbit.body.non_rotating_reference_frame), 'dynamic_pressure')
-        self.altitude = self.conn.add_stream(
-            getattr, self.vessel.flight(), 'mean_altitude')
+        # self.vessel = self.conn.add_stream(getattr, self.conn.space_center, 'active_vessel')
+
+        # self.altitude = self.conn.add_stream(
+            # getattr, self.vessel.flight(), 'mean_altitude')
         self.apoapsis = self.conn.add_stream(
             getattr, self.vessel.orbit, 'apoapsis_altitude')
         self.periapsis = self.conn.add_stream(
@@ -66,6 +70,17 @@ class LaunchManager():
             getattr, self.vessel.orbit, 'eccentricity')
         self.inclination = self. conn.add_stream(
             getattr, self.vessel.orbit, 'inclination')
+
+        self.df = self.setup_launch_df()
+
+    def setup_launch_df(self):
+        df = pd.DataFrame([{
+            'vessel': self.vessel,
+            'met': self.met,
+            'flight_mean_altitude': self.flight_mean_altitude,
+        }])
+        df = df.set_index('vessel')
+        return df 
 
     def staging(self):
         current_stage = self.vessel.control.current_stage

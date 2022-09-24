@@ -41,41 +41,98 @@ class KSPBokehApp():
             'true_anomaly': NumberFormatter(format='0.00000'),
         }
 
+        # Vessels
         # reset index as TableColumns does not support index
         columns = [TableColumn(field=Ci, title=Ci, formatter=formatter_dict.get(
             Ci, None)) for Ci in self.vessel_manager.df.reset_index().columns]
-        self.vessel_table = DataTable(source=self.vessel_source, columns=columns, autosize_mode='fit_viewport')
-                                      # width=800, height=280)
-
-
-        self.update_button = Button(label="Update", button_type="success")
-        self.update_button.on_click(self.update_source)
-
-        self.updatetest_button = Button(label="Test index", button_type="success")
-        self.updatetest_button.on_click(self.select_active_vessel_index_on_vessel_source)
-
-
-        self.text_test = TextInput(value="0", title="Search Vessel:")
+        self.vessel_table = DataTable(
+            source=self.vessel_source, columns=columns, autosize_mode='fit_viewport')
+        # width=800, height=280)
 
         self.search_vessel_input = TextInput(value="", title="Search Vessel:")
         self.search_vessel_input.on_change('value', self.search_vessel)
 
-        tabs = Tabs(tabs=[
-            Panel(child=column(self.search_vessel_input, self.vessel_table, self.update_button, self.text_test, self.updatetest_button), title='Vessels'),
-        ])
+        self.update_button = Button(label="Update", button_type="success")
+        self.update_button.on_click(self.update_source)
+
+        # test stuff
+        self.test_btn = Button(label="Test", button_type="success")
+        self.test_btn.on_click(self.teeeest)
+        self.text_test = TextInput(value="0", title="Search Vessel:")
+        # end vessels
+
+        # Communication network
+
+        # Launch
+
+        # # launch parameters
+        # target_altitude = 250000
+        # turn_start_altitude = 2500
+        # turn_end_altitude = 120000
+        # inclination = 0
+        # roll = 90
+        # max_q = 20000
+        # end_stage = 3
+
+        self.slider_target_altitude = Slider(
+            start=100000, end=1000000, value=250000, step=1000, title="Target Altitude")
+        self.slider_turn_start_altitude = Slider(
+            start=1000, end=100000, value=2500, step=100, title="Turn Start Altitude")
+        self.slider_turn_end_altitude = Slider(
+            start=1000, end=100000, value=120000, step=100, title="Turn End Altitude")
+        self.slider_inclination = Slider(
+            start=-90, end=90, value=0, step=1, title="Inclination")
+        self.slider_roll = Slider(
+            start=0, end=360, value=90, step=1, title="Roll")
+        self.slider_max_q = Slider(
+            start=10000, end=100000, value=20000, step=1000, title="Max Q")
+        self.slider_end_stage = Slider(
+            start=1, end=10, value=3, step=1, title="End Stage")
+
+        self.launch_button = Button(label="Launch", button_type="success")
+        self.launch_button.on_click(self.go_for_launch)
+
+        # self.communication_network_tab = Panel(child=column(
+            # self.vessel_table, self.update_button, self.test_btn, self.text_test, self.search_vessel_input), title='Communication Network')
+        self.launch_tab = Panel(child=column(
+            self.slider_target_altitude, self.slider_turn_start_altitude, self.slider_turn_end_altitude, self.slider_inclination, self.slider_roll, self.slider_max_q, self.slider_end_stage, self.launch_button), title='Launch')
+
+        self.vessels_tab = Panel(child=column(self.search_vessel_input, self.vessel_table,
+                                 self.update_button, self.text_test, self.test_btn), title='Vessels')
+
+        self.tabs = Tabs(tabs=[self.vessels_tab, self.launch_tab])
+
         curdoc().add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
-        curdoc().add_root(tabs)
+        curdoc().add_root(self.tabs)
+
+    def go_for_launch(self):
+        ''' Launches the vessel '''
+        launch = LaunchManager(self.slider_target_altitude.value,
+                               self.slider_turn_start_altitude.value,
+                               self.slider_turn_end_altitude.value,
+                               self.slider_end_stage.value,
+                               self.slider_inclination.value,
+                               self.slider_roll.value,
+                               self.slider_max_q.value,
+                               staging_options=None)
+
+        launch.ascent()
+
+    def teeeest(self):
+        selected_vessel = self.vessel_source.selected.indices[0]
+        vname = self.vessel_source.data['vessel'][selected_vessel]
+        self.text_test.value = vname
 
     def select_active_vessel_index_on_vessel_source(self):
         ''' Selects the active vessel on the vessel_source '''
         df = self.bokehfy_df(self.vessel_manager.df)
         active_vessel = self.vessel_manager.active_vessel()
         try:
-            active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[0]
+            active_vessel_index = df.index[df['vessel'] == str(active_vessel)].tolist()[
+                0]
             self.vessel_source.selected.indices = [active_vessel_index]
-        except:
+        except IndexError:
             pass
-         
 
     def update_on_search_vessel(self, attr, old, new):
         self.vessel_manager.name = new
@@ -115,7 +172,6 @@ class KSPBokehApp():
 
 if __name__ == '__main__':
     KSPBokehApp()
-
 
 
 # ooooold

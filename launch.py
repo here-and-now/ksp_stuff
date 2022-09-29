@@ -145,82 +145,88 @@ class LaunchManager():
             self.flight_dynamic_pressure())
 
     def ascent(self):
-        # set up auto_pilot
-        self.vessel.auto_pilot.engage()
-        self.vessel.auto_pilot.target_roll = self.roll
+        try:
+            # set up auto_pilot
+            self.vessel.auto_pilot.engage()
+            self.vessel.auto_pilot.target_roll = self.roll
 
-        # logic for desired inclination to compass heading
-        if self.target_inclination >= 0:
-            self.vessel.auto_pilot.target_heading = 90 - self.target_inclination
-        elif self.target_inclination < 0:
-            self.vessel.auto_pilot.target_heading = - \
-                (self.target_inclination - 90) + 360
+            # logic for desired inclination to compass heading
+            if self.target_inclination >= 0:
+                self.vessel.auto_pilot.target_heading = 90 - self.target_inclination
+            elif self.target_inclination < 0:
+                self.vessel.auto_pilot.target_heading = - \
+                    (self.target_inclination - 90) + 360
 
-        # schedule
-        scheduler = BackgroundScheduler()
-        scheduler.add_job(id='Autostaging', func=self.staging,
-                          trigger='interval', seconds=2)
-        scheduler.add_job(
-            id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
-        scheduler.start()
+            # schedule
+            scheduler = BackgroundScheduler()
+            scheduler.add_job(id='Autostaging', func=self.staging,
+                              trigger='interval', seconds=2)
+            scheduler.add_job(
+                id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
+            scheduler.start()
 
-        # ascent loop
-        while self.apoapsis() < self.target_altitude * .98:
-            pass
+            # ascent loop
+            while self.apoapsis() < self.target_altitude * .98:
+                pass
 
-        # reschedule for more granular control
-        # scheduler.remove_job('Gravity turn')
-        # scheduler.add_job(id='Gravity turn', func=self.gravity_turn,
-            # trigger='interval', seconds=0.1)
+            # reschedule for more granular control
+            # scheduler.remove_job('Gravity turn')
+            # scheduler.add_job(id='Gravity turn', func=self.gravity_turn,
+                # trigger='interval', seconds=0.1)
 
-        # leaving atmosphere logic
-        # while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
-        # pass
-        # print('Leaving atmosphere the atmosphere ...')
+            # leaving atmosphere logic
+            # while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
+            # pass
+            # print('Leaving atmosphere the atmosphere ...')
 
-        scheduler.remove_job('Gravity turn')
-        # scheduler.remove_job('Autostaging')
+            scheduler.remove_job('Gravity turn')
+            # scheduler.remove_job('Autostaging')
 
-        print('Ascent complete')
-        self.vessel.control.throttle = 0
-        self.vessel.auto_pilot.disengage()
+            print('Ascent complete')
+            self.vessel.control.throttle = 0
+            self.vessel.auto_pilot.disengage()
 
-        print(
-            f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
-        circ = self.mj.maneuver_planner.operation_circularize
-        circ.make_node()
+            print(
+                f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
+            circ = self.mj.maneuver_planner.operation_circularize
+            circ.make_node()
 
-        NodeManager().execute_node()
-        OrbitManager().print_telemetry()
+            NodeManager().execute_node()
+            OrbitManager().print_telemetry()
 
-        ##### manual burn handling #####
+            ##### manual burn handling #####
 
-        # node creation burn vector targeting
-        # self.node, burn_time = self.create_circularization_burn()
-        # # reference_frame = self.vessel.orbit.body.reference_frame
-        # # self.vessel.auto_pilot.engage()
-        # self.vessel.auto_pilot.reference_frame = self.node.reference_frame
-        # # self.vessel.auto_pilot.reference_frame = reference_frame
-        # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.node.reference_frame)
-        # self.vessel.auto_pilot.wait()
+            # node creation burn vector targeting
+            # self.node, burn_time = self.create_circularization_burn()
+            # # reference_frame = self.vessel.orbit.body.reference_frame
+            # # self.vessel.auto_pilot.engage()
+            # self.vessel.auto_pilot.reference_frame = self.node.reference_frame
+            # # self.vessel.auto_pilot.reference_frame = reference_frame
+            # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.node.reference_frame)
+            # self.vessel.auto_pilot.wait()
 
-        # warp
-        # self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
-        # while self.node.time_to > (burn_time / 2.0):
-        # pass
-        # self.vessel.auto_pilot.wait()
+            # warp
+            # self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
+            # while self.node.time_to > (burn_time / 2.0):
+            # pass
+            # self.vessel.auto_pilot.wait()
 
-        # circularization burn
-        # while self.node.remaining_delta_v > self.precision:
-        # self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
-        # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
+            # circularization burn
+            # while self.node.remaining_delta_v > self.precision:
+            # self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
+            # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
 
-        # cleanup
-        # self.vessel.auto_pilot.disengage()
-        # self.vessel.control.throttle = 0
-        # self.node.remove()
+            # cleanup
+            # self.vessel.auto_pilot.disengage()
+            # self.vessel.control.throttle = 0
+            # self.node.remove()
 
-        ##### manual burn handling #####
+            ##### manual burn handling #####
+        except KeyboardInterrupt:
+            print('Ascent interrupted')
+            self.vessel.control.throttle = 0
+            self.vessel.auto_pilot.disengage()
+            scheduler.shutdown()
 
     def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass

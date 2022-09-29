@@ -108,8 +108,9 @@ class KSPBokehApp():
                                self.slider_roll.value,
                                self.slider_max_q.value,
                                staging_options = None)
-        launch.ascent()
+        # launch.ascent()
         df = self.bokehfy_df(launch.df)
+        print(df)
 
 
         source = ColumnDataSource(data=df)

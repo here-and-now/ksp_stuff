@@ -53,7 +53,7 @@ class KSPBokehApp():
         self.search_vessel_input.on_change('value', self.search_vessel)
 
         self.update_button = Button(label="Update", button_type="success")
-        self.update_button.on_click(self.update_source)
+        self.update_button.on_click(self.update_vessel_source)
 
         # test stuff
         self.test_btn = Button(label="Test", button_type="success")
@@ -94,13 +94,13 @@ class KSPBokehApp():
                                  self.update_button, self.text_test, self.test_btn), title = 'Vessels')
 
         self.tabs=Tabs(tabs = [self.vessels_tab, self.launch_tab])
-
-        curdoc().add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
-        curdoc().add_root(self.tabs)
+        self.curdoc = curdoc()
+        self.curdoc.add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
+        self.curdoc.add_root(self.tabs)
 
     def go_for_launch(self):
         ''' Launches the vessel '''
-        launch=LaunchManager(self.slider_target_altitude.value,
+        self.launch=LaunchManager(self.slider_target_altitude.value,
                                self.slider_turn_start_altitude.value,
                                self.slider_turn_end_altitude.value,
                                self.slider_end_stage.value,
@@ -108,16 +108,25 @@ class KSPBokehApp():
                                self.slider_roll.value,
                                self.slider_max_q.value,
                                staging_options = None)
+        
         # launch.ascent()
-        df = self.bokehfy_df(launch.df)
-        print(df)
+        df = self.bokehfy_df(self.launch.df)
+        # print(launch.df)
 
 
-        source = ColumnDataSource(data=df)
-        self.fig_launch_telemetry.line(x='met', y='flight_mean_altitude', source=source)
+        self.launch_source = ColumnDataSource(data=df)
+        self.fig_launch_telemetry.line(x='met', y='flight_mean_altitude', source=self.launch_source)
+        
+        self.curdoc.add_periodic_callback(self.update_launch_source, 1000)
+        # self.curdoc.add_periodic_callback(self.update_launch_source, 1000)
 
+        self.launch.ascent()
 
-        launch.ascent()
+    def update_launch_source(self):
+        ''' Updates the launch telemetry plot '''
+        self.launch_source.data = self.bokehfy_df(self.launch.df)
+        
+        
 
     def teeeest(self):
         selected_vessel=self.vessel_source.selected.indices[0]
@@ -138,7 +147,7 @@ class KSPBokehApp():
     def update_on_search_vessel(self, attr, old, new):
         self.vessel_manager.name = new
         self.vessel_manager.df = self.vessel_manager.setup_vessels_df()
-        self.update_source()
+        self.update_vessel_source()
 
     # def select_data_table_row(self, attr, old, new):
     def select_data_table_row(self):
@@ -152,7 +161,7 @@ class KSPBokehApp():
         df = self.vessel_manager.search_vessels_by_name(new)
         self.vessel_source.data = self.bokehfy_df(df)
 
-    def update_source(self):
+    def update_vessel_source(self):
         ''' Updates the source of the vessel table '''
         self.vessel_source.data = self.bokehfy_df(self.vessel_manager.df)
 

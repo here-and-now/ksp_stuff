@@ -73,6 +73,7 @@ class LaunchManager():
 
         self.df = self.setup_launch_df()
 
+
     def setup_launch_df(self):
         df = pd.DataFrame([{
             'vessel': self.vessel,
@@ -81,6 +82,15 @@ class LaunchManager():
         }])
         df = df.set_index('vessel')
         return df 
+
+    def append_launch_data(self):
+        ''' appends launch data to a pandas dataframe '''
+        self.df = self.df.append({
+            'vessel': self.vessel,
+            'met': self.met(),
+            'flight_mean_altitude': self.flight_mean_altitude(),
+        }, ignore_index=True)
+
 
     def staging(self):
         current_stage = self.vessel.control.current_stage
@@ -159,6 +169,8 @@ class LaunchManager():
 
             # schedule
             scheduler = BackgroundScheduler()
+            scheduler.add_job(id='log', func=self.append_launch_data, trigger='interval', seconds=0.1)
+
             scheduler.add_job(id='Autostaging', func=self.staging,
                               trigger='interval', seconds=2)
             scheduler.add_job(
@@ -168,16 +180,6 @@ class LaunchManager():
             # ascent loop
             while self.apoapsis() < self.target_altitude * .98:
                 pass
-
-            # reschedule for more granular control
-            # scheduler.remove_job('Gravity turn')
-            # scheduler.add_job(id='Gravity turn', func=self.gravity_turn,
-                # trigger='interval', seconds=0.1)
-
-            # leaving atmosphere logic
-            # while self.flight_mean_altitude() < self.vessel.orbit.body.atmosphere_depth:
-            # pass
-            # print('Leaving atmosphere the atmosphere ...')
 
             scheduler.remove_job('Gravity turn')
             # scheduler.remove_job('Autostaging')
@@ -194,34 +196,6 @@ class LaunchManager():
             NodeManager().execute_node()
             OrbitManager().print_telemetry()
 
-            ##### manual burn handling #####
-
-            # node creation burn vector targeting
-            # self.node, burn_time = self.create_circularization_burn()
-            # # reference_frame = self.vessel.orbit.body.reference_frame
-            # # self.vessel.auto_pilot.engage()
-            # self.vessel.auto_pilot.reference_frame = self.node.reference_frame
-            # # self.vessel.auto_pilot.reference_frame = reference_frame
-            # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.node.reference_frame)
-            # self.vessel.auto_pilot.wait()
-
-            # warp
-            # self.conn.space_center.warp_to(self.node.ut - (burn_time / 2.0) - 5)
-            # while self.node.time_to > (burn_time / 2.0):
-            # pass
-            # self.vessel.auto_pilot.wait()
-
-            # circularization burn
-            # while self.node.remaining_delta_v > self.precision:
-            # self.vessel.control.throttle = self.orbit_thrust_controller(self.node.remaining_delta_v)
-            # self.vessel.auto_pilot.target_direction = self.node.remaining_burn_vector(self.vessel.orbit.body.reference_frame)
-
-            # cleanup
-            # self.vessel.auto_pilot.disengage()
-            # self.vessel.control.throttle = 0
-            # self.node.remove()
-
-            ##### manual burn handling #####
         except KeyboardInterrupt:
             print('Ascent interrupted')
             self.vessel.control.throttle = 0
@@ -261,3 +235,4 @@ class LaunchManager():
         burn_time = (m0 - m1) / flow_rate
 
         return self.node, burn_time
+

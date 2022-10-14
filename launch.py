@@ -71,19 +71,8 @@ class LaunchManager():
         self.inclination = self. conn.add_stream(
             getattr, self.vessel.orbit, 'inclination')
         
-        mean_altitude = self.conn.get_call(getattr, self.vessel.flight(), 'mean_altitude')
-        # expression test 
-        expr_apo = self.conn.krpc.Expression.greater_than(
-                self.conn.krpc.Expression.call(mean_altitude),
-                self.conn.krpc.Expression.constant_double(1000))
-
-
-        event = self.conn.krpc.add_event(expr_apo)
-        event.add_callback(self.test)
-        event.start()
-
-
-
+        
+        self.scheduler = BackgroundScheduler()
         self.df = self.setup_launch_df()
 
 
@@ -183,39 +172,53 @@ class LaunchManager():
                     (self.target_inclination - 90) + 360
 
             # schedule
-            scheduler = BackgroundScheduler()
 
-            scheduler.add_job(id='Autostaging', func=self.staging,
+            self.scheduler.add_job(id='Autostaging', func=self.staging,
                               trigger='interval', seconds=2)
-            scheduler.add_job(
+            self.scheduler.add_job(
                 id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
-            scheduler.start()
+            self.scheduler.start()
 
-            # # ascent loop
-            # # while self.apoapsis() < self.target_altitude * .98:
-                # # pass
 
-            # scheduler.remove_job('Gravity turn')
-            # # scheduler.remove_job('Autostaging')
+            # call_target_apoapsis = self.conn.get_call(getattr, self.vessel.flight(), 'mean_altitude')
+            call_target_apoapsis = self.conn.get_call(getattr, self.vessel.orbit, 'apoapsis_altitude')
+            # expression test 
+            expr_apo = self.conn.krpc.Expression.greater_than(
+                    self.conn.krpc.Expression.call(call_target_apoapsis),
+                    self.conn.krpc.Expression.constant_double(self.target_altitude))
 
-            # print('Ascent complete')
-            # self.vessel.control.throttle = 0
-            # self.vessel.auto_pilot.disengage()
-
-            # print(
-                # f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
-            # circ = self.mj.maneuver_planner.operation_circularize
-            # circ.make_node()
-
-            # NodeManager().execute_node()
-            # OrbitManager().print_telemetry()
+            event = self.conn.krpc.add_event(expr_apo)
+            event.add_callback(self.apoapsis_reached)
+            event.start()
 
         except KeyboardInterrupt:
             print('Ascent interrupted')
             self.vessel.control.throttle = 0
             self.vessel.auto_pilot.disengage()
-            # scheduler.shutdown()
+            self.scheduler.shutdown()
 
+
+    def apoapsis_reached(self):
+        print('Apoapsis reached')
+        self.vessel.control.throttle = 0
+        self.vessel.auto_pilot.disengage()
+        self.scheduler.remove_job('Gravity turn')
+        print('Gravity turn finished')
+
+        # print(
+            # f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
+
+        circularization_burn = self.mj.maneuver_planner.operation_circularize
+        circularization_burn.make_node()
+        
+        # fix this
+        NodeManager().execute_node()
+        OrbitManager().print_telemetry()
+
+
+        self.scheduler.remove_job('Autostaging')
+
+    
     def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass
         if remaining_delta_v < twr / 3:

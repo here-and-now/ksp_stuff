@@ -19,6 +19,8 @@ from vessels import VesselManager, Vessel
 from comsat_network import ComSatNetwork
 from launch import LaunchManager
 
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 class KSPBokehApp():
     def __init__(self):
@@ -108,23 +110,25 @@ class KSPBokehApp():
                                self.slider_roll.value,
                                self.slider_max_q.value,
                                staging_options = None)
-        
-        # launch.ascent()
-        df = self.bokehfy_df(self.launch.df)
-        # print(launch.df)
 
-
-        self.launch_source = ColumnDataSource(data=df)
+        # plotting stuff
+        launch_data = {'met' : [],
+                       'flight_mean_altitude' : []}
+        self.launch_source = ColumnDataSource(data=launch_data)
         self.fig_launch_telemetry.line(x='met', y='flight_mean_altitude', source=self.launch_source)
-        
-        self.curdoc.add_periodic_callback(self.update_launch_source, 1000)
-        # self.curdoc.add_periodic_callback(self.update_launch_source, 1000)
+        # periodic callback for live plotting of launch data
+        self.curdoc.add_periodic_callback(self.stream_launch_source, 1000)
 
+        # Gooooooooo 
         self.launch.ascent()
 
-    def update_launch_source(self):
-        ''' Updates the launch telemetry plot '''
-        self.launch_source.data = self.bokehfy_df(self.launch.df)
+    def stream_launch_source(self):
+        ''' Streams the launch telemetry plot '''
+        print(self.launch.flight_mean_altitude())
+        launch_data = {'met' : [self.launch.met()],
+                       'flight_mean_altitude' : [self.launch.flight_mean_altitude()]}
+
+        self.launch_source.stream(launch_data)
         
         
 

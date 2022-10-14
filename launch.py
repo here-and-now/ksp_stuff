@@ -70,26 +70,41 @@ class LaunchManager():
             getattr, self.vessel.orbit, 'eccentricity')
         self.inclination = self. conn.add_stream(
             getattr, self.vessel.orbit, 'inclination')
+        
+        mean_altitude = self.conn.get_call(getattr, self.vessel.flight(), 'mean_altitude')
+        # expression test 
+        expr_apo = self.conn.krpc.Expression.greater_than(
+                self.conn.krpc.Expression.call(mean_altitude),
+                self.conn.krpc.Expression.constant_double(1000))
+
+
+        event = self.conn.krpc.add_event(expr_apo)
+        event.add_callback(self.test)
+        event.start()
+
+
 
         self.df = self.setup_launch_df()
 
 
+    def test(self):
+        print('WTF')
+
     def setup_launch_df(self):
         df = pd.DataFrame([{
-            'vessel': self.vessel,
-            'met': self.met,
-            'flight_mean_altitude': self.flight_mean_altitude,
-        }])
-        df = df.set_index('vessel')
-        return df 
-
-    def append_launch_data(self):
-        ''' appends launch data to a pandas dataframe '''
-        self.df = self.df.append({
-            'vessel': self.vessel,
             'met': self.met(),
             'flight_mean_altitude': self.flight_mean_altitude(),
-        }, ignore_index=True)
+        }])
+        return df 
+
+    def concat_launch_data(self):
+        ''' concat launch data to a pandas dataframe '''
+        self.df = pd.concat([self.df, pd.DataFrame([{
+            'met': self.met(),
+            'flight_mean_altitude': self.flight_mean_altitude(),
+            'flight_dynamic_pressure': self.flight_dynamic_pressure(),
+        }])])
+
 
 
     def staging(self):
@@ -169,7 +184,6 @@ class LaunchManager():
 
             # schedule
             scheduler = BackgroundScheduler()
-            scheduler.add_job(id='log', func=self.append_launch_data, trigger='interval', seconds=0.1)
 
             scheduler.add_job(id='Autostaging', func=self.staging,
                               trigger='interval', seconds=2)
@@ -177,30 +191,30 @@ class LaunchManager():
                 id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
             scheduler.start()
 
-            # ascent loop
-            while self.apoapsis() < self.target_altitude * .98:
-                pass
+            # # ascent loop
+            # # while self.apoapsis() < self.target_altitude * .98:
+                # # pass
 
-            scheduler.remove_job('Gravity turn')
-            # scheduler.remove_job('Autostaging')
+            # scheduler.remove_job('Gravity turn')
+            # # scheduler.remove_job('Autostaging')
 
-            print('Ascent complete')
-            self.vessel.control.throttle = 0
-            self.vessel.auto_pilot.disengage()
+            # print('Ascent complete')
+            # self.vessel.control.throttle = 0
+            # self.vessel.auto_pilot.disengage()
 
-            print(
-                f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
-            circ = self.mj.maneuver_planner.operation_circularize
-            circ.make_node()
+            # print(
+                # f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
+            # circ = self.mj.maneuver_planner.operation_circularize
+            # circ.make_node()
 
-            NodeManager().execute_node()
-            OrbitManager().print_telemetry()
+            # NodeManager().execute_node()
+            # OrbitManager().print_telemetry()
 
         except KeyboardInterrupt:
             print('Ascent interrupted')
             self.vessel.control.throttle = 0
             self.vessel.auto_pilot.disengage()
-            scheduler.shutdown()
+            # scheduler.shutdown()
 
     def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass

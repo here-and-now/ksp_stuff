@@ -1,10 +1,11 @@
 from abc import update_abstractmethods
 import bokeh
-from bokeh.models.widgets import Tabs, Panel
+from bokeh.models import Tabs, TabPanel
 from bokeh.plotting import figure, show, output_file
 from bokeh.models import ColumnDataSource, CustomJS, Slider, Button, Div, DataTable, TableColumn, NumberFormatter, StringFormatter, RangeSlider, Select, TextInput, DataTable
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
+
 
 import numpy as np
 import glob
@@ -27,7 +28,7 @@ class KSPBokehApp():
         self.active_vessel = None
 
         # self.vessel_manager = VesselManager(name='ComSat_0.33')
-        self.vessel_manager = VesselManager(name=None)
+        self.vessel_manager = VesselManager(name='2')
         self.vessel_source = ColumnDataSource(
             self.bokehfy_df(self.vessel_manager.df))
 
@@ -48,10 +49,10 @@ class KSPBokehApp():
         columns = [TableColumn(field=Ci, title=Ci, formatter=formatter_dict.get(
             Ci, None)) for Ci in self.vessel_manager.df.reset_index().columns]
         self.vessel_table = DataTable(
-            source=self.vessel_source, columns=columns, autosize_mode='fit_viewport')
+            source=self.vessel_source, columns=columns, width=400, height=200)
         # width=800, height=280)
 
-        self.search_vessel_input = TextInput(value="", title="Search Vessel:")
+        self.search_vessel_input = TextInput(value="", title="Hmm .... Search Vessel:")
         self.search_vessel_input.on_change('value', self.search_vessel)
 
         self.update_button = Button(label="Update", button_type="success")
@@ -59,8 +60,8 @@ class KSPBokehApp():
 
         # test stuff
         self.test_btn = Button(label="Test", button_type="success")
-        self.test_btn.on_click(self.teeeest)
-        self.text_test = TextInput(value="0", title="Search Vessel:")
+        #self.test_btn.on_click(self.teeeest)
+        #self.text_test = TextInput(value="0", title="Search Vessel:")
         # end vessels
 
         # Communication network
@@ -84,22 +85,23 @@ class KSPBokehApp():
         self.launch_button = Button(label="Launch", button_type="success")
         self.launch_button.on_click(self.go_for_launch)
 
-        self.fig_launch_telemetry = figure(plot_width=800, plot_height=400)
+        self.fig_launch_telemetry = figure(width=500,height=400)
 
-        # self.communication_network_tab = Panel(child=column(
+        # self.communication_network_tab = TabPanel(child=column(
             # self.vessel_table, self.update_button, self.test_btn, self.text_test, self.search_vessel_input), title='Communication Network')
         self.launch_slider_column = column(self.slider_target_altitude, self.slider_turn_start_altitude, self.slider_turn_end_altitude, self.slider_inclination, self.slider_roll, self.slider_max_q, self.slider_end_stage, self.launch_button)
-        self.launch_telemetry_column = column(self.fig_launch_telemetry)
-        self.launch_tab = Panel(child=row(self.launch_slider_column, self.launch_telemetry_column), title='Launch')
+        self.launch_telemetry_column = column(self.fig_launch_telemetry, sizing_mode='stretch_both')
+        self.launch_tab = TabPanel(child=row(self.launch_slider_column, self.launch_telemetry_column), title='Launch')
 
-        self.vessels_tab=Panel(child = column(self.search_vessel_input, self.vessel_table,
-                                 self.update_button, self.text_test, self.test_btn), title = 'Vessels')
+        self.vessels_tab=TabPanel(child = column(self.search_vessel_input, self.vessel_table,
+                                  self.update_button), title = 'Vessels')
+        #self.vessels_tab=column(self.search_vessel_input, self.vessel_table, self.test_btn)
 
         self.tabs=Tabs(tabs = [self.vessels_tab, self.launch_tab])
         self.curdoc = curdoc()
-        self.curdoc.add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
+        #self.curdoc.add_periodic_callback(self.select_active_vessel_index_on_vessel_source, 1000)
         self.curdoc.add_root(self.tabs)
-
+        #self.curdoc.add_root(self.vessels_tab)
     def go_for_launch(self):
         ''' Launches the vessel '''
         self.launch=LaunchManager(self.slider_target_altitude.value,

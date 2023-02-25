@@ -6,7 +6,7 @@ __pycache__/
 # pyright stubs
 typings/
 trash/
-
+.idea/
 # C extensions
 *.so
 

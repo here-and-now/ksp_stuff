@@ -21,7 +21,7 @@ from utils.handle_vessels import (
 )
 
 
-class ComSatNetwork():
+class Communication():
     def __init__(self):
         self.conn = krpc.connect(name="ComSat_Network")
         print("ComSatNetwork connected ...")
@@ -113,57 +113,6 @@ class ComSatNetwork():
                     
                     module.set_action('Activate')
                     print('Antenna activated on ')
-
-    def resonant_orbit(self):
-        self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
-        self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
-
-        self.res_orbit.resonance_numerator = 2
-        self.res_orbit.resonance_denominator = 3
-
-        self.res_orbit.make_nodes()
-        NodeManager().execute_node()
-
-    def recircularize(self):
-        recirc = self.mj.maneuver_planner.operation_circularize
-        if self.res_orbit.resonance_numerator > self.res_orbit.resonance_denominator:
-            recirc.time_selector.time_reference = self.mj.TimeReference.periapsis
-        else:
-            recirc.time_selector.time_reference = self.mj.TimeReference.apoapsis
-
-        recirc.make_nodes()
-        NodeManager().execute_node()
-
-    def release_sats_triangle_orbit(self):
-        self.release_satellite()
-
-        self.resonant_orbit()
-        self.recircularize()
-        self.release_satellite()
-
-        self.resonant_orbit()
-        self.recircularize()
-        self.release_satellite()
-
-        self.setup_df()
-
-
-    def release_satellite(self):
-        '''
-        Orientates the spacecraft, activates next stage and adds
-        released satellite to a list
-        '''
-        print('Deploying ComSat')
-
-        self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
-        self.mj.smart_ass.update(False)
-        time.sleep(30)
-
-        released_satellite = self.vessel.control.activate_next_stage()
-        self.vessel_list.append(released_satellite)
-
-        print('ComSat deployed')
-        time.sleep(30)
 
     def setup_communications(self):
         '''

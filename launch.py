@@ -70,8 +70,8 @@ class LaunchManager():
             getattr, self.vessel.orbit, 'eccentricity')
         self.inclination = self. conn.add_stream(
             getattr, self.vessel.orbit, 'inclination')
-        
-        
+
+
         self.scheduler = BackgroundScheduler()
         self.df = self.setup_launch_df()
 
@@ -84,7 +84,7 @@ class LaunchManager():
             'met': self.met(),
             'flight_mean_altitude': self.flight_mean_altitude(),
         }])
-        return df 
+        return df
 
     def concat_launch_data(self):
         ''' concat launch data to a pandas dataframe '''
@@ -152,6 +152,7 @@ class LaunchManager():
 
     def gravity_turn(self):
         # quadratic gravity turn_start_altitude
+        print(self.flight_mean_altitude())
         frac = self.flight_mean_altitude() / self.turn_end_altitude
         self.vessel.auto_pilot.target_pitch = 90 - (-90 * frac * (frac - 2))
         # linit max q
@@ -162,7 +163,7 @@ class LaunchManager():
         try:
             # set up auto_pilot
             self.vessel.auto_pilot.engage()
-            self.vessel.auto_pilot.target_roll = self.roll
+            self.vessel.auto_pilot.target_roll = 0
 
             # logic for desired inclination to compass heading
             if self.target_inclination >= 0:
@@ -182,7 +183,7 @@ class LaunchManager():
 
             # call_target_apoapsis = self.conn.get_call(getattr, self.vessel.flight(), 'mean_altitude')
             call_target_apoapsis = self.conn.get_call(getattr, self.vessel.orbit, 'apoapsis_altitude')
-            # expression test 
+            # expression test
             expr_apo = self.conn.krpc.Expression.greater_than(
                     self.conn.krpc.Expression.call(call_target_apoapsis),
                     self.conn.krpc.Expression.constant_double(self.target_altitude))
@@ -193,6 +194,11 @@ class LaunchManager():
 
         except KeyboardInterrupt:
             print('Ascent interrupted')
+            self.vessel.control.throttle = 0
+            self.vessel.auto_pilot.disengage()
+            self.scheduler.shutdown()
+        except krpc.error.RPCError:
+            print('Fjucked up')
             self.vessel.control.throttle = 0
             self.vessel.auto_pilot.disengage()
             self.scheduler.shutdown()
@@ -210,7 +216,7 @@ class LaunchManager():
 
         circularization_burn = self.mj.maneuver_planner.operation_circularize
         circularization_burn.make_node()
-        
+
         # fix this
         NodeManager().execute_node()
         OrbitManager().print_telemetry()
@@ -218,7 +224,7 @@ class LaunchManager():
 
         self.scheduler.remove_job('Autostaging')
 
-    
+
     def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass
         if remaining_delta_v < twr / 3:

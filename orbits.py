@@ -53,7 +53,7 @@ class OrbitManager():
             for v in self.df.index.values])
 
         df = df.set_index('vessel')
-        self.df = pd.merge(self.df, df, how='left', left_index=True)
+        self.df = pd.merge(self.df, df, how='left', left_index=True, right_index=True)
         print(self.df)
         # call streams in dataframe
         self.df = self.df.apply(lambda x: x.apply(
@@ -116,8 +116,8 @@ class OrbitManager():
 
     def print_telemetry(self):
         """ Prints telemetry data in a fancy table """
-        df = self.setup_df()
-        table = tabulate.tabulate(df, headers='keys', tablefmt='fancy_grid')
+        #df = self.setup_df()
+        table = tabulate.tabulate(self.df, headers='keys', tablefmt='fancy_grid')
         print(table)
 
     def set_altitude_and_circularize(self, desired_inclination, desired_altitude):

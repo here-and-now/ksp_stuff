@@ -1,6 +1,5 @@
 import math
 import time
-
 import krpc
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,16 +8,6 @@ import tabulate
 
 from orbits import OrbitManager
 from nodes import NodeManager
-
-
-from utils.handle_orientation import orientate_vessel
-from utils.handle_vessels import (
-    decouple_by_name,
-    manipulate_engines_by_name,
-    select_vessel_and_duplicates_by_name,
-    switch_vessel,
-)
-
 
 class ComSatNetwork():
     def __init__(self):
@@ -31,17 +20,20 @@ class ComSatNetwork():
         self.vessel_name = self.vessel.name
         self.constellation_name = self.vessel_name
 
-        self.orbit_manager = OrbitManager()
-        self.node_manager = NodeManager()
+        self.vessel_list = [self.vessel]
+        if self.vessel_list:
+            self.df = self.setup_df()
+
+        #self.orbit_manager = OrbitManager(df=self.df)
+        #self.node_manager = NodeManager()
 
         
-        self.vessel_list = []
+        # self.vessel_list = []
 
         self.mj = self.conn.mech_jeb
         self.auto_pilot = self.vessel.auto_pilot
 
-        if self.vessel_list:
-            self.setup_df()
+
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
@@ -67,7 +59,7 @@ class ComSatNetwork():
         data = [[v, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
                  v.orbit.inclination, v.orbit.period, (
                      v.orbit.period - self.period_mean),
-                 self.return_antennas(v)] for v in self.vessel_list]
+                self.return_antennas(v)] for v in self.vessel_list]
 
         self.df = pd.DataFrame(data, columns=['Vessel', 'Name', 'Body', 'Apoapsis', 'Periapsis',
                                               'Inclination', 'Period', 'Period diff', 'Antennas'])
@@ -85,39 +77,11 @@ class ComSatNetwork():
         '''
         self.sc.active_vessel = vessel
         return self.conn.remote_tech.comms(vessel).antennas
-
-
-    def manage_antennas(self):
-        '''
-        Manage antennas of all vessels in constellation.
-        Currrently only activates RT antenna part modules.
-        WIP: Targeting
-        '''
-
-        self.df['Antennas'].to_frame().apply(lambda x: self.activate_antennas(x.index, x.values))
-
-
-    def activate_antennas(self, vessel, antennas):
-        '''
-        Activates all RT antennas in list
-        '''
-        print(vessel[0])
-        # print(antennas.values)
-        self.sc.active_vessel = vessel[0]
-        for antenna in antennas[0]:
-            print(antenna)
-            # self.sc.active_vessel = antenna.part.vessel
-            for module in antenna.part.modules:
-                if module.name == 'ModuleRTAntenna':
-                    
-                    module.set_action('Activate')
-                    print('Antenna activated on ')
-
     def resonant_orbit(self):
         self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
         self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
 
-        self.res_orbit.resonance_numerator = 2
+        self.res_orbit.resonance_numerator = 4
         self.res_orbit.resonance_denominator = 3
 
         self.res_orbit.make_nodes()
@@ -134,6 +98,8 @@ class ComSatNetwork():
         NodeManager().execute_node()
 
     def release_sats_triangle_orbit(self):
+        # reset vessel list, release satelittes will create updated one
+        self.vessel_list = []
         self.release_satellite()
 
         self.resonant_orbit()
@@ -159,50 +125,12 @@ class ComSatNetwork():
         time.sleep(30)
 
         released_satellite = self.vessel.control.activate_next_stage()
-        self.vessel_list.append(released_satellite)
+        self.vessel_list.append(released_satellite[0])
+        print(self.vessel_list)
+        print('Releaqsed sat', released_satellite[0])
 
         print('ComSat deployed')
         time.sleep(30)
-
-    def setup_communications(self):
-        '''
-        Outdated, use manage_antennas instead.
-        Based on distance between satellites, sets up
-        communication links between them
-        '''
-
-        distance_dict = {}
-        print(self.vessel_list)
-        for vessel in self.vessel_list:
-            distance_dict[vessel] = {}
-            for target_vessel in self.vessel_list:
-
-                print('tarvessel', target_vessel)
-                if vessel is not target_vessel:
-                    self.sc.target_vessel = target_vessel
-                    print('Target', self.sc.target_vessel)
-                    distance = self.sc.target_vessel.orbit.distance_at_closest_approach(
-                        vessel.orbit)
-                    distance_dict[vessel].update({target_vessel: distance})
-
-        for vessel, distance_to_vessel_dict in distance_dict.items():
-            self.sc.active_vessel = vessel
-            antenna_parts = vessel.parts.with_tag('target_whatever')
-
-            sorted_distance_to_vessel_dict = sorted(
-                distance_to_vessel_dict.items(), key=lambda x: x[1])
-
-            for i, antenna_part in enumerate(antenna_parts):
-                antenna = self.conn.remote_tech.antenna(antenna_part)
-                for module in antenna_part.modules:
-                    if module.name == 'ModuleRTAntenna':
-                        module.set_action('Activate')
-                # even target nearest satellite
-                if i % 2 == 0:
-                    antenna.target_vessel = sorted_distance_to_vessel_dict[0][0]
-                # uneven target 2nd nearest satellite
-                else:
-                    antenna.target_vessel = sorted_distance_to_vessel_dict[1][0]
 
     def init_existing_network(self, constellation_name):
         self.constellation_name = constellation_name

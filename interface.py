@@ -52,7 +52,7 @@ class KSPBokehApp():
             source=self.vessel_source, columns=columns, width=400, height=200)
         # width=800, height=280)
 
-        self.search_vessel_input = TextInput(value="", title="Hmm .... Search Vessel:")
+        self.search_vessel_input = TextInput(value="", title="Search Vessel:")
         self.search_vessel_input.on_change('value', self.search_vessel)
 
         self.update_button = Button(label="Update", button_type="success")

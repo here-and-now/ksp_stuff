@@ -16,8 +16,8 @@ class NodeManager():
 
     def execute_node(self):
         executor = self.mj.node_executor
-        executor.tolerance = 0.001
-        executor.lead_time = 3
+        executor.tolerance = 0.1
+        executor.lead_time = 10
         executor.execute_one_node()
 
         with self.conn.stream(getattr, executor, 'enabled') as enabled:

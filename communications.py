@@ -1,25 +1,10 @@
 import math
 import time
-
 import krpc
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import tabulate
 
-from orbit_manager import OrbitManager
-from node_manager import NodeManager
-
-
-from node_manager import NodeManager
-from utils.handle_orientation import orientate_vessel
-from utils.handle_vessels import (
-    decouple_by_name,
-    manipulate_engines_by_name,
-    select_vessel_and_duplicates_by_name,
-    switch_vessel,
-)
-
+from orbits import OrbitManager
 
 class Communication():
     def __init__(self):
@@ -32,10 +17,6 @@ class Communication():
         self.vessel_name = self.vessel.name
         self.constellation_name = self.vessel_name
 
-        self.orbit_manager = OrbitManager()
-        self.node_manager = NodeManager()
-
-        
         self.vessel_list = []
 
         self.mj = self.conn.mech_jeb
@@ -137,16 +118,23 @@ class Communication():
 
         for vessel, distance_to_vessel_dict in distance_dict.items():
             self.sc.active_vessel = vessel
-            antenna_parts = vessel.parts.with_tag('target_whatever')
+            antenna_parts = vessel.parts.with_name('nfex-antenna-relay-tdrs-1')
 
             sorted_distance_to_vessel_dict = sorted(
                 distance_to_vessel_dict.items(), key=lambda x: x[1])
 
             for i, antenna_part in enumerate(antenna_parts):
                 antenna = self.conn.remote_tech.antenna(antenna_part)
+
+                #if antenna is from RT itself?
                 for module in antenna_part.modules:
                     if module.name == 'ModuleRTAntenna':
                         module.set_action('Activate')
+                #if not, extend antenna normally
+                for module in antenna_part.modules:
+                    if module.name == 'ModuleDeployableAntenna':
+                        module.set_action('Extend Antenna')
+
                 # even target nearest satellite
                 if i % 2 == 0:
                     antenna.target_vessel = sorted_distance_to_vessel_dict[0][0]

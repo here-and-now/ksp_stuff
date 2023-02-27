@@ -84,11 +84,11 @@ class OrbitManager():
             if vessel.orbit.period < period_mean:
                 self.manage_orientation(
                     self.mj.SmartASSAutopilotMode.prograde, 'prograde')
-                operator_selection=operator.lt
+                operator_selection = operator.lt
             elif vessel.orbit.period >= period_mean:
                 self.manage_orientation(
                     self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
-                operator_selection=operator.gt
+                operator_selection = operator.gt
 
             # while abs(vessel.orbit.period - period_mean) > 0:
             while operator_selection(vessel.orbit.period, period_mean):
@@ -112,7 +112,7 @@ class OrbitManager():
         self.mj.smart_ass.autopilot_mode = autopilot_mode
         self.mj.smart_ass.update(False)
         orientate_vessel(self.conn, self.sc.active_vessel,
-                         direction, accuracy_cutoff=1e-3)
+                         direction, accuracy_cutoff=1e-2)
 
     def print_telemetry(self):
         """ Prints telemetry data in a fancy table """

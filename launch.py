@@ -19,7 +19,16 @@ from utils.pid import PID
 
 
 class LaunchManager():
-    def __init__(self, target_altitude, turn_start_altitude, turn_end_altitude, end_stage, inclination, roll, max_q, staging_options):
+    def __init__(self,
+             target_altitude=120000,
+             turn_start_altitude=2500,
+             turn_end_altitude=75000,
+             end_stage=3,
+             inclination=0,
+             roll=90,
+             max_q=20000,
+             staging_options=None):
+
         # initilize vessel
         self.conn = krpc.connect(name='LaunchManager')
 
@@ -44,6 +53,7 @@ class LaunchManager():
 
         self.solar_deployed = False
         self.fairings_jettisoned = False
+        self.launch_finished = False
 
         # set up PID controllers
         self.thrust_controller = PID(P=.001, I=0.0001, D=0.01)
@@ -75,9 +85,6 @@ class LaunchManager():
         self.scheduler = BackgroundScheduler()
         self.df = self.setup_launch_df()
 
-
-    def test(self):
-        print('WTF')
 
     def setup_launch_df(self):
         df = pd.DataFrame([{
@@ -133,6 +140,7 @@ class LaunchManager():
         # Fairings and solar panel deployment
         if not self.solar_deployed and not self.fairings_jettisoned and self.flight_mean_altitude() > self.vessel.orbit.body.atmosphere_depth:
             self.fairing_deployment()
+            time.sleep(2)
             self.solar_deployment()
 
     def solar_deployment(self):
@@ -173,7 +181,6 @@ class LaunchManager():
                     (self.target_inclination - 90) + 360
 
             # schedule
-
             self.scheduler.add_job(id='Autostaging', func=self.staging,
                               trigger='interval', seconds=2)
             self.scheduler.add_job(
@@ -191,6 +198,9 @@ class LaunchManager():
             event = self.conn.krpc.add_event(expr_apo)
             event.add_callback(self.apoapsis_reached)
             event.start()
+
+
+
 
         except KeyboardInterrupt:
             print('Ascent interrupted')
@@ -223,7 +233,8 @@ class LaunchManager():
 
 
         self.scheduler.remove_job('Autostaging')
-
+        
+        self.launch_finished = True
 
     def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass

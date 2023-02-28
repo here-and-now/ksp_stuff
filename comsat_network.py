@@ -5,9 +5,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import tabulate
-
+import operator
 from orbits import OrbitManager
 from nodes import NodeManager
+
+from utils.handle_orientation import orientate_vessel
+from utils.handle_vessels import (
+    decouple_by_name,
+    manipulate_engines_by_name,
+    select_vessel_and_duplicates_by_name,
+    switch_vessel,
+)
 
 class ComSatNetwork():
     def __init__(self):
@@ -81,8 +89,8 @@ class ComSatNetwork():
         self.res_orbit = self.mj.maneuver_planner.operation_resonant_orbit
         self.res_orbit.time_selector.time_reference = self.mj.TimeReference.apoapsis
 
-        self.res_orbit.resonance_numerator = 4
-        self.res_orbit.resonance_denominator = 3
+        self.res_orbit.resonance_numerator = 6
+        self.res_orbit.resonance_denominator = 5
 
         self.res_orbit.make_nodes()
         NodeManager().execute_node()
@@ -97,20 +105,86 @@ class ComSatNetwork():
         recirc.make_nodes()
         NodeManager().execute_node()
 
-    def release_sats_triangle_orbit(self):
+    def release_sats_triangle_orbit(self,nr_sats=5):
         # reset vessel list, release satelittes will create updated one
         self.vessel_list = []
         self.release_satellite()
 
-        self.resonant_orbit()
-        self.recircularize()
-        self.release_satellite()
-
-        self.resonant_orbit()
-        self.recircularize()
-        self.release_satellite()
+        for i in range(nr_sats-1):
+            self.resonant_orbit()
+            self.recircularize()
+            self.release_satellite()
 
         self.setup_df()
+
+    def fine_tune_orbital_period(self):
+        """
+        Fine tune orbital period for each satelitte in satellite list
+        to the mean orbital period with RCS thrusters
+        """
+        print("Fine tuning orbital period ...")
+        print("Orbit before fine tuning: ")
+        print(self.print_telemetry())
+
+        period_mean = self.get_orbital_period_mean()
+
+        for vessel in self.vessel_list:
+            self.sc.active_vessel = vessel
+            vessel.control.rcs = False
+
+            if vessel.orbit.period < period_mean:
+                self.manage_orientation(
+                    self.mj.SmartASSAutopilotMode.prograde, 'prograde')
+                operator_selection = operator.lt
+            elif vessel.orbit.period >= period_mean:
+                self.manage_orientation(
+                    self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
+                operator_selection = operator.gt
+
+            # while abs(vessel.orbit.period - period_mean) > -1:
+            while operator_selection(vessel.orbit.period, period_mean):
+                vessel.control.rcs = True
+                vessel.control.throttle = 0.05
+
+            vessel.control.rcs = False
+            vessel.control.throttle = 0
+
+        print("Orbit after fine tuning: ")
+        print(self.print_telemetry())
+
+    def get_orbital_period_mean(self):
+        """Get mean orbital period of all satellites in satellite list"""
+        period_mean = sum(
+            vessel.orbit.period for vessel in self.vessel_list) / len(self.vessel_list)
+        return period_mean
+
+    def manage_orientation(self, autopilot_mode, direction):
+
+        self.mj.smart_ass.autopilot_mode = autopilot_mode
+        self.mj.smart_ass.update(False)
+        orientate_vessel(self.conn, self.sc.active_vessel,
+                         direction, accuracy_cutoff=1e-1)
+
+    def print_telemetry(self):
+        """ Prints telemetry data in a fancy table """
+        # df = self.setup_df()
+        table = tabulate.tabulate(self.df, headers='keys', tablefmt='fancy_grid')
+        print(table)
+
+    def release_all_satellites(self, nr_sats, time_between=3):
+        self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
+        self.mj.smart_ass.update(False)
+        time.sleep(1)
+        self.vessel_list = []
+        for i in range(nr_sats):
+            released_satellite = self.vessel.control.activate_next_stage()
+            self.vessel_list.append(released_satellite[0])
+            time.sleep(time_between)
+
+        print(f'{len(self.vessel_list)} ComSats deployed')
+
+        print(self.vessel_list)
+
 
 
     def release_satellite(self):
@@ -122,15 +196,13 @@ class ComSatNetwork():
 
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.normal_minus
         self.mj.smart_ass.update(False)
-        time.sleep(30)
+        time.sleep(10)
 
         released_satellite = self.vessel.control.activate_next_stage()
         self.vessel_list.append(released_satellite[0])
-        print(self.vessel_list)
-        print('Releaqsed sat', released_satellite[0])
 
         print('ComSat deployed')
-        time.sleep(30)
+        time.sleep(10)
 
     def init_existing_network(self, constellation_name):
         self.constellation_name = constellation_name

@@ -41,7 +41,7 @@ class OrbitManager():
         # streaming approach, probably inconvenient
         df = pd.DataFrame([{
             'vessel': v,
-            'name': v.name,
+            # 'name': v.name,
             'body': self.conn.add_stream(getattr, v.orbit.body, 'name'),
             'eccentricity': self.conn.add_stream(getattr, v.orbit, 'eccentricity'),
             'semi_major_axis': self.conn.add_stream(getattr, v.orbit, 'semi_major_axis'),
@@ -53,7 +53,7 @@ class OrbitManager():
             for v in self.df.index.values])
 
         df = df.set_index('vessel')
-        self.df = pd.merge(self.df, df, how='left', left_index=True, right_index=True)
+        self.df = pd.merge(self.df, df, how='inner', left_index=True, right_index=True)
         print(self.df)
         # call streams in dataframe
         self.df = self.df.apply(lambda x: x.apply(
@@ -90,13 +90,13 @@ class OrbitManager():
                     self.mj.SmartASSAutopilotMode.retrograde, 'retrograde')
                 operator_selection = operator.gt
 
-            # while abs(vessel.orbit.period - period_mean) > 0:
+            # while abs(vessel.orbit.period - period_mean) > -1:
             while operator_selection(vessel.orbit.period, period_mean):
                 vessel.control.rcs=True
-                vessel.control.throttle=0.05
+                vessel.control.throttle=-1.05
 
             vessel.control.rcs=False
-            vessel.control.throttle=0
+            vessel.control.throttle=-1
 
         print("Orbit after fine tuning: ")
         print(self.print_telemetry())
@@ -149,13 +149,19 @@ class OrbitManager():
 class Orbit():
     def __init__(self, conn=None, vessel=None):
         if conn is None:
-            self.conn = krpc.connect(name=f'Orbit: {vessel.name}')
+            # self.conn = krpc.connect(name=f'Orbit: {vessel.name}')
+            self.conn = krpc.connect(name=f'Orbit: ')
             self.sc = self.conn.space_center
             self.vessel = vessel
         else:
             self.conn = conn
             self.sc = self.conn.space_center
             self.vessel = vessel
+
+        if vessel is None:
+            self.vessel = self.sc.active_vessel
+
+        self.mj = self.conn.mech_jeb
 
         # keplerian elements
         self.eccentricity = self.conn.add_stream(
@@ -200,3 +206,31 @@ class Orbit():
         }])
         df = df.set_index('vessel')
         return df 
+
+    def set_altitude_and_circularize(self, desired_inclination, desired_altitude):
+        # inclination
+        if abs(self.inclination() * (180 / math.pi) - desired_inclination) > 0.001:
+            inclination_change = self.mj.maneuver_planner.operation_inclination
+            # inclination_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
+            inclination_change.new_inclination = desired_inclination
+
+            inclination_change.make_nodes()
+            NodeManager().execute_node()
+
+        # set apoapsis
+        if self.apoapsis() < desired_altitude:
+            altitude_change = self.mj.maneuver_planner.operation_apoapsis
+            altitude_change.new_apoapsis = desired_altitude
+
+            altitude_change.make_nodes()
+            NodeManager().execute_node()
+
+        # circularize
+        if self.eccentricity() > 0.001:
+            eccentricity_change = self.mj.maneuver_planner.operation_circularize
+            eccentricity_change.time_selector.time_reference = self.mj.TimeReference.apoapsis
+
+            eccentricity_change.make_nodes()
+            NodeManager().execute_node()
+
+

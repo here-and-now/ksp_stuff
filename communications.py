@@ -91,9 +91,9 @@ class Communication():
             # self.sc.active_vessel = antenna.part.vessel
             for module in antenna.part.modules:
                 if module.name == 'ModuleRTAntenna':
-                    
                     module.set_action('Activate')
                     print('Antenna activated on ')
+
 
     def setup_communications(self):
         '''

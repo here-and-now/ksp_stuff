@@ -23,7 +23,7 @@ class LaunchManager():
              target_altitude=120000,
              turn_start_altitude=2500,
              turn_end_altitude=75000,
-             end_stage=3,
+             end_stage=5,
              inclination=0,
              roll=90,
              max_q=20000,
@@ -160,7 +160,7 @@ class LaunchManager():
 
     def gravity_turn(self):
         # quadratic gravity turn_start_altitude
-        print(self.flight_mean_altitude())
+        print('Mean Altitude', self.flight_mean_altitude())
         frac = self.flight_mean_altitude() / self.turn_end_altitude
         self.vessel.auto_pilot.target_pitch = 90 - (-90 * frac * (frac - 2))
         # linit max q

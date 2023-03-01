@@ -203,6 +203,9 @@ class Orbit():
             'longitude_of_ascending_node': self.longitude_of_ascending_node,
             'argument_of_periapsis': self.argument_of_periapsis,
             'true_anomaly': self.true_anomaly,
+            'apoapsis': self.apoapsis,
+            'periapsis': self.periapsis,
+            'period' : self.period,
         }])
         df = df.set_index('vessel')
         return df 

@@ -8,6 +8,7 @@ import tabulate
 import operator
 from orbits import OrbitManager
 from nodes import NodeManager
+from vessels import VesselManager, Vessel
 
 from utils.handle_orientation import orientate_vessel
 from utils.handle_vessels import (
@@ -39,9 +40,6 @@ class ComSatNetwork():
         # self.vessel_list = []
 
         self.mj = self.conn.mech_jeb
-        self.auto_pilot = self.vessel.auto_pilot
-
-
 
         # Telemetry
         self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
@@ -61,22 +59,19 @@ class ComSatNetwork():
         Creates a pandas dataframe to store
         telemetry data and antennas
         '''
-        self.period_mean = sum(
-            vessel.orbit.period for vessel in self.vessel_list) / len(self.vessel_list)
+        self.df = VesselManager().setup_vessels_df(vessel_list=self.vessel_list)
 
-        data = [[v, v.name, v.orbit.body.name, v.orbit.apoapsis_altitude, v.orbit.periapsis_altitude,
-                 v.orbit.inclination, v.orbit.period, (
-                     v.orbit.period - self.period_mean),
-                self.return_antennas(v)] for v in self.vessel_list]
+        self.df = self.df.apply(lambda x: x.apply(
+            lambda y: y() if callable(y) else y))
 
-        self.df = pd.DataFrame(data, columns=['Vessel', 'Name', 'Body', 'Apoapsis', 'Periapsis',
-                                              'Inclination', 'Period', 'Period diff', 'Antennas'])
-        self.df.set_index('Vessel', inplace=True)
+        self.df['period_diff'] = self.df['period'] - self.df['period'].mean()
 
-        print(tabulate.tabulate(self.df.drop('Antennas', axis=1),
+        print(tabulate.tabulate(self.df[['name', 'body', 'inclination',
+                                         'apoapsis', 'periapsis', 'period', 'period_diff' ]],
               headers='keys', tablefmt='fancy_grid'))
 
         return self.df
+
 
     def return_antennas(self, vessel):
         '''
@@ -127,14 +122,8 @@ class ComSatNetwork():
         to the mean orbital period with RCS thrusters
         """
         print("Fine tuning orbital period ...")
-        print("Orbit before fine tuning: ")
-
-        print('Vessel list at start of fine tuning', self.vessel_list)
-
         self.update_df()
-
-        period_mean = self.get_orbital_period_mean()
-        # self.mj.smart_ass.update(True)
+        period_mean = self.df['period'].mean()
 
         for vessel in self.vessel_list:
             self.sc.active_vessel = vessel
@@ -173,23 +162,12 @@ class ComSatNetwork():
 
         self.update_df()
 
-    def get_orbital_period_mean(self):
-        """Get mean orbital period of all satellites in satellite list"""
-        period_mean = sum(
-            vessel.orbit.period for vessel in self.vessel_list) / len(self.vessel_list)
-        return period_mean
-
-    def manage_orientation(self, autopilot_mode, direction):
-
-        self.mj.smart_ass.autopilot_mode = autopilot_mode
-        self.mj.smart_ass.update(True)
-        # time.sleep(5)
-
     def release_all_satellites(self, nr_sats, time_between=2):
+        self.vessel_list = []
+
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
         self.mj.smart_ass.update(False)
-        # time.sleep(20)
-        self.vessel_list = []
+        time.sleep(20)
         for i in range(nr_sats):
             released_satellite = self.vessel.control.activate_next_stage()
             self.vessel_list.append(released_satellite[0])
@@ -197,7 +175,8 @@ class ComSatNetwork():
 
         print(f'{len(self.vessel_list)} ComSats deployed')
 
-        print(self.vessel_list)
+        self.update_df()
+
     def release_satellite(self):
         '''
         Orientates the spacecraft, activates next stage and adds

@@ -11,14 +11,58 @@ class NodeManager():
         self.conn = krpc.connect(name="NodeManager")
         print('NodeManager connected ...')
 
-        # self.sc = self.conn.space_center
+        self.sc = self.conn.space_center
         self.mj = self.conn.mech_jeb
+
+        self.vessels = self.sc.vessels
+        self.mj = self.conn.mech_jeb
+
+        self.nodes_list = []
+
+
+    def refresh_nodes(self, vessels=None):
+        self.nodes_list = []
+
+        if vessels == None:
+            vessel_list = self.sc.vessels
+        else:
+            vessel_list = vessels
+
+        for vessel in vessel_list:
+            self.sc.active_vessel = vessel
+            time.sleep(2)
+            for node in vessel.control.nodes:
+                self.nodes_list.append(node)
+
+        print(self.nodes_list)
+
+    def named_refresh_nodes(self, vessel_list):
+        self.nodes_list = []
+        for vessel in vessel_list:
+            self.sc.active_vessel = vessel
+            time.sleep(2)
+            for node in vessel.coontrol.nodes:
+                self.nodes_list.append(node)
+
+        print(self.nodes_list)
+
 
     def execute_node(self):
         executor = self.mj.node_executor
         executor.tolerance = 0.1
         executor.lead_time = 10
         executor.execute_one_node()
+
+        with self.conn.stream(getattr, executor, 'enabled') as enabled:
+            enabled.rate = 1
+            with enabled.condition:
+                while enabled():
+                    enabled.wait()
+    def execute_all_nodes(self):
+        executor = self.mj.node_executor
+        executor.tolerance = 0.1
+        executor.lead_time = 10
+        executor.execute_all_nodes()
 
         with self.conn.stream(getattr, executor, 'enabled') as enabled:
             enabled.rate = 1

@@ -163,7 +163,7 @@ class KSPBokehApp():
     def search_vessel(self, attr, old, new):
         ''' Searches for vessels containing the search string '''
 
-        df = self.vessel_manager.search_vessels_by_name(new)
+        df = self.vessel_manager.fuzzy_search_by_name(new)
         self.vessel_source.data = self.bokehfy_df(df)
 
     def update_vessel_source(self):

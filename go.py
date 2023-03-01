@@ -4,6 +4,7 @@ from orbits import OrbitManager, Orbit
 from communications import Communication
 from launch import LaunchManager
 from vessels import VesselManager
+from nodes import NodeManager
 import time
 import krpc
 
@@ -13,15 +14,11 @@ import krpc
 
 # launch = LaunchManager(max_q=30000)
 # orbs = OrbitManager(df=VesselManager().df)
-
 # launch.ascent()
-
 # while not launch.launch_finished:
     # pass
 
 # antenna_parts = vessel.parts.with_name('RTLongAntenna2')
-
-
 # for ap in antenna_parts:
     # for module in ap.modules:
         # if module.name == 'ModuleRTAntenna':
@@ -29,27 +26,13 @@ import krpc
 
 # orb = Orbit()
 # orb.set_altitude_and_circularize(0,2500000)
-
-# orb_m = OrbitManager()
 coms = ComSatNetwork()
 coms.release_all_satellites(nr_sats=5)
-    # print(vessel)
-    # print(vessel.name)
-    # coms.conn.space_center.active_vessel = vessel
-    # time.sleep(3)
-    # vessel.control.rcs = True
-    # coms.mj.smart_ass.autopilot_mode = coms.mj.SmartASSAutopilotMode.retrograde
-    
-    # coms.mj.smart_ass.update(True)
-    # time.sleep(3)
+# coms.fine_tune_orbital_period()
 
-    # vessel.control.throttle = 0.05
-
-
-# time.sleep(20)
-
-coms.fine_tune_orbital_period()
-# print(coms.vessel_list)
+coms.init_sat_burns()
+# coms.init_existing_network('OsCom_0.4_Test Relay')
+NodeManager().refresh_nodes(vessels=coms.vessel_list)
 
 
 # coms.release_sats_triangle_orbit()

@@ -32,15 +32,12 @@ class VesselManager():
             self.vessel_list = [v for v in self.sc.vessels if self.name in v.name]
         self.df = self.setup_vessels_df()
 
-
-
-    
     def setup_vessels_df(self):
         ''' Returns a dataframe of Vessel objects '''
         self.df = pd.concat([Vessel(self.conn,v, orbit_bool=True).df for v in self.vessel_list])
         return self.df
 
-    def search_vessels_by_name(self, name):
+    def fuzzy_search_by_name(self, name):
         self.vessel_list = [v for v in self.sc.vessels if name in v.name]
         try:
             self.df = pd.concat([Vessel(self.conn,v, orbit_bool=True).df for v in self.vessel_list])

@@ -1,8 +1,8 @@
 import numpy as np
 import time
 
-def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-1, block=True):
-    sas_mode = False
+def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-1, block=True, sas_mode=True):
+    # sas_mode = False
     if sas_mode:
         control = vessel.control
         control.sas = True
@@ -25,7 +25,7 @@ def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-1, block=
             control.sas_mode = conn.space_center.SASMode.maneuver
 
     if block:
-        print('Blocked: Orientating vessel...' +vessel.name + ' to ' + new_orientation)
+        print(f'Blocked: Orientating {vessel} to ' + new_orientation)
 
         direction = conn.add_stream(getattr, vessel.flight(), 'direction')
         target_direction = conn.add_stream(getattr, vessel.flight(), new_orientation)

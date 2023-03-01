@@ -229,7 +229,7 @@ class LaunchManager():
 
         # fix this
         NodeManager().execute_node()
-        OrbitManager().print_telemetry()
+        #OrbitManager().print_telemetry()
 
 
         self.scheduler.remove_job('Autostaging')

@@ -21,47 +21,29 @@ from utils.handle_vessels import (
 class ComSatNetwork():
     def __init__(self):
         self.conn = krpc.connect(name="ComSat_Network")
-        print("ComSatNetwork connected ...")
-
         self.sc = self.conn.space_center
+        self.mj = self.conn.mech_jeb
 
         self.vessel = self.sc.active_vessel
         self.vessel_name = self.vessel.name
         self.constellation_name = self.vessel_name
+        print("ComSatNetwork connected ...")
 
         self.vessel_list = [self.vessel]
         if self.vessel_list:
             self.df = self.update_df()
 
-        #self.orbit_manager = OrbitManager(df=self.df)
-        #self.node_manager = NodeManager()
-
-        
-        # self.vessel_list = []
-
-        self.mj = self.conn.mech_jeb
-
-        # Telemetry
-        self.ut = self.conn.add_stream(getattr, self.conn.space_center, 'ut')
-        self.altitude = self.conn.add_stream(
-            getattr, self.vessel.flight(), 'mean_altitude')
-        self.apoapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'apoapsis_altitude')
-        self.periapsis = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'periapsis_altitude')
-        self.eccentricity = self.conn.add_stream(
-            getattr, self.vessel.orbit, 'eccentricity')
-        self.inclination = self. conn.add_stream(
-            getattr, self.vessel.orbit, 'inclination')
 
     def update_df(self):
         '''
         Creates a pandas dataframe to store
         telemetry data and antennas
         '''
-        self.df = VesselManager().setup_vessels_df(vessel_list=self.vessel_list)
+        ves = VesselManager(orbit_flag=True, node_flag=False, vessel_list=self.vessel_list)
 
-        self.df = self.df.apply(lambda x: x.apply(
+        # self.df = ves.setup_df()
+
+        self.df = ves.df.apply(lambda x: x.apply(
             lambda y: y() if callable(y) else y))
 
         self.df['period_diff'] = self.df['period'] - self.df['period'].mean()
@@ -102,7 +84,6 @@ class ComSatNetwork():
 
     def release_sats_triangle_orbit(self,nr_sats=5):
         # reset vessel list, release satelittes will create updated one
-        self.vessel_list = []
         self.release_satellite()
 
         for i in range(nr_sats-1):
@@ -113,7 +94,7 @@ class ComSatNetwork():
         self.update_df()
 
     def init_sat_burns(self):
-        for vessel in self.vessel_list:
+        for vessel in self.df.index:
             self.sc.active_vessel = vessel
             self.resonant_orbit()
     def fine_tune_orbital_period(self):
@@ -122,14 +103,12 @@ class ComSatNetwork():
         to the mean orbital period with RCS thrusters
         """
         print("Fine tuning orbital period ...")
-        self.update_df()
+        self.df = self.update_df()
         period_mean = self.df['period'].mean()
 
-        for vessel in self.vessel_list:
+        for vessel in self.df.index:
             self.sc.active_vessel = vessel
             vessel.control.rcs = False
-
-            print('Vessel:', vessel, vessel.name)
 
             if vessel.orbit.period < period_mean:
                 self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
@@ -142,7 +121,7 @@ class ComSatNetwork():
 
         time.sleep(15)
 
-        for vessel in self.vessel_list:
+        for vessel in self.df.index:
             self.sc.active_vessel = vessel
             if vessel.orbit.period < period_mean:
                 operator_selection = operator.lt
@@ -167,6 +146,7 @@ class ComSatNetwork():
 
         self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.prograde
         self.mj.smart_ass.update(False)
+
         time.sleep(20)
         for i in range(nr_sats):
             released_satellite = self.vessel.control.activate_next_stage()
@@ -192,7 +172,7 @@ class ComSatNetwork():
         self.vessel_list.append(released_satellite[0])
 
         print('ComSat deployed')
-        time.sleep(10)
+        self.update_df()
 
     def init_existing_network(self, constellation_name):
         self.constellation_name = constellation_name
@@ -204,8 +184,5 @@ class ComSatNetwork():
 
         print(
             f'{len(self.vessel_list)} preexisting satellites found with name {constellation_name}')
-
-        # print("Fucking up satellite list for testing purposes ... ")
-        # self.satellite_list = [self.sc.active_vessel]
 
         self.update_df()

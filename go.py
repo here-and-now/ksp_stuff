@@ -28,9 +28,12 @@ import krpc
 # orb.set_altitude_and_circularize(0,2500000)
 coms = ComSatNetwork()
 coms.release_all_satellites(nr_sats=5)
+# coms.init_existing_network('OsCom_0.4_Test Relay')
+# print(coms.df.index)
 coms.fine_tune_orbital_period()
 
-# coms.init_sat_burns()
+
+coms.init_sat_burns()
 # coms.init_existing_network('OsCom_0.4_Test Relay')
 # NodeManager().refresh_nodes(vessels=coms.vessel_list)
 

@@ -147,21 +147,18 @@ class OrbitManager():
             NodeManager().execute_node()
 
 class Orbit():
-    def __init__(self, conn=None, vessel=None):
+    def __init__(self, vessel=None, conn=None):
+        # self.conn = krpc.connect(name=f'Orbit: {vessel.name}')
         if conn is None:
-            # self.conn = krpc.connect(name=f'Orbit: {vessel.name}')
             self.conn = krpc.connect(name=f'Orbit: ')
-            self.sc = self.conn.space_center
-            self.vessel = vessel
         else:
             self.conn = conn
-            self.sc = self.conn.space_center
-            self.vessel = vessel
+        self.sc = self.conn.space_center
+        self.mj = self.conn.mech_jeb
+        self.vessel = vessel
 
         if vessel is None:
             self.vessel = self.sc.active_vessel
-
-        self.mj = self.conn.mech_jeb
 
         # keplerian elements
         self.eccentricity = self.conn.add_stream(
@@ -190,9 +187,9 @@ class Orbit():
         self.time_to_periapsis = self.conn.add_stream(
             getattr, self.vessel.orbit, 'time_to_periapsis')
 
-        self.df = self.setup_orbit_df()
+        self.df = self.update_df()
     
-    def setup_orbit_df(self):
+    def update_df(self):
         df = pd.DataFrame([{
             'vessel': self.vessel,
             # 'name': self.vessel.name,

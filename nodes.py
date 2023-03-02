@@ -1,6 +1,7 @@
 import math
 import time
 import krpc
+import pandas as pd
 
 from utils.handle_vessels import (
     manipulate_engines_by_name,
@@ -41,7 +42,7 @@ class NodeManager():
         for vessel in vessel_list:
             self.sc.active_vessel = vessel
             time.sleep(2)
-            for node in vessel.coontrol.nodes:
+            for node in vessel.control.nodes:
                 self.nodes_list.append(node)
 
         print(self.nodes_list)
@@ -71,7 +72,53 @@ class NodeManager():
                     enabled.wait()
 
 
-#### traaaaaaaash below
+
+
+
+
+
+class Node():
+    def __init__(self, vessel=None):
+        self.conn = krpc.connect(name="Vessel")
+        self.sc = self.conn.space_center
+        self.mj = self.conn.mech_jeb
+
+        if vessel is None:
+            self.vessel = self.sc.active_vessel
+        else:
+            self.vessel = vessel
+
+        self.sc.active_vessel = self.vessel
+        self.node_list = []
+
+        self.df = self.update_df()
+
+
+        #ToDO: fix this shit
+        # self.orbit = Orbit(self.vessel)
+        # self.df = pd.merge(self.df, self.orbit.df, how='inner', left_index=True, right_index=True)
+
+    def get_nodes(self):
+        self.node_list = []
+        for node in self.vessel.control.nodes:
+            self.node_list.append(node)
+
+        return self.node_list
+
+    def update_df(self):
+        self.node_list = self.get_nodes()
+
+        df = pd.DataFrame([{
+            'vessel': self.vessel,
+            # 'name': self.vessel.name,
+            'nodes' : self.node_list,
+        }])
+        df = df.set_index('vessel')
+        print(df)
+        return df
+
+
+    #### traaaaaaaash below
 
 
 # conn = krpc.connect(name='Execute nodes')

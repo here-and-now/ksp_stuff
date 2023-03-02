@@ -11,40 +11,33 @@ import krpc
 # conn = krpc.connect()
 # sc = conn.space_center
 # vessel = sc.active_vessel
-
-# launch = LaunchManager(max_q=30000)
-# orbs = OrbitManager(df=VesselManager().df)
-# launch.ascent()
-# while not launch.launch_finished:
-    # pass
-
+#
+# # launch = LaunchManager(max_q=30000)
+# # orbs = OrbitManager(df=VesselManager().df)
+# # launch.ascent()
+# # while not launch.launch_finished:
+#     # pass
+#
 # antenna_parts = vessel.parts.with_name('RTLongAntenna2')
 # for ap in antenna_parts:
-    # for module in ap.modules:
-        # if module.name == 'ModuleRTAntenna':
-            # module.set_action('Activate')
+#     for module in ap.modules:
+#         if module.name == 'ModuleRTAntenna':
+#             module.set_action('Activate')
 
 # orb = Orbit()
 # orb.set_altitude_and_circularize(0,2500000)
 coms = ComSatNetwork()
-coms.release_all_satellites(nr_sats=5)
-# coms.init_existing_network('OsCom_0.4_Test Relay')
-# print(coms.df.index)
-coms.fine_tune_orbital_period()
-
-
-coms.init_sat_burns()
-# coms.init_existing_network('OsCom_0.4_Test Relay')
-# NodeManager().refresh_nodes(vessels=coms.vessel_list)
-
-
-# coms.release_sats_triangle_orbit()
-
-# coms.init_existing_network('OsCom_0.2 Probe')
+# coms.resonant_orbit()
+# coms.release_all_satellites(nr_sats=5)
+coms.init_existing_network('OsCom_0.4_Test Relay')
+# coms.fine_tune_orbital_period()
+#
+# coms.recircularize_multiple_sats()
+# coms.fine_tune_orbital_period()
+coms.setup_communications()
 
 
 
-# tel = Communication()
 # tel.init_existing_network('OsCom_0.2 Probe')
 
 # tel.setup_communications()

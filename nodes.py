@@ -112,9 +112,12 @@ class Node():
             'vessel': self.vessel,
             # 'name': self.vessel.name,
             'nodes' : self.node_list,
+            'next_node_time_to': self.node_list[0].time_to,
+            'next_node_time_ut': self.node_list[0].ut,
+            'next_node_remaining_dv': self.node_list[0].remaining_delta_v,
         }])
         df = df.set_index('vessel')
-        print(df)
+        # print(df)
         return df
 
 

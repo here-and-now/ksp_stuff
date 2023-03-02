@@ -1,8 +1,8 @@
 import numpy as np
 import time
 
-def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-1, block=True, sas_mode=True):
-    # sas_mode = False
+def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-2, block=True, sas_mode=True):
+    sas_mode = False
     if sas_mode:
         control = vessel.control
         control.sas = True

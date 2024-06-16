@@ -29,13 +29,15 @@ for ap in antenna_parts:
 
 coms = ComSatNetwork()
 # coms.resonant_orbit()
-# time.sleep(30)
-# coms.release_all_satellites(nr_sats=5)
-# coms.init_existing_network('OsCom_0.6 Probe')
+# time.sleep(15)
+# coms.release_all_satellites(nr_sats=3)
+# # coms.setup_communications()
+# # coms.update_df()
+coms.init_existing_network('ComSat_AdAstra_0.12 Relay')
+# # coms.fine_tune_orbital_period()
+
+# coms.recircularize_multiple_sats()
 # coms.fine_tune_orbital_period()
-#
-coms.recircularize_multiple_sats()
-coms.fine_tune_orbital_period()
 coms.setup_communications()
 coms.update_df()
 

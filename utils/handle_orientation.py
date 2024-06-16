@@ -21,14 +21,18 @@ def orientate_vessel(conn, vessel, new_orientation, accuracy_cutoff=1e-2, block=
             control.sas_mode = conn.space_center.SASMode.anti_radial
         elif new_orientation == 'target':
             control.sas_mode = conn.space_center.SASMode.target
-        elif new_orientation == 'maneuver':
+        elif new_orientation == 'node':
             control.sas_mode = conn.space_center.SASMode.maneuver
 
     if block:
         print(f'Blocked: Orientating {vessel} to ' + new_orientation)
 
         direction = conn.add_stream(getattr, vessel.flight(), 'direction')
-        target_direction = conn.add_stream(getattr, vessel.flight(), new_orientation)
+
+        if new_orientation == 'node':
+            target_direction = conn.add_stream(getattr, vessel.control.nodes[0], 'remaining_burn_vector')
+        else:
+            target_direction = conn.add_stream(getattr, vessel.flight(), new_orientation)
 
         while np.any((np.abs(np.subtract(direction(), target_direction())) < accuracy_cutoff) == False):
             # time.sleep(0.1)

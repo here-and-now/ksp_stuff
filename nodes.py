@@ -50,8 +50,8 @@ class NodeManager():
 
     def execute_node(self):
         executor = self.mj.node_executor
-        executor.tolerance = 0.1
-        executor.lead_time = 10
+        executor.tolerance = 0.01
+        executor.lead_time = 5
         executor.execute_one_node()
 
         with self.conn.stream(getattr, executor, 'enabled') as enabled:
@@ -61,8 +61,8 @@ class NodeManager():
                     enabled.wait()
     def execute_all_nodes(self):
         executor = self.mj.node_executor
-        executor.tolerance = 0.1
-        executor.lead_time = 10
+        executor.tolerance = 0.01
+        executor.lead_time = 60
         executor.execute_all_nodes()
 
         with self.conn.stream(getattr, executor, 'enabled') as enabled:

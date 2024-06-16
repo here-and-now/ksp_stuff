@@ -20,10 +20,10 @@ from utils.pid import PID
 
 class LaunchManager():
     def __init__(self,
-             target_altitude=120000,
+             target_altitude=150000,
              turn_start_altitude=2500,
-             turn_end_altitude=75000,
-             end_stage=5,
+             turn_end_altitude=120000,
+             end_stage=8,
              inclination=0,
              roll=90,
              max_q=20000,
@@ -171,7 +171,7 @@ class LaunchManager():
         try:
             # set up auto_pilot
             self.vessel.auto_pilot.engage()
-            self.vessel.auto_pilot.target_roll = 0
+            self.vessel.auto_pilot.target_roll = self.roll
 
             # logic for desired inclination to compass heading
             if self.target_inclination >= 0:
@@ -181,12 +181,17 @@ class LaunchManager():
                     (self.target_inclination - 90) + 360
 
             # schedule
-            self.scheduler.add_job(id='Autostaging', func=self.staging,
+            self.scheduler.add_job(id='autostaging', func=self.staging,
                               trigger='interval', seconds=2)
             self.scheduler.add_job(
-                id='Gravity turn', func=self.gravity_turn, trigger='interval', seconds=1)
+                id='gravity_turn', func=self.gravity_turn, trigger='interval', seconds=1)
             self.scheduler.start()
 
+
+            # while self.flight_mean_altitude() < self.turn_end_altitude:
+            #     pass
+            #
+            # self.turn_end_reached()
 
             # call_target_apoapsis = self.conn.get_call(getattr, self.vessel.flight(), 'mean_altitude')
             call_target_apoapsis = self.conn.get_call(getattr, self.vessel.orbit, 'apoapsis_altitude')
@@ -196,10 +201,11 @@ class LaunchManager():
                     self.conn.krpc.Expression.constant_double(self.target_altitude))
 
             event = self.conn.krpc.add_event(expr_apo)
-            event.add_callback(self.apoapsis_reached)
+            event.add_callback(self.turn_end_reached)
             event.start()
 
-
+            while self.launch_finished == False:
+                pass
 
 
         except KeyboardInterrupt:
@@ -207,34 +213,31 @@ class LaunchManager():
             self.vessel.control.throttle = 0
             self.vessel.auto_pilot.disengage()
             self.scheduler.shutdown()
-        except krpc.error.RPCError:
-            print('Fjucked up')
-            self.vessel.control.throttle = 0
-            self.vessel.auto_pilot.disengage()
-            self.scheduler.shutdown()
+        # except krpc.error.RPCError:
+        #     print('Fjucked up')
+        #     self.vessel.control.throttle = 0
+        #     self.vessel.auto_pilot.disengage()
+        #     self.scheduler.shutdown()
 
 
-    def apoapsis_reached(self):
-        print('Apoapsis reached')
+    def turn_end_reached(self):
+        print(f'Turn end altitude of {self.turn_end_altitude} m reached')
         self.vessel.control.throttle = 0
         self.vessel.auto_pilot.disengage()
-        self.scheduler.remove_job('Gravity turn')
+        self.scheduler.remove_job('gravity_turn')
+
         print('Gravity turn finished')
-
         # print(
-            # f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
-
+        #     f'Planning circularization burn at apoapsis of {self.apoapsis()} m')
+        #
+        # time.sleep(3)
         circularization_burn = self.mj.maneuver_planner.operation_circularize
         circularization_burn.make_node()
-
-        # fix this
         NodeManager().execute_node()
-        #OrbitManager().print_telemetry()
 
-
-        self.scheduler.remove_job('Autostaging')
-        
+        self.scheduler.remove_job('autostaging')
         self.launch_finished = True
+        print('Launch finished')
 
     def thrust_throttle_adjustments(self, remaining_delta_v):
         twr = self.vessel.max_thrust / self.vessel.mass

@@ -193,7 +193,7 @@ class ComSatNetwork():
         print(f'{len(self.vessel_list)} ComSats deployed')
 
         print('Waiting for 10sec ... safespace for satellites')
-        time.sleep(10)
+        time.sleep(30)
         self.prepare_vessels()
         print('Vessels prepared')
         self.update_df()
@@ -229,12 +229,22 @@ class ComSatNetwork():
             self.mj.smart_ass.autopilot_mode = self.mj.SmartASSAutopilotMode.node
             self.mj.smart_ass.update(False)
 
-    def setup_communications(self):
+    def setup_communications(self, connection_list):
         '''
         Based on distance between satellites, sets up
         communication links between them in a triangular orbit.
         One antenna will always target Kerbin.
+        connection_list is a list of specific vessel names to connect to.
         '''
+
+        # Get the vessel objects for the names in connection_list with exact name match
+        vessel_name_to_object = {v.name: v for v in self.conn.space_center.vessels}
+        connection_vessels = []
+        for name in connection_list:
+            if name in vessel_name_to_object:
+                connection_vessels.append(vessel_name_to_object[name])
+            else:
+                print(f"Warning: Vessel named '{name}' not found.")
 
         distance_dict = {}
         for vessel in self.df.index:
@@ -243,8 +253,7 @@ class ComSatNetwork():
                 if vessel is not target_vessel:
                     self.sc.target_vessel = target_vessel
                     time.sleep(0.2)
-                    distance = self.sc.target_vessel.orbit.distance_at_closest_approach(
-                        vessel.orbit)
+                    distance = self.sc.target_vessel.orbit.distance_at_closest_approach(vessel.orbit)
                     distance_dict[vessel].update({target_vessel: distance})
 
         for vessel, distance_to_vessel_dict in distance_dict.items():
@@ -252,11 +261,15 @@ class ComSatNetwork():
             time.sleep(2)
             antenna_parts = vessel.parts.with_name('RelayAntenna5')
 
-            sorted_distance_to_vessel_dict = sorted(
-                distance_to_vessel_dict.items(), key=lambda x: x[1])
+            sorted_distance_to_vessel_dict = sorted(distance_to_vessel_dict.items(), key=lambda x: x[1])
 
             # Connect to the two nearest satellites to form a triangular communication link
             nearest_vessels = [sorted_distance_to_vessel_dict[0][0], sorted_distance_to_vessel_dict[1][0]]
+
+            # Add vessels from connection_list if they are not already in nearest_vessels
+            for conn_vessel in connection_vessels:
+                if conn_vessel not in nearest_vessels:
+                    nearest_vessels.append(conn_vessel)
 
             for i, antenna_part in enumerate(antenna_parts):
                 antenna = self.conn.remote_tech.antenna(antenna_part)
@@ -269,12 +282,9 @@ class ComSatNetwork():
                 if i == 0:
                     # The first antenna targets Kerbin
                     antenna.target_body = self.conn.space_center.bodies['Kerbin']
-                elif i == 1 and nearest_vessels[0]:
-                    # The second antenna targets the nearest satellite
-                    antenna.target_vessel = nearest_vessels[0]
-                elif i == 2 and nearest_vessels[1]:
-                    # The third antenna targets the second nearest satellite
-                    antenna.target_vessel = nearest_vessels[1]
+                elif i < len(nearest_vessels) + 1:
+                    # Subsequent antennas target the nearest satellites or specified vessels
+                    antenna.target_vessel = nearest_vessels[i - 1]
 
             # Log errors if any antennas are not set properly
             if not antenna_parts or len(antenna_parts) < 3:

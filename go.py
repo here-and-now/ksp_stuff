@@ -10,18 +10,18 @@ import krpc
 
 conn = krpc.connect()
 sc = conn.space_center
-vessel = sc.active_vessel
+# vessel = sc.active_vessel
 #
 # launch = LaunchManager(inclination=90, max_q=20000, roll=90)
 # launch.ascent()
 # while not launch.launch_finished:
     # pass
 #
-antenna_parts = vessel.parts.with_name('RTLongAntenna2')
-for ap in antenna_parts:
-    for module in ap.modules:
-        if module.name == 'ModuleRTAntenna':
-            module.set_action('Activate')
+# antenna_parts = vessel.parts.with_name('RTLongAntenna2')
+# for ap in antenna_parts:
+#     for module in ap.modules:
+#         if module.name == 'ModuleRTAntenna':
+#             module.set_action('Activate')
 
 # orb = Orbit()
 # orb.set_altitude_and_circularize(0,40000000)
@@ -32,13 +32,13 @@ coms = ComSatNetwork()
 # time.sleep(15)
 # coms.release_all_satellites(nr_sats=3)
 # # coms.setup_communications()
-# # coms.update_df()
-coms.init_existing_network('ComSat_AdAstra_0.12 Relay')
-# # coms.fine_tune_orbital_period()
+# coms.update_df()
+coms.init_existing_network('ComSat_AdAstra_0.13 Relay')
+# coms.fine_tune_orbital_period()
 
 # coms.recircularize_multiple_sats()
 # coms.fine_tune_orbital_period()
-coms.setup_communications()
+coms.setup_communications(connection_list=['ScanSat_0.2'])
 coms.update_df()
 
 

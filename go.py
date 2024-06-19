@@ -38,7 +38,8 @@ com = Communication()
 com.init_existing_network('ComSat_AdAstra_0.3 Probe')
 antenna_targets = {
     'HighGainAntenna': 'setup_network',
-    # 'OtherAntenna': ['Kerbin', 'ScanSat_0.2']
+    # 'nfex-antenna-relay-tdrs-2': ['active_vessel', 'ScanSat_0.2']
+    'RTShortDish2': ['active_vessel', 'ScanSat_0.2']
 }
 com.setup_communications(antenna_targets)
 com.display_network_info()

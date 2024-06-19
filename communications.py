@@ -169,24 +169,23 @@ class Communication:
 
         for vessel, distance_to_vessel_dict in distance_dict.items():
             self.switch_to_vessel(vessel)
-            antenna_parts = vessel.parts.with_name('HighGainAntenna')
-
             sorted_distance_to_vessel_dict = sorted(distance_to_vessel_dict.items(), key=lambda x: x[1])
 
             # Connect to the two nearest satellites to form a triangular communication link
             nearest_vessels = [sorted_distance_to_vessel_dict[0][0], sorted_distance_to_vessel_dict[1][0]]
 
-            for antenna_part in antenna_parts:
-                antenna = self.conn.remote_tech.antenna(antenna_part)
-                for module in antenna_part.modules:
-                    if module.name == 'ModuleRTAntenna':
-                        module.set_action('Activate')
-                    if module.name == 'ModuleDeployableAntenna':
-                        module.set_action('Extend Antenna')
+            for antenna_name, targets in antenna_targets_dict.items():
+                antenna_parts = vessel.parts.with_name(antenna_name)
 
-                # Set antenna targets based on the provided dictionary
-                if antenna_part.name in antenna_targets_dict:
-                    targets = antenna_targets_dict[antenna_part.name]
+                for antenna_part in antenna_parts:
+                    antenna = self.conn.remote_tech.antenna(antenna_part)
+                    for module in antenna_part.modules:
+                        if module.name == 'ModuleRTAntenna':
+                            module.set_action('Activate')
+                        if module.name == 'ModuleDeployableAntenna':
+                            module.set_action('Extend Antenna')
+
+                    # Set antenna targets based on the provided dictionary
                     if targets == 'setup_network':
                         # Setup the network: first antenna targets Kerbin, others target nearest vessels
                         for i, part in enumerate(antenna_parts):
@@ -207,24 +206,11 @@ class Communication:
                             else:
                                 print(f"Warning: Target '{target}' not found for antenna '{antenna_part.name}'.")
 
-            # Log errors if any antennas are not set properly
-            if not antenna_parts or len(antenna_parts) < 3:
-                print(f"Warning: Not enough antennas on vessel {vessel.name}.")
-            for i in range(len(antenna_targets_dict)):
-                if i >= len(antenna_parts):
-                    print(f"Warning: Antenna part {i} is not available for vessel {vessel.name}.")
-                if nearest_vessels[0] is None or nearest_vessels[1] is None:
-                    print(f"Warning: Nearest vessels not properly identified for vessel {vessel.name}.")
-
-# Example usage
-if __name__ == "__main__":
-    com = Communication()
-    com.init_existing_network('ComSat_AdAstra_0.13 Relay')
-
-    antenna_targets = {
-        'HighGainAntenna': 'setup_network',
-        # 'OtherAntenna': ['Kerbin', 'ScanSat_0.2']
-    }
-
-    com.setup_communications(antenna_targets)
-    com.display_network_info()
+                # Log errors if any antennas are not set properly
+                if not antenna_parts or len(antenna_parts) < 3:
+                    print(f"Warning: Not enough antennas of type '{antenna_name}' on vessel {vessel.name}.")
+                for i in range(len(antenna_targets_dict)):
+                    if i >= len(antenna_parts):
+                        print(f"Warning: Antenna part {i} of type '{antenna_name}' is not available for vessel {vessel.name}.")
+                    if nearest_vessels[0] is None or nearest_vessels[1] is None:
+                        print(f"Warning: Nearest vessels not properly identified for vessel {vessel.name}.")

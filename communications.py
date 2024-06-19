@@ -145,22 +145,17 @@ class Communication:
         headers = ["Vessel Name", "Body", "Inclination", "Apoapsis", "Periapsis", "Period", "Antenna Part Name", "Module Name", "Target", "State"]
         print(tabulate(nested_info, headers=headers, tablefmt="fancy_grid"))
 
-    def setup_communications(self, connection_list):
+    def setup_communications(self, antenna_targets_dict):
         '''
         Based on distance between satellites, sets up
         communication links between them in a triangular orbit.
         One antenna will always target Kerbin.
-        connection_list is a list of specific vessel names to connect to.
+        antenna_targets_dict is a dictionary with antenna names as keys and lists of specific targets as values.
+        If the value is 'setup_network', it will setup the network among the satellites and Kerbin.
         '''
 
-        # Get the vessel objects for the names in connection_list with exact name match
+        # Get the vessel objects for the names in the targets
         vessel_name_to_object = {v.name: v for v in self.conn.space_center.vessels}
-        connection_vessels = []
-        for name in connection_list:
-            if name in vessel_name_to_object:
-                connection_vessels.append(vessel_name_to_object[name])
-            else:
-                print(f"Warning: Vessel named '{name}' not found.")
 
         distance_dict = {}
         for vessel in self.vessel_list:
@@ -174,19 +169,14 @@ class Communication:
 
         for vessel, distance_to_vessel_dict in distance_dict.items():
             self.switch_to_vessel(vessel)
-            antenna_parts = vessel.parts.with_name('RelayAntenna5')
+            antenna_parts = vessel.parts.with_name('HighGainAntenna')
 
             sorted_distance_to_vessel_dict = sorted(distance_to_vessel_dict.items(), key=lambda x: x[1])
 
             # Connect to the two nearest satellites to form a triangular communication link
             nearest_vessels = [sorted_distance_to_vessel_dict[0][0], sorted_distance_to_vessel_dict[1][0]]
 
-            # Add vessels from connection_list if they are not already in nearest_vessels
-            for conn_vessel in connection_vessels:
-                if conn_vessel not in nearest_vessels:
-                    nearest_vessels.append(conn_vessel)
-
-            for i, antenna_part in enumerate(antenna_parts):
+            for antenna_part in antenna_parts:
                 antenna = self.conn.remote_tech.antenna(antenna_part)
                 for module in antenna_part.modules:
                     if module.name == 'ModuleRTAntenna':
@@ -194,28 +184,47 @@ class Communication:
                     if module.name == 'ModuleDeployableAntenna':
                         module.set_action('Extend Antenna')
 
-                if i == 0:
-                    # The first antenna targets Kerbin
-                    antenna.target_body = self.conn.space_center.bodies['Kerbin']
-                elif i == 1:
-                    # The second antenna targets the active vessel
-                    antenna.target = self.conn.remote_tech.Target.active_vessel
-                elif i < len(nearest_vessels) + 2:
-                    # Subsequent antennas target the nearest satellites or specified vessels
-                    antenna.target_vessel = nearest_vessels[i - 2]
+                # Set antenna targets based on the provided dictionary
+                if antenna_part.name in antenna_targets_dict:
+                    targets = antenna_targets_dict[antenna_part.name]
+                    if targets == 'setup_network':
+                        # Setup the network: first antenna targets Kerbin, others target nearest vessels
+                        for i, part in enumerate(antenna_parts):
+                            antenna = self.conn.remote_tech.antenna(part)
+                            if i == 0:
+                                antenna.target_body = self.conn.space_center.bodies['Kerbin']
+                            else:
+                                nearest_index = (i - 1) % len(nearest_vessels)
+                                antenna.target_vessel = nearest_vessels[nearest_index]
+                    else:
+                        for target in targets:
+                            if target == 'Kerbin':
+                                antenna.target_body = self.conn.space_center.bodies['Kerbin']
+                            elif target == 'active_vessel':
+                                antenna.target = self.conn.remote_tech.Target.active_vessel
+                            elif target in vessel_name_to_object:
+                                antenna.target_vessel = vessel_name_to_object[target]
+                            else:
+                                print(f"Warning: Target '{target}' not found for antenna '{antenna_part.name}'.")
 
             # Log errors if any antennas are not set properly
             if not antenna_parts or len(antenna_parts) < 3:
                 print(f"Warning: Not enough antennas on vessel {vessel.name}.")
-            if i >= len(antenna_parts):
-                print(f"Warning: Antenna part {i} is not available for vessel {vessel.name}.")
-            if nearest_vessels[0] is None or nearest_vessels[1] is None:
-                print(f"Warning: Nearest vessels not properly identified for vessel {vessel.name}.")
+            for i in range(len(antenna_targets_dict)):
+                if i >= len(antenna_parts):
+                    print(f"Warning: Antenna part {i} is not available for vessel {vessel.name}.")
+                if nearest_vessels[0] is None or nearest_vessels[1] is None:
+                    print(f"Warning: Nearest vessels not properly identified for vessel {vessel.name}.")
 
 # Example usage
 if __name__ == "__main__":
     com = Communication()
     com.init_existing_network('ComSat_AdAstra_0.13 Relay')
-    
-    com.setup_communications(['ScanSat_0.2'])  # Add appropriate vessel names here
+
+    antenna_targets = {
+        'HighGainAntenna': 'setup_network',
+        # 'OtherAntenna': ['Kerbin', 'ScanSat_0.2']
+    }
+
+    com.setup_communications(antenna_targets)
     com.display_network_info()

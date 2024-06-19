@@ -7,6 +7,7 @@ from vessels import VesselManager
 from nodes import NodeManager
 import time
 import krpc
+from communications import Communication
 
 conn = krpc.connect()
 sc = conn.space_center
@@ -27,19 +28,29 @@ sc = conn.space_center
 # orb.set_altitude_and_circularize(0,40000000)
 
 
-coms = ComSatNetwork()
+# coms = ComSatNetwork()
 # coms.resonant_orbit()
 # time.sleep(15)
 # coms.release_all_satellites(nr_sats=3)
-# # coms.setup_communications()
+# coms.recircularize_multiple_sats()
+
+com = Communication()
+com.init_existing_network('ComSat_AdAstra_0.3 Probe')
+antenna_targets = {
+    'HighGainAntenna': 'setup_network',
+    # 'OtherAntenna': ['Kerbin', 'ScanSat_0.2']
+}
+com.setup_communications(antenna_targets)
+com.display_network_info()
+# coms.setup_communications()
 # coms.update_df()
-coms.init_existing_network('ComSat_AdAstra_0.13 Relay')
+# coms.init_existing_network('ComSat_AdAstra_0.13 Relay')
 # coms.fine_tune_orbital_period()
 
-# coms.recircularize_multiple_sats()
+
 # coms.fine_tune_orbital_period()
-coms.setup_communications(connection_list=['ScanSat_0.2'])
-coms.update_df()
+# coms.setup_communications(connection_list=['ScanSat_0.2'])
+# coms.update_df()
 
 
 

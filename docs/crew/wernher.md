@@ -20,3 +20,4 @@ This is the ksp-fixer. Lessons in `docs/lessons.md`, patch the named
 - 2026-08-19 — L-023 Mun Pe went underground at 1000×; do not rails-warp to a lithobrake peri.
 - 2026-08-19 — L-026 leftover uplink abort killed Val on the pad; clear radio at mun start.
 - 2026-08-19 — L-027 occupied pad: recover leftover then launch; keep recover=True.
+- 2026-08-19 — L-028 TLI Pe=None while apo still short of Mun; raise/re-plan, do not abort.

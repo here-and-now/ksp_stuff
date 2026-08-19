@@ -13,3 +13,4 @@ Gene: ESC leftover Mun wreck parts=-1 peri=-109 km — abort, hangar must leave 
 Gene: ESC leftover Mun wreck parts=-1 peri=-109 km — abort, hangar must leave wreck
 script: acked abort ESC lithobrake leftover wreck peri=-109172 parts=-1
 Gene: resume
+Gene: pad fresh LF=3600 stg=3 — holding radio, no leftover abort

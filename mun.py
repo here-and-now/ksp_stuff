@@ -40,6 +40,8 @@ MUN_NAME = "Mun"
 _ENCOUNTER_PE_MIN = 12_000.0
 _ENCOUNTER_PE_MAX = 50_000.0
 _ENCOUNTER_PE_AIM = 25_000.0
+# apoapsis_altitude past this with no Mun patch is a miss (L-028).
+_MUN_APO_PAST = 12_000_000.0
 
 
 def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
@@ -104,6 +106,167 @@ def _time_to_soi(vessel: Any, body: str) -> float:
         except Exception:
             pass
     return float("nan")
+
+
+def _tli_patch(vessel: Any) -> tuple[str | None, float | None]:
+    return _next_body(vessel.orbit), _next_pe(vessel.orbit)
+
+
+def _tli_good(nxt: str | None, pe: float | None) -> bool:
+    return (
+        nxt == MUN_NAME
+        and pe is not None
+        and _ENCOUNTER_PE_MIN <= pe <= _ENCOUNTER_PE_MAX
+    )
+
+
+def _tli_litho(nxt: str | None, pe: float | None) -> bool:
+    return nxt == MUN_NAME and pe is not None and pe < _ENCOUNTER_PE_MIN
+
+
+def _tli_escaped_miss(state: Any, nxt: str | None) -> bool:
+    """Hyperbola or apo past Mun with no SOI — not a short Hohmann (L-028)."""
+    if nxt == MUN_NAME or not state.escaping:
+        return False
+    return (
+        not math.isfinite(state.apo)
+        or state.apo < 0.0
+        or state.apo >= _MUN_APO_PAST
+    )
+
+
+def _abort_bad_tli(state: Any, nxt: str | None, pe: float | None) -> None:
+    if _tli_litho(nxt, pe):
+        raise MissionAbort(f"TLI Mun Pe {pe:.0f} below {_ENCOUNTER_PE_MIN:.0f}")
+    if _tli_escaped_miss(state, nxt):
+        raise MissionAbort(
+            f"TLI escaped Kerbin with no Mun SOI apo={state.apo:.0f}"
+        )
+    if state.in_atmo or (state.dipping and state.body != MUN_NAME):
+        raise MissionAbort(f"TLI left a bad orbit {state.line()}")
+
+
+def _raise_tli_apo(
+    session: Session,
+    vessel: Any,
+    *,
+    watch: FlightWatch,
+    abort: Callable[[], bool] | None,
+    on_log: Callable[[str], None] | None,
+    band: float,
+) -> None:
+    """Prograde until a Mun patch appears or apo reaches the Mun band."""
+    ap = vessel.auto_pilot
+    ap.reference_frame = vessel.orbital_reference_frame
+    set_autopilot(ap, True)
+    ap.target_direction = (0.0, 1.0, 0.0)
+    vessel.control.sas = False
+    wait_aligned(ap, timeout=10.0, max_error=20.0)
+    try:
+        t0 = time.monotonic()
+        while time.monotonic() - t0 < 90.0:
+            if abort and abort():
+                raise MissionAbort("TLI raise aborted")
+            state = watch.pulse("tli+ ")
+            if holding():
+                vessel.control.throttle = 0.0
+                continue
+            check_alive(session, watch=watch)
+            nxt, pe = _tli_patch(vessel)
+            if nxt == MUN_NAME and pe is not None:
+                vessel.control.throttle = 0.0
+                if pe < _ENCOUNTER_PE_MIN:
+                    raise MissionAbort(
+                        f"TLI Mun Pe {pe:.0f} below {_ENCOUNTER_PE_MIN:.0f}"
+                    )
+                _say(f"TLI encounter after raise Pe={pe:.0f}", on_log)
+                return
+            if _tli_escaped_miss(state, nxt):
+                vessel.control.throttle = 0.0
+                return
+            if math.isfinite(state.apo) and state.apo >= band:
+                vessel.control.throttle = 0.0
+                _say(
+                    f"TLI apo {state.apo:.0f} in Mun band, Pe={pe}",
+                    on_log,
+                )
+                return
+            if not watch.relight(end_stage=0):
+                raise MissionAbort("no thrust during TLI raise")
+            vessel.control.throttle = 1.0
+        vessel.control.throttle = 0.0
+    finally:
+        try:
+            vessel.control.throttle = 0.0
+            set_autopilot(ap, False)
+        except Exception:
+            pass
+
+
+def _finish_tli(
+    session: Session,
+    vessel: Any,
+    *,
+    watch: FlightWatch,
+    abort: Callable[[], bool] | None,
+    on_log: Callable[[str], None] | None,
+) -> None:
+    """After the TLI node: Pe=None is not a lost encounter while apo is short.
+
+    L-023 still: do not warp until Pe is 12–50 km; abort a subsurface Mun Pe
+    or an escape past ~12 Mm with no SOI (L-028).
+    """
+    mun = session.bodies[MUN_NAME]
+    band = float(mun.orbit.semi_major_axis) - float(
+        vessel.orbit.body.equatorial_radius
+    )
+
+    def _tick() -> tuple[Any, str | None, float | None]:
+        st = watch.pulse("tli ", force_log=True)
+        nxt, pe = _tli_patch(vessel)
+        return st, nxt, pe
+
+    state, nxt, pe = _tick()
+    for _ in range(4):
+        if nxt == MUN_NAME:
+            break
+        time.sleep(0.25)
+        state, nxt, pe = _tick()
+
+    _abort_bad_tli(state, nxt, pe)
+    if _tli_good(nxt, pe):
+        return
+
+    if nxt != MUN_NAME and math.isfinite(state.apo) and state.apo < band:
+        _say(
+            f"TLI apo {state.apo:.0f} short of Mun {band:.0f} — raising",
+            on_log,
+        )
+        _raise_tli_apo(
+            session, vessel, watch=watch, abort=abort, on_log=on_log, band=band
+        )
+        state, nxt, pe = _tick()
+        _abort_bad_tli(state, nxt, pe)
+        if _tli_good(nxt, pe):
+            return
+
+    if not _tli_good(nxt, pe):
+        _say("TLI has no Mun patch in 12–50 km — re-planning", on_log)
+        try:
+            plan_mun_encounter(session, vessel, on_log=on_log)
+        except MissionAbort:
+            state, nxt, pe = _tick()
+            _abort_bad_tli(state, nxt, pe)
+            raise
+        execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
+        state, nxt, pe = _tick()
+        _abort_bad_tli(state, nxt, pe)
+        if _tli_good(nxt, pe):
+            return
+
+    if _tli_good(nxt, pe):
+        return
+    raise MissionAbort(f"TLI lost Mun encounter Pe={pe}")
 
 
 def hohmann_transfer_dv(orbit: Any, target_sma: float) -> float:
@@ -473,12 +636,9 @@ def run_from_lko(
         require_parking(state, min_peri=70_000, max_apo=2_000_000, max_ecc=0.25)
         plan_mun_encounter(session, vessel, on_log=on_log)
         execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
-        state = watch.pulse("tli ", force_log=True)
-        if state.escaping or state.in_atmo or (state.dipping and state.body != MUN_NAME):
-            raise MissionAbort(f"TLI left a bad orbit {state.line()}")
-        pe = _next_pe(vessel.orbit)
-        if pe is None or not (_ENCOUNTER_PE_MIN <= pe <= _ENCOUNTER_PE_MAX):
-            raise MissionAbort(f"TLI lost Mun encounter Pe={pe}")
+        _finish_tli(
+            session, vessel, watch=watch, abort=abort, on_log=on_log
+        )
         _say("TLI done, warping to Mun SOI", on_log)
         warp_to_soi(session, vessel, on_log=on_log, abort=abort, watch=watch)
         capture_at_periapsis(session, vessel, on_log=on_log, abort=abort, watch=watch)

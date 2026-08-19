@@ -29,3 +29,4 @@ Server stack trace:
   at KRPC.Service.YieldException.CallUntyped () [0x00018] in <96c426f535db4c9daa669caa35f61868>:0 
   at KRPC.Service.ProcedureCallContinuation+<>c__DisplayClass5_0.<Run>b__0 () [0x00000] in <96c426f535db4c9daa669caa35f61868>:0 
   at KRPC.Service.Services.ExecuteCall (KRPC.Service.Scanner.ProcedureSignature procedure, System.Func`1[TResult] continuation) [0x00002] in <96c426f535db4c9daa669caa35f61868>:0  → docs/flights/2026-08-19T1829Z-mun.md review=docs/flights/2026-08-19T1829Z-mun-review.md
+- 2026-08-19T1839Z mun exit=2 abort=TLI lost Mun encounter Pe=None → docs/flights/2026-08-19T1839Z-mun.md review=docs/flights/2026-08-19T1839Z-mun-review.md

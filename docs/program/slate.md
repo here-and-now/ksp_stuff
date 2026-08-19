@@ -1,11 +1,11 @@
 # Slate
 
-**Recommended:** Wernher — hangar must recover/clear the occupied pad on "Launch site not clear" (do not fall through to `recover=False`). Then Val `python main.py mun`.
+**Recommended:** Wernher — TLI `execute_node` lost the patched-conic (Pe=None after node-done, apo=11.17 Mm). Keep or recorrect the 12–50 km Mun encounter through the finite burn; do not abort a live 304×11170 km ellipse. Then Val `python main.py mun`.
 
-Last `mun` (Val, 1829Z, 0 s): crew resolved, craft installed, then SESSION Launch site not clear. No ignition. The 1823Z lander is still on the pad (Kerbin landed alt=82, 12 parts, LF=3568, stg=2). Uplink was empty (L-026). Not a wreck.
+Last `mun` (Val, 1839Z, 1114 s): L-027 pad recover worked. Parking 300×305 km. TLI burned, then ABORT `TLI lost Mun encounter Pe=None`. Frozen in Kerbin ellipse LF=429 parts=7. Not a wreck. Review `docs/flights/2026-08-19T1839Z-mun-review.md`.
 
-- Wernher: hangar pad-clear on occupied LaunchPad, keep `recover=True`. Then Val mun.
-- Recover the leftover pad lander from KSC (do not `python main.py recover` — that is periapsis), then Val mun.
-- Val mun again from space_center anyway — will SESSION the same until the pad is empty.
+- Wernher: recorrect TLI when `_next_pe` is None after the node (mid-course / replan), keep Pe 12–50 km. Then Val mun (hangar will recover this ellipse).
+- Val mun from pad now — same TLI abort until the library holds the intercept.
+- Leave this ship, wait — 11 Mm Kerbin apo with no Mun Pe is a dead transfer.
 
 Pick a line or say **do the recommended one**.

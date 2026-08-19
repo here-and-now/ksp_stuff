@@ -199,6 +199,7 @@ python main.py mun
   ```
 - **Cause:** Capture never burned (`warp` tag, thr=0). `execute_node` rails-warped toward the capture peri at 1000× inside Mun SOI; patched-conic Pe went from +23 km to −109 km and the ship hit the surface. `time_to_soi_change` NaN near 9.5 Mm sat `warp_to_soi` at 1×, but they still entered SOI (not the 400 s timeout). TLI did not dry the lander (LF=647 after circularize; LF=0 is the wreck). `FlightWatch` has no airless DIP, so no gate until ESC after the freeze.
 - **Fix:** `mun.py` — after TLI require next Pe still 12–50 km; `warp_to_soi` uses apo if `time_to_soi_change` is NaN, stops on SOI / Pe < 12 km; capture burns retrograde now if Pe is already low, does not warp to a subsurface peri. `warp.py` — 50× rails cap when airless Pe < 80 km; drop warp / abort on Pe < 0; abort if UT freezes. `nodes.py` `stop_if` on the capture warp. `watch.py` lithobrake danger + `check_alive`.
+- **Superseded in part by L-028:** immediate post-TLI abort on Pe=None. Warp/capture lithobrake guards remain.
 
 ## L-024 — Gene talks to the script through uplink.md
 
@@ -241,3 +242,17 @@ python main.py mun
   1823Z leftover: Kerbin landed alt=82, 12 parts, LF=3568, stg=2. Status at KSC: `scene=space_center` no vessel.
 - **Cause:** L-026 freeze left the lander on the pad. `go_space_center` packed it; `launch_vessel(recover=True)` still failed pre-flight (`WaitForVesselPreFlightChecks`). Hangar then retried `recover=False` (L-014/L-022), which cannot clear an occupied site. Val stayed `assigned` on that stack. Not L-022 (no SaveGame NRE).
 - **Fix:** `hangar.clear_launch_site` before `launch_vessel` and on this error: `vessel.recover()` (wait/switch if still flying at 82 m), then `go_space_center`. Keep `recover=True` on “Launch site not clear”. 25 s watchdog stays. Do not ask for a Recover click.
+
+## L-028 — TLI Pe=None is not a lost encounter while apo is still short of Mun
+
+- **When:** 2026-08-19 Val `python main.py mun` (1839Z)
+- **Symptom:** Parking ~300×305 km. TLI node burned (tag `node`, throttle 1) apo 2.5 Mm → 11.2 Mm. Aborted `TLI lost Mun encounter Pe=None` at node-done. Still Kerbin, peri 304 km, LF ~429.
+- **Telemetry:**
+  ```
+  node Kerbin orbiting alt=307542 peri=304413 apo=4802602 ecc=0.713 LF=453 stg=1 thr=1.00 F=60000N parts=7 warp=1x tpe=18789
+  node-done Kerbin orbiting alt=311603 peri=304288 apo=11169487 ecc=0.857 LF=429 stg=1 thr=0.00 F=60000N parts=7 warp=1x tpe=53271
+  tli Kerbin orbiting alt=311659 peri=304288 apo=11169487 ecc=0.857 LF=429 stg=1 thr=0.00 F=60000N parts=7 warp=1x tpe=53271
+  ABORT TLI lost Mun encounter Pe=None
+  ```
+- **Cause:** L-023 required next Pe 12–50 km immediately after `execute_node`. Finite TLI left apo at 11.17 Mm (Mun SMA altitude ~11.4 Mm). Vessel `orbit.next_orbit` is None until apo is in the Mun band; Pe=None meant “not yet at Mun”, not a lost SOI.
+- **Fix:** `mun.py` — after TLI, if next body isn’t Mun or Pe is None, raise apo / re-plan. Abort only if escaping Kerbin with no Mun SOI and apo already past ~12 Mm, or Mun Pe subsurface. Do not 1000× until Pe is 12–50 km (L-023 warp/capture guards stay).

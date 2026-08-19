@@ -23,3 +23,4 @@ exit, rewrite `docs/program/slate.md`. Library bugs go to Wernher.
 - 2026-08-19 — Jeb LKO+TLI then Mun lithobrake (planned Pe 23 km, arrived peri=-109 km). Warp-to-Pe, parts=-1, FlightWatch hung (exit 143). Seat → Val. Hold for Wernher L-023.
 - 2026-08-19 — Val pad ignition aborted by Gene: leftover Mun ESC abort consumed at T+19s. Ship intact (Kerbin landed, 12 parts, LF=3568). Seat stays Val. Review 2026-08-19T1823Z.
 - 2026-08-19 — Val mun SESSION Launch site not clear (1829Z). 1823Z pad stack still occupying LaunchPad. L-026 radio clear held. Seat stays Val. Hold for hangar pad-clear. Review 2026-08-19T1829Z.
+- 2026-08-19 — Val 1839Z pad→300 km LKO then TLI apo=11.17 Mm; abort TLI lost Mun encounter Pe=None. L-027 pad-clear held. Ship frozen, LF=429. Seat stays Val. Hold for Wernher TLI recorrect. Review 2026-08-19T1839Z.

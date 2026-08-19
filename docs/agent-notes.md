@@ -195,6 +195,10 @@ on wall-clock 1 Hz.
 `orbit.time_to_soi_change` is NaN when no SOI change is predicted, and
 was NaN near the Mun patch (~9.5 Mm) even after a planned encounter
 (`next_orbit` still Mun). Fall back to `time_to_apoapsis` on a transfer.
+Vessel `orbit.next_orbit` is None until the *live* orbit intersects Mun
+SOI; a maneuver `node.orbit.next_orbit` can be Mun while the burn is
+still short (apo below Mun SMA ~12 Mm). Do not treat Pe=None as a lost
+encounter until apo is in that band (L-028).
 High rails (1000×+) toward an airless close peri punches the patched
 conic through the surface (L-023: planned Pe 23 km → −109 km). Cap
 rails at 50× when airless Pe < 80 km; do not warp to a subsurface peri.
@@ -370,3 +374,5 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 - **2026-08-19** — Pad leftover after abort: `Launch site not clear`.
   `vessel.recoverable` / `vessel.recover()` clear it; keep
   `launch_vessel(recover=True)` (L-027).
+- **2026-08-19** — Vessel `orbit.next_orbit` is None after a short TLI
+  even when the node had a Mun patch (apo 11.17 Mm < Mun SMA). L-028.

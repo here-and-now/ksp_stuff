@@ -304,3 +304,10 @@ python main.py mun
 - **Symptom:** Suicide hovered at ~8 km, `thr=0.05`, peri −200 km, `suicide burn timed out`. `freeze()` cut throttle. Restart at 2.6 km: 1 part, LF 0, missing.
 - **Cause:** Abort always `freeze(throttle=0)`. Timeout fired while peri was underground. Chop to 0.05 when speed was low (apo≈alt).
 - **Fix:** `freeze` keeps throttle 1 if peri < 0 and alt < 30 km. Suicide timeout clock resets while peri is underground. Landing Pe 18 km not 10 km. Preflight: `docs/program/preflight.md`. Honor: `docs/program/4761.md`.
+
+## L-036 — Phases, no spotter, stack engineer
+
+- **When:** 2026-08-19 after 15 s Gene/Grok spam and a godfile `mun`
+- **Symptom:** Latency too high for Gene-in-the-loop. Spotter duplicated status. `mun.py` was the only “mission”.
+- **Cause:** Continuous TUI + one-shot mun. Building blocks were buried in Mun-specific code.
+- **Fix:** `python main.py phase <block>`. Gene replans between exits. Catalog `docs/program/blocks.md`. New role `ksp-stack`. Do not spawn spotter. TUI = phase edges + unexpected. Gene sets `suicide_throttle` / `landing_pe`. Do not fly 6189/4373 until preflight.

@@ -167,6 +167,43 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_phase(session: Session, args: argparse.Namespace) -> int:
+    from crew import current_pilot
+    from flightlog import start
+    from phases import OffPlan, run
+
+    t0 = time.monotonic()
+    crew = ""
+    try:
+        crew = current_pilot().name
+    except Exception:
+        pass
+    start(args.name, crew=crew)
+
+    def abort() -> bool:
+        return time.monotonic() - t0 > args.timeout
+
+    try:
+        run(args.name, session, on_log=_log, abort=abort)
+    except OffPlan as exc:
+        freeze(session)
+        _log(f"OFFPLAN {exc}")
+        write_handoff(command=args.name, exit_code=4, abort=f"OFFPLAN {exc}")
+        return 4
+    except MissionAbort as exc:
+        freeze(session)
+        _log(f"ABORT {exc}")
+        write_handoff(command=args.name, exit_code=2, abort=str(exc))
+        return 2
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        write_handoff(command=args.name, exit_code=1, abort=f"SESSION {exc}")
+        return 1
+    heartbeat(session, _log, tag="done ")
+    write_handoff(command=args.name, exit_code=0)
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(
         level=logging.INFO,
@@ -207,6 +244,12 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Do not Hangar a new stack. Fly the active vessel (don't abandon crew).",
     )
+    ph = sub.add_parser("phase", help="Run one Gene-planned segment, then exit")
+    ph.add_argument(
+        "name",
+        choices=("recover", "circularize", "tli", "soi", "capture", "land"),
+    )
+    ph.add_argument("--timeout", type=float, default=2400.0)
     up = sub.add_parser("uplink", help="Gene → flying mun (no kRPC)")
     up.add_argument("verb", help="abort|freeze|hold|resume|capture|skip-warp|no-warp-pe|set")
     up.add_argument("rest", nargs="*", help="reason or `mun_pe 25000`")
@@ -285,6 +328,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_recover(session)
         if args.cmd == "mun":
             return cmd_mun(session, args)
+        if args.cmd == "phase":
+            return cmd_phase(session, args)
         parser.error(f"unknown command {args.cmd}")
         return 2
     finally:

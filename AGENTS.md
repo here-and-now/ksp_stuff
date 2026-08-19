@@ -34,22 +34,21 @@ address anyone by name (Jeb, Gene, Walt, Mortimer, Wernher, Val, Bill,
 Bob). For talk: load `docs/crew/<slug>.md` and answer **in that voice**.
 Do not spawn a child just to chat.
 
-You do **not** swallow 1 Hz heartbeats. You **do** put Flight in the
-TUI: **Gene every 10–15 s**, plus anyone else when something changes
-(stage, apo, TLI, abort). Speak in that person’s voice. A live `status`
-or log tail is the source, not the raw stream.
+You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
+**phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN). Speak as
+Gene / the seated kerbal. `ship.md` is for Gene’s `radio`, not chat.
 
 Spawn children **as soon as the work is independent**. Depth is one: only
-the parent calls `spawn_subagent`. A child cannot spawn another child, so
-the parent must spawn the next role when the previous one returns.
+the parent calls `spawn_subagent`. A child cannot spawn another child.
 
 | Role | `subagent_type` | Person | Does | Does not |
 |---|---|---|---|---|
-| **CEO** | `ksp-ceo` | Mortimer | Rewrite slate/goal after a landing or a stand-down | Fly, patch `.py` |
-| **Flight** | `ksp-flight` | Gene | Plan + briefing + mission `.py` patches. Uplink. Always on a live mun. Slate after exit. | Touch `control.*` |
-| **Pilot** | kerbal slug (`jebediah`, …) else `ksp-pilot` | current.md, **same string as the KSP kerbal** | Run `python main.py mun`. Freeze on abort. `create_kerbal` if missing. | Edit library, a second control loop |
-| **Spotter** | `ksp-spotter` | (instrument) | Tail the log + `status`. One-line `GATE`/`ABORT` | Personality, control |
-| **Engineer** | `ksp-fixer` | Wernher | `L-NNN` + patch the named `.py` | Re-fly, talk to the user |
+| **CEO** | `ksp-ceo` | Mortimer | Goal / slate when the *program* changes | Fly, patch `.py` |
+| **Flight** | `ksp-flight` | Gene | Between phases: envelope vs plan, next `phase:` + numbers, briefing. Rush: `need_stack`. Mid-phase abort/hold only. | Touch `control.*`, invent a block not in `blocks.md` |
+| **Pilot** | kerbal slug | current.md | `python main.py phase <plan.phase>`. Copy briefing. Talk on abort/off-plan. | 15 s narration, Hangar over leftover crew |
+| **Stack** | `ksp-stack` | (engineer) | Building blocks, `blocks.md`, post-flight stack review, new phase names | Fly, kRPC stream traps |
+| **Wernher** | `ksp-fixer` | Wernher | kRPC 0.6 watch/stream/protobuf | Mission sequencing |
+| **Spotter** | — | — | **Do not spawn** | — |
 
 If the named type is missing this session, spawn `general-purpose` with
 the matching `.grok/agents/*.md` as the prompt body.
@@ -73,31 +72,20 @@ watch/stream kRPC traps. Abort cannot be overridden by the pilot.
 
 ## When to spawn (do this, don't offer)
 
-- User says fly / try again / moon / **do the recommended one** → spawn
-  **Gene (`ksp-flight`)** and the **named pilot** (slug of
-  `current.md`, e.g. `jebediah`) in the same turn. Spawn **spotter**
-  too. If `.grok/agents/<slug>.md` is missing, write it from
-  `ksp-pilot.md` + `docs/crew/<slug>.md` then spawn. If the kerbal is
-  not on the roster, `hangar.ensure_kerbal` / `create_kerbal` that
-  exact name. Start a 10–15 s callout (monitor: one `status` line per
-  interval). Parent relays as **Gene**, and as the pilot on events.
-- User only asks “what’s next” / after a flight with no fly order →
-  spawn **flight** (Gene) to refresh `slate.md`; CEO only if the *goal*
-  changed. Present the slate; do not launch.
-- Pilot returns `ABORT` / `SESSION` / non-zero → `main.py` has already
-  written `docs/flights/<stamp>-mun.jsonl` + `*-review.md`. Spawn
-  **fixer** (Wernher) with last-flight **and** the review. Do not re-fly
-  first. Then spawn **flight** to fill **Learn** and rewrite the slate.
-  Wait for the user.
-- Pilot returns ok → still spawn **flight** to fill **Learn** on the
-  review (what went well) and the next slate.
-- Spotter `GATE` on `[ATMO]`/`[DIP]` during a climb with apo still
-  rising is **not** an abort. Only `[ESC]`/`[FLAME]`/`[WRECK]`, or DIP
-  while already falling toward peri, spawn a fixer. `status` must not
-  overwrite `docs/last-flight.md` (mun/recover own that file).
-- Fixer returns → **do not** auto-spawn the next pilot. Put the
-  recommended retry on the slate.
-- Parent meanwhile: Walt, one short line. Do not paste the 1 Hz stream.
+- User says fly / go / recommended → spawn **Gene** then the **named
+  pilot**. Pilot runs `python main.py phase <phase from plan.md>`.
+  **No spotter. No 15 s monitor.** One Gene line at start.
+- Pilot returns **0** → spawn **`ksp-stack`** (review the jsonl rollup
+  for stack holes), then **Gene** to set `phase:` / `next:` / numbers
+  and briefing. If Gene’s next name is not in `docs/program/blocks.md`,
+  spawn `ksp-stack` **before** the next pilot. Then spawn the next
+  phase (scripted continue) unless Gene says wait.
+- Pilot returns **4 OFFPLAN** or **2 ABORT** → spawn `ksp-stack` then
+  Wernher only if it is a kRPC trap; Gene replans. **Talk** (loop.md /
+  briefing) happens here, between phases. Do not auto-fly until Gene’s
+  return includes the next `phase:`. Lithobrake freeze keeps throttle 1.
+- Gene return `need_stack: <name>` → spawn `ksp-stack` immediately.
+- `status` must not overwrite `docs/last-flight.md`.
 
 Isolation is `none` (shared tree, one game). Do not use a worktree for
 pilot/fixer — they must see the same `.py` files and the same KSP save.
@@ -106,7 +94,7 @@ pilot/fixer — they must see the same `.py` files and the same KSP save.
 
 ## Handoff
 
-Pilot / CLI writes **`docs/last-flight.md`** on every `mun`/`recover` exit
+Pilot / CLI writes **`docs/last-flight.md`** on every `phase`/`mun`/`recover` exit
 (success or abort). Gitignored. Next agent reads it instead of the raw
 terminal log.
 

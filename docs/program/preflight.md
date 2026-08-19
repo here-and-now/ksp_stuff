@@ -27,6 +27,15 @@ by cutting the stick.
 Bound **89 × 1609 km**. Next for him is **circularize**, not TLI, so we
 do not repeat Val's 11 Mm Pe=None freeze.
 
+## Phases (L-036)
+
+Next recovery is **one block**, not a full `mun`:
+
+- 4373: `python main.py phase circularize` (expect Kerbin peri ≥ 80 km)
+- 6189: `python main.py phase tli` after circular parking is confirmed
+
+No spotter. No 15 s monitor. Gene between phases. Stack engineer after exit.
+
 ## Go
 
-Only after the boxes. Say go for **6189** or **circularize 4373**.
+Only after the boxes. Say go for **circularize 4373** or **tli 6189**.

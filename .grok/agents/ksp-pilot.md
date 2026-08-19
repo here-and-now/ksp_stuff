@@ -36,9 +36,14 @@ One `Session` per process. You are the only writer: do not start a second
    script. Style still comes from crew.py.
 2. `.venv/bin/python -u main.py status` once. If the game is in a crash/recover
    UI or `SESSION` connect fails, stop and report that — do not loop.
-3. Run the command the parent named (`mun` default):
+3. Run **one phase** from `docs/program/plan.md` (`phase:`), or the
+   name the parent gave:
 
-   `.venv/bin/python -u main.py mun`
+   `.venv/bin/python -u main.py phase circularize`
+
+   (or `tli` / `soi` / `capture` / `land` / `recover`). Not a full
+   `mun` unless the parent explicitly said pad. Background it. Wait
+   30–60 s chunks.
 
    Background it. Do not poll with sleep. Wait on the task with
    `get_command_or_subagent_output` in large chunks (30–60 s).

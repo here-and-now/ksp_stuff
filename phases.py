@@ -1,0 +1,135 @@
+"""One flight segment per process. Gene plans between phases (L-036)."""
+
+from __future__ import annotations
+
+import math
+from typing import Any, Callable
+
+from session import Session
+from uplink import PLAN_PATH, desk, load_plan
+from watch import FlightWatch, MissionAbort, heartbeat
+
+NAMES = ("recover", "circularize", "tli", "soi", "capture", "land")
+
+
+class OffPlan(Exception):
+    """Phase finished but the envelope is not what Gene expected."""
+
+
+def _kv() -> dict[str, str]:
+    if not PLAN_PATH.is_file():
+        return {}
+    out: dict[str, str] = {}
+    for raw in PLAN_PATH.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or ":" not in line:
+            continue
+        k, _, v = line.partition(":")
+        out[k.strip().lower()] = v.strip()
+    return out
+
+
+def current_phase() -> str:
+    name = _kv().get("phase", "").lower()
+    if name in NAMES:
+        return name
+    return "recover"
+
+
+def set_phase(name: str, *, next_name: str | None = None) -> None:
+    kv = _kv()
+    kv["phase"] = name
+    if next_name:
+        kv["next"] = next_name
+    lines = ["# Gene's plan. `python main.py phase` runs `phase:`.\n"]
+    load_plan()
+    for k, v in desk.plan.items():
+        lines.append(f"{k}: {v:g}\n")
+    for k in ("phase", "next", "expect_body"):
+        if k in kv:
+            lines.append(f"{k}: {kv[k]}\n")
+    for k in ("expect_peri_min", "expect_apo_max"):
+        if k in kv:
+            lines.append(f"{k}: {kv[k]}\n")
+    PLAN_PATH.write_text("".join(lines), encoding="utf-8")
+
+
+def check_expect(state: Any) -> None:
+    kv = _kv()
+    body = kv.get("expect_body", "")
+    if body and str(getattr(state, "body", "")).lower() != body.lower():
+        raise OffPlan(f"body {state.body} != {body}")
+    try:
+        pmin = float(kv["expect_peri_min"])
+        if math.isfinite(state.peri) and state.peri < pmin:
+            raise OffPlan(f"peri {state.peri:.0f} < {pmin:.0f}")
+    except (KeyError, ValueError):
+        pass
+    try:
+        amax = float(kv["expect_apo_max"])
+        if math.isfinite(state.apo) and state.apo > amax:
+            raise OffPlan(f"apo {state.apo:.0f} > {amax:.0f}")
+    except (KeyError, ValueError):
+        pass
+
+
+def run(
+    name: str,
+    session: Session,
+    *,
+    on_log: Callable[[str], None] | None = None,
+    abort: Callable[[], bool] | None = None,
+) -> None:
+    name = name.lower().strip()
+    if name not in NAMES:
+        raise MissionAbort(f"unknown phase {name}")
+    load_plan()
+    vessel = session.active_vessel
+    if vessel is None:
+        raise MissionAbort("no active vessel")
+    from mun import (
+        _finish_tli,
+        capture_at_periapsis,
+        plan_mun_encounter,
+        run_from_lko,
+        warp_to_soi,
+    )
+    from nodes import execute_node, plan_circularize_at_apoapsis
+    from watch import recover_periapsis
+
+    def _say(msg: str) -> None:
+        if on_log:
+            on_log(msg)
+
+    _say(f"phase {name}")
+    if name == "recover":
+        recover_periapsis(session, extra=10_000.0, on_log=on_log, abort=abort)
+    elif name == "circularize":
+        with FlightWatch(session, on_log=on_log, uplink=True) as watch:
+            plan_circularize_at_apoapsis(session, vessel)
+            execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
+            check_expect(watch.pulse("circ ", force_log=True))
+        return
+    elif name == "tli":
+        with FlightWatch(session, on_log=on_log, uplink=True) as watch:
+            plan_mun_encounter(session, vessel, on_log=on_log)
+            execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
+            _finish_tli(session, vessel, watch=watch, abort=abort, on_log=on_log)
+            check_expect(watch.pulse("tli ", force_log=True))
+        return
+    elif name == "soi":
+        warp_to_soi(session, vessel, on_log=on_log, abort=abort)
+    elif name == "capture":
+        capture_at_periapsis(session, vessel, on_log=on_log, abort=abort)
+    elif name == "land":
+        start = desk.plan.get("suicide_start", 25_000.0)
+        run_from_lko(
+            session,
+            on_log=on_log,
+            abort=abort,
+            suicide_start_alt=start,
+            from_orbit=True,
+        )
+    heartbeat(session, on_log, tag=f"{name}-done ")
+    with FlightWatch(session, on_log=on_log) as watch:
+        check_expect(watch.pulse(f"{name} ", force_log=True))

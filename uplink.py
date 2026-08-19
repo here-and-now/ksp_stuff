@@ -46,6 +46,8 @@ _PLAN_CLAMP: dict[str, tuple[float, float]] = {
     "suicide_start": (15_000.0, 40_000.0),
     "parking_apo": (80_000.0, 400_000.0),
     "parking_peri": (75_000.0, 400_000.0),
+    "suicide_throttle": (0.2, 1.0),
+    "landing_pe": (15_000.0, 40_000.0),
 }
 
 _PLAN_DEFAULTS: dict[str, float] = {
@@ -53,6 +55,8 @@ _PLAN_DEFAULTS: dict[str, float] = {
     "suicide_start": 25_000.0,
     "parking_apo": 250_000.0,
     "parking_peri": 75_000.0,
+    "suicide_throttle": 1.0,
+    "landing_pe": 18_000.0,
 }
 
 _CLEARED = "# cleared — Gene writes one command; last write wins\n"

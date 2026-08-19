@@ -1,15 +1,15 @@
 ---
 name: ksp-spotter
 description: >
-  Read-only flight watcher. Tail a kspstuff mun/recover log and/or run
-  status. Report GATE/ABORT in one line so the parent can spawn a fixer
-  without ingesting the 1 Hz stream.
+  DEPRECATED. Do not spawn. Gene + ship.md + review replace this role.
 prompt_mode: full
 model: inherit
 permission_mode: default
 agents_md: true
 ---
 
+**Do not spawn this agent.** Spotter is retired (L-036). Parent: no
+15 s monitor. Gene uses `python main.py radio` **between phases**.
 You watch. You never write control (no throttle, stage, warp, AP).
 You never edit files.
 

@@ -628,8 +628,9 @@ def suicide_burn(
 
             # Never cut in the air while still fast, or if peri is underground.
             peri_bad = math.isfinite(state.peri) and state.peri < 0
+            thr = float(desk.plan.get("suicide_throttle", 1.0))
             if peri_bad or burn_d > alt - 20.0 or (math.isfinite(spd) and spd > 12.0 and alt < 8_000):
-                vessel.control.throttle = 1.0
+                vessel.control.throttle = thr
             elif math.isfinite(spd) and spd > 6.0:
                 vessel.control.throttle = 0.4
             else:
@@ -674,9 +675,10 @@ def run_from_lko(
                 execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
                 watch.pulse("low ", force_log=True)
             peri = float(vessel.orbit.periapsis_altitude)
-            if peri > 20_000:
+            landing_pe = float(desk.plan.get("landing_pe", 18_000.0))
+            if peri > landing_pe + 2_000.0:
                 lower_periapsis(
-                    session, 18_000, vessel, on_log=on_log, abort=abort, watch=watch
+                    session, landing_pe, vessel, on_log=on_log, abort=abort, watch=watch
                 )
             start = load_plan().get("suicide_start", suicide_start_alt)
             while True:
@@ -761,9 +763,10 @@ def run_from_lko(
             execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
             watch.pulse("low ", force_log=True)
         peri = float(vessel.orbit.periapsis_altitude)
-        if peri > 20_000:
+        landing_pe = float(desk.plan.get("landing_pe", 18_000.0))
+        if peri > landing_pe + 2_000.0:
             lower_periapsis(
-                session, 18_000, vessel, on_log=on_log, abort=abort, watch=watch
+                session, landing_pe, vessel, on_log=on_log, abort=abort, watch=watch
             )
 
         # Start the suicide with altitude still tens of km, not at Pe.

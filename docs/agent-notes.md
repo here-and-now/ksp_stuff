@@ -248,6 +248,15 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   a clean Game — always re-set the scene. On that NRE call
   `load_space_center` and retry `recover=False`. Do not wait for a Recover
   click (L-022).
+- `launch_vessel(..., recover=True)` does **not** clear a leftover
+  landed/flying on the pad. Pre-flight raises `Launch site not clear`
+  (`WaitForVesselPreFlightChecks`). Recover the occupant with
+  `vessel.recover()` when `vessel.recoverable` (biome `LaunchPad` /
+  landed+recoverable on the home body). A freeze-after-ignition leftover
+  can still be `flying` at ~82 m — switch, wait until recoverable, then
+  recover. Then `go_space_center` and retry **with** `recover=True`.
+  `recover=False` is the wrong fallback on that error (L-027). Assigned
+  crew on the leftover become `available` after recover.
 - `launch_vessel(..., recover=False)` from **flight** also works: switches
   `active_vessel` to the new pad craft; the previous vessel stayed in the
   `space_center.vessels` list (`orbiting`, `loaded=False`).
@@ -358,3 +367,6 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   clean. `load_space_center` then `recover=False` (L-022).
 - **2026-08-19** — `time_to_soi_change` NaN near a Mun patch. 1000× rails
   to a close airless peri drove Pe underground (L-023).
+- **2026-08-19** — Pad leftover after abort: `Launch site not clear`.
+  `vessel.recoverable` / `vessel.recover()` clear it; keep
+  `launch_vessel(recover=True)` (L-027).

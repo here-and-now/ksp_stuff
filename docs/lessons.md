@@ -227,3 +227,17 @@ python main.py mun
   ```
 - **Cause:** `FlightWatch(uplink=True)` takes `docs/program/uplink.md` on every pulse. Gene's `abort` of Jeb's leftover ESC wreck stayed in the file. Pad `heartbeat` does not take; first ascent pulse did. Pad peri/ESC is already ignored (L-013); the radio was not.
 - **Fix:** `uplink.clear` at `flightlog.start` (mun/recover). `watch._apply_uplink` consumes but does not abort/freeze/hold while `pre_launch` or on the Kerbin pad (alt < 200 m). Wreck/flame gates still fire. Gene can still abort after the climb-out.
+
+## L-027 — Occupied pad is not a SaveGame NRE
+
+- **When:** 2026-08-19 Val `python main.py mun` after L-026 pad abort (1823Z)
+- **Symptom:** craft installed, crew resolved, then `SESSION Could not launch … Launch site not clear`
+- **Telemetry:**
+  ```
+  Crew Valentina Kerman  apo=250000 cap=1.2
+  Installed kspstuff-mun-lander (12 parts)
+  SESSION Could not launch 'kspstuff-mun-lander' from VAB onto LaunchPad: Launch site not clear
+  ```
+  1823Z leftover: Kerbin landed alt=82, 12 parts, LF=3568, stg=2. Status at KSC: `scene=space_center` no vessel.
+- **Cause:** L-026 freeze left the lander on the pad. `go_space_center` packed it; `launch_vessel(recover=True)` still failed pre-flight (`WaitForVesselPreFlightChecks`). Hangar then retried `recover=False` (L-014/L-022), which cannot clear an occupied site. Val stayed `assigned` on that stack. Not L-022 (no SaveGame NRE).
+- **Fix:** `hangar.clear_launch_site` before `launch_vessel` and on this error: `vessel.recover()` (wait/switch if still flying at 82 m), then `go_space_center`. Keep `recover=True` on “Launch site not clear”. 25 s watchdog stays. Do not ask for a Recover click.

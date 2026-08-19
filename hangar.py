@@ -147,6 +147,145 @@ def _savegame_nre(exc: BaseException) -> bool:
     )
 
 
+def _site_not_clear(exc: BaseException) -> bool:
+    """KSP pre-flight: leftover craft still occupying the pad (L-027)."""
+    text = _exc_text(exc)
+    return "launch site not clear" in text or "site not clear" in text
+
+
+# Stock KSC. Used when biome is missing (packed flying leftover).
+_SITE_LL: dict[str, tuple[float, float]] = {
+    "LaunchPad": (-0.0972, -74.5577),
+    "Runway": (-0.0486, -74.7246),
+}
+_PAD_SITS = frozenset({"pre_launch", "prelaunch", "landed", "splashed", "flying"})
+
+
+def _near_site(lat: float, lon: float, site: str) -> bool:
+    want = _SITE_LL.get(site)
+    if want is None:
+        return False
+    dlat = abs(lat - want[0])
+    dlon = abs((lon - want[1] + 180.0) % 360.0 - 180.0)
+    return dlat < 0.05 and dlon < 0.05
+
+
+def _on_launch_site(session: Session, vessel: Any, site: str) -> bool:
+    sit = _status_name(getattr(vessel, "situation", None))
+    if sit not in _PAD_SITS:
+        return False
+    home = "kerbin"
+    try:
+        home = session.home_body.name.lower()
+    except Exception:
+        pass
+    try:
+        body = vessel.orbit.body.name.lower()
+    except Exception:
+        body = ""
+    if body and body != home:
+        return False
+    biome = ""
+    try:
+        biome = (getattr(vessel, "biome", None) or "").lower().replace(" ", "")
+    except Exception:
+        pass
+    site_key = site.lower().replace(" ", "")
+    if site_key and site_key in biome:
+        return True
+    try:
+        if bool(vessel.recoverable) and sit in (
+            "pre_launch",
+            "prelaunch",
+            "landed",
+            "splashed",
+        ):
+            return True
+    except Exception:
+        pass
+    if sit != "flying":
+        return False
+    try:
+        flt = vessel.flight()
+        if float(flt.mean_altitude) > 200:
+            return False
+        return _near_site(float(flt.latitude), float(flt.longitude), site)
+    except Exception:
+        return False
+
+
+def _recover_one(session: Session, vessel: Any) -> bool:
+    name = "?"
+    try:
+        name = vessel.name
+    except Exception:
+        pass
+    rec = False
+    try:
+        rec = bool(vessel.recoverable)
+    except Exception:
+        rec = False
+    if not rec:
+        # Abort leftover can still be flying at 82 m; recover() needs landed.
+        log.info("pad occupant %s not recoverable yet — switch and wait", name)
+        try:
+            session.switch_to(vessel)
+            try:
+                vessel.control.throttle = 0.0
+            except Exception:
+                pass
+            deadline = time.monotonic() + 15.0
+            while time.monotonic() < deadline:
+                try:
+                    rec = bool(vessel.recoverable)
+                except Exception:
+                    rec = False
+                if rec:
+                    break
+                time.sleep(0.4)
+        except Exception as exc:
+            log.warning("switch to pad occupant %s: %s", name, exc)
+            return False
+    if not rec:
+        log.warning("pad occupant %s still not recoverable", name)
+        return False
+    try:
+        log.info("recover pad occupant %s", name)
+        vessel.recover()
+        time.sleep(1.0)
+        return True
+    except Exception as exc:
+        log.warning("vessel.recover %s: %s", name, exc)
+        return False
+
+
+def clear_launch_site(session: Session, site: str = "LaunchPad") -> int:
+    """Recover craft occupying the pad. No Recover click (L-027)."""
+    session.require_connected()
+    try:
+        pool = list(session.space_center.vessels)
+    except Exception as exc:
+        log.warning("vessels for pad clear: %s", exc)
+        return 0
+    n = 0
+    for vessel in pool:
+        try:
+            if not _on_launch_site(session, vessel, site):
+                continue
+        except Exception:
+            continue
+        if _recover_one(session, vessel):
+            n += 1
+    if n:
+        log.info("cleared %s occupant(s) from %s", n, site)
+        try:
+            go_space_center(session)
+        except Exception as exc:
+            log.warning("go_space_center after pad clear: %s", exc)
+        time.sleep(1.0)
+    return n
+
+
 def go_space_center(session: Session, *, timeout: float = 45.0) -> None:
     """Leave flight/editor/dialogs for the KSC overview. No human click.
 
@@ -321,6 +460,9 @@ class Hangar:
             go_space_center(session)
         except Exception as exc:
             log.warning("go_space_center: %s", exc)
+        # Recover pad leftover before seating crew — assigned kerbals
+        # on that stack are not available until it is gone (L-027).
+        clear_launch_site(session, site)
         last_exc: Exception | None = None
         use_recover = recover
         for attempt in range(3):
@@ -338,10 +480,14 @@ class Hangar:
             except Exception as exc:
                 last_exc = exc
                 log.warning("launch attempt %s failed: %s", attempt + 1, exc)
-                use_recover = False
-                if _savegame_nre(exc):
+                if _site_not_clear(exc):
+                    clear_launch_site(session, site)
+                    use_recover = True
+                elif _savegame_nre(exc):
                     _reload_space_center(session)
+                    use_recover = False
                 else:
+                    use_recover = False
                     try:
                         go_space_center(session)
                     except Exception:

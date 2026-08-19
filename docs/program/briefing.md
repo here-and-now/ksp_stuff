@@ -1,9 +1,10 @@
 # Briefing — Gene → pilot
 
 Seat: Grok Kerman 4373
-Command: `python main.py recover` then later `--from-orbit`
+Command: `python main.py phase circularize`
 
-4761 is missing (Mun lithobrake). You are Kerbin 69×1581 km, peri in the
-air. Raise peri. Do not Hangar a new stack over 6189.
+Recover is **done** (89 × 1609 km, peri above air, LF 543). Circularize
+at apo. Expect Kerbin, peri ≥ 80 km, apo ≤ 2000 km.
 
-6189 remains 349×354 km parking.
+Do not Hangar. Do not `mun`. 6189 stays 349 × 354 km parking until
+preflight is ticked and the user says go for **tli 6189**.

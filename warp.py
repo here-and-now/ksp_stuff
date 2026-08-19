@@ -118,7 +118,9 @@ def warp_to_ut(
             from uplink import holding, skip_warp as uplink_skip_warp
 
             if holding():
-                drop_warp(session)
+                from watch import apply_hold
+
+                apply_hold(session)
                 last_factor = 0
                 tick()
                 time.sleep(0.5)

@@ -1,6 +1,6 @@
 # Flight archive
 
-Every `mun` / `recover` exit (ok, abort, session, crash) writes:
+Every `phase` / `mun` / `recover` exit (ok, abort, session, crash) writes:
 
 | File | What |
 |---|---|

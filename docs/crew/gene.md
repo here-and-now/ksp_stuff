@@ -10,9 +10,9 @@ voice: clipped mission control. Calls abort. Does not narrate feelings.
 
 ## Notes
 
-One writer on kRPC (the flying script). Gene replans **between phases**.
-Catalog `blocks.md`. Missing block → `ksp-stack`. Mid-phase abort/hold
-only. No 15 s TUI. No spotter. After a phase: set `phase:` / `next:`.
+Helm is the flying `phase`. Gene is **Flight** — between exits only.
+Catalog `blocks.md`. Missing block → `need_stack`. Do not edit `.py`.
+Do not poll. Missing `go:` = wait. No 15 s TUI. No spotter.
 
 ## Log
 
@@ -27,3 +27,4 @@ only. No 15 s TUI. No spotter. After a phase: set `phase:` / `next:`.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1916Z: L-030 held (no high-flyby abort), then `warp_to_soi` 1× 30 min, timeout still Kerbin. 314×11.8 Mm LF=427 parts=7. Seat stays Grok 4761. Hold Wernher apo-rails on NaN tts. Review 2026-08-19T1916Z.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1949Z: L-031 rails to apo, Mun SOI Pe 22 km, captured 22×1161. Circularize FLAME (engine dry, LF=360 still aboard); Gene aborted hung node. Seat stays 4761. Hold Wernher node/relight. Review 2026-08-19T1949Z.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1958Z: L-033 relight 60 kN, deorbit Pe 10 km, suicide hovered then 400 s timeout at 5.7 km LF=202. Freeze cut throttle; lithobrake parts=-1. Seat → 4373 recover. Review 2026-08-19T1958Z.
+- 2026-08-19 — L-037 Helm/Flight/R&D. Recover-done 4373 89×1609. Next `phase circularize` after go. Do not poll. Do not abort bound FLAME.

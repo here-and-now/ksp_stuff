@@ -6,7 +6,7 @@ import math
 from typing import Any, Callable
 
 from session import Session
-from uplink import PLAN_PATH, desk, load_plan
+from uplink import PLAN_PATH, desk, load_plan, write_plan_file
 from watch import FlightWatch, MissionAbort, heartbeat
 
 NAMES = ("recover", "circularize", "tli", "soi", "capture", "land")
@@ -37,21 +37,11 @@ def current_phase() -> str:
 
 
 def set_phase(name: str, *, next_name: str | None = None) -> None:
-    kv = _kv()
-    kv["phase"] = name
-    if next_name:
-        kv["next"] = next_name
-    lines = ["# Gene's plan. `python main.py phase` runs `phase:`.\n"]
     load_plan()
-    for k, v in desk.plan.items():
-        lines.append(f"{k}: {v:g}\n")
-    for k in ("phase", "next", "expect_body"):
-        if k in kv:
-            lines.append(f"{k}: {kv[k]}\n")
-    for k in ("expect_peri_min", "expect_apo_max"):
-        if k in kv:
-            lines.append(f"{k}: {kv[k]}\n")
-    PLAN_PATH.write_text("".join(lines), encoding="utf-8")
+    extra = {"phase": name}
+    if next_name:
+        extra["next"] = next_name
+    write_plan_file(extra=extra)
 
 
 def check_expect(state: Any) -> None:
@@ -102,34 +92,35 @@ def run(
             on_log(msg)
 
     _say(f"phase {name}")
-    if name == "recover":
-        recover_periapsis(session, extra=10_000.0, on_log=on_log, abort=abort)
-    elif name == "circularize":
-        with FlightWatch(session, on_log=on_log, uplink=True) as watch:
+    with FlightWatch(session, on_log=on_log, uplink=True) as watch:
+        if name == "recover":
+            recover_periapsis(
+                session, extra=10_000.0, on_log=on_log, abort=abort, watch=watch
+            )
+        elif name == "circularize":
             plan_circularize_at_apoapsis(session, vessel)
             execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
-            check_expect(watch.pulse("circ ", force_log=True))
-        return
-    elif name == "tli":
-        with FlightWatch(session, on_log=on_log, uplink=True) as watch:
+        elif name == "tli":
             plan_mun_encounter(session, vessel, on_log=on_log)
             execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
             _finish_tli(session, vessel, watch=watch, abort=abort, on_log=on_log)
-            check_expect(watch.pulse("tli ", force_log=True))
-        return
-    elif name == "soi":
-        warp_to_soi(session, vessel, on_log=on_log, abort=abort)
-    elif name == "capture":
-        capture_at_periapsis(session, vessel, on_log=on_log, abort=abort)
-    elif name == "land":
-        start = desk.plan.get("suicide_start", 25_000.0)
-        run_from_lko(
-            session,
-            on_log=on_log,
-            abort=abort,
-            suicide_start_alt=start,
-            from_orbit=True,
-        )
-    heartbeat(session, on_log, tag=f"{name}-done ")
-    with FlightWatch(session, on_log=on_log) as watch:
+        elif name == "soi":
+            warp_to_soi(
+                session, vessel, on_log=on_log, abort=abort, watch=watch
+            )
+        elif name == "capture":
+            capture_at_periapsis(
+                session, vessel, on_log=on_log, abort=abort, watch=watch
+            )
+        elif name == "land":
+            start = desk.plan.get("suicide_start", 25_000.0)
+            run_from_lko(
+                session,
+                on_log=on_log,
+                abort=abort,
+                suicide_start_alt=start,
+                from_orbit=True,
+                watch=watch,
+            )
+        heartbeat(session, on_log, tag=f"{name}-done ", watch=watch)
         check_expect(watch.pulse(f"{name} ", force_log=True))

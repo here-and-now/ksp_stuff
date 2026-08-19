@@ -311,3 +311,11 @@ python main.py mun
 - **Symptom:** Latency too high for Gene-in-the-loop. Spotter duplicated status. `mun.py` was the only “mission”.
 - **Cause:** Continuous TUI + one-shot mun. Building blocks were buried in Mun-specific code.
 - **Fix:** `python main.py phase <block>`. Gene replans between exits. Catalog `docs/program/blocks.md`. New role `ksp-stack`. Do not spawn spotter. TUI = phase edges + unexpected. Gene sets `suicide_throttle` / `landing_pe`. Do not fly 6189/4373 until preflight.
+- **Comms holes closed by L-037.**
+
+## L-037 — Helm, Flight, R&D
+
+- **When:** 2026-08-19 after the comms review (Val leftover abort, 4761 abort-FLAME, loop-not-helm, Gene 20–40 s, `save_plan` wipe, deaf `soi`, hold-as-kill)
+- **Symptom:** Three brains, one file. `abort` of a bound fueled ship was a verb. Gene's role still polled. `phase soi` never took uplink. `hold` zeroed a lithobrake. `set mun_pe` deleted `phase:`.
+- **Cause:** L-036 shipped phases + stack engineer; role files and the helm still behaved as Gene-in-the-loop. Abort always lethal. Four people could patch the same `.py`.
+- **Fix:** Helm takes uplink on every phase (`soi` included). Bound+fueled abort → hold (L-033). `apply_hold` keeps throttle 1 on lithobrake. `write_plan_file` keeps `phase`/`expect_*`. Node relight then stop if bound. `phase --timeout` default 0. `flight.lock`. Gene between exits only; no `.py`; missing `go:` = wait. R&D is stack XOR Wernher. Parent does not patch. Modules: `watch.py`, `uplink.py`, `phases.py`, `nodes.py`, `flightlog.py`, `review.py`, AGENTS/CHARTER/role files.

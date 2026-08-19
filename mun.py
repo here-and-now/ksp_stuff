@@ -28,6 +28,7 @@ from warp import warp_to_ut
 from watch import (
     FlightWatch,
     MissionAbort,
+    apply_hold,
     check_alive,
     freeze,
     heartbeat,
@@ -169,7 +170,7 @@ def _raise_tli_apo(
                 raise MissionAbort("TLI raise aborted")
             state = watch.pulse("tli+ ")
             if holding():
-                vessel.control.throttle = 0.0
+                apply_hold(session)
                 continue
             check_alive(session, watch=watch)
             nxt, pe = _tli_patch(vessel)
@@ -389,6 +390,7 @@ def warp_to_soi(
         if abort and abort():
             raise MissionAbort("aborted waiting for SOI")
         if holding():
+            apply_hold(session)
             time.sleep(0.5)
             continue
         if vessel.orbit.body.name == body:
@@ -453,7 +455,7 @@ def _capture_now(
                 raise MissionAbort("capture aborted")
             state = watch.pulse("cap ")
             if holding():
-                vessel.control.throttle = 0.0
+                apply_hold(session)
                 continue
             check_alive(session, watch=watch)
             if state.alt < 25_000 and (
@@ -600,6 +602,7 @@ def suicide_burn(
     if own:
         watch = FlightWatch(session, on_log=on_log, uplink=True)
     watch.enable_landing()
+    landed = False
     try:
         t0 = time.monotonic()
         while time.monotonic() - t0 < 1_800.0:
@@ -607,7 +610,7 @@ def suicide_burn(
                 raise MissionAbort("suicide aborted")
             state = watch.pulse("land ")
             if holding():
-                vessel.control.throttle = 0.0
+                apply_hold(session)
                 continue
             alt = state.surf if math.isfinite(state.surf) else state.alt
             spd = state.spd
@@ -623,6 +626,7 @@ def suicide_burn(
                 raise MissionAbort(f"tanks empty spd={spd:.0f} alt={alt:.0f}")
             if alt < 20.0 and math.isfinite(spd) and spd < touchdown_speed:
                 vessel.control.throttle = 0.0
+                landed = True
                 _say(f"Touchdown  alt={alt:.1f} m  spd={spd:.2f} m/s", on_log)
                 return
 
@@ -640,7 +644,10 @@ def suicide_burn(
         raise MissionAbort("suicide burn timed out")
     finally:
         try:
-            vessel.control.throttle = 0.0
+            if landed:
+                vessel.control.throttle = 0.0
+            else:
+                apply_hold(session)
             set_autopilot(ap, False)
         except Exception:
             pass
@@ -655,10 +662,14 @@ def run_from_lko(
     abort: Callable[[], bool] | None = None,
     suicide_start_alt: float = 25_000.0,
     from_orbit: bool = False,
+    watch: FlightWatch | None = None,
 ) -> None:
     """Parking orbit, or an already-raised transfer (from_orbit). Then Mun."""
     vessel = session.active_vessel
-    with FlightWatch(session, on_log=on_log, uplink=True) as watch:
+    own = watch is None
+    if own:
+        watch = FlightWatch(session, on_log=on_log, uplink=True)
+    try:
         state = watch.pulse("lko ", force_log=True)
         if from_orbit and state.body == MUN_NAME:
             _say(f"Continue Mun orbit {state.peri:.0f}×{state.apo:.0f} m", on_log)
@@ -687,6 +698,7 @@ def run_from_lko(
                 if abort and abort():
                     raise MissionAbort("aborted before landing")
                 if holding():
+                    apply_hold(session)
                     continue
                 surf = state.surf if math.isfinite(state.surf) else state.alt
                 if surf <= start:
@@ -798,6 +810,9 @@ def run_from_lko(
         check_alive(session, need_thrust=True, watch=watch)
         suicide_burn(session, vessel, on_log=on_log, abort=abort, watch=watch)
         watch.pulse("end ", force_log=True)
+    finally:
+        if own:
+            watch.close()
 
 
 def run_mission(

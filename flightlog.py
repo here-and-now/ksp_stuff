@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import math
+import os
 import time
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -18,6 +19,7 @@ from typing import Any
 log = logging.getLogger("kspstuff")
 
 FLIGHTS = Path("docs/flights")
+LOCK = Path("docs/program/flight.lock")
 
 _path: Path | None = None
 _command: str = ""
@@ -36,8 +38,60 @@ def path() -> Path | None:
     return _path
 
 
+class WriterLockError(RuntimeError):
+    """A second phase/mun/recover tried to take the helm."""
+
+
+def _pid_alive(pid: int) -> bool:
+    if pid <= 0:
+        return False
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    return True
+
+
+def acquire_lock(command: str) -> None:
+    LOCK.parent.mkdir(parents=True, exist_ok=True)
+    if LOCK.is_file():
+        raw = LOCK.read_text(encoding="utf-8")
+        old_pid = 0
+        old_cmd = "?"
+        for line in raw.splitlines():
+            if line.startswith("pid="):
+                try:
+                    old_pid = int(line.split("=", 1)[1].strip())
+                except ValueError:
+                    old_pid = 0
+            if line.startswith("command="):
+                old_cmd = line.split("=", 1)[1].strip()
+        if _pid_alive(old_pid):
+            raise WriterLockError(
+                f"writer already running pid={old_pid} command={old_cmd}"
+            )
+        log.info("stale flight.lock pid=%s — taking helm", old_pid)
+    LOCK.write_text(
+        f"pid={os.getpid()}\ncommand={command}\n",
+        encoding="utf-8",
+    )
+
+
+def release_lock() -> None:
+    try:
+        if not LOCK.is_file():
+            return
+        raw = LOCK.read_text(encoding="utf-8")
+        mine = f"pid={os.getpid()}"
+        if mine in raw:
+            LOCK.unlink()
+    except Exception:
+        log.debug("flight.lock release failed", exc_info=True)
+
+
 def start(command: str, *, crew: str = "") -> Path:
     global _path, _command, _stamp, _t0, _last_flags, _last_write, _count
+    acquire_lock(command)
     FLIGHTS.mkdir(parents=True, exist_ok=True)
     _stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
     _command = command
@@ -103,21 +157,26 @@ def record(state: Any, tag: str = "", *, ut: float | None = None, force: bool = 
 
 
 def _publish_ship(state: Any, tag: str) -> None:
-    """One-line board Gene reads without opening kRPC (L-032)."""
+    """Heartbeat + as_of so a crash is visibly stale (L-032 / L-037)."""
     try:
         line = state.line(tag) if hasattr(state, "line") else str(state)
-        Path("docs/program/ship.md").write_text(line.strip() + "\n", encoding="utf-8")
+        utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+        Path("docs/program/ship.md").write_text(
+            line.strip() + f"\nas_of: {utc}\n",
+            encoding="utf-8",
+        )
     except Exception:
         pass
 
 
 def close() -> Path | None:
     global _path
-    if _path is None:
-        return None
-    event("end", f"samples={_count}")
-    done = _path
-    _path = None
+    done = None
+    if _path is not None:
+        event("end", f"samples={_count}")
+        done = _path
+        _path = None
+    release_lock()
     return done
 
 

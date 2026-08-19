@@ -180,7 +180,7 @@ def write_review(
 
 
 def latest_jsonl() -> Path | None:
-    files = sorted(FLIGHTS.glob("*-mun.jsonl")) + sorted(FLIGHTS.glob("*-recover.jsonl"))
+    files = sorted(FLIGHTS.glob("*.jsonl"))
     return files[-1] if files else None
 
 

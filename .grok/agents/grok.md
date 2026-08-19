@@ -2,7 +2,7 @@
 name: grok
 description: >
   Grok Kerman (and numbered Grok Kerman NNN clones). Same string as
-  the KSP roster. Pilot writer. python main.py mun [--from-orbit].
+  the KSP roster. Pilot writer. python main.py phase <plan.phase>.
 prompt_mode: full
 model: inherit
 permission_mode: default
@@ -10,12 +10,10 @@ agents_md: true
 ---
 
 You **are the kerbal in `docs/program/current.md`** (Grok Kerman or
-`Grok Kerman 4761` etc.). Read `docs/crew/grok.md`. Follow
-`.grok/agents/ksp-pilot.md`. Do not leave yourself in orbit — if the
-active vessel is already crewed and flying, use:
+`Grok Kerman 4373` etc.). Read `docs/crew/grok.md`. Follow
+`.grok/agents/ksp-pilot.md`.
 
-```
-.venv/bin/python -u main.py mun --from-orbit
-```
-
-Do not Hangar a new stack over yourself.
+Run **one** `python main.py phase <name>` from `docs/program/plan.md`.
+If you are already in flight, that is still `phase` on the active
+vessel — never Hangar, never `mun --from-orbit` unless the parent
+said **pad** and nobody is leftover in orbit.

@@ -1,17 +1,18 @@
-"""Gene → flying script. Last write wins. The mun process is the only consumer.
+"""Gene → flying script. Last write wins. Helm (phase/mun/recover) takes.
 
 Files (git-friendly, next to the slate):
 
-- ``docs/program/uplink.md`` — one command. Gene writes; the script
-  *takes* it (acks + clears). ``status`` must not take.
-- ``docs/program/loop.md`` — one-line notes Gene ↔ pilot/script.
-- ``docs/program/plan.md`` — live numbers ``set`` can change.
+- ``docs/program/uplink.md`` — one command. Gene/parent writes; the
+  flying ``FlightWatch(uplink=True)`` *takes* it. ``status`` must not.
+- ``docs/program/loop.md`` — one-line notes. Not the helm (L-032).
+- ``docs/program/plan.md`` — live numbers ``set`` can change; ``phase`` /
+  ``expect_*`` survive ``save_plan`` (L-037).
 
-Gene is not on the stick every tick. He uplinks on gates and when the
-*plan* is wrong (hyperbolic Mun Pe, warp stuck). FlightWatch wreck/ESC
-gates still abort even if he said nothing. The pilot cannot override
-``abort``. mun/recover start with ``clear()`` so a leftover abort cannot
-kill the next pad (L-026).
+Gene is not on the helm every tick. Mid-phase the parent may
+``abort|hold`` on wreck-class only. FlightWatch wreck/ESC gates still
+abort even if he said nothing. Bound+fueled ``abort`` is refused
+(L-033). mun/recover/phase start with ``clear()`` so a leftover abort
+cannot kill the next pad (L-026).
 """
 
 from __future__ import annotations
@@ -60,6 +61,15 @@ _PLAN_DEFAULTS: dict[str, float] = {
 }
 
 _CLEARED = "# cleared — Gene writes one command; last write wins\n"
+
+# Envelope keys Gene owns. ``save_plan`` must not drop these (L-037).
+_PLAN_META = (
+    "phase",
+    "next",
+    "expect_body",
+    "expect_peri_min",
+    "expect_apo_max",
+)
 
 
 @dataclass
@@ -110,12 +120,41 @@ def load_plan() -> dict[str, float]:
     return desk.plan
 
 
-def save_plan() -> None:
+def plan_meta() -> dict[str, str]:
+    """``phase`` / ``next`` / ``expect_*`` currently on disk."""
+    out: dict[str, str] = {}
+    if not PLAN_PATH.is_file():
+        return out
+    for raw in PLAN_PATH.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or ":" not in line:
+            continue
+        key, _, val = line.partition(":")
+        key = key.strip().lower().replace("-", "_")
+        if key in _PLAN_META:
+            out[key] = val.strip()
+    return out
+
+
+def write_plan_file(*, extra: dict[str, str] | None = None) -> None:
+    """Numbers from ``desk.plan`` plus preserved Gene envelope (L-037)."""
+    meta = plan_meta()
+    if extra:
+        for key, val in extra.items():
+            if key in _PLAN_META and str(val).strip():
+                meta[key] = str(val).strip()
     PLAN_PATH.parent.mkdir(parents=True, exist_ok=True)
-    lines = ["# Live mission numbers. Gene `set` writes these.\n"]
+    lines = ["# Gene's plan. `python main.py phase` runs `phase:`.\n"]
     for key, val in desk.plan.items():
         lines.append(f"{key}: {val:g}\n")
+    for key in _PLAN_META:
+        if key in meta:
+            lines.append(f"{key}: {meta[key]}\n")
     PLAN_PATH.write_text("".join(lines), encoding="utf-8")
+
+
+def save_plan() -> None:
+    write_plan_file()
 
 
 def note(who: str, text: str) -> None:
@@ -160,7 +199,7 @@ def _ack_file(raw: str | None) -> None:
 
 
 def take() -> Command | None:
-    """Consume uplink.md. Only the mun/recover writer may call this."""
+    """Consume uplink.md. Only the helm writer may call this."""
     cmd = peek()
     if cmd is None:
         return None
@@ -235,7 +274,7 @@ def radio_text() -> str:
     if SHIP_PATH.is_file():
         bits.append("SHIP " + SHIP_PATH.read_text(encoding="utf-8").strip())
     else:
-        bits.append("SHIP (none — mun not publishing yet)")
+        bits.append("SHIP (none — helm not publishing yet)")
     cmd = peek()
     bits.append("UPLINK " + (cmd.raw if cmd else "(clear)"))
     bits.append("PLAN " + " ".join(f"{k}={v:g}" for k, v in desk.plan.items()))

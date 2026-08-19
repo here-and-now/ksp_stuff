@@ -219,8 +219,28 @@ def _execute_fallback(
             from uplink import holding
 
             if holding():
-                vessel.control.throttle = 0.0
+                from watch import apply_hold
+
+                apply_hold(session)
                 continue
+            if float(getattr(vessel, "available_thrust", 0) or 0) <= 0:
+                if watch.relight(end_stage=0):
+                    vessel.control.throttle = 1.0
+                    continue
+                bound = (
+                    (not state.escaping)
+                    and math.isfinite(state.peri)
+                    and state.peri >= 12_000
+                )
+                fueled = state.lf > 0 or state.ox > 0
+                if bound and fueled:
+                    log.info("node flame — bound, stopping for relight")
+                    vessel.control.throttle = 0.0
+                    watch.pulse("node-flame ", force_log=True)
+                    break
+                from watch import MissionAbort
+
+                raise MissionAbort("no thrust during node")
             remaining = node.remaining_delta_v
             if remaining > last_remaining + 5.0:
                 log.info("node remaining Δv rose (%.1f → %.1f) — stopping", last_remaining, remaining)

@@ -8,18 +8,18 @@ Mun lithobrake after suicide **timeout + freeze throttle 0** at ~8 km
 with peri underground. Relight had worked. He had LF. We killed him
 by cutting the stick.
 
-## Before 6189 `--from-orbit` TLI
+## Before 6189 `phase tli`
 
 - [ ] Seat `current.md` = exact crew on **that** vessel (`Grok Kerman 6189`)
-- [ ] `python main.py radio` works; Gene uses it every cycle
-- [ ] No Hangar. `--from-orbit` only
+- [ ] `python main.py radio` works; Gene reads it **between phases**
+- [ ] No Hangar. `phase` on the active vessel only
 - [ ] Engines: every `has_fuel` engine **active** (twin Terrier trap)
 - [ ] LF and Ox both > 0
 - [ ] Freeze will **not** cut throttle if peri < 0 and alt < 30 km (L-035)
 - [ ] Suicide: peri < 0 ⇒ throttle 1, timeout clock resets (L-035)
 - [ ] Landing Pe **18 km**, not 10 km. Suicide from **>25 km** while peri still ≥ 0 if possible
-- [ ] Gene does **not** abort FLAME on a bound orbit
-- [ ] Wall-clock SOI wait does **not** dump crew
+- [ ] Helm **refuses** abort on bound + peri ≥ 12 km + LF (L-033 / L-037)
+- [ ] Wall-clock SOI / `phase` wait does **not** dump crew (`--timeout` 0)
 - [ ] 4373 stays 89×1609 — do not launch over him
 
 ## 4373 (already recovered)

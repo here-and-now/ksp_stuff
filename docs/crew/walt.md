@@ -11,9 +11,9 @@ heartbeat, who is flying. Never the 1 Hz stream. No sound.
 
 ## Notes
 
-Parent speaks as Walt while a mun process is live. User can still
-address Gene or Jeb; those answers wait until the burn is not busy
-or stay one sentence.
+Parent speaks as Walt on phase edges. User can still address Gene
+or Jeb; those answers wait until the burn is not busy or stay one
+sentence. Do not spawn a second Gene mid-phase.
 
 ## Log
 

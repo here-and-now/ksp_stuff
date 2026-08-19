@@ -22,7 +22,7 @@ from orientation import set_autopilot
 from parts import deploy_solar, jettison_fairings, manipulate_engines, should_stage
 from pid import PID
 from session import Session
-from watch import FlightWatch, MissionAbort, recover_periapsis
+from watch import FlightWatch, MissionAbort, apply_hold, recover_periapsis
 
 log = logging.getLogger("kspstuff")
 
@@ -119,7 +119,7 @@ class Ascent:
                 from uplink import holding
 
                 if holding():
-                    vessel.control.throttle = 0.0
+                    apply_hold(session)
                     continue
                 altitude = state.alt
                 apo = state.apo

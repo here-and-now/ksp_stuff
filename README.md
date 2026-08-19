@@ -30,16 +30,17 @@ One shared `Session`, stock vs RSS/RO/RP-1 profiles. Agent CLI:
 ```bash
 source .venv/bin/activate
 python main.py status
-python main.py mun
+python main.py phase circularize
 ```
 
 Lessons (failure → library fix) live in [`docs/lessons.md`](docs/lessons.md).
 kRPC client-layer notes: [`docs/agent-notes.md`](docs/agent-notes.md).
-Agents start from `AGENTS.md` (parent spawns `ksp-pilot` / `ksp-spotter` /
-`ksp-fixer`; do not sit on the 1 Hz stream). PyQt under `ui/` is unused.
+Agents start from `AGENTS.md` (parent spawns Gene, the named kerbal,
+`ksp-stack`; **do not spawn spotter**; do not sit on the 1 Hz stream).
+PyQt under `ui/` is unused.
 
 ```
-main.py              CLI: status / mun / recover
+main.py              CLI: status / phase / mun / recover
 session.py           one kRPC connection, optional MechJeb / CommNet / RA detect
 profile.py           Kerbin vs Earth, fuels, default ascent numbers, pads
 launch.py            gravity turn, max-Q PID, staging, fairings, circularize

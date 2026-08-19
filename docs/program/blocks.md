@@ -13,5 +13,7 @@ that is not here, parent spawns `ksp-stack` first. No heredocs.
 | land | `phase land` | suicide_start, suicide_throttle, landing_pe | touchdown or low Mun orbit | Kerbin atmo |
 
 Pad `python main.py mun` still exists as a compose of ascent + these.
-Do not Hangar over leftover crew. Use `--from-orbit` / `phase` on the
-active vessel.
+Do not Hangar over leftover crew. Use `phase` on the active vessel.
+
+Helm (`phase`) takes `uplink.md`. Gene names only this catalog. Missing
+name → `ksp-stack`, not a heredoc.

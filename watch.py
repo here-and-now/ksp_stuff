@@ -439,8 +439,18 @@ class FlightWatch:
                 pass
             return
         if cmd.verb in {"abort", "freeze", "hold"}:
-            freeze(self.session)
+            apply_hold(self.session)
         if cmd.verb == "abort":
+            if _refuse_abort(state):
+                desk.hold = True
+                log.info("uplink refused abort — bound fueled: %s", cmd.raw)
+                try:
+                    from flightlog import event
+
+                    event("uplink", f"refused abort — bound fueled {cmd.raw}")
+                except Exception:
+                    pass
+                return
             reason = cmd.arg or cmd.raw
             raise MissionAbort(f"uplink abort {reason}".strip())
 
@@ -523,7 +533,7 @@ def heartbeat(
     if watch is not None:
         state = watch.pulse(tag, force_log=True)
         return state.line(tag)
-    created = FlightWatch(session, on_log=on_log)
+    created = FlightWatch(session, on_log=on_log, uplink=True)
     try:
         state = created.pulse(tag, force_log=True)
         return state.line(tag)
@@ -666,6 +676,7 @@ def recover_periapsis(
                 from uplink import holding
 
                 if holding():
+                    apply_hold(session)
                     continue
                 if (not state.escaping) and state.peri >= floor and not state.in_atmo:
                     break
@@ -735,23 +746,47 @@ def _pad_radio_off(state: FlightState) -> bool:
     return (state.body or "").lower() == "kerbin"
 
 
+def _lithobrake_keep_throttle(session: Session) -> bool:
+    try:
+        v = session.active_vessel
+        peri = float(v.orbit.periapsis_altitude)
+        alt = float(v.flight().mean_altitude)
+        return peri < 0 and alt < 30_000
+    except Exception:
+        return False
+
+
+def _refuse_abort(state: FlightState) -> bool:
+    """L-033: bound + peri ≥ 12 km + fuel left is relight, not abort."""
+    if state.wreck:
+        return False
+    peri_bad = math.isfinite(state.peri) and state.peri < 0.0
+    if peri_bad and math.isfinite(state.alt) and state.alt < 30_000:
+        return False
+    bound = (not state.escaping) and math.isfinite(state.peri) and state.peri >= 12_000
+    fueled = state.lf > 0 or state.ox > 0 or state.thrust > 0
+    return bound and fueled
+
+
+def apply_hold(session: Session) -> None:
+    """Hold the helm. Lithobrake keeps throttle 1 (L-035 / L-037)."""
+    freeze(session)
+
+
 def freeze(session: Session, *, throttle: bool = True) -> None:
     """Cut rails. Do not cut throttle on a lithobrake (L-035)."""
     from warp import drop_warp
 
     drop_warp(session)
-    keep_throttle = False
-    try:
-        v = session.active_vessel
-        peri = float(v.orbit.periapsis_altitude)
-        alt = float(v.flight().mean_altitude)
-        keep_throttle = peri < 0 and alt < 30_000
-        if keep_throttle:
-            v.control.throttle = 1.0
+    keep_throttle = _lithobrake_keep_throttle(session)
+    if keep_throttle:
+        try:
+            session.active_vessel.control.throttle = 1.0
             log.info("freeze: lithobrake — throttle 1, not 0")
-    except Exception:
-        pass
-    if throttle and not keep_throttle:
+        except Exception:
+            pass
+        return
+    if throttle:
         try:
             session.active_vessel.control.throttle = 0.0
         except Exception:

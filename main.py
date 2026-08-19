@@ -110,28 +110,34 @@ def cmd_status(session: Session) -> int:
 
 def cmd_recover(session: Session) -> int:
     from crew import current_pilot
-    from flightlog import start
+    from flightlog import WriterLockError, release_lock, start
 
     crew = ""
     try:
         crew = current_pilot().name
     except Exception:
         pass
-    start("recover", crew=crew)
     try:
-        recover_periapsis(session, extra=10_000.0, on_log=_log)
-    except MissionAbort as exc:
-        freeze(session)
-        _log(f"ABORT {exc}")
-        write_handoff(command="recover", exit_code=2, abort=str(exc))
-        return 2
-    write_handoff(command="recover", exit_code=0)
-    return 0
+        start("recover", crew=crew)
+        try:
+            recover_periapsis(session, extra=10_000.0, on_log=_log)
+        except MissionAbort as exc:
+            freeze(session)
+            _log(f"ABORT {exc}")
+            write_handoff(command="recover", exit_code=2, abort=str(exc))
+            return 2
+        write_handoff(command="recover", exit_code=0)
+        return 0
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    finally:
+        release_lock()
 
 
 def cmd_mun(session: Session, args: argparse.Namespace) -> int:
     from crew import current_pilot
-    from flightlog import start
+    from flightlog import WriterLockError, release_lock, start
 
     t0 = time.monotonic()
     crew = ""
@@ -139,37 +145,43 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
         crew = current_pilot().name
     except Exception:
         pass
-    start("mun", crew=crew)
-
-    def abort() -> bool:
-        return time.monotonic() - t0 > args.timeout
-
     try:
-        run_mission(
-            session,
-            recover=not args.keep_debris,
-            on_log=_log,
-            abort=abort,
-            from_orbit=bool(getattr(args, "from_orbit", False)),
-        )
-    except MissionAbort as exc:
-        freeze(session)
-        _log(f"ABORT {exc}")
-        _log("Append a lesson to docs/lessons.md before the next attempt.")
-        write_handoff(command="mun", exit_code=2, abort=str(exc))
-        return 2
-    except SessionError as exc:
+        start("mun", crew=crew)
+
+        def abort() -> bool:
+            return time.monotonic() - t0 > args.timeout
+
+        try:
+            run_mission(
+                session,
+                recover=not args.keep_debris,
+                on_log=_log,
+                abort=abort,
+                from_orbit=bool(getattr(args, "from_orbit", False)),
+            )
+        except MissionAbort as exc:
+            freeze(session)
+            _log(f"ABORT {exc}")
+            _log("Append a lesson to docs/lessons.md before the next attempt.")
+            write_handoff(command="mun", exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command="mun", exit_code=1, abort=f"SESSION {exc}")
+            return 1
+        heartbeat(session, _log, tag="done ")
+        write_handoff(command="mun", exit_code=0)
+        return 0
+    except WriterLockError as exc:
         _log(f"SESSION {exc}")
-        write_handoff(command="mun", exit_code=1, abort=f"SESSION {exc}")
         return 1
-    heartbeat(session, _log, tag="done ")
-    write_handoff(command="mun", exit_code=0)
-    return 0
+    finally:
+        release_lock()
 
 
 def cmd_phase(session: Session, args: argparse.Namespace) -> int:
     from crew import current_pilot
-    from flightlog import start
+    from flightlog import WriterLockError, release_lock, start
     from phases import OffPlan, run
 
     t0 = time.monotonic()
@@ -178,30 +190,38 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
         crew = current_pilot().name
     except Exception:
         pass
-    start(args.name, crew=crew)
-
-    def abort() -> bool:
-        return time.monotonic() - t0 > args.timeout
-
     try:
-        run(args.name, session, on_log=_log, abort=abort)
-    except OffPlan as exc:
-        freeze(session)
-        _log(f"OFFPLAN {exc}")
-        write_handoff(command=args.name, exit_code=4, abort=f"OFFPLAN {exc}")
-        return 4
-    except MissionAbort as exc:
-        freeze(session)
-        _log(f"ABORT {exc}")
-        write_handoff(command=args.name, exit_code=2, abort=str(exc))
-        return 2
-    except SessionError as exc:
+        start(args.name, crew=crew)
+
+        def abort() -> bool:
+            if args.timeout <= 0:
+                return False
+            return time.monotonic() - t0 > args.timeout
+
+        try:
+            run(args.name, session, on_log=_log, abort=abort)
+        except OffPlan as exc:
+            freeze(session)
+            _log(f"OFFPLAN {exc}")
+            write_handoff(command=args.name, exit_code=4, abort=f"OFFPLAN {exc}")
+            return 4
+        except MissionAbort as exc:
+            freeze(session)
+            _log(f"ABORT {exc}")
+            write_handoff(command=args.name, exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command=args.name, exit_code=1, abort=f"SESSION {exc}")
+            return 1
+        heartbeat(session, _log, tag="done ")
+        write_handoff(command=args.name, exit_code=0)
+        return 0
+    except WriterLockError as exc:
         _log(f"SESSION {exc}")
-        write_handoff(command=args.name, exit_code=1, abort=f"SESSION {exc}")
         return 1
-    heartbeat(session, _log, tag="done ")
-    write_handoff(command=args.name, exit_code=0)
-    return 0
+    finally:
+        release_lock()
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -249,7 +269,12 @@ def main(argv: list[str] | None = None) -> int:
         "name",
         choices=("recover", "circularize", "tli", "soi", "capture", "land"),
     )
-    ph.add_argument("--timeout", type=float, default=2400.0)
+    ph.add_argument(
+        "--timeout",
+        type=float,
+        default=0.0,
+        help="Wall-clock abort (seconds). 0 = none (default).",
+    )
     up = sub.add_parser("uplink", help="Gene → flying mun (no kRPC)")
     up.add_argument("verb", help="abort|freeze|hold|resume|capture|skip-warp|no-warp-pe|set")
     up.add_argument("rest", nargs="*", help="reason or `mun_pe 25000`")

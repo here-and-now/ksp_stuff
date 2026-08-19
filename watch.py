@@ -495,6 +495,21 @@ class FlightWatch:
             return True
         enable_engines(vessel)
         time.sleep(0.2)
+        if vessel.available_thrust > 0:
+            return True
+        # Twin Terriers: one dry+active, one fueled+idle (Grok 4761 Mun).
+        try:
+            for eng in vessel.parts.engines:
+                try:
+                    if eng.has_fuel:
+                        eng.active = True
+                    elif eng.active:
+                        eng.active = False
+                except Exception:
+                    continue
+        except Exception:
+            pass
+        time.sleep(0.2)
         return vessel.available_thrust > 0
 
 

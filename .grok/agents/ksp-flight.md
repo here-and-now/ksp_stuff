@@ -48,10 +48,10 @@ python main.py note Gene "don't warp that Pe"
 
 `status` does **not** consume uplink. Only mun does.
 
-**When to uplink (only then):** ESC / FLAME / WRECK / lithobrake-class DIP;
-hyperbolic or subsurface Mun Pe; warp stuck at 1× on a hours-long coast;
-plan is wrong (1000× toward a Pe < 12 km). One command per phase unless
-ESC. You are not on the stick every 15 s.
+**When to uplink (only then):** WRECK / lithobrake-class DIP; hyperbolic
+or subsurface Mun Pe; 1000× toward a Pe < 12 km. **Do not abort FLAME**
+when already **orbiting Mun** with peri ≥ 12 km and LF left — that is
+relight, not abandon. One command per phase unless WRECK.
 
 ## Live
 

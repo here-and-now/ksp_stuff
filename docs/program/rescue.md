@@ -5,8 +5,8 @@ All crewed leftover stacks. Do **not** Hangar a new `mun` over these.
 
 | Kerbal | Orbit | Notes | Next |
 |---|---|---|---|
-| **Grok Kerman 4761** | Kerbin 314 × 11782 km | Active. SOI wait 1× timeout. | `--from-orbit` after Wernher |
-| **Grok Kerman 4373** | Kerbin 69 × 1581 km | Peri was in the air; 30 min clock ran. | `recover` then circularize |
+| **Grok Kerman 4761** | **Mun 22 × 1161 km** | Captured 1949Z. FLAME on circularize; LF=360 ox=440. | `--from-orbit` after Wernher node/relight |
+| **Grok Kerman 4373** | Kerbin 69 × 1581 km | Peri was in the air; clock long expired. | `recover` if still airborne |
 | **Grok Kerman 6189** | Kerbin 349 × 354 km | Parking. Safe. | `--from-orbit` TLI |
 | Valentina Kerman | **Sun** 13.1e9 × 23.4e9 | Escaped. Later. | not this week |
 | Bob Kerman | Kerbin 71 × 67433 km | Huge ellipse. | later |

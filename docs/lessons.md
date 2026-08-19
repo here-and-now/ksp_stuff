@@ -283,3 +283,10 @@ python main.py mun
 - **Symptom:** Two LLM children + a Python mun. Gene wrote LOOP; mun never read it. Pilot LLM was blocked on mun. Wall timeout dumped the crew.
 - **Cause:** The only live listener is `FlightWatch(uplink=True)`. Talk without uplink is TUI-only. `status` is a second Session, not a mailbox.
 - **Fix:** mun publishes `docs/program/ship.md` each 1 Hz. `python main.py radio` is Gene's inbox. SOI wait has no wall-clock abandon. Gene's live loop is `radio` then `status`, then uplink/brief/note.
+
+## L-033 — Bound Mun + FLAME is relight, not abort
+
+- **When:** 2026-08-19 Grok 4761 captured 22×1161 km Mun, then FLAME
+- **Symptom:** Twin Terriers: one dry+active (0 N), one fueled+idle (60 kN). LF 360, Ox 440. Gene `uplink abort FLAME` froze him in Mun orbit.
+- **Cause:** `relight`/`enable_engines` did not prefer `has_fuel`. Gene treated FLAME as kill.
+- **Fix:** `watch.relight` activates fueled engines, shuts dry ones. `--from-orbit` on Mun skips TLI and lands. Gene must not abort a bound Mun flameout.

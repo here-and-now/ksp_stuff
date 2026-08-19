@@ -656,6 +656,53 @@ def run_from_lko(
     vessel = session.active_vessel
     with FlightWatch(session, on_log=on_log, uplink=True) as watch:
         state = watch.pulse("lko ", force_log=True)
+        if from_orbit and state.body == MUN_NAME:
+            _say(f"Continue Mun orbit {state.peri:.0f}×{state.apo:.0f} m", on_log)
+            if not watch.relight(end_stage=0):
+                raise MissionAbort(f"Mun orbit, no thrust {state.line()}")
+            peri = float(vessel.orbit.periapsis_altitude)
+            if peri > 80_000:
+                _say("High Mun orbit — lowering Pe to 30 km then circularizing", on_log)
+                lower_periapsis(
+                    session, 30_000, vessel, on_log=on_log, abort=abort, watch=watch
+                )
+                _clear_nodes(vessel)
+                plan_circularize_at_periapsis(session, vessel)
+                execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
+                watch.pulse("low ", force_log=True)
+            peri = float(vessel.orbit.periapsis_altitude)
+            if peri > 14_000:
+                lower_periapsis(
+                    session, 10_000, vessel, on_log=on_log, abort=abort, watch=watch
+                )
+            start = load_plan().get("suicide_start", suicide_start_alt)
+            while True:
+                state = watch.pulse("desc ")
+                check_alive(session, watch=watch)
+                if abort and abort():
+                    raise MissionAbort("aborted before landing")
+                if holding():
+                    continue
+                surf = state.surf if math.isfinite(state.surf) else state.alt
+                if surf <= start:
+                    break
+                if no_warp_pe() or skip_warp():
+                    break
+                if math.isfinite(state.t_pe) and state.t_pe > 45.0:
+                    warp_to_ut(
+                        session,
+                        session.space_center.ut + min(state.t_pe - 40.0, 600.0),
+                        abort=abort,
+                        watch=watch,
+                    )
+                else:
+                    break
+            stage_to_lander(vessel, on_log=on_log)
+            time.sleep(0.5)
+            check_alive(session, need_thrust=True, watch=watch)
+            suicide_burn(session, vessel, on_log=on_log, abort=abort, watch=watch)
+            watch.pulse("end ", force_log=True)
+            return
         on_transfer = (
             from_orbit
             and not state.in_atmo

@@ -17,3 +17,10 @@ Gene: pad fresh LF=3600 stg=3 — holding radio, no leftover abort
 Gene: 4761 from-orbit live; L-030 no high-flyby abort; radio quiet unless ESC/hyperbolic/stuck 1x
 Grok: copy, from-orbit, rails to apo
 Gene: 4761 from-orbit L-031: rails to apo if no Mun patch; radio quiet unless ESC/hyperbolic/subsurface Pe
+Gene: capture
+Gene: Mun SOI Pe=22km hyperbolic — capture now, do not 1000x into Pe
+Gene: Grok 4761 Mun SOI Pe 22 km. Capture now. No rails into peri.
+script: acked capture
+Gene: abort FLAME captured Mun 22x1161 engine dry
+script: acked abort FLAME captured Mun 22x1161 engine dry
+Gene: FLAME on capture circularize; Pe 22 km apo 1161 — abort hung node, keep the orbit

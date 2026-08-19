@@ -333,3 +333,10 @@ python main.py mun
 - **Symptom:** Pad always Hangared `mun_lander`. Science would have talked to crew. Wernher vs VAB vs stack vs Bob-the-scientist collided.
 - **Cause:** Hardware, software, kRPC traps, and research were one blur. No conference files.
 - **Fix:** `ksp-builder` owns `.craft` / `vab.md`. Linus (`ksp-science`) owns science boards and briefs **Gene only**. Pad requires `capable: yes`. Conference order on different files. Wernher stays kRPC. Bob still flies. Modules: `missions.py` `pad_craft_name`, `mun.py` Hangar bind, `main.py vab|science`, CHARTER/AGENTS/role files.
+
+## L-040 — Live helm only
+
+- **When:** 2026-08-19 refactor. UI/constellation unused. `mun.py` 914-line godfile. `get_services()` probe discarded names.
+- **Symptom:** Review bar had no tests. Pad compose mixed with TLI/land. `status.services` always `()`.
+- **Cause:** 2022 PyQt + relay dump left in the tree. Protobuf `Services` was iterated as a list.
+- **Fix:** Delete `ui/`, `constellation.py`, `comms.py`, `realantennas.py`, `orbits.py`. Split `transfer.py` / `land.py` / pad `mun.py`. Parse `get_services().services`. `python -m unittest discover -s tests -q`. No PyQt deps.

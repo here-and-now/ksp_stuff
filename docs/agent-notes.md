@@ -73,24 +73,21 @@ in the scene that has a vessel.
 
 ---
 
-## Service detection (current code is wrong)
+## Service detection (L-040)
 
-`Session._probe_services` is the only inventory. Two bugs, live:
+`Session._probe_services` reads **`get_services().services`** (protobuf
+``Services`` message). ``status.services`` is the name tuple. Iterating
+`get_services()` itself as if it were a list used to fail silently → `()`.
 
-1. **`status.services` is always `()`.** `conn.krpc.get_services()` returns
-   `KRPC_pb2.Services` (protobuf), not a list of objects with `.name`. The
-   list-comp is caught and discarded. SpaceCenter still works.
-2. **`getattr(conn, "remote_tech")` is not “RemoteTech is installed”.**
-   `KRPC.RemoteTech.dll` ships *inside* GameData/kRPC. The stub service exists
-   on a stock-only install. Same idea for other bundled addon DLLs.
-3. **CommNet / RealAntennas** are inferred from `active_vessel.comms` and
-   `parts.with_module("ModuleRealAntenna")`. At KSC with no vessel that probe
-   excepts → `commnet=False`. On a loaded vessel, CommNet reads
-   (`list_vessels` showed `CN 1.00`). Re-probe after spawn.
+**`getattr(conn, "remote_tech")` is not “RemoteTech is installed”.**
+`KRPC.RemoteTech.dll` ships *inside* GameData/kRPC. The stub exists on a
+stock-only install. ``status.remotetech`` means the client object exists.
+Same idea for other bundled addon DLLs. MechJeb is *not* in the stock zip;
+``conn.mech_jeb`` is None here.
 
-Fix direction (not done): parse `get_services().services` for names; treat
-`conn.remote_tech` as “stub loaded”; detect the *mod* some other way (or only
-after a vessel exists). FAR via `space_center.far_available` is the right shape.
+**CommNet / RealAntennas** are inferred from `active_vessel.comms` and
+`parts.with_module("ModuleRealAntenna")`. At KSC with no vessel that probe
+excepts → `commnet=False`. Re-probe after spawn.
 
 `conn.space_center` exists. `conn.mech_jeb` does not on this install.
 

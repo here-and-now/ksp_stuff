@@ -274,7 +274,7 @@ def main(argv: list[str] | None = None) -> int:
         "recover",
         help="Burn prograde until periapsis is above the atmosphere",
     )
-    mun_p = sub.add_parser("mun", help="Pad → LKO → Mun landing")
+    mun_p = sub.add_parser("mun", help="Pad compose (Hangar + ascent + Mun). Leftover crew: phase")
     mun_p.add_argument(
         "--timeout",
         type=float,

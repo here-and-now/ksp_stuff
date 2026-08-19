@@ -81,11 +81,11 @@ def run(
     vessel = session.active_vessel
     if vessel is None:
         raise MissionAbort("no active vessel")
-    from mun import (
+    from land import run_from_lko
+    from transfer import (
         _finish_tli,
         capture_at_periapsis,
         plan_mun_encounter,
-        run_from_lko,
         warp_to_soi,
     )
     from nodes import execute_node, plan_circularize_at_apoapsis

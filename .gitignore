@@ -26,6 +26,7 @@ venv/
 
 # Live kRPC handoff — not the lesson chain
 docs/last-flight.md
+docs/missions/*/sorties/*.jsonl
 
 # Radio: last consumed command (template uplink.md is tracked)
 docs/program/uplink.last

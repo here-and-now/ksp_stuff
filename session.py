@@ -1,8 +1,8 @@
 """One kRPC connection shared by every manager.
 
 The old repo opened a new ``krpc.connect()`` in almost every class. That
-fought RemoteTech, leaked streams, and made the UI unusable without the
-game. Call :meth:`Session.connect` explicitly.
+fought RemoteTech and leaked streams. Call :meth:`Session.connect`
+explicitly. One Session per process.
 """
 
 from __future__ import annotations
@@ -20,6 +20,27 @@ log = logging.getLogger("kspstuff")
 
 class SessionError(RuntimeError):
     """Connection, missing service, or wrong-scene failure."""
+
+
+def _krpc_service_names(conn: Any) -> tuple[str, ...]:
+    """``get_services()`` is a protobuf ``Services`` message (L-040)."""
+    try:
+        raw = conn.krpc.get_services()
+    except Exception:
+        log.debug("Could not list kRPC services", exc_info=True)
+        return ()
+    items = getattr(raw, "services", None)
+    if items is None:
+        if isinstance(raw, (list, tuple)):
+            items = raw
+        else:
+            return ()
+    names: list[str] = []
+    for svc in items:
+        n = getattr(svc, "name", None)
+        if n:
+            names.append(str(n))
+    return tuple(names)
 
 
 @dataclass(slots=True)
@@ -199,11 +220,7 @@ class Session:
         except Exception:
             log.debug("Could not read kRPC version", exc_info=True)
 
-        names: list[str] = []
-        try:
-            names = [s.name for s in conn.krpc.get_services()]
-        except Exception:
-            log.debug("Could not list kRPC services", exc_info=True)
+        names = list(_krpc_service_names(conn))
 
         def grab(attr: str) -> Any:
             try:
@@ -211,6 +228,8 @@ class Session:
             except Exception:
                 return None
 
+        # RemoteTech.dll ships *inside* GameData/kRPC: getattr is a stub, not
+        # "the mod is installed". ``status.services`` is the protobuf inventory.
         self.mech_jeb = grab("mech_jeb")
         self.remote_tech = grab("remote_tech")
 

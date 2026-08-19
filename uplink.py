@@ -137,11 +137,10 @@ def load_plan() -> dict[str, float]:
     try:
         path = plan_file()
     except Exception:
-        path = PLAN_PATH if PLAN_PATH.is_file() else None
-    if path is not None and path.is_file():
-        desk.plan = _parse_plan(path.read_text(encoding="utf-8"))
-    else:
+        log.warning("no seated mission plan — not using a stale shim")
         desk.plan = dict(_PLAN_DEFAULTS)
+        return desk.plan
+    desk.plan = _parse_plan(path.read_text(encoding="utf-8"))
     return desk.plan
 
 

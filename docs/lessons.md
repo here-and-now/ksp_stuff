@@ -319,3 +319,10 @@ python main.py mun
 - **Symptom:** Three brains, one file. `abort` of a bound fueled ship was a verb. Gene's role still polled. `phase soi` never took uplink. `hold` zeroed a lithobrake. `set mun_pe` deleted `phase:`.
 - **Cause:** L-036 shipped phases + stack engineer; role files and the helm still behaved as Gene-in-the-loop. Abort always lethal. Four people could patch the same `.py`.
 - **Fix:** Helm takes uplink on every phase (`soi` included). Bound+fueled abort → hold (L-033). `apply_hold` keeps throttle 1 on lithobrake. `write_plan_file` keeps `phase`/`expect_*`. Node relight then stop if bound. `phase --timeout` default 0. `flight.lock`. Gene between exits only; no `.py`; missing `go:` = wait. R&D is stack XOR Wernher. Parent does not patch. Modules: `watch.py`, `uplink.py`, `phases.py`, `nodes.py`, `flightlog.py`, `review.py`, AGENTS/CHARTER/role files.
+
+## L-038 — Many missions, one helm
+
+- **When:** 2026-08-19 leftover Groks 4373 + 6189 + Val/Bob/Bill in one save
+- **Symptom:** One global `plan.md` / `loop.md` / `last-flight.md`. Seating 6189 would overwrite 4373's circularize envelope. Rails-warping one ship runs every other crewed stack through peri off-camera.
+- **Cause:** L-037 closed the single-stick radio. It did not persist *which* stick. Inactive vessels stay on rails; atmosphere/lithobrake still kills them.
+- **Fix:** `docs/missions/<id>/` dossier (plan, briefing, loop, sorties). `current.md` `flight:`. `python main.py seat` refuses lost + live lock. Helm `assert_seated` (exact crew match). `warp_to_ut` scans other crewed orbits and aborts if peri is in air or airless peri < 12 km. `next:` is per-mission (4373 `wait`, not TLI). Modules: `missions.py`, `warp.py`, `flightlog.py`, `main.py`. Do not fly until go.

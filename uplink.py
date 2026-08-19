@@ -26,9 +26,29 @@ log = logging.getLogger("kspstuff")
 
 UPLINK_PATH = Path("docs/program/uplink.md")
 LAST_PATH = Path("docs/program/uplink.last")
-LOOP_PATH = Path("docs/program/loop.md")
-PLAN_PATH = Path("docs/program/plan.md")
+LOOP_PATH = Path("docs/program/loop.md")  # shim; helm notes go to the dossier
+PLAN_PATH = Path("docs/program/plan.md")  # shim; canonical is missions/<id>/plan.md
 SHIP_PATH = Path("docs/program/ship.md")
+
+
+def plan_file() -> Path:
+    """Seated mission plan. Do not fall through to a stale shim (L-038)."""
+    from missions import seated_plan_path
+
+    path = seated_plan_path()
+    if not path.is_file():
+        raise FileNotFoundError(f"no seated mission plan: {path}")
+    return path
+
+
+def loop_file() -> Path:
+    from missions import seated_loop_path
+
+    path = seated_loop_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.is_file():
+        path.write_text("# Gene ↔ this mission. Not the helm.\n", encoding="utf-8")
+    return path
 
 _VERBS = (
     "abort",
@@ -113,8 +133,12 @@ def _parse_plan(text: str) -> dict[str, float]:
 
 
 def load_plan() -> dict[str, float]:
-    if PLAN_PATH.is_file():
-        desk.plan = _parse_plan(PLAN_PATH.read_text(encoding="utf-8"))
+    try:
+        path = plan_file()
+    except Exception:
+        path = PLAN_PATH if PLAN_PATH.is_file() else None
+    if path is not None and path.is_file():
+        desk.plan = _parse_plan(path.read_text(encoding="utf-8"))
     else:
         desk.plan = dict(_PLAN_DEFAULTS)
     return desk.plan
@@ -123,9 +147,13 @@ def load_plan() -> dict[str, float]:
 def plan_meta() -> dict[str, str]:
     """``phase`` / ``next`` / ``expect_*`` currently on disk."""
     out: dict[str, str] = {}
-    if not PLAN_PATH.is_file():
+    try:
+        path = plan_file()
+    except Exception:
+        path = PLAN_PATH if PLAN_PATH.is_file() else None
+    if path is None or not path.is_file():
         return out
-    for raw in PLAN_PATH.read_text(encoding="utf-8").splitlines():
+    for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
         if not line or line.startswith("#") or ":" not in line:
             continue
@@ -143,14 +171,21 @@ def write_plan_file(*, extra: dict[str, str] | None = None) -> None:
         for key, val in extra.items():
             if key in _PLAN_META and str(val).strip():
                 meta[key] = str(val).strip()
-    PLAN_PATH.parent.mkdir(parents=True, exist_ok=True)
+    path = plan_file()
+    path.parent.mkdir(parents=True, exist_ok=True)
     lines = ["# Gene's plan. `python main.py phase` runs `phase:`.\n"]
     for key, val in desk.plan.items():
         lines.append(f"{key}: {val:g}\n")
     for key in _PLAN_META:
         if key in meta:
             lines.append(f"{key}: {meta[key]}\n")
-    PLAN_PATH.write_text("".join(lines), encoding="utf-8")
+    path.write_text("".join(lines), encoding="utf-8")
+    try:
+        from missions import sync_shim
+
+        sync_shim()
+    except Exception:
+        log.debug("shim sync failed", exc_info=True)
 
 
 def save_plan() -> None:
@@ -158,9 +193,9 @@ def save_plan() -> None:
 
 
 def note(who: str, text: str) -> None:
-    LOOP_PATH.parent.mkdir(parents=True, exist_ok=True)
+    path = loop_file()
     line = f"{who}: {text.rstrip()}\n"
-    with LOOP_PATH.open("a", encoding="utf-8") as fh:
+    with path.open("a", encoding="utf-8") as fh:
         fh.write(line)
 
 
@@ -278,10 +313,11 @@ def radio_text() -> str:
     cmd = peek()
     bits.append("UPLINK " + (cmd.raw if cmd else "(clear)"))
     bits.append("PLAN " + " ".join(f"{k}={v:g}" for k, v in desk.plan.items()))
-    if LOOP_PATH.is_file():
+    loop = loop_file()
+    if loop.is_file():
         lines = [
             ln
-            for ln in LOOP_PATH.read_text(encoding="utf-8").splitlines()
+            for ln in loop.read_text(encoding="utf-8").splitlines()
             if ln.strip() and not ln.strip().startswith("#")
         ]
         bits.append("LOOP")

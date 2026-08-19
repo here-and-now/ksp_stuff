@@ -2,8 +2,8 @@
 
 Read **`docs/program/CHARTER.md`**, then **`docs/lessons.md`**, then
 **`docs/agent-notes.md`**. If `docs/last-flight.md` exists, read that
-before flying. Seat and slate: `docs/program/current.md`,
-`docs/program/slate.md`.
+before flying. Seat and slate: `docs/program/current.md` (`flight:`),
+`docs/program/slate.md`, `docs/missions/INDEX.md`.
 
 This repo is an **agent-driven kRPC project**. Do not open the PyQt UI.
 Do not browse the web (`web_search`, `web_fetch`, `open_page`). kRPC facts
@@ -49,7 +49,7 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | Role | `subagent_type` | Person | Does | Does not |
 |---|---|---|---|---|
 | **CEO** | `ksp-ceo` | Mortimer | Goal / slate when the *program* changes | Fly, patch `.py` |
-| **Flight** | `ksp-flight` | Gene | Between phases: envelope vs plan, next `phase:` + numbers, briefing. Rush: `need_stack`. | Touch `control.*`, edit `.py`, poll 20–40 s, invent a block not in `blocks.md` |
+| **Flight** | `ksp-flight` | Gene | Between phases: seated dossier vs envelope, next `phase:` + numbers, briefing. `seat` to change ship. Rush: `need_stack`. | Touch `control.*`, edit `.py`, poll 20–40 s, invent a block not in `blocks.md`, seat while lock is live |
 | **Pilot** | kerbal slug | current.md | `python main.py phase <plan.phase>`. Copy briefing. Talk on abort/off-plan. | 15 s narration, Hangar over leftover crew, full `mun` unless pad |
 | **R&D stack** | `ksp-stack` | (engineer) | Building blocks, `blocks.md`, post-flight sequencing patches | Fly, kRPC stream traps |
 | **R&D Wernher** | `ksp-fixer` | Wernher | kRPC 0.6 watch/stream/protobuf **after** stack said `stack: ok` | Mission sequencing |
@@ -78,11 +78,13 @@ patch `.py` in the same turn — spawn R&D.
 
 Parse Gene's return block. **Missing `go:` = wait.** Never auto-fly.
 
-- User says fly / go / recommended → spawn **Gene**. If `go:` is missing
-  or `wait` → STOP (one TUI line). If `need_stack` is not `none` → spawn
-  `ksp-stack`, then Gene again. Then spawn the **named pilot**:
-  `python main.py phase <Gene's phase:>`. **No spotter. No 15 s monitor.
-  Do not spawn Gene during the phase.**
+- User says fly / go / recommended → spawn **Gene**. Gene return must
+  include `flight:` matching `current.md` (or a `seat` that already ran
+  with lock free). If `go:` is missing or `wait` → STOP (one TUI line).
+  If `need_stack` is not `none` → spawn `ksp-stack`, then Gene again.
+  Then spawn the **named pilot**: `python main.py phase <Gene's phase:>`
+  on that seated id. **No spotter. No 15 s monitor. Do not spawn Gene
+  during the phase.** Do not auto-continue onto a different Grok.
 - Pilot returns **0** → spawn **`ksp-stack`**, then **Gene**. Fly next
   only if Gene returned `go: yes` **and** `phase:` is in `blocks.md`.
 - Pilot returns **4 OFFPLAN**, **2 ABORT**, or **1 SESSION** → spawn

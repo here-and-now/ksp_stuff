@@ -24,6 +24,7 @@ LOCK = Path("docs/program/flight.lock")
 _path: Path | None = None
 _command: str = ""
 _stamp: str = ""
+_flight: str = ""
 _t0: float = 0.0
 _last_flags: tuple[str, ...] | None = None
 _last_write: float = 0.0
@@ -36,6 +37,10 @@ def stamp() -> str:
 
 def path() -> Path | None:
     return _path
+
+
+def locked_flight() -> str:
+    return _flight
 
 
 class WriterLockError(RuntimeError):
@@ -72,7 +77,7 @@ def acquire_lock(command: str) -> None:
             )
         log.info("stale flight.lock pid=%s — taking helm", old_pid)
     LOCK.write_text(
-        f"pid={os.getpid()}\ncommand={command}\n",
+        f"pid={os.getpid()}\ncommand={command}\nflight={_flight}\n",
         encoding="utf-8",
     )
 
@@ -90,12 +95,21 @@ def release_lock() -> None:
 
 
 def start(command: str, *, crew: str = "") -> Path:
-    global _path, _command, _stamp, _t0, _last_flags, _last_write, _count
+    global _path, _command, _stamp, _flight, _t0, _last_flags, _last_write, _count
+    try:
+        from missions import seated_id, seated_sorties_dir
+
+        _flight = seated_id()
+        dest = seated_sorties_dir(_flight)
+        dest.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        _flight = ""
+        dest = FLIGHTS
+        dest.mkdir(parents=True, exist_ok=True)
     acquire_lock(command)
-    FLIGHTS.mkdir(parents=True, exist_ok=True)
     _stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
     _command = command
-    _path = FLIGHTS / f"{_stamp}-{command}.jsonl"
+    _path = dest / f"{_stamp}-{command}.jsonl"
     _t0 = time.monotonic()
     _last_flags = None
     _last_write = 0.0
@@ -161,10 +175,12 @@ def _publish_ship(state: Any, tag: str) -> None:
     try:
         line = state.line(tag) if hasattr(state, "line") else str(state)
         utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
-        Path("docs/program/ship.md").write_text(
-            line.strip() + f"\nas_of: {utc}\n",
-            encoding="utf-8",
-        )
+        bits = []
+        if _flight:
+            bits.append(f"flight: {_flight}")
+        bits.append(line.strip())
+        bits.append(f"as_of: {utc}")
+        Path("docs/program/ship.md").write_text("\n".join(bits) + "\n", encoding="utf-8")
     except Exception:
         pass
 

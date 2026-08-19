@@ -179,8 +179,14 @@ def write_review(
     return out
 
 
-def latest_jsonl() -> Path | None:
-    files = sorted(FLIGHTS.glob("*.jsonl"))
+def latest_jsonl(flight_id: str | None = None) -> Path | None:
+    from missions import seated_id, seated_sorties_dir
+
+    fid = flight_id or seated_id()
+    dest = seated_sorties_dir(fid)
+    files = sorted(dest.glob("*.jsonl")) if dest.is_dir() else []
+    if not files:
+        files = sorted(FLIGHTS.glob("*.jsonl"))
     return files[-1] if files else None
 
 

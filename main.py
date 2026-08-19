@@ -50,10 +50,13 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
         text = "\n".join(body)
         HANDOFF.write_text(text, encoding="utf-8")
         stamp = log_stamp() or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
-        archive = Path("docs/flights") / f"{stamp}-{command}.md"
+        jsonl = log_path()
+        if jsonl is not None:
+            archive = jsonl.with_suffix(".md")
+        else:
+            archive = Path("docs/flights") / f"{stamp}-{command}.md"
         archive.parent.mkdir(parents=True, exist_ok=True)
         archive.write_text(text, encoding="utf-8")
-        jsonl = log_path()
         log_close()
         review_path = None
         if jsonl is not None:
@@ -118,6 +121,9 @@ def cmd_recover(session: Session) -> int:
     except Exception:
         pass
     try:
+        from missions import assert_seated
+
+        assert_seated(session)
         start("recover", crew=crew)
         try:
             recover_periapsis(session, extra=10_000.0, on_log=_log)
@@ -129,6 +135,9 @@ def cmd_recover(session: Session) -> int:
         write_handoff(command="recover", exit_code=0)
         return 0
     except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
         _log(f"SESSION {exc}")
         return 1
     finally:
@@ -146,6 +155,12 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
     except Exception:
         pass
     try:
+        from missions import assert_seated, pad_kerbal_available
+
+        if args.from_orbit:
+            assert_seated(session)
+        else:
+            pad_kerbal_available(session)
         start("mun", crew=crew)
 
         def abort() -> bool:
@@ -175,6 +190,9 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
     except WriterLockError as exc:
         _log(f"SESSION {exc}")
         return 1
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        return 1
     finally:
         release_lock()
 
@@ -191,6 +209,9 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
     except Exception:
         pass
     try:
+        from missions import assert_seated
+
+        assert_seated(session)
         start(args.name, crew=crew)
 
         def abort() -> bool:
@@ -218,6 +239,9 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
         write_handoff(command=args.name, exit_code=0)
         return 0
     except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
         _log(f"SESSION {exc}")
         return 1
     finally:
@@ -285,8 +309,11 @@ def main(argv: list[str] | None = None) -> int:
     rev.add_argument("log", nargs="?", default=None, help="docs/flights/<stamp>-mun.jsonl")
     sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
     sub.add_parser("radio", help="Gene inbox: ship.md + uplink + loop (no kRPC)")
-    brief_p = sub.add_parser("brief", help="Gene → briefing.md + loop.md")
+    brief_p = sub.add_parser("brief", help="Gene → seated mission briefing + loop")
     brief_p.add_argument("text", nargs="+")
+    seat_p = sub.add_parser("seat", help="Point current.md at a mission dossier")
+    seat_p.add_argument("who", help="flight id or roster string")
+    sub.add_parser("missions", help="Print docs/missions/INDEX.md (no kRPC)")
     args = parser.parse_args(argv)
 
     if args.cmd == "uplink":
@@ -322,23 +349,45 @@ def main(argv: list[str] | None = None) -> int:
         print(radio_text(), end="")
         return 0
     if args.cmd == "plan":
-        from pathlib import Path as P
+        from missions import seated_plan_path
 
-        text = P("docs/program/plan.md").read_text(encoding="utf-8")
+        path = seated_plan_path()
+        text = path.read_text(encoding="utf-8")
         print(text, end="" if text.endswith("\n") else "\n")
         return 0
     if args.cmd == "brief":
-        from pathlib import Path as P
-
+        from missions import seated_briefing_path, seated_id, sync_shim
         from uplink import note
 
         body = " ".join(args.text)
-        P("docs/program/briefing.md").write_text(
-            "# Briefing — Gene → pilot\n\n" + body.strip() + "\n",
+        path = seated_briefing_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            f"# Briefing — Gene → {seated_id()}\n\n" + body.strip() + "\n",
             encoding="utf-8",
         )
         note("Gene", body)
+        try:
+            sync_shim()
+        except Exception:
+            pass
         print("briefed", flush=True)
+        return 0
+    if args.cmd == "seat":
+        from missions import seat
+
+        try:
+            fid = seat(args.who)
+        except Exception as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        print(f"seated {fid}", flush=True)
+        return 0
+    if args.cmd == "missions":
+        from missions import index_text, write_index
+
+        write_index()
+        print(index_text(), end="")
         return 0
 
     try:

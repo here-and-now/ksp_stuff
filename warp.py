@@ -166,6 +166,13 @@ def warp_to_ut(
                 time.sleep(1.0)
                 continue
 
+            from missions import other_crewed_warp_danger
+
+            peer = other_crewed_warp_danger(session)
+            if peer:
+                drop_warp(session)
+                raise MissionAbort(peer)
+
             now_ut = float(sc.ut)
             if now_ut > last_ut + 0.05:
                 last_ut = now_ut

@@ -29,11 +29,11 @@ One `Session` per process. You are the only writer: do not start a second
 
 ## Do
 
-1. Read `docs/program/briefing.md` and `docs/program/plan.md` (Gene's
-   plan). Copy on `python main.py note <YourName> "copy, …"`. Then
-   `docs/program/current.md`, `docs/crew/<slug>.md`, last-flight if
-   any, last 3 lessons. Do not override Gene's plan from a scratch
-   script. Style still comes from crew.py.
+1. Read `docs/program/current.md` (`flight:`). Then that dossier
+   (`docs/missions/<id>/briefing.md` and `plan.md`). Copy on
+   `python main.py note <YourName> "copy, …"`. Then
+   `docs/crew/<slug>.md`, last-flight if any, last 3 lessons. Do not
+   fly a different Grok's plan. Style still comes from crew.py.
 2. `.venv/bin/python -u main.py status` once. If the game is in a crash/recover
    UI or `SESSION` connect fails, stop and report that — do not loop.
 3. Run **one phase** from `docs/program/plan.md` (`phase:`), or the

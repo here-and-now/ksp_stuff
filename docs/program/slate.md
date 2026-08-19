@@ -1,6 +1,7 @@
 # Slate
 
-**Recommended:** wait for go. Next recovery is one `phase`, not `mun`.
+**Recommended:** wait for go. Seat `grok-4373` (already). One helm.
+`python main.py missions` for the board.
 
 1. **Grok 4373** — Kerbin **89 × 1609 km**, bound, LF 543. Next:
    `python main.py phase circularize`.

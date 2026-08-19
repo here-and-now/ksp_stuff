@@ -133,10 +133,13 @@ def current_assignment() -> dict[str, str]:
     if not CURRENT_PATH.is_file():
         return {"pilot": "Jebediah Kerman", "capcom": "Valentina Kerman"}
     kv = _parse_kv(CURRENT_PATH.read_text(encoding="utf-8"))
-    return {
+    out = {
         "pilot": kv.get("pilot", "Jebediah Kerman"),
         "capcom": kv.get("capcom", "Valentina Kerman"),
     }
+    if kv.get("flight"):
+        out["flight"] = kv["flight"]
+    return out
 
 
 def current_pilot() -> Person:

@@ -441,6 +441,28 @@ class FlightWatch:
         if cmd.verb in {"abort", "freeze", "hold"}:
             apply_hold(self.session)
         if cmd.verb == "abort":
+            try:
+                from flightlog import locked_flight
+                from missions import seated_id
+
+                locked = locked_flight()
+                now = seated_id()
+                if locked and now and locked != now:
+                    log.info(
+                        "uplink abort ignored — seated %s helm %s: %s",
+                        now,
+                        locked,
+                        cmd.raw,
+                    )
+                    try:
+                        from flightlog import event
+
+                        event("uplink", f"ignored other-mission abort {cmd.raw}")
+                    except Exception:
+                        pass
+                    return
+            except Exception:
+                pass
             if _refuse_abort(state):
                 desk.hold = True
                 log.info("uplink refused abort — bound fueled: %s", cmd.raw)

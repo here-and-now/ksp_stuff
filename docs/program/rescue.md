@@ -1,7 +1,7 @@
 # Rescue board — nobody is debris
 
-All crewed leftover stacks. Do **not** Hangar a new `mun` over these.
-`phase` on the active vessel. One writer.
+**Canonical:** `docs/missions/INDEX.md` (`python main.py missions`).
+Do not Hangar. Seat with `python main.py seat <id>`. One helm.
 
 | Kerbal | Orbit | Notes | Next |
 |---|---|---|---|

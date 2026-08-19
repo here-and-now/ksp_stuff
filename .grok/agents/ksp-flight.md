@@ -49,15 +49,19 @@ takes it. `loop.md` is not the helm (L-032).
 
 ## After a phase exit
 
-1. Read newest `docs/flights/*-review.md`. Envelope vs `expect_*`. Fill **Learn**.
-2. Set `phase:` / `next:` / numbers in `plan.md`. Brief the pilot. Seat `current.md`.
+1. Read newest `docs/missions/<seated>/sorties/*-review.md`. Envelope vs `expect_*`. Fill **Learn**.
+2. Set `phase:` / `next:` / numbers in **that** dossier `plan.md`. Brief. `seat` only to change ship (lock free).
 3. If you need a block not in `blocks.md`: `need_stack: <name>`.
 4. Slate + gene.md log. Do not Hangar over leftover crew.
 5. Missing `go:` is treated as **wait**. Only `go: yes` continues.
 
+To change ship: lock must be free. `python main.py seat <id>`, then brief
+**that** dossier. Do not copy 4373's `expect_*` onto 6189.
+
 ## Return
 
 ```
+flight: <grok-4373|…>
 seat: <kerbal>
 phase: <circularize|tli|…>
 next: <name>

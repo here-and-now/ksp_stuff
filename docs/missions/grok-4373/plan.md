@@ -1,4 +1,4 @@
-# Seated grok-4373. Canonical: docs/missions/grok-4373/plan.md
+# Gene's plan. `python main.py phase` runs `phase:`.
 mun_pe: 25000
 suicide_start: 25000
 parking_apo: 250000

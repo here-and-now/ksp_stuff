@@ -28,3 +28,4 @@ Do not poll. Missing `go:` = wait. No 15 s TUI. No spotter.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1949Z: L-031 rails to apo, Mun SOI Pe 22 km, captured 22×1161. Circularize FLAME (engine dry, LF=360 still aboard); Gene aborted hung node. Seat stays 4761. Hold Wernher node/relight. Review 2026-08-19T1949Z.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1958Z: L-033 relight 60 kN, deorbit Pe 10 km, suicide hovered then 400 s timeout at 5.7 km LF=202. Freeze cut throttle; lithobrake parts=-1. Seat → 4373 recover. Review 2026-08-19T1958Z.
 - 2026-08-19 — L-037 Helm/Flight/R&D. Recover-done 4373 89×1609. Next `phase circularize` after go. Do not poll. Do not abort bound FLAME.
+- 2026-08-19 — L-038 dossiers. Seated grok-4373. 6189 is another mission (`seat grok-6189` after lock free). 4373 next is wait, not TLI.

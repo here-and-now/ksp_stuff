@@ -25,7 +25,7 @@ assign `L-NNN` if you are not patching — `lesson: none`.
 1. `docs/program/blocks.md` and `docs/program/plan.md`
 2. Newest `docs/flights/*-review.md` (not the raw jsonl)
 3. `docs/lessons.md` last 5
-4. `phases.py`, `watch.py`, `warp.py`, `nodes.py`, `mun.py` as needed
+4. `phases.py`, `watch.py`, `warp.py`, `nodes.py`, `mun.py`, `missions.py` as needed
 
 ## After a flight / when Gene lacks a block
 

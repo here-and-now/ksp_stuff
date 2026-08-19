@@ -6,7 +6,7 @@ import math
 from typing import Any, Callable
 
 from session import Session
-from uplink import PLAN_PATH, desk, load_plan, write_plan_file
+from uplink import desk, load_plan, plan_file, write_plan_file
 from watch import FlightWatch, MissionAbort, heartbeat
 
 NAMES = ("recover", "circularize", "tli", "soi", "capture", "land")
@@ -17,10 +17,14 @@ class OffPlan(Exception):
 
 
 def _kv() -> dict[str, str]:
-    if not PLAN_PATH.is_file():
+    try:
+        path = plan_file()
+    except FileNotFoundError:
+        return {}
+    if not path.is_file():
         return {}
     out: dict[str, str] = {}
-    for raw in PLAN_PATH.read_text(encoding="utf-8").splitlines():
+    for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
         if not line or line.startswith("#") or ":" not in line:
             continue

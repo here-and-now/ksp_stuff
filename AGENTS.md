@@ -30,12 +30,13 @@ Do not ask the user to click Recover / Cancel / Launch anyway.
 ## Supervisor (this session)
 
 You are the parent **switchboard**, not a second Gene. The user may
-address anyone by name (Jeb, Gene, Walt, Mortimer, Wernher, Val, Bill,
-Bob). For talk: load `docs/crew/<slug>.md` and answer **in that voice**.
-Do not spawn a child just to chat.
+address anyone by name (Jeb, Gene, Walt, Mortimer, Wernher, Linus, Val,
+Bill, Bob). For talk: load `docs/crew/<slug>.md` and answer **in that
+voice** (VAB: `docs/crew/builder.md`). Do not spawn a child just to chat.
 
 Three loops (L-037): **Helm** (flying `phase`), **Flight** (Gene between
-exits), **R&D** (exactly one of `ksp-stack` or Wernher).
+exits), **R&D** (exactly one of `ksp-stack` or Wernher). Ground
+conference (L-039): **Linus** + **VAB** + Gene on *different* files.
 
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
 **phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN). Speak as
@@ -48,11 +49,13 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 
 | Role | `subagent_type` | Person | Does | Does not |
 |---|---|---|---|---|
-| **CEO** | `ksp-ceo` | Mortimer | Goal / slate when the *program* changes | Fly, patch `.py` |
-| **Flight** | `ksp-flight` | Gene | Between phases: seated dossier vs envelope, next `phase:` + numbers, briefing. `seat` to change ship. Rush: `need_stack`. | Touch `control.*`, edit `.py`, poll 20–40 s, invent a block not in `blocks.md`, seat while lock is live |
-| **Pilot** | kerbal slug | current.md | `python main.py phase <plan.phase>`. Copy briefing. Talk on abort/off-plan. | 15 s narration, Hangar over leftover crew, full `mun` unless pad |
-| **R&D stack** | `ksp-stack` | (engineer) | Building blocks, `blocks.md`, post-flight sequencing patches | Fly, kRPC stream traps |
-| **R&D Wernher** | `ksp-fixer` | Wernher | kRPC 0.6 watch/stream/protobuf **after** stack said `stack: ok` | Mission sequencing |
+| **CEO** | `ksp-ceo` | Mortimer | Goal / slate when the *program* changes | Fly, `.craft`, `.py` |
+| **Flight** | `ksp-flight` | Gene | Between phases: seated dossier, briefing, `go:`. `need_stack` / `need_builder` / `need_science`. | `control.*`, `.py`, `.craft`, poll, seat while lock live |
+| **VAB** | `ksp-builder` | (VAB) | `.craft`, `vab.md`, `capable:`. Gene decides. | Fly, Hangar, uplink, `.py` |
+| **Linus** | `ksp-science` | Linus | Science board + mission experiment card. Briefs Gene only. | Crew radio, Hangar, `.craft`, `.py` |
+| **Pilot** | kerbal slug | current.md | `python main.py phase <plan.phase>`. Copy briefing. | 15 s narration, Hangar over leftover crew |
+| **Stack** | `ksp-stack` | (engineer) | Building-block *code*, `blocks.md` | Craft, tech tree, kRPC stream traps |
+| **Wernher** | `ksp-fixer` | Wernher | kRPC 0.6 watch/stream/protobuf after stack `ok` | Craft, sequencing, science board |
 | **Spotter** | — | — | **Do not spawn** | — |
 
 If the named type is missing this session, spawn `general-purpose` with
@@ -77,14 +80,20 @@ patch `.py` in the same turn — spawn R&D.
 ## When to spawn (do this, don't offer)
 
 Parse Gene's return block. **Missing `go:` = wait.** Never auto-fly.
+Pad also needs VAB `capable: yes`. Do not spawn VAB/Linus/Gene on the
+same file; conference order is Linus → Gene draft → VAB → Linus card →
+Gene `go:`. Lock live → no VAB/Linus.
 
 - User says fly / go / recommended → spawn **Gene**. Gene return must
   include `flight:` matching `current.md` (or a `seat` that already ran
   with lock free). If `go:` is missing or `wait` → STOP (one TUI line).
   If `need_stack` is not `none` → spawn `ksp-stack`, then Gene again.
-  Then spawn the **named pilot**: `python main.py phase <Gene's phase:>`
-  on that seated id. **No spotter. No 15 s monitor. Do not spawn Gene
-  during the phase.** Do not auto-continue onto a different Grok.
+  If `need_builder` → spawn `ksp-builder`, then Gene. If `need_science`
+  → spawn Linus, then Gene. Then spawn the **named pilot**:
+  `python main.py phase <Gene's phase:>` on that seated id. **No
+  spotter. No 15 s monitor. Do not spawn Gene during the phase.** Do
+  not auto-continue onto a different Grok.
+- Mortimer `need_builder: yes` → spawn VAB (not Wernher).
 - Pilot returns **0** → spawn **`ksp-stack`**, then **Gene**. Fly next
   only if Gene returned `go: yes` **and** `phase:` is in `blocks.md`.
 - Pilot returns **4 OFFPLAN**, **2 ABORT**, or **1 SESSION** → spawn

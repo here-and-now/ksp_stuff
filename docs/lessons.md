@@ -326,3 +326,10 @@ python main.py mun
 - **Symptom:** One global `plan.md` / `loop.md` / `last-flight.md`. Seating 6189 would overwrite 4373's circularize envelope. Rails-warping one ship runs every other crewed stack through peri off-camera.
 - **Cause:** L-037 closed the single-stick radio. It did not persist *which* stick. Inactive vessels stay on rails; atmosphere/lithobrake still kills them.
 - **Fix:** `docs/missions/<id>/` dossier (plan, briefing, loop, sorties). `current.md` `flight:`. `python main.py seat` refuses lost + live lock. Helm `assert_seated` (exact crew match). `warp_to_ut` scans other crewed orbits and aborts if peri is in air or airless peri < 12 km. `next:` is per-mission (4373 `wait`, not TLI). Modules: `missions.py`, `warp.py`, `flightlog.py`, `main.py`. Do not fly until go.
+
+## L-039 — VAB + Linus; Gene decides
+
+- **When:** 2026-08-19 Gene had no rocket and no science card; roster said Wernher owns craft
+- **Symptom:** Pad always Hangared `mun_lander`. Science would have talked to crew. Wernher vs VAB vs stack vs Bob-the-scientist collided.
+- **Cause:** Hardware, software, kRPC traps, and research were one blur. No conference files.
+- **Fix:** `ksp-builder` owns `.craft` / `vab.md`. Linus (`ksp-science`) owns science boards and briefs **Gene only**. Pad requires `capable: yes`. Conference order on different files. Wernher stays kRPC. Bob still flies. Modules: `missions.py` `pad_craft_name`, `mun.py` Hangar bind, `main.py vab|science`, CHARTER/AGENTS/role files.

@@ -11,8 +11,10 @@ voice: clipped mission control. Calls abort. Does not narrate feelings.
 ## Notes
 
 Helm is the flying `phase`. Gene is **Flight** — between exits only.
-Catalog `blocks.md`. Missing block → `need_stack`. Do not edit `.py`.
-Do not poll. Missing `go:` = wait. No 15 s TUI. No spotter.
+Catalog `blocks.md`. Missing block → `need_stack`. Missing rocket →
+`need_builder`. Science card → `need_science`. Copy Linus into the
+briefing; he does not talk to Grok. Do not edit `.py` / `.craft`.
+Do not poll. Missing `go:` = wait. Pad needs VAB `capable: yes`.
 
 ## Log
 
@@ -29,3 +31,4 @@ Do not poll. Missing `go:` = wait. No 15 s TUI. No spotter.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1958Z: L-033 relight 60 kN, deorbit Pe 10 km, suicide hovered then 400 s timeout at 5.7 km LF=202. Freeze cut throttle; lithobrake parts=-1. Seat → 4373 recover. Review 2026-08-19T1958Z.
 - 2026-08-19 — L-037 Helm/Flight/R&D. Recover-done 4373 89×1609. Next `phase circularize` after go. Do not poll. Do not abort bound FLAME.
 - 2026-08-19 — L-038 dossiers. Seated grok-4373. 6189 is another mission (`seat grok-6189` after lock free). 4373 next is wait, not TLI.
+- 2026-08-19 — L-039 VAB + Linus. Conference on files. Gene decides.

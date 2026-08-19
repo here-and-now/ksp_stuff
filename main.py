@@ -161,6 +161,9 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
             assert_seated(session)
         else:
             pad_kerbal_available(session)
+            from missions import pad_craft_name
+
+            pad_craft_name()
         start("mun", crew=crew)
 
         def abort() -> bool:
@@ -314,6 +317,8 @@ def main(argv: list[str] | None = None) -> int:
     seat_p = sub.add_parser("seat", help="Point current.md at a mission dossier")
     seat_p.add_argument("who", help="flight id or roster string")
     sub.add_parser("missions", help="Print docs/missions/INDEX.md (no kRPC)")
+    sub.add_parser("vab", help="Print VAB board + seated craft.md (no kRPC)")
+    sub.add_parser("science", help="Print Linus board; career snapshot if connected")
     args = parser.parse_args(argv)
 
     if args.cmd == "uplink":
@@ -388,6 +393,48 @@ def main(argv: list[str] | None = None) -> int:
 
         write_index()
         print(index_text(), end="")
+        return 0
+    if args.cmd == "vab":
+        from missions import VAB_PATH, seated_craft_path, seated_id
+
+        bits = []
+        if VAB_PATH.is_file():
+            bits.append(VAB_PATH.read_text(encoding="utf-8").rstrip())
+        craft = seated_craft_path()
+        bits.append(f"\n# seated {seated_id()} craft.md")
+        if craft.is_file():
+            bits.append(craft.read_text(encoding="utf-8").rstrip())
+        print("\n".join(bits) + "\n", end="")
+        return 0
+    if args.cmd == "science":
+        from missions import SCIENCE_PATH, seated_id, seated_science_path
+
+        bits = []
+        if SCIENCE_PATH.is_file():
+            bits.append(SCIENCE_PATH.read_text(encoding="utf-8").rstrip())
+        card = seated_science_path()
+        bits.append(f"\n# seated {seated_id()} science.md")
+        if card.is_file():
+            bits.append(card.read_text(encoding="utf-8").rstrip())
+        print("\n".join(bits) + "\n", end="")
+        try:
+            session = _connect(args)
+        except SessionError as exc:
+            print(f"CAREER (no probe) {exc}", flush=True)
+            return 0
+        try:
+            from career import snapshot_career
+
+            snap = snapshot_career(session)
+            print(
+                f"CAREER mode={snap.game_mode} science={snap.science} "
+                f"funds={snap.funds} rep={snap.reputation}",
+                flush=True,
+            )
+        except Exception as exc:
+            print(f"CAREER (no probe) {exc}", flush=True)
+        finally:
+            session.close()
         return 0
 
     try:

@@ -27,6 +27,7 @@ _SLUG = {
     "Gene Kerman": "gene",
     "Walt Kerman": "walt",
     "Wernher von Kerman": "wernher",
+    "Linus Kerman": "linus",
 }
 
 # Library defaults, then clamp. Matches mun.py / L-015 / L-008.

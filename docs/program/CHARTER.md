@@ -5,43 +5,49 @@ address anyone and who picks the next item on the slate. No sound. No PyQt.
 
 ## How it runs
 
-Three loops (L-037). Each has one owner. Everyone else is a file.
-Many **missions**, one seated helm (L-038).
+Three loops (L-037). Many **missions**, one seated helm (L-038).
+Planning is a **conference on files** (L-039). Flying is Gene → helm.
 
-1. **Helm** — flying `python main.py phase` on the **seated** mission
-   (`docs/program/current.md` `flight:`). Only kRPC writer. Takes
-   `uplink.md`. Gates abort. `flight.lock` forbids a second writer.
-   Crew on the active vessel must match the seated pilot. Rails warp
-   scans other crewed stacks (unloaded ships still die on rails).
-2. **Flight** (Gene) owns the **seated dossier**
-   (`docs/missions/<id>/plan.md`). He replans **between** `phase` exits.
-   To change ship: lock free → `python main.py seat <id>` → brief that
-   dossier. He does not invent a block, edit `.py`, or poll. Missing
-   `go:` = wait. Return includes `flight:`.
-3. **R&D** — exactly one patcher after an exit: `ksp-stack` first
-   (sequencing / blocks); Wernher only for kRPC 0.6 stream traps if
-   stack did not patch.
-4. **CAPCOM** (Walt) is extra voice on events, not a substitute for Gene.
-   The flying **agent name is the KSP kerbal name** (create if missing).
-5. **Pilots** run one `phase`. Style in `docs/crew/*.md` still clamps
-   ascent numbers. Gates always win. No spotter. No 15 s TUI stream.
+| Who | Owns | Never |
+|---|---|---|
+| **Helm** | flying `phase`; `uplink.md`; `flight.lock` | a second writer |
+| **Gene** | seated dossier plan + briefing; `go:` | `.py`, `.craft` |
+| **VAB** | `.craft`, `vab.md` | Hangar, uplink, `.py` |
+| **Linus** | `science.md`, mission experiment card | crew radio, Hangar |
+| **Stack** | `phases.py`, `blocks.md` | craft, tech tree |
+| **Wernher** | kRPC 0.6 traps | craft, sequencing |
+| **Mortimer** | goal / slate | fly, craft, `.py` |
+| **Walt** | TUI voice on phase edges | planning |
+| **Pilot** | one `phase` | rewrite the plan |
 
-Live handoff is still gitignored `docs/last-flight.md`. Sorties write
-under `docs/missions/<id>/sorties/`. Gene fills **Learn** after every
-exit. R&D reads the review before patching.
+Linus briefs **Gene** (what / when / which part). Gene copies that into
+the pilot briefing. Linus has **no** `uplink` / `loop` / `note`.
 
-**Radio:** Gene talks to the **helm** and the **pilot file**,
-not to a second kRPC session.
+Gene last-writes the **plan**. VAB last-writes the **`.craft`**. Linus
+last-writes **science.md**. Disagreement → Gene `go: wait`.
 
-- `docs/program/ship.md` — last heartbeat + `as_of` the helm published
-- `python main.py radio` — Gene's inbox (ship + uplink + loop)
-- `docs/program/uplink.md` — stick command the helm *takes*
-- `docs/missions/<id>/briefing.md` + `loop.md` — plan told to that pilot
-- `python main.py brief …` / `note Gene …` — Gene → seated dossier
-- `python main.py seat <id>` / `missions` — switch / board
-- Bound+fueled abort is refused (L-033). Hold does not zero a lithobrake.
-- Wall-clock SOI / `phase` timeouts do not dump crew (L-032 / L-037)
+**Conference (parent, depth 1, different files):** Linus opportunities →
+Gene draft (`go: wait`) → VAB `capable:` → Linus binds experiments to
+that craft → Gene briefing + `go:`. Do not spawn them on one file.
+Do not spawn VAB/Linus while `flight.lock` is live.
 
-After you say **go**, the parent runs `phase` after `phase` until Gene
-returns `go: wait` (or omits `go:`) or a phase aborts. Gene/Mortimer
-still own `slate.md`. Parent does not patch `.py`.
+Pad also needs seated kerbal **available**, `capable: yes`, and a real
+`craft:` file. Leftover 4373/6189 fly `phase` on the vessel they have.
+
+Crew on the active vessel must match the seated pilot. Rails warp scans
+other crewed stacks (unloaded ships still die on rails).
+
+Live handoff is gitignored `docs/last-flight.md`. Sorties write under
+`docs/missions/<id>/sorties/`. Gene fills **Learn**. Stack then Gene
+after every exit; Wernher only on a kRPC trap.
+
+**Radio (flight):**
+
+- `docs/program/ship.md` — last heartbeat + `as_of` + flight id
+- `python main.py radio` — Gene's inbox
+- `docs/program/uplink.md` — helm *takes*
+- `docs/missions/<id>/briefing.md` + `loop.md` — Gene → that pilot
+- `python main.py seat <id>` / `missions` / `vab` / `science`
+
+Bound+fueled abort is refused (L-033). Hold does not zero a lithobrake.
+Missing `go:` = wait. Parent does not patch `.py`.

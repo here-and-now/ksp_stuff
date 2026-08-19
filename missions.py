@@ -20,6 +20,8 @@ CURRENT_PATH = Path("docs/program/current.md")
 SHIM_PLAN = Path("docs/program/plan.md")
 SHIM_BRIEF = Path("docs/program/briefing.md")
 SHIM_LOOP = Path("docs/program/loop.md")
+VAB_PATH = Path("docs/program/vab.md")
+SCIENCE_PATH = Path("docs/program/science.md")
 
 _NAMED = {
     "Jebediah Kerman": "jebediah",
@@ -95,6 +97,37 @@ def seated_loop_path(flight_id: str | None = None) -> Path:
 
 def seated_sorties_dir(flight_id: str | None = None) -> Path:
     return dossier(flight_id) / "sorties"
+
+
+def seated_craft_path(flight_id: str | None = None) -> Path:
+    return dossier(flight_id) / "craft.md"
+
+
+def seated_science_path(flight_id: str | None = None) -> Path:
+    return dossier(flight_id) / "science.md"
+
+
+def vab_kv() -> dict[str, str]:
+    return _parse_kv(VAB_PATH)
+
+
+def pad_craft_name() -> str:
+    """Hangar name. SESSION if VAB has not signed capable: yes."""
+    from session import SessionError
+
+    kv = vab_kv()
+    cap = kv.get("capable", "").lower()
+    if cap != "yes":
+        raise SessionError(
+            f"VAB capable={cap or 'missing'} — no pad (L-039)"
+        )
+    name = (kv.get("craft") or "").strip()
+    if not name or name.startswith("("):
+        meta = mission_meta()
+        name = (meta.get("craft") or "").strip()
+    if not name or name.startswith("("):
+        raise SessionError("no craft: on vab.md / mission — VAB must name a file")
+    return name
 
 
 def mission_meta(flight_id: str | None = None) -> dict[str, str]:

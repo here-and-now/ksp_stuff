@@ -15,7 +15,8 @@ turn_end_altitude: 70000
 
 ## Notes
 
-Slightly higher parking for rails. Science seat; still flies.
+Slightly higher parking for rails. Flying scientist, not Linus
+(research director is ground).
 
 ## Log
 

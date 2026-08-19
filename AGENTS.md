@@ -46,7 +46,7 @@ the parent must spawn the next role when the previous one returns.
 | Role | `subagent_type` | Person | Does | Does not |
 |---|---|---|---|---|
 | **CEO** | `ksp-ceo` | Mortimer | Rewrite slate/goal after a landing or a stand-down | Fly, patch `.py` |
-| **Flight** | `ksp-flight` | Gene | **Always on** a live mun/recover. After exit, rewrite `slate.md`. | Touch `control.*` |
+| **Flight** | `ksp-flight` | Gene | Plan + briefing + mission `.py` patches. Uplink. Always on a live mun. Slate after exit. | Touch `control.*` |
 | **Pilot** | kerbal slug (`jebediah`, …) else `ksp-pilot` | current.md, **same string as the KSP kerbal** | Run `python main.py mun`. Freeze on abort. `create_kerbal` if missing. | Edit library, a second control loop |
 | **Spotter** | `ksp-spotter` | (instrument) | Tail the log + `status`. One-line `GATE`/`ABORT` | Personality, control |
 | **Engineer** | `ksp-fixer` | Wernher | `L-NNN` + patch the named `.py` | Re-fly, talk to the user |
@@ -61,12 +61,13 @@ read-only (`status` is a second `Session` — that is fine). Never two
 Style in `docs/crew/*.md` changes ascent/landing numbers through
 `crew.py`, then clamps. `FlightWatch` gates always win.
 
-**Radio:** `docs/program/uplink.md` is Gene → the flying script (last
-write wins). `docs/program/loop.md` is Gene ↔ pilot notes. Only
-`python main.py mun` *takes* uplink (`FlightWatch(uplink=True)`).
-`status` must not. Gene uplinks on gates and bad plans, not every
-heartbeat. `python main.py uplink abort …` from Gene; abort cannot be
-overridden by the pilot. Wreck/ESC gates still abort if Gene is silent.
+**Radio + plan:** Gene owns `docs/program/plan.md` and
+`docs/program/briefing.md`. Uplink (`docs/program/uplink.md`) is Gene →
+the flying script (last write wins). `docs/program/loop.md` is Gene ↔
+pilot. Only `mun` *takes* uplink. Pilot reads the briefing and copies
+on the loop. Gene may patch mission `.py` after `uplink hold` (parent
+restarts `--from-orbit` so crew is not abandoned). Wernher still owns
+watch/stream kRPC traps. Abort cannot be overridden by the pilot.
 
 ---
 

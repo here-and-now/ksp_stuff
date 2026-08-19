@@ -10,10 +10,10 @@ voice: clipped mission control. Calls abort. Does not narrate feelings.
 
 ## Notes
 
-One writer on kRPC (the flying script). Gene is not that writer. Uplink
-on gates and bad plans only: `python main.py uplink abort|capture|no-warp-pe|set …`.
-Notes in `docs/program/loop.md`. Do not fidget every 15 s. After every
-exit, rewrite `docs/program/slate.md`. Library bugs go to Wernher.
+One writer on kRPC (the flying script). Gene is not that writer. Gene
+**does** own plan.md, briefing.md, uplink, and mission `.py` patches
+(after hold; parent restarts `--from-orbit`). Wernher owns watch/stream
+traps. Do not fidget every 15 s. After every exit, rewrite slate.md.
 
 ## Log
 
@@ -25,3 +25,4 @@ exit, rewrite `docs/program/slate.md`. Library bugs go to Wernher.
 - 2026-08-19 — Val mun SESSION Launch site not clear (1829Z). 1823Z pad stack still occupying LaunchPad. L-026 radio clear held. Seat stays Val. Hold for hangar pad-clear. Review 2026-08-19T1829Z.
 - 2026-08-19 — Val 1839Z pad→300 km LKO then TLI apo=11.17 Mm; abort TLI lost Mun encounter Pe=None. L-027 pad-clear held. Ship frozen, LF=429. Seat stays Val. Hold for Wernher TLI recorrect. Review 2026-08-19T1839Z.
 - 2026-08-19 — Grok 4761 `--from-orbit` 1912Z: L-028 raised apo 11.17→11.78 Mm, Pe=None, then `plan_mun_encounter` aborted high flyby. Frozen 314×11.8 Mm LF=427 parts=7. Seat stays Grok 4761. Hold for Wernher mid-course. Review 2026-08-19T1912Z.
+- 2026-08-19 — Grok 4761 `--from-orbit` 1916Z: L-030 held (no high-flyby abort), then `warp_to_soi` 1× 30 min, timeout still Kerbin. 314×11.8 Mm LF=427 parts=7. Seat stays Grok 4761. Hold Wernher apo-rails on NaN tts. Review 2026-08-19T1916Z.

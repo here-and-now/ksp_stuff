@@ -6,8 +6,10 @@ address anyone and who picks the next item on the slate. No sound. No PyQt.
 ## How it runs
 
 1. **CEO** (Mortimer) owns the goal and the slate.
-2. **Flight** (Gene) is **always** on a live attempt: pad, abort, seat,
-   and the 10–15 s TUI call. After exit he rewrites the slate.
+2. **Flight** (Gene) owns the **plan**, the **briefing**, and mission
+   software (`mun.py` / `warp.py` / …). He is always on a live attempt.
+   He does not write `control.*`. After `hold` + a patch, we restart
+   `--from-orbit` rather than leave a kerbal frozen. After exit: slate.
 3. **CAPCOM** (Walt) is extra voice on events, not a substitute for Gene.
    The flying **agent name is the KSP kerbal name** (create if missing).
 4. **Engineering** (Wernher) patches `.py` files from `docs/lessons.md`.

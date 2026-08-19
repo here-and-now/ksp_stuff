@@ -402,10 +402,26 @@ def warp_to_soi(
         tts = _time_to_soi(vessel, body)
         if skip_warp():
             time.sleep(0.5)
-        elif math.isfinite(tts) and tts > lead + 5.0:
+            continue
+        if math.isfinite(tts) and tts > lead + 5.0:
             warp_to_ut(
                 session,
                 session.space_center.ut + tts - lead,
+                abort=abort,
+                watch=watch,
+                stop_if=_arrived_or_impact,
+            )
+            continue
+        # No patched SOI yet (L-031): rails toward apo, never sit 1× until
+        # a wall-clock timeout abandons a Grok.
+        try:
+            tap = float(vessel.orbit.time_to_apoapsis)
+        except Exception:
+            tap = float("nan")
+        if math.isfinite(tap) and tap > 45.0:
+            warp_to_ut(
+                session,
+                session.space_center.ut + tap - 30.0,
                 abort=abort,
                 watch=watch,
                 stop_if=_arrived_or_impact,

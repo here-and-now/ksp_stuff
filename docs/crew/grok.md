@@ -25,3 +25,4 @@ fly — copy this file rather than inventing a tenth personality.
   (Val was assigned; hangar created numbered Groks). Seat current.md.
   Continue `--from-orbit`. Do not abandon.
 - 2026-08-19T1912Z mun exit=2 abort=No Mun encounter with Pe in 12–50 km. Refusing a high flyby. → docs/flights/2026-08-19T1912Z-mun.md review=docs/flights/2026-08-19T1912Z-mun-review.md
+- 2026-08-19T1916Z mun exit=2 abort=Timed out waiting for SOI Mun (now Kerbin) → docs/flights/2026-08-19T1916Z-mun.md review=docs/flights/2026-08-19T1916Z-mun-review.md

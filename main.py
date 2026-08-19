@@ -215,6 +215,9 @@ def main(argv: list[str] | None = None) -> int:
     note_p.add_argument("text", nargs="+")
     rev = sub.add_parser("review", help="Roll up a flight jsonl (no kRPC)")
     rev.add_argument("log", nargs="?", default=None, help="docs/flights/<stamp>-mun.jsonl")
+    sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
+    brief_p = sub.add_parser("brief", help="Gene → briefing.md + loop.md")
+    brief_p.add_argument("text", nargs="+")
     args = parser.parse_args(argv)
 
     if args.cmd == "uplink":
@@ -243,6 +246,25 @@ def main(argv: list[str] | None = None) -> int:
             handoff=HANDOFF if HANDOFF.is_file() else None,
         )
         print(out.as_posix(), flush=True)
+        return 0
+    if args.cmd == "plan":
+        from pathlib import Path as P
+
+        text = P("docs/program/plan.md").read_text(encoding="utf-8")
+        print(text, end="" if text.endswith("\n") else "\n")
+        return 0
+    if args.cmd == "brief":
+        from pathlib import Path as P
+
+        from uplink import note
+
+        body = " ".join(args.text)
+        P("docs/program/briefing.md").write_text(
+            "# Briefing — Gene → pilot\n\n" + body.strip() + "\n",
+            encoding="utf-8",
+        )
+        note("Gene", body)
+        print("briefed", flush=True)
         return 0
 
     try:

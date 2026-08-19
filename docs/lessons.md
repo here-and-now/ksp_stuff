@@ -269,3 +269,10 @@ python main.py mun
 - **Symptom:** `ABORT No Mun encounter with Pe in 12–50 km. Refusing a high flyby.` Freeze. Three Groks still out.
 - **Cause:** `_finish_tli` re-raised `plan_mun_encounter`'s flyby refusal. Apo already ~Mun band; no patched Pe yet is a coast/SOI problem, not an abandon.
 - **Fix:** If replan misses 12–50 km and Kerbin peri is safe, return and `warp_to_soi`. Do not abort a crewed transfer for a high flyby. Rescue board: `docs/program/rescue.md`.
+
+## L-031 — Gene owns plan/brief/software; SOI wait must not 1×-timeout a Grok
+
+- **When:** 2026-08-19 Grok 4761 coast 314×11.8 Mm
+- **Symptom:** `Timed out waiting for SOI Mun` after ~1× `soi` heartbeats. Froze him at ~3.4 Mm.
+- **Cause:** `warp_to_soi` slept 0.5 s when `time_to_soi` was NaN until a wall deadline. Gene had no brief/plan/patch path except Wernher-after-abort.
+- **Fix:** No SOI patch → `warp_to_ut` toward apo. Gene owns `plan.md`, `briefing.md`, `python main.py brief`, and may patch mission `.py` after `uplink hold` (parent restarts `--from-orbit`). Pilot reads the briefing and copies on `loop.md`.

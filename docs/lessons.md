@@ -290,3 +290,10 @@ python main.py mun
 - **Symptom:** Twin Terriers: one dry+active (0 N), one fueled+idle (60 kN). LF 360, Ox 440. Gene `uplink abort FLAME` froze him in Mun orbit.
 - **Cause:** `relight`/`enable_engines` did not prefer `has_fuel`. Gene treated FLAME as kill.
 - **Fix:** `watch.relight` activates fueled engines, shuts dry ones. `--from-orbit` on Mun skips TLI and lands. Gene must not abort a bound Mun flameout.
+
+## L-034 — Suicide timeout + chopped throttle left Grok at 8 km
+
+- **When:** 2026-08-19 Grok 4761 Mun 22×10 km inbound
+- **Symptom:** `suicide burn timed out` at ~8 km, throttle 0.05, peri still underground. Freeze. Crew still alive.
+- **Cause:** 400 s suicide cap. Throttle chopped to 0.05 while peri < 0.
+- **Fix:** Suicide loop 1800 s. Throttle 1 whenever peri is underground. Restart `--from-orbit`. Do not Hangar. Do not abandon.

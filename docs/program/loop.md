@@ -24,3 +24,5 @@ script: acked capture
 Gene: abort FLAME captured Mun 22x1161 engine dry
 script: acked abort FLAME captured Mun 22x1161 engine dry
 Gene: FLAME on capture circularize; Pe 22 km apo 1161 — abort hung node, keep the orbit
+Grok: copy, Mun orbit, relight, land
+Gene: 4761 live Mun 22x1161. FLAME is relight, do not abort. Land. Radio quiet unless ESC/subsurface/WRECK.

@@ -602,7 +602,7 @@ def suicide_burn(
     watch.enable_landing()
     try:
         t0 = time.monotonic()
-        while time.monotonic() - t0 < 400.0:
+        while time.monotonic() - t0 < 1_800.0:
             if abort and abort():
                 raise MissionAbort("suicide aborted")
             state = watch.pulse("land ")
@@ -626,8 +626,9 @@ def suicide_burn(
                 _say(f"Touchdown  alt={alt:.1f} m  spd={spd:.2f} m/s", on_log)
                 return
 
-            # Never cut in the air while still fast.
-            if burn_d > alt - 20.0 or (math.isfinite(spd) and spd > 12.0 and alt < 8_000):
+            # Never cut in the air while still fast, or if peri is underground.
+            peri_bad = math.isfinite(state.peri) and state.peri < 0
+            if peri_bad or burn_d > alt - 20.0 or (math.isfinite(spd) and spd > 12.0 and alt < 8_000):
                 vessel.control.throttle = 1.0
             elif math.isfinite(spd) and spd > 6.0:
                 vessel.control.throttle = 0.4

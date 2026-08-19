@@ -23,13 +23,15 @@ Live handoff is still gitignored `docs/last-flight.md`. Every `mun` /
 timeline, events). Gene fills **Learn** after every exit — success,
 abort, or crash. Wernher reads the review before patching.
 
-**Radio:** Gene is not on the stick every tick. He plans, has the last
-word, and uplinks when a gate fires or the *plan* is wrong.
+**Radio:** Gene talks to the **flying script** and the **pilot file**,
+not to a second kRPC session.
 
-- `docs/program/uplink.md` — one command the mun loop executes
-  (`abort` / `hold` / `capture` / `set mun_pe …`). Last write wins.
-- `docs/program/loop.md` — one-line notes. Not the stick.
-- `python main.py uplink …` writes the command. `status` does not take it.
+- `docs/program/ship.md` — last heartbeat the mun process published
+- `python main.py radio` — Gene's inbox (ship + uplink + loop)
+- `docs/program/uplink.md` — stick command the mun loop *takes*
+- `docs/program/briefing.md` + `loop.md` — plan told to the pilot
+- `python main.py brief …` / `note Gene …` — Gene → pilot
+- Wall-clock SOI timeouts do not dump crew (L-032)
 
 Between flights, Gene/Mortimer write `docs/program/slate.md`. Nothing
 launches until the user picks a line or says **do the recommended one**.

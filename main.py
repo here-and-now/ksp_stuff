@@ -216,6 +216,7 @@ def main(argv: list[str] | None = None) -> int:
     rev = sub.add_parser("review", help="Roll up a flight jsonl (no kRPC)")
     rev.add_argument("log", nargs="?", default=None, help="docs/flights/<stamp>-mun.jsonl")
     sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
+    sub.add_parser("radio", help="Gene inbox: ship.md + uplink + loop (no kRPC)")
     brief_p = sub.add_parser("brief", help="Gene → briefing.md + loop.md")
     brief_p.add_argument("text", nargs="+")
     args = parser.parse_args(argv)
@@ -246,6 +247,11 @@ def main(argv: list[str] | None = None) -> int:
             handoff=HANDOFF if HANDOFF.is_file() else None,
         )
         print(out.as_posix(), flush=True)
+        return 0
+    if args.cmd == "radio":
+        from uplink import radio_text
+
+        print(radio_text(), end="")
         return 0
     if args.cmd == "plan":
         from pathlib import Path as P

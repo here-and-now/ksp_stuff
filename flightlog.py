@@ -99,6 +99,16 @@ def record(state: Any, tag: str = "", *, ut: float | None = None, force: bool = 
     except Exception:
         row["line"] = getattr(state, "line", lambda: "")() 
     _write(row)
+    _publish_ship(state, tag)
+
+
+def _publish_ship(state: Any, tag: str) -> None:
+    """One-line board Gene reads without opening kRPC (L-032)."""
+    try:
+        line = state.line(tag) if hasattr(state, "line") else str(state)
+        Path("docs/program/ship.md").write_text(line.strip() + "\n", encoding="utf-8")
+    except Exception:
+        pass
 
 
 def close() -> Path | None:

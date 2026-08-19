@@ -276,3 +276,10 @@ python main.py mun
 - **Symptom:** `Timed out waiting for SOI Mun` after ~1× `soi` heartbeats. Froze him at ~3.4 Mm.
 - **Cause:** `warp_to_soi` slept 0.5 s when `time_to_soi` was NaN until a wall deadline. Gene had no brief/plan/patch path except Wernher-after-abort.
 - **Fix:** No SOI patch → `warp_to_ut` toward apo. Gene owns `plan.md`, `briefing.md`, `python main.py brief`, and may patch mission `.py` after `uplink hold` (parent restarts `--from-orbit`). Pilot reads the briefing and copies on `loop.md`.
+
+## L-032 — Gene and the pilot share files, not vibes
+
+- **When:** 2026-08-19 Grok 4761 1× SOI loop; Gene's notes never reached the stick
+- **Symptom:** Two LLM children + a Python mun. Gene wrote LOOP; mun never read it. Pilot LLM was blocked on mun. Wall timeout dumped the crew.
+- **Cause:** The only live listener is `FlightWatch(uplink=True)`. Talk without uplink is TUI-only. `status` is a second Session, not a mailbox.
+- **Fix:** mun publishes `docs/program/ship.md` each 1 Hz. `python main.py radio` is Gene's inbox. SOI wait has no wall-clock abandon. Gene's live loop is `radio` then `status`, then uplink/brief/note.

@@ -55,12 +55,18 @@ ESC. You are not on the stick every 15 s.
 
 ## Live
 
+Every 20–40 s, **radio first** (no second kRPC writer needed for talk):
+
 ```bash
 cd /home/os/gits/ksp_stuff
+.venv/bin/python main.py radio
 .venv/bin/python -u main.py status
 ```
 
-Every 20–40 s. Classify, uplink if the list above hits, `note` one line.
+`radio` is SHIP (what the flying script last published) + pending UPLINK + LOOP.
+If SHIP shows warp=1x for minutes on a long coast, `uplink` will not start rails
+by itself — note it; the script must be in `warp_to_ut`. Talk to the pilot with
+`python main.py note Gene "…"` and `python main.py brief …`.
 `ABORT` / `SESSION` / mun gone → **After exit**.
 
 ## After exit

@@ -372,7 +372,7 @@ def warp_to_soi(
 ) -> None:
     session.require_connected()
     vessel = vessel or session.active_vessel
-    deadline = time.monotonic() + 1_800.0
+    # L-032: Gene abort is the way out. A wall-clock timeout leaves Groks.
 
     def _arrived_or_impact() -> bool:
         try:
@@ -383,7 +383,7 @@ def warp_to_soi(
         pe = _encounter_pe(vessel, body)
         return pe is not None and pe < _ENCOUNTER_PE_MIN
 
-    while time.monotonic() < deadline:
+    while True:
         heartbeat(session, on_log, tag="soi ", watch=watch)
         check_alive(session, watch=watch)
         if abort and abort():
@@ -428,7 +428,6 @@ def warp_to_soi(
             )
         else:
             time.sleep(0.5)
-    raise MissionAbort(f"Timed out waiting for SOI {body} (now {vessel.orbit.body.name})")
 
 
 def _capture_now(

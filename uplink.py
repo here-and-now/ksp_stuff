@@ -27,6 +27,7 @@ UPLINK_PATH = Path("docs/program/uplink.md")
 LAST_PATH = Path("docs/program/uplink.last")
 LOOP_PATH = Path("docs/program/loop.md")
 PLAN_PATH = Path("docs/program/plan.md")
+SHIP_PATH = Path("docs/program/ship.md")
 
 _VERBS = (
     "abort",
@@ -222,6 +223,29 @@ def _apply(cmd: Command) -> None:
         lo, hi = _PLAN_CLAMP[key]
         desk.plan[key] = min(hi, max(lo, float(m.group(2))))
         save_plan()
+
+
+def radio_text() -> str:
+    """Gene inbox. No kRPC. Ship line + pending uplink + last talk."""
+    bits: list[str] = []
+    if SHIP_PATH.is_file():
+        bits.append("SHIP " + SHIP_PATH.read_text(encoding="utf-8").strip())
+    else:
+        bits.append("SHIP (none — mun not publishing yet)")
+    cmd = peek()
+    bits.append("UPLINK " + (cmd.raw if cmd else "(clear)"))
+    bits.append("PLAN " + " ".join(f"{k}={v:g}" for k, v in desk.plan.items()))
+    if LOOP_PATH.is_file():
+        lines = [
+            ln
+            for ln in LOOP_PATH.read_text(encoding="utf-8").splitlines()
+            if ln.strip() and not ln.strip().startswith("#")
+        ]
+        bits.append("LOOP")
+        bits.extend(f"  {ln}" for ln in lines[-8:])
+    else:
+        bits.append("LOOP (empty)")
+    return "\n".join(bits) + "\n"
 
 
 def write(verb: str, arg: str = "", *, who: str = "Gene") -> None:

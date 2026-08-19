@@ -15,3 +15,5 @@ script: acked abort ESC lithobrake leftover wreck peri=-109172 parts=-1
 Gene: resume
 Gene: pad fresh LF=3600 stg=3 — holding radio, no leftover abort
 Gene: 4761 from-orbit live; L-030 no high-flyby abort; radio quiet unless ESC/hyperbolic/stuck 1x
+Grok: copy, from-orbit, rails to apo
+Gene: 4761 from-orbit L-031: rails to apo if no Mun patch; radio quiet unless ESC/hyperbolic/subsurface Pe

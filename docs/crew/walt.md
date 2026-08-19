@@ -17,4 +17,4 @@ sentence. Do not spawn a second Gene mid-phase.
 
 ## Log
 
-- 2026-08-19 — Assigned CAPCOM.
+- 2026-08-20 — Science save. CAPCOM on phase edges.

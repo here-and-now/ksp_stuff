@@ -1,41 +1,7 @@
-# Preflight — next recovery (honor 4761)
+# Preflight — new science save
 
-Do **not** fly until this is true.
-
-## 4761 (missing)
-
-Mun lithobrake after suicide **timeout + freeze throttle 0** at ~8 km
-with peri underground. Relight had worked. He had LF. We killed him
-by cutting the stick.
-
-## Before 6189 `phase tli`
-
-- [ ] Seat `current.md` = exact crew on **that** vessel (`Grok Kerman 6189`)
-- [ ] `python main.py radio` works; Gene reads it **between phases**
-- [ ] No Hangar. `phase` on the active vessel only
-- [ ] Engines: every `has_fuel` engine **active** (twin Terrier trap)
-- [ ] LF and Ox both > 0
-- [ ] Freeze will **not** cut throttle if peri < 0 and alt < 30 km (L-035)
-- [ ] Suicide: peri < 0 ⇒ throttle 1, timeout clock resets (L-035)
-- [ ] Landing Pe **18 km**, not 10 km. Suicide from **>25 km** while peri still ≥ 0 if possible
-- [ ] Helm **refuses** abort on bound + peri ≥ 12 km + LF (L-033 / L-037)
-- [ ] Wall-clock SOI / `phase` wait does **not** dump crew (`--timeout` 0)
-- [ ] 4373 stays 89×1609 — do not launch over him
-
-## 4373 (already recovered)
-
-Bound **89 × 1609 km**. Next for him is **circularize**, not TLI, so we
-do not repeat Val's 11 Mm Pe=None freeze.
-
-## Phases (L-036)
-
-Next recovery is **one block**, not a full `mun`:
-
-- 4373: `python main.py phase circularize` (expect Kerbin peri ≥ 80 km)
-- 6189: `python main.py phase tli` after circular parking is confirmed
-
-No spotter. No 15 s monitor. Gene between phases. Stack engineer after exit.
-
-## Go
-
-Only after the boxes. Say go for **circularize 4373** or **tli 6189**.
+- [ ] Live `status` / `science` match this save (not the Mun campaign)
+- [ ] Pad clear, seated kerbal **available**
+- [x] VAB `capable: yes` and a real `.craft`
+- [x] Linus mission card copied into Gene's briefing
+- [x] Gene `go: yes`

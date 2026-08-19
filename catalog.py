@@ -18,6 +18,13 @@ log = logging.getLogger("kspstuff")
 STOCK_NODES: dict[str, dict[str, tuple[float, float, float]]] = {
     "mk1pod_v2": {"top": (0.0, 0.6423756, 0.0), "bottom": (0.0, -0.4050379, 0.0)},
     "parachuteSingle": {"bottom": (0.0, -0.120649, 0.0)},
+    # Flea. Goo / basicFin are surface-only (no stack nodes).
+    "solidBooster_sm_v2": {
+        "top": (0.0, 0.7575, 0.0),
+        "bottom": (0.0, -0.9975, 0.0),
+    },
+    "GooExperiment": {},
+    "basicFin": {},
     "fuelTankSmallFlat": {"top": (0.0, 0.3125, 0.0), "bottom": (0.0, -0.3125, 0.0)},
     "fuelTank": {"top": (0.0, 0.981725, 0.0), "bottom": (0.0, -0.9125, 0.0)},
     "fuelTank_long": {"top": (0.0, 1.875, 0.0), "bottom": (0.0, -1.8875, 0.0)},

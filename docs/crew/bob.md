@@ -20,4 +20,4 @@ Slightly higher parking for rails. Flying scientist, not Linus
 
 ## Log
 
-- 2026-08-19 — Rostered. Was aboard a 67 Mm ellipse in an earlier save.
+- 2026-08-20 — Science save. Logs wiped. Flying scientist, not Linus.

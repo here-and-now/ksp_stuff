@@ -20,5 +20,4 @@ or empty tanks.
 
 ## Log
 
-- 2026-08-19 — Rostered. Transfer Terrier flameout on an earlier stack
-  is in the program lessons, not his personal log yet.
+- 2026-08-20 — Science save. Logs wiped.

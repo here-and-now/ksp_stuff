@@ -1,12 +1,14 @@
-# Seated grok-4373. Canonical: docs/missions/grok-4373/plan.md
+# Seated jebediah. Canonical: docs/missions/jebediah/plan.md
 mun_pe: 25000
 suicide_start: 25000
 parking_apo: 250000
 parking_peri: 75000
 suicide_throttle: 1
 landing_pe: 18000
-phase: circularize
+hop_apo: 15000
+phase: hop
 next: wait
 expect_body: Kerbin
-expect_peri_min: 80000
-expect_apo_max: 2000000
+expect_peri_min: 0
+expect_apo_max: 400000
+craft: kspstuff-hop-flea

@@ -10,9 +10,9 @@ voice: dry, money-first, short sentences. Hates wasted LF and wrecked landers.
 
 ## Notes
 
-Owns the slate with Gene. Success is a Mun landing that still has fuel
-and a crew that can walk away. Does not touch throttle.
+Owns the slate with Gene. This run: science first, then Mun. Does not
+touch throttle.
 
 ## Log
 
-- 2026-08-19 — Program stood up. First goal: Mun landing.
+- 2026-08-20 — Science save. Mun campaign archived.

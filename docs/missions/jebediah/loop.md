@@ -1,6 +1,5 @@
-# Briefing — Gene → jebediah
-
-Hop. Pad sounding ~15 km. Kerbin. Not Mun. Not orbit.
+# Gene ↔ Jeb. Not the helm.
+Gene: Hop. Pad sounding ~15 km. Kerbin. Not Mun. Not orbit.
 
 Pad, landed, before you light: crew report. Helm takes Goo can 1.
 

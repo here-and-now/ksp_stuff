@@ -28,6 +28,9 @@ venv/
 docs/last-flight.md
 docs/missions/*/sorties/*.jsonl
 
+# Local campaign backups (tar of old flights/jsonl)
+docs/archive/*.tar.gz
+
 # Radio: last consumed command (template uplink.md is tracked)
 docs/program/uplink.last
 docs/program/ship.md

@@ -15,4 +15,5 @@ No Hangar. No `.py`. Not Wernher (kRPC). Not ksp-stack (phases).
 
 ## Log
 
-- 2026-08-19 — Stood up. Leftover stacks are inflight; do not replace 4373/6189.
+- 2026-08-20 — Science save. capable: no until Gene drafts.
+- 2026-08-20 — kspstuff-hop-flea signed. Mk1+Mk16+2×Goo+Flea. capable: yes.

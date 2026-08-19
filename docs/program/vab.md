@@ -1,9 +1,9 @@
 # VAB board — hardware vs Gene's draft
 
-capable: inflight
-craft: (on vessel)
-notes: Seated grok-4373 is already flying. Do not Hangar. Do not
-  replace this stack. A new pad needs capable: yes and a real .craft.
-
-# last
-# 2026-08-19 leftover 4373 / 6189 / Val / Bob / Bill
+capable: yes
+craft: kspstuff-hop-flea
+notes: Start hop. Mk1 + Mk16 + 2×Goo + Flea. No thermometer
+  (engineering101). No Hammer / T100 (basicRocketry). Wet ~2.5 t,
+  Flea 192 kN / ~750 m/s ASL — pad and FlyingLow, not orbit.
+  Two Goo cans srf-attached on the pod (pad + flying). No fins;
+  SAS on the Mk1 has to hold TWR ~8.

@@ -11,7 +11,6 @@ from missions import (
     seated_id,
     seated_plan_path,
 )
-from session import SessionError
 from uplink import desk, load_plan, save_plan
 from watch import FlightState, _refuse_abort
 
@@ -53,10 +52,10 @@ class TestSlugs(unittest.TestCase):
 
 
 class TestSeatAndPlan(unittest.TestCase):
-    def test_seated_4373(self):
-        self.assertEqual(seated_id(), "grok-4373")
+    def test_seated_jeb(self):
+        self.assertEqual(seated_id(), "jebediah")
         self.assertTrue(seated_plan_path().is_file())
-        self.assertTrue(is_lost("grok-4761"))
+        self.assertFalse(is_lost("jebediah"))
 
     def test_save_plan_keeps_envelope(self):
         load_plan()
@@ -64,18 +63,27 @@ class TestSeatAndPlan(unittest.TestCase):
         desk.plan["mun_pe"] = old
         save_plan()
         text = seated_plan_path().read_text(encoding="utf-8")
-        self.assertIn("phase: circularize", text)
+        self.assertIn("phase: wait", text)
         self.assertIn("next: wait", text)
 
-    def test_pad_refuses_inflight(self):
-        with self.assertRaises(SessionError) as ctx:
-            pad_craft_name()
-        self.assertIn("capable", str(ctx.exception).lower())
+    def test_pad_returns_signed_craft(self):
+        self.assertEqual(pad_craft_name(), "kspstuff-hop-flea")
 
-    def test_seat_lost_refused(self):
+    def test_hop_flea_has_goo(self):
+        from craft import hop_flea
+
+        names = [p.name for p in hop_flea().parts]
+        self.assertIn("mk1pod_v2", names)
+        self.assertIn("parachuteSingle", names)
+        self.assertIn("solidBooster_sm_v2", names)
+        self.assertEqual(names.count("GooExperiment"), 2)
+        self.assertNotIn("sensorThermometer", names)
+        self.assertNotIn("solidBooster_v2", names)
+
+    def test_seat_missing_refused(self):
         from missions import seat
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(FileNotFoundError):
             seat("grok-4761")
 
 

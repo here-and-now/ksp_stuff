@@ -5,8 +5,10 @@ parking_apo: 250000
 parking_peri: 75000
 suicide_throttle: 1
 landing_pe: 18000
-phase: tli
-next: soi
+hop_apo: 15000
+phase: hop
+next: wait
 expect_body: Kerbin
-expect_peri_min: 70000
-expect_apo_max: 14000000
+expect_peri_min: 0
+expect_apo_max: 400000
+craft: kspstuff-hop-flea

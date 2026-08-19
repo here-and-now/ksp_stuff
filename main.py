@@ -145,7 +145,13 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
         return time.monotonic() - t0 > args.timeout
 
     try:
-        run_mission(session, recover=not args.keep_debris, on_log=_log, abort=abort)
+        run_mission(
+            session,
+            recover=not args.keep_debris,
+            on_log=_log,
+            abort=abort,
+            from_orbit=bool(getattr(args, "from_orbit", False)),
+        )
     except MissionAbort as exc:
         freeze(session)
         _log(f"ABORT {exc}")
@@ -195,6 +201,11 @@ def main(argv: list[str] | None = None) -> int:
         "--keep-debris",
         action="store_true",
         help="launch_vessel recover=False",
+    )
+    mun_p.add_argument(
+        "--from-orbit",
+        action="store_true",
+        help="Do not Hangar a new stack. Fly the active vessel (don't abandon crew).",
     )
     up = sub.add_parser("uplink", help="Gene → flying mun (no kRPC)")
     up.add_argument("verb", help="abort|freeze|hold|resume|capture|skip-warp|no-warp-pe|set")

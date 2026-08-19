@@ -98,6 +98,8 @@ def slug_for(name: str) -> str:
 def load_person(name_or_slug: str) -> Person:
     slug = slug_for(name_or_slug)
     path = CREW_DIR / f"{slug}.md"
+    if not path.is_file() and "grok" in slug:
+        path = CREW_DIR / "grok.md"
     if not path.is_file():
         raise FileNotFoundError(path)
     text = path.read_text(encoding="utf-8")
@@ -112,9 +114,13 @@ def load_person(name_or_slug: str) -> Person:
         kerbal_name = None
     else:
         kerbal_name = kerbal
+    display = name_or_slug if name_or_slug[0].isupper() else title
+    if kerbal_name and slug.startswith("grok") and " " in name_or_slug:
+        kerbal_name = name_or_slug
+        display = name_or_slug
     return Person(
         slug=slug,
-        name=title,
+        name=display,
         duty=kv.get("duty", "pilot"),
         kerbal=kerbal_name,
         path=path,

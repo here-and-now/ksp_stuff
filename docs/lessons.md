@@ -256,3 +256,9 @@ python main.py mun
   ```
 - **Cause:** L-023 required next Pe 12–50 km immediately after `execute_node`. Finite TLI left apo at 11.17 Mm (Mun SMA altitude ~11.4 Mm). Vessel `orbit.next_orbit` is None until apo is in the Mun band; Pe=None meant “not yet at Mun”, not a lost SOI.
 - **Fix:** `mun.py` — after TLI, if next body isn’t Mun or Pe is None, raise apo / re-plan. Abort only if escaping Kerbin with no Mun SOI and apo already past ~12 Mm, or Mun Pe subsurface. Do not 1000× until Pe is 12–50 km (L-023 warp/capture guards stay).
+
+## L-029 — Don't abandon the numbered Grok on a leftover TLI
+
+- **When:** 2026-08-19 Val assigned; hangar created `Grok Kerman 4761` (also 4373, 6189). Active 304×11 Mm, recoverable=False.
+- **Symptom:** Next pad `mun` would Hangar a new stack and leave Grok in the ellipse.
+- **Fix:** `python main.py mun --from-orbit`. `run_from_lko(from_orbit=True)` skips parking when peri≥70 km and apo>2 Mm, then `_finish_tli`. Seat `current.md` to that crew string. `crew.py` maps `Grok Kerman NNN` onto `docs/crew/grok.md`.

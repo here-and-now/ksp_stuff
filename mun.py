@@ -628,17 +628,42 @@ def run_from_lko(
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
     suicide_start_alt: float = 25_000.0,
+    from_orbit: bool = False,
 ) -> None:
-    """Assume circular Kerbin parking orbit. Transfer, capture, land."""
+    """Parking orbit, or an already-raised transfer (from_orbit). Then Mun."""
     vessel = session.active_vessel
     with FlightWatch(session, on_log=on_log, uplink=True) as watch:
         state = watch.pulse("lko ", force_log=True)
-        require_parking(state, min_peri=70_000, max_apo=2_000_000, max_ecc=0.25)
-        plan_mun_encounter(session, vessel, on_log=on_log)
-        execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
-        _finish_tli(
-            session, vessel, watch=watch, abort=abort, on_log=on_log
+        on_transfer = (
+            from_orbit
+            and not state.in_atmo
+            and math.isfinite(state.peri)
+            and state.peri >= 70_000
+            and math.isfinite(state.apo)
+            and state.apo > 2_000_000
         )
+        if on_transfer:
+            _say(
+                f"Continue transfer {state.peri:.0f}×{state.apo:.0f} m",
+                on_log,
+            )
+            _finish_tli(
+                session, vessel, watch=watch, abort=abort, on_log=on_log
+            )
+        else:
+            if from_orbit:
+                require_parking(
+                    state, min_peri=70_000, max_apo=12_000_000, max_ecc=0.9
+                )
+            else:
+                require_parking(
+                    state, min_peri=70_000, max_apo=2_000_000, max_ecc=0.25
+                )
+            plan_mun_encounter(session, vessel, on_log=on_log)
+            execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
+            _finish_tli(
+                session, vessel, watch=watch, abort=abort, on_log=on_log
+            )
         _say("TLI done, warping to Mun SOI", on_log)
         warp_to_soi(session, vessel, on_log=on_log, abort=abort, watch=watch)
         capture_at_periapsis(session, vessel, on_log=on_log, abort=abort, watch=watch)
@@ -706,8 +731,9 @@ def run_mission(
     recover: bool = True,
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
+    from_orbit: bool = False,
 ) -> None:
-    """Pad → LKO → Mun landing using Hangar + Ascent + :func:`run_from_lko`."""
+    """Pad → LKO → Mun, or continue the active vessel (from_orbit)."""
     from craft import mun_lander
     from crew import apply_ascent, current_pilot
     from hangar import Hangar, discover_ksp
@@ -721,6 +747,25 @@ def run_mission(
     _desk.plan["suicide_start"] = style.suicide_start_alt
     _desk.plan["parking_apo"] = style.target_altitude
     save_plan()
+
+    if from_orbit:
+        if session.active_vessel is None:
+            raise MissionAbort("from-orbit: no active vessel")
+        _say(f"Continue from orbit as {person.name}", on_log)
+        heartbeat(session, on_log, tag="cont ")
+        try:
+            run_from_lko(
+                session,
+                on_log=on_log,
+                abort=abort,
+                suicide_start_alt=style.suicide_start_alt,
+                from_orbit=True,
+            )
+        except MissionAbort:
+            freeze(session)
+            heartbeat(session, on_log, tag="abort ")
+            raise
+        return
 
     root = discover_ksp()
     if root is None:

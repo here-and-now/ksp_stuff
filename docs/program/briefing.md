@@ -1,10 +1,9 @@
 # Briefing — Gene → pilot
 
-Seat: Grok Kerman 4761
-Command: `python main.py mun --from-orbit`
+Seat: Grok Kerman 4373
+Command: `python main.py recover` then later `--from-orbit`
 
-You are **8 km over the Mun**, peri underground, LF ~200, 60 kN.
-Suicide timed out because throttle was chopped. Stay throttle 1 until
-touchdown. Do not Hangar. Do not abort.
+4761 is missing (Mun lithobrake). You are Kerbin 69×1581 km, peri in the
+air. Raise peri. Do not Hangar a new stack over 6189.
 
-After you: Grok 4373, Grok 6189.
+6189 remains 349×354 km parking.

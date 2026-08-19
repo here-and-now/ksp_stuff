@@ -297,3 +297,10 @@ python main.py mun
 - **Symptom:** `suicide burn timed out` at ~8 km, throttle 0.05, peri still underground. Freeze. Crew still alive.
 - **Cause:** 400 s suicide cap. Throttle chopped to 0.05 while peri < 0.
 - **Fix:** Suicide loop 1800 s. Throttle 1 whenever peri is underground. Restart `--from-orbit`. Do not Hangar. Do not abandon.
+
+## L-035 — Freeze-on-abort is the lithobrake
+
+- **When:** 2026-08-19 Grok 4761, 1958Z then 2015Z
+- **Symptom:** Suicide hovered at ~8 km, `thr=0.05`, peri −200 km, `suicide burn timed out`. `freeze()` cut throttle. Restart at 2.6 km: 1 part, LF 0, missing.
+- **Cause:** Abort always `freeze(throttle=0)`. Timeout fired while peri was underground. Chop to 0.05 when speed was low (apo≈alt).
+- **Fix:** `freeze` keeps throttle 1 if peri < 0 and alt < 30 km. Suicide timeout clock resets while peri is underground. Landing Pe 18 km not 10 km. Preflight: `docs/program/preflight.md`. Honor: `docs/program/4761.md`.

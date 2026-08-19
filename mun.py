@@ -634,6 +634,8 @@ def suicide_burn(
                 vessel.control.throttle = 0.4
             else:
                 vessel.control.throttle = 0.05
+            if peri_bad:
+                t0 = time.monotonic()  # L-035: do not timeout while peri is underground
         raise MissionAbort("suicide burn timed out")
     finally:
         try:
@@ -672,9 +674,9 @@ def run_from_lko(
                 execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
                 watch.pulse("low ", force_log=True)
             peri = float(vessel.orbit.periapsis_altitude)
-            if peri > 14_000:
+            if peri > 20_000:
                 lower_periapsis(
-                    session, 10_000, vessel, on_log=on_log, abort=abort, watch=watch
+                    session, 18_000, vessel, on_log=on_log, abort=abort, watch=watch
                 )
             start = load_plan().get("suicide_start", suicide_start_alt)
             while True:

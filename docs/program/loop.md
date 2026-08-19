@@ -26,3 +26,5 @@ script: acked abort FLAME captured Mun 22x1161 engine dry
 Gene: FLAME on capture circularize; Pe 22 km apo 1161 — abort hung node, keep the orbit
 Grok: copy, Mun orbit, relight, land
 Gene: 4761 live Mun 22x1161. FLAME is relight, do not abort. Land. Radio quiet unless ESC/subsurface/WRECK.
+Gene: L-034 live: 4761 ~3 km Mun, Pe buried, 60 kN LF~200. Throttle 1 until touchdown. Do not abort. Do not Hangar.
+Gene: 1958Z suicide timeout 5.7 km LF=202. Falling. --from-orbit now, throttle 1 to touchdown. Do not abort ESC.

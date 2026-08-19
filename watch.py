@@ -736,11 +736,22 @@ def _pad_radio_off(state: FlightState) -> bool:
 
 
 def freeze(session: Session, *, throttle: bool = True) -> None:
-    """Cut rails (and optionally throttle) so a human can intervene."""
+    """Cut rails. Do not cut throttle on a lithobrake (L-035)."""
     from warp import drop_warp
 
     drop_warp(session)
-    if throttle:
+    keep_throttle = False
+    try:
+        v = session.active_vessel
+        peri = float(v.orbit.periapsis_altitude)
+        alt = float(v.flight().mean_altitude)
+        keep_throttle = peri < 0 and alt < 30_000
+        if keep_throttle:
+            v.control.throttle = 1.0
+            log.info("freeze: lithobrake — throttle 1, not 0")
+    except Exception:
+        pass
+    if throttle and not keep_throttle:
         try:
             session.active_vessel.control.throttle = 0.0
         except Exception:

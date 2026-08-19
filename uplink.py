@@ -90,6 +90,7 @@ _PLAN_META = (
     "expect_peri_min",
     "expect_apo_max",
     "craft",
+    "hop_apo",
 )
 
 

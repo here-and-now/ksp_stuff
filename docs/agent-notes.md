@@ -280,6 +280,29 @@ test: encode the name mapping and assert file vs `vessel.parts` after launch.
 
 ---
 
+## Science (kRPC 0.6 schema, not yet live-run)
+
+`vessel.parts.experiments` is every `ModuleScienceExperiment`.
+`Part.experiment` raises if the part has more than one — use
+`Part.experiments`. Python `Experiment`:
+
+- `name` / `title` — cfg `experimentID` (`crewReport`, `mysteryGoo`,
+  `evaReport`, `temperatureScan`, …)
+- `available`, `has_data`, `inoperable`, `rerunnable`, `deployed`, `biome`
+- `run()`, `reset()`, `dump()`, `transmit()`, `data`, `science_subject`
+
+`science.py` calls `run()` only. Do **not** transmit goo (`xmitDataScalar`
+0.3). Do **not** `dump`/`reset` to free a second sample. EVA report /
+surface sample live on the kerbal EVA part — no hatch API here; skip.
+Mk1 pod `ModuleScienceContainer` is `evaOnlyStorage = True` (IVA cannot
+stash). `Run()` refuses `has_data`; a rerunnable second crew report tries
+the experiment module event, not dump. Goo is one-shot.
+
+Kerbin FlyingLow / FlyingHigh split is 18 km (stock). Hop `hop_apo`
+defaults 15 km so the coast stays FlyingLow.
+
+---
+
 ## Capability matrix
 
 Status: **live** = exercised against this KSP; **code** = written, not live;
@@ -310,6 +333,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | PyQt connect + plot | code only |
 | `.craft` round-trip vs `vessel.parts` | not done |
 | RSS / RO / RP-1 | code only |
+| `Experiment.run` / hop sounding | code only |
 
 ---
 
@@ -373,3 +397,6 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   `launch_vessel(recover=True)` (L-027).
 - **2026-08-19** — Vessel `orbit.next_orbit` is None after a short TLI
   even when the node had a Mun patch (apo 11.17 Mm < Mun SMA). L-028.
+- **2026-08-20** — Experiment API from `KRPC.SpaceCenter.xml` 0.6:
+  `parts.experiments`, `run`/`has_data`/`available`. No live run (KSC,
+  no vessel). Hop block L-041.

@@ -14,7 +14,7 @@ Planning is a **conference on files** (L-039). Flying is Gene → helm.
 | **Gene** | seated dossier plan + briefing; `go:` | `.py`, `.craft` |
 | **VAB** | `.craft`, `vab.md` | Hangar, uplink, `.py` |
 | **Linus** | `science.md`, mission experiment card | crew radio, Hangar |
-| **Stack** | `phases.py`, `blocks.md` | craft, tech tree |
+| **Stack** | `phases.py`, `hop.py`, `science.py`, `blocks.md` | craft, tech tree |
 | **Wernher** | kRPC 0.6 traps | craft, sequencing |
 | **Mortimer** | goal / slate | fly, craft, `.py` |
 | **Walt** | TUI voice on phase edges | planning |
@@ -32,7 +32,7 @@ that craft → Gene briefing + `go:`. Do not spawn them on one file.
 Do not spawn VAB/Linus while `flight.lock` is live.
 
 Pad also needs seated kerbal **available**, `capable: yes`, and a real
-`craft:` file. Leftover 4373/6189 fly `phase` on the vessel they have.
+`craft:` file. Leftover crew flies `phase` on the vessel they have.
 
 Crew on the active vessel must match the seated pilot. Rails warp scans
 other crewed stacks (unloaded ships still die on rails).
@@ -47,7 +47,7 @@ after every exit; Wernher only on a kRPC trap.
 - `python main.py radio` — Gene's inbox
 - `docs/program/uplink.md` — helm *takes*
 - `docs/missions/<id>/briefing.md` + `loop.md` — Gene → that pilot
-- `python main.py seat <id>` / `missions` / `vab` / `science`
+- `python main.py seat <id>` / `missions` / `vab` / `science` / `hop`
 
 Bound+fueled abort is refused (L-033). Hold does not zero a lithobrake.
 Missing `go:` = wait. Parent does not patch `.py`.

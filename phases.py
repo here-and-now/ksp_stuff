@@ -9,7 +9,7 @@ from session import Session
 from uplink import desk, load_plan, plan_file, write_plan_file
 from watch import FlightWatch, MissionAbort, heartbeat
 
-NAMES = ("recover", "circularize", "tli", "soi", "capture", "land")
+NAMES = ("recover", "circularize", "tli", "soi", "capture", "land", "hop")
 
 
 class OffPlan(Exception):
@@ -48,17 +48,18 @@ def set_phase(name: str, *, next_name: str | None = None) -> None:
     write_plan_file(extra=extra)
 
 
-def check_expect(state: Any) -> None:
+def check_expect(state: Any, *, skip_peri: bool = False) -> None:
     kv = _kv()
     body = kv.get("expect_body", "")
     if body and str(getattr(state, "body", "")).lower() != body.lower():
         raise OffPlan(f"body {state.body} != {body}")
-    try:
-        pmin = float(kv["expect_peri_min"])
-        if math.isfinite(state.peri) and state.peri < pmin:
-            raise OffPlan(f"peri {state.peri:.0f} < {pmin:.0f}")
-    except (KeyError, ValueError):
-        pass
+    if not skip_peri:
+        try:
+            pmin = float(kv["expect_peri_min"])
+            if math.isfinite(state.peri) and state.peri < pmin:
+                raise OffPlan(f"peri {state.peri:.0f} < {pmin:.0f}")
+        except (KeyError, ValueError):
+            pass
     try:
         amax = float(kv["expect_apo_max"])
         if math.isfinite(state.apo) and state.apo > amax:
@@ -80,6 +81,8 @@ def run(
     load_plan()
     vessel = session.active_vessel
     if vessel is None:
+        if name == "hop":
+            raise MissionAbort("no active vessel — python main.py hop to Hangar")
         raise MissionAbort("no active vessel")
     from land import run_from_lko
     from transfer import (
@@ -126,5 +129,17 @@ def run(
                 from_orbit=True,
                 watch=watch,
             )
+        elif name == "hop":
+            from hop import run_from_vessel
+
+            result = run_from_vessel(
+                session, on_log=on_log, abort=abort, watch=watch
+            )
+            if result == "recovered":
+                _say("hop recovered")
+                return
         heartbeat(session, on_log, tag=f"{name}-done ", watch=watch)
-        check_expect(watch.pulse(f"{name} ", force_log=True))
+        check_expect(
+            watch.pulse(f"{name} ", force_log=True),
+            skip_peri=(name == "hop"),
+        )

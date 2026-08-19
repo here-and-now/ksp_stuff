@@ -16,6 +16,7 @@ and run the checkout (not an installed package, not `compileall`):
 source .venv/bin/activate
 python main.py status          # one heartbeat line
 python main.py phase circularize
+python main.py hop             # pad sounding (not Mun)
 ```
 
 KSP + kRPC 0.6.0 must already listen on `127.0.0.1:50000` and `:50001`.

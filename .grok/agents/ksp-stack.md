@@ -45,6 +45,6 @@ sequencing and block quality.
 ```
 stack: ok|patched
 lesson: L-NNN or none
-blocks: recover,circularize,tli,soi,capture,land
+blocks: recover,circularize,tli,soi,capture,land,hop
 need_gene: yes|no
 ```

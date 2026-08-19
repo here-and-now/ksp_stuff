@@ -64,12 +64,14 @@ class Ascent:
         on_log: Callable[[str], None] | None = None,
         on_telemetry: Callable[[TelemetrySample], None] | None = None,
         abort: Callable[[], bool] | None = None,
+        watch: FlightWatch | None = None,
     ) -> None:
         self.session = session
         self.config = config
         self.on_log = on_log or (lambda msg: log.info(msg))
         self.on_telemetry = on_telemetry
         self.abort = abort or (lambda: False)
+        self._watch = watch
         self.finished = False
         self.samples: list[TelemetrySample] = []
         self.heading = 90.0
@@ -112,7 +114,10 @@ class Ascent:
         apo_cap = cfg.target_altitude * cfg.energy_cap
         surface_frame = vessel.surface_reference_frame
 
-        watch = FlightWatch(session, extra=5_000.0, on_log=self.on_log, uplink=True)
+        watch = self._watch
+        own_watch = watch is None
+        if own_watch:
+            watch = FlightWatch(session, extra=5_000.0, on_log=self.on_log, uplink=True)
         try:
             while not self.abort():
                 state = watch.pulse("asc ")
@@ -128,6 +133,10 @@ class Ascent:
 
                 if state.flameout:
                     if not watch.relight(end_stage=cfg.end_stage):
+                        if not cfg.circularize:
+                            vessel.control.throttle = 0.0
+                            self._say("Flameout — hop coast")
+                            break
                         if apo >= cfg.target_altitude and not state.in_atmo:
                             self._say("Flameout after apo — coasting")
                             break
@@ -228,7 +237,8 @@ class Ascent:
             state = watch.snapshot()
             # Near peri in the air, prograde raises apo not peri (L-016).
             # Circularize-at-apo is the right burn; recover only if unbound.
-            if state.escaping:
+            # Sounding (circularize=False) coasts in air — do not recover.
+            if cfg.circularize and state.escaping:
                 self._say("Post-ascent recover (escaping)")
                 recover_periapsis(
                     session,
@@ -249,7 +259,8 @@ class Ascent:
                 pass
             raise
         finally:
-            watch.close()
+            if own_watch and watch is not None:
+                watch.close()
 
     def _circularize(self, vessel: Any, *, watch: Any | None = None) -> None:
         self._raise_periapsis(vessel, watch=watch)

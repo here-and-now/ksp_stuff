@@ -15,7 +15,7 @@ Agents do not drive the PyQt UI. CLI:
 ```bash
 source .venv/bin/activate
 python main.py status
-python main.py mun
+python main.py phase circularize
 ```
 
 ---
@@ -340,3 +340,18 @@ python main.py mun
 - **Symptom:** Review bar had no tests. Pad compose mixed with TLI/land. `status.services` always `()`.
 - **Cause:** 2022 PyQt + relay dump left in the tree. Protobuf `Services` was iterated as a list.
 - **Fix:** Delete `ui/`, `constellation.py`, `comms.py`, `realantennas.py`, `orbits.py`. Split `transfer.py` / `land.py` / pad `mun.py`. Parse `get_services().services`. `python -m unittest discover -s tests -q`. No PyQt deps.
+
+## L-041 — hop is a named block, not a Mun leftover
+
+- **When:** 2026-08-20 science_sandbox first flight. Linus card at hop
+  (pad crew report, FlyingLow, goo if hung, EVA landed, recover pod).
+- **Symptom:** `blocks.md` had no hop. Gene could not name the sortie.
+  Ascent flameout in air aborted. Style clamp forces apo ≥ 80 km.
+- **Cause:** Catalog was recover/circularize/TLI/land only. Sounding is
+  not a Mun compose.
+- **Fix:** `phases.NAMES` + `python main.py hop` pad compose /
+  `phase hop` on a live vessel. `science.py` runs
+  `vessel.parts.experiments` (`Experiment.run`, no transmit, skip EVA).
+  Ascent `circularize=False` coasts on flameout and skips peri recover.
+  `hop_apo` default 15 km (8–25 km). Expect skips peri_min. EVA stays
+  briefing text. Do not Hangar over leftover crew.

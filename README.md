@@ -7,6 +7,7 @@ Agent-driven kRPC checkout for Kerbal Space Program. Sibling `.py` files +
 source .venv/bin/activate
 python main.py status
 python main.py phase circularize
+python main.py hop
 python main.py missions
 ```
 
@@ -18,8 +19,10 @@ Do not Hangar over leftover crew. Pad `mun` needs VAB `capable: yes`.
 Do not `pip install` this tree. Do not `python -m kspstuff`.
 
 ```
-main.py       CLI: status / phase / seat / vab / science / mun (pad compose)
+main.py       CLI: status / phase / seat / vab / science / hop / mun (pad compose)
 phases.py     one segment per process
+hop.py        Kerbin sounding compose (not Mun)
+science.py    kRPC 0.6 Experiment.run (no transmit, no EVA)
 transfer.py   TLI / SOI / capture
 land.py       deorbit / suicide
 watch.py      FlightWatch gates

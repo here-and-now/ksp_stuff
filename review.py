@@ -1,0 +1,200 @@
+"""After-flight rollup. Facts from jsonl; Gene writes the learn line."""
+
+from __future__ import annotations
+
+import json
+import math
+from collections import Counter
+from pathlib import Path
+from typing import Any
+
+from flightlog import FLIGHTS
+
+
+def load_rows(jsonl: Path) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    if not jsonl.is_file():
+        return rows
+    for line in jsonl.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return rows
+
+
+def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    states = [r for r in rows if r.get("kind") == "state"]
+    events = [r for r in rows if r.get("kind") != "state"]
+    flags_seen: Counter[str] = Counter()
+    transitions: list[str] = []
+    prev_flags: tuple[str, ...] = ()
+    bodies: list[str] = []
+    tags: Counter[str] = Counter()
+
+    def _f(row: dict[str, Any], key: str) -> float:
+        val = row.get(key)
+        try:
+            num = float(val)
+        except (TypeError, ValueError):
+            return float("nan")
+        return num
+
+    alt_min = peri_min = lf_min = float("inf")
+    apo_max = warp_max = -float("inf")
+    lf0 = lf1 = float("nan")
+    t_esc = t_atmo = t_dip = 0.0
+    prev_t = 0.0
+    first_line = last_line = ""
+
+    for row in states:
+        t = float(row.get("t") or 0.0)
+        dt = max(0.0, t - prev_t)
+        prev_t = t
+        flags = tuple(row.get("flags") or [])
+        flags_seen.update(flags)
+        if flags != prev_flags:
+            extra = " ".join(flags) if flags else "(clear)"
+            transitions.append(f"T+{t:.0f}s {row.get('tag','')} {extra}".strip())
+            prev_flags = flags
+        body = str(row.get("body") or "")
+        if body and (not bodies or bodies[-1] != body):
+            bodies.append(body)
+        tag = str(row.get("tag") or "")
+        if tag:
+            tags[tag] += 1
+        alt, peri, apo = _f(row, "alt"), _f(row, "peri"), _f(row, "apo")
+        lf, warp = _f(row, "lf"), _f(row, "warp")
+        if math.isfinite(alt):
+            alt_min = min(alt_min, alt)
+        if math.isfinite(peri):
+            peri_min = min(peri_min, peri)
+        if math.isfinite(apo):
+            apo_max = max(apo_max, apo)
+        if math.isfinite(lf):
+            lf_min = min(lf_min, lf)
+            if not math.isfinite(lf0):
+                lf0 = lf
+            lf1 = lf
+        if math.isfinite(warp):
+            warp_max = max(warp_max, warp)
+        if "ESC" in flags:
+            t_esc += dt
+        if "ATMO" in flags:
+            t_atmo += dt
+        if "DIP" in flags:
+            t_dip += dt
+        last_line = _line(row)
+        if not first_line:
+            first_line = last_line
+
+    dur = float(states[-1]["t"]) if states else 0.0
+    return {
+        "samples": len(states),
+        "events": len(events),
+        "duration_s": round(dur, 1),
+        "bodies": bodies,
+        "tags": dict(tags),
+        "alt_min": _fin(alt_min),
+        "peri_min": _fin(peri_min),
+        "apo_max": _fin(apo_max),
+        "lf_start": _fin(lf0),
+        "lf_end": _fin(lf1),
+        "lf_min": _fin(lf_min),
+        "warp_max": _fin(warp_max),
+        "t_esc_s": round(t_esc, 1),
+        "t_atmo_s": round(t_atmo, 1),
+        "t_dip_s": round(t_dip, 1),
+        "flag_counts": dict(flags_seen),
+        "transitions": transitions[:40],
+        "event_lines": [
+            f"T+{e.get('t', 0):.0f}s {e.get('kind')} {e.get('msg', '')}".strip()
+            for e in events
+        ][:40],
+        "first": first_line,
+        "last": last_line,
+    }
+
+
+def write_review(
+    jsonl: Path,
+    *,
+    command: str,
+    exit_code: int,
+    abort: str | None,
+    handoff: Path | None = None,
+) -> Path:
+    rows = load_rows(jsonl)
+    stats = summarize(rows)
+    out = jsonl.with_name(jsonl.stem + "-review.md")
+    lines = [
+        f"# Review {jsonl.stem}",
+        "",
+        f"command: {command}",
+        f"exit: {exit_code}",
+        f"abort: {abort or ''}",
+        f"log: {jsonl.as_posix()}",
+        f"samples: {stats['samples']} (~1 Hz)",
+        f"duration: {stats['duration_s']} s wall",
+        f"bodies: {', '.join(stats['bodies']) or '?'}",
+        f"tags: {stats['tags']}",
+        "",
+        "## Envelope",
+        "",
+        f"- alt min {stats['alt_min']}",
+        f"- peri min {stats['peri_min']}",
+        f"- apo max {stats['apo_max']}",
+        f"- LF {stats['lf_start']} → {stats['lf_end']} (min {stats['lf_min']})",
+        f"- warp max {stats['warp_max']}x",
+        f"- time ATMO {stats['t_atmo_s']}s  DIP {stats['t_dip_s']}s  ESC {stats['t_esc_s']}s",
+        f"- flags {stats['flag_counts']}",
+        "",
+        "## First / last",
+        "",
+        f"- {stats['first']}",
+        f"- {stats['last']}",
+        "",
+        "## Flag changes",
+        "",
+    ]
+    lines.extend(f"- {x}" for x in stats["transitions"] or ["(none)"])
+    lines.extend(["", "## Events", ""])
+    lines.extend(f"- {x}" for x in stats["event_lines"] or ["(none)"])
+    if handoff and handoff.is_file():
+        lines.extend(["", "## Handoff", "", "```", handoff.read_text(encoding="utf-8")[:4000], "```"])
+    lines.extend(
+        [
+            "",
+            "## Learn",
+            "",
+            "_Gene fills this. What worked, what failed, what to change in",
+            "the library vs this pilot's style. One short paragraph._",
+            "",
+        ]
+    )
+    out.write_text("\n".join(lines), encoding="utf-8")
+    return out
+
+
+def latest_jsonl() -> Path | None:
+    files = sorted(FLIGHTS.glob("*-mun.jsonl")) + sorted(FLIGHTS.glob("*-recover.jsonl"))
+    return files[-1] if files else None
+
+
+def _fin(val: float) -> float | None:
+    if not math.isfinite(val) or abs(val) == float("inf"):
+        return None
+    return round(val, 1)
+
+
+def _line(row: dict[str, Any]) -> str:
+    flag = row.get("flags") or []
+    flag_s = (" [" + " ".join(flag) + "]") if flag else ""
+    return (
+        f"{row.get('tag','')}{row.get('body','?')} {row.get('situation','?')} "
+        f"alt={row.get('alt')} peri={row.get('peri')} apo={row.get('apo')} "
+        f"LF={row.get('lf')} warp={row.get('warp')}x{flag_s}"
+    ).strip()

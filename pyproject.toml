@@ -1,0 +1,22 @@
+[project]
+name = "kspstuff"
+version = "0.2.0"
+description = "kRPC helpers for KSP. Run python main.py; not a pip package."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "os" }]
+dependencies = [
+    "krpc",
+    "numpy",
+    "PyQt6",
+    "pyqtgraph",
+]
+
+# Application checkout, not a package to `pip install`.
+# Third-party deps live in `.venv`; run `python main.py`.
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

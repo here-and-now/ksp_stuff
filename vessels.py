@@ -1,88 +1,141 @@
-import time
+"""Vessel snapshots and name search. No pandas — a list of dataclasses."""
 
-import krpc
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import tabulate
+from __future__ import annotations
 
-from orbits import Orbit
-from nodes import Node
-# from nodes import NodeManager
+from dataclasses import dataclass
+from typing import Any, Iterable
 
-from utils.handle_orientation import orientate_vessel
-from utils.handle_vessels import (
-    decouple_by_name,
-    manipulate_engines_by_name,
-    select_vessel_and_duplicates_by_name,
-    switch_vessel,
+from session import Session
+
+
+@dataclass(slots=True)
+class VesselSnapshot:
+    name: str
+    type: str
+    situation: str
+    body: str
+    apoapsis: float
+    periapsis: float
+    inclination_deg: float
+    eccentricity: float
+    period: float
+    crew: int
+    loaded: bool
+    comms: str
+    met: float
+
+    def as_row(self) -> tuple[object, ...]:
+        return (
+            self.name,
+            self.type,
+            self.situation,
+            self.body,
+            round(self.apoapsis),
+            round(self.periapsis),
+            round(self.inclination_deg, 3),
+            f"{self.eccentricity:.5f}",
+            round(self.period, 2),
+            self.crew,
+            self.comms,
+        )
+
+
+COLUMNS = (
+    "Name",
+    "Type",
+    "Situation",
+    "Body",
+    "Apoapsis",
+    "Periapsis",
+    "Incl °",
+    "Ecc",
+    "Period s",
+    "Crew",
+    "Comms",
 )
-class VesselManager():
-    def __init__(self, name=None, vessel_list=None, orbit_flag=False, node_flag=False, exact_name=False, instance_name='VesselManager'):
-        self.conn = krpc.connect(name="VesselManager")
-        self.sc = self.conn.space_center
 
-        self.orbit_flag = orbit_flag
-        self.node_flag = node_flag
 
-        self.exact_name = exact_name
+def _enum_name(value: Any) -> str:
+    return getattr(value, "name", str(value))
 
-        if vessel_list is None and name is None:
-            self.vessel_list = self.sc.vessels
-        elif vessel_list is not None:
-            self.vessel_list = vessel_list
+
+def _comms_summary(session: Session, vessel: Any) -> str:
+    try:
+        comms = vessel.comms
+        if comms.can_communicate:
+            return f"CN {comms.signal_strength:.2f}"
+        return "CN no link"
+    except Exception:
+        pass
+    if session.remote_tech is not None:
+        try:
+            comms = session.remote_tech.comms(vessel)
+            if comms.has_connection:
+                return f"RT delay {comms.signal_delay:.2f}s"
+            return "RT no link"
+        except Exception:
+            pass
+    return "—"
+
+
+def snapshot(session: Session, vessel: Any) -> VesselSnapshot:
+    orbit = vessel.orbit
+    try:
+        body = orbit.body.name
+    except Exception:
+        body = "?"
+    try:
+        inc = orbit.inclination * (180.0 / 3.141592653589793)
+    except Exception:
+        inc = 0.0
+    return VesselSnapshot(
+        name=vessel.name,
+        type=_enum_name(vessel.type),
+        situation=_enum_name(vessel.situation),
+        body=body,
+        apoapsis=float(orbit.apoapsis_altitude),
+        periapsis=float(orbit.periapsis_altitude),
+        inclination_deg=inc,
+        eccentricity=float(orbit.eccentricity),
+        period=float(orbit.period),
+        crew=int(getattr(vessel, "crew_count", 0) or 0),
+        loaded=bool(getattr(vessel, "loaded", False)),
+        comms=_comms_summary(session, vessel),
+        met=float(getattr(vessel, "met", 0.0) or 0.0),
+    )
+
+
+_CLUTTER_TYPES = {"debris", "flag", "dropped_part", "space_object"}
+
+
+def list_vessels(
+    session: Session,
+    name: str | None = None,
+    *,
+    exact: bool = False,
+    vessels: Iterable[Any] | None = None,
+    skip_clutter: bool = True,
+) -> list[tuple[Any, VesselSnapshot]]:
+    session.require_connected()
+    pool = list(vessels) if vessels is not None else list(session.space_center.vessels)
+    if name:
+        if exact:
+            pool = [v for v in pool if v.name == name]
         else:
-            self.vessel_list = self.search_by_name(name=name)
-
-        self.df = self.setup_df()
-
-    def setup_df(self):
-        ''' Returns a dataframe of Vessel objects '''
-        self.df = pd.concat([Vessel(v, orbit_flag=self.orbit_flag, node_flag=self.node_flag, conn=self.conn).df for v in self.vessel_list])
-        return self.df
-
-    def search_by_name(self, name='*'):
-        if self.exact_name:
-            self.vessel_list = [v for v in self.sc.vessels if name == v.name]
-        else:
-            self.vessel_list = [v for v in self.sc.vessels if name in v.name]
-
-        # self.df = self.setup_df()
-        return self.vessel_list
-
-    def filter_df_by_attr(self, df, attr, value):
-        """ Returns a dataframe of vessels with a given name"""
-        return df[df[attr].str.contains(value)]
+            needle = name.lower()
+            pool = [v for v in pool if needle in v.name.lower()]
+    out: list[tuple[Any, VesselSnapshot]] = []
+    for vessel in pool:
+        try:
+            snap = snapshot(session, vessel)
+        except Exception:
+            continue
+        if skip_clutter and snap.type.lower() in _CLUTTER_TYPES:
+            continue
+        out.append((vessel, snap))
+    return out
 
 
-
-
-class Vessel():
-    def __init__(self, vessel=None, orbit_flag=False, node_flag=False, conn=None):
-        if conn is None:
-            self.conn = krpc.connect(name="Vessel")
-        else:
-            self.conn = conn
-        # Vessel attributes
-        self.vessel = vessel
-        # Dataframe
-        self.df = self.setup_df()
-
-        #ToDO: fix this shit
-        if orbit_flag:
-            self.orbit = Orbit(self.vessel, conn=self.conn)
-            self.df = pd.merge(self.df, self.orbit.df, how='inner', left_index=True, right_index=True)
-        if node_flag:
-            self.node = Node(self.vessel)
-            self.df = pd.merge(self.df, self.node.df, how='inner', left_index=True, right_index=True)
-
-    def setup_df(self):
-        """ Returns a dataframe of vessel attributes """
-        df = pd.DataFrame([{
-                'vessel': self.vessel,
-                'name': self.vessel.name,
-            }])
-        df = df.set_index('vessel')
-        return df 
-
-
+def find_by_name(session: Session, name: str, *, exact: bool = True) -> list[Any]:
+    rows = list_vessels(session, name=name, exact=exact)
+    return [vessel for vessel, _snap in rows]

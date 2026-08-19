@@ -419,7 +419,7 @@ class FlightWatch:
             flags=tuple(flags),
         )
 
-    def _apply_uplink(self) -> None:
+    def _apply_uplink(self, state: FlightState) -> None:
         """Gene's file. ``status`` watches leave ``uplink=False`` so they do not steal."""
         from uplink import desk, take
 
@@ -427,6 +427,16 @@ class FlightWatch:
         if cmd is None:
             if desk.hold:
                 freeze(self.session)
+            return
+        if cmd.verb in {"abort", "freeze", "hold"} and _pad_radio_off(state):
+            desk.hold = False
+            log.info("uplink ignored on pad: %s", cmd.raw)
+            try:
+                from flightlog import event
+
+                event("uplink", f"ignored on pad {cmd.raw}")
+            except Exception:
+                pass
             return
         if cmd.verb in {"abort", "freeze", "hold"}:
             freeze(self.session)
@@ -456,7 +466,7 @@ class FlightWatch:
         if state.wreck:
             raise MissionAbort(state.line(tag) or "wreck")
         if self._uplink:
-            self._apply_uplink()
+            self._apply_uplink(state)
         return state
 
     def relight(self, *, end_stage: int = 0) -> bool:
@@ -696,6 +706,18 @@ def recover_periapsis(
     finally:
         if own:
             watch.close()
+
+
+def _pad_radio_off(state: FlightState) -> bool:
+    """Stale ESC abort of a wreck must not kill a Kerbin pad start (L-026)."""
+    sit = (state.situation or "").lower().replace("-", "_")
+    if sit in {"pre_launch", "prelaunch"}:
+        return True
+    if not math.isfinite(state.alt) or state.alt >= 200.0:
+        return False
+    if sit in {"landed", "splashed"}:
+        return True
+    return (state.body or "").lower() == "kerbin"
 
 
 def freeze(session: Session, *, throttle: bool = True) -> None:

@@ -1,5 +1,5 @@
 # Gene → flying script. One command. Last write wins.
-# The mun process takes + acks; python main.py status does not.
+# mun/recover clears this at start (L-026). status does not take.
 #
 # abort [reason]
 # freeze
@@ -7,5 +7,3 @@
 # capture
 # skip-warp / no-warp-pe / warp-pe
 # set mun_pe 25000
-# set suicide_start 28000
-# set parking_apo 250000

@@ -8,3 +8,8 @@ Gene: hold
 script: acked hold
 Gene: resume
 script: acked resume
+Gene: abort ESC lithobrake leftover wreck peri=-109172 parts=-1
+Gene: ESC leftover Mun wreck parts=-1 peri=-109 km — abort, hangar must leave wreck
+Gene: ESC leftover Mun wreck parts=-1 peri=-109 km — abort, hangar must leave wreck
+script: acked abort ESC lithobrake leftover wreck peri=-109172 parts=-1
+Gene: resume

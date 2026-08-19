@@ -10,7 +10,8 @@ Files (git-friendly, next to the slate):
 Gene is not on the stick every tick. He uplinks on gates and when the
 *plan* is wrong (hyperbolic Mun Pe, warp stuck). FlightWatch wreck/ESC
 gates still abort even if he said nothing. The pilot cannot override
-``abort``.
+``abort``. mun/recover start with ``clear()`` so a leftover abort cannot
+kill the next pad (L-026).
 """
 
 from __future__ import annotations
@@ -52,6 +53,8 @@ _PLAN_DEFAULTS: dict[str, float] = {
     "parking_apo": 250_000.0,
     "parking_peri": 75_000.0,
 }
+
+_CLEARED = "# cleared — Gene writes one command; last write wins\n"
 
 
 @dataclass
@@ -141,19 +144,22 @@ def peek() -> Command | None:
         return None
 
 
+def _ack_file(raw: str | None) -> None:
+    try:
+        UPLINK_PATH.parent.mkdir(parents=True, exist_ok=True)
+        if raw:
+            LAST_PATH.write_text(raw + "\n", encoding="utf-8")
+        UPLINK_PATH.write_text(_CLEARED, encoding="utf-8")
+    except Exception:
+        log.debug("uplink ack failed", exc_info=True)
+
+
 def take() -> Command | None:
     """Consume uplink.md. Only the mun/recover writer may call this."""
     cmd = peek()
     if cmd is None:
         return None
-    try:
-        LAST_PATH.write_text(cmd.raw + "\n", encoding="utf-8")
-        UPLINK_PATH.write_text(
-            "# cleared — Gene writes one command; last write wins\n",
-            encoding="utf-8",
-        )
-    except Exception:
-        log.debug("uplink ack failed", exc_info=True)
+    _ack_file(cmd.raw)
     _apply(cmd)
     note("script", f"acked {cmd.raw}")
     log.info("uplink %s", cmd.raw)
@@ -161,6 +167,27 @@ def take() -> Command | None:
         from flightlog import event
 
         event("uplink", cmd.raw)
+    except Exception:
+        pass
+    return cmd
+
+
+def clear(*, reason: str = "new flight") -> Command | None:
+    """Drop leftover radio. mun/recover start here so last flight's abort cannot fire."""
+    cmd = peek()
+    desk.hold = False
+    desk.skip_warp = False
+    desk.no_warp_pe = False
+    desk.capture = False
+    _ack_file(f"cleared {cmd.raw}" if cmd is not None else None)
+    if cmd is None:
+        return None
+    note("script", f"cleared leftover {cmd.raw} ({reason})")
+    log.info("uplink cleared leftover %s (%s)", cmd.raw, reason)
+    try:
+        from flightlog import event
+
+        event("uplink", f"cleared leftover {cmd.raw}")
     except Exception:
         pass
     return cmd

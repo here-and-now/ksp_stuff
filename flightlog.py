@@ -47,6 +47,12 @@ def start(command: str, *, crew: str = "") -> Path:
     _last_write = 0.0
     _count = 0
     event("start", f"command={command} crew={crew}")
+    try:
+        from uplink import clear
+
+        clear(reason=f"{command} start")
+    except Exception:
+        log.debug("uplink clear at start failed", exc_info=True)
     return _path
 
 

@@ -213,3 +213,17 @@ python main.py mun
 - **Symptom:** last-flight.md truncates; no envelope (min peri, time in ESC, LF curve, warp vs alt)
 - **Cause:** 1 Hz went to stdout only. Agents must not ingest the stream, but disk can.
 - **Fix:** `flightlog.py` records ~1 Hz + flag-change + uplink events to `docs/flights/<utc>-mun.jsonl`. On every mun/recover exit `review.py` writes `*-review.md`. Gene fills **Learn**. Wernher reads the review, not the jsonl. `python main.py review` rebuilds. Status does not record.
+
+## L-026 — Leftover uplink abort kills the next pad start
+
+- **When:** 2026-08-19 `python main.py mun` (Val). Fresh 12-part lander on the pad after Jeb's Mun lithobrake (L-023).
+- **Symptom:** Ignition, then abort whose text is the previous wreck. She never left the pad.
+- **Telemetry:**
+  ```
+  pad Kerbin pre_launch alt=82 peri=-598435 apo=82 ecc=0.995 LF=3600 stg=3 thr=0.00 F=0N parts=12 warp=1x tpe=276 [ATMO]
+  Ignition
+  asc Kerbin flying alt=82 peri=-598436 apo=83 ecc=0.995 LF=3588 stg=2 thr=1.00 F=569813N parts=12 warp=1x tpe=276 [ATMO]
+  ABORT uplink abort ESC lithobrake leftover wreck peri=-109172 parts=-1
+  ```
+- **Cause:** `FlightWatch(uplink=True)` takes `docs/program/uplink.md` on every pulse. Gene's `abort` of Jeb's leftover ESC wreck stayed in the file. Pad `heartbeat` does not take; first ascent pulse did. Pad peri/ESC is already ignored (L-013); the radio was not.
+- **Fix:** `uplink.clear` at `flightlog.start` (mun/recover). `watch._apply_uplink` consumes but does not abort/freeze/hold while `pre_launch` or on the Kerbin pad (alt < 200 m). Wreck/flame gates still fire. Gene can still abort after the climb-out.

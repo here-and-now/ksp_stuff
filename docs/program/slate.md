@@ -1,11 +1,11 @@
 # Slate
 
-**Recommended:** Wernher L-023, then Mun from the pad — Val.
+**Recommended:** Val `python main.py mun` from the pad (uplink already cleared).
 
-Last `mun` (Jeb) made LKO and TLI. Mun SOI arrived hyperbolic: planned Pe 23 km, actual peri −109 km. Warp-to-Pe lithobraked (~2.8 km, `parts=-1`). FlightWatch did not abort; process hung until SIGTERM (exit 143). Wreck → Val. Do not re-fly until warp/watch refuse a subsurface Pe.
+Last `mun` (Val, 18.7 s): hangar left Jeb's wreck and ignited a 12-part lander. Gene had already uplinked abort from leftover Mun ESC (`peri=-109 km`, `parts=-1`). Script acked at ignition. Stack is still on Kerbin (landed alt=82, 12 parts, LF=3568, stg=2). Not a wreck. L-023 never flew.
 
-- Wernher L-023 (`warp.py` / `watch.py`): no rails-to-Pe if peri < 12 km; abort on `parts<=0` / lithobrake. Then Val `python main.py mun` (hangar must leave the wreck first, L-022).
-- Leave-flight / recover the Mun wreck only, then hold for L-023.
-- Stand down (Mortimer) if the leftover wreck still NREs the pad.
+- Val retry `python main.py mun` from the pad. Do not abort on leftover Mun ESC. Uplink is empty.
+- Wernher: hangar/`mun` start must drop a stale abort when the vessel changes (Gene leftover-wreck abort killed a good pad start). Then Val mun.
+- Recover the landed pad stack first (stg=2, LF=3568), then Val mun — only if hangar NREs on landed-not-prelaunch (L-022).
 
 Pick a line or say **do the recommended one**.

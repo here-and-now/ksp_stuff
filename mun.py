@@ -761,9 +761,9 @@ def run_from_lko(
             execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
             watch.pulse("low ", force_log=True)
         peri = float(vessel.orbit.periapsis_altitude)
-        if peri > 14_000:
+        if peri > 20_000:
             lower_periapsis(
-                session, 10_000, vessel, on_log=on_log, abort=abort, watch=watch
+                session, 18_000, vessel, on_log=on_log, abort=abort, watch=watch
             )
 
         # Start the suicide with altitude still tens of km, not at Pe.

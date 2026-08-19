@@ -262,3 +262,10 @@ python main.py mun
 - **When:** 2026-08-19 Val assigned; hangar created `Grok Kerman 4761` (also 4373, 6189). Active 304×11 Mm, recoverable=False.
 - **Symptom:** Next pad `mun` would Hangar a new stack and leave Grok in the ellipse.
 - **Fix:** `python main.py mun --from-orbit`. `run_from_lko(from_orbit=True)` skips parking when peri≥70 km and apo>2 Mm, then `_finish_tli`. Seat `current.md` to that crew string. `crew.py` maps `Grok Kerman NNN` onto `docs/crew/grok.md`.
+
+## L-030 — A missed 12–50 km Pe is not leave-Grok-in-the-ellipse
+
+- **When:** 2026-08-19 Grok 4761 `--from-orbit` on 304×11 Mm
+- **Symptom:** `ABORT No Mun encounter with Pe in 12–50 km. Refusing a high flyby.` Freeze. Three Groks still out.
+- **Cause:** `_finish_tli` re-raised `plan_mun_encounter`'s flyby refusal. Apo already ~Mun band; no patched Pe yet is a coast/SOI problem, not an abandon.
+- **Fix:** If replan misses 12–50 km and Kerbin peri is safe, return and `warp_to_soi`. Do not abort a crewed transfer for a high flyby. Rescue board: `docs/program/rescue.md`.

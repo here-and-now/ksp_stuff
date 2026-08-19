@@ -1,11 +1,11 @@
 # Slate
 
-**Recommended:** Wernher — TLI `execute_node` lost the patched-conic (Pe=None after node-done, apo=11.17 Mm). Keep or recorrect the 12–50 km Mun encounter through the finite burn; do not abort a live 304×11170 km ellipse. Then Val `python main.py mun`.
+**Recommended:** Grok 4761 `python main.py mun --from-orbit` (do not Hangar).
 
-Last `mun` (Val, 1839Z, 1114 s): L-027 pad recover worked. Parking 300×305 km. TLI burned, then ABORT `TLI lost Mun encounter Pe=None`. Frozen in Kerbin ellipse LF=429 parts=7. Not a wreck. Review `docs/flights/2026-08-19T1839Z-mun-review.md`.
+Nobody is debris. Board: `docs/program/rescue.md`.
 
-- Wernher: recorrect TLI when `_next_pe` is None after the node (mid-course / replan), keep Pe 12–50 km. Then Val mun (hangar will recover this ellipse).
-- Val mun from pad now — same TLI abort until the library holds the intercept.
-- Leave this ship, wait — 11 Mm Kerbin apo with no Mun Pe is a dead transfer.
+1. **Grok 4761** — 314×11.8 Mm transfer, on the stick. Continue TLI/SOI. L-030: do not abort on a missed 12–50 km Pe.
+2. **Grok 4373** — 69×1581 km, peri in the air, ~37 min to skim. `recover` next.
+3. **Grok 6189** — 349×354 km parking. TLI after 4373 is safe.
 
-Pick a line or say **do the recommended one**.
+Do not pad-launch. Do not leave a Grok frozen.

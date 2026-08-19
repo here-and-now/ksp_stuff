@@ -24,3 +24,4 @@ exit, rewrite `docs/program/slate.md`. Library bugs go to Wernher.
 - 2026-08-19 — Val pad ignition aborted by Gene: leftover Mun ESC abort consumed at T+19s. Ship intact (Kerbin landed, 12 parts, LF=3568). Seat stays Val. Review 2026-08-19T1823Z.
 - 2026-08-19 — Val mun SESSION Launch site not clear (1829Z). 1823Z pad stack still occupying LaunchPad. L-026 radio clear held. Seat stays Val. Hold for hangar pad-clear. Review 2026-08-19T1829Z.
 - 2026-08-19 — Val 1839Z pad→300 km LKO then TLI apo=11.17 Mm; abort TLI lost Mun encounter Pe=None. L-027 pad-clear held. Ship frozen, LF=429. Seat stays Val. Hold for Wernher TLI recorrect. Review 2026-08-19T1839Z.
+- 2026-08-19 — Grok 4761 `--from-orbit` 1912Z: L-028 raised apo 11.17→11.78 Mm, Pe=None, then `plan_mun_encounter` aborted high flyby. Frozen 314×11.8 Mm LF=427 parts=7. Seat stays Grok 4761. Hold for Wernher mid-course. Review 2026-08-19T1912Z.

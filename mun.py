@@ -254,10 +254,10 @@ def _finish_tli(
         _say("TLI has no Mun patch in 12–50 km — re-planning", on_log)
         try:
             plan_mun_encounter(session, vessel, on_log=on_log)
-        except MissionAbort:
-            state, nxt, pe = _tick()
-            _abort_bad_tli(state, nxt, pe)
-            raise
+        except MissionAbort as exc:
+            # L-030: a 12–50 km Pe planner miss is not "leave Grok in the ellipse".
+            _say(f"replan missed 12–50 km Pe ({exc}) — coast apo/SOI", on_log)
+            return
         execute_node(session, vessel, abort=abort, on_log=on_log, watch=watch)
         state, nxt, pe = _tick()
         _abort_bad_tli(state, nxt, pe)
@@ -265,6 +265,13 @@ def _finish_tli(
             return
 
     if _tli_good(nxt, pe):
+        return
+    if (
+        not state.escaping
+        and math.isfinite(state.peri)
+        and state.peri >= 70_000
+    ):
+        _say(f"no 12–50 km Pe yet (Pe={pe}) — coast apo/SOI anyway", on_log)
         return
     raise MissionAbort(f"TLI lost Mun encounter Pe={pe}")
 

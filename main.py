@@ -4,6 +4,7 @@
     python main.py tech
     python main.py parts --unlocked
     python main.py status
+    python main.py screenshot
 """
 
 from __future__ import annotations
@@ -478,8 +479,35 @@ def main(argv: list[str] | None = None) -> int:
     parts_p.add_argument("--node", default=None, help="TechRequired node id")
     parts_p.add_argument("--search", default=None, help="Substring on name/title/tech/category")
     parts_p.add_argument("--module", default=None, help="Module name substring (Experiment, ProceduralPart)")
+    shot_p = sub.add_parser(
+        "screenshot",
+        help="Capture the KSP window (no kRPC; works off-focus / other workspace)",
+    )
+    shot_p.add_argument(
+        "--out",
+        default=None,
+        help="PNG path. Default screenshots/ksp-<utc>.png",
+    )
+    shot_p.add_argument(
+        "--name",
+        default=None,
+        help="Stem under screenshots/ (never first-mystery-goo without --force)",
+    )
+    shot_p.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite an existing PNG",
+    )
     args = parser.parse_args(argv)
 
+    if args.cmd == "screenshot":
+        from screenshot import cmd_screenshot
+
+        return cmd_screenshot(
+            Path(args.out) if args.out else None,
+            force=bool(args.force),
+            name=args.name,
+        )
     if args.cmd == "uplink":
         from uplink import write
 

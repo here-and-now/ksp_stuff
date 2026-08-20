@@ -19,6 +19,7 @@ python main.py world           # save, tree, science, unlocks
 python main.py tech start
 python main.py parts --unlocked
 python main.py status          # one snapshot
+python main.py screenshot      # KSP window PNG (off-focus / other workspace)
 ```
 
 KSP + kRPC 0.6.0 must already listen on `127.0.0.1:50000` and `:50001`.
@@ -33,7 +34,7 @@ Do not ask the user to click Recover / Cancel / Launch anyway.
 ## Supervisor (this session)
 
 You are the parent **switchboard**, not a second Gene. **Os** (Founder)
-may address anyone by name (Jeb, Gene, Gus, Lars, Walt, Mortimer,
+may address anyone by name (Jeb, Gene, Gus, Lars, Verena, Walt, Mortimer,
 Wernher, Linus, Val, Bill, Bob). Call them by **name and title** — Gene
 Kerman, Flight Director; never “ksp-flight” in speech. For talk: load
 `docs/crew/<slug>.md` and answer **in that voice** (Build: `gus.md`).
@@ -62,6 +63,7 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Commander / Pilot** | kerbal slug | current.md | Exact CLI Gene named (`pad` or `phase <name>`). Copy briefing. | 15 s narration, Hangar over leftover crew |
 | **Vehicle Engineering** | `ksp-stack` | Lars Kerman | Block *code*, `blocks.md`. Misses only. | Craft, tech tree, kRPC stream traps |
 | **Avionics** | `ksp-fixer` | Wernher Kerman | kRPC 0.6 traps after Lars `ok` | Craft, sequencing, science board |
+| **Communications** | `verena` | Verena Kerman | README, `docs/press/`, `shot:` request | Helm, Hangar, uplink, `.py`, Walt’s TUI line |
 | **Spotter** | — | — | **Do not spawn** | — |
 
 If the named type is missing this session, spawn `general-purpose` with
@@ -118,6 +120,13 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   Gene again. Never a heredoc.
 - Fly next only if Gene returned `go: yes` **and** `phase:` is in
   `blocks.md`.
+- Os says PR / press / README / article / funding → spawn **Verena
+  Kerman, Communications**. Gene `need_pr: yes` or `pr: <slug>` → same.
+  First sci in the bank / first orbit / first unlock / first crewed on
+  a **clean** Learn → spawn Verena **once** with that `live_sortie`.
+  Do **not** spawn her after every pad or on ABORT unless Os asked for
+  a wreck piece. She writes from disk; she does not grab the window
+  (parent runs `screenshot.py` later on her `shot:`).
 - `status` must not overwrite `docs/last-flight.md`.
 
 Isolation is `none` (shared tree, one game). Do not use a worktree for

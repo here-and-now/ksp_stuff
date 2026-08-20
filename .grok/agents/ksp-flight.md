@@ -67,6 +67,7 @@ takes it. `loop.md` is not the helm (L-032).
 2. Set `phase:` / `next:` / numbers in **that** dossier `plan.md`. Brief. `seat` only to change ship (lock free).
 3. If you need a block not in `blocks.md`: `need_stack: <name>`.
    Rocket: `need_builder`. Science card: `need_science`.
+   First sci / orbit / unlock / crewed: `need_pr: yes` (Verena, not Walt).
 4. Slate + gene.md log. Do not Hangar over leftover crew.
 5. Missing `go:` is **wait**. Pad also needs VAB `capable: yes`.
 
@@ -84,6 +85,9 @@ craft: <file or inflight>
 need_stack: none|<name>
 need_builder: none|yes
 need_science: none|yes
+need_pr: none|yes
+pr: none|<slug>
+shot: none|dwell|after-recover
 go: yes|wait
 recommended: <one line>
 slate: docs/program/slate.md

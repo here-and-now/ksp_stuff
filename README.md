@@ -1,7 +1,30 @@
-# kspstuff
+# Grok Space Program
 
-Agent-driven kRPC checkout for Kerbal Space Program. Sibling `.py` files +
-`python main.py`. Not a pip package. No PyQt.
+Earth. Real solar system. Probes first (PBC). Save **`letsgrok`**.
+
+Staff are agents. **Os** is Founder. Gene Kerman is Flight Director.
+Jebediah Kerman commands when seated. Verena Kerman, Communications,
+keeps this page and [docs/press/](docs/press/INDEX.md).
+
+## Now
+
+**Sci 2.22.** Still Start. Next tree nodes cost 5.
+
+[Stayputnik on the Cape](docs/press/pad-goo.md) — 1235Z pad, Goo +
+thermometer on the HD, three Z-100s, recovered.
+
+[![First Mystery Goo](screenshots/first-mystery-goo.png)](docs/press/pad-goo.md)
+
+## Board
+
+- [Missions](docs/missions/INDEX.md) — seated `jebediah`
+- [Science](docs/program/science.md) · [jebediah card](docs/missions/jebediah/science.md)
+- [Slate](docs/program/slate.md) · [Charter](docs/program/CHARTER.md)
+- Query the live save: `python main.py world` · `tech` · `parts --unlocked`
+
+## Agent checkout
+
+Sibling `.py` + `python main.py`. Not a pip package. No PyQt.
 
 ```bash
 source .venv/bin/activate
@@ -12,26 +35,12 @@ python main.py status
 python main.py missions
 ```
 
-KSP is **`~/Games/KSP-rss`**, save **`letsgrok`**. Override with `KSPSTUFF_KSP`
-and `KSPSTUFF_SAVE`. kRPC 0.6.0 on `127.0.0.1:50000` / `:50001`. One `Session`
-per process. Steam stock Kerbin is not this program.
+KSP is **`~/Games/KSP-rss`**, save **`letsgrok`**. `KSPSTUFF_KSP` /
+`KSPSTUFF_SAVE` override. kRPC 0.6.0 on `127.0.0.1:50000` / `:50001`.
+One `Session` per process. Steam stock Kerbin is not this program.
 
-Helm / Flight / VAB / Linus: `AGENTS.md`, `docs/program/CHARTER.md`.
-Lessons: `docs/lessons.md`. kRPC traps: `docs/agent-notes.md`.
+Do not Hangar leftover crew. Do not fly `hop` / `mun`. Do not
+`pip install` this tree. Tests: `python -m unittest discover -s tests -q`.
 
-Do not Hangar over leftover crew. Do not fly `hop` / `mun` until VAB
-`capable: yes` on a PBC start craft. Do not `pip install` this tree.
-Do not `python -m kspstuff`.
-
-```
-main.py       CLI: world / tech / parts / status / phase / seat / vab / science
-world.py      disk tree + parts + save R&D (no kRPC)
-catalog.py    MM ConfigCache / unpatched GameData
-phases.py     one segment per process
-science.py    stock Experiment.run (Kerbalism live probe later)
-watch.py      FlightWatch (to be replaced)
-missions.py   dossiers, seat, warp scan of other crew
-```
-
-`--profile auto` picks RSS if the save has Earth, else stock Kerbin.
-No tests need the game: `python -m unittest discover -s tests -q`.
+Protocol: [PROTOCOL.md](docs/program/PROTOCOL.md). Lessons (letsgrok):
+[docs/lessons.md](docs/lessons.md).

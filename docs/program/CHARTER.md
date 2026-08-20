@@ -28,7 +28,8 @@ Planning is a **conference on files** (L-039). Flying is Gene → helm.
 | **Lars Kerman** | Vehicle Engineering | `pad.py`, `science.py`, `blocks.md` | craft, tech tree, fly |
 | **Wernher Kerman** | Avionics | kRPC 0.6 traps | craft, sequencing |
 | **Mortimer Kerman** | CEO | goal / slate | fly, craft, `.py` |
-| **Walt Kerman** | CAPCOM (PAO to Os) | TUI on phase edges | planning |
+| **Walt Kerman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
+| **Verena Kerman** | Communications | `README.md`, `docs/press/` | helm, Hangar, uplink, `.py` |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
 
 Linus briefs **Gene** (what / when / which part). Gene copies that into

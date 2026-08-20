@@ -17,6 +17,9 @@ class TestProtocolDoc(unittest.TestCase):
             "ec_rate",
             "recover_banks",
             "live_sortie",
+            "Verena",
+            "Communications",
+            "docs/press/",
         ):
             self.assertIn(needle, text)
 
@@ -35,3 +38,19 @@ class TestLinusCardSchema(unittest.TestCase):
         self.assertIn("mysteryGoo", text)
         self.assertIn("temperatureScan", text)
         self.assertIn("GooExperiment", text)
+
+
+class TestPressDesk(unittest.TestCase):
+    def test_verena_files(self):
+        self.assertTrue(Path("docs/crew/verena.md").is_file())
+        self.assertTrue(Path(".grok/agents/verena.md").is_file())
+        self.assertTrue(Path("docs/press/INDEX.md").is_file())
+        self.assertTrue(Path("docs/press/pad-goo.md").is_file())
+
+    def test_readme_portrait(self):
+        text = Path("README.md").read_text(encoding="utf-8")
+        self.assertIn("docs/press/", text)
+        self.assertIn("letsgrok", text)
+        self.assertIn("Os", text)
+        self.assertIn("Verena", text)
+        self.assertIn("python main.py world", text)

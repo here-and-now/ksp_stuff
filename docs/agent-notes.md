@@ -55,6 +55,33 @@ after a CKAN change is slow; later boots ~70 s to MAINMENU. First
 `Session.connect()` ~30 s (service schema over RPC). Later connects are cheaper.
 System `python3` has no `krpc`; use `.venv`.
 
+### Screenshot (no kRPC)
+
+`grim -g "<x>,<y> <w>x<h>"` of the Hyprland layout box is **not** a window
+shot. KSP stays `mapped` with an `at`/`size` while `visible` is false
+(other workspace, or covered — e.g. a fullscreen Grok on the same
+workspace). grim then copies the **output** pixels (TUI, Firefox, black).
+Geometry also moves when the window is resized.
+
+```bash
+python main.py screenshot
+python main.py screenshot --name <stem>   # screenshots/<stem>.png
+```
+
+`screenshot.py` finds `class=KSP.x86_64` (title fallback), prefers the
+RSS pid if two copies run, then:
+
+1. `grim -T <hyprland stableId>` — foreign toplevel buffer. Works
+   occluded / inactive workspace / XWayland. Does **not** focus or
+   switch workspace.
+2. `magick import -window` on the X11 id (`WM_CLASS=KSP.x86_64` via
+   `xprop`, `DISPLAY=:1` on this Hyprland).
+3. Last resort: Hyprland 0.56 `hl.dsp.focus` + wait until `visible`,
+   then `grim -g` **only if shown**, restore previous window.
+
+Default dest is `screenshots/ksp-<utc>.png`. Refuses to overwrite
+`screenshots/first-mystery-goo.png` unless `--force`.
+
 ### World desk (disk, no kRPC)
 
 kRPC 0.6 has no RD-node list and no “parts that unlock later.” Read GameData +
@@ -395,6 +422,10 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-20** — Hyprland screenshot: `grim -g` of KSP `at`/`size`
+  captured the covering Grok TUI while `visible=false`. Live capture is
+  `grim -T <stableId>` (`python main.py screenshot`). X11
+  `magick import -window` also works on this XWayland client.
 - **2026-08-20** — kRPC `Module` from `parts.modules_with_name` is a new
   proxy vs `part.modules`; `id()` does not dedupe. Kerbalism `Toggle` starts
   and stops. `start_experiments` keys on (part name, experiment_id) (L-043).

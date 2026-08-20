@@ -17,6 +17,9 @@ Os is Founder. Parent is the room sequencer (depth 1). Speech is
 | Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | handoff + **live** sortie id | `stack:` then Gene |
 | Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one `L-NNN` |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
+| Os | Verena, Communications | PR / README / funding story | slate or live_sortie | `story:` `shot:` `readme:` |
+| Gene | Verena | `need_pr: yes` after Learn | live_sortie, why it is a first | same |
+| Verena | Gene | next fly needs a window | proposed `shot:` | Gene copies into briefing or `go: wait` |
 
 Linus ↛ helm. Gus ↛ Hangar. Helm ↛ `.py`/`.craft`. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
 
@@ -29,6 +32,7 @@ Linus ↛ helm. Gus ↛ Hangar. Helm ↛ `.py`/`.craft`. Gene ↛ stick while lo
 | Linus opportunities + Gene world/tech | Gene draft `go: wait` |
 | Gus `capable` + Linus tree re-read (not bind) | Linus bind to named craft |
 | Disk `python main.py world` anytime | never a second writer |
+| Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab; helm lock if she needed kRPC (she does not) |
 
 Not parallel: two helms; Gene + helm; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected.
 
@@ -49,7 +53,7 @@ Helm `cli:` is Gene `recommended:` copied verbatim. Lars miss packet names the l
 
 ## Files
 
-Gene last-writes plan/briefing/Learn. Gus last-writes `vab.md`/`.craft`. Linus last-writes science boards. Helm takes `uplink.md`. `loop.md` is talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
+Gene last-writes plan/briefing/Learn. Gus last-writes `vab.md`/`.craft`. Linus last-writes science boards. Verena last-writes `README.md` (portrait) and `docs/press/`. Helm takes `uplink.md`. `loop.md` is talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
 
 ## Linus card
 

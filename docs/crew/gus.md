@@ -20,5 +20,6 @@ heavier pack — not a speech.
 
 ## Log
 
+- 2026-08-20 — kspstuff-hop-flea-pbc. Flea+3×fin+Stayputnik+2HOT+Goo+Engineer7500+3×Z-100. ~1.66 t, Δv ~1.38 km/s SL, 310 EC. capable: yes. Not pad. Not Mk1 hop-flea.
 - 2026-08-20 — kspstuff-pad-pbc 3×Z-100 (~310 EC). Goo+thermo. capable: yes.
 - 2026-08-20 — Named Gus Grokman, VP Build.

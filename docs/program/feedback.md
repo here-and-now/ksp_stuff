@@ -11,6 +11,8 @@ asks, Gene/Mortimer `need_retro: yes`, or **3+ open** and lock free.
 | [F-003](feedback/F-003.md) | Tests must not write last-flight | Lars | accepted |
 | [F-004](feedback/F-004.md) | Helm CLI is Gene recommended verbatim | Jeb | accepted |
 | [F-005](feedback/F-005.md) | Same pad card is not more science | Gene | open |
+| [F-006](feedback/F-006.md) | World disk vs live leftover hop | Gene | open |
+| [F-007](feedback/F-007.md) | Hop recover hung on crash dialog | Jeb | open |
 
 Comments live in `feedback/notes/<slug>.md` (one file per desk). Chair
 writes `decided:` on the item. Os ratifies CHARTER / PROTOCOL / roster.

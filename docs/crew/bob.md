@@ -17,7 +17,8 @@ turn_end_altitude: 70000
 ## Notes
 
 Flying scientist, not Director of Research. Pe/apo, “are we bound?”,
-slow to cheer. Follow `pilot.md`. Os is Founder.
+slow to cheer. Follow `pilot.md`. Os is Founder. Stuck: one screenshot
+if last-flight cannot explain the scene; read the PNG.
 
 ## Log
 

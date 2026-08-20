@@ -41,6 +41,9 @@ filename” (unit tests used to forge that). Do not read
 3. If Gene asked for a name not in `phases.NAMES`, implement that block
    or refuse with why.
 4. Do not re-fly. Do not compileall. Do not pip install.
+   Never revert, quickload, return to VAB, or rewind UT. Crash UI is
+   honest: recover the leftover or Hangar the next stack. Os will not
+   click it.
 
 Wernher (`wernher`) still owns kRPC 0.6 stream/protobuf traps. You own
 sequencing and block quality.

@@ -80,15 +80,27 @@ RSS pid if two copies run, then:
 3. Last resort: Hyprland 0.56 `hl.dsp.focus` + wait until `visible`,
    then `grim -g` **only if shown**, restore previous window.
 
-`--full` sets compositor fullscreen (`internal=2, client=0`) on KSP
-only, waits for the XWayland window to match the monitor, `grim -T`,
-then `internal=0`. If dwindle does not snap back (another window
-already fullscreen on that workspace), relative `window.resize` on
-KSP only restores the tile. `client=0` avoids Unity exclusive FS.
-Does not dispatch FS on Firefox (pip_tile media band / “the video”).
+`grim -T` does **not** need focus, the active workspace, or the same
+monitor as the TUI. `--full` only grows a *small* tile. If KSP is
+already monitor-sized or already compositor/client FS (other
+workspace, other monitor, unfocused), `--full` is grim -T with **no**
+layout change — it must not `internal=0` a window that was already
+fullscreen.
+
+When it does grow: `internal=2, client=0` on KSP only, shot, restore
+the **original** FS state + size (relative resize if dwindle ate the
+tile) + that monitor's workspace if it changed + previous focus.
+Does not dispatch FS on Firefox (pip_tile). Brief overlay flash is
+possible while a small window is grown; Hyprland 0.56 did not steal
+the monitor's active workspace in a live probe.
 
 Default dest is `screenshots/ksp-<utc>.png`. Refuses to overwrite
 `screenshots/first-mystery-goo.png` unless `--force`.
+
+Press stills: Verena `shot:` → parent `--name <slug>`. Ops: Gene
+(between exits) or the seated Commander may take **one**
+`--name stuck-<stem>` when last-flight / jsonl cannot explain the
+scene, then read the PNG. Not a heartbeat. grim is not kRPC.
 
 ### World desk (disk, no kRPC)
 
@@ -290,8 +302,13 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   missing kerbals still launch empty. `create_kerbal(name, "Pilot", True)`
   if the roster is busy. `conn.krpc.game_scene = GameScene.space_center`
   (or deprecated `space_center.load_space_center`) leaves a junk flight /
-  modal without a click. `can_revert_to_launch` exists but restores the
-  *current* flight’s pad, not a new craft.
+  modal without a click. Catastrophic Flight Results pauses physics
+  (`vessel.met` stuck, `recoverable` false, toolbar empty); the same
+  scene setter dismisses it. `can_revert_to_launch` exists but restores
+  the *current* flight’s pad, not a new craft. **Do not call it.** Never
+  revert, quickload, return to VAB, or rewind UT from the crash dialog.
+  Honest leftover: recover or Hangar the next stack. Os will not click
+  Recover / Cancel / Launch anyway.
 - `launch_vessel(..., recover=True)` from **space_center** and from **flight**
   entered `flight` / `pre_launch` with `active_vessel` set. Internally KSP
   **saves** via `FlightDriver.StartWithNewLaunch` → `GamePersistence.SaveGame`.
@@ -423,6 +440,10 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-20** — `--full` must skip the FS dance when the buffer is
+  already monitor-sized / already FS (inactive workspace still
+  `grim -T`). Always restore original `fullscreen`/`fullscreenClient`,
+  not `internal=0`.
 - **2026-08-20** — Hyprland screenshot: `grim -g` of KSP `at`/`size`
   captured the covering Grok TUI while `visible=false`. Live capture is
   `grim -T <stableId>` (`python main.py screenshot`). X11
@@ -487,3 +508,5 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 - **2026-08-20** — Pad 1204Z died EC=0 at T+483 s during goo dwell
   (L-045). Goo canister `ec_rate` 0.18; MM cache last-wins was lab 0.9.
   Pad recovers partial HD; Z-100 cannot feed a full 641 s sample.
+- **2026-08-20** — Hop leftover Flight Results: `vessel.met` frozen,
+  `recoverable` never true. `go_space_center` dismisses that modal.

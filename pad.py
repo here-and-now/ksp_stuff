@@ -28,12 +28,30 @@ log = logging.getLogger("kspstuff")
 CRAFT = "kspstuff-pad-pbc"
 _PULSE_S = 1.0
 _DWELL_ABORT = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
+# Hop-era radio. Toggle starts *and* stops; the pad SRB is not a hop.
+_PAD_UPLINK_SKIP = frozenset({"science", "stage"})
 
 
 def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
     log.info(msg)
     if on_log:
         on_log(msg)
+
+
+def _uplink_tick(ctx: Ctx) -> None:
+    """Take helm radio. abort-class raises. Do not Toggle or stage."""
+    cmd = take()
+    if cmd is None:
+        return
+    verb = str(getattr(cmd, "verb", "") or "").lower().replace("-", "_")
+    if verb in _PAD_UPLINK_SKIP:
+        return
+    try:
+        call(cmd.verb, ctx)
+    except KeyError:
+        pass
+    if verb in _DWELL_ABORT:
+        raise MissionAbort(verb)
 
 
 def _ec_has_science(
@@ -98,15 +116,7 @@ def dwell_for_card(
                 if stop:
                     call("abort_pad", ctx)
                     raise MissionAbort("abort")
-            cmd = take()
-            if cmd is not None:
-                verb = str(getattr(cmd, "verb", "") or "").lower().replace("-", "_")
-                try:
-                    call(cmd.verb, ctx)
-                except KeyError:
-                    pass
-                if verb in _DWELL_ABORT:
-                    raise MissionAbort(verb)
+            _uplink_tick(ctx)
             snap = telem.read()
             pulses += 1
             for reason in gates(snap):
@@ -176,12 +186,7 @@ def run_on_vessel(
         events=log_events,
         science_ids=science_ids,
     )
-    cmd = take()
-    if cmd is not None:
-        try:
-            call(cmd.verb, ctx)
-        except KeyError:
-            pass
+    _uplink_tick(ctx)
     started = start_experiments(vessel, names=science_ids, on_log=on_log)
     if started:
         _say("science " + ",".join(started), on_log)

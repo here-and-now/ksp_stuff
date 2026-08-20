@@ -106,6 +106,22 @@ class _Session:
         return _S()
 
 
+class TestUnknownPhase(unittest.TestCase):
+    def test_names_pad_and_hop(self):
+        from phases import NAMES
+
+        self.assertEqual(NAMES, ("pad", "hop"))
+
+    def test_need_stack_message(self):
+        from phases import run
+        from telem import MissionAbort
+
+        with self.assertRaises(MissionAbort) as ctx:
+            run("mun", None)  # type: ignore[arg-type]
+        self.assertIn("need_stack", str(ctx.exception))
+        self.assertIn("blocks.md", str(ctx.exception))
+
+
 class TestPhasePad(unittest.TestCase):
     def test_uncrewed_recover_skips_seat_and_heartbeat(self):
         session = _Session()

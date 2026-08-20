@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from catalog import Catalog, ExperimentCfg, merge_experiment_cfg
 from pad import recover_or_abort, run_on_vessel
@@ -12,6 +13,7 @@ from science import (
     card_complete,
     card_has_data,
     experiment_done,
+    hd_has_data,
     pad_dwell_s,
     pad_ec_rate,
     start_experiments,
@@ -67,9 +69,10 @@ class _Parts:
 
 class _Control:
     throttle = 0.0
+    staged = 0
 
     def activate_next_stage(self):
-        pass
+        self.staged += 1
 
 
 class _Body:
@@ -377,6 +380,19 @@ class TestExperimentDone(unittest.TestCase):
         empty = _Mod("Experiment", "mysteryGoo")
         self.assertFalse(card_has_data(_Vessel([empty]), ("mysteryGoo",)))
 
+    def test_hd_has_data_without_experiment(self):
+        drive = _Mod("HardDrive", "")
+        drive.fields = {"Data": "Telemetry Report 0.11 Mb"}
+        empty = _Mod("HardDrive", "")
+        empty.fields = {"Data": "empty"}
+        vessel = _Vessel([])
+        vessel.parts = _Parts([_Part("probeCoreSphere.v2", [drive])])
+        self.assertTrue(hd_has_data(vessel))
+        blank = _Vessel([])
+        blank.parts = _Parts([_Part("probeCoreSphere.v2", [empty])])
+        self.assertFalse(hd_has_data(blank))
+        self.assertFalse(hd_has_data(_Vessel([])))
+
     def test_dwell_budget_uses_size_over_sample_count(self):
         cat = Catalog()
         cat.experiments["mysteryGoo"] = ExperimentCfg(
@@ -593,9 +609,102 @@ class TestPadOnVessel(unittest.TestCase):
         self.assertGreaterEqual(now(), (1.0 / 0.18) * PAD_EC_MARGIN)
 
 
+class _Uplink:
+    def __init__(self, verb: str):
+        self.verb = verb
+
+
+class TestPadUplink(unittest.TestCase):
+    def test_science_before_start_does_not_toggle_twice(self):
+        mod = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([mod], recoverable=True)
+        now, sleep = _fast_clock()
+        with patch("pad.take", return_value=_Uplink("science")):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("mysteryGoo",),
+                now=now,
+                sleep=sleep,
+                timeout=2.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(mod.triggered, ["Start Experiment"])
+
+    def test_science_during_dwell_does_not_toggle_again(self):
+        mod = _Mod("Experiment", "mysteryGoo")
+
+        def trigger_event(name):
+            mod.triggered.append(name)
+            mod.fields["status"] = "Running"
+
+        mod.trigger_event = trigger_event
+        vessel = _Vessel([mod], recoverable=True)
+        n = [0]
+
+        def fake_take():
+            n[0] += 1
+            return _Uplink("science") if n[0] >= 2 else None
+
+        t = [0.0]
+
+        def now():
+            return t[0]
+
+        def sleep(dt):
+            mod.fields["status"] = "Done"
+            mod.fields["Has Data"] = True
+            t[0] += dt if dt else 0.01
+
+        with patch("pad.take", fake_take):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("mysteryGoo",),
+                now=now,
+                sleep=sleep,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(mod.triggered, ["Start Experiment"])
+
+    def test_abort_before_start_does_not_continue(self):
+        mod = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([mod], recoverable=True)
+        with patch("pad.take", return_value=_Uplink("abort_pad")):
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    _Session(vessel), vessel, science_ids=("mysteryGoo",)
+                )
+        self.assertIn("abort", str(ctx.exception).lower())
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(mod.triggered, [])
+
+    def test_stage_does_not_light_srb(self):
+        mod = _Mod("Experiment", "mysteryGoo", done=True)
+        vessel = _Vessel([mod], recoverable=True)
+        now, sleep = _fast_clock()
+        with patch("pad.take", return_value=_Uplink("stage")):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("mysteryGoo",),
+                now=now,
+                sleep=sleep,
+                timeout=2.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(mod.triggered, ["Start Experiment"])
+
+
 class TestPadModule(unittest.TestCase):
     def test_no_flightwatch_import(self):
         text = Path("pad.py").read_text(encoding="utf-8")
         self.assertNotIn("from watch", text)
         self.assertNotIn("import watch", text)
         self.assertNotIn("from watch import", text)
+        self.assertIn("uncrewed=True", text)

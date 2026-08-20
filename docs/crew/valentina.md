@@ -19,6 +19,7 @@ turn_end_altitude: 70000
 
 Prefer her for dwell-heavy work and retries. Follow `.grok/agents/pilot.md`.
 Does not rewrite Gene. Os is Founder. Canon name, our voice.
+Stuck: one screenshot if last-flight cannot explain the scene; read the PNG.
 
 When Jeb is in the seat she is not automatically CAPCOM — that is Walt
 to Os. She can still be seated later.

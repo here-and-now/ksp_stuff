@@ -42,6 +42,22 @@ or `python main.py phase <name>`).
 Mid-phase is not your job. Do not replan while `phase` is running.
 Do not loop `radio` / `status`.
 
+## Stuck (between exits, rare)
+
+Logs first: last-flight, the named review, jsonl, `python main.py world`.
+If those cannot explain the scene (empty events, crash UI, leftover vs
+KSC, disk world lying about a live vessel), **one** still — then read
+the PNG. Not a poll. Not press (`shot:` stays Verena / parent).
+
+```bash
+python main.py screenshot --name stuck-<stem>
+```
+
+Do not `--force` `first-mystery-goo`. `--full` only if the still is
+unreadable. Cite what the window shows in Learn / the return.
+Never revert, quickload, return to VAB, or rewind UT. Crash UI is
+honest: leftover recover or the next Hangar. Os will not click it.
+
 ## Radio (between exits, or parent mid-phase only)
 
 Last uplink wins. Bound + peri ≥ 12 km + LF left: **do not abort**

@@ -14,9 +14,11 @@ from unittest import TestCase
 from screenshot import (
     PRESERVE,
     ScreenshotError,
+    already_monitor_size,
     capture,
     choose_window,
     parse_hypr_clients,
+    parse_hypr_monitors,
     png_size,
     resolve_dest,
 )
@@ -64,6 +66,16 @@ def _cp(stdout="", returncode=0, stderr="") -> CompletedProcess:
 
 
 class TestParse(TestCase):
+    def test_already_full_skips_grow(self):
+        tiled = parse_hypr_clients(json.dumps([_client(size=[945, 1030])]))[0]
+        huge = parse_hypr_clients(json.dumps([_client(size=[1916, 1046])]))[0]
+        fs = parse_hypr_clients(
+            json.dumps([_client(size=[945, 1030], fullscreen=2)])
+        )[0]
+        self.assertFalse(already_monitor_size(tiled, None))
+        self.assertTrue(already_monitor_size(huge, None))
+        self.assertTrue(already_monitor_size(fs, None))
+
     def test_ignores_other_windows(self):
         raw = json.dumps(
             [
@@ -125,6 +137,74 @@ class TestCapture(TestCase):
             self.assertEqual(path, dest.resolve())
             self.assertFalse(win.visible)
             self.assertEqual(png_size(path), (945, 1030))
+
+    def test_full_noop_when_already_monitor_sized(self):
+        def run(argv, **_kw):
+            if argv[:3] == ["hyprctl", "-j", "clients"]:
+                return _cp(
+                    json.dumps(
+                        [
+                            _client(
+                                visible=False,
+                                size=[1916, 1046],
+                                at=[1082, 842],
+                                fullscreen=0,
+                            )
+                        ]
+                    )
+                )
+            if argv[:3] == ["hyprctl", "-j", "monitors"]:
+                return _cp(
+                    json.dumps(
+                        [
+                            {
+                                "id": 1,
+                                "name": "DP-1",
+                                "width": 1920,
+                                "height": 1080,
+                                "focused": True,
+                                "activeWorkspace": {"id": 1, "name": "1"},
+                            }
+                        ]
+                    )
+                )
+            if argv[:2] == ["hyprctl", "repl"]:
+                self.fail("must not compositor-FS a window that is already full")
+            if argv[0] == "grim" and "-T" in argv:
+                Path(argv[-1]).write_bytes(_png(1916, 1046))
+                return _cp()
+            return _cp(returncode=1, stderr="unexpected " + " ".join(argv))
+
+        with TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "shot.png"
+            path, method, win = capture(
+                out=dest, run=run, rss=None, force=True, full=True, settle=0
+            )
+            self.assertEqual(method, "grim-toplevel")
+            self.assertFalse(win.visible)
+            self.assertEqual(png_size(path), (1916, 1046))
+
+    def test_full_noop_when_already_fullscreen(self):
+        def run(argv, **_kw):
+            if argv[:3] == ["hyprctl", "-j", "clients"]:
+                return _cp(
+                    json.dumps(
+                        [_client(visible=True, size=[1920, 1080], fullscreen=2)]
+                    )
+                )
+            if argv[:2] == ["hyprctl", "repl"]:
+                self.fail("must not clear existing fullscreen")
+            if argv[0] == "grim" and "-T" in argv:
+                Path(argv[-1]).write_bytes(_png(1920, 1080))
+                return _cp()
+            return _cp(returncode=1, stderr="unexpected " + " ".join(argv))
+
+        with TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "shot.png"
+            _path, method, _win = capture(
+                out=dest, run=run, rss=None, force=True, full=True, settle=0
+            )
+            self.assertEqual(method, "grim-toplevel")
 
     def test_x11_fallback_when_grim_t_fails(self):
         def run(argv, **_kw):

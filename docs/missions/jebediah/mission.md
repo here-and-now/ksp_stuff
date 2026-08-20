@@ -4,7 +4,7 @@ id: jebediah
 pilot: Jebediah Grokman
 status: available
 body: Earth
-peri:
-apo:
+peri: —
+apo: —
 next: wait
-notes: 1235Z pad recovered. world sci 2.22. Still start. Hold. Os next.
+notes: leftover recovered 17-02-13Z. KSC. world sci 3.20. FlyingLow in-flight 15-58 not recover. Verena. Do not Hangar.

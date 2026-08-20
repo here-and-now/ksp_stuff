@@ -4,6 +4,8 @@
     python main.py tech
     python main.py parts --unlocked
     python main.py status
+    python main.py pad
+    python main.py hop
     python main.py screenshot
 """
 
@@ -167,6 +169,50 @@ def cmd_pad(session: Session, args: argparse.Namespace) -> int:
         release_lock()
 
 
+def cmd_hop(session: Session, args: argparse.Namespace) -> int:
+    from emergencies import Ctx, call as emergency_call
+    from flightlog import WriterLockError, release_lock, start
+    from hop import run_hop
+    from phases import OffPlan
+
+    t0 = time.monotonic()
+    try:
+        start("hop", crew="", session=session)
+
+        def abort() -> bool:
+            if args.timeout <= 0:
+                return False
+            return time.monotonic() - t0 > args.timeout
+
+        try:
+            result = run_hop(session, on_log=_log, abort=abort)
+        except OffPlan as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"OFFPLAN {exc}")
+            write_handoff(command="hop", exit_code=4, abort=f"OFFPLAN {exc}")
+            return 4
+        except MissionAbort as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"ABORT {exc}")
+            write_handoff(command="hop", exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command="hop", exit_code=1, abort=f"SESSION {exc}")
+            return 1
+        _log(result)
+        write_handoff(command="hop", exit_code=0)
+        return 0
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    finally:
+        release_lock()
+
+
 def cmd_phase(session: Session, args: argparse.Namespace) -> int:
     from crew import current_pilot
     from flightlog import WriterLockError, release_lock, start
@@ -183,9 +229,13 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
 
         # Uncrewed PBC probe: no seated kerbal on the vessel; recover
         # deletes it — do not FlightWatch a missing ship.
-        if args.name != "pad":
+        if args.name not in {"pad", "hop"}:
             assert_seated(session)
-        start(args.name, crew="" if args.name == "pad" else crew, session=session)
+        start(
+            args.name,
+            crew="" if args.name in {"pad", "hop"} else crew,
+            session=session,
+        )
 
         def abort() -> bool:
             if args.timeout <= 0:
@@ -257,6 +307,16 @@ def main(argv: list[str] | None = None) -> int:
         "--keep-debris",
         action="store_true",
         help="launch_vessel recover=False",
+    )
+    hop_p = sub.add_parser(
+        "hop",
+        help="Sounding: Hangar Flea uncrewed, light, FlyingLow card, recover HD",
+    )
+    hop_p.add_argument(
+        "--timeout",
+        type=float,
+        default=0.0,
+        help="Wall-clock abort (seconds). 0 = none (default).",
     )
     from phases import NAMES as PHASE_NAMES
 
@@ -486,6 +546,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_status(session)
         if args.cmd == "pad":
             return cmd_pad(session, args)
+        if args.cmd == "hop":
+            return cmd_hop(session, args)
         if args.cmd == "phase":
             return cmd_phase(session, args)
         parser.error(f"unknown command {args.cmd}")

@@ -48,6 +48,19 @@ class KspWindow:
     mapped: bool
     xwayland: bool
     workspace: str
+    monitor: int = -1
+    fullscreen: int = 0
+    fullscreen_client: int = 0
+
+
+@dataclass(frozen=True, slots=True)
+class HyprMonitor:
+    id: int
+    name: str
+    width: int
+    height: int
+    active_workspace: str
+    focused: bool
 
 
 def png_size(path: Path) -> tuple[int, int]:
@@ -125,9 +138,43 @@ def parse_hypr_clients(raw: str) -> list[KspWindow]:
                 mapped=bool(c.get("mapped", True)),
                 xwayland=bool(c.get("xwayland")),
                 workspace=ws_name,
+                monitor=int(c["monitor"]) if c.get("monitor") is not None else -1,
+                fullscreen=int(c.get("fullscreen") or 0),
+                fullscreen_client=int(c.get("fullscreenClient") or 0),
             )
         )
     return out
+
+
+def parse_hypr_monitors(raw: str) -> list[HyprMonitor]:
+    data = json.loads(raw)
+    if not isinstance(data, list):
+        return []
+    out: list[HyprMonitor] = []
+    for m in data:
+        if not isinstance(m, dict):
+            continue
+        ws = m.get("activeWorkspace") or {}
+        out.append(
+            HyprMonitor(
+                id=int(m.get("id") or 0),
+                name=str(m.get("name") or ""),
+                width=int(m.get("width") or 0),
+                height=int(m.get("height") or 0),
+                active_workspace=str(ws.get("name") or ws.get("id") or ""),
+                focused=bool(m.get("focused")),
+            )
+        )
+    return out
+
+
+def already_monitor_size(window: KspWindow, mon: HyprMonitor | None) -> bool:
+    """True if grim -T already has monitor pixels (no compositor FS needed)."""
+    if window.fullscreen or window.fullscreen_client:
+        return True
+    if mon is None:
+        return window.size[0] >= 1600 and window.size[1] >= 900
+    return window.size[0] >= mon.width - 40 and window.size[1] >= mon.height - 80
 
 
 def choose_window(windows: list[KspWindow], rss: Path | None = None) -> KspWindow:
@@ -160,6 +207,47 @@ def _hypr_windows(run: Run) -> list[KspWindow]:
         return parse_hypr_clients(r.stdout or "[]")
     except json.JSONDecodeError as exc:
         raise ScreenshotError(f"hyprctl clients: bad JSON ({exc})") from exc
+
+
+def _hypr_monitors(run: Run) -> list[HyprMonitor]:
+    r = _try_run(run, ["hyprctl", "-j", "monitors"])
+    if r is None or r.returncode != 0:
+        return []
+    try:
+        return parse_hypr_monitors(r.stdout or "[]")
+    except json.JSONDecodeError:
+        return []
+
+
+def _active_address(run: Run) -> str:
+    r = _try_run(run, ["hyprctl", "-j", "activewindow"])
+    if r is None or r.returncode != 0 or not r.stdout:
+        return ""
+    try:
+        return str(json.loads(r.stdout).get("address") or "")
+    except json.JSONDecodeError:
+        return ""
+
+
+def _focus_workspace(run: Run, ws: str) -> bool:
+    if not ws:
+        return False
+    arg = ws if str(ws).isdigit() else json.dumps(str(ws))
+    lua = f'hl.dispatch(hl.dsp.focus({{ workspace = {arg} }})); return "ok"'
+    r = _try_run(run, ["hyprctl", "repl", lua])
+    return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
+
+
+def _focus_addr(run: Run, addr: str) -> bool:
+    if not addr:
+        return False
+    lua = (
+        f'local w=hl.get_window("address:{addr}"); '
+        "if w==nil then return \"missing\" end; "
+        "hl.dispatch(hl.dsp.focus({ window = w })); return \"ok\""
+    )
+    r = _try_run(run, ["hyprctl", "repl", lua])
+    return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
 
 
 def _x11_scan(run: Run) -> list[KspWindow]:
@@ -372,6 +460,14 @@ def _wait_window(
         time.sleep(0.05)
 
 
+def _take_buffer(run: Run, window: KspWindow, dest: Path) -> str | None:
+    if _grim_toplevel(run, window, dest):
+        return "grim-toplevel"
+    if _x11_import(run, window, dest):
+        return "x11-import"
+    return None
+
+
 def _capture_full(
     run: Run,
     window: KspWindow,
@@ -381,16 +477,19 @@ def _capture_full(
     settle: float,
     grow_timeout: float = 3.0,
     restore_timeout: float = 2.0,
+    mon: HyprMonitor | None = None,
 ) -> tuple[str, KspWindow]:
-    """Fill the monitor for the shot, then restore the exact tile.
+    """Grow a small tile to the monitor, shoot, restore orig FS/size/focus.
 
-    ``internal=2, client=0``: compositor fullscreen. XWayland gets the
-    monitor size (Unity re-renders) without exclusive client FS. Tile
-    geometry is restored by clearing fullscreen — no ``window.resize``.
-    Does not dispatch FS on Firefox (pip_tile media band).
+    Skip this path when ``already_monitor_size`` — grim -T does not need
+    the window focused, visible, or on the active workspace.
     """
     orig_w, orig_h = window.size
     orig_at = window.at
+    orig_fs = window.fullscreen
+    orig_fsc = window.fullscreen_client
+    orig_ws = mon.active_workspace if mon is not None else ""
+    prev_addr = _active_address(run)
     shot = window
     try:
         if not _set_fullscreen(run, window, internal=2, client=0):
@@ -409,13 +508,12 @@ def _capture_full(
             shot = choose_window(_hypr_windows(run), rss)
         except ScreenshotError:
             shot = grown
-        if _grim_toplevel(run, shot, dest):
-            return "grim-toplevel-full", shot
-        if _x11_import(run, shot, dest):
-            return "x11-import-full", shot
+        how = _take_buffer(run, shot, dest)
+        if how:
+            return f"{how}-full", shot
         raise ScreenshotError("fullscreen capture failed after compositor FS")
     finally:
-        _set_fullscreen(run, window, internal=0, client=0)
+        _set_fullscreen(run, window, internal=orig_fs, client=orig_fsc)
         restored = _wait_window(
             run,
             lambda w: abs(w.size[0] - orig_w) <= 40 and abs(w.size[1] - orig_h) <= 40,
@@ -446,6 +544,16 @@ def _capture_full(
                 f"{getattr(restored, 'at', None)}",
                 file=sys.stderr,
             )
+        if orig_ws:
+            now = None
+            for m in _hypr_monitors(run):
+                if mon is not None and m.id == mon.id:
+                    now = m
+                    break
+            if now is not None and now.active_workspace != orig_ws:
+                _focus_workspace(run, orig_ws)
+        if prev_addr:
+            _focus_addr(run, prev_addr)
 
 
 def resolve_dest(
@@ -501,6 +609,15 @@ def capture(
     rss_root = root if isinstance(root, Path) else None
     window = choose_window(windows, rss_root)
     if full:
+        mons = _hypr_monitors(run)
+        mon = next((m for m in mons if m.id == window.monitor), None)
+        if already_monitor_size(window, mon):
+            how = _take_buffer(run, window, dest)
+            if how:
+                return dest, how, window
+            raise ScreenshotError(
+                "KSP already monitor-sized but grim -T / x11 import failed"
+            )
         method, window = _capture_full(
             run,
             window,
@@ -509,6 +626,7 @@ def capture(
             settle=settle,
             grow_timeout=grow_timeout,
             restore_timeout=restore_timeout,
+            mon=mon,
         )
         return dest, method, window
     if _grim_toplevel(run, window, dest):

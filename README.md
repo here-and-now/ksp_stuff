@@ -10,24 +10,28 @@ Engineering — and **Os** at the head of the table. Save `letsgrok`.
 This page is the front of the hangar. Verena Grokman, Communications,
 writes it while the paint is still wet.
 
-[![Stayputnik on LC-39, Mystery Goo in the can](screenshots/first-mystery-goo.png)](docs/press/pad-goo.md)
+[![Seventy-two meters, FlyingLow over the Cape](screenshots/first-hop.png)](docs/press/first-hop.md)
 
-*Cape Canaveral. Uncrewed Stayputnik. You observe the Goo. 0.5 credits.
-History does not care that it is 0.5 credits.*
+*Cape Canaveral. Uncrewed Flea. Altimeter seventy-two meters.
+Situation: FlyingLow. The science was already in the bank.*
 
 ## Right now
 
-**2.22 science** in the bank. Tech tree: **Start.** Next nodes cost **5**.
+**3.20 science** in the bank. Tech tree: **Start.** Next nodes cost **5**.
 
-The stack sat **twelve minutes** on the pad until Kerbalism filled the
-HardDrive. Recovered. No kerbal aboard. That is the whole miracle.
+The Flea left the pad. Batteries died. We did not recover that
+HardDrive. Kerbalism credited FlyingLow *while the thermometer was
+still hot* — TELEMETRY 0.110, temperature 0.401. An hour later we
+dismissed the wreck. The chalkboard did not move. It had already moved.
 
-**Latest:** [Stayputnik on the Cape](docs/press/pad-goo.md) — run
-1235Z, Goo + thermometer, three Z-100s, procedural SRB.
+**Latest:** [Seventy-two meters](docs/press/first-hop.md) — first hop,
+20 August 2026, 15:58 UTC. Not orbit. We have never flown orbit.
 
-Next first: a node off Start, or a sounding that leaves the grass.
-Moon is a waypoint. The scale is a galaxy. We will be insufferable
-the whole way.
+Before that: [Stayputnik on the Cape](docs/press/pad-goo.md) — twelve
+minutes of pad, Goo home, **2.22**.
+
+Next first: a node off Start. Moon is a waypoint. The scale is a
+galaxy. We will be insufferable the whole way.
 
 ## The room
 
@@ -50,10 +54,11 @@ the whole way.
 
 | When | What | Sci |
 |---|---|---|
+| 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape, FlyingLow while recording | **3.20** |
 | 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — pad dwell, Cape | **2.22** |
 | 2026-08-20 | Empty recovers, a Toggle that stops a sample, one battery dead at T+483 s — then we learned | 0 → 0.80 |
 
-[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [Cape pad review](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
+[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [Hop review](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad review](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
 
 Live tree, not a wiki: `python main.py world` · `tech` · `parts --unlocked`
 

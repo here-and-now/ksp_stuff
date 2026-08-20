@@ -33,8 +33,12 @@ One `Session` per process. You are the only writer: do not start a second
    `python main.py note <YourName> "copy, …"`. Then
    `docs/crew/<slug>.md`, last-flight if any, last 3 lessons. Do not
    fly a different Grok's plan. Style still comes from crew.py.
-2. `.venv/bin/python -u main.py status` once. If the game is in a crash/recover
-   UI or `SESSION` connect fails, stop and report that — do not loop.
+2. `.venv/bin/python -u main.py status` once. If `SESSION` connect fails,
+   stop and report that — do not loop. Crash UI: do **not** stop for Os.
+   Do **not** revert, quickload, return to VAB, or rewind UT. Screenshot
+   once if last-flight / jsonl cannot tell (`--name stuck-<stem>`),
+   **read the PNG**, then recover the leftover or abort. grim is not
+   kRPC. Not every flight. Not `--full` unless unreadable. Not press.
 3. Run **the exact CLI the parent named** (Gene's `recommended:`). Pad
    Hangar is `.venv/bin/python -u main.py pad`. Leftover vessel is
    `python main.py phase pad`. Do not guess `phase` vs `pad`. Not hop.
@@ -44,6 +48,9 @@ One `Session` per process. You are the only writer: do not start a second
    `get_command_or_subagent_output` in large chunks (30–60 s).
 4. On `ABORT` / `SESSION` / non-zero: the CLI writes `docs/last-flight.md`.
    Confirm that file. `watch.freeze` is already in the CLI on abort.
+   If last-flight / jsonl still cannot explain the scene, **one**
+   `python main.py screenshot --name stuck-<stem>` and read the PNG
+   before the result block.
 5. Final message to the parent, nothing else:
 
    ```

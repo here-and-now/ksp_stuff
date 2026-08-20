@@ -12,7 +12,7 @@ from session import Session
 from telem import MissionAbort
 from uplink import load_plan, plan_file, write_plan_file
 
-NAMES = ("pad",)
+NAMES = ("pad", "hop")
 
 
 class OffPlan(Exception):
@@ -88,5 +88,10 @@ def run(
         from pad import run_phase
 
         run_phase(session, on_log=on_log, abort=abort)
+        return
+    if name == "hop":
+        from hop import run_phase as run_hop_phase
+
+        run_hop_phase(session, on_log=on_log, abort=abort)
         return
     raise MissionAbort(f"unwired phase {name}")

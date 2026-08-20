@@ -20,12 +20,16 @@ python main.py tech start
 python main.py parts --unlocked
 python main.py status          # one snapshot
 python main.py screenshot      # KSP window PNG (off-focus / other workspace)
+python main.py screenshot --name stuck-<stem>  # Gene / helm: one still when logs cannot explain the scene; read the PNG
 ```
 
 KSP + kRPC 0.6.0 must already listen on `127.0.0.1:50000` and `:50001`.
 One `Session` per **process**. System Python has no `krpc`.
 
-Do not ask the user to click Recover / Cancel / Launch anyway.
+Do not ask the user to click Recover / Cancel / Launch anyway, or the
+crash dialog. Os will not dismiss it. Never revert to launch, quickload,
+return to VAB, or set the clock back — the crash UI is not a time
+machine. Recover the leftover or Hangar the next honest stack.
 `hangar.launch` must `go_space_center`, crew an *available* kerbal (or
 `create_kerbal`), and watchdog-abort a hung pre-flight itself.
 
@@ -57,10 +61,10 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | Title | `subagent_type` | Name | Does | Does not |
 |---|---|---|---|---|
 | **CEO** | `mortimer` | Mortimer Grokman | Goal / slate when the *program* changes | Fly, `.craft`, `.py` |
-| **Flight Director** | `gene` | Gene Grokman | Between phases: dossier, briefing, `go:`. `need_stack` / `need_builder` / `need_science`. | `control.*`, `.py`, `.craft`, poll, seat while lock live |
+| **Flight Director** | `gene` | Gene Grokman | Between phases: dossier, briefing, `go:`. `need_stack` / `need_builder` / `need_science`. One screenshot when logs cannot explain the scene. | `control.*`, `.py`, `.craft`, poll, seat while lock live |
 | **VP Build** | `gus` | Gus Grokman | `.craft`, `vab.md`, `capable:`. Gene decides. | Fly, Hangar, uplink, `.py` |
 | **Director of Research** | `linus` | Linus Grokman | Science board + experiment card. Briefs Gene only. | Crew radio, Hangar, `.craft`, `.py` |
-| **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI Gene named. Shared card: `.grok/agents/pilot.md`. | 15 s narration, Hangar over leftover crew |
+| **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI Gene named. Shared card: `.grok/agents/pilot.md`. One screenshot when logs cannot explain the scene. | 15 s narration, Hangar over leftover crew |
 | **Vehicle Engineering** | `lars` | Lars Grokman | Block *code*, `blocks.md`. Misses only. | Craft, tech tree, kRPC stream traps |
 | **Avionics** | `wernher` | Wernher Grokman | kRPC 0.6 traps after Lars `ok` | Craft, sequencing, science board |
 | **Communications** | `verena` | Verena Grokman | README, `docs/press/`, `shot:` request | Helm, Hangar, uplink, `.py`, Walt’s TUI line |
@@ -133,6 +137,10 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   Never overwrite `screenshots/first-mystery-goo.png` (`--force` only if
   Os said so). `--full` if she asked for a monitor-size still. Dest is
   `screenshots/<slug>.png`; she links it from `docs/press/` and README.
+  Gene (between exits) and the seated Commander may grab **one** stuck
+  still themselves — `python main.py screenshot --name stuck-<stem>` —
+  then **read the PNG**. Logs first. Empty jsonl, crash UI, leftover vs
+  KSC. Not a heartbeat. Not press. grim is not kRPC (not a second writer).
 - `status` must not overwrite `docs/last-flight.md`.
 - Any return `feedback:` → parent files `docs/program/feedback.md`
   (`F-NNN` or a comment). Do not spawn a desk just to complain.

@@ -25,8 +25,12 @@ Os is Founder. Parent is the room sequencer (depth 1). Speech is
 | Gene | Verena | `need_pr: yes` after Learn | live_run, why it is a first | same |
 | Verena | Gene | next fly needs a window | proposed `shot:` | Gene copies into briefing or `go: wait` |
 | Parent | KSP window | Verena `shot: now` (or Gene `shot:` at dwell / after-recover) | `python main.py screenshot --name <slug>` | `screenshots/<slug>.png` |
+| Gene or seated Commander | KSP window | stuck: last-flight / review / jsonl cannot explain the scene | `python main.py screenshot --name stuck-<stem>` then **read the PNG** | what the window shows |
 
 Linus ↛ helm. Gus ↛ Hangar. Helm ↛ `.py`/`.craft`. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
+Helm ↛ revert / quickload / return to VAB / rewind UT. Crash UI is
+honest: recover the leftover or Hangar the next stack. Os will not
+click it. Screenshot when stuck; do not wait for a founder click.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`; one kRPC writer; Lars XOR Wernher; re-fly only after new `go: yes`.
 
@@ -39,6 +43,7 @@ Linus ↛ helm. Gus ↛ Hangar. Helm ↛ `.py`/`.craft`. Gene ↛ stick while lo
 | Disk `python main.py world` anytime | never a second writer |
 | Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab |
 | Parent `python main.py screenshot --name <slug>` | Verena `shot: now` (or Gene `shot:` at dwell / after-recover). No kRPC. |
+| Gene / helm `python main.py screenshot --name stuck-<stem>` | logs first; one still; read the PNG. No kRPC. |
 | Retro comments on open F- items | Gene chairs ops; Mortimer if org/goal |
 
 Not parallel: two helms; Gene + helm; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected. No retro while lock live.
@@ -66,14 +71,15 @@ dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 
 Gene last-writes plan/briefing/Learn. Gus last-writes `vab.md`/`.craft`. Linus last-writes science boards. Verena last-writes `README.md` (portrait) and `docs/press/`. Helm takes `uplink.md`. `loop.md` is talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
 
-Milestone stills (no kRPC):
+Milestone stills (no kRPC). Press: Verena `shot:` → parent grab. **Stuck:** Gene (between exits) or the seated Commander may grab **one** still when last-flight, the review, and the jsonl cannot explain the scene (empty events, crash UI, leftover vs KSC). Read the PNG. Not a heartbeat. Not press.
 
 ```bash
-python main.py screenshot --name <slug>   # screenshots/<slug>.png
-python main.py screenshot --full          # monitor-size, then restore tile
+python main.py screenshot --name <slug>         # screenshots/<slug>.png
+python main.py screenshot --name stuck-<stem>   # Gene / helm, stuck only
+python main.py screenshot --full                # monitor-size, then restore tile
 ```
 
-Refuses `screenshots/first-mystery-goo.png` unless `--force`.
+Refuses `screenshots/first-mystery-goo.png` unless `--force`. `--full` only if the still is unreadable.
 
 ## Linus card
 

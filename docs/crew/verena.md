@@ -22,4 +22,5 @@ Os is Founder. Interview = read the repo. Checkout box stays at the
 
 ## Log
 
+- 2026-08-20 — First hop, FlyingLow in-flight, sci 3.20. Not the wreck recover.
 - 2026-08-20 — Cape story, sci 2.22. README is a hangar front page.

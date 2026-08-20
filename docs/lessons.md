@@ -85,3 +85,120 @@ python main.py pad
   smallest positive `ec_rate`. Do not edit `.craft` — a full goo sample
   still needs more battery (Gene / VAB). Modules: `pad.py`, `science.py`,
   `catalog.py`.
+
+## stack-review — uplink science is a second Toggle
+
+- **When:** 2026-08-20 stack review after 1235Z (letsgrok pad, exit 0).
+- **Symptom:** Live path was sound (card start, 740 s catalog wall, recover,
+  sci 2.22). `run_on_vessel` still `take()`s hop radio before start and
+  every dwell pulse: `call(science)` is a second Kerbalism Toggle; `stage`
+  lights the unused pad SRB; `abort_pad` recovered then the compose
+  continued (exit 0).
+- **Cause:** Hop-era uplink table on the pad path. `start()` clears a
+  leftover; a science/stage/abort written during Hangar still fires.
+- **Fix:** Pad consumes uplink: abort-class raises; science and stage are
+  not called. Empty card still aborts. Uncrewed Hangar unchanged.
+  Modules: `pad.py`.
+
+## hop — light, flying card, recover HD
+
+- **When:** 2026-08-20 after 1235Z pad. Gene `need_stack` hop. Os: more
+  science, off the ground.
+- **Symptom:** Catalog was `pad` only. Pad does not light. Helm could not
+  leave the Cape.
+- **Cause:** `phases.NAMES` stopped at pad compose. FlyingLow is a
+  different Kerbalism subject; ballistic peri is underground.
+- **Fix:** `hop` in `phases.NAMES` / `blocks.md`. `python main.py hop` /
+  `phase hop` on an already-launched uncrewed vessel — does **not**
+  Hangar `kspstuff-pad-pbc`. Light, start the Kerbalism card once
+  airborne, dwell through the ballistic, recover HD when
+  landed/splashed/wreck-recoverable. `hop_apo` 15 km, cut at target,
+  OffPlan above ~18 km. `check_expect(skip_peri=True)`. Empty tanks after
+  the motor are expected. No chute, no FlightWatch, no stock
+  `Experiment.run`. Modules: `hop.py`, `phases.py`, `science.py`,
+  `main.py`.
+
+## hop — Hangar the Flea, not the pad motor
+
+- **When:** 2026-08-20 after 1235Z pad. Gene `need_stack` hop. Conference
+  in: Gus `capable: yes` `kspstuff-hop-flea-pbc`, Linus flying card bound.
+  `go: wait`.
+- **Symptom:** `python main.py hop` / `run_phase` abort `no active vessel
+  — Hangar a hop craft first (not kspstuff-pad-pbc)`. Catalog hop did not
+  Hangar. `python main.py pad` Hangars the pad motor.
+- **Cause:** `hop.run_hop` was an alias of `run_phase` on whatever was
+  already active. Empty KSC after Cape recover has no vessel. Lighting a
+  leftover `kspstuff-pad-pbc` would be the wrong motor. Splash
+  `mysteryGoo` on the Linus card is not a hop start (FlyingLow goo will
+  not finish on this hang).
+- **Fix:** `python main.py hop` copies `crafts/kspstuff-hop-flea-pbc.craft`
+  into the save VAB (byte-copy; do not `Craft.load` round-trip) and
+  `hangar.launch(..., uncrewed=True)` — `go_space_center`, recover
+  leftover, 25 s pre-flight watchdog. Refuses `kspstuff-pad-pbc`.
+  `phase hop` Hangars when empty or leftover pad motor; already-launched
+  hop skips Hangar. Airborne start is the flying card
+  (`kerbalism_TELEMETRY` + `temperatureScan`); splash goo stays off.
+  `hop_apo` 15 km, OffPlan ~18 km, `skip_peri`, recover when
+  landed/splashed/wreck-recoverable. Modules: `hop.py`, `science.py`.
+
+## 2026-08-20T15-58-12Z-hop — Dead probe EC=0 must recover the HD
+
+- **When:** 2026-08-20 letsgrok `python main.py hop` (`2026-08-20T15-58-12Z-hop`).
+  Uncrewed `kspstuff-hop-flea-pbc`. Jeb Hangared, lit, started the FlyingLow
+  card (TELEMETRY + thermo). No chute.
+- **Symptom:** exit 2 `ABORT timeout` at T+609 s. Last-flight is `gate ec=0`
+  then `hop timeout 601s`. Never `hop down`. samples=1. HD not recovered.
+- **Cause:** Hop treated airborne `ec=0` as a dwell gate. With science
+  already started it `continue`d until `DEFAULT_HOP_S` (600 s) and dumped
+  the timeout even if the HD had data. Recover required `_down` (landed /
+  splashed / wreck) **and** `vessel.recoverable`. Pad 1204Z recovers on
+  EC=0 if any slot has data; hop did not. Ballistic peri negative is not
+  the abort.
+- **Fix:** Recover on first recoverable after leaving the pad (situation
+  may stay flying). EC=0 with HD data (in-card or already started) recovers
+  immediately when KSP will take the vessel; otherwise wait wreck-
+  recoverable. Do not OffPlan a dead probe. Do not timeout-dump while
+  airborne with an HD — abort timeout only if the HD is empty; down and
+  not recoverable is still `not recoverable`. Empty pad EC=0 still aborts.
+  Modules: `hop.py`, `science.py`.
+
+## 2026-08-20T16-24-37Z-hop — Leftover dead probe recovers HD without a fresh start
+
+- **When:** 2026-08-20 letsgrok `python main.py phase hop`
+  (`2026-08-20T16-24-37Z-hop`). Leftover uncrewed `kspstuff-hop-flea-pbc`
+  already flying ~73 m, EC=0, fuel=0. Gene: skip Hangar, recover HD, do
+  not light. FlyingLow card ran on 15-58-12Z (disk TELEMETRY 0.110 +
+  thermo 0.401). `recover_banks: yes`.
+- **Symptom:** exit 2 `ABORT no science (wanted kerbalism_TELEMETRY,temperatureScan)`.
+  Last-flight: hop airborne, `gate ec=0`, `science skip (no Experiment
+  modules)`, abort. HD not recovered. Leftover still flying.
+- **Cause:** Hop required `start_experiments` after airborne. Empty
+  Experiment list (dead / disabled Kerbalism modules) aborted **before**
+  recover. `_hd_ready` only saw Experiment `Has Data` or a start in this
+  process — not HardDrive files, not “modules gone”. 15-58-12Z recover-
+  on-EC=0 never ran because the science abort is earlier in the same pulse.
+- **Fix:** Skip a fresh Experiment start when the HardDrive already has
+  data or Experiment modules are gone after leaving the pad; recover on
+  first recoverable. Do not Toggle a leftover card. Empty card on a clean
+  pad still aborts (modules present but none start; pad EC=0 with empty
+  HD). Modules: `hop.py`, `science.py`.
+
+## 2026-08-20T16-36-39Z-hop — Paused wreck must bank the HD
+
+- **When:** 2026-08-20 letsgrok `python main.py phase hop`
+  (`2026-08-20T16-36-39Z-hop`). Leftover uncrewed `kspstuff-hop-flea-pbc`.
+  Gene: skip Hangar, recover HD, do not light. MET already 0d 00:01:15
+  (same as 16-24-37Z).
+- **Symptom:** exit 2 `ABORT abort` at T+526 s. Last-flight is `gate ec=0`
+  then uplink `abort`. HD not recovered. Stuck still: empty Cape grass,
+  alt 72 m, situation flying, toolbar "no vessels", navball 127 m/s.
+- **Cause:** 16-24-37Z leftover recover-on-first-recoverable waited for
+  `vessel.recoverable`. Catastrophic Flight Results paused physics; MET
+  stuck; recoverable never true. `ec=0` with HD `continue`d the wait and
+  skipped the rest of the pulse. Gene uplink-aborted. Do not ask Os to
+  click Recover.
+- **Fix:** Keep waiting a *live* fall (MET moving) until recoverable —
+  do not timeout-dump. Frozen MET (~5 s stuck) or a gone vessel after
+  leaving the pad recovers hop debris, then `hangar.go_space_center`
+  to dismiss Flight Results so the HD banks. Empty pad EC=0 still
+  aborts. Modules: `hop.py`.

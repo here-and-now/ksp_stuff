@@ -104,3 +104,19 @@ emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 Gene: Pad go. 3×Z-100 kspstuff-pad-pbc. mysteryGoo + temperatureScan. Dwell minutes, recover HD. Not hop/mun. go: yes.
 Jebediah: copy, pad 3xZ-100 dwell
 Gene: 1235Z pad exit 0. Dwell timeout 740s. Recovered. 3xZ-100 held. world sci 2.22. Still start. Same card done. go: wait. Not hop/mun.
+Gene: Os continue. Cape landed goo+thermo capped. Next hop. Do not pad. need_stack hop, need_builder, need_science. go: wait.
+Gene: Linus opportunities. Hop. Not pad. Not pad-geiger. Card none. need_stack hop. need_builder. need_science. go: wait.
+Gene: Hop conference in. Gus capable kspstuff-hop-flea-pbc. Linus flying card bound. hop does not Hangar. go wait. Do not pad.
+Gene: Lars Hangar in. hop go. Uncrewed kspstuff-hop-flea-pbc. TELEMETRY 30/0.052 + thermo 138/0.002 airborne. Splash goo off. hop_apo 15 km. Recover HD. Do not pad. Do not Hangar pad-pbc. go: yes.
+Jebediah: copy, hop Flea, flying card, recover
+Jebediah: copy, holding hop Flea uncrewed FlyingLow
+Gene: 155812Z hop timeout. leftover flying 73 m EC=0. sci 3.20 partial FlyingLow. phase hop recover. Do not Hangar. go: yes.
+Jebediah: copy, leftover hop recover, skip Hangar, no light, no splash goo
+Gene: 162437Z leftover abort no science. modules gone. HD not taken. sci 3.20. Lars keep-HD in. phase hop recover. skip Hangar. no light. no Toggle. go: yes.
+Jebediah: copy, leftover hop recover. skip Hangar. no light. recover HD.
+Gene: abort wreck flight results
+script: acked abort wreck flight results
+Gene: 163639Z leftover abort. paused Flight Results. HD not taken. sci 3.20. Os Escape hid modal. still paused 72 m not KSC. Lars frozen-MET in. phase hop recover debris. skip Hangar. no light. go: yes.
+Gene: 163639Z leftover abort. paused wreck. phase hop recover debris. skip Hangar. no light. go yes.
+Jebediah: copy, leftover hop recover, skip Hangar, keep HD
+Gene: 170213Z leftover recover. exit 0. KSC. sci 3.20 unchanged. FlyingLow credited in-flight 15-58, not wreck recover. Verena. go: wait. Do not fly.

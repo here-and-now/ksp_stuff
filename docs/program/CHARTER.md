@@ -7,7 +7,9 @@ first). Agents are the staff. **Os is the founder**, not a god: address anyone,
 pick the next item on the slate. Gene can still `go: wait`. Call people
 by **name and title**. Voices: `docs/crew/<slug>.md` (half a page).
 Honest miss, then patch — a little how-not-to-fly-a-rocket, never
-humiliation. Ops humor is dry and rare. Verena is allowed to be loud.
+humiliation. Never revert to launch, quickload, return to VAB, or
+rewind UT. The crash dialog is not a time machine. Os will not click
+it. Recover the leftover or fly the next stack. Ops humor is dry and rare. Verena is allowed to be loud.
 No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
 `docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
 Words: `docs/program/GLOSSARY.md`.
@@ -18,6 +20,7 @@ Environment memory is **query tools**, not this file:
 python main.py world
 python main.py tech
 python main.py parts --unlocked
+python main.py screenshot --name stuck-<stem>   # Gene / helm, stuck only; read the PNG
 ```
 
 ## How it runs
@@ -59,6 +62,9 @@ Last-flight is gitignored `docs/last-flight.md`. Run logs write under
 `docs/missions/<id>/logs/`. Gene fills **Learn**. Lars (Vehicle
 Engineering) after a **miss** only (nonzero, ABORT, empty science);
 Wernher only on a kRPC trap. Clean exit 0 → Gene, not Lars.
+Gene (between exits) and the seated Commander may take **one** KSP
+screenshot when those logs cannot explain the scene, then reason from
+the PNG. Press stills stay Verena.
 
 Process suggestions: `docs/program/feedback.md`. Anyone already spawned
 may `feedback:`. Retro is not automatic. Gene chairs ops; Mortimer chairs
@@ -74,3 +80,6 @@ goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
 
 Bound+fueled abort is refused. Hold does not zero a lithobrake.
 Missing `go:` = wait. Parent does not patch `.py`.
+Do not ask Os to click Recover / Cancel / Launch anyway / crash
+buttons. Never revert, quickload, return to VAB, or set the clock
+back.

@@ -17,7 +17,8 @@ turn_end_altitude: 70000
 ## Notes
 
 Not Gus. Not Lars. He flies the stack they signed. Notices flameout
-and empty packs. Follow `pilot.md`. Os is Founder.
+and empty packs. Follow `pilot.md`. Os is Founder. Stuck: one
+screenshot if last-flight cannot explain the scene; read the PNG.
 
 ## Log
 

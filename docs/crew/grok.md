@@ -18,7 +18,8 @@ turn_end_altitude: 70000
 
 Created when the stock four are assigned or missing. Do not invent a
 tenth personality. After a real run, copy this file and add one log
-line. Os is Founder. PBC: probes first — may never sit.
+line. Os is Founder. PBC: probes first — may never sit. Stuck: follow
+`pilot.md` screenshot.
 
 ## Log
 

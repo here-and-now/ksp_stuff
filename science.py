@@ -1,12 +1,19 @@
 """kRPC 0.6 science experiments. Run and keep; never transmit.
 
-Stock hop: ``vessel.parts.experiments`` → ``Experiment.run``. Kerbalism
-pad: ``part.modules`` named ``Experiment``, started via events — not
-``Experiment.run``. ``Module.fields`` is PAW gui names; ``experiment_id``
-is a hidden field (``field_list`` / ``get_field_by_id`` / ``config``).
-Pad dwells until HD has the card (status / Has Data / remaining, else
-cfg ``data_rate`` × ScienceDefs size, capped by remaining EC /
-``ec_rate``). EVA hatch is not wired — skip evaReport / surfaceSample.
+Stock leftover: ``vessel.parts.experiments`` → ``Experiment.run``.
+Kerbalism pad/hop: ``part.modules`` named ``Experiment``, started via
+events — not ``Experiment.run``. ``Module.fields`` is PAW gui names;
+``experiment_id`` is a hidden field (``field_list`` / ``get_field_by_id``
+/ ``config``). Pad dwells until HD has the card (status / Has Data /
+remaining, else cfg ``data_rate`` × ScienceDefs size, capped by remaining
+EC / ``ec_rate``). Hop starts the **flying** card once airborne (not
+splash goo) and recovers when landed/splashed/wreck-recoverable, or
+when EC=0 and the HD already has data — it does not wait the pad
+catalog wall. A leftover with files on ``HardDrive`` (or no Experiment
+modules left) recovers without a second Toggle. A paused Flight
+Results wreck (MET frozen, recoverable never true) recovers hop debris
+or leaves flight so the HD banks. EVA hatch is not wired
+— skip evaReport / surfaceSample.
 """
 
 from __future__ import annotations
@@ -20,6 +27,8 @@ log = logging.getLogger("kspstuff")
 EVA_EXPERIMENTS = frozenset({"evaReport", "surfaceSample", "evaScience"})
 
 PAD_EXPERIMENTS = ("mysteryGoo", "temperatureScan")
+# Airborne start. Splash mysteryGoo is not a hop start.
+HOP_EXPERIMENTS = ("kerbalism_TELEMETRY", "temperatureScan")
 
 _SKIP_EVENTS = (
     "reset",
@@ -45,6 +54,20 @@ _START_EVENTS = (
 )
 _KERBALISM_MODULES = frozenset({"Experiment", "ModuleScienceExperiment"})
 _KERBALISM_MODULE_ALIASES = frozenset({"moduleksmexperiment", "kerbalismexperiment"})
+_DRIVE_MODULES = frozenset({"HardDrive", "harddrive"})
+_EMPTY_DRIVE = frozenset(
+    {"", "empty", "none", "0", "0.0", "n/a", "-", "no data", "nodata"}
+)
+_DRIVE_DATA_KEYS = (
+    "Data",
+    "data",
+    "Files",
+    "files",
+    "stored",
+    "FilesSize",
+    "fileSize",
+    "used",
+)
 # kRPC part.name (uid stripped). Used when experiment_id is not a PAW field.
 _PART_EXPERIMENTS = {
     "GooExperiment": "mysteryGoo",
@@ -219,6 +242,16 @@ def _is_science_module(name: str) -> bool:
         return True
     low = n.lower()
     return low in {m.lower() for m in _KERBALISM_MODULES} or low in _KERBALISM_MODULE_ALIASES
+
+
+def _is_drive_module(name: str) -> bool:
+    n = (name or "").strip()
+    if not n:
+        return False
+    low = n.lower()
+    if low in _DRIVE_MODULES:
+        return True
+    return "harddrive" in low
 
 
 def _part_experiment_id(part: Any) -> str:
@@ -740,6 +773,79 @@ def card_has_data(vessel: Any, names: Iterable[str]) -> bool:
     return False
 
 
+def iter_drive_modules(vessel: Any) -> list[tuple[Any, Any]]:
+    """(part, module) Kerbalism ``HardDrive`` slots — not Experiment PAW."""
+    found: list[tuple[Any, Any]] = []
+    seen: set[tuple[str, int]] = set()
+
+    def add(part: Any, module: Any) -> None:
+        key = (_part_name(part), id(module))
+        if key in seen:
+            return
+        seen.add(key)
+        found.append((part, module))
+
+    try:
+        parts = list(vessel.parts.all)
+    except Exception:
+        parts = []
+    for part in parts:
+        try:
+            modules = list(part.modules)
+        except Exception:
+            continue
+        for module in modules:
+            try:
+                if _is_drive_module(_mod_name(module)):
+                    add(part, module)
+            except Exception:
+                continue
+    finder = _attr(_attr(vessel, "parts"), "modules_with_name")
+    if callable(finder):
+        try:
+            extras = list(finder("HardDrive") or [])
+        except Exception:
+            extras = []
+        for module in extras:
+            try:
+                part = _attr(module, "part")
+                if _is_drive_module(_mod_name(module) or "HardDrive"):
+                    add(part, module)
+            except Exception:
+                continue
+    return found
+
+
+def _drive_holds_data(module: Any) -> bool:
+    """True if this HardDrive PAW/config shows files or samples."""
+    if _has_data_field(module):
+        return True
+    for key in _DRIVE_DATA_KEYS:
+        val = module_field(module, key)
+        if val is None:
+            continue
+        if _truthy(val):
+            return True
+        num = _number(val)
+        if num is not None:
+            if num > 0.0:
+                return True
+            continue
+        text = str(val).strip().lower()
+        if not text or text in _EMPTY_DRIVE or text.startswith("empty"):
+            continue
+        return True
+    return False
+
+
+def hd_has_data(vessel: Any) -> bool:
+    """True if any Kerbalism HardDrive holds files — even with Experiment gone."""
+    for _part, module in iter_drive_modules(vessel):
+        if _drive_holds_data(module):
+            return True
+    return False
+
+
 def pad_ec_rate(
     names: Iterable[str],
     *,
@@ -828,3 +934,102 @@ def pad_dwell_s(
         if ec_f == ec_f and ec_f >= 0.0:
             return min(data_s, (ec_f / drain) * PAD_EC_MARGIN)
     return data_s
+
+
+def card_experiment_ids(text: str) -> tuple[str, ...]:
+    """Linus card ``- experiment: id`` lines. Empty text → hop/pad default."""
+    found: list[str] = []
+    seen: set[str] = set()
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line.startswith("-"):
+            continue
+        rest = line.lstrip("-").strip()
+        key, sep, val = rest.partition(":")
+        if not sep or key.strip().lower() != "experiment":
+            continue
+        eid = val.strip().split()[0] if val.strip() else ""
+        if not eid or eid in seen:
+            continue
+        seen.add(eid)
+        found.append(eid)
+    return tuple(found) if found else HOP_EXPERIMENTS
+
+
+_FLYING_SIT = frozenset(
+    {
+        "flying",
+        "flyinglow",
+        "flyinghigh",
+        "inspace",
+        "inspacelow",
+        "inspacehigh",
+    }
+)
+_SPLASH_SIT = frozenset(
+    {
+        "srfsplashed",
+        "splashed",
+        "splash",
+        "srflanded",
+        "landed",
+        "srf",
+    }
+)
+
+
+def card_flying_ids(text: str) -> tuple[str, ...]:
+    """Ids helm may start airborne. Splash/landed rows are not a hop start."""
+    found: list[str] = []
+    seen: set[str] = set()
+    section = ""
+    current_eid: str | None = None
+    current_sit = ""
+
+    def flush() -> None:
+        nonlocal current_eid, current_sit
+        if not current_eid:
+            current_eid = None
+            current_sit = ""
+            return
+        sec = section.lower()
+        sit = current_sit.lower().replace(" ", "").replace("_", "")
+        splash_sec = any(w in sec for w in ("splash", "landed", "surface", "water"))
+        flying_sec = any(w in sec for w in ("fly", "space")) or not sec
+        splash_sit = sit in _SPLASH_SIT or sit.startswith("srf")
+        flying_sit = sit in _FLYING_SIT or sit.startswith("flying") or sit.startswith(
+            "inspace"
+        )
+        take = False
+        if splash_sit or splash_sec:
+            take = False
+        elif flying_sit or flying_sec:
+            take = True
+        if take and current_eid not in seen:
+            seen.add(current_eid)
+            found.append(current_eid)
+        current_eid = None
+        current_sit = ""
+
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("#"):
+            flush()
+            section = line.lstrip("#").strip()
+            continue
+        if line.startswith("-"):
+            flush()
+            rest = line.lstrip("-").strip()
+            key, sep, val = rest.partition(":")
+            if sep and key.strip().lower() in {"experiment", "experiment_id"}:
+                eid = val.strip().split()[0] if val.strip() else ""
+                current_eid = eid or None
+            continue
+        if current_eid and ":" in line:
+            key, _, val = line.partition(":")
+            if key.strip().lower() == "situation":
+                current_sit = val.strip().split()[0] if val.strip() else ""
+    flush()
+    return tuple(found)

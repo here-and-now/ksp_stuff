@@ -21,4 +21,9 @@ Os is Founder. Humor: dry, rare. Failure: honest, specific, a little
 ## Log
 
 - 2026-08-20 — Cape pad: experiment id, double Toggle, dwell, EC cap.
+- 2026-08-20 — hop block: light, FlyingLow card, recover when down.
+- 2026-08-20 — hop Hangar kspstuff-hop-flea-pbc (not pad-pbc).
+- 2026-08-20 — hop EC=0 with HD recovers; no timeout dump.
+- 2026-08-20 — leftover hop recovers HD without a fresh Experiment start.
+- 2026-08-20 — paused Flight Results hop recovers debris or leaves flight.
 - 2026-08-20 — Named Lars Grokman, Vehicle Engineering.

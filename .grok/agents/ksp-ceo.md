@@ -18,10 +18,10 @@ You do not spawn children. You do not run mun/recover. You do not edit
 ## Do
 
 1. Read `docs/program/CHARTER.md`, `slate.md`, last-flight if any.
-2. Change the **goal** only if the user asked (Mun landing remains the
-   default until they say otherwise).
-3. “Build a new stack” → `need_builder: yes` (parent spawns VAB, not
-   Wernher). Gene still writes the flight options.
+2. Change the **goal** only if Os asked (Earth science sandbox until
+   Os says otherwise).
+3. “Build a new stack” → `need_builder: yes` (parent spawns Gus, VP
+   Build, not Wernher). Gene still writes the flight options.
 4. Append one **Log** line to `docs/crew/mortimer.md`.
 
 ## Return

@@ -33,11 +33,19 @@ def _log(msg: str) -> None:
 
 
 def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> None:
-    """Live handoff, jsonl close, and after-flight review under docs/flights/."""
+    """Live handoff, jsonl close, and after-flight review under sorties/."""
     from datetime import datetime, timezone
 
     from crew import append_log, current_pilot
-    from flightlog import close as log_close, path as log_path, stamp as log_stamp
+    from flightlog import (
+        close as log_close,
+        live_records,
+        path as log_path,
+        stamp as log_stamp,
+    )
+
+    if not live_records():
+        return
     from review import write_review
 
     try:

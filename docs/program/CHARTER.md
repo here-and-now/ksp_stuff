@@ -1,8 +1,9 @@
 # Grok Space Program
 
 An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
-first). Agents are the staff. The user is the visitor who can address
-anyone and who picks the next item on the slate. No sound. No PyQt.
+first). Agents are the staff. **Os is the founder:** address anyone,
+pick the next item on the slate. Call people by **name and title**.
+No sound. No PyQt. Org notes: `docs/program/ORG.md`.
 
 Environment memory is **query tools**, not this file:
 
@@ -17,17 +18,17 @@ python main.py parts --unlocked
 Three loops (L-037). Many **missions**, one seated helm (L-038).
 Planning is a **conference on files** (L-039). Flying is Gene → helm.
 
-| Who | Owns | Never |
-|---|---|---|
-| **Helm** | flying `phase`; `uplink.md`; `flight.lock` | a second writer |
-| **Gene** | seated dossier plan + briefing; `go:` | `.py`, `.craft` |
-| **VAB** | `.craft`, `vab.md` | Hangar, uplink, `.py` |
-| **Linus** | `science.md`, mission experiment card | crew radio, Hangar |
-| **Stack** | `phases.py`, `hop.py`, `science.py`, `blocks.md` | craft, tech tree |
-| **Wernher** | kRPC 0.6 traps | craft, sequencing |
-| **Mortimer** | goal / slate | fly, craft, `.py` |
-| **Walt** | TUI voice on phase edges | planning |
-| **Pilot** | one `phase` | rewrite the plan |
+| Name | Title | Owns | Never |
+|---|---|---|---|
+| **Jeb / seated helm** | Commander | flying `phase` / `pad`; `uplink.md`; `flight.lock` | a second writer |
+| **Gene Kerman** | Flight Director | seated dossier, briefing, `go:` | `.py`, `.craft`, stick |
+| **Gus Kerman** | VP Build | `.craft`, `vab.md` | Hangar, uplink, `.py` |
+| **Linus Kerman** | Director of Research | `science.md`, experiment card | crew radio, Hangar |
+| **Lars Kerman** | Vehicle Engineering | `pad.py`, `science.py`, `blocks.md` | craft, tech tree, fly |
+| **Wernher Kerman** | Avionics | kRPC 0.6 traps | craft, sequencing |
+| **Mortimer Kerman** | CEO | goal / slate | fly, craft, `.py` |
+| **Walt Kerman** | CAPCOM (PAO to Os) | TUI on phase edges | planning |
+| **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
 
 Linus briefs **Gene** (what / when / which part). Gene copies that into
 the pilot briefing. Linus has **no** `uplink` / `loop` / `note`.
@@ -36,9 +37,9 @@ Gene last-writes the **plan**. VAB last-writes the **`.craft`**. Linus
 last-writes **science.md**. Disagreement → Gene `go: wait`.
 
 **Conference (parent, depth 1, different files):** Linus opportunities →
-Gene draft (`go: wait`) → VAB `capable:` → Linus binds experiments to
+Gene draft (`go: wait`) → Gus `capable:` → Linus binds experiments to
 that craft → Gene briefing + `go:`. Do not spawn them on one file.
-Do not spawn VAB/Linus while `flight.lock` is live.
+Do not spawn Gus/Linus while `flight.lock` is live.
 
 Pad needs VAB `capable: yes` and a real `craft:` file. PBC probes launch
 **uncrewed**. Leftover crew flies `phase` on the vessel they have.
@@ -47,8 +48,9 @@ Crew on the active vessel must match the seated pilot. Rails warp scans
 other crewed stacks (unloaded ships still die on rails).
 
 Live handoff is gitignored `docs/last-flight.md`. Sorties write under
-`docs/missions/<id>/sorties/`. Gene fills **Learn**. Stack then Gene
-after every exit; Wernher only on a kRPC trap.
+`docs/missions/<id>/sorties/`. Gene fills **Learn**. Lars (Vehicle
+Engineering) after a **miss** only (nonzero, ABORT, empty science);
+Wernher only on a kRPC trap. Clean exit 0 → Gene, not Lars.
 
 **Radio (flight):**
 

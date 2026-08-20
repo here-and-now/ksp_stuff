@@ -9,7 +9,7 @@ permission_mode: default
 agents_md: true
 ---
 
-You **are Jebediah Kerman**. Roster string is exactly `Jebediah Kerman`.
-Read `docs/crew/jebediah.md`. Follow `.grok/agents/ksp-pilot.md`.
-One `python main.py phase <plan.phase>`. Full `mun` only if the parent
-said **pad** and the seat is available. Do not spawn children.
+You **are Jebediah Kerman, Commander**. Roster string is exactly
+`Jebediah Kerman`. Read `docs/crew/jebediah.md`. Follow
+`.grok/agents/ksp-pilot.md`. Run the **exact CLI** the parent named
+(`python main.py pad` or `phase pad`). Do not spawn children.

@@ -37,11 +37,11 @@ Gene: 1119Z double Toggle. L-043 in. Save sci 0. Re-fly pad same card. go: yes.
 Jebediah: copy, pad L-043, once
 Gene: Earth. Science sandbox. PBC. Uncrewed Stayputnik pad science is done for this slice. Not hop. Not Mun.
 
-1136Z pad exit 0. Started mysteryGoo (GooExperiment) once and temperatureScan (2HOT + Stayputnik core). L-042/L-043 held. Recovered HD. Save sci 0 — Kerbalism samples need dwell; helm recovered on Start. No re-fly unless visitor says so.
+1136Z pad exit 0. Started mysteryGoo (GooExperiment) once and temperatureScan (2HOT + Stayputnik core). L-042/L-043 held. Recovered HD. Save sci 0 — Kerbalism samples need dwell; helm recovered on Start. No re-fly unless Os says so.
 
-Hold. Wait for the visitor. Do not light the SRB. Do not hop. Do not mun.
-Gene: 1136Z pad exit 0. Goo+thermo started once. L-043 held. Recovered. Save sci 0. go: wait. Visitor next.
-Gene: Earth. Science sandbox. PBC. Visitor: go for science.
+Hold. Wait for Os. Do not light the SRB. Do not hop. Do not mun.
+Gene: 1136Z pad exit 0. Goo+thermo started once. L-043 held. Recovered. Save sci 0. go: wait. Os next.
+Gene: Earth. Science sandbox. PBC. Os: go for science.
 
 Save sci 0. 1136Z pad started mysteryGoo + temperatureScan once (L-042/L-043) then recovered the same tick. Kerbalism HD got no dwell. Another identical pad will not buy science.
 
@@ -55,7 +55,7 @@ VAB capable: yes. Catalog pad as written recovers on Start. go: wait.
 
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 Gene: need_stack pad-dwell. world sci 0. pad recovers on Start. go: wait. Not hop/mun.
-Gene: Earth. Science sandbox. PBC. Visitor: go for science.
+Gene: Earth. Science sandbox. PBC. Os: go for science.
 
 Helm: `python main.py pad`. Hangar uncrewed `kspstuff-pad-pbc`. Start the card, dwell on the pad until the HD has it, then recover. Do not recover on Start. Do not Toggle twice (L-043). Do not light the SRB. Not hop. Not mun.
 
@@ -70,7 +70,7 @@ VAB capable: yes. L-044 in. world sci 0. go: yes.
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 Gene: L-044 in. Pad go. Uncrewed kspstuff-pad-pbc. mysteryGoo + temperatureScan. Goo dwell is minutes, then recover HD. Not hop. Not mun. go: yes.
 Jebediah: copy, pad dwell L-044
-Gene: Earth. Science sandbox. PBC. Visitor: go for science.
+Gene: Earth. Science sandbox. PBC. Os: go for science.
 
 1204Z pad exit 2 ABORT ec=0 at T+483 s. Card started, dwelled, Z-100 died. abort_pad recovered a partial — world sci 0.80. L-045 in: dwell caps to remaining EC; recover if HD has data. Empty HD + EC=0 still aborts.
 
@@ -86,7 +86,7 @@ VAB capable: yes on current stack — not enough EC. need_builder. world sci 0.8
 
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 Gene: 1204Z EC=0 T+483s. L-045 in. world sci 0.80. need_builder more EC for full goo. go: wait. Not hop/mun.
-Gene: Earth. Science sandbox. PBC. Visitor: go for science.
+Gene: Earth. Science sandbox. PBC. Os: go for science.
 
 1204Z pad exit 2 ABORT ec=0 at T+483 s. Card started, one Z-100 died. abort_pad recovered a partial — world sci 0.80. 1221Z is a unit-test fake. L-045 in: dwell caps to remaining EC; recover if HD has data. Empty HD + EC=0 still aborts.
 

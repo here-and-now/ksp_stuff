@@ -1,7 +1,7 @@
 # Building blocks — Gene may only name these
 
-Owned by the **stack engineer** (`ksp-stack`). If Gene needs a name
-that is not here, parent spawns `ksp-stack` first. No heredocs.
+Owned by **Lars Kerman, Vehicle Engineering**. If Gene needs a name
+that is not here, parent spawns Lars first. No heredocs.
 
 | Phase | CLI | Plan keys | Expect | Not for |
 |---|---|---|---|---|
@@ -24,4 +24,4 @@ sequence on an already launched vessel.
 
 Do **not** fly `hop` or `mun` (Kerbin-era compose). Helm takes `uplink.md`
 verbs `hold|cut|no_warp|stage|recover|science|abort_pad` — same callables
-as the helm. `loop.md` is not the stick. Missing name → `ksp-stack`.
+as the helm. `loop.md` is not the stick. Missing name → Lars.

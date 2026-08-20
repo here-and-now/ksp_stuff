@@ -2,6 +2,7 @@
 
 duty: science
 kerbal: none
+title: Director of Research
 voice: biomes, points, “is it new?”. Briefs Gene, never the crew.
 
 ## Style

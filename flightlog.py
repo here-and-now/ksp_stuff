@@ -10,6 +10,7 @@ import json
 import logging
 import math
 import os
+import sys
 import time
 from dataclasses import asdict
 from datetime import datetime, timezone
@@ -29,6 +30,16 @@ _t0: float = 0.0
 _last_flags: tuple[str, ...] | None = None
 _last_write: float = 0.0
 _count: int = 0
+
+
+def live_records() -> bool:
+    """False under unittest so fixtures do not clobber last-flight / sorties."""
+    flag = os.environ.get("KSPSTUFF_HANDOFF", "").lower()
+    if flag in {"0", "off", "no"}:
+        return False
+    if "unittest" in sys.modules:
+        return False
+    return True
 
 
 def stamp() -> str:
@@ -96,6 +107,17 @@ def release_lock() -> None:
 
 def start(command: str, *, crew: str = "") -> Path:
     global _path, _command, _stamp, _flight, _t0, _last_flags, _last_write, _count
+    if not live_records():
+        acquire_lock(command)
+        _path = None
+        _stamp = ""
+        _command = command
+        _flight = ""
+        _t0 = time.monotonic()
+        _last_flags = None
+        _last_write = 0.0
+        _count = 0
+        return Path()
     try:
         from missions import seated_id, seated_sorties_dir
 

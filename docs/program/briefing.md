@@ -1,6 +1,6 @@
 # Briefing — Gene → jebediah
 
-Earth. Science sandbox. PBC. Visitor: go for science — banked.
+Earth. Science sandbox. PBC. Os: go for science — banked.
 
 1235Z pad exit 0. Live T+748 s. Card started (mysteryGoo + temperatureScan
 on 2HOT and Stayputnik). Dwell timeout 740 s (catalog wall). Recovered.

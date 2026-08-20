@@ -7,4 +7,4 @@ body: Earth
 peri: —
 apo: —
 next: wait
-notes: leftover recovered 17-02-13Z. KSC. world sci 3.20. FlyingLow in-flight 15-58 not recover. Verena. Do not Hangar.
+notes: Lars hop-jsonl in. 15-58 envelope stays empty. Os still drums 002423 / KER 2,380.7 m not 72 m. sci 3.20. Verena patched hop. Do not Hangar.

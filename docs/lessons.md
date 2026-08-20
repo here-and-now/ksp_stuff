@@ -202,3 +202,24 @@ python main.py pad
   leaving the pad recovers hop debris, then `hangar.go_space_center`
   to dismiss Flight Results so the HD banks. Empty pad EC=0 still
   aborts. Modules: `hop.py`.
+
+## 2026-08-20T15-58-12Z-hop — 1 Hz snapshots must hit the run jsonl
+
+- **When:** 2026-08-20 letsgrok `python main.py hop`
+  (`2026-08-20T15-58-12Z-hop`). Uncrewed Flea. Os still
+  `screenshots/rocket-flea.png` is T+7 s, alt 2.1 km, apo 11.6 km,
+  motor lit. Pad 1235Z same hole.
+- **Symptom:** jsonl is two lines (start + end `samples=1`). Review
+  envelope `samples 0`, alt min None, apo max None, duration 0.0 s.
+  Last-flight is `gate ec=0` then timeout — airborne aged out of the
+  40-line tail. The room read 72 m from a leftover wreck still because
+  the log could not answer where or when.
+- **Cause:** `hop.py` / `pad.py` call `Telem.read` each pulse and
+  `EventLog.emit("snapshot")` in memory. `EventLog()` has no path.
+  `flightlog.record` has no hop or pad caller. Review envelopes
+  `kind=state` rows only, so start/end never fill alt/apo.
+- **Fix:** Each `Telem.read` writes a `kind=state` row to the seated
+  run jsonl (alt, apo, peri, situation, MET, EC, fuel) via
+  `flightlog.record(..., force=True)`. Pad dwell uses the same Telem
+  pulse. Learn can envelope a hop. Modules: `telem.py`, `flightlog.py`,
+  `review.py`.

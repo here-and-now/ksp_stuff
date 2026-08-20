@@ -1,7 +1,9 @@
 """Structured flight telemetry. Not FlightWatch.
 
 Streams use kRPC 0.6 ``add_stream(getattr, obj, name)``. Gates use the
-live body's ``atmosphere_depth``. Events go to jsonl.
+live body's ``atmosphere_depth``. Each :meth:`Telem.read` writes a
+``kind=state`` row to the seated run jsonl (alt, apo, peri, situation,
+MET, EC, fuel). :class:`EventLog` stays in-memory unless given a path.
 """
 
 from __future__ import annotations
@@ -84,15 +86,19 @@ class Snapshot:
     throttle: float = float("nan")
     thrust: float = float("nan")
     speed: float = float("nan")
+    met: float = float("nan")
     ec: float | None = None
     fuel: float | None = None
+    lf: float | None = None
     broken: str | None = None
     resources: dict[str, float] = field(default_factory=dict)
+    flags: tuple[str, ...] = field(default_factory=tuple)
 
     def as_dict(self) -> dict[str, Any]:
         data = asdict(self)
         data["in_atmo"] = int(self.in_atmo)
         data["wreck"] = int(self.wreck)
+        data["flags"] = list(self.flags)
         return data
 
 
@@ -298,6 +304,7 @@ class Telem:
         if vessel is None:
             snap = Snapshot(scene=self.scene, vessel=None)
             self.events.emit("snapshot", **snap.as_dict())
+            _record_run(self.session, snap)
             return snap
         self._bind(vessel)
         body = self._body
@@ -338,6 +345,7 @@ class Telem:
             speed = float(vessel.flight().speed)
         except Exception:
             pass
+        met = _finite(getattr(vessel, "met", float("nan")))
         broken = reliability_broken(vessel)
         snap = Snapshot(
             scene=self.scene,
@@ -355,17 +363,40 @@ class Telem:
             throttle=throttle,
             thrust=thrust,
             speed=speed,
+            met=met,
             ec=ec,
             fuel=fuel,
+            lf=fuel,
             broken=broken,
             resources=resources,
         )
+        reasons = gates(snap)
+        snap.flags = tuple(reasons)
         self.events.emit("snapshot", **snap.as_dict())
-        for reason in gates(snap):
+        for reason in reasons:
             self.events.emit("gate", reason=reason)
         if snap.ec is not None and snap.ec <= 0:
             self.events.emit("resource_low", resource="ElectricCharge", amount=snap.ec)
+        _record_run(self.session, snap)
         return snap
+
+
+def _record_run(session: Any, snap: Snapshot) -> None:
+    """Write this pulse to the seated jsonl. No-op if helm has not started."""
+    try:
+        from flightlog import record
+    except Exception:
+        return
+    ut = None
+    try:
+        ut = float(getattr(getattr(session, "space_center", None), "ut"))
+    except (TypeError, ValueError, AttributeError):
+        ut = None
+    tag = snap.scene if snap.scene and snap.scene != "?" else ""
+    try:
+        record(snap, tag=tag, ut=ut, force=True)
+    except Exception:
+        log.debug("flightlog record failed", exc_info=True)
 
 
 def read_snapshot(session: Any, *, scene: str = "?", events: EventLog | None = None) -> Snapshot:

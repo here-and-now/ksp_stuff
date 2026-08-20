@@ -1,5 +1,5 @@
 # Seated jebediah. Canonical: docs/missions/jebediah/plan.md
-# leftover recovered 17-02-13Z. KSC. sci 3.20. Verena. Do not fly.
+# Lars hop-jsonl in. 15-58 stays empty. Verena. Do not fly.
 mun_pe: 25000
 suicide_start: 25000
 parking_apo: 250000

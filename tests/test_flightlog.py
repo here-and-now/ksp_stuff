@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import json
 import os
+import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -50,3 +53,83 @@ class TestLiveRecords(unittest.TestCase):
         write_handoff(command="pad", exit_code=0)
         after = path.read_text(encoding="utf-8") if path.is_file() else None
         self.assertEqual(before, after)
+
+
+class TestRecordEnvelope(unittest.TestCase):
+    def test_state_rows_envelope_hop(self):
+        import flightlog
+        from review import summarize
+        from telem import Snapshot
+
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        old = (
+            flightlog._path,
+            flightlog._t0,
+            flightlog._count,
+            flightlog._last_write,
+            flightlog._last_flags,
+        )
+        flightlog._path = tmp
+        flightlog._t0 = time.monotonic()
+        flightlog._count = 0
+        flightlog._last_write = 0.0
+        flightlog._last_flags = None
+        try:
+            flightlog.record(
+                Snapshot(
+                    body="Earth",
+                    situation="flying",
+                    alt=2123.0,
+                    peri=-6_362_500.0,
+                    apo=11562.0,
+                    met=7.0,
+                    ec=0.0,
+                    fuel=3.5,
+                    lf=3.5,
+                    flags=("ec=0",),
+                ),
+                tag="flight",
+                ut=62610.0,
+                force=True,
+            )
+            flightlog.record(
+                Snapshot(
+                    body="Earth",
+                    situation="flying",
+                    alt=400.0,
+                    peri=-7_000_000.0,
+                    apo=810.0,
+                    met=75.0,
+                    ec=0.0,
+                    fuel=0.0,
+                    lf=0.0,
+                    flags=("ec=0",),
+                ),
+                tag="flight",
+                ut=62678.0,
+                force=True,
+            )
+        finally:
+            (
+                flightlog._path,
+                flightlog._t0,
+                flightlog._count,
+                flightlog._last_write,
+                flightlog._last_flags,
+            ) = old
+        rows = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        stats = summarize(rows)
+        self.assertEqual(stats["samples"], 2)
+        self.assertEqual(stats["alt_min"], 400.0)
+        self.assertEqual(stats["apo_max"], 11562.0)
+        self.assertEqual(stats["met_max"], 75.0)
+        self.assertEqual(stats["ec_min"], 0.0)
+        self.assertEqual(stats["fuel_min"], 0.0)
+        self.assertEqual(stats["fuel_start"], 3.5)
+        self.assertIn("ec=0", stats["flag_counts"])
+        self.assertIn("met=7.0", stats["first"])
+        self.assertIn("fuel=0.0", stats["last"])

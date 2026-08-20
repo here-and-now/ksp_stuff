@@ -29,6 +29,9 @@ before pad.
 
 ## Log
 
+- 2026-08-20 — Os still re-read. Drums 002423 / KER 2,380.7 m. Not 002123 / 2,090.7. Apo 11,581.8 m. 72 m wreck. go: wait. Do not fly.
+- 2026-08-20 — Lars hop-jsonl in. Telem.read → jsonl kind=state. 15-58 stays empty. Verena rewriting hop around Os still. go: wait. Do not fly.
+- 2026-08-20 — Os Flea still. Altimeter 2,123 m not 72 m. 15-58 jsonl start+end only. Peak unknown. need_stack hop-jsonl. Verena after numbers. go: wait.
 - 2026-08-20 — 170213Z leftover recover. exit 0. KSC. sci 3.20 unchanged. FlyingLow credited in-flight 15-58, not wreck recover. Verena. go: wait.
 - 2026-08-20 — 163639Z leftover hop abort. paused Flight Results. HD not taken. sci 3.20. Os Escape hid modal. still paused 72 m not KSC. Lars frozen-MET recover. phase hop recover debris. do not Hangar. go: yes.
 - 2026-08-20 — Os: stuck screenshot. Logs first; one PNG; read it. Not press.

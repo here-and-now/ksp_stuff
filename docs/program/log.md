@@ -19,3 +19,6 @@ Append-only decisions. Environment facts come from `python main.py world`.
 - 2026-08-20 — Lars Hangar in. hop go. `python main.py hop` Hangars uncrewed kspstuff-hop-flea-pbc, lights, FlyingLow TELEMETRY+thermo, recover HD. Splash goo off. hop_apo 15 km. Do not pad.
 - 2026-08-20 — 16-24-37Z leftover hop abort `no science`. Experiment modules gone. HD not taken. world sci 3.20. Lars patched keep HD. `phase hop` recover. Do not Hangar. Do not pad.
 - 2026-08-20 — 16-36-39Z leftover hop abort. Paused Flight Results; HD not taken. world sci 3.20. Os Escape hid modal; still paused flight 72 m, not KSC. Lars frozen-MET recover debris then leave flight. `phase hop` recover. Do not Hangar. Do not pad. Do not revert.
+- 2026-08-20 — Lars hop-jsonl in. Telem.read force-writes kind=state onto seated jsonl. Pad same path. 15-58 envelope stays empty. Next hop can. Verena rewriting hop around Os still. go: wait. Do not fly.
+- 2026-08-20 — Os Flea still `rocket-flea.png`: altimeter 2,123 m (not 72 m). 15-58 hop jsonl start+end only; envelope empty. 72 m is the wreck leftover (`first-hop.png`). need_stack hop-jsonl. Verena after numbers. go: wait. Do not fly.
+- 2026-08-20 — Os still re-read: drums **002423** / KER **2,380.7 m** (not 002123 / 2,090.7). Apo 11,581.8 m. 72 m leftover wreck. Verena patched. go: wait. Do not fly.

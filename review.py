@@ -43,9 +43,9 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
             return float("nan")
         return num
 
-    alt_min = peri_min = lf_min = float("inf")
-    apo_max = warp_max = -float("inf")
-    lf0 = lf1 = float("nan")
+    alt_min = peri_min = lf_min = fuel_min = ec_min = float("inf")
+    apo_max = warp_max = met_max = -float("inf")
+    lf0 = lf1 = fuel0 = fuel1 = ec0 = ec1 = float("nan")
     t_esc = t_atmo = t_dip = 0.0
     prev_t = 0.0
     first_line = last_line = ""
@@ -68,17 +68,32 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
             tags[tag] += 1
         alt, peri, apo = _f(row, "alt"), _f(row, "peri"), _f(row, "apo")
         lf, warp = _f(row, "lf"), _f(row, "warp")
+        fuel, ec, met = _f(row, "fuel"), _f(row, "ec"), _f(row, "met")
+        if not math.isfinite(lf):
+            lf = fuel
         if math.isfinite(alt):
             alt_min = min(alt_min, alt)
         if math.isfinite(peri):
             peri_min = min(peri_min, peri)
         if math.isfinite(apo):
             apo_max = max(apo_max, apo)
+        if math.isfinite(met):
+            met_max = max(met_max, met)
         if math.isfinite(lf):
             lf_min = min(lf_min, lf)
             if not math.isfinite(lf0):
                 lf0 = lf
             lf1 = lf
+        if math.isfinite(fuel):
+            fuel_min = min(fuel_min, fuel)
+            if not math.isfinite(fuel0):
+                fuel0 = fuel
+            fuel1 = fuel
+        if math.isfinite(ec):
+            ec_min = min(ec_min, ec)
+            if not math.isfinite(ec0):
+                ec0 = ec
+            ec1 = ec
         if math.isfinite(warp):
             warp_max = max(warp_max, warp)
         if "ESC" in flags:
@@ -101,9 +116,16 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "alt_min": _fin(alt_min),
         "peri_min": _fin(peri_min),
         "apo_max": _fin(apo_max),
+        "met_max": _fin(met_max),
         "lf_start": _fin(lf0),
         "lf_end": _fin(lf1),
         "lf_min": _fin(lf_min),
+        "fuel_start": _fin(fuel0),
+        "fuel_end": _fin(fuel1),
+        "fuel_min": _fin(fuel_min),
+        "ec_start": _fin(ec0),
+        "ec_end": _fin(ec1),
+        "ec_min": _fin(ec_min),
         "warp_max": _fin(warp_max),
         "t_esc_s": round(t_esc, 1),
         "t_atmo_s": round(t_atmo, 1),
@@ -154,6 +176,9 @@ def write_review(
         f"- alt min {stats['alt_min']}",
         f"- peri min {stats['peri_min']}",
         f"- apo max {stats['apo_max']}",
+        f"- met max {stats['met_max']}",
+        f"- EC {stats['ec_start']} → {stats['ec_end']} (min {stats['ec_min']})",
+        f"- fuel {stats['fuel_start']} → {stats['fuel_end']} (min {stats['fuel_min']})",
         f"- LF {stats['lf_start']} → {stats['lf_end']} (min {stats['lf_min']})",
         f"- warp max {stats['warp_max']}x",
         f"- time ATMO {stats['t_atmo_s']}s  DIP {stats['t_dip_s']}s  ESC {stats['t_esc_s']}s",
@@ -206,8 +231,12 @@ def _fin(val: float) -> float | None:
 def _line(row: dict[str, Any]) -> str:
     flag = row.get("flags") or []
     flag_s = (" [" + " ".join(flag) + "]") if flag else ""
+    fuel = row.get("fuel")
+    if fuel is None:
+        fuel = row.get("lf")
     return (
         f"{row.get('tag','')}{row.get('body','?')} {row.get('situation','?')} "
         f"alt={row.get('alt')} peri={row.get('peri')} apo={row.get('apo')} "
-        f"LF={row.get('lf')} warp={row.get('warp')}x{flag_s}"
+        f"met={row.get('met')} ec={row.get('ec')} fuel={fuel} "
+        f"warp={row.get('warp')}x{flag_s}"
     ).strip()

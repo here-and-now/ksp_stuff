@@ -4,12 +4,44 @@ from __future__ import annotations
 
 import json
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
 from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold
 from telem import EventLog, Telem, format_snapshot, gates, in_atmosphere, read_snapshot
 import uplink
+
+
+def _bind_run_jsonl(test: unittest.TestCase, path: Path) -> None:
+    import flightlog
+
+    old = (
+        flightlog._path,
+        flightlog._t0,
+        flightlog._count,
+        flightlog._last_write,
+        flightlog._last_flags,
+        flightlog._command,
+    )
+    flightlog._path = path
+    flightlog._t0 = time.monotonic()
+    flightlog._count = 0
+    flightlog._last_write = 0.0
+    flightlog._last_flags = None
+    flightlog._command = "test"
+
+    def restore() -> None:
+        (
+            flightlog._path,
+            flightlog._t0,
+            flightlog._count,
+            flightlog._last_write,
+            flightlog._last_flags,
+            flightlog._command,
+        ) = old
+
+    test.addCleanup(restore)
 
 
 class _Body:
@@ -159,6 +191,59 @@ class TestJsonl(unittest.TestCase):
         rec = json.loads(text.splitlines()[0])
         self.assertEqual(rec["event"], "snapshot")
         self.assertIsNone(rec["vessel"])
+
+    def test_telem_read_writes_seated_state_row(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        tmp.write_text("", encoding="utf-8")
+        _bind_run_jsonl(self, tmp)
+        vessel = _Vessel(
+            alt=2123.0, sit="flying", ec=0.0, fuel=3.5, speed=429.0
+        )
+        vessel.met = 7.0
+        vessel.orbit.apoapsis_altitude = 11562.0
+        vessel.orbit.periapsis_altitude = -6_362_500.0
+        session = _Session(vessel)
+        session.space_center.ut = 62610.0
+        with Telem(session, scene="flight") as telem:
+            snap = telem.read()
+            telem.read()
+        self.assertEqual(snap.situation, "flying")
+        self.assertAlmostEqual(snap.met, 7.0)
+        rows = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        states = [row for row in rows if row.get("kind") == "state"]
+        self.assertEqual(len(states), 2)
+        row = states[0]
+        self.assertEqual(row["situation"], "flying")
+        self.assertAlmostEqual(row["alt"], 2123.0)
+        self.assertAlmostEqual(row["apo"], 11562.0)
+        self.assertAlmostEqual(row["peri"], -6_362_500.0)
+        self.assertAlmostEqual(row["met"], 7.0)
+        self.assertEqual(row["ec"], 0.0)
+        self.assertEqual(row["fuel"], 3.5)
+        self.assertEqual(row["lf"], 3.5)
+        self.assertIn("ec=0", row.get("flags") or [])
+        self.assertEqual(row["ut"], 62610.0)
+
+    def test_empty_eventlog_does_not_skip_seated_jsonl(self):
+        tmp = Path(tempfile.mkdtemp()) / "pad.jsonl"
+        _bind_run_jsonl(self, tmp)
+        vessel = _Vessel(alt=80.0, sit="pre_launch", ec=10.0, fuel=20.0)
+        vessel.met = 0.0
+        with Telem(_Session(vessel), events=EventLog()) as telem:
+            telem.read()
+        rows = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        states = [row for row in rows if row.get("kind") == "state"]
+        self.assertEqual(len(states), 1)
+        self.assertEqual(states[0]["situation"], "pre_launch")
+        self.assertAlmostEqual(states[0]["alt"], 80.0)
 
 
 class TestEmergencies(unittest.TestCase):

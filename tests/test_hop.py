@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import json
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -865,6 +867,75 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(result, "recovered")
         hop.assert_called_once()
         run.assert_not_called()
+
+    def test_pulses_write_state_jsonl(self):
+        """Each Telem.read lands alt/apo/peri/sit/MET/EC/fuel on the seated jsonl."""
+        import flightlog
+
+        vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
+        vessel.name = "kspstuff-hop-flea-pbc"
+        vessel.met = 7.0
+        vessel._alt = 2123.0
+        vessel.orbit.apoapsis_altitude = 11562.0
+        vessel.orbit.periapsis_altitude = -6_362_500.0
+        now, sleep, t = _fast_clock()
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        old = (
+            flightlog._path,
+            flightlog._t0,
+            flightlog._count,
+            flightlog._last_write,
+            flightlog._last_flags,
+        )
+        flightlog._path = tmp
+        flightlog._t0 = time.monotonic()
+        flightlog._count = 0
+        flightlog._last_write = 0.0
+        flightlog._last_flags = None
+
+        def nap(dt):
+            t[0] += dt if dt else 0.01
+            vessel.met += dt if dt else 0.01
+            vessel._alt = max(80.0, vessel._alt - 200.0)
+            if t[0] >= 3.0:
+                vessel.recoverable = True
+
+        try:
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
+                now=now,
+                sleep=nap,
+                timeout=2.0,
+                pulse=1.0,
+            )
+        finally:
+            (
+                flightlog._path,
+                flightlog._t0,
+                flightlog._count,
+                flightlog._last_write,
+                flightlog._last_flags,
+            ) = old
+        self.assertEqual(result, "recovered")
+        rows = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        states = [row for row in rows if row.get("kind") == "state"]
+        self.assertGreaterEqual(len(states), 3)
+        first = states[0]
+        self.assertEqual(first["situation"], "flying")
+        self.assertAlmostEqual(first["alt"], 2123.0)
+        self.assertAlmostEqual(first["apo"], 11562.0)
+        self.assertAlmostEqual(first["peri"], -6_362_500.0)
+        self.assertAlmostEqual(first["met"], 7.0)
+        self.assertEqual(first["ec"], 0.0)
+        self.assertEqual(first["fuel"], 5.0)
+        alts = [row["alt"] for row in states]
+        self.assertGreater(max(alts), min(alts))
 
     def test_already_launched_hop_skips_hangar(self):
         vessel = _Vessel([])

@@ -26,4 +26,5 @@ Os is Founder. Humor: dry, rare. Failure: honest, specific, a little
 - 2026-08-20 — hop EC=0 with HD recovers; no timeout dump.
 - 2026-08-20 — leftover hop recovers HD without a fresh Experiment start.
 - 2026-08-20 — paused Flight Results hop recovers debris or leaves flight.
+- 2026-08-20 — hop/pad 1 Hz snapshots land on the seated jsonl.
 - 2026-08-20 — Named Lars Grokman, Vehicle Engineering.

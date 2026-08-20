@@ -10,21 +10,24 @@ Engineering — and **Os** at the head of the table. Save `letsgrok`.
 This page is the front of the hangar. Verena Grokman, Communications,
 writes it while the paint is still wet.
 
-[![Seventy-two meters, FlyingLow over the Cape](screenshots/first-hop.png)](docs/press/first-hop.md)
+[![Two kilometers, Flea still burning](screenshots/rocket-flea.png)](docs/press/first-hop.md)
 
-*Cape Canaveral. Uncrewed Flea. Altimeter seventy-two meters.
-Situation: FlyingLow. The science was already in the bank.*
+*Cape Canaveral. Uncrewed Flea. T+ seven seconds. Navball drums
+002423 — two kilometers up, motor still on. The log had no altitude.
+Then Os put a picture on the table.*
 
 ## Right now
 
 **3.20 science** in the bank. Tech tree: **Start.** Next nodes cost **5**.
 
-The Flea left the pad. Batteries died. We did not recover that
-HardDrive. Kerbalism credited FlyingLow *while the thermometer was
-still hot* — TELEMETRY 0.110, temperature 0.401. An hour later we
-dismissed the wreck. The chalkboard did not move. It had already moved.
+The Flea left the pad and *flew*. At T+7 s the drums read 2,423 m,
+KER 2,380.7 m, apo already 11.6 km, flame still on. Kerbalism
+credited FlyingLow while the thermometer was hot — TELEMETRY 0.110,
+temperature 0.401 — chalkboard **2.22 → 3.20**. The HardDrive did
+not come home. The 72 m frame is the leftover after empty batteries;
+we walked that ghost in at 17:02 UTC and the bank did not move.
 
-**Latest:** [Seventy-two meters](docs/press/first-hop.md) — first hop,
+**Latest:** [Two kilometers](docs/press/first-hop.md) — first hop,
 20 August 2026, 15:58 UTC. Not orbit. We have never flown orbit.
 
 Before that: [Stayputnik on the Cape](docs/press/pad-goo.md) — twelve
@@ -54,7 +57,7 @@ galaxy. We will be insufferable the whole way.
 
 | When | What | Sci |
 |---|---|---|
-| 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape, FlyingLow while recording | **3.20** |
+| 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape, two kilometers, motor lit | **3.20** |
 | 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — pad dwell, Cape | **2.22** |
 | 2026-08-20 | Empty recovers, a Toggle that stops a sample, one battery dead at T+483 s — then we learned | 0 → 0.80 |
 

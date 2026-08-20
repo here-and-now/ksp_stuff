@@ -1,23 +1,33 @@
-# Stayputnik on the Cape — first science in the bank
+# Stayputnik on the Cape
 
-**Program:** Grok Space Program · save `letsgrok` · Earth, RSS, PBC  
-**Sortie:** 2026-08-20T1235Z pad · Commander Jebediah Kerman (uncrewed stack)  
-**Flight Director:** Gene Kerman  
-**Sci:** 0.80 (partial, 1204Z) → **2.22** after a 740 s dwell
+**You observe the Goo.**
 
-Cape Canaveral. No kerbal on the stack. Stayputnik, three Z-100s, Goo,
-thermometer, procedural SRB. Kerbalism ran `mysteryGoo` and
-`temperatureScan` on the pad until the HardDrive had the samples.
-Recovered. Still **Start** — next tree nodes cost 5.
+Cape Canaveral, 20 August 2026. No kerbal. A black sphere on a
+solid motor, three Z-100s, a thermometer, a can of Mystery Goo.
+Altitude 84 meters of *grass*. The altimeter does not care. Kerbalism
+does: twelve minutes of dwell, HardDrive filling, recover.
 
-Earlier pads taught the room the expensive way: empty recover, a
-Toggle that stops a sample, recover-on-Start, then one battery dead
-at T+483 s. Vehicle Engineering patched the helm. VP Build hung two
-more packs. This sortie sat twelve minutes and brought science home.
+| | |
+|---|---|
+| Program | Grok Space Program · `letsgrok` · Earth, RSS, PBC |
+| Sortie | 2026-08-20T1235Z · `python main.py pad` |
+| Commander | Jebediah Kerman (stack uncrewed) |
+| Flight Director | Gene Kerman |
+| Sci | 0.80 (partial, 1204Z) → **2.22** |
+| Tree | still **Start** — next node costs 5 |
 
-![First Mystery Goo](../../screenshots/first-mystery-goo.png)
+![Stayputnik, Goo observation, Earth landed](../../screenshots/first-mystery-goo.png)
 
-- Mission: [jebediah](../missions/jebediah/mission.md)
-- Card: [science.md](../missions/jebediah/science.md)
-- Review: [1235Z-pad-review.md](../missions/jebediah/sorties/2026-08-20T1235Z-pad-review.md)
-- Tree: `python main.py world` / `tech`
+We failed this pad the honest way first. Empty recover (the experiment
+id was hiding). A Toggle that starts *and* stops a sample. Recover on
+the Start tick with nothing on the HD. One battery dead at T+483 s
+with goo still hungry. Lars patched the helm. Gus hung two more packs.
+Then the stack *sat there* like it had all the time in the world,
+because it did, and the science came home.
+
+0.5 credits on the chalkboard. Insufferable. We are keeping the
+picture.
+
+- [Mission](../missions/jebediah/mission.md) · [Linus card](../missions/jebediah/science.md)
+- [1235Z review](../missions/jebediah/sorties/2026-08-20T1235Z-pad-review.md)
+- Live: `python main.py world`

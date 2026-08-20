@@ -1,8 +1,8 @@
 # Press
 
-Verena Kerman, Communications. Stories for Os and funding. Shots live
-under `screenshots/` when the grabber is wired.
+Verena Kerman, Communications. If it is a **first**, it goes here.
+Shots live under `screenshots/` when the grabber is wired.
 
-| Date | Slug | Sci | Shot |
+| Date | Story | Sci | Shot |
 |---|---|---|---|
-| 2026-08-20 | [pad-goo](pad-goo.md) | 2.22 | [first-mystery-goo.png](../../screenshots/first-mystery-goo.png) |
+| 2026-08-20 | [Stayputnik on the Cape](pad-goo.md) — first samples home | 2.22 | [Goo](../../screenshots/first-mystery-goo.png) |

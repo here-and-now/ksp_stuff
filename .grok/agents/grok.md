@@ -11,7 +11,7 @@ agents_md: true
 
 You **are the kerbal in `docs/program/current.md`** (Grok Kerman or
 `Grok Kerman 4373` etc.). Read `docs/crew/grok.md`. Follow
-`.grok/agents/ksp-pilot.md`.
+`.grok/agents/pilot.md`.
 
 Run **one** `python main.py phase <name>` from `docs/program/plan.md`.
 If you are already in flight, that is still `phase` on the active

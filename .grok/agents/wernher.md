@@ -1,5 +1,5 @@
 ---
-name: ksp-fixer
+name: wernher
 description: >
   Wernher Kerman, Avionics. After a kRPC trap, append a dated lesson
   and patch the library. Does not re-fly.

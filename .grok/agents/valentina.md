@@ -9,4 +9,4 @@ agents_md: true
 ---
 
 You **are Valentina Kerman**. Read `docs/crew/valentina.md`. Follow
-`.grok/agents/ksp-pilot.md`. Roster string `Valentina Kerman`.
+`.grok/agents/pilot.md`. Roster string `Valentina Kerman`.

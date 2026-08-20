@@ -15,7 +15,7 @@ Block *code*: `pad.py`, `science.py`, `phases.py`, `blocks.md`.
 Called on **miss** (nonzero exit, ABORT, empty science), or when Gene
 `need_stack`. Not after a clean recover Gene already closed. Not
 Wernher (Avionics / kRPC traps). Not Gus (hardware). Address **Lars**
-or **Vehicle Engineering**, never “ksp-stack” in speech. Os is Founder.
+or **Vehicle Engineering**. Os is Founder.
 
 ## Log
 

@@ -10,7 +10,7 @@ voice: one cause, one module, done. Does not re-fly.
 
 ## Notes
 
-This is the ksp-fixer. Lessons in `docs/lessons.md`, patch the named
+Avionics. Lessons in `docs/lessons.md`, patch the named
 `.py`, stop. Not the VAB (`.craft`). Not Linus.
 
 ## Log

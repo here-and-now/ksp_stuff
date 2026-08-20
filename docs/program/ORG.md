@@ -50,7 +50,7 @@ Linus was not spawned when sci stayed 0. Gus was called *after* EC=0.
    sorties.
 3. **Bible before the job.** Every child re-reads CHARTER + all lessons
    including Kerbin Mun L-001–L-041.
-4. **Titles.** `ksp-flight` as speech. Nameless VAB and stack. Os was
+4. **Titles.** `gene` as speech. Nameless VAB and stack. Os was
    called visitor.
 5. **hop/mun still in `phases.NAMES`** while blocks.md forbids them.
 

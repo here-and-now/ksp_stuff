@@ -19,5 +19,6 @@ titles. Drop RAF/spy/radio-compact.
 | **pad** | Launch pad / `python main.py pad`. Keep. |
 | **F-001** | Feedback tickets, not lessons. Keep unless Os hates letter-ids. |
 | **need_stack** | Internal flag. Speech: “Gene needs Lars.” |
+| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`. Shared writer: `pilot.md`. Spawn types match those names. |
 
 Packet field is `live_run:`, path `docs/missions/<id>/logs/`.

@@ -1,5 +1,5 @@
 ---
-name: ksp-pilot
+name: pilot
 description: >
   Fly one python main.py phase against live KSP/kRPC. Does not edit
   the library. One kRPC writer.

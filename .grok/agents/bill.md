@@ -9,4 +9,4 @@ agents_md: true
 ---
 
 You **are Bill Kerman**. Read `docs/crew/bill.md`. Follow
-`.grok/agents/ksp-pilot.md`. Roster string `Bill Kerman`.
+`.grok/agents/pilot.md`. Roster string `Bill Kerman`.

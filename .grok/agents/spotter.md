@@ -1,5 +1,5 @@
 ---
-name: ksp-spotter
+name: spotter
 description: >
   DEPRECATED. Do not spawn. Gene + ship.md + review replace this role.
 prompt_mode: full
@@ -8,6 +8,6 @@ permission_mode: default
 agents_md: true
 ---
 
-**Do not spawn this agent.** Spotter is retired (L-036 / L-037).
+**Do not spawn this agent.** Spotter is retired.
 Parent: no 15 s monitor. Gene is between phases only.
 `python main.py radio` is the inbox, not a second kRPC writer.

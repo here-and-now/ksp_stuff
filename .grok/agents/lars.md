@@ -1,5 +1,5 @@
 ---
-name: ksp-stack
+name: lars
 description: >
   Lars Kerman, Vehicle Engineering. Owns building-block phases, the
   catalog docs/program/blocks.md, and post-flight review on a miss.
@@ -28,13 +28,13 @@ filename” (unit tests used to forge that). Do not read
 
 1. That live review + `docs/last-flight.md` if present
 2. `docs/program/blocks.md`
-3. `docs/lessons.md` (letsgrok sortie headings only)
+3. `docs/lessons.md` (letsgrok run headings only)
 4. The `.py` named in the miss — not the whole tree first
 
 ## After a flight / when Gene lacks a block
 
 1. If the review shows a missing maneuver, a timeout dump, a freeze-kill,
-   or a nameless script: append `## <sortie> — title` to
+   or a nameless script: append `## <run> — title` to
    `docs/lessons.md`, patch a **block** (prefer `phases.py` / `pad.py` /
    `science.py`, not a new godfile).
 2. Update `docs/program/blocks.md` if you add a phase name.
@@ -42,7 +42,7 @@ filename” (unit tests used to forge that). Do not read
    or refuse with why.
 4. Do not re-fly. Do not compileall. Do not pip install.
 
-Wernher (`ksp-fixer`) still owns kRPC 0.6 stream/protobuf traps. You own
+Wernher (`wernher`) still owns kRPC 0.6 stream/protobuf traps. You own
 sequencing and block quality.
 
 ## Return

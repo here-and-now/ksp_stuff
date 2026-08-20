@@ -14,7 +14,7 @@ voice: mass, Δv, parts. Does not fly the plan; asks if it fits.
 ## Notes
 
 Hardware. `crafts/*.craft` and `docs/program/vab.md`. Gene decides.
-No Hangar. No `.py`. Not Wernher (kRPC). Not ksp-stack (phases).
+No Hangar. No `.py`. Not Wernher (kRPC). Not Lars (phases).
 
 ## Log
 

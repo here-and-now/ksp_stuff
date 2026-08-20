@@ -40,9 +40,9 @@ Kerman, Flight Director; never “ksp-flight” in speech. For talk: load
 `docs/crew/<slug>.md` and answer **in that voice** (Build: `gus.md`).
 Do not spawn a child just to chat.
 
-Three loops (L-037): **Helm** (Commander flying `phase`/`pad`), **Flight
+Three loops: **Helm** (Commander flying `phase`/`pad`), **Flight
 Director** (Gene between exits), **R&D** (exactly one of Lars or
-Wernher). Ground conference (L-039): **Linus** + **Gus** + Gene on
+Wernher). Ground conference: **Linus** + **Gus** + Gene on
 *different* files.
 
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
@@ -80,7 +80,7 @@ Style in `docs/crew/*.md` changes ascent/landing numbers through
 `docs/program/briefing.md` **between exits**. Uplink
 (`docs/program/uplink.md`) is last-write-wins; **helm takes**
 (`phase` / `mun` / `recover`, not `status`). `loop.md` is talk, not the
-helm (L-032). Bound+fueled `abort` is refused (L-033). Parent does **not**
+helm. Bound+fueled `abort` is refused. Parent does **not**
 patch `.py` in the same turn — spawn R&D.
 
 ---
@@ -134,6 +134,13 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   Os said so). `--full` if she asked for a monitor-size still. Dest is
   `screenshots/<slug>.png`; she links it from `docs/press/` and README.
 - `status` must not overwrite `docs/last-flight.md`.
+- Any return `feedback:` → parent files `docs/program/feedback.md`
+  (`F-NNN` or a comment). Do not spawn a desk just to complain.
+- Retro (comment round, then Gene, then Mortimer if needed): Os says
+  retro / feedback / org, or Gene/Mortimer `need_retro: yes`, or **3+
+  open** F- items and lock **free**. Parallel `notes/<slug>.md` only
+  for desks the items touch. Gene `need_mortimer` / Mortimer `need_os`
+  for CHARTER/PROTOCOL/roster. Lock live → no retro.
 
 Isolation is `none` (shared tree, one game). Do not use a worktree for
 pilot/fixer — they must see the same `.py` files and the same KSP save.
@@ -154,9 +161,9 @@ last:
   <up to 40 heartbeat / ABORT lines>
 ```
 
-R&D contract: one new `L-NNN` (stack **or** Wernher, not both), the
-library patch named in that lesson, then stop. Parent re-flies via a
-new pilot only after Gene `go: yes`.
+R&D contract: one new dated heading in `docs/lessons.md` (sortie —
+title). Lars **or** Wernher, not both. Patch the named `.py`, then stop.
+Parent re-flies via a new Commander only after Gene `go: yes`.
 
 ---
 
@@ -176,7 +183,7 @@ tanks, pre-flight fail):
 Connection → streams → control writes → `.craft` / `launch_vessel` → mission
 loops. Lessons already record kRPC 0.6 traps (`engaged`, protobuf
 `get_services`, stream `getattr` form, warp-in-atmo, rails altitude cap,
-pad DIP/ESC, FlightWatch). Helm/Flight/R&D: L-037.
+pad DIP/ESC, FlightWatch). Helm / Flight Director / R&D.
 
 Every burn/warp/ascent loop holds a `watch.FlightWatch` and calls `pulse()`
 each iteration (1 Hz log, faster gates). Print-only heartbeats are not

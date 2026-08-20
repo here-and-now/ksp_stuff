@@ -88,9 +88,13 @@ need_stack: none|<name>
 need_builder: none|yes
 need_science: none|yes
 need_pr: none|yes
+need_retro: none|yes
+need_mortimer: none|yes
 pr: none|<slug>
 shot: none|dwell|after-recover
 go: yes|wait
 recommended: <one line>
 slate: docs/program/slate.md
+feedback:
+  - new: <good / bad / suggest or omit>
 ```

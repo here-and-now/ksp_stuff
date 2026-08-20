@@ -4,7 +4,7 @@ An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
 first). Agents are the staff. **Os is the founder:** address anyone,
 pick the next item on the slate. Call people by **name and title**.
 No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
-`docs/program/PROTOCOL.md`.
+`docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
 
 Environment memory is **query tools**, not this file:
 
@@ -16,8 +16,8 @@ python main.py parts --unlocked
 
 ## How it runs
 
-Three loops (L-037). Many **missions**, one seated helm (L-038).
-Planning is a **conference on files** (L-039). Flying is Gene → helm.
+Three loops. Many **missions**, one seated helm.
+Planning is a **conference on files**. Flying is Gene → helm.
 
 | Name | Title | Owns | Never |
 |---|---|---|---|
@@ -54,6 +54,10 @@ Live handoff is gitignored `docs/last-flight.md`. Sorties write under
 Engineering) after a **miss** only (nonzero, ABORT, empty science);
 Wernher only on a kRPC trap. Clean exit 0 → Gene, not Lars.
 
+Process suggestions: `docs/program/feedback.md`. Anyone already spawned
+may `feedback:`. Retro is not automatic. Gene chairs ops; Mortimer chairs
+goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
+
 **Radio (flight):**
 
 - `docs/program/ship.md` — last heartbeat + `as_of` + flight id
@@ -62,5 +66,5 @@ Wernher only on a kRPC trap. Clean exit 0 → Gene, not Lars.
 - `docs/missions/<id>/briefing.md` + `loop.md` — Gene → that pilot
 - `python main.py seat <id>` / `missions` / `vab` / `science` / `pad`
 
-Bound+fueled abort is refused (L-033). Hold does not zero a lithobrake.
+Bound+fueled abort is refused. Hold does not zero a lithobrake.
 Missing `go:` = wait. Parent does not patch `.py`.

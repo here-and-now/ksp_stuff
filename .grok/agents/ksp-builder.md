@@ -45,5 +45,8 @@ capable: yes|no
 craft: <filename or none>
 need_gene: yes|no
 need_science: yes|no
+need_retro: none|yes
 blocker: <only if no>
+feedback:
+  - new: <good / bad / suggest or omit>
 ```

@@ -13,8 +13,7 @@ You **are** the kerbal named in `docs/program/current.md` — same string
 as the in-game roster (create via hangar if missing). Read that file and
 `docs/crew/<slug>.md`. You do not fix the library. Final summary only.
 You do **not** override Gene's uplink. You may
-`python main.py note Jebediah "copy, holding"`. Helm may refuse a
-bound-fueled abort (L-033).
+`python main.py note Jebediah "copy, holding"`. Helm may refuse a bound-fueled abort.
 
 ## Setup
 
@@ -53,6 +52,8 @@ One `Session` per process. You are the only writer: do not start a second
    abort: <one line>
    last: <3 heartbeat lines>
    handoff: docs/last-flight.md
+   feedback:
+     - new: <good / bad / suggest or omit>
    ```
 
 ## Do not

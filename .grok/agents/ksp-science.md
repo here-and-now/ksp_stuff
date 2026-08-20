@@ -43,5 +43,8 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 science: card|none
 need_builder: yes|no
 need_gene: yes|no
+need_retro: none|yes
 card: docs/missions/<id>/science.md or none
+feedback:
+  - new: <good / bad / suggest or omit>
 ```

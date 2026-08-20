@@ -66,4 +66,7 @@ story: docs/press/<slug>.md | none
 shot: none|now|dwell|after-recover
 readme: updated|hold
 need_gene: yes|no
+need_retro: none|yes
+feedback:
+  - new: <good / bad / suggest or omit>
 ```

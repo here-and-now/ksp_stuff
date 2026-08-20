@@ -1,7 +1,7 @@
 # Kerbin / Mun lessons (archived)
 
 Not the live chain. RSS Earth / letsgrok agents read `docs/lessons.md`
-(L-042+). kRPC traps that are still true are in `docs/agent-notes.md`.
+(letsgrok sortie headings). kRPC traps that are still true are in `docs/agent-notes.md`.
 
 ## L-001 — `AutoPilot.engage` missing (kRPC 0.6)
 

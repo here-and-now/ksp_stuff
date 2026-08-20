@@ -29,5 +29,9 @@ You do not spawn children. You do not run mun/recover. You do not edit
 ```
 goal: <one line>
 need_builder: none|yes
+need_retro: none|yes
+need_os: none|yes
 recommended: <one line or none>
+feedback:
+  - new: <good / bad / suggest or omit>
 ```

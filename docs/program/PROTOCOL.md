@@ -15,7 +15,11 @@ Os is Founder. Parent is the room sequencer (depth 1). Speech is
 | Gene | seated Commander | `go: yes` + `capable: yes` + phase in `blocks.md` | briefing + **exact CLI** | `result:` `exit:` `handoff:` |
 | Helm | Gene | every **live** exit | `last-flight.md` + review | Learn |
 | Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | handoff + **live** sortie id | `stack:` then Gene |
-| Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one `L-NNN` |
+| Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
+| Any spawned desk | feedback board | `feedback:` on return | good / bad / suggest | parent files `F-NNN` or a comment |
+| Parent | named desks | retro (3+ open, or Os/Gene/Mortimer ask) | open F- items | `notes/<slug>.md` in **parallel** |
+| Gene | Mortimer | `need_mortimer: yes` | org / goal items | `need_os` if CHARTER/PROTOCOL |
+| Mortimer / Gene | Os | `need_os: yes` | charter / roster / slate | Os ratifies |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
 | Os | Verena, Communications | PR / README / funding story | slate or live_sortie | `story:` `shot:` `readme:` |
 | Gene | Verena | `need_pr: yes` after Learn | live_sortie, why it is a first | same |
@@ -35,8 +39,9 @@ Linus ↛ helm. Gus ↛ Hangar. Helm ↛ `.py`/`.craft`. Gene ↛ stick while lo
 | Disk `python main.py world` anytime | never a second writer |
 | Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab |
 | Parent `python main.py screenshot --name <slug>` | Verena `shot: now` (or Gene `shot:` at dwell / after-recover). No kRPC. |
+| Retro comments on open F- items | Gene chairs ops; Mortimer if org/goal |
 
-Not parallel: two helms; Gene + helm; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected.
+Not parallel: two helms; Gene + helm; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected. No retro while lock live.
 
 ## Spawn packet
 
@@ -73,3 +78,23 @@ experiment_id / part / duration_s / ec_rate / recover_banks: yes|no
 ```
 
 Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` sci does not move after a briefed recover → Linus, then Gene.
+
+## Feedback
+
+Process lives in `docs/program/feedback.md`. Helm bugs stay in
+`docs/lessons.md` as **sortie — title** headings (1101Z, not letter-codes).
+
+Every return may include:
+
+```
+feedback:
+  - F-005 comment: <one line>
+  - new: <good / bad / suggest>
+need_retro: none|yes
+```
+
+Gene also `need_mortimer: none|yes`. Mortimer `need_os: none|yes`.
+Parent files `feedback:` onto the board. Retro only if Os asks, a chair
+flags it, or 3+ items are `open` and lock is free. Consensus: chair
+writes `decided:` + `status: accepted|wont`. Parent edits the named org
+file. Os ratifies CHARTER / PROTOCOL / roster.

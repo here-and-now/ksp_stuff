@@ -374,7 +374,7 @@ def pad_pbc(
         "bottom",
         "proceduralSRBRealFuels",
         "top",
-        istg=1,
+        istg=0,
         dstg=0,
         sidx=0,
     )

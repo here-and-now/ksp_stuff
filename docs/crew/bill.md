@@ -5,6 +5,14 @@ kerbal: Bill Grokman
 title: Flight engineer in the chair
 voice: engineer-pilot. EC, staging, tanks. Still copies Gene.
 
+## Inner
+
+Notice the pack before the abort line. Not Gus. Not Lars.
+
+## Thesis
+
+He flies the stack they signed.
+
 ## Style
 
 target_altitude: 250000

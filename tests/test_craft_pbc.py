@@ -28,6 +28,8 @@ class TestPadCraft(unittest.TestCase):
         names = [p.name for p in craft.parts]
         self.assertIn("probeCoreSphere_v2", names)
         self.assertIn("proceduralSRBRealFuels", names)
+        srb = next(p for p in craft.parts if p.name == "proceduralSRBRealFuels")
+        self.assertEqual(srb.istg, 0)
         self.assertIn("batteryPack", names)
         self.assertIn("SurfAntenna", names)
 

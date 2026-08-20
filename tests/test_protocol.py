@@ -44,9 +44,8 @@ class TestLinusCardSchema(unittest.TestCase):
         self.assertIn("recover_banks:", text)
         self.assertIn("duration_s:", text)
         self.assertIn("ec_rate:", text)
-        self.assertIn("mysteryGoo", text)
-        self.assertIn("temperatureScan", text)
-        self.assertIn("GooExperiment", text)
+        self.assertIn("geigerCounter", text)
+        self.assertNotIn("- experiment: mysteryGoo", text)
 
 
 class TestPressDesk(unittest.TestCase):

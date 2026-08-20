@@ -1,7 +1,8 @@
 """Career snapshot (kRPC stock fields).
 
-Science sandbox has science, not funds/contracts. Tree unlocks are disk
-(`world.py`), not this module. No RP-1 / KCT service.
+Science sandbox has science, not funds/contracts. Tree query is disk
+(`world.py`). Buy is `tech-unlock` (kRPC R&D), not this module.
+No RP-1 / KCT service.
 """
 
 from __future__ import annotations

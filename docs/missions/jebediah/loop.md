@@ -120,3 +120,21 @@ Gene: 163639Z leftover abort. paused Flight Results. HD not taken. sci 3.20. Os 
 Gene: 163639Z leftover abort. paused wreck. phase hop recover debris. skip Hangar. no light. go yes.
 Jebediah: copy, leftover hop recover, skip Hangar, keep HD
 Gene: 170213Z leftover recover. exit 0. KSC. sci 3.20 unchanged. FlyingLow credited in-flight 15-58, not wreck recover. Verena. go: wait. Do not fly.
+Jebediah: copy, hop Flea kspstuff-hop-flea-pbc, TELEMETRY+thermo airborne, recover HD, hop_apo 15000, no pad
+Jebediah: copy, leftover pad Flea, no Hangar
+Jebediah: copy, leftover tracking Flea, enter Flight, no Hangar
+Jebediah: copy, leftover pad Flea, one Toggle per id
+Jebediah: copy, pad geiger, not goo
+Jebediah: copy, pad geiger, MET must move
+Jebediah: copy, fresh Hangar, pad geiger, MET must move
+Jebediah: copy, dry-launch pad, MET must tick, Stayputnik geiger PAW
+Jebediah: copy, ad astra, named clocks
+Gene: abort_pad
+script: acked abort_pad
+Jebediah: copy, Flea TELEMETRY, named clocks, no geiger
+Jebediah: copy, Geiger part, rem/UT not MET, rails 0
+Gene: abort
+script: acked abort
+Jebediah: copy, Geiger part not PAW
+Jebediah: copy, Hammer thermo, 2HOT not PAW
+Jebediah: copy, landed TELEMETRY, skip geiger

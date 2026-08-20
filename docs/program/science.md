@@ -4,139 +4,117 @@ Query, then write. Do not copy Squad Start from memory.
 
 ```bash
 python main.py world
-python main.py parts --unlocked --module Experiment
-python main.py tech start
-python main.py science
+python main.py tech
+python main.py parts --unlocked --search geiger
+python main.py parts --stack
 ```
 
-Kerbalism Default: `MODULE Experiment` + `HardDrive` (time + EC). File
-experiments (`kerbalism_TELEMETRY`, `temperatureScan`, `geigerCounter`)
-credit R&D **while recording** — not on `vessel.recover()`. Goo is a
-sample; that slot still wants recover. Do not transmit (omni-only, no
-RA planner). Game `PreferencesScience.transmitScience = True` anyway.
-PBC unmanned. Mk1 is locked (`simpleCommandModules`, 90). No
-`crewReport` on a probe.
-
-After Gus `capable: yes`, bind **that** craft in seated `science.md`.
-Each line: `experiment_id`, `part`, `duration_s`, `ec_rate`. Card
-`recover_banks: yes|no`. Missing part → `need_builder`. Gus sizes
-`ec_rate × duration_s` before signing. `duration_s` is size/data_rate
-(recording). Pad wall is that ×1.15+2.
+F-013: bind `geigerCounter` only on `kerbalism-geigercounter`, never
+Stayputnik PAW. File experiments credit while recording. Do not
+transmit. PBC unmanned. Mk1 locked (`simpleCommandModules`, 90).
 
 ---
 
 ## Banked (do not re-fly)
 
-Live `persistent.sfs` (`python main.py world`): R&D `sci = 3.20062709`
-+ Kerbalism `uncreditedScience = 0.011`. Still `start`. No hop vessel
-in FLIGHTSTATE (`activeVessel = -1`). Asteroids only.
-
-Cape `2026-08-20T12-35-42Z-pad` recovered HD: landed goo + Shores
-thermo, then `sci = 2.2239902` + uncredited `0.476` (2.70 in the lab).
-Hop `2026-08-20T15-58-12Z-hop` started TELEMETRY + thermo airborne,
-died EC=0, **never recovered**. Those FlyingLow subjects were already
-in R&D. Leftover `2026-08-20T17-02-13Z-hop` exit 0 (paused wreck,
-`go_space_center`) **did not move sci**. `recover_banks` did not dump a
-hop HD. No splash goo. Cape uncredited buffer flushed (~0.011 left).
+Live `persistent.sfs`: R&D `sci = 2.3272078` + uncredited 0.056.
+Unlocked: **`start`, `engineering101`, `basicRocketry`**. 22-56-44Z
+Hammer hop OFFPLAN apo 18.8 km (still FlyingLow). 2HOT started;
+Kerbalism credited while recording. **No recover** — recovery leftover
+unchanged. KSC empty. Do not recover Ast. XRL-564.
 
 | subject | sci / cap | scv | notes |
 |---|---|---|---|
-| `mysteryGoo@EarthSrfLanded` | 1.80 / 1.80 | 0 | **Earth-global.** Cape. Another Cape goo is 0. |
-| `temperatureScan@EarthSrfLandedShores` | 0.90 / 0.90 | 0 | Shores only. Other biomes still pay. |
-| `kerbalism_TELEMETRY@EarthFlyingLowShores` | 0.110 / 1.40 | 0.921 | 15-58-12Z hop, **partial**. 1.29 left. |
-| `temperatureScan@EarthFlyingLowShores` | 0.401 / 2.10 | 0.809 | 15-58-12Z hop, **partial**. 1.70 left. |
+| `mysteryGoo@EarthSrfLanded` | 1.80 / 1.80 | 0 | F-005. |
+| `temperatureScan@EarthSrfLandedShores` | 0.90 / 0.90 | 0 | Shores. |
+| `kerbalism_TELEMETRY@EarthFlyingLowShores` | 1.40 / 1.40 | 0 | **Capped.** |
+| `geigerCounter@EarthSrfLandedShores` | 1.20 / 1.20 | 0 | **Capped.** Do not re-pad. |
+| `temperatureScan@EarthFlyingLowShores` | **2.055 / 2.10** | **0.021** | leftover **0.045**. **3 s.** Crumbs. |
+| `kerbalism_TELEMETRY@EarthSrfLandedShores` | 0.027 / 0.60 | 0.955 | leftover **0.57**. 29 s. |
+| `recovery@EarthFlew` | 5.00 / 6.00 | 0.167 | leftover **1.00**. |
 
-Cape 2.70 + hop 0.512 = 3.21 lab. F-005: same Cape pad card is done.
-Hop flying card (`docs/missions/jebediah/science.md`) is **spent** —
-do not re-bind it as new. Remaining scv is still payable on a *new*
-run if Gene asks.
+86 s leftover thermo card **spent / stale**. Do not re-bind. Jump
+1.13→2.33 is FlyingLow thermo file, not recover.
 
-HD assumption that failed: TELEMETRY 0.75 + thermo 0.45 = 1.20 MB vs
-1.0 MB tape did **not** zero one subject. Both filed **partials**
-(Kerbalism credits as data is produced; they never finished both
-files). ~0.06 MB TELEMETRY + ~0.086 MB thermo fits the tape. "Both
-will not file" was a complete-file claim. Wrong.
+Earth RSS: landed 0.3, flyingLow 0.7, flyingHigh 0.9. FlyingLow < 50 km.
+Geiger cap 4 → FlyingLow **global** 2.80, FlyingHigh **global** 3.60.
 
-Earth RSS multipliers (Kopernicus): landed 0.3, splashed 0.4, flyingLow 0.7,
-flyingHigh 0.9. FlyingLow < 50 km; space 35786 km. Cape biome = Shores.
-
-Need **1.80** more for a 5-sci node.
+Need **12.67** for `survivability` (15). **17.67** for `generalRocketry`
+(20).
 
 ---
 
-## Hardware at `start` (unlocked Experiment parts)
+## Tree now
 
-| part | experiment_id | duration_s | ec_rate | HD |
-|---|---|---|---|---|
-| `GooExperiment` | `mysteryGoo` | 641 | 0.18 | private sample slot |
-| `sensorThermometer` | `temperatureScan` | 138 | 0.002 | uses command HD |
-| `probeCoreSphere_v2` | `temperatureScan` | 138 | 0.002 | same subject as 2HOT |
-| `probeCoreSphere_v2` | `geigerCounter` | 497 | 0.005 | 0.5 MB — fills Stayputnik HD |
-| `probeCoreSphere_v2` | `kerbalism_TELEMETRY` | 30 | 0.052 | 0.75 MB — **does not fit** 0.5 MB HD |
-| `probeCoreSphere_v2` | `kerbalism_LITE` | 10 | 0.03 | 0.25 MB; **InSpace only** |
-| `probeCoreSphere_v2` | `kerbalism_MITE` | 755 | 0.085 | polar orbit (`incl 70–120`) |
-| `probeCoreSphere_v2` | `kerbalism_SITE` | 3645 | 0.15 | InSpace; 12.4 MB; 547 EC |
-| `probeCoreSphere_v2` | `seismicScan` | 317248 | 0.0076 | landed@biomes; 200 MB; 2411 EC |
-| `restock-goocanister-625-1` | `mysteryGoo` | 641 | 0.18 | same id as canister — not extra sci |
+| node | cost | state |
+|---|---|---|
+| start | 0 | **owned** |
+| engineering101 | 5 | **owned** — Geiger Counter |
+| basicRocketry | 5 | **owned** — Hammer/Swivel/tanks. No science part. |
+| survivability | 15 | locked. chute |
+| generalRocketry | 20 | locked. MITE SETUP |
+| stability | 18 | locked. barometer |
 
-PBC Stayputnik HD = **0.5 MB**. `Engineer7500` (Start, KER tape) = **+0.5 MB**.
-No solar. No parachute (`parachuteSingle` = survivability, 15). No barometer
-(`sensorBarometer` = stability, 18).
-
-Expected cap ≈ patched `scienceCap` × Earth dataValue (Cape 1.80 / 0.90
-and FlyingLow thermo cap 2.10 match).
-
-Craft on the shelf: `kspstuff-hop-flea-pbc` (Gus `capable: yes`). Not
-bound for a new card. Leftover is gone — next hop is a Hangar.
+`kerbalism-geigercounter` **UNLOCKED**. seismic `landing` LOCKED.
 
 ---
 
-## Still available at this tech
+## Hardware
 
-### 1. Finish FlyingLow Shores (same subjects, remaining scv)
+This Hangar: `kspstuff-geiger-pbc` (Gus signed). Stayputnik +
+Engineer7500 + Geiger Counter (do **not** start). Bound leftover landed
+TELEMETRY: `docs/missions/jebediah/science.md`. Do not Hangar Hammer
+for this pad. Do not Toggle Stayputnik PAW geigerCounter. Do not
+Toggle goo/thermo (F-005).
 
-Not a new card. Not the spent hop bind. Remaining:
+---
 
-| experiment_id | part | left | duration_s left | ec_rate | est. sci left |
-|---|---|---|---|---|---|
-| `kerbalism_TELEMETRY` | Stayputnik | scv 0.921 | ~28 | 0.052 | **1.29** |
-| `temperatureScan` | `sensorThermometer` | scv 0.809 | ~112 | 0.002 | **1.70** |
+## Still available
 
-Thermo alone → program **4.90**, **0.10 short of a node**. TELEMETRY
-alone → 4.49, short. **Both remaining → ~6.19, unlocks.** Do not start
-goo airborne. Do not co-run geiger (1.25 MB). Bind only if Gene asks.
+### 1. Landed TELEMETRY Shores leftover — **bound**
 
-### 2. Cape pad, new IDs (no hop)
+On `kspstuff-geiger-pbc`. Stayputnik PAW. Live
+`kerbalism_TELEMETRY@EarthSrfLandedShores` scv 0.955, sci 0.027/0.60.
 
-Not the Cape goo+thermo card. Landed TELEMETRY is a **different**
-subject from FlyingLow.
+| field | value |
+|---|---|
+| experiment_id | `kerbalism_TELEMETRY` |
+| part | **`probeCoreSphere_v2`** |
+| instrument | hosted PAW, no Science part, unlocked start |
+| situation | SrfLanded@Shores |
+| duration_s | **29** |
+| ec_rate | **0.052** |
+| file MB | 0.72 vs tape 1.0 |
+| est. sci | **0.57** |
+| recover_banks | yes |
 
-- `geigerCounter` on `probeCoreSphere_v2` — landed Shores `@Biomes`.
-  497 s, 0.005 EC/s, 0.5 MB. Est. **1.2** → program **4.40**, short.
-- `kerbalism_TELEMETRY` landed Shores. 30 s, 0.052 EC/s, 0.75 MB.
-  Est. **0.6**. Needs `Engineer7500`. Do not run with geiger.
+Do not bind `geigerCounter`. Do not bind goo/thermo. Cape pad sit.
 
-Together ~1.8 → ~5.00, razor. Do not also start landed goo/thermo.
+### 2. Other remaining (not this card)
 
-### 3. Splash / other biomes
+| experiment_id | situation | instrument | duration_s | ec_rate | est. left | notes |
+|---|---|---|---|---|---|---|
+| `kerbalism_TELEMETRY` | SrfLanded@Shores | hosted PAW | **29** | 0.052 | **0.57** | **this card** |
+| `geigerCounter` | FlyingLow **global** | Geiger Counter, e101, unlocked | **497** | 0.005 | **2.80** | fat file. **497 s hang.** part on stack, not PAW |
+| `geigerCounter` | FlyingHigh **global** | same | **497** | 0.005 | **3.60** | 50 km lid |
+| `geigerCounter` | Surface other biomes | same | 497 | 0.005 | **1.20**/biome | Shores done |
+| `recovery@EarthFlew` | survive+recover | — | — | — | **1.00** | living hop + recover (OFFPLAN did not) |
+| `temperatureScan` | FlyingLow@Shores | 2HOT | **3** | 0.002 | **0.045** | **crumbs — skip** |
+| `temperatureScan` | FlyingHigh | 2HOT, start, unlocked | 138 | 0.002 | **2.70** | if apo ≥ 50 km. Lars lid 50 km |
+| `mysteryGoo` | SrfSplashed | Goo | 641 | 0.18 | **2.40** | hop-to-water refused |
 
-| experiment_id | situation | duration_s | ec_rate | est. sci | notes |
-|---|---|---|---|---|---|
-| `mysteryGoo` | FlyingLow (global) | 641 | 0.18 | **4.2** | hop will not finish |
-| `mysteryGoo` | SrfSplashed (global) | 641 | 0.18 | **2.4** | water; **unlocks** if the can lives |
-| `temperatureScan` | Surface@Water (or other) | 138 | 0.002 | 0.9 / 1.2 splash | Shores landed is done |
-| `geigerCounter` | FlyingLow (global) | 497 | 0.005 | 2.8 | long for a hop |
+Tape: geiger 0.5 MB + leftover thermo crumbs 0.01 MB << 1.0. EC: geiger
+497×0.005=2.5 + cmd ~14 vs 310. Hang is the wall, not tape.
 
-No chute at Start. Splash is a living wreck on Water, 641 s, ~115 EC.
+Do not re-pad Cape Surface geiger. Do not hop leftover FlyingLow
+TELEMETRY. Do not bind Stayputnik PAW as the Geiger. Do not bind
+seismic / barometer / MITE (LOCKED).
 
-### 4. Not this program yet
+### Horizon, not a bind
 
-- `kerbalism_LITE` / `SITE` / `MITE` — orbit (MITE polar).
-- `seismicScan` — 3.7 d, 2411 EC, 200 MB. Needs solar + drive.
-- Mk1 / `crewReport` / EVA — locked.
-- Do not unlock. Next 5-sci nodes (`basicRocketry`, `engineering101`)
-  are engines/tanks/decoupler, not a chute. Dedicated
-  `kerbalism-geigercounter` at engineering101 is redundant with Stayputnik.
+Ast. XRL-564 — InSpace TELEMETRY / LITE / geiger-with-part someday.
+Do not recover the rock. Chute is still 15.
 
-One line of future: remaining FlyingLow thermo+TELEMETRY on a new hop
-is the 5-sci node; chute is still survivability (15).
+One line of future: landed TELEMETRY 29 s is this pad. FlyingLow
+geiger 2.80 still wants the Geiger part and 497 s. Survivability
+12.67 away.

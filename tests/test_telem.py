@@ -75,6 +75,7 @@ class _Control:
     def __init__(self):
         self.throttle = 0.0
         self.staged = 0
+        self.current_stage = 1
 
     def activate_next_stage(self):
         self.staged += 1
@@ -97,6 +98,7 @@ class _Vessel:
         self.control = _Control()
         self.resources = _Resources({"ElectricCharge": ec, "SolidFuel": fuel})
         self.thrust = 0.0
+        self.met = 0.0
         self._flight = _Flight(alt=alt, speed=speed)
         self.orbit = _Orbit(_Body(depth=depth), peri=-500_000.0, apo=alt)
         self.parts = type("P", (), {"all": []})()

@@ -91,6 +91,7 @@ class Snapshot:
     fuel: float | None = None
     lf: float | None = None
     broken: str | None = None
+    stage: int | None = None
     resources: dict[str, float] = field(default_factory=dict)
     flags: tuple[str, ...] = field(default_factory=tuple)
 
@@ -305,6 +306,7 @@ class Telem:
             snap = Snapshot(scene=self.scene, vessel=None)
             self.events.emit("snapshot", **snap.as_dict())
             _record_run(self.session, snap)
+            _maybe_shot(snap)
             return snap
         self._bind(vessel)
         body = self._body
@@ -347,6 +349,11 @@ class Telem:
             pass
         met = _finite(getattr(vessel, "met", float("nan")))
         broken = reliability_broken(vessel)
+        stage = None
+        try:
+            stage = int(getattr(vessel.control, "current_stage"))
+        except (TypeError, ValueError, AttributeError):
+            stage = None
         snap = Snapshot(
             scene=self.scene,
             vessel=str(getattr(vessel, "name", "vessel")),
@@ -368,6 +375,7 @@ class Telem:
             fuel=fuel,
             lf=fuel,
             broken=broken,
+            stage=stage,
             resources=resources,
         )
         reasons = gates(snap)
@@ -378,7 +386,17 @@ class Telem:
         if snap.ec is not None and snap.ec <= 0:
             self.events.emit("resource_low", resource="ElectricCharge", amount=snap.ec)
         _record_run(self.session, snap)
+        _maybe_shot(snap)
         return snap
+
+
+def _maybe_shot(snap: Snapshot) -> None:
+    try:
+        from screenshot import mission_observe
+
+        mission_observe(snap)
+    except Exception:
+        log.debug("mission shot observe failed", exc_info=True)
 
 
 def _record_run(session: Any, snap: Snapshot) -> None:

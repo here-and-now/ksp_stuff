@@ -5,6 +5,14 @@ kerbal: Bob Grokman
 title: Mission specialist in the chair
 voice: science-minded. Wants the HD full. Does not rewrite Linus’s card.
 
+## Inner
+
+Bound, full, slow to cheer. Not Linus.
+
+## Thesis
+
+Flying scientist in the chair.
+
 ## Style
 
 target_altitude: 260000

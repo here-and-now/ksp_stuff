@@ -116,23 +116,28 @@ def vab_kv() -> dict[str, str]:
     return _parse_kv(VAB_PATH)
 
 
-def pad_craft_name() -> str:
-    """Hangar name. SESSION if VAB has not signed capable: yes."""
+def hangar_craft_name() -> str:
+    """Hangar name. Seated craft.md, then VAB, then mission. L-039 capable."""
     from session import SessionError
 
     kv = vab_kv()
     cap = kv.get("capable", "").lower()
     if cap != "yes":
         raise SessionError(
-            f"VAB capable={cap or 'missing'} — no pad (L-039)"
+            f"VAB capable={cap or 'missing'} — no Hangar (L-039)"
         )
-    name = (kv.get("craft") or "").strip()
+    seated = _parse_kv(seated_craft_path())
+    name = (seated.get("craft") or kv.get("craft") or "").strip()
     if not name or name.startswith("("):
         meta = mission_meta()
         name = (meta.get("craft") or "").strip()
     if not name or name.startswith("("):
-        raise SessionError("no craft: on vab.md / mission — VAB must name a file")
+        raise SessionError("no craft: on craft.md / vab.md / mission — VAB must name a file")
     return name
+
+
+def pad_craft_name() -> str:
+    return hangar_craft_name()
 
 
 def mission_meta(flight_id: str | None = None) -> dict[str, str]:

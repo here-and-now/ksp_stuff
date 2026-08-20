@@ -9,10 +9,13 @@ remaining, else cfg ``data_rate`` × ScienceDefs size, capped by remaining
 EC / ``ec_rate``). Hop starts the **flying** card once airborne (not
 splash goo) and recovers when landed/splashed/wreck-recoverable, or
 when EC=0 and the HD already has data — it does not wait the pad
-catalog wall. A leftover with files on ``HardDrive`` (or no Experiment
-modules left) recovers without a second Toggle. A paused Flight
-Results wreck (MET frozen, recoverable never true) recovers hop debris
-or leaves flight so the HD banks. EVA hatch is not wired
+catalog wall. One Toggle per experiment_id; 2HOT owns ``temperatureScan``,
+not Stayputnik (a second Toggle stops Kerbalism). A leftover with files
+on ``HardDrive`` (or no Experiment modules left) recovers without a
+second Toggle. A new Hangar still
+starts the flying card: idle remaining=0 is not leftover data. A paused
+Flight Results wreck (MET frozen, recoverable never true) recovers hop
+debris or leaves flight so the HD banks. EVA hatch is not wired
 — skip evaReport / surfaceSample.
 """
 
@@ -29,6 +32,8 @@ EVA_EXPERIMENTS = frozenset({"evaReport", "surfaceSample", "evaScience"})
 PAD_EXPERIMENTS = ("mysteryGoo", "temperatureScan")
 # Airborne start. Splash mysteryGoo is not a hop start.
 HOP_EXPERIMENTS = ("kerbalism_TELEMETRY", "temperatureScan")
+# Water sample after hop. Not airborne.
+SPLASH_EXPERIMENTS = ("mysteryGoo",)
 
 _SKIP_EVENTS = (
     "reset",
@@ -56,7 +61,23 @@ _KERBALISM_MODULES = frozenset({"Experiment", "ModuleScienceExperiment"})
 _KERBALISM_MODULE_ALIASES = frozenset({"moduleksmexperiment", "kerbalismexperiment"})
 _DRIVE_MODULES = frozenset({"HardDrive", "harddrive"})
 _EMPTY_DRIVE = frozenset(
-    {"", "empty", "none", "0", "0.0", "n/a", "-", "no data", "nodata"}
+    {
+        "",
+        "empty",
+        "none",
+        "0",
+        "0.0",
+        "n/a",
+        "-",
+        "no data",
+        "nodata",
+        "no files",
+        "nofiles",
+        "0 files",
+        "0 file",
+        "false",
+        "no",
+    }
 )
 _DRIVE_DATA_KEYS = (
     "Data",
@@ -72,6 +93,7 @@ _DRIVE_DATA_KEYS = (
 _PART_EXPERIMENTS = {
     "GooExperiment": "mysteryGoo",
     "sensorThermometer": "temperatureScan",
+    "kerbalism-geigercounter": "geigerCounter",
 }
 _EID_KEYS = ("experiment_id", "experimentID", "experiment")
 _DONE_STATUS = (
@@ -377,6 +399,34 @@ def _part_name(part: Any) -> str:
     return str(_attr(part, "name", "") or "")
 
 
+def _part_stem(part: Any) -> str:
+    raw = _part_name(part)
+    token = raw.replace(".", "_")
+    return token.split("_")[0] if token else ""
+
+
+def _slot_rank(part: Any, eid: str) -> int:
+    """Lower wins. Native Science part; Stayputnik PAW is a duplicate host."""
+    stem = _part_stem(part)
+    pname = _part_name(part).lower().replace("_", "-")
+    mapped = _PART_EXPERIMENTS.get(stem) or _PART_EXPERIMENTS.get(
+        stem.replace("_", "-")
+    )
+    if mapped == eid:
+        return 0
+    if eid == "temperatureScan" and "thermometer" in pname:
+        return 0
+    if eid == "mysteryGoo" and "goo" in stem.lower():
+        return 0
+    if eid == "geigerCounter" and "geiger" in pname:
+        return 0
+    if eid.startswith("kerbalism_") and "probe" in pname:
+        return 0
+    if eid in {"temperatureScan", "geigerCounter"} and "probe" in pname:
+        return 2
+    return 1
+
+
 def _mod_name(module: Any) -> str:
     return str(_attr(module, "name", "") or "")
 
@@ -596,11 +646,21 @@ def start_experiments(
     """Start Kerbalism ``Experiment`` modules via events.
 
     Does **not** call ``vessel.parts.experiments`` / ``Experiment.run()``.
-    One trigger per (part, experiment_id) — a second Toggle stops the sample.
+    One trigger per experiment_id (card order). Native part wins — Stayputnik
+    ``temperatureScan`` is a duplicate of 2HOT; a second Toggle stops Kerbalism.
     """
-    want = {n.strip() for n in names} if names is not None else None
+    want_list: list[str] | None = None
+    want: set[str] | None = None
+    if names is not None:
+        want_list = []
+        seen_want: set[str] = set()
+        for n in names:
+            token = str(n).strip()
+            if token and token not in seen_want:
+                seen_want.add(token)
+                want_list.append(token)
+        want = set(want_list)
     done: list[str] = []
-    started: set[tuple] = set()
 
     def _say(msg: str) -> None:
         log.info(msg)
@@ -611,30 +671,50 @@ def start_experiments(
     if not found:
         _say("science skip (no Experiment modules)")
 
+    best: dict[str, tuple[int, Any, Any, str]] = {}
+    found_order: list[str] = []
     for part, module, eid in found:
         pname = _part_name(part) or "?"
-        key = _slot_key(part, module, eid)
         if want is not None and eid not in want:
             _say(f"science skip {eid or '?'} on {pname} (not in card)")
             continue
         if eid in EVA_EXPERIMENTS:
             _say(f"science skip {eid} (EVA)")
             continue
-        if key in started:
-            continue
         broken = module_field(module, "broken", "isBroken", "malfunction")
         if broken in (True, 1, "True", "true", "1"):
             _say(f"science skip {eid or _attr(module, 'name', 'Experiment')} broken")
             continue
+        if not eid:
+            _say(f"science skip ? on {pname} (no experiment_id)")
+            continue
+        rank = _slot_rank(part, eid)
+        prev = best.get(eid)
+        if prev is None:
+            best[eid] = (rank, part, module, eid)
+            found_order.append(eid)
+            continue
+        old_rank, old_part, _, _ = prev
+        if rank < old_rank:
+            _say(
+                f"science skip {eid} on {_part_name(old_part) or '?'} "
+                f"(prefer {pname})"
+            )
+            best[eid] = (rank, part, module, eid)
+        else:
+            _say(f"science skip {eid} on {pname} (already {_part_name(old_part)})")
+
+    sequence = [e for e in (want_list or found_order) if e in best]
+    for eid in sequence:
+        _rank, part, module, _eid = best[eid]
+        pname = _part_name(part) or "?"
         label = eid or str(_attr(module, "name", "Experiment") or "Experiment")
         if _already_running(module):
             _say(f"science keep {label} running")
-            started.add(key)
             done.append(str(label))
             continue
         if _trigger_module(module):
             _say(f"science start {label}")
-            started.add(key)
             done.append(str(label))
         else:
             _say(f"science skip {eid or '?'} on {pname} no event")
@@ -685,12 +765,90 @@ def _has_data_field(module: Any) -> bool:
 
 
 def _remaining_zero(module: Any) -> bool:
+    num = _remaining_value(module)
+    return num is not None and num <= 0.0
+
+
+def _remaining_value(module: Any) -> float | None:
     for key in _REMAIN_KEYS:
         num = _number(module_field(module, key))
-        if num is None:
+        if num is not None:
+            return num
+    return None
+
+
+def _best_slots(
+    vessel: Any, names: Iterable[str] | None = None
+) -> list[tuple[Any, Any, str]]:
+    """One module per experiment_id. Native Science part beats Stayputnik PAW."""
+    want = {str(n).strip() for n in names if n} if names is not None else None
+    best: dict[str, tuple[int, Any, Any, str]] = {}
+    order: list[str] = []
+    for part, module, eid in iter_science_modules(vessel):
+        if not eid:
             continue
-        return num <= 0.0
-    return False
+        if want is not None and eid not in want:
+            continue
+        rank = _slot_rank(part, eid)
+        prev = best.get(eid)
+        if prev is None:
+            best[eid] = (rank, part, module, eid)
+            order.append(eid)
+            continue
+        if rank < prev[0]:
+            best[eid] = (rank, part, module, eid)
+    return [(best[e][1], best[e][2], e) for e in order]
+
+
+def card_run_rem(
+    vessel: Any, names: Iterable[str]
+) -> tuple[bool, float | None]:
+    """Preferred in-card slot: running, remaining (None if no field)."""
+    running = False
+    rem_min: float | None = None
+    for _part, module, _eid in _best_slots(vessel, names):
+        if status_running(module):
+            running = True
+        rem = _remaining_value(module)
+        if rem is None:
+            continue
+        rem_min = rem if rem_min is None else min(rem_min, rem)
+    return running, rem_min
+
+
+def card_wait_line(
+    vessel: Any,
+    names: Iterable[str],
+    *,
+    met: float | None = None,
+    ut: float | None = None,
+    sit: str | None = None,
+    ec: float | None = None,
+) -> str:
+    """Why helm is sitting: experiment remaining / running, plus clock.
+
+    Not a timer. Commander reads this. Empty card → ``wait science none``.
+    """
+    bits: list[str] = []
+    for part, module, eid in _best_slots(vessel, names):
+        rem = _remaining_value(module)
+        rem_s = f"{rem:g}" if rem is not None else "?"
+        run = "1" if status_running(module) else "0"
+        st = _status_text(module) or "?"
+        part_s = _part_stem(part) or _part_name(part) or "?"
+        bits.append(f"{eid} part={part_s} run={run} rem={rem_s} {st}")
+    body = ",".join(bits) if bits else "none"
+    extra: list[str] = []
+    if met is not None and met == met:
+        extra.append(f"met={met:.1f}")
+    if ut is not None and ut == ut:
+        extra.append(f"ut={ut:.1f}")
+    if sit:
+        extra.append(f"sit={sit}")
+    if ec is not None and ec == ec:
+        extra.append(f"ec={ec:.0f}")
+    tail = (" " + " ".join(extra)) if extra else ""
+    return f"wait science {body}{tail}"
 
 
 def _reset_ready(module: Any) -> bool:
@@ -755,8 +913,18 @@ def card_complete(
     return done
 
 
-def card_has_data(vessel: Any, names: Iterable[str]) -> bool:
-    """True if any in-card slot already has HD data (not merely started)."""
+def card_has_data(
+    vessel: Any,
+    names: Iterable[str],
+    *,
+    remaining: bool = True,
+) -> bool:
+    """True if any in-card slot already has HD data (not merely started).
+
+    ``remaining=False`` skips remaining-sample 0. Duration experiments
+    (TELEMETRY) sit at 0 before a fresh start — that is not leftover HD.
+    Pad EC=0 still uses remaining=0 after a sample is consumed.
+    """
     want = {str(n).strip() for n in names if n}
     if not want:
         return False
@@ -765,7 +933,7 @@ def card_has_data(vessel: Any, names: Iterable[str]) -> bool:
             continue
         if _has_data_field(module):
             return True
-        if _remaining_zero(module):
+        if remaining and _remaining_zero(module):
             return True
         low = _status_text(module)
         if low and any(w in low for w in _DONE_STATUS):
@@ -1005,6 +1173,120 @@ def card_flying_ids(text: str) -> tuple[str, ...]:
             take = False
         elif flying_sit or flying_sec:
             take = True
+        if take and current_eid not in seen:
+            seen.add(current_eid)
+            found.append(current_eid)
+        current_eid = None
+        current_sit = ""
+
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("#"):
+            flush()
+            section = line.lstrip("#").strip()
+            continue
+        if line.startswith("-"):
+            flush()
+            rest = line.lstrip("-").strip()
+            key, sep, val = rest.partition(":")
+            if sep and key.strip().lower() in {"experiment", "experiment_id"}:
+                eid = val.strip().split()[0] if val.strip() else ""
+                current_eid = eid or None
+            continue
+        if current_eid and ":" in line:
+            key, _, val = line.partition(":")
+            if key.strip().lower() == "situation":
+                current_sit = val.strip().split()[0] if val.strip() else ""
+    flush()
+    return tuple(found)
+
+
+def card_splash_ids(text: str) -> tuple[str, ...]:
+    """Ids helm may start when splashed. FlyingLow is not a splash start."""
+    found: list[str] = []
+    seen: set[str] = set()
+    section = ""
+    current_eid: str | None = None
+    current_sit = ""
+
+    def flush() -> None:
+        nonlocal current_eid, current_sit
+        if not current_eid:
+            current_eid = None
+            current_sit = ""
+            return
+        sec = section.lower()
+        sit = current_sit.lower().replace(" ", "").replace("_", "")
+        splash_sec = any(w in sec for w in ("splash", "water"))
+        splash_sit = sit in {"srfsplashed", "splashed", "splash"} or sit.startswith(
+            "srfsplash"
+        )
+        if (splash_sit or splash_sec) and current_eid not in seen:
+            seen.add(current_eid)
+            found.append(current_eid)
+        current_eid = None
+        current_sit = ""
+
+    for raw in text.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        if line.startswith("#"):
+            flush()
+            section = line.lstrip("#").strip()
+            continue
+        if line.startswith("-"):
+            flush()
+            rest = line.lstrip("-").strip()
+            key, sep, val = rest.partition(":")
+            if sep and key.strip().lower() in {"experiment", "experiment_id"}:
+                eid = val.strip().split()[0] if val.strip() else ""
+                current_eid = eid or None
+            continue
+        if current_eid and ":" in line:
+            key, _, val = line.partition(":")
+            if key.strip().lower() == "situation":
+                current_sit = val.strip().split()[0] if val.strip() else ""
+    flush()
+    return tuple(found)
+
+
+def card_pad_ids(text: str) -> tuple[str, ...]:
+    """Ids helm may start on the pad. FlyingLow / splash are not a pad start."""
+    found: list[str] = []
+    seen: set[str] = set()
+    section = ""
+    current_eid: str | None = None
+    current_sit = ""
+
+    def flush() -> None:
+        nonlocal current_eid, current_sit
+        if not current_eid:
+            current_eid = None
+            current_sit = ""
+            return
+        sec = section.lower()
+        sit = current_sit.lower().replace(" ", "").replace("_", "")
+        splash_sec = any(w in sec for w in ("splash", "water"))
+        flying_sec = any(w in sec for w in ("fly", "space"))
+        pad_sec = any(w in sec for w in ("pad", "landed", "cape", "shore"))
+        splash_sit = sit in {"srfsplashed", "splashed", "splash"} or sit.startswith(
+            "srfsplash"
+        )
+        flying_sit = sit in _FLYING_SIT or sit.startswith("flying") or sit.startswith(
+            "inspace"
+        )
+        pad_sit = sit in {
+            "srflanded",
+            "landed",
+            "prelaunch",
+            "pre_launch",
+        } or sit.startswith("srfland")
+        take = (pad_sec or pad_sit) and not splash_sec and not flying_sec
+        if splash_sit or flying_sit:
+            take = False
         if take and current_eid not in seen:
             seen.add(current_eid)
             found.append(current_eid)

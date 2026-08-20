@@ -366,18 +366,169 @@ def _format_part_line(part: PartDef) -> str:
     mods = ",".join(part.modules[:8])
     if len(part.modules) > 8:
         mods += ",…"
-    exp = f" exp={','.join(part.experiments)}" if part.experiments else ""
     res = f" res={','.join(part.resources)}" if part.resources else ""
+    n_host = len(part.experiments)
+    host = f" hosts={n_host}" if n_host else ""
     return (
         f"  {part.name:36} {part.tech:28} {part.category:14}"
-        f"{mass}{proc}  {part.title}{exp}{res}"
+        f"{mass}{proc}{host}  {part.title}{res}"
         + (f"  [{mods}]" if mods else "")
     )
 
 
-def format_parts(world: World, parts: list[PartDef]) -> str:
-    if not parts:
-        return "parts: (none)\n"
-    lines = [_format_part_line(p).lstrip() for p in parts]
-    lines.append(f"# {len(parts)} parts")
+def _instrument_parts(world: World, eid: str) -> list[PartDef]:
+    """Science-category parts that *are* this experiment (Goo, 2HOT, Geiger)."""
+    out = [
+        p
+        for p in world.catalog.parts.values()
+        if p.category.lower() == "science" and eid in p.experiments
+    ]
+    out.sort(key=lambda p: (p.tech, p.name))
+    return out
+
+
+def _host_parts(world: World, eid: str, *, among: list[PartDef] | None = None) -> list[PartDef]:
+    pool = among if among is not None else list(world.catalog.parts.values())
+    out = [
+        p
+        for p in pool
+        if eid in p.experiments and p.category.lower() != "science"
+    ]
+    out.sort(key=lambda p: (p.tech, p.name))
+    return out
+
+
+def format_hosted(world: World, parts: list[PartDef]) -> str:
+    """PAW experiments on these parts — not extra VAB parts."""
+    unlocked = set(world.research.unlocked)
+    eids: list[str] = []
+    seen: set[str] = set()
+    for part in parts:
+        for eid in part.experiments:
+            if eid not in seen:
+                seen.add(eid)
+                eids.append(eid)
+    if not eids:
+        return ""
+    lines = [
+        "# hosted experiments (PAW on a part). Not extra parts. Do not sign these as hardware.",
+    ]
+    for eid in eids:
+        hosts = [p for p in parts if eid in p.experiments and p.category.lower() != "science"]
+        instruments = _instrument_parts(world, eid)
+        host_s = ",".join(f"{p.name}({p.title})" for p in hosts) or "(none in this list)"
+        if instruments:
+            on_stack = [p for p in instruments if p.name in {x.name for x in parts}]
+            unlocked_inst = [p for p in instruments if p.tech in unlocked]
+            inst = (on_stack or unlocked_inst or instruments)[0]
+            lock = "UNLOCKED" if inst.tech in unlocked else f"LOCKED tech={inst.tech}"
+            inst_s = f" part={inst.name} ({inst.title}) {lock}"
+        else:
+            inst_s = " no Science-category part"
+        lines.append(f"  {eid:28} hosted_on={host_s}{inst_s}")
+    return "\n".join(lines) + "\n"
+
+
+def format_parts(
+    world: World,
+    parts: list[PartDef],
+    *,
+    search: str | None = None,
+    unlocked: bool = False,
+) -> str:
+    lines = [
+        "# placeable parts (VAB). hosts=N means PAW experiment slots, not extra parts.",
+    ]
+    if parts:
+        lines.extend(_format_part_line(p).lstrip() for p in parts)
+        lines.append(f"# {len(parts)} parts")
+        hosted = format_hosted(world, parts)
+        if hosted:
+            lines.append(hosted.rstrip())
+    else:
+        lines.append("parts: (none)")
+    if search:
+        q = search.lower()
+        extra = _format_search_hosted(world, q, unlocked=unlocked)
+        if extra:
+            lines.append(extra.rstrip())
+    return "\n".join(lines) + "\n"
+
+
+def _format_search_hosted(world: World, q: str, *, unlocked: bool) -> str:
+    """When the query is an experiment (geiger), say who hosts it and which part is locked."""
+    hits: list[str] = []
+    for p in world.catalog.parts.values():
+        for eid in p.experiments:
+            if q in eid.lower():
+                hits.append(eid)
+    eids = sorted(set(hits))
+    if not eids:
+        return ""
+    unlocked_nodes = set(world.research.unlocked)
+    lines = [f"# search {q!r}: experiment ids (not parts unless Science-category)"]
+    for eid in eids:
+        hosts = _host_parts(world, eid)
+        if unlocked:
+            hosts = [p for p in hosts if p.tech in unlocked_nodes]
+        inst = _instrument_parts(world, eid)
+        joined = ",".join(p.name for p in hosts[:8])
+        host_s = joined or ("(none unlocked)" if unlocked else "(none)")
+        lines.append(f"  {eid:28} hosted_on={host_s}")
+        for part in inst:
+            mark = "UNLOCKED" if part.tech in unlocked_nodes else f"LOCKED tech={part.tech}"
+            lines.append(f"    instrument {part.name}  {part.title}  {mark}")
+    return "\n".join(lines) + "\n"
+
+
+def craft_part_names(text: str) -> list[str]:
+    """Unique cfg part names from a .craft file or craft.md ``parts:`` list."""
+    names: list[str] = []
+    seen: set[str] = set()
+    in_list = False
+    for raw in text.splitlines():
+        line = raw.strip()
+        if line.startswith("part ="):
+            token = line.split("=", 1)[1].strip()
+            if "_" in token and token.rsplit("_", 1)[-1].isdigit():
+                token = token.rsplit("_", 1)[0]
+            name = cfg_name(token)
+            if name not in seen:
+                seen.add(name)
+                names.append(name)
+            continue
+        if line == "parts:":
+            in_list = True
+            continue
+        if in_list:
+            if line.startswith("- "):
+                name = cfg_name(line[2:].strip())
+                if name not in seen:
+                    seen.add(name)
+                    names.append(name)
+            elif line and not line.startswith("#"):
+                in_list = False
+    return names
+
+
+def format_stack(world: World, names: list[str], *, label: str = "stack") -> str:
+    """Honest stack: parts on the craft, then PAW experiments those parts host."""
+    lines = [f"# {label}: parts on the vehicle (what you see)", "parts:"]
+    found: list[PartDef] = []
+    for name in names:
+        part = world.catalog.get(name)
+        if part is None:
+            lines.append(f"  {name}  MISSING from catalog")
+            continue
+        if any(p.name == name for p in found):
+            continue
+        found.append(part)
+        count = sum(1 for x in names if x == name)
+        qty = f" x{count}" if count > 1 else ""
+        lines.append(
+            f"  {part.name}{qty}  {part.title}  tech={part.tech}  {part.category}"
+        )
+    hosted = format_hosted(world, found)
+    if hosted:
+        lines.append(hosted.rstrip())
     return "\n".join(lines) + "\n"

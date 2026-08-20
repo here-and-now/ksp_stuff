@@ -26,7 +26,7 @@ class _ExpMod:
     def __init__(self):
         self.name = "Experiment"
         self.fields = {
-            "experiment_id": "mysteryGoo",
+            "experiment_id": "geigerCounter",
             "broken": False,
             "Has Data": True,
             "status": "Done",
@@ -53,8 +53,8 @@ class _Vessel:
             "R", (), {"amount": lambda self, n: {"ElectricCharge": 10.0, "SolidFuel": 5}.get(n, 0)}
         )()
         self.thrust = 0.0
-        goo = type("Part", (), {"name": "GooExperiment", "modules": [_ExpMod()]})()
-        self.parts = type("P", (), {"all": [goo]})()
+        core = type("Part", (), {"name": "probeCoreSphere.v2", "modules": [_ExpMod()]})()
+        self.parts = type("P", (), {"all": [core]})()
         self.orbit = type(
             "O",
             (),
@@ -110,7 +110,9 @@ class TestUnknownPhase(unittest.TestCase):
     def test_names_pad_and_hop(self):
         from phases import NAMES
 
-        self.assertEqual(NAMES, ("pad", "hop"))
+        self.assertEqual(
+            NAMES, ("pad", "hop", "splash", "hop-to-water", "tech-unlock")
+        )
 
     def test_need_stack_message(self):
         from phases import run

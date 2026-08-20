@@ -223,3 +223,270 @@ python main.py pad
   `flightlog.record(..., force=True)`. Pad dwell uses the same Telem
   pulse. Learn can envelope a hop. Modules: `telem.py`, `flightlog.py`,
   `review.py`.
+
+## 2026-08-20T18-02-57Z-hop — Fresh Hangar must start the flying card
+
+- **When:** 2026-08-20 letsgrok `python main.py hop`
+  (`2026-08-20T18-02-57Z-hop`). Uncrewed `kspstuff-hop-flea-pbc`. Jeb
+  Hangared, lit, recovered. Linus flying card TELEMETRY 28 s / 0.052 +
+  thermo 112 s / 0.002. World sci still 3.20062709.
+- **Symptom:** exit 0, recovered. Last-flight is `hop light`, `hop
+  airborne`, `science keep HD`, then `gate ec=0`, paused wreck,
+  dismissed Flight Results. Never `science kerbalism_TELEMETRY,…`.
+  samples 63, apo max 12 km, MET 75.6, EC 310 → 0 at impact. HD empty.
+- **Cause:** `_keep_hd` skipped `start_experiments` on a **new** Flea.
+  Leftover-HD skip (16-24-37Z) is for already-dead probes. Idle
+  TELEMETRY remaining=0 made `card_has_data` true, so hop treated a
+  fresh Hangar as leftover and recovered nothing. Thermo never ran.
+- **Fix:** Leftover-HD skip only if this process did **not** light.
+  `card_has_data(..., remaining=False)` for hop keep-HD — remaining=0
+  is not leftover data. A Hangar that lights always starts the flying
+  card. Empty pad card still aborts. Modules: `hop.py`, `science.py`.
+
+## 2026-08-20 leftover-flea-spacecenter — Enter leftover Flight from tracking
+
+- **When:** 2026-08-20 letsgrok `python main.py phase hop` after Gene skip
+  Hangar. Disk leftover PRELAUNCH `kspstuff-hop-flea-pbc`, activeVessel 12.
+  Last-flight still 18-02-57Z recovered. Stuck still: KSC overview,
+  tracking `kspstuff-hop-flea-pbc EARTH`.
+- **Symptom:** exit 1 SESSION. `RPCError Procedure not available in game
+  scene 'SpaceCenter'`. Helm never entered Flight. `status` died the
+  same way. Tracking still lists the Flea. No Hangar.
+- **Cause:** `phase hop` skipped Hangar (leftover already launched) then
+  called Telem/control in SpaceCenter. `vessel.flight()` is not a
+  SpaceCenter procedure. Leftover lived in tracking, not on the pad
+  scene. A second Hangar would occupy the same site.
+- **Fix:** Find the hop Flea in active or `space_center.vessels`. If the
+  scene is not Flight, `switch_to` / `GameScene.flight` and wait.
+  Then light / recover that stack. Empty KSC still Hangars. Modules:
+  `hop.py`, `hangar.py`.
+
+## 2026-08-20T18-22-47Z-hop — One Toggle per flying-card id
+
+- **When:** 2026-08-20 letsgrok `python main.py phase hop`
+  (`2026-08-20T18-22-47Z-hop`). Scene-enter worked. Uncrewed leftover
+  Flea. Jeb lit, airborne, started the card.
+- **Symptom:** exit 0. Handoff `science start temperatureScan`,
+  `kerbalism_TELEMETRY`, **again** `temperatureScan`, then dwell, EC=0,
+  paused wreck, dismissed Flight Results. **No `recovered` line.**
+  World sci still 3.20062709. TELEMETRY 28 s should have credited
+  FlyingLow while recording if it actually ran.
+- **Cause:** Stayputnik also carries `temperatureScan` (in-card by id).
+  `start_experiments` Toggled 2HOT **and** the core. Kerbalism Toggle
+  is start *and* stop (1119Z). File experiments credit while recording
+  — a stopped TELEMETRY writes nothing. `_finish_hd` dismissed the
+  crash UI and returned recovered without logging or `vessel.recover()`.
+- **Fix:** One trigger per experiment_id, card order, native part
+  (thermo on `sensorThermometer`, TELEMETRY on Stayputnik). Skip the
+  core's duplicate thermo. Paused-wreck dismiss logs `recovered` and
+  retries recover after `go_space_center`. Modules: `science.py`,
+  `hop.py`.
+
+## splash — wait for Water, then goo dwell
+
+- **When:** 2026-08-20 Gene `need_stack: splash`. Os max Start harvest.
+  Catalog was pad + hop. Linus splash goo (`mysteryGoo` Water, 641 s /
+  0.18, recover_banks) is not a hop start.
+- **Symptom:** Hop lights, starts FlyingLow, recovers on first
+  recoverable / EC=0 wreck. Splash dwell never runs.
+- **Cause:** `phases.NAMES` stopped at hop. Hop's recover-on-down is
+  correct for the flying card and fatal for a 641 s Water sample.
+- **Fix:** `splash` in `phases.NAMES` / `blocks.md`. `python main.py
+  splash` / `phase splash` on leftover `kspstuff-hop-flea-pbc` — no
+  Hangar, no light, no pad motor. Wait until splashed, one Toggle
+  GooExperiment, dwell, recover HD. Landed is not splashed. Flying
+  recoverable does not recover. Frozen wreck still `go_space_center`.
+  Modules: `splash.py`, `science.py`, `phases.py`, `main.py`.
+
+## hop-to-water — Start Flea cannot steer to Water
+
+- **When:** 2026-08-20 Gene `need_stack: hop-to-water`. Splash is in
+  catalog; hop still dies on Shores (18-32 lithobrake 74 m) and
+  recovers — that leftover is not Water.
+- **Symptom:** Splash waits for `splashed`. Hop recover-on-down leaves
+  a Shores wreck or an empty KSC. Gene wanted an east leftover.
+- **Cause:** `kspstuff-hop-flea-pbc` is Stayputnik + RT-5 Flea + basic
+  fins. No reaction wheel, no gimbal, no chute. SAS holds vertical.
+  Cape pad biome is Shores; Atlantic is east. A 15 km vertical hang
+  falls on the pad. TWR 12 does not buy range without pitch. An east
+  AP heading would be a fake.
+- **Fix:** `hop-to-water` in `phases.NAMES` / `blocks.md`.
+  `python main.py hop-to-water` / `phase hop-to-water` aborts before
+  Hangar: Start Flea cannot steer to Water. Do not skip hop recover
+  to dump a Shores wreck on splash. need_builder for east pitch, or
+  skip splash. Modules: `hop.py`, `phases.py`, `main.py`.
+
+## pad-card — seated science.md, not PAD_EXPERIMENTS
+
+- **When:** 2026-08-20 Gene `need_stack: pad-card`. Linus bound
+  `geigerCounter` 497 s / 0.005 on `kspstuff-pad-pbc`. go: wait.
+- **Symptom:** `pad.py` `run_on_vessel` defaulted
+  `science_ids=PAD_EXPERIMENTS` (mysteryGoo + temperatureScan). A geiger
+  card would re-fly F-005 Cape goo+thermo.
+- **Cause:** Hop and splash already read seated `science.md`. Pad still
+  used the hardcoded pair.
+- **Fix:** `pad_science_ids()` / `card_pad_ids` — Pad/landed rows only.
+  FlyingLow and splash stay off. Empty card still falls back to
+  `PAD_EXPERIMENTS`. Bound geiger starts geiger. Modules: `pad.py`,
+  `science.py`.
+
+## 2026-08-20T19-06-59Z-pad — Frozen MET dwell must not recover empty HD
+
+- **When:** 2026-08-20 letsgrok `python main.py pad`
+  (`2026-08-20T19-06-59Z-pad`). Card `geigerCounter` 497 s / 0.005.
+  pad-card patch skipped goo/thermo and started geiger.
+- **Symptom:** exit 0, recovered twice. World sci still 3.70130873.
+  samples 442, wall 583 s, **met max 0.0**, situation **pre_launch**
+  first and last. EC 310→280 (command drain). Catalog wall 575 s.
+  Stuck still: KSC, no vessels, sci 3.7.
+- **Cause:** `dwell_for_card` uses wall-clock `pad_dwell_s`. UT moved;
+  vessel MET stayed 0 (pre_launch). Kerbalism file science credits
+  while recording — the geiger clock never ran. Timeout still
+  `recover_or_abort` on an empty HD.
+- **Fix:** Dwell watches MET. Frozen MET → unpause / enter Flight.
+  Catalog timeout with no stored data (Has Data / HardDrive, not idle
+  remaining=0) aborts `MET frozen, empty HD` or `dwell timeout empty
+  HD`. Timeout with data still recovers. Modules: `pad.py`.
+
+## 2026-08-20T19-26-57Z-pad — Unpause physics so pad MET actually moves
+
+- **When:** 2026-08-20 letsgrok `python main.py pad`
+  (`2026-08-20T19-26-57Z-pad`). Geiger Toggle, then ABORT MET frozen,
+  empty HD. Sci still 3.70.
+- **Symptom:** exit 2. `science start geigerCounter`, dwell, `pad MET
+  frozen`, timeout 575 s, abort. Never `pad unpause`. MET max 0.0,
+  pre_launch. Jeb: unpause/Flight did not move MET.
+- **Cause:** `_unpause_clock` only cleared `krpc.paused` when the flag
+  already read True, and skipped Flight when scene was already flight.
+  Hop Flight Results freeze is not that flag. Hangar `launch_vessel`
+  leaves the clock stopped. Kerbalism file science is MET. The honest
+  abort fired; time never ran.
+- **Fix:** `hangar.run_physics` always sets `paused=False` on krpc and
+  space_center, rails/physics warp 1×. Call after Hangar launch and
+  **before** pad dwell. Freeze still retries. Empty HD after frozen
+  MET still aborts. Modules: `hangar.py`, `pad.py`.
+
+## 2026-08-20T20-08-26Z-pad — MET does not tick in pre_launch
+
+- **When:** 2026-08-20 letsgrok `python main.py pad`
+  (`2026-08-20T20-08-26Z-pad`). Hangar fresh, `run_physics` ran
+  (`pad unpause`). exit 2 ABORT MET frozen, empty HD. Sci 3.70.
+- **Symptom:** UT moved (~1 s/pulse), EC drained, **met max 0.0**,
+  situation **pre_launch** first and last, stage 1, warp Nonex.
+  Screenshot still T+0. Unpause is not enough.
+- **Cause:** KSP does not increment `vessel.met` in PRELAUNCH. Kerbalism
+  file science (geiger) is that clock. Goo/thermo 1235Z could bank as
+  samples without MET. First stage with SRB `istg=1` would light the
+  motor (hop). Pad never staged.
+- **Fix:** pad-pbc SRB `istg=0`. Pad does one throttle-0
+  `activate_next_stage` on pre_launch (`pad launch clock`) so MET
+  starts on the pad. Uplink `stage` still skipped. Frozen MET + empty
+  HD still aborts. Modules: `pad.py`, `craft.py`.
+
+## hangar ready — wait on kRPC, not a timer
+
+- **When:** Os: Jeb must not wait 30–60 s for load or geiger. Wait only
+  with a named clock and data.
+- **Cause:** Pilot card said 30–60 s chunks. Pad/hop slept 1 s after
+  Hangar. Dwell did not print experiment remaining.
+- **Fix:** `hangar.wait_vessel_ready` polls Flight + `parts.all` +
+  `flight()`. Prints `hangar ready`. Dwell prints `wait science <id>
+  run= rem= met=`. Commander asks what the sit is for; a timer is not
+  a reason. Modules: `hangar.py`, `pad.py`, `hop.py`, `science.py`,
+  `.grok/agents/pilot.md`.
+
+## 2026-08-20T20-55-22Z-hop — tech-unlock catalog (kRPC R&D, not GameData)
+
+- **When:** 2026-08-20 letsgrok hop recovered, sci 8.90, tree still
+  `start`. Gene `need_stack: tech-unlock`. Linus: buy
+  **engineering101** (5) then Gus can sign `kerbalism-geigercounter`.
+  F-013: this is the unlock, not a pad geiger sit.
+- **Symptom:** `python main.py tech` queries. No buy CLI. Gene does not
+  click R&D. Os: never write GameData.
+- **Cause:** kRPC 0.6 SpaceCenter exposes `get_Science` and
+  `GameScene.research_and_development`. Live `get_services` has no
+  UnlockTech / ResearchTech / PurchaseTech. `RDTech.ResearchTech` is
+  the honest in-game spend; it is not an RPC.
+- **Fix:** `tech_unlock.py` + `python main.py tech-unlock [node]` /
+  `phase tech-unlock`. Disk checks node/parents/owned. Opens R&D,
+  invokes a purchase RPC if the server grows one, game-`save` persist.
+  Aborts if 0.6 still has no RPC. Does not patch the save. Modules:
+  `tech_unlock.py`, `phases.py`, `main.py`.
+
+## pad-geiger-hangar — Hangar Gus-signed geiger craft, not pad_pbc()
+
+- **When:** Gene `need_stack: pad-geiger-hangar`. Gus `capable: yes`
+  `kspstuff-geiger-pbc` with `kerbalism-geigercounter`. Linus bound
+  Cape Surface geiger 497/0.005 on that part (F-013). go: wait.
+- **Symptom:** `python main.py pad` used `pad_craft_name()` as the
+  **filename** but still called `pad_pbc(wanted)` — Stayputnik + Goo +
+  2HOT + SRB, **no Geiger Counter**. A geiger-named template is still
+  the wrong stack.
+- **Cause:** Pad Hangar generated the Start template. Hop already
+  byte-copies `crafts/*.craft`. Seated `craft.md` / VAB already named
+  `kspstuff-geiger-pbc`.
+- **Fix:** Copy `crafts/<name>.craft` when the file exists. `pad_pbc()`
+  only for `kspstuff-pad-pbc`. Missing named file aborts (do not
+  generate). Dry-launch skips `current_stage != 0` so a Flea at
+  `istg=1` does not light. Modules: `pad.py`, `missions.py`.
+
+## pad-clock — rem/running/UT, not MET; pad physics-warp only
+
+- **When:** Os 2026-08-21: we do not need MET to do science. Safe
+  physics-warp testing. Never rails us into the future.
+- **Symptom:** Pad aborted `MET frozen, empty HD` on PRELAUNCH while
+  a Kerbalism file could still be recording (`wait science run= rem=`).
+  Dry-launch existed to tick MET; lighting a Flea would hop.
+- **Cause:** 19-06Z treated vessel MET as the science clock. Catalog
+  timeout with MET 0 aborted even when the sit was running. kRPC
+  `physics_warp_factor` 0 is 1×; rails `WarpTo` jumps UT.
+- **Fix:** Dwell watches rem / running / UT. Recording does not abort
+  because MET is 0. Empty HD with nothing recording still aborts.
+  Pad physics 2–4× on landed/prelaunch (`physics_warp_factor` 1–3),
+  rails always 0, never WarpTo, 1× after dwell. Keep dry-launch skip
+  when stage would light. Hangar still `kspstuff-geiger-pbc` (F-013).
+  Modules: `pad.py`, `science.py`.
+
+## 2026-08-20T22-11-44Z-pad — Geiger part ranks above Stayputnik PAW
+
+- **When:** 2026-08-20 letsgrok `python main.py pad`
+  (`2026-08-20T22-11-44Z-pad`). Card `geigerCounter` on
+  `kerbalism-geigercounter`. Craft has the part. Uplink abort.
+- **Symptom:** Helm Toggled Stayputnik PAW `geigerCounter` and skipped
+  the Geiger Counter. `wait science geigerCounter run=1 rem=0 waiting`
+  plus `run=0 rem=0 stopped`. UT moved. Flea unlit. Science not filing.
+- **Cause:** `_PART_EXPERIMENTS` had Goo and 2HOT only. `_slot_rank`
+  returned 1 for `geigerCounter` on both Stayputnik and
+  `kerbalism-geigercounter`. First found (PAW) won. Idle PAW rem=0 is
+  not a file (F-013).
+- **Fix:** Map `kerbalism-geigercounter` → `geigerCounter` rank 0
+  (probe PAW rank 2). Start / wait / rem use that preferred slot.
+  PAW-only stack still starts. Modules: `science.py`.
+
+## hop-hammer-hangar — Hangar seated Hammer, not the Flea
+
+- **When:** Gene `need_stack: hop-hammer-hangar`. Gus `capable: yes`
+  `kspstuff-hop-hammer-pbc` (RT-10, 2HOT, no Geiger). Leftover
+  FlyingLow thermo. `hop_apo` 18 km. go: wait.
+- **Symptom:** `python main.py hop` still byte-copied
+  `kspstuff-hop-flea-pbc`. Pad already Hangars seated/VAB; hop did not.
+- **Cause:** `install_and_launch` hardcoded `CRAFT` Flea. `_is_hop_craft`
+  only matched the Flea, so a leftover Flea would skip Hangar.
+- **Fix:** Hangar `hangar_craft_name()` (seated craft.md / VAB). Refuse
+  pad-pbc and geiger-pbc. Leftover skip only the named hop. `hop_apo`
+  18 km stays inside the 8–18 km clamp. Modules: `hop.py`, `missions.py`.
+
+## 2026-08-20T22-56-44Z-hop — Hammer 18.8 km is still FlyingLow
+
+- **When:** 2026-08-20 letsgrok `python main.py hop`
+  (`2026-08-20T22-56-44Z-hop`). Hangar Hammer. skip Stayputnik thermo,
+  start temperatureScan on 2HOT. exit 4 OFFPLAN apo 18858 > 18000.
+  Solid ~540 left. Flea not Hangared.
+- **Symptom:** `hop_apo` 18 km / OffPlan > 18. Hold set throttle 0.
+  RT-10 cannot unlight. Thermo started; never got rem=. MET 15.5 s.
+- **Cause:** OffPlan used the hop_apo **clamp** as the science lid.
+  FlyingLow is < 50 km. 18.8 km is still the sit. check_expect
+  `expect_apo_max` 18000 would have killed it too.
+- **Fix:** OffPlan apo > 50 km FlyingLow. hop_apo stays a cut wish
+  (solids ignore throttle). check_expect skip_apo on hop. Modules:
+  `hop.py`, `phases.py`. Gus if Gene needs a motor that *stops* at 18.

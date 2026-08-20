@@ -1,32 +1,55 @@
 """Pad science compose. Not hop.py.
 
-Hangar a PBC Start probe, start Kerbalism Experiment modules, dwell
+Hangar the seated / VAB craft file (Gus-signed ``.craft``), start the
+seated science.md pad card (not a hardcoded goo+thermo pair), dwell
 until the HD has the card (or remaining EC is gone), recover or abort
-honestly. Pad EC=0 with data recovers; empty HD aborts.
+honestly. Do not ``pad_pbc()`` a geiger sit — that template has no
+Geiger Counter part (F-013). Pad EC=0 with data recovers; empty HD
+aborts. Science clock is rem / running / UT, not vessel MET. Dry-launch
+only when it will not light the motor. Pad dwell may physics-warp
+2–4× (rails 0, never WarpTo); back to 1× after. Empty card falls back
+to PAD_EXPERIMENTS.
 """
 
 from __future__ import annotations
 
 import logging
 import time
+from pathlib import Path
 from typing import Callable
 
 from emergencies import Ctx, call
-from hangar import discover_hangar
+from hangar import discover_hangar, game_scene, go_flight, run_physics, wait_vessel_ready
 from science import (
     PAD_EXPERIMENTS,
     card_complete,
     card_has_data,
+    card_pad_ids,
+    card_run_rem,
+    card_wait_line,
+    hd_has_data,
     pad_dwell_s,
     start_experiments,
 )
+from screenshot import mission_event
 from telem import EventLog, MissionAbort, Telem, gates
 from uplink import take
 
 log = logging.getLogger("kspstuff")
 
-CRAFT = "kspstuff-pad-pbc"
+TEMPLATE = "kspstuff-pad-pbc"
+CRAFT = TEMPLATE
+REPO_CRAFTS = Path(__file__).resolve().parent / "crafts"
 _PULSE_S = 1.0
+_STILL_N = 5
+_STILL_MET = 0.2
+_STILL_UT = 0.2
+_PAD_SIT = frozenset(
+    {"pre_launch", "prelaunch", "landed", "srf_landed", "srflanded"}
+)
+# kRPC physics_warp_factor: 0=1×, 1=2×, 2=3×, 3=4×. Never rails.
+_PAD_PHYS_FACTOR = 2
+_PAD_PHYS_MAX = 3
 _DWELL_ABORT = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
 # Hop-era radio. Toggle starts *and* stops; the pad SRB is not a hop.
 _PAD_UPLINK_SKIP = frozenset({"science", "stage"})
@@ -36,6 +59,25 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
     log.info(msg)
     if on_log:
         on_log(msg)
+
+
+def pad_science_ids() -> tuple[str, ...]:
+    """Seated pad card. FlyingLow / splash are not a pad start.
+
+    Empty file falls back to ``PAD_EXPERIMENTS``. A bound geiger card is
+    not F-005 goo+thermo.
+    """
+    try:
+        from missions import seated_science_path
+
+        path = seated_science_path()
+        if path.is_file():
+            ids = card_pad_ids(path.read_text(encoding="utf-8"))
+            if ids:
+                return ids
+    except Exception:
+        pass
+    return PAD_EXPERIMENTS
 
 
 def _uplink_tick(ctx: Ctx) -> None:
@@ -68,6 +110,134 @@ def _ec_has_science(
     return any(saw_running.values())
 
 
+def _hd_stored(vessel: object, science_ids: tuple[str, ...] | list[str]) -> bool:
+    """Stored files / Has Data — not idle remaining=0."""
+    return bool(
+        card_has_data(vessel, science_ids, remaining=False) or hd_has_data(vessel)
+    )
+
+
+def _launch_clock(
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+) -> None:
+    """Leave pre_launch so MET can tick. Throttle 0. Do not hop.
+
+    KSP does not increment ``vessel.met`` in PRELAUNCH. First stage is
+    a dry launch if the SRB is already ``istg=0`` (stage 0 restage is a
+    no-op). A Flea at ``istg=1`` would light — skip.
+    """
+    sit = str(getattr(vessel, "situation", "") or "").lower().replace("-", "_")
+    if sit not in {"pre_launch", "prelaunch"}:
+        return
+    try:
+        control = vessel.control
+        stage = getattr(control, "current_stage", 0)
+        try:
+            stage_n = int(stage)
+        except (TypeError, ValueError):
+            stage_n = 0
+        if stage_n != 0:
+            _say(f"pad launch clock skip stage={stage_n} (would light)", on_log)
+            return
+        control.throttle = 0.0
+        control.activate_next_stage()
+        _say("pad launch clock", on_log)
+    except Exception as exc:
+        log.warning("pad launch clock: %s", exc)
+        return
+    try:
+        vessel.situation = "landed"
+    except Exception:
+        pass
+
+
+def _unpause_clock(
+    session: object,
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+) -> None:
+    """Always unpause. Hangar / Flight Results stop physics."""
+    _say("pad unpause", on_log)
+    run_physics(session)
+    try:
+        scene = game_scene(session)  # type: ignore[arg-type]
+    except Exception:
+        return
+    if scene in {"flight", "?"}:
+        return
+    _say(f"pad enter flight ({scene})", on_log)
+    try:
+        go_flight(session, vessel)  # type: ignore[arg-type]
+    except Exception as exc:
+        log.warning("pad enter flight: %s", exc)
+
+
+def _sc(session: object) -> object | None:
+    return getattr(session, "space_center", None)
+
+
+def _read_ut(session: object) -> float:
+    try:
+        return float(getattr(_sc(session), "ut"))
+    except (TypeError, ValueError, AttributeError):
+        return float("nan")
+
+
+def _rails_zero(session: object) -> None:
+    sc = _sc(session)
+    if sc is None:
+        return
+    try:
+        sc.rails_warp_factor = 0
+    except Exception:
+        pass
+
+
+def _physics_factor(session: object, n: int) -> None:
+    """Physics warp only. 0 is 1×. Never rails. Never WarpTo."""
+    _rails_zero(session)
+    sc = _sc(session)
+    if sc is None:
+        return
+    try:
+        sc.physics_warp_factor = int(n)
+    except Exception:
+        pass
+
+
+def _sit_ok_for_warp(vessel: object, snap: object | None = None) -> bool:
+    sit = ""
+    if snap is not None:
+        sit = str(getattr(snap, "situation", "") or "")
+    if not sit:
+        sit = str(getattr(vessel, "situation", "") or "")
+    return sit.lower().replace("-", "_") in _PAD_SIT
+
+
+def _pad_physics_warp(
+    session: object,
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+    *,
+    snap: object | None = None,
+) -> None:
+    """2–4× physics on the pad. Rails stay 0."""
+    _rails_zero(session)
+    if not _sit_ok_for_warp(vessel, snap):
+        return
+    n = min(max(_PAD_PHYS_FACTOR, 1), _PAD_PHYS_MAX)
+    _physics_factor(session, n)
+    _say(f"pad physics {n + 1}x rails=0", on_log)
+
+
+def _pad_physics_1x(
+    session: object, on_log: Callable[[str], None] | None
+) -> None:
+    _physics_factor(session, 0)
+    _say("pad physics 1x", on_log)
+
+
 def _load_catalog() -> object | None:
     try:
         from catalog import load_catalog
@@ -96,7 +266,11 @@ def dwell_for_card(
 ) -> str:
     """Telem pulse until card HD is done, catalog duration, or honest abort.
 
-    Does not Toggle. Does not recover on the first pulse.
+    Does not Toggle. Science clock is rem / running / UT, not vessel MET.
+    Unpause then pad physics-warp (rails 0) before the loop. Freeze
+    retries unpause. Recording (run=1 or rem dropping) does not abort
+    because MET is 0. Empty HD after a timeout with nothing recording
+    still aborts. Always 1× physics on the way out.
     """
     clock = now if now is not None else time.monotonic
     nap = sleep if sleep is not None else time.sleep
@@ -104,53 +278,125 @@ def dwell_for_card(
     t0 = clock()
     saw_running: dict[tuple, bool] = {}
     pulses = 0
+    prev_rem: float | None = None
+    rem_moved = False
+    prev_ut: float | None = None
+    ut_moved = False
+    still = 0
+    nudged = False
     _say("science dwell", on_log)
     events.emit("science_dwell", phase="start")
-    with Telem(session, events=events) as telem:
-        while True:
-            if abort is not None:
-                try:
-                    stop = bool(abort())
-                except Exception:
-                    stop = False
-                if stop:
-                    call("abort_pad", ctx)
-                    raise MissionAbort("abort")
-            _uplink_tick(ctx)
-            snap = telem.read()
-            pulses += 1
-            for reason in gates(snap):
-                _say(f"gate {reason}", on_log)
-                if reason == "wreck" or reason.startswith("reliability"):
-                    call("abort_pad", ctx)
-                    raise MissionAbort(reason)
-                if reason == "ec=0":
-                    card_complete(vessel, science_ids, saw_running)
-                    if _ec_has_science(vessel, science_ids, saw_running, pulses):
-                        _say("science dwell ec=0 with data", on_log)
-                        events.emit("science_dwell", result="ec")
-                        return "ec"
-                    call("abort_pad", ctx)
-                    raise MissionAbort(reason)
-            if pulses > 1 and card_complete(vessel, science_ids, saw_running):
-                _say("science dwell done", on_log)
-                events.emit("science_dwell", result="done")
-                return "done"
-            if pulses == 1:
-                card_complete(vessel, science_ids, saw_running)
-            elapsed = clock() - t0
-            if budget is None:
-                budget = pad_dwell_s(
-                    science_ids,
-                    vessel=vessel,
-                    catalog=_load_catalog(),
-                    ec=snap.ec,
+    _unpause_clock(session, vessel, on_log)
+    _pad_physics_warp(session, vessel, on_log)
+    try:
+        with Telem(session, events=events) as telem:
+            while True:
+                if abort is not None:
+                    try:
+                        stop = bool(abort())
+                    except Exception:
+                        stop = False
+                    if stop:
+                        call("abort_pad", ctx)
+                        raise MissionAbort("abort")
+                _uplink_tick(ctx)
+                snap = telem.read()
+                pulses += 1
+                met = float(getattr(snap, "met", float("nan")))
+                ut = _read_ut(session)
+                sit = str(
+                    getattr(snap, "situation", "")
+                    or getattr(vessel, "situation", "")
+                    or ""
                 )
-            if pulses > 1 and elapsed >= budget:
-                _say(f"science dwell timeout {elapsed:.0f}s", on_log)
-                events.emit("science_dwell", result="timeout", s=elapsed)
-                return "timeout"
-            nap(pulse)
+                running, rem = card_run_rem(vessel, science_ids)
+                _say(
+                    card_wait_line(
+                        vessel,
+                        science_ids,
+                        met=met if met == met else None,
+                        ut=ut if ut == ut else None,
+                        sit=sit or None,
+                        ec=getattr(snap, "ec", None),
+                    ),
+                    on_log,
+                )
+                if rem is not None:
+                    if prev_rem is not None and rem < prev_rem - 1e-6:
+                        rem_moved = True
+                        still = 0
+                    prev_rem = rem
+                if ut == ut:
+                    if prev_ut is not None and ut > prev_ut + _STILL_UT:
+                        ut_moved = True
+                        still = 0
+                    elif prev_ut is not None and ut <= prev_ut + _STILL_UT:
+                        still += 1
+                        if still >= _STILL_N and not nudged:
+                            _say("pad physics frozen", on_log)
+                            events.emit("science_dwell", result="physics")
+                            _unpause_clock(session, vessel, on_log)
+                            _pad_physics_warp(session, vessel, on_log, snap=snap)
+                            nudged = True
+                    prev_ut = ut
+                elif met == met and met <= _STILL_MET:
+                    still += 1
+                    if still >= _STILL_N and not nudged:
+                        _say("pad physics frozen", on_log)
+                        _unpause_clock(session, vessel, on_log)
+                        _pad_physics_warp(session, vessel, on_log, snap=snap)
+                        nudged = True
+                recording = bool(running or rem_moved or any(saw_running.values()))
+                for reason in gates(snap):
+                    _say(f"gate {reason}", on_log)
+                    if reason == "wreck" or reason.startswith("reliability"):
+                        call("abort_pad", ctx)
+                        raise MissionAbort(reason)
+                    if reason == "ec=0":
+                        card_complete(vessel, science_ids, saw_running)
+                        if _ec_has_science(vessel, science_ids, saw_running, pulses):
+                            _say("science dwell ec=0 with data", on_log)
+                            events.emit("science_dwell", result="ec")
+                            return "ec"
+                        call("abort_pad", ctx)
+                        raise MissionAbort(reason)
+                if pulses > 1 and card_complete(vessel, science_ids, saw_running):
+                    _say("science dwell done", on_log)
+                    events.emit("science_dwell", result="done")
+                    return "done"
+                if pulses == 1:
+                    card_complete(vessel, science_ids, saw_running)
+                elapsed = clock() - t0
+                if budget is None:
+                    budget = pad_dwell_s(
+                        science_ids,
+                        vessel=vessel,
+                        catalog=_load_catalog(),
+                        ec=snap.ec,
+                    )
+                hard = float(budget) * 2.0 if budget else elapsed
+                if pulses > 1 and elapsed >= budget:
+                    if _hd_stored(vessel, science_ids):
+                        _say(f"science dwell timeout {elapsed:.0f}s", on_log)
+                        events.emit("science_dwell", result="timeout", s=elapsed)
+                        return "timeout"
+                    filing = bool(
+                        rem is not None
+                        and rem > 0
+                        and (running or rem_moved)
+                        and elapsed < hard
+                    )
+                    if filing:
+                        nap(pulse)
+                        continue
+                    _say(f"science dwell timeout {elapsed:.0f}s", on_log)
+                    events.emit("science_dwell", result="timeout", s=elapsed)
+                    if recording:
+                        return "timeout"
+                    raise MissionAbort("dwell timeout empty HD")
+                nap(pulse)
+    finally:
+        _pad_physics_1x(session, on_log)
 
 
 def recover_or_abort(vessel: object) -> str:
@@ -161,6 +407,7 @@ def recover_or_abort(vessel: object) -> str:
         ok = False
     if ok:
         getattr(vessel, "recover")()
+        mission_event("recover")
         return "recovered"
     raise MissionAbort("not recoverable")
 
@@ -171,7 +418,7 @@ def run_on_vessel(
     *,
     events: EventLog | None = None,
     on_log: Callable[[str], None] | None = None,
-    science_ids: tuple[str, ...] = PAD_EXPERIMENTS,
+    science_ids: tuple[str, ...] | None = None,
     abort: Callable[[], bool] | None = None,
     now: Callable[[], float] | None = None,
     sleep: Callable[[float], None] | None = None,
@@ -180,17 +427,20 @@ def run_on_vessel(
 ) -> str:
     """Science, dwell until HD has the card, recover/abort."""
     log_events = events if events is not None else EventLog()
+    ids = science_ids if science_ids is not None else pad_science_ids()
     ctx = Ctx(
         session=session,
         vessel=vessel,
         events=log_events,
-        science_ids=science_ids,
+        science_ids=ids,
     )
     _uplink_tick(ctx)
-    started = start_experiments(vessel, names=science_ids, on_log=on_log)
+    _launch_clock(vessel, on_log)
+    started = start_experiments(vessel, names=ids, on_log=on_log)
     if started:
         _say("science " + ",".join(started), on_log)
         log_events.emit("science", ids=list(started))
+        mission_event("science")
         dwell_for_card(
             session,
             vessel,
@@ -206,8 +456,8 @@ def run_on_vessel(
         )
     else:
         _say("science (none)", on_log)
-        if science_ids:
-            wanted = ",".join(science_ids)
+        if ids:
+            wanted = ",".join(ids)
             call("abort_pad", ctx)
             raise MissionAbort(f"no science (wanted {wanted})")
         with Telem(session, events=log_events) as telem:
@@ -222,17 +472,41 @@ def run_on_vessel(
     return result
 
 
+def pad_craft_path(name: str | None = None) -> Path:
+    nid = (name or CRAFT).strip()
+    return REPO_CRAFTS / f"{nid}.craft"
+
+
 def install_and_launch(session: object, *, recover: bool = True) -> None:
-    from craft import pad_pbc
-    from catalog import load_catalog
+    """Hangar the Gus-signed file. Never generate pad_pbc over a named sit.
+
+    Byte-copy ``crafts/<name>.craft`` — ``pad_pbc()`` has no Geiger Counter
+    part (F-013). Template generate only for ``kspstuff-pad-pbc``.
+    """
     from missions import pad_craft_name
 
     wanted = pad_craft_name()
+    src = pad_craft_path(wanted)
     hangar = discover_hangar()
     if hangar is None:
         raise MissionAbort("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
+    if src.is_file():
+        folder = hangar.ships("VAB")
+        folder.mkdir(parents=True, exist_ok=True)
+        dest = folder / f"{wanted}.craft"
+        dest.write_bytes(src.read_bytes())
+        log.info("pad Hangar %s uncrewed", wanted)
+        hangar.launch(session, wanted, recover=recover, uncrewed=True)
+        return
+    if wanted != TEMPLATE and TEMPLATE not in wanted:
+        raise MissionAbort(
+            f"missing pad craft {src} — do not pad_pbc() a {wanted} sit (F-013)"
+        )
+    from catalog import load_catalog
+    from craft import pad_pbc
+
     catalog = load_catalog(hangar.ksp_root)
-    craft = pad_pbc(wanted, catalog=catalog)
+    craft = pad_pbc(TEMPLATE, catalog=catalog)
     hangar.install(craft, overwrite=True)
     hangar.launch(session, craft.name, recover=recover, uncrewed=True)
 
@@ -248,7 +522,11 @@ def run_pad(
     """Hangar + Kerbalism pad science. Probes are uncrewed."""
     log_events = events if events is not None else EventLog()
     install_and_launch(session, recover=recover)
-    time.sleep(1.0)
+    try:
+        msg = wait_vessel_ready(session)
+    except Exception as exc:
+        raise MissionAbort(f"no vessel after launch: {exc}") from exc
+    _say(msg, on_log)
     try:
         vessel = session.active_vessel  # type: ignore[attr-defined]
     except Exception as exc:

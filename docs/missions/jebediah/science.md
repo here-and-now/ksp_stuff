@@ -1,46 +1,19 @@
 # jebediah science card
 
-science: card
+science: wait
 flight: jebediah
-craft: kspstuff-hop-flea-pbc
-at: hop
+craft: kspstuff-geiger-pbc
+at: pad
 body: Earth
 need_builder: no
-notes: Kerbalism Experiment on Gus-signed kspstuff-hop-flea-pbc. Recover the HD.
-  Do not transmit. Not the 1235Z Cape landed goo+thermo card (spent, F-005).
-  Uncrewed. No Mk1. No chute. hop_apo 15 km (FlyingLow < 50 km).
-  HD: Stayputnik 0.5 + Engineer7500 0.5 = 1.0 MB data. TELEMETRY is 0.75 MB —
-  needs the tape. Do not co-run geiger (1.25 MB). TELEMETRY 0.75 + thermo 0.45
-  = 1.20 MB; both will not file on this HD. Thermo is best-effort (Gene: if it
-  finishes). Goo is splash dwell (east Water), private sample, 1 slot. Do not
-  start goo airborne — that spends the sample on incomplete FlyingLow (641 s
-  will not finish on this hang). Helm hop starts every `- experiment:` line
-  once airborne and recovers on first recoverable; splash dwell is Gene/Lars.
+notes: 23-13 pad recovered. Landed TELEMETRY **0.60/0.60 capped**.
+  Bank +0.10 not 0.57. rem=0 still files crumbs. Do **not** re-pad
+  this card. Do not Toggle Cape Surface geigerCounter (capped). Do not
+  hop leftover FlyingLow TELEMETRY (capped). Next: FlyingLow geiger
+  2.80 wants the Geiger **part** and 497 s hang. Asteroid not this card.
 
 recover_banks: yes
 
-## Flying (helm starts airborne)
-
-- experiment: kerbalism_TELEMETRY
-  experiment_id: kerbalism_TELEMETRY
-  part: probeCoreSphere_v2
-  situation: FlyingLow
-  at: Shores
-  duration_s: 30
-  ec_rate: 0.052
-- experiment: temperatureScan
-  experiment_id: temperatureScan
-  part: sensorThermometer
-  situation: FlyingLow
-  at: Shores
-  duration_s: 138
-  ec_rate: 0.002
-
-## Splash (water bank if the probe lives; not a hop start)
-
-- experiment_id: mysteryGoo
-  part: GooExperiment
-  situation: SrfSplashed
-  at: Water
-  duration_s: 641
-  ec_rate: 0.18
+# No `- experiment:` lines.
+# spent Cape Surface geigerCounter duration_s 497 / ec_rate 0.005
+# spent landed TELEMETRY duration_s 29 / ec_rate 0.052

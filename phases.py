@@ -12,7 +12,8 @@ from session import Session
 from telem import MissionAbort
 from uplink import load_plan, plan_file, write_plan_file
 
-NAMES = ("pad", "hop")
+NAMES = ("pad", "hop", "splash", "hop-to-water", "tech-unlock")
+UNCREWED = frozenset(NAMES)
 
 
 class OffPlan(Exception):
@@ -51,7 +52,9 @@ def set_phase(name: str, *, next_name: str | None = None) -> None:
     write_plan_file(extra=extra)
 
 
-def check_expect(state: Any, *, skip_peri: bool = False) -> None:
+def check_expect(
+    state: Any, *, skip_peri: bool = False, skip_apo: bool = False
+) -> None:
     kv = _kv()
     body = kv.get("expect_body", "")
     if body and str(getattr(state, "body", "")).lower() != body.lower():
@@ -63,6 +66,8 @@ def check_expect(state: Any, *, skip_peri: bool = False) -> None:
                 raise OffPlan(f"peri {state.peri:.0f} < {pmin:.0f}")
         except (KeyError, ValueError):
             pass
+    if skip_apo:
+        return
     try:
         amax = float(kv["expect_apo_max"])
         if math.isfinite(state.apo) and state.apo > amax:
@@ -93,5 +98,20 @@ def run(
         from hop import run_phase as run_hop_phase
 
         run_hop_phase(session, on_log=on_log, abort=abort)
+        return
+    if name == "splash":
+        from splash import run_phase as run_splash_phase
+
+        run_splash_phase(session, on_log=on_log, abort=abort)
+        return
+    if name in {"hop-to-water", "hop_water"}:
+        from hop import run_hop_to_water
+
+        run_hop_to_water(session, on_log=on_log, abort=abort)
+        return
+    if name in {"tech-unlock", "tech_unlock"}:
+        from tech_unlock import run_phase as run_tech_unlock
+
+        run_tech_unlock(session, on_log=on_log, abort=abort)
         return
     raise MissionAbort(f"unwired phase {name}")

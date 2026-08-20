@@ -9,7 +9,10 @@ from pathlib import Path
 from catalog import cfg_name, craft_name, load_catalog, scan_config_cache
 from hangar import DEFAULT_SAVE, RSS_KSP, STEAM_KSP, discover_hangar, discover_ksp
 from world import (
+    craft_part_names,
     filter_parts,
+    format_parts,
+    format_stack,
     format_tech,
     format_world,
     load_world,
@@ -83,6 +86,53 @@ class TestFixtureWorld(unittest.TestCase):
         self.assertEqual([p.name for p in goo], ["GooExperiment"])
         exp = filter_parts(self.world, unlocked=True, module="Experiment")
         self.assertTrue({p.name for p in exp} >= {"probeCoreSphere_v2", "GooExperiment"})
+
+    def test_parts_text_does_not_call_stayputnik_a_geiger(self):
+        stay = filter_parts(self.world, unlocked=True, search="stayputnik")
+        text = format_parts(self.world, stay)
+        self.assertIn("probeCoreSphere_v2", text)
+        self.assertNotIn("exp=", text)
+        self.assertIn("hosted experiments", text)
+        self.assertIn("hosted_on=", text)
+        stay_part = self.world.catalog.get("probeCoreSphere_v2")
+        assert stay_part is not None
+        if stay_part.experiments:
+            self.assertIn(stay_part.experiments[0], text)
+
+    def test_search_hosted_experiment_is_not_a_part(self):
+        stay = self.world.catalog.get("probeCoreSphere_v2")
+        self.assertIsNotNone(stay)
+        assert stay is not None
+        eid = stay.experiments[0]
+        text = format_parts(self.world, [], search=eid, unlocked=True)
+        self.assertIn("hosted_on=", text)
+        self.assertIn(eid, text)
+        self.assertIn("probeCoreSphere_v2", text)
+
+    def test_stack_from_craft_md(self):
+        md = (
+            "craft: kspstuff-pad-pbc\n"
+            "parts:\n"
+            "  - probeCoreSphere_v2\n"
+            "  - GooExperiment\n"
+            "  - sensorThermometer\n"
+            "notes: ignore\n"
+        )
+        names = craft_part_names(md)
+        self.assertEqual(
+            names,
+            ["probeCoreSphere_v2", "GooExperiment", "sensorThermometer"],
+        )
+        text = format_stack(self.world, names, label="pad")
+        self.assertIn("probeCoreSphere_v2", text)
+        self.assertIn("GooExperiment", text)
+        visible, _, hosted = text.partition("hosted")
+        self.assertNotIn("kerbalism-geigercounter", visible)
+        stay = self.world.catalog.get("probeCoreSphere_v2")
+        assert stay is not None
+        if stay.experiments:
+            self.assertIn("hosted_on=", text)
+            self.assertTrue(any(e in text for e in stay.experiments))
 
     def test_tech_start_text(self):
         text = format_tech(self.world, "start")

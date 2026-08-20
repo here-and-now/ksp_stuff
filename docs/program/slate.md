@@ -3,12 +3,11 @@
 **Goal:** Kardashev III or bust. Today: Earth science sandbox, CTT+PBC
 tree. PBC: probes first. Moon is a waypoint, not the destination.
 
-**Recommended:** none. Lars hop-jsonl in. `Telem.read` force-writes
-`kind=state` onto the seated jsonl; pad same path. 15-58 envelope stays
-empty — cannot reconstruct. Next hop can. Os still: `rocket-flea.png`
-is the hop (T+7 s, drums **002423**, KER **2,380.7 m**, apo 11,581.8 m,
-motor lit). `first-hop.png` 72 m is the leftover wreck. Verena patched.
-world sci 3.20. Do not Hangar. Do not pad. Do not `python main.py hop`.
+**Recommended:** none. 23-13-28Z pad recovered. sci **2.43**. Landed
+TELEMETRY **capped**. Bank +0.10 not 0.57. rem=0 files crumbs. Do not
+re-pad. Do not Toggle Cape geiger. Next: FlyingLow geiger 2.80 wants
+497 s hang. Never rails. Ast. XRL-564 someday. Os still:
+`rocket-flea.png` drums **002423**, KER **2,380.7 m**. Not 72 m.
 go: wait.
 
 Canonical save `letsgrok`. Honor 4761 lives in `docs/archive/` only.

@@ -5,6 +5,8 @@ Files (git-friendly, next to the slate):
 - ``docs/program/uplink.md`` — one command. Gene/parent writes; the
   flying ``FlightWatch(uplink=True)`` *takes* it. ``status`` must not.
 - ``docs/program/loop.md`` — one-line notes. Not the helm (L-032).
+- ``docs/program/helm-tech.md`` — Commander → Lars/Gus/Wernher. What
+  the stack needed. Helm owns the loop; Gene still owns the CLI.
 - ``docs/program/plan.md`` — live numbers ``set`` can change; ``phase`` /
   ``expect_*`` survive ``save_plan`` (L-037).
 
@@ -29,6 +31,7 @@ log = logging.getLogger("kspstuff")
 UPLINK_PATH = Path("docs/program/uplink.md")
 LAST_PATH = Path("docs/program/uplink.last")
 LOOP_PATH = Path("docs/program/loop.md")  # shim; helm notes go to the dossier
+HELM_TECH_PATH = Path("docs/program/helm-tech.md")
 PLAN_PATH = Path("docs/program/plan.md")  # shim; canonical is missions/<id>/plan.md
 SHIP_PATH = Path("docs/program/ship.md")
 
@@ -213,6 +216,27 @@ def note(who: str, text: str) -> None:
     line = f"{who}: {text.rstrip()}\n"
     with path.open("a", encoding="utf-8") as fh:
         fh.write(line)
+
+
+def note_tech(desk: str, text: str, *, who: str = "") -> Path:
+    """Commander → tech desks. Does not rewrite Gene's plan."""
+    from datetime import datetime, timezone
+
+    HELM_TECH_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if not HELM_TECH_PATH.is_file():
+        HELM_TECH_PATH.write_text(
+            "# Helm → tech\n\n"
+            "Jebediah (or seated Commander) writes what the stack needed.\n"
+            "Lars / Gus / Wernher / Gene read between exits. Not the stick.\n\n",
+            encoding="utf-8",
+        )
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+    speaker = (who or "helm").strip() or "helm"
+    dest = (desk or "tech").strip() or "tech"
+    line = f"- {stamp} **{speaker} → {dest}:** {text.rstrip()}\n"
+    with HELM_TECH_PATH.open("a", encoding="utf-8") as fh:
+        fh.write(line)
+    return HELM_TECH_PATH
 
 
 def _parse(text: str) -> Command | None:

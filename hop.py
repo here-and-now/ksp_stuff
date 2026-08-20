@@ -1,13 +1,17 @@
 """Sounding block.
 
-Hangar ``crafts/kspstuff-hop-flea-pbc.craft`` uncrewed (not the pad
-motor), light, start the Kerbalism flying card once airborne, dwell
-through the ballistic, recover the HD when landed/splashed/wreck-
-recoverable — or when EC=0 and the HD already has data. Leftover with
-HardDrive files or no Experiment modules recovers without a second
-start. A paused Flight Results wreck (MET stuck, recoverable never
-true) recovers hop debris or leaves flight so the HD banks. Ballistic
-peri is negative. No chute. Splash goo is not a hop start.
+Hangar the seated / VAB ``.craft`` uncrewed (Hammer sit:
+``kspstuff-hop-hammer-pbc``; not pad/geiger). Light, start the
+Kerbalism flying card once airborne, dwell through the ballistic,
+recover the HD when landed/splashed/wreck-recoverable — or when EC=0
+and the HD already has data. Leftover with HardDrive files or no
+Experiment modules recovers without a second start — only if this
+process did **not** light. A hop this process lit always starts the
+flying card (one Toggle per id; thermo on 2HOT, not Stayputnik). Idle
+TELEMETRY remaining=0 is not leftover HD. A leftover already in
+tracking while the scene is SpaceCenter is switched into Flight — do
+not Hangar a second stack. Ballistic peri is negative. No chute.
+Splash goo is not a hop start. Do not light a pad geiger.
 """
 
 from __future__ import annotations
@@ -19,7 +23,7 @@ from pathlib import Path
 from typing import Callable
 
 from emergencies import Ctx, call
-from hangar import discover_hangar, go_space_center
+from hangar import discover_hangar, game_scene, go_flight, go_space_center, wait_vessel_ready
 from pad import recover_or_abort
 from science import (
     HOP_EXPERIMENTS,
@@ -29,6 +33,7 @@ from science import (
     iter_science_modules,
     start_experiments,
 )
+from screenshot import mission_event
 from telem import EventLog, MissionAbort, Telem, gates
 from uplink import take
 
@@ -36,10 +41,14 @@ log = logging.getLogger("kspstuff")
 
 CRAFT = "kspstuff-hop-flea-pbc"
 PAD_CRAFT = "kspstuff-pad-pbc"
+GEIGER_CRAFT = "kspstuff-geiger-pbc"
+_NOT_HOP = (PAD_CRAFT, GEIGER_CRAFT, "pad-pbc", "geiger-pbc")
 REPO_CRAFTS = Path(__file__).resolve().parent / "crafts"
 HOP_APO_DEFAULT = 15_000.0
 HOP_APO_CLAMP = (8_000.0, 18_000.0)
+# hop_apo is a cut *wish*. Solids cannot hold. OffPlan is FlyingLow, not the clamp.
 HOP_APO_MAX = 18_000.0
+FLYING_LOW_M = 50_000.0
 DEFAULT_HOP_S = 600.0
 _AIRBORNE_M = 250.0
 _PULSE_S = 1.0
@@ -59,7 +68,7 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
 
 
 def hop_target_apo() -> float:
-    """Gene ``hop_apo`` (m). Clamp stays FlyingLow (~18 km stock split)."""
+    """Gene ``hop_apo`` (m). Cut wish. Clamp 8–18 km. OffPlan is FlyingLow."""
     raw = ""
     try:
         from phases import _kv
@@ -76,8 +85,19 @@ def hop_target_apo() -> float:
     return min(HOP_APO_CLAMP[1], max(HOP_APO_CLAMP[0], apo))
 
 
-def hop_craft_path() -> Path:
-    return REPO_CRAFTS / f"{CRAFT}.craft"
+def hop_craft_name() -> str:
+    """Seated / VAB / mission craft. Fallback Flea if VAB unsigned."""
+    try:
+        from missions import hangar_craft_name
+
+        name = hangar_craft_name().strip()
+    except Exception:
+        name = ""
+    return name or CRAFT
+
+
+def hop_craft_path(name: str | None = None) -> Path:
+    return REPO_CRAFTS / f"{(name or hop_craft_name()).strip()}.craft"
 
 
 def hop_science_ids() -> tuple[str, ...]:
@@ -100,7 +120,16 @@ def _vessel_name(vessel: object) -> str:
 
 
 def _is_pad_motor(vessel: object) -> bool:
-    return PAD_CRAFT in _vessel_name(vessel).lower()
+    name = _vessel_name(vessel).lower()
+    return any(tag in name for tag in _NOT_HOP)
+
+
+def _is_hop_craft(vessel: object) -> bool:
+    name = _vessel_name(vessel).lower()
+    if not name or _is_pad_motor(vessel):
+        return False
+    wanted = hop_craft_name().lower()
+    return bool(wanted) and wanted in name
 
 
 def _active_vessel(session: object) -> object | None:
@@ -110,18 +139,52 @@ def _active_vessel(session: object) -> object | None:
         return None
 
 
-def install_and_launch(session: object, *, recover: bool = True) -> None:
-    """Copy the Gus-signed Flea into VAB and launch uncrewed.
+def _find_hop_vessel(session: object) -> object | None:
+    """Active leftover, else tracking pool. Prefer the Flea over debris."""
+    active = _active_vessel(session)
+    if active is not None and _is_hop_craft(active):
+        return active
+    craft = None
+    debris = None
+    for other in _pool(session, active):
+        if other is None or not _is_hop_craft(other):
+            continue
+        if "debris" in _vessel_name(other).lower():
+            debris = debris or other
+        else:
+            craft = other
+            break
+    return craft or debris
 
-    Byte-copy the repo ``.craft`` — ``Craft.load``/``install`` drops
-    RESOURCE and non-MODULE children. Never Hangar the pad motor.
+
+def _ensure_flight(
+    session: object,
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+) -> None:
+    """SpaceCenter tracking is not Flight. Enter the leftover before Telem."""
+    try:
+        scene = game_scene(session)  # type: ignore[arg-type]
+    except Exception:
+        return
+    if scene == "flight":
+        return
+    _say(f"hop enter flight ({scene})", on_log)
+    go_flight(session, vessel)  # type: ignore[arg-type]
+
+
+def install_and_launch(session: object, *, recover: bool = True) -> None:
+    """Copy the Gus-signed hop ``.craft`` into VAB and launch uncrewed.
+
+    Byte-copy the repo file — never Hangar pad/geiger. Same pointer as pad.
     """
-    name = CRAFT
-    if name == PAD_CRAFT or "pad-pbc" in name:
+    name = hop_craft_name()
+    low = name.lower()
+    if any(tag in low for tag in _NOT_HOP):
         raise MissionAbort(
-            f"hop Hangar refused {name} — need kspstuff-hop-flea-pbc"
+            f"hop Hangar refused {name} — need a hop motor (not pad/geiger)"
         )
-    src = hop_craft_path()
+    src = hop_craft_path(name)
     if not src.is_file():
         raise MissionAbort(f"missing hop craft {src}")
     hangar = discover_hangar()
@@ -169,8 +232,15 @@ def _recoverable(vessel: object) -> bool:
 
 
 def _hd_ready(vessel: object, ids: tuple[str, ...], started: list[str]) -> bool:
-    """True if the HD may hold science (in-card data, drive files, or started)."""
-    return bool(started) or card_has_data(vessel, ids) or hd_has_data(vessel)
+    """True if the HD may hold science (drive files, stored slots, or started).
+
+    Idle remaining=0 (TELEMETRY duration) is not leftover data.
+    """
+    return (
+        bool(started)
+        or hd_has_data(vessel)
+        or card_has_data(vessel, ids, remaining=False)
+    )
 
 
 def _keep_hd(
@@ -180,7 +250,10 @@ def _keep_hd(
     *,
     left_pad: bool,
 ) -> bool:
-    """Recover leftover HD: files on the drive, or Experiment modules gone."""
+    """Recover leftover HD: files on the drive, or Experiment modules gone.
+
+    Not for a Flea this process just lit — leftover skip is dead probes.
+    """
     if _hd_ready(vessel, ids, started):
         return True
     if left_pad:
@@ -217,9 +290,10 @@ def _vessel_met(vessel: object | None) -> float | None:
 
 def _ours(vessel: object) -> bool:
     name = _vessel_name(vessel).lower()
-    if not name or PAD_CRAFT in name:
+    if not name or _is_pad_motor(vessel):
         return False
-    return CRAFT in name or "debris" in name
+    wanted = hop_craft_name().lower()
+    return (wanted and wanted in name) or "debris" in name
 
 
 def _try_recover(
@@ -232,6 +306,7 @@ def _try_recover(
     except Exception:
         return None
     _say("recovered", on_log)
+    mission_event("recover")
     return "recovered"
 
 
@@ -245,6 +320,7 @@ def _force_recover(
     except Exception:
         return None
     _say("recovered", on_log)
+    mission_event("recover")
     return "recovered"
 
 
@@ -284,9 +360,18 @@ def _finish_hd(
         _say("hop dismissed flight results", on_log)
     except Exception as exc:
         log.warning("hop dismiss flight results: %s", exc)
+    if got is None:
+        for other in _pool(session, vessel):
+            if other is vessel or _ours(other):
+                hit = _try_recover(other, on_log)
+                if hit is not None:
+                    got = hit
+                    break
     if got is not None:
         return got
     if dismissed:
+        _say("recovered", on_log)
+        mission_event("recover")
         return "recovered"
     return None
 
@@ -328,6 +413,7 @@ def _light(vessel: object, on_log: Callable[[str], None] | None) -> None:
 
 
 def _hold_or_cut(vessel: object, snap: object, hop_apo: float) -> None:
+    """Throttle 0 at hop_apo. An SRB ignores this — do not OffPlan the coast."""
     try:
         control = vessel.control
         apo = float(getattr(snap, "apo", float("nan")))
@@ -362,7 +448,8 @@ def run_on_vessel(
 ) -> str:
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars.
 
-    Leftover with drive files or no Experiment modules skips a fresh start.
+    Leftover (did not light) with drive files or no Experiment modules
+    skips a fresh start. A Flea this process lit always starts the card.
     Paused Flight Results (MET stuck) recovers debris or leaves flight.
     """
     from phases import OffPlan, check_expect
@@ -376,6 +463,7 @@ def run_on_vessel(
     budget = DEFAULT_HOP_S if timeout is None else float(timeout)
     t0 = clock()
     lit = False
+    did_light = False
     left_pad = False
     started: list[str] = []
     science_attempted = False
@@ -413,6 +501,7 @@ def run_on_vessel(
                 if not left_pad:
                     _say("hop airborne", on_log)
                     log_events.emit("hop", result="airborne")
+                    mission_event("airborne", snap)
                 left_pad = True
             down = _down(snap, flown=left_pad)
 
@@ -458,11 +547,11 @@ def run_on_vessel(
                 and not down
                 and not waiting_hd
                 and math.isfinite(apo_f)
-                and apo_f > HOP_APO_MAX
+                and apo_f > FLYING_LOW_M
             ):
-                raise OffPlan(f"apo {apo_f:.0f} > {HOP_APO_MAX:.0f}")
+                raise OffPlan(f"apo {apo_f:.0f} > {FLYING_LOW_M:.0f} FlyingLow")
             if left_pad and not down and not waiting_hd:
-                check_expect(snap, skip_peri=True)
+                check_expect(snap, skip_peri=True, skip_apo=True)
 
             if not lit:
                 if airborne:
@@ -470,22 +559,28 @@ def run_on_vessel(
                 elif not left_pad and str(snap.situation) in _LIGHT_SIT:
                     _light(vessel, on_log)
                     lit = True
+                    did_light = True
                     log_events.emit("hop", result="light")
+                    mission_event("light", snap)
 
             if left_pad and not down:
                 _hold_or_cut(vessel, snap, hop_apo)
 
             if left_pad and not down and not science_attempted:
                 science_attempted = True
-                if _keep_hd(vessel, ids, started, left_pad=True):
+                if (not did_light) and _keep_hd(
+                    vessel, ids, started, left_pad=True
+                ):
                     _say("science keep HD", on_log)
                     log_events.emit("science", result="keep")
+                    mission_event("science", snap)
                     waiting_hd = True
                 else:
                     started = start_experiments(vessel, names=ids, on_log=on_log)
                     if started:
                         _say("science " + ",".join(started), on_log)
                         log_events.emit("science", ids=list(started))
+                        mission_event("science", snap)
                         _say("science dwell", on_log)
                         log_events.emit("science_dwell", phase="start")
                     elif ids:
@@ -526,6 +621,7 @@ def run_on_vessel(
                     if still >= _STILL_N:
                         _say("hop paused wreck", on_log)
                         log_events.emit("hop", result="paused")
+                        mission_event("paused", snap)
                         got = _finish_hd(session, vessel, on_log)
                         if got is not None:
                             return got
@@ -564,9 +660,13 @@ def run_hop(
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
 ) -> str:
-    """``python main.py hop``: Hangar the Flea uncrewed, then light."""
+    """``python main.py hop``: Hangar the seated hop craft uncrewed, then light."""
     install_and_launch(session)
-    time.sleep(1.0)
+    try:
+        msg = wait_vessel_ready(session)
+    except Exception as exc:
+        raise MissionAbort(f"no vessel after launch: {exc}") from exc
+    _say(msg, on_log)
     vessel = _active_vessel(session)
     if vessel is None:
         raise MissionAbort("no vessel after launch")
@@ -581,8 +681,35 @@ def run_phase(
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
 ) -> str:
-    """``phase hop``: Hangar if empty or leftover pad motor; else already launched."""
-    vessel = _active_vessel(session)
+    """``phase hop``: Hangar if empty or leftover pad motor; else leftover Flight.
+
+    Tracking leftover at SpaceCenter is switched into Flight. Do not Hangar
+    a second hop on that pad. Do not fly leftover pad/geiger as a hop.
+    """
+    vessel = _find_hop_vessel(session)
     if vessel is None or _is_pad_motor(vessel):
         return run_hop(session, on_log=on_log, abort=abort)
+    _ensure_flight(session, vessel, on_log)
+    live = _active_vessel(session)
+    if live is not None:
+        vessel = live
     return run_on_vessel(session, vessel, on_log=on_log, abort=abort)
+
+
+HOP_TO_WATER_ABORT = (
+    "hop-to-water refused: Start Flea cannot steer to Water "
+    "(Stayputnik has no torque, Flea has no gimbal, no chute). "
+    "Cape Shores vertical hop lithobrakes Shores (18-32: 74 m). "
+    "need_builder for east pitch, or skip splash"
+)
+
+
+def run_hop_to_water(
+    session: object,
+    *,
+    on_log: Callable[[str], None] | None = None,
+    abort: Callable[[], bool] | None = None,
+) -> str:
+    """Named catalog block. Does not Hangar. Does not fake Water."""
+    _say(HOP_TO_WATER_ABORT, on_log)
+    raise MissionAbort(HOP_TO_WATER_ABORT)

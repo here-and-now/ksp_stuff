@@ -9,6 +9,7 @@ Use ``grim -T <stableId>`` (foreign toplevel buffer) first.
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
 import struct
@@ -22,9 +23,16 @@ from pathlib import Path
 
 from hangar import discover_ksp
 
+log = logging.getLogger("kspstuff")
+
 ROOT = Path(__file__).resolve().parent
 SHOT_DIR = ROOT / "screenshots"
-PRESERVE = frozenset({"first-mystery-goo.png"})
+PRESERVE = frozenset(
+    {"first-mystery-goo.png", "first-hop.png", "rocket-flea.png"}
+)
+RUNS_DIR = SHOT_DIR / "runs"
+MISSION_INTERVAL_S = 60.0
+_SLUG = re.compile(r"[^a-z0-9-]+")
 KSP_CLASSES = frozenset({"KSP.x86_64", "KSP.x86", "KSP"})
 MIN_PX = 64
 
@@ -643,6 +651,192 @@ def capture(
         f"stableId={window.stable_id or '-'}). "
         "Need grim -T (Hyprland stableId) or magick import on the X11 id."
     )
+
+
+def _slug(event: str) -> str:
+    text = _SLUG.sub("-", str(event).lower()).strip("-")
+    return (text or "tick")[:40]
+
+
+def run_shot_dir(*, stamp: str | None = None, command: str | None = None) -> Path:
+    """``screenshots/runs/<earth-stamp>-<command>/``. Not press heroes."""
+    st = stamp
+    cmd = command
+    if not st or not cmd:
+        try:
+            from flightlog import command as fl_command
+            from flightlog import stamp as fl_stamp
+
+            st = st or fl_stamp()
+            cmd = cmd or fl_command()
+        except Exception:
+            pass
+    st = st or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
+    cmd = _slug(cmd or "run")
+    return RUNS_DIR / f"{st}-{cmd}"
+
+
+def mission_dest(
+    event: str,
+    *,
+    met: float | None = None,
+    stamp: str | None = None,
+    command: str | None = None,
+) -> Path:
+    folder = run_shot_dir(stamp=stamp, command=command)
+    met_s = 0
+    if met is not None:
+        try:
+            m = float(met)
+        except (TypeError, ValueError):
+            m = float("nan")
+        if m == m and m >= 0:
+            met_s = int(m)
+    return folder / f"T+{met_s:06d}-{_slug(event)}.png"
+
+
+class ShotCadence:
+    """Quiet stills: ~1 min, plus sit/stage/light/wreck. Never reads the PNG."""
+
+    def __init__(
+        self,
+        *,
+        interval_s: float = MISSION_INTERVAL_S,
+        grab: Callable[[Path], None] | None = None,
+        clock: Callable[[], float] = time.monotonic,
+        min_gap_s: float = 1.5,
+    ) -> None:
+        self.interval_s = float(interval_s)
+        self.grab = grab
+        self.clock = clock
+        self.min_gap_s = float(min_gap_s)
+        self.t0 = clock()
+        self._last = 0.0
+        self._sit: str | None = None
+        self._stage: int | None = None
+        self._thrust_on: bool | None = None
+        self._ec0 = False
+        self._started = False
+
+    def observe(self, snap: object, *, event: str | None = None) -> Path | None:
+        reasons: list[str] = []
+        if event:
+            reasons.append(_slug(event))
+        sit = str(getattr(snap, "situation", "") or "")
+        if self._sit is not None and sit and sit != self._sit:
+            reasons.append(f"sit-{_slug(sit)}")
+        if sit:
+            self._sit = sit
+        stage = getattr(snap, "stage", None)
+        try:
+            stage_i = int(stage) if stage is not None else None
+        except (TypeError, ValueError):
+            stage_i = None
+        if (
+            stage_i is not None
+            and self._stage is not None
+            and stage_i != self._stage
+        ):
+            reasons.append("stage")
+        if stage_i is not None:
+            self._stage = stage_i
+        thrust = getattr(snap, "thrust", 0.0)
+        try:
+            thrust_f = float(thrust)
+        except (TypeError, ValueError):
+            thrust_f = 0.0
+        on = thrust_f == thrust_f and thrust_f > 10.0
+        if self._thrust_on is False and on:
+            reasons.append("light")
+        if thrust_f == thrust_f:
+            self._thrust_on = on
+        if bool(getattr(snap, "wreck", False)):
+            reasons.append("wreck")
+        ec = getattr(snap, "ec", None)
+        try:
+            ec_f = float(ec) if ec is not None else None
+        except (TypeError, ValueError):
+            ec_f = None
+        if ec_f is not None and ec_f <= 0 and not self._ec0:
+            self._ec0 = True
+            reasons.append("ec0")
+        now = self.clock()
+        if not self._started:
+            self._started = True
+            reasons.append("start")
+        elif now - self._last >= self.interval_s:
+            reasons.append("tick")
+        if not reasons:
+            return None
+        if (
+            self._last
+            and now - self._last < self.min_gap_s
+            and event is None
+            and "tick" in reasons
+            and len(reasons) == 1
+        ):
+            return None
+        return self._grab(reasons[0], snap)
+
+    def event(self, name: str, snap: object | None = None) -> Path | None:
+        return self.observe(snap or object(), event=name)
+
+    def _grab(self, slug: str, snap: object) -> Path | None:
+        from flightlog import live_records
+
+        if self.grab is None and not live_records():
+            return None
+        met = getattr(snap, "met", None)
+        dest = mission_dest(slug, met=met if isinstance(met, (int, float)) else None)
+        if dest.name in PRESERVE:
+            return None
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if dest.exists():
+            dest = dest.with_name(f"{dest.stem}-{os.getpid()}.png")
+        try:
+            if self.grab is not None:
+                self.grab(dest)
+            else:
+                capture(out=dest, force=False, full=False)
+        except Exception:
+            log.debug("mission shot failed slug=%s", slug, exc_info=True)
+            return None
+        self._last = self.clock()
+        log.info("shot %s", dest)
+        return dest
+
+
+_cadence: ShotCadence | None = None
+
+
+def reset_mission_shots() -> ShotCadence:
+    global _cadence
+    _cadence = ShotCadence()
+    return _cadence
+
+
+def mission_shots() -> ShotCadence:
+    global _cadence
+    if _cadence is None:
+        _cadence = ShotCadence()
+    return _cadence
+
+
+def mission_observe(snap: object, *, event: str | None = None) -> Path | None:
+    """Helm cadence. Capture only — do not read the PNG."""
+    try:
+        return mission_shots().observe(snap, event=event)
+    except Exception:
+        log.debug("mission_observe failed", exc_info=True)
+        return None
+
+
+def mission_event(name: str, snap: object | None = None) -> Path | None:
+    try:
+        return mission_shots().event(name, snap)
+    except Exception:
+        log.debug("mission_event failed", exc_info=True)
+        return None
 
 
 def cmd_screenshot(

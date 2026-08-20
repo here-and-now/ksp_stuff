@@ -311,6 +311,188 @@ def clear_launch_site(session: Session, site: str = "LaunchPad") -> int:
     return n
 
 
+def vessel_ready_state(session: Any, vessel: Any = None) -> tuple[bool, str]:
+    """kRPC: Flight, active vessel, parts loaded, ``flight()`` callable.
+
+    Do not sleep a wall-clock guess. PRELAUNCH is ready (MET may still be 0).
+    """
+    try:
+        scene = game_scene(session)
+    except Exception:
+        scene = "?"
+    if scene not in {"flight", "?"}:
+        return False, f"scene {scene}"
+    try:
+        v = vessel if vessel is not None else getattr(session, "active_vessel", None)
+        if v is None:
+            sc = getattr(session, "space_center", None)
+            v = getattr(sc, "active_vessel", None) if sc is not None else None
+    except Exception as exc:
+        return False, f"active_vessel ({exc})"
+    if v is None:
+        return False, "active_vessel None"
+    try:
+        parts = list(getattr(getattr(v, "parts", None), "all", ()) or ())
+        sit = str(getattr(v, "situation", "") or "?")
+        name = str(getattr(v, "name", "") or "?")
+    except Exception as exc:
+        return False, f"loading ({exc})"
+    if not parts:
+        return False, "parts empty"
+    try:
+        v.flight()
+    except Exception as exc:
+        return False, f"flight() {exc}"
+    return True, f"hangar ready {name} sit={sit} parts={len(parts)}"
+
+
+def wait_vessel_ready(
+    session: Any,
+    vessel: Any = None,
+    *,
+    timeout: float = 30.0,
+) -> str:
+    """Poll kRPC until the vessel is loaded. No 30 s guess."""
+    deadline = time.monotonic() + timeout
+    last = "no vessel"
+    while time.monotonic() < deadline:
+        ok, last = vessel_ready_state(session, vessel)
+        if ok:
+            log.info(last)
+            return last
+        time.sleep(0.1)
+    raise SessionError(f"timed out waiting for vessel ready ({last})")
+
+
+def go_ksc(session: Any, *, timeout: float = 45.0) -> str:
+    """Leave Flight (asteroid, debris, leftover) for Space Center. Not a load."""
+    go_space_center(session, timeout=timeout)
+    return "ksc"
+
+
+def load_save(session: Any, name: str = "persistent") -> str:
+    """Apply ``name.sfs`` from the current save folder via kRPC.
+
+    Mortimer after an honest RD spend. Not quickload. Not revert-to-launch.
+    Os is not asked. ``SpaceCenter.load`` may drop the client — that is
+    success if the RPC was issued.
+    """
+    slug = (name or "").strip()
+    if not slug:
+        raise SessionError(
+            "load_save: need a named sfs (rd-<node>). "
+            "load persistent autosaves RAM first and wipes an RD spend"
+        )
+    if slug.lower() in {"quicksave", "quickload"}:
+        raise SessionError("load_save: quicksave/quickload is forbidden")
+    if slug.lower() == "persistent":
+        raise SessionError(
+            "load_save: refuse persistent — kRPC autosaves RAM onto "
+            "persistent.sfs before load (F-014). Use rd-<node>"
+        )
+    sc = getattr(session, "space_center", None)
+    fn = getattr(sc, "load", None) if sc is not None else None
+    if not callable(fn):
+        raise SessionError("SpaceCenter.load missing (cannot apply RD save)")
+    log.info("load save %s (apply RD, not revert)", slug)
+    try:
+        fn(slug)
+    except Exception as exc:
+        msg = str(exc).lower()
+        if "disconnect" in msg or "connection" in msg or "closed" in msg:
+            log.info("load save %s: client dropped after load (ok)", slug)
+            return f"load {slug}"
+        raise SessionError(f"load save {slug}: {exc}") from exc
+    return f"load {slug}"
+
+
+def run_physics(session: Any) -> None:
+    """Unpause and 1× physics. Launch / Flight Results often stop the clock.
+
+    Always set ``paused=False`` (kRPC 0.6 ``conn.krpc.paused`` and
+    ``space_center.paused`` if present). Do not skip when the flag already
+    reads false — Flight Results freeze is not that flag. ``physics_warp_factor``
+    0 is 1× (not paused).
+    """
+    krpc = getattr(getattr(session, "conn", None), "krpc", None)
+    sc = getattr(session, "space_center", None)
+    for obj in (krpc, sc):
+        if obj is None:
+            continue
+        try:
+            obj.paused = False
+        except Exception:
+            pass
+    if sc is None:
+        return
+    try:
+        sc.rails_warp_factor = 0
+    except Exception:
+        pass
+    try:
+        sc.physics_warp_factor = 0
+    except Exception:
+        pass
+
+
+def go_flight(
+    session: Session,
+    vessel: Any = None,
+    *,
+    timeout: float = 45.0,
+) -> None:
+    """Enter Flight on a leftover from SpaceCenter / tracking. No click.
+
+    ``vessel.flight()`` / control are not available in ``space_center``.
+    Setting ``active_vessel`` loads the tracking leftover; ``GameScene.flight``
+    is the belt if the switch did not move the scene.
+    """
+    session.require_connected()
+    if vessel is None:
+        try:
+            vessel = session.active_vessel
+        except Exception:
+            vessel = None
+    if vessel is None:
+        raise SessionError("no vessel to enter Flight")
+    name = "?"
+    try:
+        name = str(vessel.name or "?")
+    except Exception:
+        pass
+    scene = game_scene(session)
+    if scene == "flight":
+        wait_vessel_ready(session, vessel, timeout=min(timeout, 30.0))
+        return
+    log.info("scene %s → flight (%s)", scene, name)
+    try:
+        session.switch_to(vessel)
+    except Exception as exc:
+        log.warning("switch_to leftover %s: %s", name, exc)
+        try:
+            session.space_center.active_vessel = vessel
+        except Exception as exc2:
+            log.warning("active_vessel leftover %s: %s", name, exc2)
+    try:
+        krpc = session.conn.krpc
+        flight = getattr(krpc.GameScene, "flight", None)
+        if flight is not None:
+            krpc.game_scene = flight
+    except Exception as exc:
+        log.warning("game_scene flight: %s", exc)
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if game_scene(session) == "flight":
+            session.space_center = session.conn.space_center
+            left = max(0.5, deadline - time.monotonic())
+            wait_vessel_ready(session, vessel, timeout=left)
+            return
+        time.sleep(0.1)
+    raise SessionError(
+        f"timed out waiting for flight (still {game_scene(session)}; leftover {name})"
+    )
+
+
 def go_space_center(session: Session, *, timeout: float = 45.0) -> None:
     """Leave flight/editor/dialogs for the KSC overview. No human click.
 
@@ -506,6 +688,8 @@ class Hangar:
                     crew_list,
                     use_recover,
                 )
+                run_physics(session)
+                wait_vessel_ready(session)
                 return
             except Exception as exc:
                 last_exc = exc

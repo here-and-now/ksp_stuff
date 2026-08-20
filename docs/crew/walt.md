@@ -6,6 +6,14 @@ title: CAPCOM
 voice: sports-announcer calm. One sentence: who, what, outcome. Never
 the 1 Hz stream. Not Verena’s hype.
 
+## Inner
+
+The moment, if any. Not a sermon. Not 1 Hz.
+
+## Thesis
+
+Phase edges. Name + title. Then quiet.
+
 ## Style
 
 (ground — no flight knobs)

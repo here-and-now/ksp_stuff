@@ -14,9 +14,11 @@ from unittest import TestCase
 from screenshot import (
     PRESERVE,
     ScreenshotError,
+    ShotCadence,
     already_monitor_size,
     capture,
     choose_window,
+    mission_dest,
     parse_hypr_clients,
     parse_hypr_monitors,
     png_size,
@@ -353,3 +355,52 @@ class TestCapture(TestCase):
             )
         )
         self.assertEqual(choose_window(wins, None).stable_id, "steam")
+
+
+class _Snap:
+    def __init__(self, sit="pre_launch", stage=1, thrust=0.0, wreck=False, ec=10.0, met=0.0):
+        self.situation = sit
+        self.stage = stage
+        self.thrust = thrust
+        self.wreck = wreck
+        self.ec = ec
+        self.met = met
+
+
+class TestShotCadence(TestCase):
+    def test_interval_and_events(self):
+        written: list[str] = []
+        t = {"now": 0.0}
+
+        def clock():
+            return t["now"]
+
+        def grab(dest: Path) -> None:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(b"png")
+            written.append(dest.name)
+
+        cad = ShotCadence(interval_s=60.0, grab=grab, clock=clock, min_gap_s=0.0)
+        first = cad.observe(_Snap(sit="pre_launch", met=0))
+        self.assertIsNotNone(first)
+        self.assertTrue(written[0].endswith("-start.png"))
+        self.assertIsNone(cad.observe(_Snap(sit="pre_launch", met=1)))
+        air = cad.observe(_Snap(sit="flying", met=2, thrust=50.0))
+        self.assertIsNotNone(air)
+        self.assertIn("sit-flying", written[-1])
+        t["now"] = 60.0
+        tick = cad.observe(_Snap(sit="flying", met=60, thrust=50.0))
+        self.assertIsNotNone(tick)
+        self.assertTrue(written[-1].endswith("-tick.png"))
+        stage = cad.observe(_Snap(sit="flying", met=61, thrust=50.0, stage=0))
+        self.assertIsNotNone(stage)
+        self.assertTrue(written[-1].endswith("-stage.png"))
+        sci = cad.event("science", _Snap(sit="flying", met=62))
+        self.assertIsNotNone(sci)
+        self.assertTrue(written[-1].endswith("-science.png"))
+
+    def test_mission_dest_uses_run_folder(self):
+        dest = mission_dest("airborne", met=7.4, stamp="2026-08-20T15-58-12Z", command="hop")
+        self.assertEqual(dest.name, "T+000007-airborne.png")
+        self.assertEqual(dest.parent.name, "2026-08-20T15-58-12Z-hop")
+        self.assertEqual(dest.parent.parent.name, "runs")

@@ -38,14 +38,18 @@ wrapper → update the table here → next slice. Encode knowledge in helpers
 | Plugin | `GameData/kRPC` **0.6.0** (manual drop-in; CKAN 51 modules + kRPC) |
 | Client | `.venv`, Python 3.14.7, `krpc==0.6.0` |
 | Sockets | `127.0.0.1:50000` RPC, `127.0.0.1:50001` stream |
-| Settings | `GameData/kRPC/PluginData/settings.cfg` — `AutoStartServers=True`, `AutoAcceptConnections=True` |
+| Settings | `GameData/kRPC/PluginData/settings.cfg` — disk 2026-08-20: `autoStartServers = False`, `autoAcceptConnections = True`, `pauseServerWithGame = False` |
 
 Steam `Kerbal Space Program` still has stock kRPC + Squad only. **Do not use it.**
 `hangar.discover_ksp` prefers RSS when `GameData/RealSolarSystem` exists.
 Do not load `Grok`, `test`, or old career folders.
 
-The kRPC zip ships an empty `settings.cfg`. Without auto-start, the server does
-not bind until someone clicks Start in the in-game window.
+The kRPC zip ships an empty `settings.cfg`. Disk now has a filled cfg with
+**`autoStartServers = False`**. Without auto-start, the server does not bind
+until someone clicks Start in the in-game window. **Do not write GameData**
+to flip that flag.
+
+Desk briefing (who may touch what): `docs/program/krpc.md`. Traps stay here.
 
 Client and plugin **must match** (both 0.6.0 here). `KSP.log` must contain
 `[kRPC]` after boot.
@@ -55,7 +59,15 @@ after a CKAN change is slow; later boots ~70 s to MAINMENU. First
 `Session.connect()` ~30 s (service schema over RPC). Later connects are cheaper.
 System `python3` has no `krpc`; use `.venv`.
 
-### Screenshot (no kRPC)
+### Parts vs hosted experiments (disk)
+
+`python main.py parts` lists **placeable** parts. `hosts=N` is Kerbalism
+PAW slots on that part — not extra VAB parts. Stayputnik hosts
+`geigerCounter`; the Geiger Counter part is `kerbalism-geigercounter`
+at `engineering101`. Seated stack: `python main.py parts --stack`.
+Do not sign an experiment id as hardware.
+
+## Screenshot (no kRPC)
 
 `grim -g "<x>,<y> <w>x<h>"` of the Hyprland layout box is **not** a window
 shot. KSP stays `mapped` with an `at`/`size` while `visible` is false
@@ -100,12 +112,21 @@ Default dest is `screenshots/ksp-<utc>.png`. Refuses to overwrite
 Press stills: Verena `shot:` → parent `--name <slug>`. Ops: Gene
 (between exits) or the seated Commander may take **one**
 `--name stuck-<stem>` when last-flight / jsonl cannot explain the
-scene, then read the PNG. Not a heartbeat. grim is not kRPC.
+scene, then read the PNG. grim is not kRPC.
+
+Helm cadence (no kRPC, do **not** read unless stuck): pad/hop
+`Telem.read` grabs `screenshots/runs/<stamp>-<command>/T+MMMMMM-<event>.png`
+about every 60 s and on sit/stage/light/wreck/first EC=0, plus named
+events (science, recover, airborne). Failures are debug-only — never
+abort the fly. Never overwrite press heroes (`first-mystery-goo`,
+`first-hop`, `rocket-flea`). Verena may pick from that folder.
 
 ### World desk (disk, no kRPC)
 
-kRPC 0.6 has no RD-node list and no “parts that unlock later.” Read GameData +
-save:
+kRPC 0.6 has no RD-node list and no UnlockTech. `GameScene.research_and_development`
+opens the facility; `SpaceCenter.science` is get-only. Buy CLI:
+`python main.py tech-unlock <id>` (aborts if no purchase RPC — do not
+edit GameData or the save). Read GameData + save for the tree:
 
 ```bash
 python main.py world
@@ -138,7 +159,20 @@ connect fails if 50001 is closed.
 
 `space_center.active_vessel` is **`None`** at the space center with nothing
 spawned. Touching `.name` / `.comms` there raises. Scene-dependent probes belong
-in the scene that has a vessel.
+in the scene that has a vessel. A leftover still listed in tracking while
+`game_scene` is `space_center` is not Flight: `vessel.flight()` / control
+raise `Procedure not available in game scene 'SpaceCenter'`. Set
+`active_vessel` (and `GameScene.flight` if the scene did not move) and wait
+for `flight` — do not Hangar a second stack on that pad.
+
+`KRPC.GameScene` setter is **async** (plugin 0.6 XML): setting returns
+immediately; poll until it reports the requested scene. `GameScene.flight`
+resumes the save’s active vessel and fails if there is none.
+`LoadSpaceCenter` is deprecated.
+
+`python main.py world|tech|parts|screenshot` are disk / grim — no Session.
+`status` and `python main.py science` (career snapshot) **open** a Session.
+While `flight.lock` is live they are a second writer — do not run them.
 
 ---
 
@@ -201,11 +235,9 @@ in this tree — Lars writes it when Gene `need_stack`.
 
 **Pipeline**
 
-Pad uses `telem.Telem` (getattr streams). Hold `flight` / `orbit`; never `vessel.flight()`
-per pulse. Writes stay RPC. Ascent, nodes, warp, recover, suicide all
-`pulse()` the same instance. `heartbeat()` / `status` are one-shots.
-Do not treat the 1 Hz line as intervention — the loop branches on
-`FlightState`.
+Pad/hop use `telem.Telem` (getattr streams). **`watch.py` / `FlightWatch` are
+not in this tree.** Hold `flight` / `orbit`; never `vessel.flight()`
+per pulse. Writes stay RPC. `status` is the one-shot Session probe.
 
 UI `TelemetrySample` / pyqtSignal is parked with the rest of the UI.
 
@@ -240,6 +272,13 @@ True). Set `control.sas=False` yourself anyway. `error` / `pitch_error` /
 `target_roll=0`. `error` streamed at 10 Hz: 73° → 2.6° in 2.25 s.
 `ap.wait()` then returned in 0.35 s at `error≈1°`. Disengage → `error`
 raises again.
+
+**Pause (plugin 0.6):** `conn.krpc.paused` is the KRPC service flag.
+`space_center.paused` may also exist. Flight Results / `launch_vessel`
+can freeze physics **without** that flag reading True — always *set*
+`paused=False`, then `rails_warp_factor=0` and `physics_warp_factor=0`
+(0 is 1× physics, not stopped). `hangar.run_physics` after Hangar and
+before pad dwell.
 
 **Warp (plugin 0.6, from `KRPC.SpaceCenter.json`):**
 
@@ -426,7 +465,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 - Encode craft part-name round-trip (`mk1pod_v2` ↔ `mk1pod.v2`) and assert
   after `launch_vessel`. Extend catalog only as names are needed.
-- Ascent hot-path reads are on `FlightWatch` streams; writes stay RPC. Respect
+- Ascent hot-path reads are on `telem.Telem` streams; writes stay RPC. Respect
   the one-tick getter lag (do not treat immediate `control.throttle` as the
   value just set). Do not gate ascent on `ecc` while still in atmosphere
   (suborbital hops report `ecc≈1`).
@@ -440,6 +479,12 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-20** — kRPC 0.6: `GameScene.research_and_development` opens
+  R&D; `get_Science` only. No UnlockTech. `python main.py tech-unlock`.
+- **2026-08-20** — Disk `PluginData/settings.cfg`: `autoStartServers = False`
+  (not True). GameScene setter async. `python main.py science` opens a
+  Session. Telemetry is `telem.Telem`; no `watch.py`. Desk briefing
+  `docs/program/krpc.md`. No Kerbalism kRPC service.
 - **2026-08-20** — `--full` must skip the FS dance when the buffer is
   already monitor-sized / already FS (inactive workspace still
   `grim -T`). Always restore original `fullscreen`/`fullscreenClient`,

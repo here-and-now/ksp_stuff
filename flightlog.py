@@ -97,6 +97,10 @@ def stamp() -> str:
     return _stamp
 
 
+def command() -> str:
+    return _command
+
+
 def path() -> Path | None:
     return _path
 
@@ -202,6 +206,12 @@ def start(command: str, *, crew: str = "", session: Any = None) -> Path:
         clear(reason=f"{command} start")
     except Exception:
         log.debug("uplink clear at start failed", exc_info=True)
+    try:
+        from screenshot import reset_mission_shots
+
+        reset_mission_shots()
+    except Exception:
+        log.debug("mission shots reset failed", exc_info=True)
     return _path
 
 

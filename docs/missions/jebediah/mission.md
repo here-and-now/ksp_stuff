@@ -7,4 +7,4 @@ body: Earth
 peri: —
 apo: —
 next: wait
-notes: Lars hop-jsonl in. 15-58 envelope stays empty. Os still drums 002423 / KER 2,380.7 m not 72 m. sci 3.20. Verena patched hop. Do not Hangar.
+notes: 23-13 pad recovered. sci 2.43. Landed TELEMETRY capped. Do not re-pad. Do not Toggle Cape geiger. go: wait.

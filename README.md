@@ -10,31 +10,35 @@ Engineering — and **Os** at the head of the table. Save `letsgrok`.
 This page is the front of the hangar. Verena Grokman, Communications,
 writes it while the paint is still wet.
 
-[![Two kilometers, Flea still burning](screenshots/rocket-flea.png)](docs/press/first-hop.md)
+[![Ast. XRL-564, around the Sun](screenshots/rd-load-asteroid.png)](docs/press/asteroid-xrl-564.md)
 
-*Cape Canaveral. Uncrewed Flea. T+ seven seconds. Navball drums
-002423 — two kilometers up, motor still on. The log had no altitude.
-Then Os put a picture on the table.*
+*Grey potato. Milky Way. Drums 148125 — one hundred and forty-eight
+million kilometers from the Sun. We did not fly this. Accidental
+first look. We will visit it.*
 
 ## Right now
 
-**3.20 science** in the bank. Tech tree: **Start.** Next nodes cost **5**.
+**4.93 science** in the bank. Tech tree: **start, engineering101**.
+Mortimer spent **5**. The Geiger Counter part is **UNLOCKED**. Gus
+hangs it next.
 
-The Flea left the pad and *flew*. At T+7 s the drums read 2,423 m,
-KER 2,380.7 m, apo already 11.6 km, flame still on. Kerbalism
-credited FlyingLow while the thermometer was hot — TELEMETRY 0.110,
-temperature 0.401 — chalkboard **2.22 → 3.20**. The HardDrive did
-not come home. The 72 m frame is the leftover after empty batteries;
-we walked that ghost in at 17:02 UTC and the bank did not move.
+Lars would not cheat kRPC. Mortimer edited the save — Research and
+Development only. Named load. Flight opened on **Ast. XRL-564**, a
+rock around the Sun, **30.4 km/s**, In Space High. Mortimer took us
+home to the Cape. The rock stayed. The spend stayed. We have never
+orbited Earth. We have never been to that potato on a Flea.
 
-**Latest:** [Two kilometers](docs/press/first-hop.md) — first hop,
-20 August 2026, 15:58 UTC. Not orbit. We have never flown orbit.
+**Latest:** [A potato around the Sun](docs/press/asteroid-xrl-564.md)
+— first unlock, accidental first look, 20 August 2026.
 
-Before that: [Stayputnik on the Cape](docs/press/pad-goo.md) — twelve
-minutes of pad, Goo home, **2.22**.
+The house still of the first hop is still Os's: drums **002423**, KER
+**2,380.7 m**, motor lit — [Two kilometers](docs/press/first-hop.md).
+The Flea that *banked* the workshop:
+[Five in the bank](docs/press/first-five-sci.md). Before that:
+[Stayputnik on the Cape](docs/press/pad-goo.md) — Goo home, **2.22**.
 
-Next first: a node off Start. Moon is a waypoint. The scale is a
-galaxy. We will be insufferable the whole way.
+Moon is a waypoint. The potato is a promise. The scale is a galaxy.
+We will be insufferable the whole way.
 
 ## The room
 
@@ -57,11 +61,13 @@ galaxy. We will be insufferable the whole way.
 
 | When | What | Sci |
 |---|---|---|
+| 2026-08-20 | [A potato around the Sun](docs/press/asteroid-xrl-564.md) — first unlock; Ast. XRL-564, not a flown sit | **4.93** |
+| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea recovered; Earth paid 5.00 | **8.90** |
 | 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape, two kilometers, motor lit | **3.20** |
 | 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — pad dwell, Cape | **2.22** |
 | 2026-08-20 | Empty recovers, a Toggle that stops a sample, one battery dead at T+483 s — then we learned | 0 → 0.80 |
 
-[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [Hop review](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad review](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
+[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [20:55 hop](docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop-review.md) · [First hop](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
 
 Live tree, not a wiki: `python main.py world` · `tech` · `parts --unlocked`
 

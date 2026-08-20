@@ -2,16 +2,27 @@
 
 from __future__ import annotations
 
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from catalog import Catalog, ExperimentCfg, merge_experiment_cfg
-from pad import recover_or_abort, run_on_vessel
+from pad import (
+    TEMPLATE,
+    install_and_launch,
+    pad_craft_path,
+    pad_science_ids,
+    recover_or_abort,
+    run_on_vessel,
+)
 from science import (
     PAD_EC_MARGIN,
+    PAD_EXPERIMENTS,
     card_complete,
     card_has_data,
+    card_pad_ids,
+    card_wait_line,
     experiment_done,
     hd_has_data,
     pad_dwell_s,
@@ -70,6 +81,7 @@ class _Parts:
 class _Control:
     throttle = 0.0
     staged = 0
+    current_stage = 0
 
     def activate_next_stage(self):
         self.staged += 1
@@ -133,10 +145,28 @@ class _Vessel:
         self.recovered = True
 
 
+class _Krpc:
+    def __init__(self):
+        self.paused = True
+        self.GameScene = type("GS", (), {"flight": "flight"})()
+        self.game_scene = type("S", (), {"name": "flight"})()
+
+
 class _Session:
     def __init__(self, vessel):
         self.active_vessel = vessel
-        self.space_center = type("SC", (), {"rails_warp_factor": 0, "physics_warp_factor": 0})()
+        self.space_center = type(
+            "SC",
+            (),
+            {
+                "rails_warp_factor": 0,
+                "physics_warp_factor": 0,
+                "paused": True,
+                "ut": 0.0,
+            },
+        )()
+        krpc = _Krpc()
+        self.conn = type("C", (), {"krpc": krpc, "space_center": self.space_center})()
 
     def add_stream(self, func, obj, name):
         class _S:
@@ -259,7 +289,8 @@ class TestKerbalismStart(unittest.TestCase):
         self.assertEqual(inner.triggered, ["Start Experiment"])
         self.assertEqual([x for x in lines if x.startswith("science start")], ["science start mysteryGoo"])
 
-    def test_same_eid_two_parts_both_start(self):
+    def test_same_eid_prefers_native_part(self):
+        """Stayputnik thermo is a duplicate of 2HOT. One Toggle."""
         stay = _Mod("Experiment", "temperatureScan")
         thermo = _Mod("Experiment", "temperatureScan")
         vessel = _Vessel([stay])
@@ -269,10 +300,73 @@ class TestKerbalismStart(unittest.TestCase):
                 _Part("sensorThermometer", [thermo]),
             ]
         )
-        ran = start_experiments(vessel, names=("temperatureScan",))
-        self.assertEqual(ran, ["temperatureScan", "temperatureScan"])
-        self.assertEqual(stay.triggered, ["Start Experiment"])
+        lines: list[str] = []
+        ran = start_experiments(
+            vessel, names=("temperatureScan",), on_log=lines.append
+        )
+        self.assertEqual(ran, ["temperatureScan"])
         self.assertEqual(thermo.triggered, ["Start Experiment"])
+        self.assertEqual(stay.triggered, [])
+        self.assertTrue(any("already" in x or "prefer" in x for x in lines))
+
+    def test_geiger_prefers_counter_part_not_stayputnik_paw(self):
+        """F-013: kerbalism-geigercounter ranks 0. Idle PAW rem=0 is not a file."""
+        from science import _slot_rank, card_run_rem, card_wait_line
+
+        stay = _Mod("Experiment", "geigerCounter")
+        stay.fields["remaining"] = 0
+        stay.fields["status"] = "waiting"
+        inst = _Mod("Experiment", "geigerCounter")
+        inst.fields["remaining"] = 497
+        inst.fields["status"] = "Ready"
+        paw = _Part("probeCoreSphere.v2", [stay])
+        native = _Part("kerbalism-geigercounter_1183042711", [inst])
+        self.assertEqual(_slot_rank(native, "geigerCounter"), 0)
+        self.assertGreater(_slot_rank(paw, "geigerCounter"), 0)
+        vessel = _Vessel([stay])
+        vessel.parts = _Parts([paw, native])
+        lines: list[str] = []
+        ran = start_experiments(
+            vessel, names=("geigerCounter",), on_log=lines.append
+        )
+        self.assertEqual(ran, ["geigerCounter"])
+        self.assertEqual(inst.triggered, ["Start Experiment"])
+        self.assertEqual(stay.triggered, [])
+        self.assertTrue(any("kerbalism-geigercounter" in x or "prefer" in x or "already" in x for x in lines))
+        wait = card_wait_line(vessel, ("geigerCounter",))
+        self.assertIn("geigerCounter", wait)
+        self.assertNotIn("geigerCounter run=1 rem=0", wait)
+        self.assertNotIn(",", wait)
+        running, rem = card_run_rem(vessel, ("geigerCounter",))
+        self.assertFalse(running)
+        self.assertEqual(rem, 497)
+
+    def test_geiger_paw_only_still_starts(self):
+        stay = _Mod("Experiment", "geigerCounter")
+        vessel = _Vessel([stay])
+        vessel.parts = _Parts([_Part("probeCoreSphere.v2", [stay])])
+        ran = start_experiments(vessel, names=("geigerCounter",))
+        self.assertEqual(ran, ["geigerCounter"])
+        self.assertEqual(stay.triggered, ["Start Experiment"])
+
+    def test_flying_card_order_one_each(self):
+        stay_thermo = _Mod("Experiment", "temperatureScan")
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        hot = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([stay_thermo])
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [stay_thermo, tel]),
+                _Part("sensorThermometer", [hot]),
+            ]
+        )
+        ran = start_experiments(
+            vessel, names=("kerbalism_TELEMETRY", "temperatureScan")
+        )
+        self.assertEqual(ran, ["kerbalism_TELEMETRY", "temperatureScan"])
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(hot.triggered, ["Start Experiment"])
+        self.assertEqual(stay_thermo.triggered, [])
 
     def test_stock_leftover_same_part_once(self):
         ksm = _Mod("Experiment", "temperatureScan")
@@ -380,17 +474,32 @@ class TestExperimentDone(unittest.TestCase):
         empty = _Mod("Experiment", "mysteryGoo")
         self.assertFalse(card_has_data(_Vessel([empty]), ("mysteryGoo",)))
 
+    def test_card_has_data_idle_telemetry_remaining(self):
+        """Duration TELEMETRY remaining=0 is pad-data, not leftover HD."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        vessel = _Vessel([tel])
+        self.assertTrue(card_has_data(vessel, ("kerbalism_TELEMETRY",)))
+        self.assertFalse(
+            card_has_data(vessel, ("kerbalism_TELEMETRY",), remaining=False)
+        )
+
     def test_hd_has_data_without_experiment(self):
         drive = _Mod("HardDrive", "")
         drive.fields = {"Data": "Telemetry Report 0.11 Mb"}
         empty = _Mod("HardDrive", "")
         empty.fields = {"Data": "empty"}
+        none = _Mod("HardDrive", "")
+        none.fields = {"Data": "no files"}
         vessel = _Vessel([])
         vessel.parts = _Parts([_Part("probeCoreSphere.v2", [drive])])
         self.assertTrue(hd_has_data(vessel))
         blank = _Vessel([])
         blank.parts = _Parts([_Part("probeCoreSphere.v2", [empty])])
         self.assertFalse(hd_has_data(blank))
+        quiet = _Vessel([])
+        quiet.parts = _Parts([_Part("probeCoreSphere.v2", [none])])
+        self.assertFalse(hd_has_data(quiet))
         self.assertFalse(hd_has_data(_Vessel([])))
 
     def test_dwell_budget_uses_size_over_sample_count(self):
@@ -437,6 +546,55 @@ class TestExperimentDone(unittest.TestCase):
         self.assertEqual(spec.data_rate, 0.669)
         self.assertEqual(spec.size_mb, 429)
         self.assertEqual(spec.ec_rate, 0.18)
+
+
+class TestPadCardIds(unittest.TestCase):
+    def test_pad_section_skips_flying_and_splash(self):
+        text = (
+            "## Flying\n"
+            "- experiment: kerbalism_TELEMETRY\n"
+            "  situation: FlyingLow\n"
+            "## Pad\n"
+            "- experiment: geigerCounter\n"
+            "  situation: SrfLanded\n"
+            "## Splash\n"
+            "- experiment: mysteryGoo\n"
+            "  situation: SrfSplashed\n"
+        )
+        self.assertEqual(card_pad_ids(text), ("geigerCounter",))
+        self.assertNotIn("mysteryGoo", card_pad_ids(text))
+        self.assertNotIn("kerbalism_TELEMETRY", card_pad_ids(text))
+
+    def test_empty_falls_back_to_pad_experiments(self):
+        self.assertEqual(card_pad_ids(""), ())
+        with patch("missions.seated_science_path") as path:
+            path.return_value = Path("/no/such/science.md")
+            self.assertEqual(pad_science_ids(), PAD_EXPERIMENTS)
+
+    def test_live_card_is_geiger_not_f005(self):
+        ids = pad_science_ids()
+        self.assertEqual(ids, ("geigerCounter",))
+        self.assertNotIn("mysteryGoo", ids)
+        self.assertNotIn("temperatureScan", ids)
+
+    def test_run_on_vessel_reads_seated_card(self):
+        """Default science_ids is the seated pad card, not PAD_EXPERIMENTS."""
+        mod = _Mod("Experiment", "geigerCounter", done=True)
+        vessel = _Vessel([mod], recoverable=True)
+        vessel.parts = _Parts([_Part("probeCoreSphere.v2", [mod])])
+        now, sleep = _fast_clock()
+        with patch("pad.pad_science_ids", return_value=("geigerCounter",)):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                now=now,
+                sleep=sleep,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(mod.triggered, ["Start Experiment"])
 
 
 class TestPadOnVessel(unittest.TestCase):
@@ -495,8 +653,25 @@ class TestPadOnVessel(unittest.TestCase):
         self.assertEqual(result, "recovered")
         self.assertTrue(vessel.recovered)
 
-    def test_timeout_recovers_without_done_flag(self):
+    def test_timeout_empty_hd_aborts(self):
         mod = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([mod], recoverable=True)
+        now, sleep = _fast_clock()
+        with self.assertRaises(MissionAbort) as ctx:
+            run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("mysteryGoo",),
+                now=now,
+                sleep=sleep,
+                timeout=2.0,
+                pulse=1.0,
+            )
+        self.assertIn("empty HD", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+
+    def test_timeout_with_data_recovers(self):
+        mod = _Mod("Experiment", "mysteryGoo", done=True)
         vessel = _Vessel([mod], recoverable=True)
         now, sleep = _fast_clock()
         result = run_on_vessel(
@@ -510,7 +685,126 @@ class TestPadOnVessel(unittest.TestCase):
         )
         self.assertEqual(result, "recovered")
         self.assertTrue(vessel.recovered)
-        self.assertGreaterEqual(now(), 2.0)
+
+    def test_timeout_empty_hd_aborts_without_met_clock(self):
+        mod = _Mod("Experiment", "geigerCounter")
+        vessel = _Vessel([mod], recoverable=True)
+        vessel.met = 0.0
+        vessel.parts = _Parts([_Part("probeCoreSphere.v2", [mod])])
+        now, sleep = _fast_clock()
+        logs: list[str] = []
+        with self.assertRaises(MissionAbort) as ctx:
+            run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("geigerCounter",),
+                on_log=logs.append,
+                now=now,
+                sleep=sleep,
+                timeout=2.0,
+                pulse=1.0,
+            )
+        self.assertIn("dwell timeout empty HD", str(ctx.exception))
+        self.assertNotIn("MET frozen", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+        self.assertFalse(any("MET frozen" in x for x in logs))
+        self.assertTrue(any("pad unpause" in x for x in logs))
+        self.assertTrue(any("pad launch clock" in x for x in logs))
+        self.assertEqual(vessel.control.staged, 1)
+
+    def test_recording_met_zero_does_not_abort(self):
+        mod = _Mod("Experiment", "geigerCounter", running=True)
+        mod.fields["remaining"] = 3.0
+        vessel = _Vessel([mod], recoverable=True)
+        vessel.met = 0.0
+        vessel.parts = _Parts([_Part("probeCoreSphere.v2", [mod])])
+        now, sleep0 = _fast_clock()
+        sess = _Session(vessel)
+        sess.space_center.ut = 100.0
+
+        def sleep(dt):
+            sleep0(dt)
+            rem = float(mod.fields.get("remaining", 0)) - dt
+            mod.fields["remaining"] = max(0.0, rem)
+            sess.space_center.ut += dt
+            if rem <= 0:
+                mod.fields["status"] = "Done"
+                mod.fields["Has Data"] = True
+
+        logs: list[str] = []
+        result = run_on_vessel(
+            sess,
+            vessel,
+            science_ids=("geigerCounter",),
+            on_log=logs.append,
+            now=now,
+            sleep=sleep,
+            timeout=2.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertFalse(any("MET frozen" in x for x in logs))
+        self.assertTrue(any("pad physics 3x rails=0" in x for x in logs))
+        self.assertTrue(any("pad physics 1x" in x for x in logs))
+        self.assertEqual(sess.space_center.rails_warp_factor, 0)
+        self.assertEqual(sess.space_center.physics_warp_factor, 0)
+
+    def test_pad_source_never_rails_or_warpto(self):
+        text = Path("pad.py").read_text(encoding="utf-8")
+        self.assertNotIn("WarpTo(", text)
+        self.assertNotIn("warp_to(", text)
+        self.assertIn("rails_warp_factor = 0", text)
+        self.assertNotIn("rails_warp_factor = 1", text)
+
+    def test_landed_does_not_stage(self):
+        mod = _Mod("Experiment", "mysteryGoo", done=True)
+        vessel = _Vessel([mod], recoverable=True, sit="landed")
+        now, sleep = _fast_clock()
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("mysteryGoo",),
+            now=now,
+            sleep=sleep,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(vessel.control.staged, 0)
+
+    def test_dwell_unpauses_before_loop(self):
+        """Hangar leave-paused: always set paused=False, do not wait for the flag."""
+        from hangar import run_physics
+
+        sc = type("SC", (), {"rails_warp_factor": 2, "physics_warp_factor": 3, "paused": True})()
+        krpc = _Krpc()
+        session = type("S", (), {"conn": type("C", (), {"krpc": krpc})(), "space_center": sc})()
+        run_physics(session)
+        self.assertFalse(krpc.paused)
+        self.assertFalse(sc.paused)
+        self.assertEqual(sc.rails_warp_factor, 0)
+        self.assertEqual(sc.physics_warp_factor, 0)
+
+        mod = _Mod("Experiment", "mysteryGoo", done=True)
+        vessel = _Vessel([mod], recoverable=True)
+        now, sleep = _fast_clock()
+        logs: list[str] = []
+        sess = _Session(vessel)
+        sess.conn.krpc.paused = True
+        result = run_on_vessel(
+            sess,
+            vessel,
+            science_ids=("mysteryGoo",),
+            on_log=logs.append,
+            now=now,
+            sleep=sleep,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertFalse(sess.conn.krpc.paused)
+        self.assertTrue(any("pad unpause" in x for x in logs))
 
     def test_empty_science_aborts(self):
         vessel = _Vessel([], recoverable=True)
@@ -609,9 +903,106 @@ class TestPadOnVessel(unittest.TestCase):
         self.assertGreaterEqual(now(), (1.0 / 0.18) * PAD_EC_MARGIN)
 
 
+class TestCardWaitLine(unittest.TestCase):
+    def test_names_remaining_and_clock(self):
+        mod = _Mod("Experiment", "geigerCounter", running=True)
+        mod.fields["remaining"] = 0.4
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("probeCoreSphere.v2", [mod])])
+        line = card_wait_line(
+            vessel, ("geigerCounter",), met=12.3, sit="landed", ec=280.0
+        )
+        self.assertTrue(line.startswith("wait science"))
+        self.assertIn("geigerCounter", line)
+        self.assertIn("part=", line)
+        self.assertIn("rem=0.4", line)
+        self.assertIn("run=1", line)
+        self.assertIn("met=12.3", line)
+        self.assertIn("sit=landed", line)
+
+
 class _Uplink:
     def __init__(self, verb: str):
         self.verb = verb
+
+
+class _FakeHangar:
+    def __init__(self, root: Path):
+        self.root = root
+        self.calls: list[dict] = []
+        self.installed: list[str] = []
+
+    def ships(self, facility: str = "VAB") -> Path:
+        path = self.root / facility
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def install(self, craft, *, overwrite=True, **_kwargs):
+        self.installed.append(craft.name)
+        dest = self.ships("VAB") / f"{craft.name}.craft"
+        dest.write_text(f"ship = {craft.name}\n", encoding="utf-8")
+        return dest
+
+    def launch(self, session, name, *, recover=True, uncrewed=False, **_kwargs):
+        self.calls.append(
+            {"name": name, "uncrewed": uncrewed, "recover": recover}
+        )
+        session.active_vessel = _Vessel([], sit="pre_launch")
+        session.active_vessel.name = name
+
+
+class TestPadHangar(unittest.TestCase):
+    def test_copies_geiger_file_not_pad_pbc_template(self):
+        src = pad_craft_path("kspstuff-geiger-pbc")
+        self.assertTrue(src.is_file())
+        raw_src = src.read_bytes()
+        self.assertIn(b"kerbalism-geigercounter", raw_src)
+        with tempfile.TemporaryDirectory() as tmp:
+            fake = _FakeHangar(Path(tmp))
+            session = _Session(_Vessel([]))
+            session.active_vessel = None
+            with patch("pad.discover_hangar", return_value=fake):
+                with patch("missions.pad_craft_name", return_value="kspstuff-geiger-pbc"):
+                    with patch("craft.pad_pbc") as gen:
+                        install_and_launch(session)
+            dest = fake.ships("VAB") / "kspstuff-geiger-pbc.craft"
+            self.assertTrue(dest.is_file())
+            self.assertEqual(dest.read_bytes(), raw_src)
+            self.assertNotIn("kspstuff-pad-pbc", dest.read_text(encoding="utf-8"))
+            gen.assert_not_called()
+            self.assertEqual(fake.installed, [])
+            self.assertEqual(fake.calls[0]["name"], "kspstuff-geiger-pbc")
+            self.assertTrue(fake.calls[0]["uncrewed"])
+            self.assertEqual(session.active_vessel.name, "kspstuff-geiger-pbc")
+
+    def test_missing_named_craft_does_not_generate_template(self):
+        session = _Session(_Vessel([]))
+        with patch("pad.discover_hangar") as hangar:
+            hangar.return_value.ksp_root = Path("/tmp")
+            hangar.return_value.ships.return_value = Path("/tmp")
+            with patch("missions.pad_craft_name", return_value="kspstuff-no-such"):
+                with patch("pad.pad_craft_path", return_value=Path("/no/such.craft")):
+                    with patch("craft.pad_pbc") as gen:
+                        with self.assertRaises(MissionAbort) as ctx:
+                            install_and_launch(session)
+        gen.assert_not_called()
+        self.assertIn("F-013", str(ctx.exception))
+        self.assertIn("kspstuff-no-such", str(ctx.exception))
+
+    def test_template_name_still_pad_pbc(self):
+        self.assertEqual(TEMPLATE, "kspstuff-pad-pbc")
+
+
+class TestPadLaunchClock(unittest.TestCase):
+    def test_flea_stage_does_not_light(self):
+        from pad import _launch_clock
+
+        vessel = _Vessel([], sit="pre_launch")
+        vessel.control.current_stage = 1
+        logs: list[str] = []
+        _launch_clock(vessel, logs.append)
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(any("skip stage=1" in x for x in logs))
 
 
 class TestPadUplink(unittest.TestCase):
@@ -620,16 +1011,16 @@ class TestPadUplink(unittest.TestCase):
         vessel = _Vessel([mod], recoverable=True)
         now, sleep = _fast_clock()
         with patch("pad.take", return_value=_Uplink("science")):
-            result = run_on_vessel(
-                _Session(vessel),
-                vessel,
-                science_ids=("mysteryGoo",),
-                now=now,
-                sleep=sleep,
-                timeout=2.0,
-                pulse=1.0,
-            )
-        self.assertEqual(result, "recovered")
+            with self.assertRaises(MissionAbort):
+                run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("mysteryGoo",),
+                    now=now,
+                    sleep=sleep,
+                    timeout=2.0,
+                    pulse=1.0,
+                )
         self.assertEqual(mod.triggered, ["Start Experiment"])
 
     def test_science_during_dwell_does_not_toggle_again(self):
@@ -697,7 +1088,7 @@ class TestPadUplink(unittest.TestCase):
                 pulse=1.0,
             )
         self.assertEqual(result, "recovered")
-        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(vessel.control.staged, 1)
         self.assertEqual(mod.triggered, ["Start Experiment"])
 
 

@@ -1,4 +1,4 @@
-# Verena Kerman
+# Verena Grokman
 
 duty: communications
 kerbal: none

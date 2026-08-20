@@ -24,10 +24,15 @@ VAB_PATH = Path("docs/program/vab.md")
 SCIENCE_PATH = Path("docs/program/science.md")
 
 _NAMED = {
+    "Jebediah Grokman": "jebediah",
     "Jebediah Kerman": "jebediah",
+    "Valentina Grokman": "valentina",
     "Valentina Kerman": "valentina",
+    "Bill Grokman": "bill",
     "Bill Kerman": "bill",
+    "Bob Grokman": "bob",
     "Bob Kerman": "bob",
+    "Grok Grokman": "grok",
     "Grok Kerman": "grok",
 }
 
@@ -36,9 +41,9 @@ _LOST = frozenset({"lost", "missing", "gone"})
 
 
 def flight_slug(roster: str) -> str:
-    """Exact roster string → id. ``Grok Kerman 4373`` → ``grok-4373``."""
+    """Exact roster string → id. ``Grok Grokman 4373`` → ``grok-4373``."""
     text = roster.strip()
-    m = re.match(r"^Grok Kerman(?:\s+(\d+))?$", text, re.I)
+    m = re.match(r"^Grok (?:Grokman|Kerman)(?:\s+(\d+))?$", text, re.I)
     if m:
         num = m.group(1)
         return f"grok-{num}" if num else "grok"
@@ -68,7 +73,7 @@ def current_kv() -> dict[str, str]:
 
 def seated_pilot() -> str:
     kv = current_kv()
-    return kv.get("pilot", "Jebediah Kerman")
+    return kv.get("pilot", "Jebediah Grokman")
 
 
 def seated_id() -> str:
@@ -169,7 +174,7 @@ def lock_held() -> str | None:
 
 def write_current(*, flight: str, pilot: str, capcom: str | None = None) -> None:
     kv = current_kv()
-    cap = capcom or kv.get("capcom", "Jebediah Kerman")
+    cap = capcom or kv.get("capcom", "Jebediah Grokman")
     CURRENT_PATH.parent.mkdir(parents=True, exist_ok=True)
     CURRENT_PATH.write_text(
         f"flight: {flight}\npilot: {pilot}\ncapcom: {cap}\n",

@@ -1,4 +1,4 @@
-# Wernher Kerman
+# Wernher Grokman
 
 duty: avionics
 kerbal: none

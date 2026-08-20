@@ -57,7 +57,7 @@ Linus was not spawned when sci stayed 0. Gus was called *after* EC=0.
 ## Changes (this slice)
 
 - Os / Founder. Name + SpaceX-style title in speech. Machine slugs stay.
-- **Gus Kerman**, VP Build. **Lars Kerman**, Vehicle Engineering.
+- **Gus Grokman**, VP Build. **Lars Grokman**, Vehicle Engineering.
 - Lars **only on miss** (nonzero exit, ABORT, science none, unexpected).
   Gene still fills Learn after live exits.
 - Linus when `world` sci does not move after a briefed recover.

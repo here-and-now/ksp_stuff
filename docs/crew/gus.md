@@ -1,4 +1,4 @@
-# Gus Kerman
+# Gus Grokman
 
 duty: vp-build
 kerbal: none
@@ -21,4 +21,4 @@ heavier pack — not a speech.
 ## Log
 
 - 2026-08-20 — kspstuff-pad-pbc 3×Z-100 (~310 EC). Goo+thermo. capable: yes.
-- 2026-08-20 — Named Gus Kerman, VP Build.
+- 2026-08-20 — Named Gus Grokman, VP Build.

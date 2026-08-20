@@ -1,3 +1,3 @@
-# Jebediah Kerman — feedback notes
+# Jebediah Grokman — feedback notes
 
 Commander comments on open F- items. Do not edit other desks’ notes.

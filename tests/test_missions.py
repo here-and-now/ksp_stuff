@@ -44,10 +44,11 @@ class _S:
 
 class TestSlugs(unittest.TestCase):
     def test_grok_number(self):
+        self.assertEqual(flight_slug("Grok Grokman 4373"), "grok-4373")
         self.assertEqual(flight_slug("Grok Kerman 4373"), "grok-4373")
 
     def test_named(self):
-        self.assertEqual(flight_slug("Valentina Kerman"), "valentina")
+        self.assertEqual(flight_slug("Valentina Grokman"), "valentina")
 
 
 class TestSeatAndPlan(unittest.TestCase):

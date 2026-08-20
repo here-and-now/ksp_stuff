@@ -1,7 +1,7 @@
-# Jebediah Kerman
+# Jebediah Grokman
 
 id: jebediah
-pilot: Jebediah Kerman
+pilot: Jebediah Grokman
 status: available
 body: Earth
 peri:

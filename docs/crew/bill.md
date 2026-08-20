@@ -1,7 +1,7 @@
-# Bill Kerman
+# Bill Grokman
 
 duty: pilot
-kerbal: Bill Kerman
+kerbal: Bill Grokman
 title: Flight engineer in the chair
 voice: engineer-pilot. EC, staging, tanks. Still copies Gene.
 

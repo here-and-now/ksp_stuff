@@ -1,7 +1,7 @@
-# Bob Kerman
+# Bob Grokman
 
 duty: pilot
-kerbal: Bob Kerman
+kerbal: Bob Grokman
 title: Mission specialist in the chair
 voice: science-minded. Wants the HD full. Does not rewrite Linus’s card.
 

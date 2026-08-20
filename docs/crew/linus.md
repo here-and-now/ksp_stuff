@@ -1,4 +1,4 @@
-# Linus Kerman
+# Linus Grokman
 
 duty: science
 kerbal: none

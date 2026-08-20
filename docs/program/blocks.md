@@ -1,6 +1,6 @@
 # Building blocks — Gene may only name these
 
-Owned by **Lars Kerman, Vehicle Engineering**. If Gene needs a name
+Owned by **Lars Grokman, Vehicle Engineering**. If Gene needs a name
 that is not here, parent spawns Lars first. No heredocs. Missing name
 means Lars writes it — do not keep leftover Kerbin/Mun compose around
 for them.

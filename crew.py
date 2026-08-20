@@ -17,18 +17,27 @@ log = logging.getLogger("kspstuff")
 CREW_DIR = Path("docs/crew")
 CURRENT_PATH = Path("docs/program/current.md")
 
-_SLUG = {
-    "Jebediah Kerman": "jebediah",
-    "Valentina Kerman": "valentina",
-    "Bill Kerman": "bill",
-    "Bob Kerman": "bob",
-    "Grok Kerman": "grok",
-    "Mortimer Kerman": "mortimer",
-    "Gene Kerman": "gene",
-    "Walt Kerman": "walt",
-    "Wernher von Kerman": "wernher",
-    "Linus Kerman": "linus",
-}
+# House is Grokman. Stock KSP roster may still say Kerman — both slug.
+_SLUG: dict[str, str] = {}
+for _first, _slug in (
+    ("Jebediah", "jebediah"),
+    ("Valentina", "valentina"),
+    ("Bill", "bill"),
+    ("Bob", "bob"),
+    ("Grok", "grok"),
+    ("Mortimer", "mortimer"),
+    ("Gene", "gene"),
+    ("Walt", "walt"),
+    ("Wernher", "wernher"),
+    ("Linus", "linus"),
+    ("Gus", "gus"),
+    ("Lars", "lars"),
+    ("Verena", "verena"),
+):
+    _SLUG[f"{_first} Grokman"] = _slug
+    _SLUG[f"{_first} Kerman"] = _slug
+_SLUG["Wernher von Kerman"] = "wernher"
+_SLUG["Wernher von Grokman"] = "wernher"
 
 # Library defaults, then clamp. Matches mun.py / L-015 / L-008.
 _STYLE_CLAMP: dict[str, tuple[float, float]] = {
@@ -132,11 +141,11 @@ def load_person(name_or_slug: str) -> Person:
 
 def current_assignment() -> dict[str, str]:
     if not CURRENT_PATH.is_file():
-        return {"pilot": "Jebediah Kerman", "capcom": "Valentina Kerman"}
+        return {"pilot": "Jebediah Grokman", "capcom": "Valentina Grokman"}
     kv = _parse_kv(CURRENT_PATH.read_text(encoding="utf-8"))
     out = {
-        "pilot": kv.get("pilot", "Jebediah Kerman"),
-        "capcom": kv.get("capcom", "Valentina Kerman"),
+        "pilot": kv.get("pilot", "Jebediah Grokman"),
+        "capcom": kv.get("capcom", "Valentina Grokman"),
     }
     if kv.get("flight"):
         out["flight"] = kv["flight"]

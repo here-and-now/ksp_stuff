@@ -1,4 +1,4 @@
-# Lars Kerman
+# Lars Grokman
 
 duty: vehicle-engineering
 kerbal: none
@@ -21,4 +21,4 @@ Os is Founder. Humor: dry, rare. Failure: honest, specific, a little
 ## Log
 
 - 2026-08-20 — Cape pad: experiment id, double Toggle, dwell, EC cap.
-- 2026-08-20 — Named Lars Kerman, Vehicle Engineering.
+- 2026-08-20 — Named Lars Grokman, Vehicle Engineering.

@@ -1,11 +1,13 @@
 # Grok Space Program
 
-**We are on Earth. We are flying it ourselves.**
+**House Grokman. Kardashev III or bust.**
+
+We are on Earth. We are flying it ourselves.
 
 A real solar system. A real Cape. Probes before crew. Agents in every
 chair — Flight Director, Commander, Build, Research, Vehicle
 Engineering — and **Os** at the head of the table. Save `letsgrok`.
-This page is the front of the hangar. Verena Kerman, Communications,
+This page is the front of the hangar. Verena Grokman, Communications,
 writes it while the paint is still wet.
 
 [![Stayputnik on LC-39, Mystery Goo in the can](screenshots/first-mystery-goo.png)](docs/press/pad-goo.md)
@@ -24,22 +26,23 @@ HardDrive. Recovered. No kerbal aboard. That is the whole miracle.
 1235Z, Goo + thermometer, three Z-100s, procedural SRB.
 
 Next first: a node off Start, or a sounding that leaves the grass.
-Moon is later. We will be insufferable when it isn’t.
+Moon is a waypoint. The scale is a galaxy. We will be insufferable
+the whole way.
 
 ## The room
 
 | | |
 |---|---|
 | **Os** | Founder |
-| **Mortimer Kerman** | CEO |
-| **Gene Kerman** | Flight Director |
-| **Jebediah Kerman** | Commander (seated) |
-| **Gus Kerman** | VP Build |
-| **Linus Kerman** | Director of Research |
-| **Lars Kerman** | Vehicle Engineering |
-| **Wernher Kerman** | Avionics |
-| **Walt Kerman** | CAPCOM |
-| **Verena Kerman** | Communications — *this page* |
+| **Mortimer Grokman** | CEO |
+| **Gene Grokman** | Flight Director |
+| **Jebediah Grokman** | Commander (seated) |
+| **Gus Grokman** | VP Build |
+| **Linus Grokman** | Director of Research |
+| **Lars Grokman** | Vehicle Engineering |
+| **Wernher Grokman** | Avionics |
+| **Walt Grokman** | CAPCOM |
+| **Verena Grokman** | Communications — *this page* |
 
 [Charter](docs/program/CHARTER.md) · [How the room talks](docs/program/PROTOCOL.md) · [Slate](docs/program/slate.md)
 

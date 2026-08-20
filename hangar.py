@@ -29,12 +29,39 @@ DEFAULT_SAVE = "letsgrok"
 # kRPC WaitForVesselPreFlightChecks sits on Launch anyway / Cancel (L-017).
 # Assigned/missing kerbals also launch empty (L-018).
 STOCK_CREW: tuple[str, ...] = (
+    "Jebediah Grokman",
+    "Valentina Grokman",
+    "Bill Grokman",
+    "Bob Grokman",
+    # Stock save leftover until Hangar recasts them.
     "Jebediah Kerman",
     "Valentina Kerman",
     "Bill Kerman",
     "Bob Kerman",
 )
-_CREATED_PILOT = "Grok Kerman"
+_CREATED_PILOT = "Grok Grokman"
+
+
+def _roster_aliases(name: str) -> tuple[str, ...]:
+    """House Grokman; stock saves may still roster Kerman."""
+    names = [name]
+    if " Grokman" in name:
+        names.append(name.replace(" Grokman", " Kerman"))
+        names.append(name.replace(" Grokman", " von Kerman"))
+    if "Kerman" in name:
+        names.append(name.replace(" von Kerman", " Grokman").replace(" Kerman", " Grokman"))
+    return tuple(dict.fromkeys(names))
+
+
+def _get_kerbal(sc: Any, name: str) -> Any:
+    for n in _roster_aliases(name):
+        try:
+            kerbal = sc.get_kerbal(n)
+        except Exception:
+            continue
+        if kerbal is not None:
+            return kerbal
+    return None
 
 
 def _status_name(value: Any) -> str:
@@ -60,20 +87,14 @@ def default_crew(session: Session, seats: int = 1) -> list[str]:
     sc = session.space_center
     picked: list[str] = []
     for name in STOCK_CREW + (_CREATED_PILOT,):
-        try:
-            kerbal = sc.get_kerbal(name)
-        except Exception:
-            continue
+        kerbal = _get_kerbal(sc, name)
         if kerbal is not None and _kerbal_available(kerbal):
             picked.append(kerbal.name)
             if len(picked) >= n:
                 break
     while len(picked) < n:
-        name = _CREATED_PILOT if _CREATED_PILOT not in picked else f"Grok Kerman {int(time.time()) % 10000}"
-        try:
-            existing = sc.get_kerbal(name)
-        except Exception:
-            existing = None
+        name = _CREATED_PILOT if _CREATED_PILOT not in picked else f"Grok Grokman {int(time.time()) % 10000}"
+        existing = _get_kerbal(sc, name)
         if existing is None:
             log.info("create_kerbal %s Pilot", name)
             sc.create_kerbal(name, "Pilot", True)
@@ -82,7 +103,7 @@ def default_crew(session: Session, seats: int = 1) -> list[str]:
         elif _kerbal_available(existing):
             picked.append(existing.name)
         else:
-            name = f"Grok Kerman {int(time.time()) % 10000}"
+            name = f"Grok Grokman {int(time.time()) % 10000}"
             sc.create_kerbal(name, "Pilot", True)
             picked.append(name)
     log.info("Launch crew: %s", ", ".join(picked[:n]))
@@ -92,10 +113,7 @@ def default_crew(session: Session, seats: int = 1) -> list[str]:
 def ensure_kerbal(session: Session, name: str, *, trait: str = "Pilot") -> str | None:
     """Roster that exact kerbal: create if missing, seat if available."""
     sc = session.space_center
-    try:
-        kerbal = sc.get_kerbal(name)
-    except Exception:
-        kerbal = None
+    kerbal = _get_kerbal(sc, name)
     if kerbal is None:
         log.info("create_kerbal %s %s", name, trait)
         try:

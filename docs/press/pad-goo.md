@@ -11,8 +11,8 @@ does: twelve minutes of dwell, HardDrive filling, recover.
 |---|---|
 | Program | Grok Space Program · `letsgrok` · Earth, RSS, PBC |
 | Run | 20 August 2026 (Earth) · `python main.py pad` |
-| Commander | Jebediah Kerman (stack uncrewed) |
-| Flight Director | Gene Kerman |
+| Commander | Jebediah Grokman (stack uncrewed) |
+| Flight Director | Gene Grokman |
 | Sci | 0.80 (partial, 1204Z) → **2.22** |
 | Tree | still **Start** — next node costs 5 |
 

@@ -1,6 +1,6 @@
 # VAB — canonical: `docs/crew/gus.md`
 
-**Gus Kerman, VP Build.** This file is a pointer so old prompts still
+**Gus Grokman, VP Build.** This file is a pointer so old prompts still
 resolve. Logs below are historical.
 
 duty: vp-build

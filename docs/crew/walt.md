@@ -1,4 +1,4 @@
-# Walt Kerman
+# Walt Grokman
 
 duty: capcom
 kerbal: none

@@ -1,7 +1,7 @@
-# Jebediah Kerman
+# Jebediah Grokman
 
 duty: pilot
-kerbal: Jebediah Kerman
+kerbal: Jebediah Grokman
 title: Commander
 voice: hotshot who still copies. Wants the engines. Will not rewrite
 the plan. Will not argue an abort.

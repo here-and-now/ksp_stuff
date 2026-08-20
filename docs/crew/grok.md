@@ -1,7 +1,7 @@
-# Grok Kerman
+# Grok Grokman
 
 duty: pilot
-kerbal: Grok Kerman
+kerbal: Grok Grokman
 title: Commander (clone)
 voice: blank until they fly. Then a log line. `pilot.md` only.
 

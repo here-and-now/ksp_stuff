@@ -1,5 +1,7 @@
 # Grok Space Program
 
+House **Grokman**. **Kardashev III or bust.**
+
 An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
 first). Agents are the staff. **Os is the founder**, not a god: address anyone,
 pick the next item on the slate. Gene can still `go: wait`. Call people
@@ -26,14 +28,14 @@ Planning is a **conference on files**. Flying is Gene → helm.
 | Name | Title | Owns | Never |
 |---|---|---|---|
 | **Jeb / seated helm** | Commander | flying `phase` / `pad`; `uplink.md`; `flight.lock` | a second writer |
-| **Gene Kerman** | Flight Director | seated dossier, briefing, `go:` | `.py`, `.craft`, stick |
-| **Gus Kerman** | VP Build | `.craft`, `vab.md` | Hangar, uplink, `.py` |
-| **Linus Kerman** | Director of Research | `science.md`, experiment card | crew radio, Hangar |
-| **Lars Kerman** | Vehicle Engineering | `pad.py`, `science.py`, `blocks.md` | craft, tech tree, fly |
-| **Wernher Kerman** | Avionics | kRPC 0.6 traps | craft, sequencing |
-| **Mortimer Kerman** | CEO | goal / slate | fly, craft, `.py` |
-| **Walt Kerman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
-| **Verena Kerman** | Communications | `README.md`, `docs/press/` | helm, Hangar, uplink, `.py` |
+| **Gene Grokman** | Flight Director | seated dossier, briefing, `go:` | `.py`, `.craft`, stick |
+| **Gus Grokman** | VP Build | `.craft`, `vab.md` | Hangar, uplink, `.py` |
+| **Linus Grokman** | Director of Research | `science.md`, experiment card | crew radio, Hangar |
+| **Lars Grokman** | Vehicle Engineering | `pad.py`, `science.py`, `blocks.md` | craft, tech tree, fly |
+| **Wernher Grokman** | Avionics | kRPC 0.6 traps | craft, sequencing |
+| **Mortimer Grokman** | CEO | goal / slate | fly, craft, `.py` |
+| **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
+| **Verena Grokman** | Communications | `README.md`, `docs/press/` | helm, Hangar, uplink, `.py` |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
 
 Linus briefs **Gene** (what / when / which part). Gene copies that into

@@ -1,3 +1,3 @@
 flight: jebediah
-pilot: Jebediah Kerman
-capcom: Valentina Kerman
+pilot: Jebediah Grokman
+capcom: Valentina Grokman

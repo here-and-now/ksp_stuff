@@ -315,6 +315,139 @@ def _focus_then_grim(run: Run, window: KspWindow, dest: Path) -> bool:
     return ok
 
 
+def _resize_relative(run: Run, window: KspWindow, dx: int, dy: int) -> bool:
+    """Dwindle split restore. Not used on Firefox."""
+    if dx == 0 and dy == 0:
+        return True
+    cls = window.class_name or "KSP.x86_64"
+    lua = (
+        f'local w=hl.get_window("class:{cls}"); '
+        'if w==nil then return "missing" end; '
+        "hl.dispatch(hl.dsp.window.resize({"
+        f"x={int(dx)}, y={int(dy)}, relative=true, window=w"
+        "})); return \"ok\""
+    )
+    r = _try_run(run, ["hyprctl", "repl", lua])
+    return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
+
+
+def _set_fullscreen(
+    run: Run,
+    window: KspWindow,
+    *,
+    internal: int,
+    client: int,
+) -> bool:
+    """Hyprland 0.56: compositor FS without Unity exclusive (client=0)."""
+    cls = window.class_name or "KSP.x86_64"
+    lua = (
+        f'local w=hl.get_window("class:{cls}"); '
+        'if w==nil then return "missing" end; '
+        "hl.dispatch(hl.dsp.window.fullscreen_state({"
+        f"internal={int(internal)}, client={int(client)}, window=w"
+        "})); return \"ok\""
+    )
+    r = _try_run(run, ["hyprctl", "repl", lua])
+    return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
+
+
+def _wait_window(
+    run: Run,
+    pred,
+    *,
+    timeout: float,
+    rss: Path | None,
+) -> KspWindow | None:
+    deadline = time.monotonic() + timeout
+    last: KspWindow | None = None
+    while True:
+        try:
+            last = choose_window(_hypr_windows(run), rss)
+            if pred(last):
+                return last
+        except ScreenshotError:
+            pass
+        if time.monotonic() >= deadline:
+            return last
+        time.sleep(0.05)
+
+
+def _capture_full(
+    run: Run,
+    window: KspWindow,
+    dest: Path,
+    *,
+    rss: Path | None,
+    settle: float,
+    grow_timeout: float = 3.0,
+    restore_timeout: float = 2.0,
+) -> tuple[str, KspWindow]:
+    """Fill the monitor for the shot, then restore the exact tile.
+
+    ``internal=2, client=0``: compositor fullscreen. XWayland gets the
+    monitor size (Unity re-renders) without exclusive client FS. Tile
+    geometry is restored by clearing fullscreen — no ``window.resize``.
+    Does not dispatch FS on Firefox (pip_tile media band).
+    """
+    orig_w, orig_h = window.size
+    orig_at = window.at
+    shot = window
+    try:
+        if not _set_fullscreen(run, window, internal=2, client=0):
+            raise ScreenshotError("hypr fullscreen_state on failed")
+        grown = _wait_window(
+            run,
+            lambda w: w.size[0] >= orig_w + 200 or w.size[0] >= 1600,
+            timeout=grow_timeout,
+            rss=rss,
+        )
+        if grown is None:
+            raise ScreenshotError("KSP did not grow after compositor fullscreen")
+        if settle > 0:
+            time.sleep(settle)
+        try:
+            shot = choose_window(_hypr_windows(run), rss)
+        except ScreenshotError:
+            shot = grown
+        if _grim_toplevel(run, shot, dest):
+            return "grim-toplevel-full", shot
+        if _x11_import(run, shot, dest):
+            return "x11-import-full", shot
+        raise ScreenshotError("fullscreen capture failed after compositor FS")
+    finally:
+        _set_fullscreen(run, window, internal=0, client=0)
+        restored = _wait_window(
+            run,
+            lambda w: abs(w.size[0] - orig_w) <= 40 and abs(w.size[1] - orig_h) <= 40,
+            timeout=restore_timeout,
+            rss=rss,
+        )
+        if restored is not None and (
+            abs(restored.size[0] - orig_w) > 40 or abs(restored.size[1] - orig_h) > 40
+        ):
+            _resize_relative(
+                run,
+                window,
+                orig_w - restored.size[0],
+                orig_h - restored.size[1],
+            )
+            restored = _wait_window(
+                run,
+                lambda w: abs(w.size[0] - orig_w) <= 40
+                and abs(w.size[1] - orig_h) <= 40,
+                timeout=restore_timeout,
+                rss=rss,
+            )
+        if restored is None or abs(restored.size[0] - orig_w) > 40:
+            print(
+                f"screenshot restore warn: wanted {orig_w}x{orig_h} "
+                f"at {orig_at}, got "
+                f"{getattr(restored, 'size', None)} at "
+                f"{getattr(restored, 'at', None)}",
+                file=sys.stderr,
+            )
+
+
 def resolve_dest(
     out: Path | None = None,
     *,
@@ -354,6 +487,10 @@ def capture(
     run: Run | None = None,
     now: datetime | None = None,
     rss: Path | None | bool = True,
+    full: bool = False,
+    settle: float = 0.8,
+    grow_timeout: float = 3.0,
+    restore_timeout: float = 2.0,
 ) -> tuple[Path, str, KspWindow]:
     run = run or _run
     dest = resolve_dest(out, name=name, force=force, now=now)
@@ -361,7 +498,19 @@ def capture(
     if not windows:
         windows = _x11_scan(run)
     root = discover_ksp() if rss is True else rss or None
-    window = choose_window(windows, root if isinstance(root, Path) else None)
+    rss_root = root if isinstance(root, Path) else None
+    window = choose_window(windows, rss_root)
+    if full:
+        method, window = _capture_full(
+            run,
+            window,
+            dest,
+            rss=rss_root,
+            settle=settle,
+            grow_timeout=grow_timeout,
+            restore_timeout=restore_timeout,
+        )
+        return dest, method, window
     if _grim_toplevel(run, window, dest):
         return dest, "grim-toplevel", window
     if _x11_import(run, window, dest):
@@ -383,9 +532,10 @@ def cmd_screenshot(
     *,
     force: bool = False,
     name: str | None = None,
+    full: bool = False,
 ) -> int:
     try:
-        path, method, window = capture(out=out, force=force, name=name)
+        path, method, window = capture(out=out, force=force, name=name, full=full)
     except ScreenshotError as exc:
         print(str(exc), file=sys.stderr)
         return 1

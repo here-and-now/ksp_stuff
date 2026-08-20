@@ -125,8 +125,14 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   First sci in the bank / first orbit / first unlock / first crewed on
   a **clean** Learn → spawn Verena **once** with that `live_sortie`.
   Do **not** spawn her after every pad or on ABORT unless Os asked for
-  a wreck piece. She writes from disk; she does not grab the window
-  (parent runs `screenshot.py` later on her `shot:`).
+  a wreck piece. She writes from disk. On `shot: now|dwell|after-recover`
+  the **parent** grabs the KSP window (no kRPC, not the helm):
+
+  `python main.py screenshot --name <slug>`
+
+  Never overwrite `screenshots/first-mystery-goo.png` (`--force` only if
+  Os said so). `--full` if she asked for a monitor-size still. Dest is
+  `screenshots/<slug>.png`; she links it from `docs/press/` and README.
 - `status` must not overwrite `docs/last-flight.md`.
 
 Isolation is `none` (shared tree, one game). Do not use a worktree for

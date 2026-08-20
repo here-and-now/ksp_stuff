@@ -1,7 +1,8 @@
 # Press
 
 Verena Kerman, Communications. If it is a **first**, it goes here.
-Shots live under `screenshots/` when the grabber is wired.
+Shots: `python main.py screenshot --name <slug>` → `screenshots/<slug>.png`.
+Never overwrite `first-mystery-goo.png`.
 
 | Date | Story | Sci | Shot |
 |---|---|---|---|

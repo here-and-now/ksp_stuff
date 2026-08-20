@@ -20,6 +20,7 @@ class TestProtocolDoc(unittest.TestCase):
             "Verena",
             "Communications",
             "docs/press/",
+            "python main.py screenshot",
         ):
             self.assertIn(needle, text)
 
@@ -54,3 +55,12 @@ class TestPressDesk(unittest.TestCase):
         self.assertIn("Os", text)
         self.assertIn("Verena", text)
         self.assertIn("python main.py world", text)
+
+    def test_goo_shot_preserved(self):
+        from screenshot import PRESERVE, resolve_dest
+
+        self.assertIn("first-mystery-goo.png", PRESERVE)
+        goo = Path("screenshots/first-mystery-goo.png")
+        self.assertTrue(goo.is_file())
+        with self.assertRaises(Exception):
+            resolve_dest(name="first-mystery-goo")

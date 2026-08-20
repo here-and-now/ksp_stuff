@@ -498,6 +498,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Overwrite an existing PNG",
     )
+    shot_p.add_argument(
+        "--full",
+        action="store_true",
+        help="Compositor-fullscreen for the shot, then restore the tile",
+    )
     args = parser.parse_args(argv)
 
     if args.cmd == "screenshot":
@@ -507,6 +512,7 @@ def main(argv: list[str] | None = None) -> int:
             Path(args.out) if args.out else None,
             force=bool(args.force),
             name=args.name,
+            full=bool(args.full),
         )
     if args.cmd == "uplink":
         from uplink import write

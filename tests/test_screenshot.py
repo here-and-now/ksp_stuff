@@ -167,6 +167,102 @@ class TestCapture(TestCase):
             with self.assertRaises(ScreenshotError):
                 capture(out=Path(tmp) / "x.png", run=run, rss=None, force=True)
 
+    def test_full_then_restore_tile(self):
+        fs_on = []
+        fs_off = []
+
+        def run(argv, **_kw):
+            if argv[:3] == ["hyprctl", "-j", "clients"]:
+                if fs_on and not fs_off:
+                    return _cp(json.dumps([_client(visible=True, size=[1920, 1080], at=[1080, 840])]))
+                return _cp(json.dumps([_client(visible=True, size=[945, 1030], at=[2045, 850])]))
+            if argv[:2] == ["hyprctl", "repl"]:
+                lua = argv[2]
+                self.assertIn("fullscreen_state", lua)
+                self.assertNotIn("firefox", lua.lower())
+                if "internal=2" in lua:
+                    fs_on.append(lua)
+                    self.assertIn("client=0", lua)
+                elif "internal=0" in lua:
+                    fs_off.append(lua)
+                else:
+                    self.fail(lua)
+                return _cp("ok")
+            if argv[0] == "grim" and "-T" in argv:
+                Path(argv[-1]).write_bytes(_png(1920, 1080))
+                return _cp()
+            if argv[0] == "grim" and "-g" in argv:
+                self.fail("grim -g not used for --full")
+            return _cp(returncode=1, stderr="unexpected " + " ".join(argv))
+
+        with TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "shot.png"
+            path, method, win = capture(
+                out=dest,
+                run=run,
+                rss=None,
+                force=True,
+                full=True,
+                settle=0,
+                grow_timeout=0,
+                restore_timeout=0,
+            )
+            self.assertEqual(method, "grim-toplevel-full")
+            self.assertEqual(png_size(path), (1920, 1080))
+            self.assertEqual(win.size, (1920, 1080))
+            self.assertEqual(len(fs_on), 1)
+            self.assertEqual(len(fs_off), 1)
+
+    def test_full_relative_resize_if_unfullscreen_keeps_large(self):
+        resizes = []
+        # tile -> compositor FS -> un-FS still large -> relative resize back
+        stage = ["tile"]
+
+        def size_for_stage():
+            if stage[0] == "fs":
+                return [1920, 1080], [1080, 840]
+            if stage[0] == "stuck":
+                return [1910, 1070], [1085, 845]
+            return [945, 1030], [2045, 850]
+
+        def run(argv, **_kw):
+            if argv[:3] == ["hyprctl", "-j", "clients"]:
+                size, at = size_for_stage()
+                return _cp(json.dumps([_client(visible=True, size=size, at=at)]))
+            if argv[:2] == ["hyprctl", "repl"]:
+                lua = argv[2]
+                if "fullscreen_state" in lua and "internal=2" in lua:
+                    stage[0] = "fs"
+                    return _cp("ok")
+                if "fullscreen_state" in lua and "internal=0" in lua:
+                    stage[0] = "stuck"
+                    return _cp("ok")
+                if "relative=true" in lua:
+                    resizes.append(lua)
+                    stage[0] = "tile"
+                    return _cp("ok")
+                self.fail(lua)
+            if argv[0] == "grim" and "-T" in argv:
+                Path(argv[-1]).write_bytes(_png(1920, 1080))
+                return _cp()
+            return _cp(returncode=1, stderr="unexpected " + " ".join(argv))
+
+        with TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "shot.png"
+            capture(
+                out=dest,
+                run=run,
+                rss=None,
+                force=True,
+                full=True,
+                settle=0,
+                grow_timeout=0,
+                restore_timeout=0,
+            )
+            self.assertEqual(len(resizes), 1)
+            self.assertIn("x=-965", resizes[0])
+            self.assertIn("y=-40", resizes[0])
+
     def test_choose_prefers_mapped_then_larger(self):
         wins = parse_hypr_clients(
             json.dumps(

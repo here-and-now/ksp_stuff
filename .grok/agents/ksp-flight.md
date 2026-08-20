@@ -68,6 +68,8 @@ takes it. `loop.md` is not the helm (L-032).
 3. If you need a block not in `blocks.md`: `need_stack: <name>`.
    Rocket: `need_builder`. Science card: `need_science`.
    First sci / orbit / unlock / crewed: `need_pr: yes` (Verena, not Walt).
+   If Verena asked for a window, copy `shot:` into the briefing; parent
+   runs `python main.py screenshot --name <slug>` at that beat.
 4. Slate + gene.md log. Do not Hangar over leftover crew.
 5. Missing `go:` is **wait**. Pad also needs VAB `capable: yes`.
 

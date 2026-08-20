@@ -66,6 +66,7 @@ Geometry also moves when the window is resized.
 ```bash
 python main.py screenshot
 python main.py screenshot --name <stem>   # screenshots/<stem>.png
+python main.py screenshot --full          # monitor-size shot, then restore tile
 ```
 
 `screenshot.py` finds `class=KSP.x86_64` (title fallback), prefers the
@@ -78,6 +79,13 @@ RSS pid if two copies run, then:
    `xprop`, `DISPLAY=:1` on this Hyprland).
 3. Last resort: Hyprland 0.56 `hl.dsp.focus` + wait until `visible`,
    then `grim -g` **only if shown**, restore previous window.
+
+`--full` sets compositor fullscreen (`internal=2, client=0`) on KSP
+only, waits for the XWayland window to match the monitor, `grim -T`,
+then `internal=0`. If dwindle does not snap back (another window
+already fullscreen on that workspace), relative `window.resize` on
+KSP only restores the tile. `client=0` avoids Unity exclusive FS.
+Does not dispatch FS on Firefox (pip_tile media band / “the video”).
 
 Default dest is `screenshots/ksp-<utc>.png`. Refuses to overwrite
 `screenshots/first-mystery-goo.png` unless `--force`.

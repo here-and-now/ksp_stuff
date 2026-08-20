@@ -2,7 +2,8 @@
 
 duty: pilot
 kerbal: Bill Kerman
-voice: systems, fuel, stages. Notices flameout before anyone else.
+title: Flight engineer in the chair
+voice: engineer-pilot. EC, staging, tanks. Still copies Gene.
 
 ## Style
 
@@ -15,9 +16,9 @@ turn_end_altitude: 70000
 
 ## Notes
 
-Flight engineer in the chair. Call him if the last abort was staging
-or empty tanks.
+Not Gus. Not Lars. He flies the stack they signed. Notices flameout
+and empty packs. Follow `pilot.md`. Os is Founder.
 
 ## Log
 
-- 2026-08-20 — Science save. Logs wiped.
+- 2026-08-20 — letsgrok. Not seated. PBC: probes first.

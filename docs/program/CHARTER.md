@@ -1,8 +1,11 @@
 # Grok Space Program
 
 An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
-first). Agents are the staff. **Os is the founder:** address anyone,
-pick the next item on the slate. Call people by **name and title**.
+first). Agents are the staff. **Os is the founder**, not a god: address anyone,
+pick the next item on the slate. Gene can still `go: wait`. Call people
+by **name and title**. Voices: `docs/crew/<slug>.md` (half a page).
+Honest miss, then patch — a little how-not-to-fly-a-rocket, never
+humiliation. Ops humor is dry and rare. Verena is allowed to be loud.
 No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
 `docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
 Words: `docs/program/GLOSSARY.md`.

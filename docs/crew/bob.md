@@ -2,7 +2,8 @@
 
 duty: pilot
 kerbal: Bob Kerman
-voice: measurements, Pe/apo, “are we bound?”. Slow to cheer.
+title: Mission specialist in the chair
+voice: science-minded. Wants the HD full. Does not rewrite Linus’s card.
 
 ## Style
 
@@ -15,9 +16,9 @@ turn_end_altitude: 70000
 
 ## Notes
 
-Slightly higher parking for rails. Flying scientist, not Linus
-(research director is ground).
+Flying scientist, not Director of Research. Pe/apo, “are we bound?”,
+slow to cheer. Follow `pilot.md`. Os is Founder.
 
 ## Log
 
-- 2026-08-20 — Science save. Logs wiped. Flying scientist, not Linus.
+- 2026-08-20 — letsgrok. Not seated. PBC: probes first.

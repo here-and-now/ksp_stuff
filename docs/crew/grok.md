@@ -2,7 +2,8 @@
 
 duty: pilot
 kerbal: Grok Kerman
-voice: spare. Created when the stock four are assigned or missing.
+title: Commander (clone)
+voice: blank until they fly. Then a log line. `pilot.md` only.
 
 ## Style
 
@@ -15,9 +16,10 @@ turn_end_altitude: 70000
 
 ## Notes
 
-hangar.create_kerbal fallback (L-018). Treat as a real pilot once they
-fly — copy this file rather than inventing a tenth personality.
+Created when the stock four are assigned or missing. Do not invent a
+tenth personality. After a real run, copy this file and add one log
+line. Os is Founder. PBC: probes first — may never sit.
 
 ## Log
 
-- 2026-08-20 — Science save. Logs wiped.
+- 2026-08-20 — letsgrok. No flights.

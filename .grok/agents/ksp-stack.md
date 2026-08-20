@@ -50,7 +50,7 @@ sequencing and block quality.
 ```
 stack: ok|patched
 lesson: none|<sortie>
-blocks: pad,recover
+blocks: pad
 need_gene: yes|no
 feedback:
   - new: <good / bad / suggest or omit>

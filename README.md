@@ -70,7 +70,6 @@ python main.py missions
 
 KSP **`~/Games/KSP-rss`**, save **`letsgrok`**. Override `KSPSTUFF_KSP` /
 `KSPSTUFF_SAVE`. kRPC 0.6.0 on `127.0.0.1:50000` / `:50001`. One
-`Session` per process. Do not Hangar leftover crew. Do not fly `hop` /
-`mun`. Tests: `python -m unittest discover -s tests -q`.
+`Session` per process. Do not Hangar leftover crew. Tests: `python -m unittest discover -s tests -q`.
 
 Letsgrok lessons: [docs/lessons.md](docs/lessons.md).

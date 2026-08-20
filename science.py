@@ -19,8 +19,6 @@ log = logging.getLogger("kspstuff")
 # Need a kerbal on EVA. Do not invent hatch APIs.
 EVA_EXPERIMENTS = frozenset({"evaReport", "surfaceSample", "evaScience"})
 
-# First pad hop card. Other parts run only if the caller names them.
-HOP_EXPERIMENTS = ("crewReport", "mysteryGoo")
 PAD_EXPERIMENTS = ("mysteryGoo", "temperatureScan")
 
 _SKIP_EVENTS = (

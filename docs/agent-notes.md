@@ -184,19 +184,12 @@ kRPC has two read styles on the same connection:
   lagged one physics step (ΔMET 0.02 s, Δalt ~8 cm). Streams are last-push,
   not a second fetch.
 
-`orientation.py` stream-wait and MechJeb `conn.stream(...)` still untested live.
+MechJeb `conn.stream(...)` still untested live. Autopilot wait is not
+in this tree — Lars writes it when Gene `need_stack`.
 
 **Pipeline**
 
-`watch.FlightWatch` is the **only** hot reader in the writer process.
-Subscribe once (`getattr` on held `flight`/`orbit`): alt, q, surface
-altitude, apo, peri, ecc, sma, t_pe, t_ap. Suicide calls
-`enable_landing()` for body-frame speed / vertical speed on the same
-watch — do not open a second stream set. `pulse()` waits on
-`stream_update_condition` then reads every `s()` (one wake is a batch).
-Log one line per second with flags `ATMO DIP ESC FLAME WRECK`.
-Resources, warp, throttle, thrust, situation, engines are RPC at 1 Hz.
-Hold `flight` / `orbit` / body-frame `flight`; never `vessel.flight()`
+Pad uses `telem.Telem` (getattr streams). Hold `flight` / `orbit`; never `vessel.flight()`
 per pulse. Writes stay RPC. Ascent, nodes, warp, recover, suicide all
 `pulse()` the same instance. `heartbeat()` / `status` are one-shots.
 Do not treat the 1 Hz line as intervention — the loop branches on
@@ -229,7 +222,7 @@ True). Set `control.sas=False` yourself anyway. `error` / `pitch_error` /
 `heading_error` / `current_*_error` all raise
 `RuntimeError: The auto-pilot is not engaged` while `engaged` is false.
 `current_target_pitch` is readable when disengaged. Use
-`set_autopilot` / `autopilot_error` in `orientation.py`.
+`engaged` bool. No `orientation.py` in this tree.
 
 **AP hold (live):** `engaged=True`, `target_pitch=0`, `target_heading=90`,
 `target_roll=0`. `error` streamed at 10 Hz: 73° → 2.6° in 2.25 s.
@@ -399,7 +392,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | `orbit.*`, `flight.mean_altitude`, `dynamic_pressure` as **RPC get** | live |
 | `add_stream(getattr, obj, name)` + `rate` + `wait_for_stream_update` | live |
 | `add_stream(bound_property)` / streaming setters | live (both fail as specified) |
-| `orientation` stream wait (direction vs target) | code only |
+| Autopilot stream wait | not in tree (Gene need_stack) |
 | MechJeb `node_executor` | absent |
 | `status.services` list | broken (protobuf) |
 | `status.remotetech` meaning | broken (stub DLL) |
@@ -408,7 +401,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | `.craft` round-trip vs `vessel.parts` | not done |
 | RSS / Kerbalism disk `world`/`tech`/`parts` | code (fixtures + live cache) |
 | Kerbalism `Experiment` run / pad sortie | live start (L-043/1136Z); dwell L-044/L-045 |
-| FlightWatch as controller | to be replaced (`telem.py`) |
+| Pad dwell + recover | live (1235Z) |
 
 ---
 
@@ -445,7 +438,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 - **2026-08-19** — Empty plugin `settings.cfg` does not auto-bind; wrote
   AutoStartServers / AutoAcceptConnections / 127.0.0.1 ports.
 - **2026-08-19** — `AutoPilot.engage` missing; `engaged` bool property works.
-  Wrapper: `orientation.set_autopilot`.
+  No orientation helper in-tree.
 - **2026-08-19** — `Hangar.install` + `launch_vessel(recover=True)` from KSC
   and from flight. Scene `flight`, situation `pre_launch`.
 - **2026-08-19** — Telemetry in the first flight loop was RPC polling at ~20 Hz

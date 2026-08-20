@@ -70,7 +70,7 @@ If the named type is missing this session, spawn `general-purpose` with
 the matching `.grok/agents/*.md` as the prompt body.
 
 **kRPC:** one **writer**. Pilot owns throttle/AP/stage. `status` is a
-second `Session` — that is fine. Never two `phase`/`mun`/`recover`
+second `Session` — that is fine. Never two `phase`/`pad`
 processes (`docs/program/flight.lock`).
 
 Style in `docs/crew/*.md` changes ascent/landing numbers through
@@ -79,7 +79,7 @@ Style in `docs/crew/*.md` changes ascent/landing numbers through
 **Radio + plan:** Gene owns `docs/program/plan.md` and
 `docs/program/briefing.md` **between exits**. Uplink
 (`docs/program/uplink.md`) is last-write-wins; **helm takes**
-(`phase` / `mun` / `recover`, not `status`). `loop.md` is talk, not the
+(`phase` / `pad`, not `status`). `loop.md` is talk, not the
 helm. Bound+fueled `abort` is refused. Parent does **not**
 patch `.py` in the same turn — spawn R&D.
 
@@ -149,7 +149,7 @@ pilot/fixer — they must see the same `.py` files and the same KSP save.
 
 ## Handoff
 
-Pilot / CLI writes **`docs/last-flight.md`** on every `phase`/`mun`/`recover` exit
+Pilot / CLI writes **`docs/last-flight.md`** on every `phase`/`pad` exit
 (success or abort). Gitignored. Next agent reads it instead of the raw
 terminal log.
 

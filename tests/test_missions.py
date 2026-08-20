@@ -12,7 +12,6 @@ from missions import (
     seated_plan_path,
 )
 from uplink import desk, load_plan, save_plan
-from watch import FlightState, _refuse_abort
 
 
 class _O:
@@ -71,17 +70,6 @@ class TestSeatAndPlan(unittest.TestCase):
     def test_pad_returns_pbc_craft(self):
         self.assertEqual(pad_craft_name(), "kspstuff-pad-pbc")
 
-    def test_hop_flea_has_goo(self):
-        from craft import hop_flea
-
-        names = [p.name for p in hop_flea().parts]
-        self.assertIn("mk1pod_v2", names)
-        self.assertIn("parachuteSingle", names)
-        self.assertIn("solidBooster_sm_v2", names)
-        self.assertEqual(names.count("GooExperiment"), 2)
-        self.assertNotIn("sensorThermometer", names)
-        self.assertNotIn("solidBooster_v2", names)
-
     def test_seat_missing_refused(self):
         from missions import seat
 
@@ -109,44 +97,6 @@ class TestWarpPeers(unittest.TestCase):
         msg = other_crewed_warp_danger(s)
         self.assertIsNotNone(msg)
         self.assertIn("Bob", msg)
-
-
-class TestRefuseAbort(unittest.TestCase):
-    def test_bound_fueled(self):
-        st = FlightState(
-            body="Mun",
-            peri=22000,
-            apo=100000,
-            alt=50000,
-            lf=360,
-            ox=0,
-            thrust=0,
-            escaping=False,
-            wreck=False,
-        )
-        # FlightState may require more fields — fall back if construct fails.
-        try:
-            self.assertTrue(_refuse_abort(st))
-        except TypeError:
-            self.skipTest("FlightState fields changed")
-
-    def test_lithobrake_not_refused(self):
-        try:
-            st = FlightState(
-                body="Mun",
-                peri=-100,
-                apo=10000,
-                alt=8000,
-                lf=200,
-                ox=0,
-                thrust=60,
-                escaping=False,
-                wreck=False,
-            )
-        except TypeError:
-            self.skipTest("FlightState fields changed")
-            return
-        self.assertFalse(_refuse_abort(st))
 
 
 if __name__ == "__main__":

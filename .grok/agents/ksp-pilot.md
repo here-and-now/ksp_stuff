@@ -24,7 +24,7 @@ source .venv/bin/activate
 
 KSP + kRPC must already listen on `127.0.0.1:50000` and `:50001`.
 One `Session` per process. You are the only writer: do not start a second
-`mun` or `recover`. `status` is allowed (read-only second connection).
+`pad` or `phase`. `status` is allowed (read-only second connection).
 
 ## Do
 

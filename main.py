@@ -17,10 +17,8 @@ from collections import deque
 from pathlib import Path
 
 from hangar import game_scene
-from mun import run_mission
 from session import ConnectionSettings, Session, SessionError
 from telem import MissionAbort
-from watch import freeze, heartbeat, recover_periapsis
 
 log = logging.getLogger("kspstuff")
 
@@ -123,95 +121,6 @@ def cmd_status(session: Session) -> int:
     return 0
 
 
-def cmd_recover(session: Session) -> int:
-    from crew import current_pilot
-    from flightlog import WriterLockError, release_lock, start
-
-    crew = ""
-    try:
-        crew = current_pilot().name
-    except Exception:
-        pass
-    try:
-        from missions import assert_seated
-
-        assert_seated(session)
-        start("recover", crew=crew)
-        try:
-            recover_periapsis(session, extra=10_000.0, on_log=_log)
-        except MissionAbort as exc:
-            freeze(session)
-            _log(f"ABORT {exc}")
-            write_handoff(command="recover", exit_code=2, abort=str(exc))
-            return 2
-        write_handoff(command="recover", exit_code=0)
-        return 0
-    except WriterLockError as exc:
-        _log(f"SESSION {exc}")
-        return 1
-    except SessionError as exc:
-        _log(f"SESSION {exc}")
-        return 1
-    finally:
-        release_lock()
-
-
-def cmd_mun(session: Session, args: argparse.Namespace) -> int:
-    from crew import current_pilot
-    from flightlog import WriterLockError, release_lock, start
-
-    t0 = time.monotonic()
-    crew = ""
-    try:
-        crew = current_pilot().name
-    except Exception:
-        pass
-    try:
-        from missions import assert_seated, pad_kerbal_available
-
-        if args.from_orbit:
-            assert_seated(session)
-        else:
-            pad_kerbal_available(session)
-            from missions import pad_craft_name
-
-            pad_craft_name()
-        start("mun", crew=crew)
-
-        def abort() -> bool:
-            return time.monotonic() - t0 > args.timeout
-
-        try:
-            run_mission(
-                session,
-                recover=not args.keep_debris,
-                on_log=_log,
-                abort=abort,
-                from_orbit=bool(getattr(args, "from_orbit", False)),
-            )
-        except MissionAbort as exc:
-            freeze(session)
-            _log(f"ABORT {exc}")
-            _log("Append a lesson to docs/lessons.md before the next attempt.")
-            write_handoff(command="mun", exit_code=2, abort=str(exc))
-            return 2
-        except SessionError as exc:
-            _log(f"SESSION {exc}")
-            write_handoff(command="mun", exit_code=1, abort=f"SESSION {exc}")
-            return 1
-        heartbeat(session, _log, tag="done ")
-        write_handoff(command="mun", exit_code=0)
-        return 0
-    except WriterLockError as exc:
-        _log(f"SESSION {exc}")
-        return 1
-    except SessionError as exc:
-        _log(f"SESSION {exc}")
-        return 1
-    finally:
-        release_lock()
-
-
 def cmd_pad(session: Session, args: argparse.Namespace) -> int:
     from emergencies import Ctx, call as emergency_call
     from flightlog import WriterLockError, release_lock, start
@@ -258,59 +167,6 @@ def cmd_pad(session: Session, args: argparse.Namespace) -> int:
         release_lock()
 
 
-def cmd_hop(session: Session, args: argparse.Namespace) -> int:
-    from crew import current_pilot
-    from flightlog import WriterLockError, release_lock, start
-    from hop import run_pad
-
-    t0 = time.monotonic()
-    crew = ""
-    try:
-        crew = current_pilot().name
-    except Exception:
-        pass
-    try:
-        from missions import pad_craft_name, pad_kerbal_available
-
-        pad_kerbal_available(session)
-        pad_craft_name()
-        start("hop", crew=crew)
-
-        def abort() -> bool:
-            if args.timeout <= 0:
-                return False
-            return time.monotonic() - t0 > args.timeout
-
-        try:
-            result = run_pad(
-                session,
-                recover=not args.keep_debris,
-                on_log=_log,
-                abort=abort,
-            )
-        except MissionAbort as exc:
-            freeze(session)
-            _log(f"ABORT {exc}")
-            write_handoff(command="hop", exit_code=2, abort=str(exc))
-            return 2
-        except SessionError as exc:
-            _log(f"SESSION {exc}")
-            write_handoff(command="hop", exit_code=1, abort=f"SESSION {exc}")
-            return 1
-        if result != "recovered":
-            heartbeat(session, _log, tag="done ")
-        write_handoff(command="hop", exit_code=0)
-        return 0
-    except WriterLockError as exc:
-        _log(f"SESSION {exc}")
-        return 1
-    except SessionError as exc:
-        _log(f"SESSION {exc}")
-        return 1
-    finally:
-        release_lock()
-
-
 def cmd_phase(session: Session, args: argparse.Namespace) -> int:
     from crew import current_pilot
     from flightlog import WriterLockError, release_lock, start
@@ -339,17 +195,16 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
         try:
             run(args.name, session, on_log=_log, abort=abort)
         except OffPlan as exc:
-            freeze(session)
+            from emergencies import Ctx, call as emergency_call
+
+            emergency_call("hold", Ctx(session=session))
             _log(f"OFFPLAN {exc}")
             write_handoff(command=args.name, exit_code=4, abort=f"OFFPLAN {exc}")
             return 4
         except MissionAbort as exc:
-            if args.name == "pad":
-                from emergencies import Ctx, call as emergency_call
+            from emergencies import Ctx, call as emergency_call
 
-                emergency_call("hold", Ctx(session=session))
-            else:
-                freeze(session)
+            emergency_call("hold", Ctx(session=session))
             _log(f"ABORT {exc}")
             write_handoff(command=args.name, exit_code=2, abort=str(exc))
             return 2
@@ -357,8 +212,6 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
             _log(f"SESSION {exc}")
             write_handoff(command=args.name, exit_code=1, abort=f"SESSION {exc}")
             return 1
-        if args.name != "pad":
-            heartbeat(session, _log, tag="done ")
         write_handoff(command=args.name, exit_code=0)
         return 0
     except WriterLockError as exc:
@@ -390,42 +243,6 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status", help="Heartbeat line for the active vessel")
-    sub.add_parser(
-        "recover",
-        help="Burn prograde until periapsis is above the atmosphere",
-    )
-    mun_p = sub.add_parser("mun", help="Pad compose (Hangar + ascent + Mun). Leftover crew: phase")
-    mun_p.add_argument(
-        "--timeout",
-        type=float,
-        default=2400.0,
-        help="Wall-clock abort (seconds). Default 40 min.",
-    )
-    mun_p.add_argument(
-        "--keep-debris",
-        action="store_true",
-        help="launch_vessel recover=False",
-    )
-    mun_p.add_argument(
-        "--from-orbit",
-        action="store_true",
-        help="Do not Hangar a new stack. Fly the active vessel (don't abandon crew).",
-    )
-    hop_p = sub.add_parser(
-        "hop",
-        help="Pad compose (Hangar + Kerbin sounding). Leftover crew: phase hop",
-    )
-    hop_p.add_argument(
-        "--timeout",
-        type=float,
-        default=0.0,
-        help="Wall-clock abort (seconds). 0 = none (default).",
-    )
-    hop_p.add_argument(
-        "--keep-debris",
-        action="store_true",
-        help="launch_vessel recover=False",
-    )
     pad_p = sub.add_parser(
         "pad",
         help="Pad compose: PBC probe + Kerbalism experiments (not hop)",
@@ -667,12 +484,6 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.cmd == "status":
             return cmd_status(session)
-        if args.cmd == "recover":
-            return cmd_recover(session)
-        if args.cmd == "mun":
-            return cmd_mun(session, args)
-        if args.cmd == "hop":
-            return cmd_hop(session, args)
         if args.cmd == "pad":
             return cmd_pad(session, args)
         if args.cmd == "phase":

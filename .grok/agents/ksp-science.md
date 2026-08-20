@@ -29,10 +29,12 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 
 1. First pass (no craft yet): opportunities at this tech →
    `docs/program/science.md`.
-2. After VAB `capable: yes`: bind experiments to **that** craft →
-   `docs/missions/<id>/science.md` (`at: <phase>`, `part:`, `biome:`).
-   If the craft lacks the part: `need_builder`, not a fake card.
-3. After `go:` you are idle until Gene `need_science` between phases.
+2. After Gus `capable: yes`: bind experiments to **that** craft →
+   `docs/missions/<id>/science.md`. Each experiment **must** have
+   `experiment_id`, `part`, `duration_s`, `ec_rate`, and the card
+   `recover_banks: yes|no`. If the craft lacks the part: `need_builder`.
+3. After `go:` idle until Gene `need_science`, or until parent calls
+   because `world` sci did not move after a briefed recover.
 4. Append one log line to `docs/crew/linus.md`.
 
 ## Return

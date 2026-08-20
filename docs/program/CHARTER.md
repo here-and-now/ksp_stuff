@@ -3,7 +3,8 @@
 An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
 first). Agents are the staff. **Os is the founder:** address anyone,
 pick the next item on the slate. Call people by **name and title**.
-No sound. No PyQt. Org notes: `docs/program/ORG.md`.
+No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
+`docs/program/PROTOCOL.md`.
 
 Environment memory is **query tools**, not this file:
 
@@ -33,7 +34,7 @@ Planning is a **conference on files** (L-039). Flying is Gene → helm.
 Linus briefs **Gene** (what / when / which part). Gene copies that into
 the pilot briefing. Linus has **no** `uplink` / `loop` / `note`.
 
-Gene last-writes the **plan**. VAB last-writes the **`.craft`**. Linus
+Gene last-writes the **plan**. Gus last-writes the **`.craft`**. Linus
 last-writes **science.md**. Disagreement → Gene `go: wait`.
 
 **Conference (parent, depth 1, different files):** Linus opportunities →

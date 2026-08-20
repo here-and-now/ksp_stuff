@@ -18,9 +18,10 @@ crew. Gene decides the plan; you propose a rocket.
 ## Read
 
 1. `python main.py parts --unlocked` — only those names (PBC: no Mk1 at Start)
-2. `python main.py parts --search` / `--module ProceduralPart` when sizing tanks/SRBs
-3. Gene's seated plan + Linus `science.md`
-4. `docs/program/vab.md` — do not sign kspstuff-hop-flea
+2. Seated `science.md` — size EC from `ec_rate × duration_s` **before**
+   `capable: yes`. One Z-100 cannot finish a 740 s goo at 0.18 EC/s.
+3. Gene's seated plan. `docs/program/vab.md`. Do not sign hop-flea.
+Do not read `docs/archive/kerbin-lessons.md`.
 
 Honor PBC. Prefer procedural meters when the part is `proc`. Craft compiler
 meters come in slice 3; until then `capable: no` unless Gene only needs a

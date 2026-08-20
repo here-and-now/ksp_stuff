@@ -23,10 +23,14 @@ stream/protobuf trap. Do not assign `L-NNN` if you are not patching —
 
 ## Read
 
-1. `docs/program/blocks.md` and `docs/program/plan.md`
-2. Newest `docs/flights/*-review.md` (not the raw jsonl)
-3. `docs/lessons.md` last 5
-4. `phases.py`, `watch.py`, `warp.py`, `nodes.py`, `mun.py`, `missions.py` as needed
+The spawn packet names the **live** review path. Do not use “newest
+filename” (unit tests used to forge that). Do not read
+`docs/archive/kerbin-lessons.md`.
+
+1. That live review + `docs/last-flight.md` if present
+2. `docs/program/blocks.md`
+3. `docs/lessons.md` (letsgrok L-042+ only)
+4. The `.py` named in the miss — not the whole tree first
 
 ## After a flight / when Gene lacks a block
 

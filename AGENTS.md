@@ -86,9 +86,15 @@ patch `.py` in the same turn — spawn R&D.
 ## When to spawn (do this, don't offer)
 
 Parse Gene's return block. **Missing `go:` = wait.** Never auto-fly.
-Pad also needs VAB `capable: yes`. Do not spawn VAB/Linus/Gene on the
-same file; conference order is Linus → Gene draft → VAB → Linus card →
-Gene `go:`. Lock live → no VAB/Linus.
+Pad also needs Gus `capable: yes`. Do not spawn Gus/Linus/Gene on the
+same file. Conference: Linus opportunities **parallel** with Gene
+world/tech; then Gene draft (`go: wait`) → Gus `capable:` → Linus
+**bind** to that craft → Gene `go:`. Lock live → no Gus/Linus/Gene.
+
+Every spawn is a **packet** (`docs/program/PROTOCOL.md`): `to` name+title,
+`task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_sortie`
+id on a miss. Helm `cli:` is Gene `recommended:` copied verbatim.
+Do not tell children to read `docs/archive/kerbin-lessons.md`.
 
 - Os says fly / go / recommended → spawn **Gene Kerman, Flight Director**.
   Gene return must include `flight:` matching `current.md` (or a `seat`

@@ -27,12 +27,18 @@ should not be running — the parent uplinks `abort|hold` on wreck-class.
 
 ## Plan (between phases only)
 
-Own the **seated** `docs/missions/<id>/plan.md` (`phase:`, `next:`,
-`expect_*`, `craft:`) and that dossier's `briefing.md`. Catalog:
-`docs/program/blocks.md`. After a phase exits, read the newest
-`sorties/*-review.md`, fill **Learn**, set the next `phase:`,
-`python main.py brief …`, `note Gene`. If you need a name that is not
-in the catalog, return `need_stack: <name>` — do not heredoc.
+Own the **seated** `docs/missions/<id>/plan.md` and `briefing.md`.
+Catalog: `docs/program/blocks.md`. Copy Linus `duration_s` / `ec_rate`
+into the briefing so Gus is not late.
+
+After a **clean** live exit: short pass — named review + `python main.py
+world` sci, fill **Learn**, `go: wait` unless Os already asked to
+continue. Do not ingest `docs/archive/kerbin-lessons.md`.
+
+After a miss: parent may have Lars first. Then you replan. If you need
+a name not in `blocks.md`, `need_stack: <name>` — no heredoc.
+`recommended:` is the **exact** CLI for the Commander (`python main.py pad`
+or `python main.py phase <name>`).
 
 Mid-phase is not your job. Do not replan while `phase` is running.
 Do not loop `radio` / `status`.

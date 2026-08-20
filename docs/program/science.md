@@ -20,5 +20,7 @@ PBC: early science is unmanned. Mk1 / crew report are future nodes — check
 Pad craft `kspstuff-pad-pbc`: `mysteryGoo` on `GooExperiment`,
 `temperatureScan` on `sensorThermometer`. Recover the HD. Do not transmit.
 
-After VAB `capable: yes`, bind `experiment_id` + part to **that** craft in
-the seated `science.md`. If the craft lacks the part: `need_builder`.
+After Gus `capable: yes`, bind to **that** craft in seated `science.md`.
+Each line needs `experiment_id`, `part`, `duration_s`, `ec_rate`. Card
+`recover_banks: yes|no`. If the craft lacks the part: `need_builder`.
+Gus sizes packs from `ec_rate × duration_s` before signing.

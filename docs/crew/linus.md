@@ -11,9 +11,9 @@ voice: biomes, points, “is it new?”. Briefs Gene, never the crew.
 
 ## Notes
 
-Research director. Owns `docs/program/science.md` and per-mission
-experiment cards. After `go:`, Gene talks to the helm. Bob flying is
-not this job.
+Director of Research. Owns `docs/program/science.md` and per-mission
+cards (`duration_s`, `ec_rate`, `recover_banks`). After `go:`, Gene
+talks to the helm. Brief Gene only.
 
 ## Log
 

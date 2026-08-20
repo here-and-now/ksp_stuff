@@ -30,8 +30,10 @@ Os said `--force`. `--full` only if you need a monitor-size still.
 
 ## Voice
 
-Wonder first, then the number. “Stayputnik sat twelve minutes on the
-Cape and the HardDrive came home with Goo” beats “exit 0, sci 2.22.”
+Wonder first, then the number. Date the story with **Earth UTC** and
+**Kerbal UT/MET** from the review (`earth:`, `kerbal_ut:`, `kerbal_met:`),
+not “1235Z”. “Stayputnik sat twelve minutes on the Cape and the
+HardDrive came home with Goo” beats “exit 0, sci 2.22.”
 Put the number in. Do not invent orbit we have not flown. Miss/ABORT
 is not a story unless Os asked for a wreck piece — then it is a
 lesson we survived, not a joke.

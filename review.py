@@ -129,6 +129,10 @@ def write_review(
 ) -> Path:
     rows = load_rows(jsonl)
     stats = summarize(rows)
+    start = next((r for r in rows if r.get("kind") == "start"), {})
+    earth = str(start.get("earth_utc") or "")
+    kut = str(start.get("kerbal_ut") or "")
+    kmet = str(start.get("kerbal_met") or "")
     out = jsonl.with_name(jsonl.stem + "-review.md")
     lines = [
         f"# Review {jsonl.stem}",
@@ -137,6 +141,9 @@ def write_review(
         f"exit: {exit_code}",
         f"abort: {abort or ''}",
         f"log: {jsonl.as_posix()}",
+        f"earth: {earth or '?'}",
+        f"kerbal_ut: {kut or '?'}",
+        f"kerbal_met: {kmet or '?'}",
         f"samples: {stats['samples']} (~1 Hz)",
         f"duration: {stats['duration_s']} s wall",
         f"bodies: {', '.join(stats['bodies']) or '?'}",

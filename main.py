@@ -131,7 +131,7 @@ def cmd_pad(session: Session, args: argparse.Namespace) -> int:
         from missions import pad_craft_name
 
         pad_craft_name()
-        start("pad", crew="")
+        start("pad", crew="", session=session)
 
         def abort() -> bool:
             if args.timeout <= 0:
@@ -185,7 +185,7 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
         # deletes it — do not FlightWatch a missing ship.
         if args.name != "pad":
             assert_seated(session)
-        start(args.name, crew="" if args.name == "pad" else crew)
+        start(args.name, crew="" if args.name == "pad" else crew, session=session)
 
         def abort() -> bool:
             if args.timeout <= 0:

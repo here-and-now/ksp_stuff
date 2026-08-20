@@ -58,6 +58,10 @@ return: the named block
 
 Helm `cli:` is Gene `recommended:` copied verbatim. Lars miss packet names the live review path, not “newest file”. Do not require `docs/archive/kerbin-lessons.md`.
 
+A **sortie** is one helm command. Filename Earth UTC with seconds
+(`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
+dates stories from those lines.
+
 ## Files
 
 Gene last-writes plan/briefing/Learn. Gus last-writes `vab.md`/`.craft`. Linus last-writes science boards. Verena last-writes `README.md` (portrait) and `docs/press/`. Helm takes `uplink.md`. `loop.md` is talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.

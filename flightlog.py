@@ -1,7 +1,8 @@
 """On-disk 1 Hz flight recorder. Not for the TUI.
 
-Mun/recover start a jsonl under docs/flights/. Status does not.
-Flag changes are written immediately. After exit, review.py rolls it up.
+One **sortie** is one helm command (`python main.py pad`). Files live
+under the seated dossier ``sorties/``. Stamp is Earth UTC with seconds
+(filesystem-safe) plus Kerbal UT/MET in the jsonl start event.
 """
 
 from __future__ import annotations
@@ -40,6 +41,56 @@ def live_records() -> bool:
     if "unittest" in sys.modules:
         return False
     return True
+
+
+def earth_stamp(now: datetime | None = None) -> str:
+    """Filesystem-safe Earth UTC: 2026-08-20T12-35-42Z (not 1235Z)."""
+    t = now or datetime.now(timezone.utc)
+    return t.strftime("%Y-%m-%dT%H-%M-%SZ")
+
+
+def earth_display(now: datetime | None = None) -> str:
+    t = now or datetime.now(timezone.utc)
+    return t.strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def format_kerbal_clock(seconds: float, *, label: str = "UT") -> str:
+    """KSP universal/MET as days + hh:mm:ss. Raw seconds stay in jsonl."""
+    try:
+        s = float(seconds)
+    except (TypeError, ValueError):
+        return "?"
+    if not math.isfinite(s) or s < 0:
+        return "?"
+    whole = int(s)
+    days, rem = divmod(whole, 86400)
+    hours, rem = divmod(rem, 3600)
+    mins, secs = divmod(rem, 60)
+    if label == "MET":
+        return f"MET {days}d {hours:02d}:{mins:02d}:{secs:02d}"
+    return f"{days}d {hours:02d}:{mins:02d}:{secs:02d} UT"
+
+
+def kerbal_clocks(session: Any = None) -> dict[str, Any]:
+    ut = met = None
+    if session is not None:
+        try:
+            ut = float(session.space_center.ut)
+        except Exception:
+            ut = None
+        try:
+            vessel = session.active_vessel
+            if vessel is not None:
+                met = float(vessel.met)
+        except Exception:
+            met = None
+    out: dict[str, Any] = {
+        "kerbal_ut_s": None if ut is None else round(ut, 3),
+        "kerbal_met_s": None if met is None else round(met, 3),
+        "kerbal_ut": format_kerbal_clock(ut) if ut is not None else "?",
+        "kerbal_met": format_kerbal_clock(met, label="MET") if met is not None else "?",
+    }
+    return out
 
 
 def stamp() -> str:
@@ -105,7 +156,7 @@ def release_lock() -> None:
         log.debug("flight.lock release failed", exc_info=True)
 
 
-def start(command: str, *, crew: str = "") -> Path:
+def start(command: str, *, crew: str = "", session: Any = None) -> Path:
     global _path, _command, _stamp, _flight, _t0, _last_flags, _last_write, _count
     if not live_records():
         acquire_lock(command)
@@ -129,14 +180,22 @@ def start(command: str, *, crew: str = "") -> Path:
         dest = FLIGHTS
         dest.mkdir(parents=True, exist_ok=True)
     acquire_lock(command)
-    _stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
+    now = datetime.now(timezone.utc)
+    _stamp = earth_stamp(now)
     _command = command
     _path = dest / f"{_stamp}-{command}.jsonl"
     _t0 = time.monotonic()
     _last_flags = None
     _last_write = 0.0
     _count = 0
-    event("start", f"command={command} crew={crew}")
+    clocks = kerbal_clocks(session)
+    event(
+        "start",
+        f"command={command} crew={crew}",
+        earth_utc=earth_display(now),
+        earth_stamp=_stamp,
+        **clocks,
+    )
     try:
         from uplink import clear
 

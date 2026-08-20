@@ -1,8 +1,12 @@
 """kRPC 0.6 science experiments. Run and keep; never transmit.
 
-``vessel.parts.experiments`` → ``Experiment`` (name, available, has_data,
-run, reset, dump, transmit). EVA hatch is not wired — skip evaReport /
-surfaceSample. Goo is one-shot; crew reports are rerunnable.
+Stock hop: ``vessel.parts.experiments`` → ``Experiment.run``. Kerbalism
+pad: ``part.modules`` named ``Experiment``, started via events — not
+``Experiment.run``. ``Module.fields`` is PAW gui names; ``experiment_id``
+is a hidden field (``field_list`` / ``get_field_by_id`` / ``config``).
+Pad dwells until HD has the card (status / Has Data / remaining, else
+cfg ``data_rate`` × ScienceDefs size, capped by remaining EC /
+``ec_rate``). EVA hatch is not wired — skip evaReport / surfaceSample.
 """
 
 from __future__ import annotations
@@ -17,8 +21,69 @@ EVA_EXPERIMENTS = frozenset({"evaReport", "surfaceSample", "evaScience"})
 
 # First pad hop card. Other parts run only if the caller names them.
 HOP_EXPERIMENTS = ("crewReport", "mysteryGoo")
+PAD_EXPERIMENTS = ("mysteryGoo", "temperatureScan")
 
-_SKIP_EVENTS = ("reset", "discard", "transmit", "review", "collect", "store")
+_SKIP_EVENTS = (
+    "reset",
+    "discard",
+    "transmit",
+    "review",
+    "collect",
+    "store",
+    "stop",
+    "pause",
+)
+_START_EVENTS = (
+    "Start Experiment",
+    "Start experiment",
+    "Start",
+    "Run Experiment",
+    "Run",
+    "Deploy",
+    "Toggle",
+    "ToggleEvent",
+    "RunEvent",
+    "StartAction",
+)
+_KERBALISM_MODULES = frozenset({"Experiment", "ModuleScienceExperiment"})
+_KERBALISM_MODULE_ALIASES = frozenset({"moduleksmexperiment", "kerbalismexperiment"})
+# kRPC part.name (uid stripped). Used when experiment_id is not a PAW field.
+_PART_EXPERIMENTS = {
+    "GooExperiment": "mysteryGoo",
+    "sensorThermometer": "temperatureScan",
+}
+_EID_KEYS = ("experiment_id", "experimentID", "experiment")
+_DONE_STATUS = (
+    "done",
+    "complete",
+    "completed",
+    "depleted",
+    "finished",
+    "recorded",
+    "has data",
+    "reset required",
+)
+_RUNNING_STATUS = (
+    "running",
+    "recording",
+    "measuring",
+    "in progress",
+    "started",
+    "waiting",
+    "forced",
+)
+_HAS_DATA_KEYS = ("Has Data", "has_data", "HasData", "hasData")
+_REMAIN_KEYS = (
+    "remainingSampleMass",
+    "remaining",
+    "sample remaining",
+    "data remaining",
+    "Science Remaining",
+    "remaining_mass",
+)
+DEFAULT_PAD_DWELL_S = 900.0
+# Recover before the last fifth of the battery so the probe stays commandable.
+PAD_EC_MARGIN = 0.8
 
 
 def experiment_name(exp: Any) -> str:
@@ -139,3 +204,629 @@ def run_ready(
         _say(line)
         done.append(name)
     return done
+
+
+def _attr(obj: Any, name: str, default: Any = None) -> Any:
+    try:
+        return getattr(obj, name)
+    except Exception:
+        return default
+
+
+def _is_science_module(name: str) -> bool:
+    n = (name or "").strip()
+    if not n:
+        return False
+    if n in _KERBALISM_MODULES:
+        return True
+    low = n.lower()
+    return low in {m.lower() for m in _KERBALISM_MODULES} or low in _KERBALISM_MODULE_ALIASES
+
+
+def _part_experiment_id(part: Any) -> str:
+    raw = str(_attr(part, "name", "") or "")
+    if not raw:
+        return ""
+    token = raw.replace(".", "_")
+    stem = token.split("_")[0]
+    return (
+        _PART_EXPERIMENTS.get(raw)
+        or _PART_EXPERIMENTS.get(token)
+        or _PART_EXPERIMENTS.get(stem)
+        or ""
+    )
+
+
+def module_field(module: Any, *keys: str) -> Any:
+    """Module field by stable id, then cfg, then PAW gui name.
+
+    kRPC 0.6 ``Module.fields`` / ``get_field`` are visible gui names and
+    throw on duplicate names. Kerbalism ``experiment_id`` is not guiActive.
+    """
+    if not keys:
+        return None
+    want = {k.lower() for k in keys}
+
+    try:
+        flist = list(_attr(module, "field_list") or [])
+    except Exception:
+        flist = []
+    for field in flist:
+        fname = str(_attr(field, "name", "") or "")
+        if fname.lower() not in want:
+            continue
+        val = _attr(field, "value")
+        if val is not None and str(val) != "":
+            return val
+
+    getter_id = _attr(module, "get_field_by_id")
+    if callable(getter_id):
+        for key in keys:
+            try:
+                val = getter_id(key)
+            except Exception:
+                continue
+            if val is not None and str(val) != "":
+                return val
+
+    try:
+        by_id = _attr(module, "fields_by_id")
+    except Exception:
+        by_id = None
+    if isinstance(by_id, dict):
+        for key in keys:
+            if key in by_id and by_id[key] not in (None, ""):
+                return by_id[key]
+            for dk, dv in by_id.items():
+                if str(dk).lower() == key.lower() and dv not in (None, ""):
+                    return dv
+
+    cfg = _attr(module, "config")
+    if cfg is not None:
+        try:
+            values = _attr(cfg, "values")
+        except Exception:
+            values = None
+        if isinstance(values, dict):
+            for key in keys:
+                if key in values and values[key] not in (None, ""):
+                    return values[key]
+        getter = _attr(cfg, "get_value")
+        if callable(getter):
+            for key in keys:
+                try:
+                    val = getter(key)
+                except Exception:
+                    continue
+                if val not in (None, ""):
+                    return val
+
+    try:
+        fields = _attr(module, "fields")
+    except Exception:
+        fields = None
+    if isinstance(fields, dict):
+        for key in keys:
+            if key in fields and fields[key] not in (None, ""):
+                return fields[key]
+            for dk, dv in fields.items():
+                if str(dk).lower() == key.lower() and dv not in (None, ""):
+                    return dv
+
+    getter = _attr(module, "get_field")
+    if callable(getter):
+        for key in keys:
+            try:
+                val = getter(key)
+            except Exception:
+                continue
+            if val not in (None, ""):
+                return val
+
+    for key in keys:
+        val = _attr(module, key)
+        if val is not None and not callable(val) and str(val) != "":
+            return val
+    return None
+
+
+def _skip_event(text: str) -> bool:
+    low = text.lower()
+    return any(word in low for word in _SKIP_EVENTS)
+
+
+def _matches_start(text: str) -> bool:
+    low = text.lower()
+    if _skip_event(low):
+        return False
+    return any(want.lower() == low or want.lower() in low for want in _START_EVENTS)
+
+
+def _part_name(part: Any) -> str:
+    return str(_attr(part, "name", "") or "")
+
+
+def _mod_name(module: Any) -> str:
+    return str(_attr(module, "name", "") or "")
+
+
+def _slot_key(part: Any, module: Any, eid: str) -> tuple:
+    """Stable identity: kRPC Module proxies from parts.all vs modules_with_name
+    are different Python objects (id() does not dedupe)."""
+    token = str(eid or "").strip()
+    if token:
+        return (_part_name(part), token)
+    return (_part_name(part), _mod_name(module), "")
+
+
+def _is_kerbalism_experiment(module: Any) -> bool:
+    n = _mod_name(module)
+    if n == "Experiment":
+        return True
+    return n.lower() in _KERBALISM_MODULE_ALIASES
+
+
+def _already_running(module: Any) -> bool:
+    """Kerbalism Toggle starts *and* stops. Do not fire if already running."""
+    try:
+        event_list = list(_attr(module, "event_list") or [])
+    except Exception:
+        event_list = []
+    for ev in event_list:
+        gui = str(_attr(ev, "gui_name", "") or "")
+        ident = str(_attr(ev, "name", "") or "")
+        blob = f"{gui} {ident}".lower()
+        if not any(w in blob for w in ("stop", "pause")):
+            continue
+        if _attr(ev, "active") is True:
+            return True
+    status = module_field(module, "status", "Status", "state", "State")
+    if status is None:
+        return False
+    low = str(status).lower()
+    return any(w in low for w in ("running", "recording", "measuring", "in progress"))
+
+
+def _start_rank(text: str) -> int:
+    """Prefer Start/Run/Deploy over Toggle (Toggle is start *and* stop)."""
+    if not text or _skip_event(text):
+        return 99
+    if not _matches_start(text):
+        return 99
+    return 1 if "toggle" in text.lower() else 0
+
+
+def _trigger_module(module: Any) -> bool:
+    try:
+        event_list = list(_attr(module, "event_list") or [])
+    except Exception:
+        event_list = []
+    names: list[str] = []
+    for ev in event_list:
+        gui = str(_attr(ev, "gui_name", "") or "")
+        ident = str(_attr(ev, "name", "") or "")
+        if gui:
+            names.append(gui)
+        if ident and ident not in names:
+            names.append(ident)
+    try:
+        events = list(_attr(module, "events") or [])
+    except Exception:
+        events = []
+    names.extend(str(x) for x in events)
+    event_list = sorted(
+        event_list,
+        key=lambda ev: min(
+            _start_rank(str(_attr(ev, "gui_name", "") or "")),
+            _start_rank(str(_attr(ev, "name", "") or "")),
+        ),
+    )
+    names = sorted(names, key=_start_rank)
+
+    for ev in event_list:
+        gui = str(_attr(ev, "gui_name", "") or "")
+        ident = str(_attr(ev, "name", "") or "")
+        if _matches_start(gui) or _matches_start(ident):
+            trig = _attr(ev, "trigger")
+            if callable(trig):
+                try:
+                    trig()
+                    return True
+                except Exception:
+                    pass
+
+    for ev_name in names:
+        if not _matches_start(ev_name):
+            continue
+        trigger = _attr(module, "trigger_event")
+        if callable(trigger):
+            try:
+                trigger(ev_name)
+                return True
+            except Exception:
+                pass
+        by_id = _attr(module, "trigger_event_by_id")
+        if callable(by_id):
+            try:
+                by_id(ev_name)
+                return True
+            except Exception:
+                pass
+        has_ev = _attr(module, "has_event")
+        if callable(has_ev):
+            try:
+                if has_ev(ev_name):
+                    module.trigger_event(ev_name)
+                    return True
+            except Exception:
+                pass
+
+    # Bare Experiment: first non-skip event (often Toggle / ToggleEvent).
+    for ev in event_list:
+        gui = str(_attr(ev, "gui_name", "") or "")
+        ident = str(_attr(ev, "name", "") or "")
+        if _skip_event(gui) or _skip_event(ident):
+            continue
+        trig = _attr(ev, "trigger")
+        if callable(trig):
+            try:
+                trig()
+                return True
+            except Exception:
+                continue
+    for ev_name in names:
+        if _skip_event(ev_name):
+            continue
+        trigger = _attr(module, "trigger_event")
+        if callable(trigger):
+            try:
+                trigger(ev_name)
+                return True
+            except Exception:
+                continue
+        by_id = _attr(module, "trigger_event_by_id")
+        if callable(by_id):
+            try:
+                by_id(ev_name)
+                return True
+            except Exception:
+                continue
+    return False
+
+
+def _infer_eid(part: Any, module: Any) -> str:
+    eid = module_field(module, *_EID_KEYS)
+    if eid is not None and str(eid).strip():
+        return str(eid).strip()
+    return _part_experiment_id(part)
+
+
+def iter_science_modules(vessel: Any) -> list[tuple[Any, Any, str]]:
+    """(part, module, experiment_id) from part.modules — not parts.experiments.
+
+    One slot per (part, experiment_id). Kerbalism ``Experiment`` wins over a
+    leftover ``ModuleScienceExperiment``. ``modules_with_name`` proxies are
+    merged by that key, not Python ``id()``.
+    """
+    slots: dict[tuple, tuple[Any, Any, str]] = {}
+    order: list[tuple] = []
+
+    def add(part: Any, module: Any, eid: str) -> None:
+        key = _slot_key(part, module, eid)
+        prev = slots.get(key)
+        if prev is None:
+            slots[key] = (part, module, eid)
+            order.append(key)
+            return
+        _, old_mod, _ = prev
+        if _is_kerbalism_experiment(module) and not _is_kerbalism_experiment(old_mod):
+            slots[key] = (part, module, eid)
+
+    try:
+        parts = list(vessel.parts.all)
+    except Exception:
+        parts = []
+    for part in parts:
+        try:
+            modules = list(part.modules)
+        except Exception:
+            continue
+        for module in modules:
+            try:
+                if not _is_science_module(_mod_name(module)):
+                    continue
+                add(part, module, _infer_eid(part, module))
+            except Exception:
+                continue
+    finder = _attr(_attr(vessel, "parts"), "modules_with_name")
+    if callable(finder):
+        for mname in ("Experiment", "ModuleScienceExperiment"):
+            try:
+                extras = list(finder(mname) or [])
+            except Exception:
+                continue
+            for module in extras:
+                try:
+                    part = _attr(module, "part")
+                    if not _is_science_module(_mod_name(module) or mname):
+                        continue
+                    add(part, module, _infer_eid(part, module))
+                except Exception:
+                    continue
+    return [slots[k] for k in order]
+
+
+def start_experiments(
+    vessel: Any,
+    *,
+    names: Iterable[str] | None = None,
+    on_log: Callable[[str], None] | None = None,
+) -> list[str]:
+    """Start Kerbalism ``Experiment`` modules via events.
+
+    Does **not** call ``vessel.parts.experiments`` / ``Experiment.run()``.
+    One trigger per (part, experiment_id) — a second Toggle stops the sample.
+    """
+    want = {n.strip() for n in names} if names is not None else None
+    done: list[str] = []
+    started: set[tuple] = set()
+
+    def _say(msg: str) -> None:
+        log.info(msg)
+        if on_log:
+            on_log(msg)
+
+    found = iter_science_modules(vessel)
+    if not found:
+        _say("science skip (no Experiment modules)")
+
+    for part, module, eid in found:
+        pname = _part_name(part) or "?"
+        key = _slot_key(part, module, eid)
+        if want is not None and eid not in want:
+            _say(f"science skip {eid or '?'} on {pname} (not in card)")
+            continue
+        if eid in EVA_EXPERIMENTS:
+            _say(f"science skip {eid} (EVA)")
+            continue
+        if key in started:
+            continue
+        broken = module_field(module, "broken", "isBroken", "malfunction")
+        if broken in (True, 1, "True", "true", "1"):
+            _say(f"science skip {eid or _attr(module, 'name', 'Experiment')} broken")
+            continue
+        label = eid or str(_attr(module, "name", "Experiment") or "Experiment")
+        if _already_running(module):
+            _say(f"science keep {label} running")
+            started.add(key)
+            done.append(str(label))
+            continue
+        if _trigger_module(module):
+            _say(f"science start {label}")
+            started.add(key)
+            done.append(str(label))
+        else:
+            _say(f"science skip {eid or '?'} on {pname} no event")
+    return done
+
+
+def _number(val: Any) -> float | None:
+    if val is None or isinstance(val, bool):
+        return None
+    if isinstance(val, (int, float)):
+        out = float(val)
+        return out if out == out else None
+    text = str(val).strip().replace(",", "")
+    if not text:
+        return None
+    token = text.split()[0].rstrip("%")
+    try:
+        return float(token)
+    except ValueError:
+        return None
+
+
+def _truthy(val: Any) -> bool:
+    if val in (True, 1, "1", "True", "true", "yes", "Yes"):
+        return True
+    if isinstance(val, str) and val.strip().lower() in ("has data", "stored"):
+        return True
+    return False
+
+
+def _status_text(module: Any) -> str:
+    val = module_field(module, "status", "Status", "state", "State", "Experiment_status")
+    return str(val).strip().lower() if val is not None and str(val).strip() else ""
+
+
+def status_running(module: Any) -> bool:
+    if _already_running(module):
+        return True
+    low = _status_text(module)
+    return bool(low) and any(w in low for w in _RUNNING_STATUS)
+
+
+def _has_data_field(module: Any) -> bool:
+    for key in _HAS_DATA_KEYS:
+        if _truthy(module_field(module, key)):
+            return True
+    return False
+
+
+def _remaining_zero(module: Any) -> bool:
+    for key in _REMAIN_KEYS:
+        num = _number(module_field(module, key))
+        if num is None:
+            continue
+        return num <= 0.0
+    return False
+
+
+def _reset_ready(module: Any) -> bool:
+    try:
+        event_list = list(_attr(module, "event_list") or [])
+    except Exception:
+        event_list = []
+    for ev in event_list:
+        blob = (
+            f"{_attr(ev, 'gui_name', '') or ''} {_attr(ev, 'name', '') or ''}"
+        ).lower()
+        if "reset" not in blob:
+            continue
+        if _attr(ev, "active") is True:
+            return True
+    return False
+
+
+def experiment_done(module: Any, *, saw_running: bool = False) -> bool:
+    """Kerbalism Experiment finished this subject. Does not Toggle."""
+    if status_running(module):
+        return False
+    if _has_data_field(module):
+        return True
+    if _remaining_zero(module):
+        return True
+    low = _status_text(module)
+    if low and any(w in low for w in _DONE_STATUS):
+        return True
+    if _reset_ready(module):
+        return True
+    return bool(saw_running)
+
+
+def card_complete(
+    vessel: Any,
+    names: Iterable[str],
+    saw_running: dict[tuple, bool] | None = None,
+) -> bool:
+    """True when every in-card science slot is done (or none exist)."""
+    want = {str(n).strip() for n in names if n}
+    if not want:
+        return True
+    seen = saw_running if saw_running is not None else {}
+    slots = [
+        (part, module, eid)
+        for part, module, eid in iter_science_modules(vessel)
+        if eid in want
+    ]
+    if not slots:
+        return False
+    done = True
+    for part, module, eid in slots:
+        key = _slot_key(part, module, eid)
+        if status_running(module):
+            seen[key] = True
+            done = False
+            continue
+        if experiment_done(module, saw_running=seen.get(key, False)):
+            continue
+        done = False
+    return done
+
+
+def card_has_data(vessel: Any, names: Iterable[str]) -> bool:
+    """True if any in-card slot already has HD data (not merely started)."""
+    want = {str(n).strip() for n in names if n}
+    if not want:
+        return False
+    for _part, module, eid in iter_science_modules(vessel):
+        if eid not in want:
+            continue
+        if _has_data_field(module):
+            return True
+        if _remaining_zero(module):
+            return True
+        low = _status_text(module)
+        if low and any(w in low for w in _DONE_STATUS):
+            return True
+    return False
+
+
+def pad_ec_rate(
+    names: Iterable[str],
+    *,
+    vessel: Any = None,
+    catalog: Any = None,
+) -> float:
+    """Sum in-card Experiment ``ec_rate``. Live modules win; catalog fallback."""
+    want = [str(n).strip() for n in names if n]
+    want_set = set(want)
+    if not want_set:
+        return 0.0
+    cat_rates: dict[str, float] = {}
+    cat_exps = _attr(catalog, "experiments") if catalog is not None else None
+    if isinstance(cat_exps, dict):
+        for eid, spec in cat_exps.items():
+            rate = _number(_attr(spec, "ec_rate"))
+            if rate is not None and rate > 0.0:
+                cat_rates[str(eid)] = rate
+    total = 0.0
+    if vessel is not None:
+        for _part, module, eid in iter_science_modules(vessel):
+            if eid not in want_set:
+                continue
+            rate = _number(module_field(module, "ec_rate", "ecRate"))
+            if rate is None or rate <= 0.0:
+                rate = cat_rates.get(eid)
+            if rate is not None and rate > 0.0:
+                total += rate
+        return total
+    seen: set[str] = set()
+    for eid in want:
+        if eid in seen:
+            continue
+        seen.add(eid)
+        rate = cat_rates.get(eid)
+        if rate is not None and rate > 0.0:
+            total += rate
+    return total
+
+
+def pad_dwell_s(
+    names: Iterable[str],
+    *,
+    vessel: Any = None,
+    catalog: Any = None,
+    ec: float | None = None,
+) -> float:
+    """Wall-clock cap: size/data_rate, min remaining EC/ec_rate.
+
+    Not sample_amount/rate. EC cap is None-safe: unknown rate → data wall only.
+    """
+    want = [str(n).strip() for n in names if n]
+    if not want:
+        return 0.0
+    rates: dict[str, float] = {}
+    sizes: dict[str, float] = {}
+    cat_exps = _attr(catalog, "experiments") if catalog is not None else None
+    if isinstance(cat_exps, dict):
+        for eid, spec in cat_exps.items():
+            rate = _number(_attr(spec, "data_rate"))
+            size = _number(_attr(spec, "size_mb"))
+            if rate is not None:
+                rates[str(eid)] = rate
+            if size is not None:
+                sizes[str(eid)] = size
+    if vessel is not None:
+        for _part, module, eid in iter_science_modules(vessel):
+            if eid not in want:
+                continue
+            rate = _number(module_field(module, "data_rate", "dataRate"))
+            if rate is not None:
+                rates[eid] = rate
+    times: list[float] = []
+    for eid in want:
+        rate_f = rates.get(eid) or 0.0
+        size_f = sizes.get(eid) or 0.0
+        if rate_f > 0.0 and size_f > 0.0:
+            times.append(size_f / rate_f)
+    data_s = max(times) * 1.15 + 2.0 if times else DEFAULT_PAD_DWELL_S
+    drain = pad_ec_rate(names, vessel=vessel, catalog=catalog)
+    if ec is not None and drain > 0.0:
+        try:
+            ec_f = float(ec)
+        except (TypeError, ValueError):
+            ec_f = float("nan")
+        if ec_f == ec_f and ec_f >= 0.0:
+            return min(data_s, (ec_f / drain) * PAD_EC_MARGIN)
+    return data_s

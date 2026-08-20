@@ -7,9 +7,10 @@ from typing import Any, Callable
 
 from session import Session
 from uplink import desk, load_plan, plan_file, write_plan_file
-from watch import FlightWatch, MissionAbort, heartbeat
+from telem import MissionAbort
+from watch import FlightWatch, heartbeat
 
-NAMES = ("recover", "circularize", "tli", "soi", "capture", "land", "hop")
+NAMES = ("recover", "circularize", "tli", "soi", "capture", "land", "hop", "pad")
 
 
 class OffPlan(Exception):
@@ -79,6 +80,11 @@ def run(
     if name not in NAMES:
         raise MissionAbort(f"unknown phase {name}")
     load_plan()
+    if name == "pad":
+        from pad import run_phase
+
+        run_phase(session, on_log=on_log, abort=abort)
+        return
     vessel = session.active_vessel
     if vessel is None:
         if name == "hop":

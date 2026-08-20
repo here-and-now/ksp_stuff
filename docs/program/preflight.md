@@ -1,7 +1,8 @@
-# Preflight — new science save
+# Preflight — Earth science sandbox (`letsgrok`)
 
-- [ ] Live `status` / `science` match this save (not the Mun campaign)
-- [ ] Pad clear, seated kerbal **available**
-- [x] VAB `capable: yes` and a real `.craft`
-- [x] Linus mission card copied into Gene's briefing
-- [x] Gene `go: yes`
+- [x] `python main.py world` matches this save (Earth, SCIENCE_SANDBOX)
+- [x] VAB `capable: yes` `kspstuff-pad-pbc` from `parts --unlocked`
+- [x] Linus card: mysteryGoo + temperatureScan on that craft
+- [ ] Gene `go: wait` (1235Z pad banked; visitor next)
+- [x] `emergencies:` listed (hold, cut, abort_pad, science, …)
+- [x] Do not Hangar a Mk1 / hop-flea. Do not load Kerbin saves.

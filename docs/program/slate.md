@@ -1,8 +1,9 @@
 # Slate
 
-**Goal:** science mode. Gather science, unlock the tree, then Mun.
+**Goal:** science sandbox on Earth. Gather science, unlock the CTT+PBC tree.
+PBC: probes first. Moon is later.
 
-**Recommended:** `python main.py hop` — Jeb pad sounding on kspstuff-hop-flea.
+**Recommended:** Hold. 1235Z pad recovered HD. world sci 2.22. Still start.
+Next nodes cost 5. Visitor unlocks or a new card. Not hop/mun.
 
-No leftover crew. Empty flights archive. Honor 4761 lives in
-`docs/archive/` only.
+Canonical save `letsgrok`. Honor 4761 lives in `docs/archive/` only.

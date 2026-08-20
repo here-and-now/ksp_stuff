@@ -8,15 +8,17 @@ before flying. Seat and slate: `docs/program/current.md` (`flight:`),
 This repo is an **agent-driven kRPC project**. Do not open the PyQt UI.
 Do not browse the web (`web_search`, `web_fetch`, `open_page`). kRPC facts
 are in `docs/agent-notes.md`; mission facts in `docs/lessons.md` and a live
-`status`/`phase` probe.
+`status`/`phase` probe. Tree and parts: `python main.py world|tech|parts`
+(disk, no kRPC).
 Do not ship mission logic as a heredoc. Put it in a `.py` next to `main.py`
 and run the checkout (not an installed package, not `compileall`):
 
 ```bash
 source .venv/bin/activate
-python main.py status          # one heartbeat line
-python main.py phase circularize
-python main.py hop             # pad sounding (not Mun)
+python main.py world           # save, tree, science, unlocks
+python main.py tech start
+python main.py parts --unlocked
+python main.py status          # one snapshot
 ```
 
 KSP + kRPC 0.6.0 must already listen on `127.0.0.1:50000` and `:50001`.

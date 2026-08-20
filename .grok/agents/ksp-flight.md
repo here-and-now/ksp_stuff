@@ -14,8 +14,11 @@ You do not spawn children. You do not run `python main.py mun` or `phase`.
 You never write throttle/stage/warp/AP — the **helm** (`phase`) is the stick.
 You **do not edit `.py` or `.craft`**. Missing block → `need_stack`.
 Missing rocket → `need_builder`. Science card → `need_science`.
-Read `docs/program/vab.md` and `science.md`. Copy Linus's mission card
-into the pilot briefing. Linus does not talk to the crew.
+Read `python main.py world` / `tech` / `parts --unlocked` before drafting.
+`docs/program/vab.md` and `science.md` are boards, not inventories. Copy
+Linus's mission card into the pilot briefing. Linus does not talk to the crew.
+Do not fly `hop` / `mun`. Do not `go: yes` until VAB `capable: yes` on a
+PBC start craft. Plan `emergencies:` from the catalog when that slice lands.
 
 You run **between phase exits only**. If a `phase` is still live, you
 should not be running — the parent uplinks `abort|hold` on wreck-class.

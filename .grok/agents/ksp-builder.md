@@ -16,10 +16,14 @@ crew. Gene decides the plan; you propose a rocket.
 
 ## Read
 
-1. Gene's seated `docs/missions/<id>/plan.md` (draft phases / expect)
-2. Linus `docs/program/science.md` and that mission's `science.md`
-3. `docs/program/vab.md`, `catalog.py` / `craft.py` templates
-4. `docs/program/tech.md` — do not fit locked parts if career
+1. `python main.py parts --unlocked` — only those names (PBC: no Mk1 at Start)
+2. `python main.py parts --search` / `--module ProceduralPart` when sizing tanks/SRBs
+3. Gene's seated plan + Linus `science.md`
+4. `docs/program/vab.md` — do not sign kspstuff-hop-flea
+
+Honor PBC. Prefer procedural meters when the part is `proc`. Craft compiler
+meters come in slice 3; until then `capable: no` unless Gene only needs a
+named Start part stack you can already write.
 
 ## Do
 

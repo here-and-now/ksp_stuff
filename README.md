@@ -5,27 +5,31 @@ Agent-driven kRPC checkout for Kerbal Space Program. Sibling `.py` files +
 
 ```bash
 source .venv/bin/activate
+python main.py world
+python main.py tech
+python main.py parts --unlocked
 python main.py status
-python main.py phase circularize
-python main.py hop
 python main.py missions
 ```
 
-KSP + kRPC 0.6.0 on `127.0.0.1:50000` / `:50001`. One `Session` per process.
+KSP is **`~/Games/KSP-rss`**, save **`letsgrok`**. Override with `KSPSTUFF_KSP`
+and `KSPSTUFF_SAVE`. kRPC 0.6.0 on `127.0.0.1:50000` / `:50001`. One `Session`
+per process. Steam stock Kerbin is not this program.
+
 Helm / Flight / VAB / Linus: `AGENTS.md`, `docs/program/CHARTER.md`.
 Lessons: `docs/lessons.md`. kRPC traps: `docs/agent-notes.md`.
 
-Do not Hangar over leftover crew. Pad `mun` needs VAB `capable: yes`.
-Do not `pip install` this tree. Do not `python -m kspstuff`.
+Do not Hangar over leftover crew. Do not fly `hop` / `mun` until VAB
+`capable: yes` on a PBC start craft. Do not `pip install` this tree.
+Do not `python -m kspstuff`.
 
 ```
-main.py       CLI: status / phase / seat / vab / science / hop / mun (pad compose)
+main.py       CLI: world / tech / parts / status / phase / seat / vab / science
+world.py      disk tree + parts + save R&D (no kRPC)
+catalog.py    MM ConfigCache / unpatched GameData
 phases.py     one segment per process
-hop.py        Kerbin sounding compose (not Mun)
-science.py    kRPC 0.6 Experiment.run (no transmit, no EVA)
-transfer.py   TLI / SOI / capture
-land.py       deorbit / suicide
-watch.py      FlightWatch gates
+science.py    stock Experiment.run (Kerbalism live probe later)
+watch.py      FlightWatch (to be replaced)
 missions.py   dossiers, seat, warp scan of other crew
 ```
 

@@ -33,7 +33,7 @@ def run_mission(
 ) -> None:
     """Pad → LKO → Mun, or continue the active vessel (from_orbit)."""
     from crew import apply_ascent, current_pilot
-    from hangar import Hangar, discover_ksp
+    from hangar import discover_hangar
     from launch import Ascent, AscentConfig
     from missions import pad_craft_name
     from session import SessionError
@@ -73,10 +73,9 @@ def run_mission(
         wanted = pad_craft_name()
     except SessionError:
         raise
-    root = discover_ksp()
-    if root is None:
-        raise MissionAbort("KSP install not found (KSPSTUFF_KSP / Steam path)")
-    hangar = Hangar(ksp_root=root, save="Grok")
+    hangar = discover_hangar()
+    if hangar is None:
+        raise MissionAbort("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
     from craft import TEMPLATES
 
     key = wanted.replace("kspstuff-", "").replace("_", "-")

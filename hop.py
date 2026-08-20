@@ -84,16 +84,13 @@ def _install_pad_craft(
     *,
     recover: bool = True,
 ) -> None:
-    import os
-
-    from hangar import Hangar, discover_ksp
+    from hangar import discover_hangar
     from missions import pad_craft_name
 
     wanted = pad_craft_name()
-    root = discover_ksp()
-    if root is None:
-        raise MissionAbort("KSP install not found (KSPSTUFF_KSP / Steam path)")
-    hangar = Hangar(ksp_root=root, save=os.environ.get("KSPSTUFF_SAVE") or "Grok")
+    hangar = discover_hangar()
+    if hangar is None:
+        raise MissionAbort("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
     from craft import TEMPLATES
 
     key = wanted.replace("kspstuff-", "").replace("_", "-")

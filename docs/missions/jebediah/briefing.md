@@ -1,13 +1,21 @@
 # Briefing — Gene → jebediah
 
-Hop. Pad sounding ~15 km. Kerbin. Not Mun. Not orbit.
+Earth. Science sandbox. PBC. Visitor: go for science — banked.
 
-Pad, landed, before you light: crew report. Helm takes Goo can 1.
+1235Z pad exit 0. Live T+748 s. Card started (mysteryGoo + temperatureScan
+on 2HOT and Stayputnik). Dwell timeout 740 s (catalog wall). Recovered.
+3×Z-100 held. L-043/L-045 held. world sci 2.22 (was 0.80). Still start.
+1221Z is a unit-test fake.
 
-Light the Flea.
+Same pad card is done. Do not re-fly goo+thermo on this stack. Next tree
+nodes cost 5 (basicRocketry, engineering101). Do not unlock. Hold.
 
-FlyingLow: crew report (LaunchPad biome; Shores if you leave KSC). Helm takes Goo can 2. Do not transmit.
+Not hop. Not mun.
 
-Chute. EVA report only if you are stopped on the ground — hatch on the pad before light, or after you stop. No flying EVA.
+Linus card (kspstuff-pad-pbc, landed pad, recover HD, no transmit) — flown:
+- mysteryGoo on GooExperiment
+- temperatureScan on sensorThermometer
 
-Recover the pod. That is the science. That is the flight.
+VAB capable: yes. world sci 2.22. go: wait.
+
+emergencies: hold, cut, no_warp, stage, recover, science, abort_pad

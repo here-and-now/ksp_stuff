@@ -15,5 +15,7 @@ No Hangar. No `.py`. Not Wernher (kRPC). Not ksp-stack (phases).
 
 ## Log
 
+- 2026-08-20 — kspstuff-pad-pbc 3×Z-100 (310 EC). Goo+thermo stay. capable: yes.
 - 2026-08-20 — Science save. capable: no until Gene drafts.
 - 2026-08-20 — kspstuff-hop-flea signed. Mk1+Mk16+2×Goo+Flea. capable: yes.
+- 2026-08-20 — capable: no. PBC Start has no Mk1. Query `parts --unlocked`. Procedural meters next.

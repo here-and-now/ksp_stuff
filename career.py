@@ -1,8 +1,7 @@
-"""Career / RP-1 facing snapshot.
+"""Career snapshot (kRPC stock fields).
 
-There is no kRPC RP-1 service. Funds, science, reputation, and contracts
-still come through SpaceCenter. Avionics, KCT, and program points are
-listed as future hooks.
+Science sandbox has science, not funds/contracts. Tree unlocks are disk
+(`world.py`), not this module. No RP-1 / KCT service.
 """
 
 from __future__ import annotations
@@ -34,13 +33,10 @@ class CareerSnapshot:
 
 
 RP1_NOTES = (
-    "RP-1 has no dedicated kRPC API. This tab only sees stock career fields.",
-    "Comms in RP-1 are RealAntennas on CommNet, not RemoteTech.",
-    "kRPC has no RA service: we read ModuleRealAntenna fields and vessel.comms.",
-    "Dish pointing is in-game only (Antenna Targeting). Omnis need none.",
-    "Avionics (control range, EC, unlocked tech) are not exposed — fly that in-game.",
-    "KCT build times, unlock points, and program slots are future work.",
-    "RO engines may need ullage (see parts.ullage) before ignition.",
+    "kRPC sees stock career fields only. Tree/parts: python main.py world.",
+    "Science sandbox: funds/contracts are none. Unlocks are on disk R&D.",
+    "Comms are RealAntennas on CommNet, not RemoteTech. No RA kRPC service.",
+    "Kerbalism science/LS/reliability are part.modules, not this snapshot.",
 )
 
 

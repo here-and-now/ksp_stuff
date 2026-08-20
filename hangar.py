@@ -22,6 +22,8 @@ log = logging.getLogger("kspstuff")
 
 SKIP_SAVES = {"training", "scenarios", "missions"}
 STEAM_KSP = Path.home() / ".steam/steam/steamapps/common/Kerbal Space Program"
+RSS_KSP = Path.home() / "Games" / "KSP-rss"
+DEFAULT_SAVE = "letsgrok"
 
 # Empty Mk1/Mk1-3 pods are not probes. KSP then shows "No Control" and
 # kRPC WaitForVesselPreFlightChecks sits on Launch anyway / Cancel (L-017).
@@ -153,21 +155,26 @@ def _site_not_clear(exc: BaseException) -> bool:
     return "launch site not clear" in text or "site not clear" in text
 
 
-# Stock KSC. Used when biome is missing (packed flying leftover).
-_SITE_LL: dict[str, tuple[float, float]] = {
-    "LaunchPad": (-0.0972, -74.5577),
-    "Runway": (-0.0486, -74.7246),
-}
 _PAD_SITS = frozenset({"pre_launch", "prelaunch", "landed", "splashed", "flying"})
 
 
+def pad_ll(ksp_root: Path | None = None) -> tuple[float, float]:
+    """Default pad lat/lon. RSS Cape, not stock KSC, when RSS sites exist."""
+    from sites import STOCK_PAD, default_pad_ll
+
+    root = ksp_root or discover_ksp()
+    if root is None:
+        return STOCK_PAD.latitude, STOCK_PAD.longitude
+    return default_pad_ll(root)
+
+
 def _near_site(lat: float, lon: float, site: str) -> bool:
-    want = _SITE_LL.get(site)
-    if want is None:
+    want_lat, want_lon = pad_ll()
+    if site.lower() not in {"launchpad", "runway", "ksc", "us_cape_canaveral"}:
         return False
-    dlat = abs(lat - want[0])
-    dlon = abs((lon - want[1] + 180.0) % 360.0 - 180.0)
-    return dlat < 0.05 and dlon < 0.05
+    dlat = abs(lat - want_lat)
+    dlon = abs((lon - want_lon + 180.0) % 360.0 - 180.0)
+    return dlat < 0.5 and dlon < 0.5
 
 
 def _on_launch_site(session: Session, vessel: Any, site: str) -> bool:
@@ -451,8 +458,13 @@ class Hangar:
         site: str | None = None,
         recover: bool = True,
         crew: list[str] | None = None,
+        uncrewed: bool = False,
     ) -> None:
-        """Launch from KSC. Recovers junk flights and pre-flight dialogs itself."""
+        """Launch from KSC. Recovers junk flights and pre-flight dialogs itself.
+
+        Probes: ``uncrewed=True`` (empty crew list). Do not seat a kerbal
+        in a Stayputnik (L-017 is Mk1-only).
+        """
         session.require_connected()
         if site is None:
             site = "LaunchPad" if facility.upper() == "VAB" else "Runway"
@@ -466,7 +478,7 @@ class Hangar:
         last_exc: Exception | None = None
         use_recover = recover
         for attempt in range(3):
-            crew_list = resolve_crew(session, crew)
+            crew_list: list[str] = [] if uncrewed else resolve_crew(session, crew)
             try:
                 self._launch_watched(
                     session,
@@ -545,29 +557,29 @@ class Hangar:
 
 
 def discover_ksp() -> Path | None:
+    """RSS install first. Steam stock is last. ``KSPSTUFF_KSP`` wins."""
     env = os.environ.get("KSPSTUFF_KSP")
     if env:
         p = Path(env).expanduser()
         if p.is_dir():
             return p
+    rss = RSS_KSP
+    if (rss / "GameData" / "RealSolarSystem").is_dir():
+        return rss
+    if rss.is_dir() and (rss / "GameData").is_dir():
+        return rss
     if STEAM_KSP.is_dir():
         return STEAM_KSP
     return None
 
 
 def discover_hangar(save: str | None = None) -> Hangar | None:
+    """Default save is ``letsgrok``. Never the alphabetically first folder."""
     root = discover_ksp()
     if root is None:
         return None
-    hangar = Hangar(ksp_root=root, save=save or os.environ.get("KSPSTUFF_SAVE") or "")
-    saves = hangar.list_saves()
-    if hangar.save and hangar.save in saves:
-        return hangar
-    if len(saves) == 1:
-        hangar.save = saves[0]
-        return hangar
-    hangar.save = saves[0] if saves else ""
-    return hangar
+    wanted = save or os.environ.get("KSPSTUFF_SAVE") or DEFAULT_SAVE
+    return Hangar(ksp_root=root, save=wanted)
 
 
 def game_scene(session: Session) -> str:

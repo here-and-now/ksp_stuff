@@ -1,14 +1,18 @@
-# Claimed tech. Live probe or unknown — do not fanfic career locks.
+# Claimed tech
 
-mode: science_sandbox
-tree: unknown/start
-science: 0.0
-funds: none
-contracts: none
-note: kRPC has no RD-node list on this install. Save was not
-  tree-probed. Treat **Start** as the only safe unlock. GameData
-  `TechRequired = start` (Squad, not the live save): `mk1pod_v2`,
-  `GooExperiment`, `parachuteMk1`, `solidBooster_sm_v2` (Flea),
-  `basicFin`. Not Start: `sensorThermometer` (engineering101, 5),
-  Hammer / FL-T100 / LV-T45 (basicRocketry, 5), barometer
-  (survivability, 15), Science Jr (basicScience, 45).
+Do not inventory parts here. Query the live save:
+
+```bash
+python main.py world
+python main.py tech
+python main.py tech start
+python main.py parts --unlocked
+python main.py parts --node basicRocketry
+```
+
+kRPC has no RD-node list. `world.py` reads GameData (post-MM ConfigCache +
+the save's `TechTreeUrl`) and `saves/<save>/persistent.sfs` R&D.
+
+Canonical install `~/Games/KSP-rss`, save `letsgrok` (`KSPSTUFF_KSP` /
+`KSPSTUFF_SAVE`). Honor PBC: if `parts --unlocked` does not list a pod, it
+is locked.

@@ -10,9 +10,10 @@ voice: dry, money-first, short sentences. Hates wasted LF and wrecked landers.
 
 ## Notes
 
-Owns the slate with Gene. This run: science first, then Mun. Does not
-touch throttle.
+Owns the slate with Gene. This run: Earth science sandbox, PBC probes
+first, then the tree, then the Moon. Does not touch throttle.
 
 ## Log
 
 - 2026-08-20 — Science save. Mun campaign archived.
+- 2026-08-20 — Canonical letsgrok / RSS. Kerbin hops retired.

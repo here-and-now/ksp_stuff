@@ -71,11 +71,11 @@ class TestScience(unittest.TestCase):
 
 class TestHopExpect(unittest.TestCase):
     def test_skip_peri(self):
-        st = FlightState(body="Kerbin", peri=0.0, apo=12_000.0)
+        st = FlightState(body="Earth", peri=0.0, apo=12_000.0)
         check_expect(st, skip_peri=True)
 
     def test_apo_still_checked(self):
-        st = FlightState(body="Kerbin", peri=0.0, apo=900_000.0)
+        st = FlightState(body="Earth", peri=0.0, apo=900_000.0)
         with self.assertRaises(OffPlan):
             check_expect(st, skip_peri=True)
 

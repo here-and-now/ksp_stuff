@@ -29,26 +29,48 @@ wrapper → update the table here → next slice. Encode knowledge in helpers
 
 ---
 
-## Environment (live 2026-08-19)
+## Environment (live 2026-08-20, RSS)
 
 | | |
 |---|---|
-| KSP | 1.12.5.3190 LinuxPlayer, Steam `220200` |
-| Root | `~/.steam/steam/steamapps/common/Kerbal Space Program` |
-| Plugin | `GameData/kRPC` **0.6.0** (Squad + SquadExpansion only besides that) |
+| KSP | 1.12.5.3190 LinuxPlayer, portable `~/Games/KSP-rss` |
+| Save | `letsgrok` (`SCIENCE_SANDBOX`). Env `KSPSTUFF_KSP`, `KSPSTUFF_SAVE` |
+| Plugin | `GameData/kRPC` **0.6.0** (manual drop-in; CKAN 51 modules + kRPC) |
 | Client | `.venv`, Python 3.14.7, `krpc==0.6.0` |
 | Sockets | `127.0.0.1:50000` RPC, `127.0.0.1:50001` stream |
 | Settings | `GameData/kRPC/PluginData/settings.cfg` — `AutoStartServers=True`, `AutoAcceptConnections=True` |
+
+Steam `Kerbal Space Program` still has stock kRPC + Squad only. **Do not use it.**
+`hangar.discover_ksp` prefers RSS when `GameData/RealSolarSystem` exists.
+Do not load `Grok`, `test`, or old career folders.
 
 The kRPC zip ships an empty `settings.cfg`. Without auto-start, the server does
 not bind until someone clicks Start in the in-game window.
 
 Client and plugin **must match** (both 0.6.0 here). `KSP.log` must contain
-`[kRPC]` after boot; a stock-only GameData listing means the plugin did not load.
+`[kRPC]` after boot.
 
-`steam -applaunch 220200`. First kRPC boot ~2 min to main menu / space center.
-First `Session.connect()` ~30 s (service schema over RPC). Later connects are
-cheaper. System `python3` has no `krpc`; use `.venv`.
+Launch `~/Games/KSP-rss/KSP.x86_64` (close CKAN GUI first — lock). First MM pass
+after a CKAN change is slow; later boots ~70 s to MAINMENU. First
+`Session.connect()` ~30 s (service schema over RPC). Later connects are cheaper.
+System `python3` has no `krpc`; use `.venv`.
+
+### World desk (disk, no kRPC)
+
+kRPC 0.6 has no RD-node list and no “parts that unlock later.” Read GameData +
+save:
+
+```bash
+python main.py world
+python main.py tech [node]
+python main.py parts --unlocked|--node ID|--search TXT|--module Experiment
+```
+
+Sources: `GameData/ModuleManager.ConfigCache` (post-MM PART), save
+`CAREER.TechTreeUrl` (letsgrok → HETTN.TechTree), `SCENARIO ResearchAndDevelopment`.
+Kerbalism science is `MODULE Experiment` + `HardDrive`. RealFuels is resource
+**names**. RealAntennas has no kRPC service — early probes stay omni. Encode
+*how to look*, not the solar system.
 
 ---
 
@@ -230,7 +252,8 @@ space_center.launch_vessel(facility, name, site, crew, recover)
 
 `Hangar` is that folder + those two RPCs. Live this session:
 
-- `discover_ksp()` found the Steam install.
+- `discover_ksp()` prefers `~/Games/KSP-rss`; default save `letsgrok`.
+  Steam stock is last. Do not install crafts into the Steam tree.
 - `install(craft, overwrite=True)` wrote a parseable `.craft` into save `Grok`.
 - `launchable_vessels("VAB")` listed those names.
 - `launch_vessel(..., crew=[])` on an Mk1 pod raises the in-game **No
@@ -280,23 +303,39 @@ test: encode the name mapping and assert file vs `vessel.parts` after launch.
 
 ---
 
-## Science (kRPC 0.6 schema, not yet live-run)
+## Science (kRPC 0.6)
 
-`vessel.parts.experiments` is every `ModuleScienceExperiment`.
+**Stock hop** uses `vessel.parts.experiments` (`ModuleScienceExperiment`).
 `Part.experiment` raises if the part has more than one — use
-`Part.experiments`. Python `Experiment`:
+`Part.experiments`. Python `Experiment`: `name` / `title` (cfg
+`experimentID`: `crewReport`, `mysteryGoo`, `temperatureScan`, …),
+`available`, `has_data`, `inoperable`, `rerunnable`, `deployed`,
+`biome`, `run()` / `reset()` / `dump()` / `transmit()`.
 
-- `name` / `title` — cfg `experimentID` (`crewReport`, `mysteryGoo`,
-  `evaReport`, `temperatureScan`, …)
-- `available`, `has_data`, `inoperable`, `rerunnable`, `deployed`, `biome`
-- `run()`, `reset()`, `dump()`, `transmit()`, `data`, `science_subject`
+`science.run_ready` calls `run()` only. Do **not** transmit goo. Do
+**not** `dump`/`reset`. Skip EVA. Mk1 `ModuleScienceContainer` is
+`evaOnlyStorage = True`. `Run()` refuses `has_data`.
 
-`science.py` calls `run()` only. Do **not** transmit goo (`xmitDataScalar`
-0.3). Do **not** `dump`/`reset` to free a second sample. EVA report /
-surface sample live on the kerbal EVA part — no hatch API here; skip.
-Mk1 pod `ModuleScienceContainer` is `evaOnlyStorage = True` (IVA cannot
-stash). `Run()` refuses `has_data`; a rerunnable second crew report tries
-the experiment module event, not dump. Goo is one-shot.
+**Kerbalism pad** is not that API. Live MM cache: Goo / thermometer /
+Stayputnik carry `MODULE { name = Experiment; experiment_id = … }`.
+kRPC `Module.fields` and `get_field` are **visible PAW gui names** and
+throw if two fields share a gui name. `experiment_id` is a hidden
+KSPField. Use `Module.field_list` (`PartField.name` / `.value`),
+`get_field_by_id`, or `Module.config.values`. Events: `event_list`
+(`PartEvent.name` is stable, e.g. `Toggle` / `ToggleEvent`;
+`gui_name` is localized Start/Stop). `parts.modules_with_name("Experiment")`
+lists them. Those Module objects are **new proxies** — Python `id()` is
+not a stable key vs `part.modules`. Dedup by (part name, experiment_id).
+`Toggle` / `ToggleEvent` starts *and* stops; fire once. `science.start_experiments`
+does **not** call `Experiment.run()`. Recover the HardDrive **after dwell**;
+do not transmit. Kerbalism Default is time + EC: goo ~641 s (`size` 429 MB
+/ `data_rate` ~0.669, `ec_rate` 0.18 on `GooExperiment`), thermometer
+~138 s (`ec_rate` 0.002). `sample_amount` is sample count, not duration.
+Z-100 is 100 EC; Stayputnik 10; no solar on `kspstuff-pad-pbc`. Pad dwell
+caps at remaining EC / sum(in-card `ec_rate`) × 0.8 and recovers on pad
+EC=0 if the HD has data (L-045). Done: PAW `status` (recording/running vs
+done/depleted/reset required), `Has Data`, remaining sample/data 0,
+Stop inactive after we saw it running. No clean flag → wall-clock cap.
 
 Kerbin FlyingLow / FlyingHigh split is 18 km (stock). Hop `hop_apo`
 defaults 15 km so the coast stays FlyingLow.
@@ -311,7 +350,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | Item | Status |
 |---|---|
 | `Session.connect` / `close`, kRPC 0.6.0 | live |
-| `game_scene`, `bodies`, profile `auto` → stock | live |
+| `game_scene`, `bodies`, profile `auto` → Earth/RSS | live (stock Kerbin retired) |
 | `active_vessel` at KSC, nothing spawned | live (`None`) |
 | `launch_vessel` + recover, `launchable_vessels` | live |
 | `control.throttle`, `activate_next_stage`, `sas`, `pitch` | live |
@@ -332,8 +371,9 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | `status.commnet` at KSC | broken (needs vessel) |
 | PyQt connect + plot | code only |
 | `.craft` round-trip vs `vessel.parts` | not done |
-| RSS / RO / RP-1 | code only |
-| `Experiment.run` / hop sounding | code only |
+| RSS / Kerbalism disk `world`/`tech`/`parts` | code (fixtures + live cache) |
+| Kerbalism `Experiment` run / pad sortie | live start (L-043/1136Z); dwell L-044/L-045 |
+| FlightWatch as controller | to be replaced (`telem.py`) |
 
 ---
 
@@ -355,6 +395,11 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-20** — kRPC `Module` from `parts.modules_with_name` is a new
+  proxy vs `part.modules`; `id()` does not dedupe. Kerbalism `Toggle` starts
+  and stops. `start_experiments` keys on (part name, experiment_id) (L-043).
+- **2026-08-20** — Canonical root `~/Games/KSP-rss`, save `letsgrok`. Disk
+  readers `world.py` / ConfigCache / HETTN. Steam path is last. Do not fly hop/mun.
 - **2026-08-19** — kRPC 0.6.0 client+plugin. `Session.connect` on 50000/50001.
   Schema ~30 s first time. `get_services()` is protobuf → `status.services==()`.
   `remote_tech` attr true with no RT mod. `active_vessel` None at KSC.
@@ -400,3 +445,13 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 - **2026-08-20** — Experiment API from `KRPC.SpaceCenter.xml` 0.6:
   `parts.experiments`, `run`/`has_data`/`available`. No live run (KSC,
   no vessel). Hop block L-041.
+- **2026-08-20** — Kerbalism pad 1101Z: `Module.fields` is PAW gui
+  names, not `experiment_id`. Use `field_list` / `get_field_by_id` /
+  `config`. L-042.
+- **2026-08-20** — Pad 1136Z started the card then recovered empty
+  (sci 0). Kerbalism experiments need dwell; `pad` waits for done or
+  size/`data_rate` (L-044). Do not `sample_amount`/`data_rate` (goo
+  count=1 → ~1.5 s).
+- **2026-08-20** — Pad 1204Z died EC=0 at T+483 s during goo dwell
+  (L-045). Goo canister `ec_rate` 0.18; MM cache last-wins was lab 0.9.
+  Pad recovers partial HD; Z-100 cannot feed a full 641 s sample.

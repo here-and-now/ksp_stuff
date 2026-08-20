@@ -419,10 +419,73 @@ def mun_lander(name: str = "kspstuff-mun-lander") -> Craft:
     return b.craft
 
 
+def procedural_cylinder(diameter: float, length: float) -> list[CfgNode]:
+    """MODULE blocks for a ProceduralParts cylinder (meters)."""
+    part = CfgNode(name="MODULE")
+    part.add("name", "ProceduralPart")
+    part.add("isEnabled", "True")
+    part.add("shapeName", "Cylinder")
+    cyl = CfgNode(name="MODULE")
+    cyl.add("name", "ProceduralShapeCylinder")
+    cyl.add("isEnabled", "True")
+    cyl.add("diameter", f"{diameter:g}")
+    cyl.add("length", f"{length:g}")
+    tanks = CfgNode(name="MODULE")
+    tanks.add("name", "ModuleFuelTanks")
+    tanks.add("type", "SolidFuel")
+    tanks.add("volume", f"{max(diameter, 0.01) * max(length, 0.01) * 1000:g}")
+    return [part, cyl, tanks]
+
+
+def set_cylinder(part: CraftPart, *, diameter: float, length: float) -> CraftPart:
+    part.modules.extend(procedural_cylinder(diameter, length))
+    return part
+
+
+def pad_pbc(
+    name: str = "kspstuff-pad-pbc",
+    *,
+    diameter: float = 0.625,
+    length: float = 1.2,
+    catalog: Catalog | None = None,
+) -> Craft:
+    """PBC Start probe: Stayputnik + 3×Z-100 + omni + Goo + thermometer + SRB.
+
+    No Mk1, no chute. Procedural SRB meters in the craft text.
+    proceduralBattery is basicScience, not Start — stack Z-100s instead.
+    """
+    b = StackBuilder(name, catalog or Catalog.stock())
+    b.craft.description = (
+        f"kspstuff PBC pad. Stayputnik + 3xZ-100 + Goo + thermometer + "
+        f"procedural SRB {diameter:g}x{length:g} m."
+    )
+    b.craft.vessel_type = "Probe"
+    probe = b.root("probeCoreSphere_v2")
+    # 3× Z-100 on +X (300 EC + Stayputnik 10). One pack died at T+483 s.
+    b.srf_attach(probe, "batteryPack", (0.13, 0.12, 0.0))
+    b.srf_attach(probe, "batteryPack", (0.13, 0.0, 0.0))
+    b.srf_attach(probe, "batteryPack", (0.13, -0.12, 0.0))
+    b.srf_attach(probe, "SurfAntenna", (-0.12, 0.0, 0.0))
+    b.srf_attach(probe, "GooExperiment", (0.0, 0.05, 0.14))
+    b.srf_attach(probe, "sensorThermometer", (0.0, 0.05, -0.14))
+    srb = b.attach(
+        probe,
+        "bottom",
+        "proceduralSRBRealFuels",
+        "top",
+        istg=1,
+        dstg=0,
+        sidx=0,
+    )
+    set_cylinder(srb, diameter=diameter, length=length)
+    return b.craft
+
+
 TEMPLATES = {
     "simple-orbiter": simple_orbiter,
     "hop-flea": hop_flea,
     "hecs-sounding": hecs_sounding,
     "twostage": two_stage_orbiter,
     "mun-lander": mun_lander,
+    "pad-pbc": pad_pbc,
 }

@@ -3,8 +3,8 @@
 id: jebediah
 pilot: Jebediah Kerman
 status: available
-body: Kerbin
+body: Earth
 peri:
 apo:
 next: wait
-notes: New science save. First seat. No flight yet.
+notes: 1235Z pad recovered. world sci 2.22. Still start. Hold. Visitor next.

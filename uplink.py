@@ -22,6 +22,8 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from emergencies import ALIASES, CALLABLES, NAMES as EMERGENCY_NAMES
+
 log = logging.getLogger("kspstuff")
 
 UPLINK_PATH = Path("docs/program/uplink.md")
@@ -50,16 +52,29 @@ def loop_file() -> Path:
         path.write_text("# Gene ↔ this mission. Not the helm.\n", encoding="utf-8")
     return path
 
-_VERBS = (
-    "abort",
-    "freeze",
-    "hold",
-    "resume",
-    "capture",
-    "skip-warp",
-    "no-warp-pe",
-    "warp-pe",
-    "set",
+_VERBS = tuple(
+    dict.fromkeys(
+        (
+            "abort",
+            "freeze",
+            "hold",
+            "cut",
+            "no_warp",
+            "no-warp",
+            "stage",
+            "recover",
+            "science",
+            "abort_pad",
+            "resume",
+            "capture",
+            "skip-warp",
+            "no-warp-pe",
+            "warp-pe",
+            "set",
+        )
+        + EMERGENCY_NAMES
+        + tuple(ALIASES)
+    )
 )
 
 _PLAN_CLAMP: dict[str, tuple[float, float]] = {

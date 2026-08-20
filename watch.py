@@ -19,6 +19,7 @@ from typing import Any, Callable
 
 from orientation import set_autopilot, wait_aligned
 from session import Session
+from telem import MissionAbort
 
 log = logging.getLogger("kspstuff")
 
@@ -35,10 +36,6 @@ _STREAM_PROPS: tuple[tuple[str, str], ...] = (
     ("orbit", "time_to_apoapsis"),
 )
 _LANDING_PROPS: tuple[str, ...] = ("speed", "vertical_speed")
-
-
-class MissionAbort(RuntimeError):
-    """Predicted lithobrake, wreck, empty tanks with leftover speed, or a gate."""
 
 
 def _say(msg: str, on_log: Callable[[str], None] | None) -> None:

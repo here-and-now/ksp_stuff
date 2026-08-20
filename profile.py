@@ -1,4 +1,4 @@
-"""Stock vs RSS/RO/RP-1 game profiles.
+"""Stock vs RSS game profiles.
 
 Body names, fuels, default ascent numbers, and launch-site latitudes live
 here so nothing else has to hardcode Kerbin.
@@ -119,7 +119,7 @@ STOCK = GameProfile(
 
 RSS_RP1 = GameProfile(
     name="rss",
-    display_name="RSS / RO / RP-1",
+    display_name="RSS (Kerbalism Default)",
     home_body_candidates=("Earth",),
     fuels=RO_FUELS,
     default_target_altitude=200_000,
@@ -129,9 +129,9 @@ RSS_RP1 = GameProfile(
     default_max_twr=2.2,
     altitude_range=(160_000, 2_000_000),
     notes=(
-        "Real solar system. RP-1 career typically uses RealAntennas on "
-        "CommNet, not RemoteTech. MechJeb is still the planner. Ullage and "
-        "avionics are hooks, not a full RP-1 service."
+        "Real solar system, science sandbox. Kerbalism Default + RealAntennas "
+        "on CommNet. Not RO/RP-1. Not MechJeb. Live body.atmosphere_depth wins; "
+        "these numbers are only connect-time defaults."
     ),
     comms_prefers_remotetech=False,
     launch_sites=LAUNCH_SITES["Earth"],

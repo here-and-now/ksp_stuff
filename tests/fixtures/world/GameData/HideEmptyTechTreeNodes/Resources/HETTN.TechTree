@@ -1,0 +1,29 @@
+TechTree
+{
+	RDNode
+	{
+		id = start
+		title = Start
+		cost = 0
+	}
+	RDNode
+	{
+		id = basicRocketry
+		title = Basic Rocketry
+		cost = 5
+		Parent
+		{
+			parentID = start
+		}
+	}
+	RDNode
+	{
+		id = simpleCommandModules
+		title = Simple Command Modules
+		cost = 90
+		Parent
+		{
+			parentID = enhancedSurvivability
+		}
+	}
+}

@@ -1,8 +1,9 @@
 """Agent CLI. No UI.
 
+    python main.py world
+    python main.py tech
+    python main.py parts --unlocked
     python main.py status
-    python main.py hop
-    python main.py mun
 """
 
 from __future__ import annotations
@@ -17,7 +18,8 @@ from pathlib import Path
 from hangar import game_scene
 from mun import run_mission
 from session import ConnectionSettings, Session, SessionError
-from watch import FlightWatch, MissionAbort, freeze, heartbeat, recover_periapsis
+from telem import MissionAbort
+from watch import freeze, heartbeat, recover_periapsis
 
 log = logging.getLogger("kspstuff")
 
@@ -99,17 +101,17 @@ def _connect(args: argparse.Namespace) -> Session:
 
 
 def cmd_status(session: Session) -> int:
+    from telem import Telem, format_snapshot, gates
+
     scene = game_scene(session)
-    if session.active_vessel is None:
-        _log(f"status scene={scene} no vessel")
-        return 0
-    with FlightWatch(session, on_log=_log) as watch:
-        state = watch.pulse("status ", force_log=True)
-        danger = state.danger()
-        if danger:
-            _log(f"GATE {danger}")
-            return 3
-        return 0
+    with Telem(session, scene=scene) as telem:
+        snap = telem.read()
+    _log(format_snapshot(snap))
+    danger = gates(snap)
+    if danger:
+        _log("gate " + "; ".join(danger))
+        return 3
+    return 0
 
 
 def cmd_recover(session: Session) -> int:
@@ -201,6 +203,52 @@ def cmd_mun(session: Session, args: argparse.Namespace) -> int:
         release_lock()
 
 
+def cmd_pad(session: Session, args: argparse.Namespace) -> int:
+    from emergencies import Ctx, call as emergency_call
+    from flightlog import WriterLockError, release_lock, start
+    from pad import run_pad
+
+    t0 = time.monotonic()
+    try:
+        from missions import pad_craft_name
+
+        pad_craft_name()
+        start("pad", crew="")
+
+        def abort() -> bool:
+            if args.timeout <= 0:
+                return False
+            return time.monotonic() - t0 > args.timeout
+
+        try:
+            result = run_pad(
+                session,
+                recover=not args.keep_debris,
+                on_log=_log,
+                abort=abort,
+            )
+        except MissionAbort as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"ABORT {exc}")
+            write_handoff(command="pad", exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command="pad", exit_code=1, abort=f"SESSION {exc}")
+            return 1
+        _log(result)
+        write_handoff(command="pad", exit_code=0)
+        return 0
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    finally:
+        release_lock()
+
+
 def cmd_hop(session: Session, args: argparse.Namespace) -> int:
     from crew import current_pilot
     from flightlog import WriterLockError, release_lock, start
@@ -268,8 +316,11 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
     try:
         from missions import assert_seated
 
-        assert_seated(session)
-        start(args.name, crew=crew)
+        # Uncrewed PBC probe: no seated kerbal on the vessel; recover
+        # deletes it — do not FlightWatch a missing ship.
+        if args.name != "pad":
+            assert_seated(session)
+        start(args.name, crew="" if args.name == "pad" else crew)
 
         def abort() -> bool:
             if args.timeout <= 0:
@@ -284,7 +335,12 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
             write_handoff(command=args.name, exit_code=4, abort=f"OFFPLAN {exc}")
             return 4
         except MissionAbort as exc:
-            freeze(session)
+            if args.name == "pad":
+                from emergencies import Ctx, call as emergency_call
+
+                emergency_call("hold", Ctx(session=session))
+            else:
+                freeze(session)
             _log(f"ABORT {exc}")
             write_handoff(command=args.name, exit_code=2, abort=str(exc))
             return 2
@@ -292,7 +348,8 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
             _log(f"SESSION {exc}")
             write_handoff(command=args.name, exit_code=1, abort=f"SESSION {exc}")
             return 1
-        heartbeat(session, _log, tag="done ")
+        if args.name != "pad":
+            heartbeat(session, _log, tag="done ")
         write_handoff(command=args.name, exit_code=0)
         return 0
     except WriterLockError as exc:
@@ -360,6 +417,21 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="launch_vessel recover=False",
     )
+    pad_p = sub.add_parser(
+        "pad",
+        help="Pad compose: PBC probe + Kerbalism experiments (not hop)",
+    )
+    pad_p.add_argument(
+        "--timeout",
+        type=float,
+        default=0.0,
+        help="Wall-clock abort (seconds). 0 = none (default).",
+    )
+    pad_p.add_argument(
+        "--keep-debris",
+        action="store_true",
+        help="launch_vessel recover=False",
+    )
     from phases import NAMES as PHASE_NAMES
 
     ph = sub.add_parser("phase", help="Run one Gene-planned segment, then exit")
@@ -371,7 +443,10 @@ def main(argv: list[str] | None = None) -> int:
         help="Wall-clock abort (seconds). 0 = none (default).",
     )
     up = sub.add_parser("uplink", help="Gene → flying mun (no kRPC)")
-    up.add_argument("verb", help="abort|freeze|hold|resume|capture|skip-warp|no-warp-pe|set")
+    up.add_argument(
+        "verb",
+        help="hold|cut|no_warp|stage|recover|science|abort_pad|freeze|abort|set|…",
+    )
     up.add_argument("rest", nargs="*", help="reason or `mun_pe 25000`")
     note_p = sub.add_parser("note", help="Append a line to docs/program/loop.md")
     note_p.add_argument("who")
@@ -387,6 +462,14 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("missions", help="Print docs/missions/INDEX.md (no kRPC)")
     sub.add_parser("vab", help="Print VAB board + seated craft.md (no kRPC)")
     sub.add_parser("science", help="Print Linus board; career snapshot if connected")
+    sub.add_parser("world", help="KSP root, save, tree, science (no kRPC)")
+    tech_p = sub.add_parser("tech", help="Disk tech tree + save unlocks (no kRPC)")
+    tech_p.add_argument("node", nargs="?", default=None, help="RDNode id (start, basicRocketry, …)")
+    parts_p = sub.add_parser("parts", help="Disk parts catalog (no kRPC)")
+    parts_p.add_argument("--unlocked", action="store_true", help="Only parts on unlocked nodes")
+    parts_p.add_argument("--node", default=None, help="TechRequired node id")
+    parts_p.add_argument("--search", default=None, help="Substring on name/title/tech/category")
+    parts_p.add_argument("--module", default=None, help="Module name substring (Experiment, ProceduralPart)")
     args = parser.parse_args(argv)
 
     if args.cmd == "uplink":
@@ -474,6 +557,29 @@ def main(argv: list[str] | None = None) -> int:
             bits.append(craft.read_text(encoding="utf-8").rstrip())
         print("\n".join(bits) + "\n", end="")
         return 0
+    if args.cmd in {"world", "tech", "parts"}:
+        from world import WorldError, filter_parts, format_parts, format_tech, format_world, load_world
+
+        try:
+            world = load_world()
+        except WorldError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        if args.cmd == "world":
+            print(format_world(world), end="")
+            return 0
+        if args.cmd == "tech":
+            print(format_tech(world, args.node), end="")
+            return 0
+        parts = filter_parts(
+            world,
+            unlocked=bool(args.unlocked),
+            node=args.node,
+            search=args.search,
+            module=args.module,
+        )
+        print(format_parts(world, parts), end="")
+        return 0
     if args.cmd == "science":
         from missions import SCIENCE_PATH, seated_id, seated_science_path
 
@@ -485,6 +591,12 @@ def main(argv: list[str] | None = None) -> int:
         if card.is_file():
             bits.append(card.read_text(encoding="utf-8").rstrip())
         print("\n".join(bits) + "\n", end="")
+        try:
+            from world import WorldError, format_world, load_world
+
+            print(format_world(load_world()), end="")
+        except WorldError as exc:
+            print(f"WORLD (no disk) {exc}", flush=True)
         try:
             session = _connect(args)
         except SessionError as exc:
@@ -519,6 +631,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_mun(session, args)
         if args.cmd == "hop":
             return cmd_hop(session, args)
+        if args.cmd == "pad":
+            return cmd_pad(session, args)
         if args.cmd == "phase":
             return cmd_phase(session, args)
         parser.error(f"unknown command {args.cmd}")

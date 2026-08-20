@@ -16,10 +16,13 @@ the pilot briefing. You do not edit `.py` or `.craft`.
 
 ## Read
 
-1. `docs/program/science.md`, `tech.md` (mode sandbox|career)
-2. `python main.py science` if you need funds/science/contracts
-3. Gene's draft plan + VAB `vab.md` / mission `craft.md` (parts)
-4. Catalog of what the craft actually has before you demand goo
+1. `python main.py world` then `python main.py parts --unlocked --module Experiment`
+2. `python main.py tech` / `tech <node>` — do not inventory Squad Start from memory
+3. `docs/program/science.md` (how to query), Gene's draft, VAB `vab.md`
+4. After a craft exists: that craft's parts, not hop-flea
+
+PBC: Stayputnik era. Mk1 is locked until the tree says otherwise.
+Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 
 ## Do
 

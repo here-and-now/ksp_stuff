@@ -1,10 +1,14 @@
 # jebediah stack
 
 status: signed
-craft: kspstuff-hop-flea
+craft: kspstuff-pad-pbc
 parts:
-  - mk1pod_v2
-  - parachuteSingle
-  - GooExperiment (×2, srf on pod)
-  - solidBooster_sm_v2
-notes: Start only. Recover the pod. Do not transmit goo.
+  - probeCoreSphere_v2
+  - batteryPack
+  - batteryPack
+  - batteryPack
+  - SurfAntenna
+  - GooExperiment
+  - sensorThermometer
+  - proceduralSRBRealFuels (cylinder 0.625 × 1.2 m)
+notes: PBC Start. 3×Z-100 (300 EC) + Stayputnik 10. Uncrewed. Recover the HD. No Mk1.

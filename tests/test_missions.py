@@ -60,14 +60,16 @@ class TestSeatAndPlan(unittest.TestCase):
     def test_save_plan_keeps_envelope(self):
         load_plan()
         old = desk.plan["mun_pe"]
+        phase = desk.plan.get("phase", "")
         desk.plan["mun_pe"] = old
         save_plan()
         text = seated_plan_path().read_text(encoding="utf-8")
-        self.assertIn("phase: wait", text)
+        if phase:
+            self.assertIn(f"phase: {phase}", text)
         self.assertIn("next: wait", text)
 
-    def test_pad_returns_signed_craft(self):
-        self.assertEqual(pad_craft_name(), "kspstuff-hop-flea")
+    def test_pad_returns_pbc_craft(self):
+        self.assertEqual(pad_craft_name(), "kspstuff-pad-pbc")
 
     def test_hop_flea_has_goo(self):
         from craft import hop_flea

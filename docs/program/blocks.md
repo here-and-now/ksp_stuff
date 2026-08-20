@@ -5,23 +5,23 @@ that is not here, parent spawns `ksp-stack` first. No heredocs.
 
 | Phase | CLI | Plan keys | Expect | Not for |
 |---|---|---|---|---|
-| recover | `python main.py phase recover` | parking_peri | peri ≥ air+extra | already circular |
-| circularize | `phase circularize` | parking_apo | expect_body, peri_min, apo_max | peri in air |
-| tli | `phase tli` | mun_pe | next body Mun or high apo | not parked |
-| soi | `phase soi` | — | body Mun | already in Mun SOI |
-| capture | `phase capture` | mun_pe | bound, peri ≥ 12 km | Kerbin |
-| land | `phase land` | suicide_start, suicide_throttle, landing_pe | touchdown or low Mun orbit | Kerbin atmo |
-| hop | `python main.py hop` (pad) / `phase hop` | hop_apo (default 15 km) | Kerbin sounding; peri_min ignored; landed or recover | Mun, LKO |
+| pad | `python main.py pad` / `phase pad` | craft, emergencies | start Kerbalism card → dwell (HD done or EC budget) → recover; empty HD + EC=0 aborts | crewed Mk1, hop, mun |
+| recover | `python main.py phase recover` | parking_peri | peri ≥ air+extra | pad compose |
 
-Pad `python main.py hop` Hangars a sounding stack (VAB `capable: yes`),
-crew report + goo on the pad, Flea-height ascent (`circularize=False`),
-FlyingLow reports, chute, recover if `vessel.recoverable` else freeze.
-`phase hop` is that sequence on an **already launched** vessel. No
-vessel → not this phase. EVA is Gene briefing only (no hatch API).
-Do not transmit goo.
+`python main.py pad` Hangars `kspstuff-pad-pbc` **uncrewed**, starts
+Kerbalism `Experiment` modules via `part.modules` (field id / cfg /
+part name — not PAW `Module.fields`), **dwells on the pad** until those
+slots are done (Has Data / remaining / stopped after running, else cfg
+`data_rate` × ScienceDefs size, **capped by remaining EC / `ec_rate`**)
+with a `Telem` pulse — not FlightWatch. Watches EC/reliability/wreck.
+Pad `pre_launch` EC=0 **recovers** if the HD has data or a slot already
+ran; abort only if the HD is empty. Gene uplink `abort_pad` / `recover`
+/ `hold` aborts the dwell. Recovers only if the briefed experiments
+started **and** the vessel is recoverable. Do not recover on the Start
+tick. Empty start with a card is an honest abort (pad cleared), not
+exit 0. `science_ids=()` is Gene briefed none. `phase pad` is that
+sequence on an already launched vessel.
 
-Pad `python main.py mun` still exists as a compose of ascent + these.
-Do not Hangar over leftover crew. Use `phase` on the active vessel.
-
-Helm (`phase`) takes `uplink.md`. Gene names only this catalog. Missing
-name → `ksp-stack`, not a heredoc.
+Do **not** fly `hop` or `mun` (Kerbin-era compose). Helm takes `uplink.md`
+verbs `hold|cut|no_warp|stage|recover|science|abort_pad` — same callables
+as the helm. `loop.md` is not the stick. Missing name → `ksp-stack`.

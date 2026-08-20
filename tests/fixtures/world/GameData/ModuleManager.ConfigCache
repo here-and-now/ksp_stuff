@@ -1,0 +1,99 @@
+url = Squad/Parts/Command/probeCoreSphere_v2/probeCoreSphere
+PART
+{
+	name = probeCoreSphere_v2
+	module = Part
+	author = fixture
+	title = Probodobodyne Stayputnik
+	category = Pods
+	TechRequired = start
+	mass = 0.05
+	node_stack_bottom = 0.0, -0.1875, 0.0, 0.0, -1.0, 0.0, 0
+	MODULE
+	{
+		name = ModuleCommand
+	}
+	MODULE
+	{
+		name = HardDrive
+	}
+	MODULE
+	{
+		name = Experiment
+		experiment_id = kerbalism_TELEMETRY
+	}
+	RESOURCE
+	{
+		name = ElectricCharge
+		amount = 10
+		maxAmount = 10
+	}
+}
+url = Squad/Parts/Command/mk1pod_v2/mk1Pod
+PART
+{
+	name = mk1pod_v2
+	title = Mk1 Command Pod (UNPRESSURIZED)
+	category = Pods
+	TechRequired = simpleCommandModules
+	mass = 0.84
+	node_stack_top = 0.0, 0.6423756, 0.0, 0.0, 1.0, 0.0, 1
+	node_stack_bottom = 0.0, -0.4050379, 0.0, 0.0, -1.0, 0.0, 1
+	MODULE
+	{
+		name = ModuleCommand
+	}
+}
+url = ProceduralParts/Parts/proceduralSRBRealFuels
+PART
+{
+	name = proceduralSRBRealFuels
+	title = Procedural SRB
+	category = Engine
+	TechRequired = start
+	mass = 3.737
+	node_stack_top = 0.0, 0.5, 0.0, 0.0, 1.0, 0.0, 1
+	node_stack_bottom = 0.0, -0.5, 0.0, 0.0, -1.0, 0.0, 1
+	MODULE
+	{
+		name = ProceduralPart
+	}
+	MODULE
+	{
+		name = ProceduralShapeCylinder
+		diameter = 1.25
+		length = 1
+	}
+	MODULE
+	{
+		name = ModuleEnginesRF
+	}
+	RESOURCE
+	{
+		name = SolidFuel
+		amount = 1
+		maxAmount = 1
+	}
+}
+url = Squad/Parts/Science/GooExperiment/gooExperiment
+PART
+{
+	name = GooExperiment
+	title = Mystery Goo™ Containment Unit
+	category = Science
+	TechRequired = start
+	mass = 0.05
+	MODULE
+	{
+		name = Experiment
+		experiment_id = mysteryGoo
+		sample_amount = 1
+		ec_rate = 0.18
+		data_rate = 0.669266770670827
+	}
+	MODULE
+	{
+		name = HardDrive
+		experiment_id = mysteryGoo
+	}
+}

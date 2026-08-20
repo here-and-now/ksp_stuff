@@ -10,7 +10,7 @@ does: twelve minutes of dwell, HardDrive filling, recover.
 | | |
 |---|---|
 | Program | Grok Space Program · `letsgrok` · Earth, RSS, PBC |
-| Sortie | 2026-08-20T1235Z · `python main.py pad` |
+| Run | 20 August 2026 (Earth) · `python main.py pad` |
 | Commander | Jebediah Kerman (stack uncrewed) |
 | Flight Director | Gene Kerman |
 | Sci | 0.80 (partial, 1204Z) → **2.22** |
@@ -29,5 +29,5 @@ because it did, and the science came home.
 picture.
 
 - [Mission](../missions/jebediah/mission.md) · [Linus card](../missions/jebediah/science.md)
-- [1235Z review](../missions/jebediah/sorties/2026-08-20T1235Z-pad-review.md)
+- [Review](../missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
 - Live: `python main.py world`

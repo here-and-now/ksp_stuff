@@ -5,6 +5,7 @@ first). Agents are the staff. **Os is the founder:** address anyone,
 pick the next item on the slate. Call people by **name and title**.
 No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
 `docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
+Words: `docs/program/GLOSSARY.md`.
 
 Environment memory is **query tools**, not this file:
 
@@ -49,8 +50,8 @@ Pad needs VAB `capable: yes` and a real `craft:` file. PBC probes launch
 Crew on the active vessel must match the seated pilot. Rails warp scans
 other crewed stacks (unloaded ships still die on rails).
 
-Live handoff is gitignored `docs/last-flight.md`. Sorties write under
-`docs/missions/<id>/sorties/`. Gene fills **Learn**. Lars (Vehicle
+Last-flight is gitignored `docs/last-flight.md`. Run logs write under
+`docs/missions/<id>/logs/`. Gene fills **Learn**. Lars (Vehicle
 Engineering) after a **miss** only (nonzero, ABORT, empty science);
 Wernher only on a kRPC trap. Clean exit 0 → Gene, not Lars.
 

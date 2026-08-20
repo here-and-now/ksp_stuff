@@ -1,8 +1,8 @@
 """On-disk 1 Hz flight recorder. Not for the TUI.
 
-One **sortie** is one helm command (`python main.py pad`). Files live
-under the seated dossier ``sorties/``. Stamp is Earth UTC with seconds
-(filesystem-safe) plus Kerbal UT/MET in the jsonl start event.
+One **run** is one helm command (`python main.py pad`). Files live
+under the seated mission ``logs/``. Stamp is Earth UTC with seconds
+plus Kerbal UT/MET in the jsonl start event.
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ _count: int = 0
 
 
 def live_records() -> bool:
-    """False under unittest so fixtures do not clobber last-flight / sorties."""
+    """False under unittest so fixtures do not clobber last-flight / logs."""
     flag = os.environ.get("KSPSTUFF_HANDOFF", "").lower()
     if flag in {"0", "off", "no"}:
         return False
@@ -170,10 +170,10 @@ def start(command: str, *, crew: str = "", session: Any = None) -> Path:
         _count = 0
         return Path()
     try:
-        from missions import seated_id, seated_sorties_dir
+        from missions import seated_id, seated_logs_dir
 
         _flight = seated_id()
-        dest = seated_sorties_dir(_flight)
+        dest = seated_logs_dir(_flight)
         dest.mkdir(parents=True, exist_ok=True)
     except Exception:
         _flight = ""

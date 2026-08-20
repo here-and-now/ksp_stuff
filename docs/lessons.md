@@ -7,8 +7,9 @@ true live in `docs/agent-notes.md`.
 After anything unexpected on this save (failed API, wreck, empty HD,
 EC=0):
 
-1. Append a heading **sortie — title** (example: `## 1101Z — Pad recover
-   is not science`). No letter-codes.
+1. Append a heading **run — title** (example: `## 2026-08-20T11-01-00Z —
+   Pad recover is not science`). No letter-codes. Old Cape files keep
+   their compact names.
 2. Put the fix in a `.py` next to `main.py`.
 3. Patch `docs/agent-notes.md` if the API fact is still current.
 

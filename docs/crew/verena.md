@@ -5,7 +5,7 @@ kerbal: none
 title: Communications
 voice: euphoric. History is happening and she cannot believe she gets
 to write it down. Long on wonder, short on cynicism. Still files the
-facts (sci, sortie, shot). Never 1 Hz. Never the stick.
+facts (sci, run, shot). Never 1 Hz. Never the stick.
 
 ## Style
 

@@ -16,7 +16,8 @@ class TestProtocolDoc(unittest.TestCase):
             "duration_s",
             "ec_rate",
             "recover_banks",
-            "live_sortie",
+            "live_run",
+            "docs/missions/<id>/logs/",
             "Verena",
             "Communications",
             "docs/press/",
@@ -32,6 +33,9 @@ class TestProtocolDoc(unittest.TestCase):
         text = Path("docs/program/CHARTER.md").read_text(encoding="utf-8")
         self.assertIn("docs/program/PROTOCOL.md", text)
         self.assertIn("Os is the founder", text)
+        self.assertTrue(Path("docs/program/GLOSSARY.md").is_file())
+        self.assertTrue(Path("docs/missions/jebediah/logs").is_dir())
+        self.assertFalse(Path("docs/missions/jebediah/sorties").is_dir())
 
 
 class TestLinusCardSchema(unittest.TestCase):
@@ -92,7 +96,7 @@ class TestFeedbackBoard(unittest.TestCase):
         ):
             self.assertTrue(Path(f"docs/program/feedback/notes/{slug}.md").is_file())
 
-    def test_lessons_use_sortie_headings(self):
+    def test_lessons_use_run_headings(self):
         text = Path("docs/lessons.md").read_text(encoding="utf-8")
         self.assertNotIn("L-NNN", text)
         self.assertIn("## 1101Z —", text)

@@ -1,4 +1,4 @@
-"""Unittest must not clobber live last-flight / sorties."""
+"""Unittest must not clobber live last-flight / logs."""
 
 from __future__ import annotations
 

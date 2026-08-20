@@ -400,7 +400,7 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | PyQt connect + plot | code only |
 | `.craft` round-trip vs `vessel.parts` | not done |
 | RSS / Kerbalism disk `world`/`tech`/`parts` | code (fixtures + live cache) |
-| Kerbalism `Experiment` run / pad sortie | live start (L-043/1136Z); dwell L-044/L-045 |
+| Kerbalism `Experiment` run / pad | live (Cape 2026-08-20) |
 | Pad dwell + recover | live (1235Z) |
 
 ---

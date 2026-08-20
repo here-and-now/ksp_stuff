@@ -94,7 +94,7 @@ world/tech; then Gene draft (`go: wait`) → Gus `capable:` → Linus
 **bind** to that craft → Gene `go:`. Lock live → no Gus/Linus/Gene.
 
 Every spawn is a **packet** (`docs/program/PROTOCOL.md`): `to` name+title,
-`task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_sortie`
+`task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_run`
 id on a miss. Helm `cli:` is Gene `recommended:` copied verbatim.
 Do not tell children to read `docs/archive/kerbin-lessons.md`.
 
@@ -123,7 +123,7 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
 - Os says PR / press / README / article / funding → spawn **Verena
   Kerman, Communications**. Gene `need_pr: yes` or `pr: <slug>` → same.
   First sci in the bank / first orbit / first unlock / first crewed on
-  a **clean** Learn → spawn Verena **once** with that `live_sortie`.
+  a **clean** Learn → spawn Verena **once** with that `live_run`.
   Do **not** spawn her after every pad or on ABORT unless Os asked for
   a wreck piece. She writes from disk. On `shot: now|dwell|after-recover`
   the **parent** grabs the KSP window (no kRPC, not the helm):
@@ -161,7 +161,7 @@ last:
   <up to 40 heartbeat / ABORT lines>
 ```
 
-R&D contract: one new dated heading in `docs/lessons.md` (sortie —
+R&D contract: one new dated heading in `docs/lessons.md` (run —
 title). Lars **or** Wernher, not both. Patch the named `.py`, then stop.
 Parent re-flies via a new Commander only after Gene `go: yes`.
 

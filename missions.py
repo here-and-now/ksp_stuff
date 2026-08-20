@@ -95,8 +95,8 @@ def seated_loop_path(flight_id: str | None = None) -> Path:
     return dossier(flight_id) / "loop.md"
 
 
-def seated_sorties_dir(flight_id: str | None = None) -> Path:
-    return dossier(flight_id) / "sorties"
+def seated_logs_dir(flight_id: str | None = None) -> Path:
+    return dossier(flight_id) / "logs"
 
 
 def seated_craft_path(flight_id: str | None = None) -> Path:

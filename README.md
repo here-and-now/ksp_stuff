@@ -20,7 +20,7 @@ History does not care that it is 0.5 credits.*
 The stack sat **twelve minutes** on the pad until Kerbalism filled the
 HardDrive. Recovered. No kerbal aboard. That is the whole miracle.
 
-**Latest:** [Stayputnik on the Cape](docs/press/pad-goo.md) — sortie
+**Latest:** [Stayputnik on the Cape](docs/press/pad-goo.md) — run
 1235Z, Goo + thermometer, three Z-100s, procedural SRB.
 
 Next first: a node off Start, or a sounding that leaves the grass.
@@ -50,7 +50,7 @@ Moon is later. We will be insufferable when it isn’t.
 | 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — pad dwell, Cape | **2.22** |
 | 2026-08-20 | Empty recovers, a Toggle that stops a sample, one battery dead at T+483 s — then we learned | 0 → 0.80 |
 
-[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [1235Z review](docs/missions/jebediah/sorties/2026-08-20T1235Z-pad-review.md)
+[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [Cape pad review](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
 
 Live tree, not a wiki: `python main.py world` · `tech` · `parts --unlocked`
 

@@ -14,15 +14,15 @@ Os is Founder. Parent is the room sequencer (depth 1). Speech is
 | Gene | Lars, Vehicle Engineering | `need_stack: <name>` | missing block | `stack:` `lesson:` |
 | Gene | seated Commander | `go: yes` + `capable: yes` + phase in `blocks.md` | briefing + **exact CLI** | `result:` `exit:` `handoff:` |
 | Helm | Gene | every **live** exit | `last-flight.md` + review | Learn |
-| Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | handoff + **live** sortie id | `stack:` then Gene |
+| Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
 | Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
 | Any spawned desk | feedback board | `feedback:` on return | good / bad / suggest | parent files `F-NNN` or a comment |
 | Parent | named desks | retro (3+ open, or Os/Gene/Mortimer ask) | open F- items | `notes/<slug>.md` in **parallel** |
 | Gene | Mortimer | `need_mortimer: yes` | org / goal items | `need_os` if CHARTER/PROTOCOL |
 | Mortimer / Gene | Os | `need_os: yes` | charter / roster / slate | Os ratifies |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
-| Os | Verena, Communications | PR / README / funding story | slate or live_sortie | `story:` `shot:` `readme:` |
-| Gene | Verena | `need_pr: yes` after Learn | live_sortie, why it is a first | same |
+| Os | Verena, Communications | PR / README / funding story | slate or live_run | `story:` `shot:` `readme:` |
+| Gene | Verena | `need_pr: yes` after Learn | live_run, why it is a first | same |
 | Verena | Gene | next fly needs a window | proposed `shot:` | Gene copies into briefing or `go: wait` |
 | Parent | KSP window | Verena `shot: now` (or Gene `shot:` at dwell / after-recover) | `python main.py screenshot --name <slug>` | `screenshots/<slug>.png` |
 
@@ -48,7 +48,7 @@ Not parallel: two helms; Gene + helm; Lars on a clean 0. During dwell: no childr
 ```
 to: <Name, Title>
 from: Os | parent
-live_sortie: 1235Z | none
+live_run: 2026-08-20T12-35-42Z-pad | none
 lock: free | live
 task: one sentence
 read: <≤3 paths>
@@ -58,9 +58,9 @@ return: the named block
 
 Helm `cli:` is Gene `recommended:` copied verbatim. Lars miss packet names the live review path, not “newest file”. Do not require `docs/archive/kerbin-lessons.md`.
 
-A **sortie** is one helm command. Filename Earth UTC with seconds
+A **run** is one helm command. Filename Earth UTC with seconds
 (`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
-dates stories from those lines.
+dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 
 ## Files
 
@@ -86,7 +86,7 @@ Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` 
 ## Feedback
 
 Process lives in `docs/program/feedback.md`. Helm bugs stay in
-`docs/lessons.md` as **sortie — title** headings (1101Z, not letter-codes).
+`docs/lessons.md` as **run — title** headings (the filename stem, not letter-codes).
 
 Every return may include:
 

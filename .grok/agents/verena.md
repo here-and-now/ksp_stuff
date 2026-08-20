@@ -43,7 +43,7 @@ README is a **front page**, not a man page. Checkout stays last.
 ## Read (packet `read:` ≤3, plus these if missing)
 
 1. `python main.py world` (sci, save, unlocked)
-2. Seated dossier + newest **live** review if `live_sortie` is set
+2. Seated dossier + newest **live** review if `live_run` is set
 3. `docs/press/INDEX.md` and current `README.md`
 
 Do not ingest `docs/archive/kerbin-lessons.md`. Interview = read

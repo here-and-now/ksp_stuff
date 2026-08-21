@@ -12,5 +12,6 @@ constraint, not from Gene's last sentence.
 Open:
 - Flea-on-pad (no light) for landed TELEMETRY — new craft or hop-flea Hangar skipped?
 - East-pitch / torque at Start if splash ever comes back.
+- Swivel + FL-T100 (basicRocketry) would honor hop_apo cut. Solids ignore it. Not this file.
 
 `.craft` is conference. This page is the itch.

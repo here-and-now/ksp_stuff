@@ -580,3 +580,42 @@ python main.py pad
   Low flying `recover()` only when recoverable. Do not
   `go_space_center` on flying recoverable=no. Frozen MET still unpauses.
   Modules: `hop.py`.
+
+## 2026-08-21T11-52-45Z-hop — Dead GUID is not leftover
+
+- **When:** 2026-08-21 letsgrok `python main.py phase hop`
+  (`2026-08-21T11-52-45Z-hop` then leftover). Card FlyingLow geiger on
+  `kerbalism-geigercounter`. F-013 unlocked, on craft. Tracking night,
+  search no vessels, KSC empty, sci 6.1.
+- **Symptom:** exit 1, `ValueError: No such vessel fbacb1ed-…`.
+  `_find_hop_vessel`. Disk desk still `hangar recover
+  kspstuff-hop-flea-pbc Debris sit=FLYING`.
+- **Cause:** `_active_vessel` returned a kRPC proxy for a GUID Tracking
+  no longer has. `_is_hop_craft` did `getattr` `.name` outside the
+  except. Disk leftover is not live.
+- **Fix:** Dead GUID is no leftover — scan `space_center.vessels`.
+  Empty Tracking Hangars. `.name` on a dead proxy returns empty, not
+  a raise. Modules: `hop.py`.
+
+## 2026-08-21T12-04-13Z-hop — Catastrophic never lands
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T12-04-13Z-hop`). Hangar `kspstuff-hop-flea-pbc`. Card
+  FlyingLow geiger on `kerbalism-geigercounter`. F-013 unlocked, on
+  craft. FAR+RealHeat+RealChute; chute locked. Os Flight Results PNG:
+  Outcome Catastrophic Failure, no Recover (Revert / Tracking / Space
+  Center / Close). Liftoff 00:00:00, collisions 00:01:07, highest alt
+  3149 m, MET 1m 7s. Never revert.
+- **Symptom:** Parent uplinked abort. Jeb waited ~250 s on `hop wait
+  landed recoverable=yes` while 1 Hz jsonl was already the wreck: MET
+  stuck 67.62, alt 74.03, q=0, speed=0, fuel=0, situation=flying,
+  wreck=false, UT ticking. `recover()` spam `sit=flying recoverable=no`.
+  exit 2, sci unchanged 6.0524.
+- **Cause:** Frozen + flying + q=0 set litho/down, then `if frozen and
+  sit in _AIR: wait landed` + `run_physics`. Catastrophic Failure never
+  becomes landed. Telem `wreck=false` on that sit is a lie.
+- **Fix:** That fingerprint is crash UI now. Log one line (sit +
+  recoverable + met + alt + q). `recover()` if recoverable; else
+  `go_space_center` (Close / Space Center, not revert) and abort `not
+  recoverable`. Do not wait the 600 s wall. Telem marks wreck on
+  MET-still + q=0 + low flying. Modules: `hop.py`, `telem.py`.

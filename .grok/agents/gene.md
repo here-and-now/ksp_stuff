@@ -37,9 +37,23 @@ Own the **seated** `docs/missions/<id>/plan.md` and `briefing.md`.
 Catalog: `docs/program/blocks.md`. Copy Linus `duration_s` / `ec_rate`
 into the briefing so Gus is not late.
 
-After a **clean** live exit: short pass — named review + desk
-`sci_delta`, fill **Learn**, `go: wait` unless Os already asked to
-continue. Write `go:` and `recommended:` on seated `plan.md`. Do not
+Write `campaign:` on seated `plan.md`. Cheap probe sit (`pad`/`hop`,
+leftover science, hangar none): first `go: yes` of the sit includes
+`campaign: uncrewed`. **Leave `go: yes`.** Parent re-flies last
+`recommended:` on clean 0 without hiring you. Do not flip `wait`
+between those hops.
+
+When you **are** hired after hops: **batch Learn** — every review
+since the last Learn + desk `sci_delta`. Then `go: wait` and
+`campaign: none` unless Os asked to continue the string. Stop
+reasons (parent already stopped flying): miss, leftover hangar,
+empty card, Os wait, new craft/card, crewed.
+
+Crewed / firsts / `campaign: none`: after a **clean** live exit,
+short pass — named review + desk `sci_delta`, fill **Learn**,
+`go: wait` unless Os already asked to continue.
+
+Write `go:` and `recommended:` on seated `plan.md`. Do not
 re-run `world` if desk is this sit. Do not ingest
 `docs/archive/kerbin-lessons.md`.
 
@@ -90,7 +104,7 @@ takes it. `loop.md` is not the stick (L-032).
 
 ## After a phase exit
 
-1. Read newest `docs/missions/<seated>/logs/*-review.md`. Envelope vs `expect_*`. Fill **Learn**.
+1. Batch or one: reviews since last Learn. Envelope vs `expect_*`. Fill **Learn**.
 2. Set `phase:` / `next:` / numbers in **that** dossier `plan.md`. Brief. `seat` only to change ship (lock free).
 3. If you need a block not in `blocks.md`: `need_stack: <name>`.
    Rocket: `need_builder`. Science card: `need_science`.
@@ -99,6 +113,7 @@ takes it. `loop.md` is not the stick (L-032).
    runs `python main.py screenshot --name <slug>` at that beat.
 4. Slate + `docs/crew/log/gene.md`. Do not Hangar over leftover crew. `hangar:` on desk.
 5. Missing `go:` is **wait**. Pad also needs VAB `capable: yes`.
+   Uncrewed campaign hops are not your hire. Batch Learn at stop.
 
 To change ship: lock must be free. `python main.py seat <id>`, then brief
 **that** dossier. Do not copy 4373's `expect_*` onto 6189.
@@ -120,6 +135,7 @@ need_mortimer: none|yes|org
 pr: none|<slug>
 shot: none|dwell|after-recover
 go: yes|wait
+campaign: none|uncrewed
 recommended: <one line>
 f013: <instrument tech unlocked on_craft>
 slate: docs/program/slate.md

@@ -41,6 +41,7 @@ need_stack or wait. Honest miss, then patch — a little “how not to
 fly a rocket,” never humiliation. Chairs ops feedback. Os if PROTOCOL.
 
 Humor: dry, rare, never cute. Missing `go:` = wait. Gus `capable: yes`
-before pad.
+before pad. Uncrewed campaign: first `go:` and batch Learn; hops
+between are not his hire.
 
 Logs: `docs/crew/log/gene.md`.

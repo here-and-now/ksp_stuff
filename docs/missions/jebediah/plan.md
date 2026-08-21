@@ -12,17 +12,19 @@ expect_peri_min: -500000
 expect_apo_max: 50000
 craft: kspstuff-hop-flea-pbc
 hop_apo: 18000
-go: wait
-recommended: python main.py hop
+go: yes
+campaign: none
+recommended: python main.py phase hop
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 need_builder: none
 need_science: none
 need_stack: none
-# Sit: 11-40-22Z hop clean. exit 0. sci 4.79 → 5.33 (+0.54). KSC empty. hangar none.
-# Recover sit=landed recoverable=yes then recovered sit=landed — before dismiss.
-# FAR apo 7.7 km, lithobrake landed 76 m, MET 67, EC 279→275. Flea spent.
-# Next: Hangar kspstuff-hop-flea-pbc. python main.py hop. Do not phase leftover.
-# Start FlyingLow geiger leftover 1.40 on kerbalism-geigercounter. Catalog 497 not a hang.
-# Skip recovery crumbs 0.028. Skip thermo 0.045. Do not pad. Do not Hangar geiger-pbc.
+# Sit: 12-22-36Z hop abort. exit 2 not recoverable. sci 6.35 (+0).
+# Crash UI detect-now: MET 65.4 alt 74.1 q=0 flying recoverable=no. No wait-landed.
+# leftover PRELAUNCH hop-flea-pbc. Skip Hangar. Keep Flea. Hammer-far waits.
+# FlyingLow geiger leftover 0.32 on kerbalism-geigercounter. Catalog 497 not hang.
+# Skip thermo 0.045. Do not pad. Do not Hangar hop-flea / geiger-pbc / hammer-far.
 # hop_apo 18 km is a cut wish. OffPlan lid 50 km. Never rails.
-# Recover: wait sit=landed in Flight, then recover() when recoverable=yes BEFORE dismiss.
+# Crash UI: log sit/recoverable/met/alt/q; recover() if yes; else Space Center/Close abort.
+# Do not unpause-spam recover after Catastrophic when recoverable=no.
+# Living recover: wait sit=landed then recover() BEFORE dismiss.

@@ -14,6 +14,7 @@ titles. Drop RAF/spy/radio-compact.
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |
 | **go: / wait** | MCC. Keep. |
+| **campaign:** | Gene on seated `plan.md`. `uncrewed` = parent re-flies last recommended on clean 0 without Gene; batch Learn at stop. `none` = Learn each hop. |
 | **CAPCOM** | NASA loop. Walt. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |

@@ -254,6 +254,7 @@ class Telem:
         self._body: Any = None
         self._streams: dict[str, Any] = {}
         self._vessel: Any = None
+        self._met_was: float | None = None
 
     def close(self) -> None:
         for stream in self._streams.values():
@@ -266,6 +267,7 @@ class Telem:
         self._orbit = None
         self._body = None
         self._vessel = None
+        self._met_was = None
 
     def __enter__(self) -> Telem:
         return self
@@ -317,9 +319,6 @@ class Telem:
         q = self._stream("flight.dynamic_pressure")
         atm = _finite(getattr(body, "atmosphere_depth", float("nan")))
         sit = _enum_name(getattr(vessel, "situation", None))
-        wreck = sit in {"wrecked", "wreck"} or (
-            math.isfinite(alt) and alt < -10.0
-        )
         resources: dict[str, float] = {}
         for name in _FUELS:
             amount = resource_amount(vessel, name)
@@ -348,6 +347,23 @@ class Telem:
         except Exception:
             pass
         met = _finite(getattr(vessel, "met", float("nan")))
+        wreck = sit in {"wrecked", "wreck"} or (
+            math.isfinite(alt) and alt < -10.0
+        )
+        if (
+            not wreck
+            and sit in {"flying", "sub_orbital", "suborbital"}
+            and math.isfinite(q)
+            and q <= 0.0
+            and math.isfinite(alt)
+            and 0.0 <= alt <= 250.0
+            and self._met_was is not None
+            and math.isfinite(met)
+            and abs(met - self._met_was) < 0.2
+        ):
+            wreck = True
+        if math.isfinite(met):
+            self._met_was = met
         broken = reliability_broken(vessel)
         stage = None
         try:

@@ -105,20 +105,24 @@ patch `.py` in the same turn — spawn R&D.
 
 ## When to spawn (do this, don't offer)
 
-Parse Gene's return block. **Missing `go:` = wait.** Never auto-fly.
-Pad also needs Gus `capable: yes`. Do not spawn Gus/Linus/Gene on the
-same file. Lock live → no Gus/Linus/Gene.
+Parse Gene's return block. **Missing `go:` = wait.** Never fly
+without `python main.py protocol fly` → `fly: yes`. Pad also needs
+Gus `capable: yes`. Do not spawn Gus/Linus/Gene on the same file.
+Lock live → no Gus/Linus/Gene.
 
 Parent runs **`python main.py desk`** once per conference turn (disk,
-no kRPC). That **writes `docs/program/desk.md`**. Packet `read:` is
-that file + ≤2 role paths. Children do not re-run `world`/`tech`/`parts`
-if desk is this sit. `hangar:` is the Hangar call. Missing `f013` on
-bind / capable / `go:` / Lars miss → wait. Gene **max two hires per
-sit** (draft iff unnamed, then merge).
+no kRPC). That **writes `docs/program/desk.md`**. After Gus
+`capable: yes`, **desk again** before Linus bind or Gene merge
+(I-014). Packet `read:` is that file + ≤2 role paths. Children do
+not re-run `world`/`tech`/`parts` if desk is this sit. `hangar:` is
+the Hangar call. Missing `f013` on bind / capable / `go:` / Lars
+miss → wait. Gene **max two hires per sit** (draft iff unnamed, then
+merge). Uncrewed campaign hops are not Gene hires.
 
 Spawn the Commander only if **`python main.py protocol fly`** prints
 `fly: yes`. Copy `cli:` verbatim. Missing `go:` on seated `plan.md` is
-wait in code, not only in this file.
+wait in code, not only in this file. Uncrewed `campaign:` continue
+is that same print (Gene left `go: yes`).
 
 Every spawn is a **packet** (`docs/program/PROTOCOL.md`): `to` name+title,
 `task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_run`
@@ -138,20 +142,26 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   the only `go:`. `go: wait` only when blocked (no capable, no bind,
   F-013 locked/missing instrument, leftover vs Hangar unclear). Do not
   STOP on `wait` when `need_*` is the work.
-- Fly iff `python main.py protocol fly` prints `fly: yes` (merge Gene
-  `go: yes` on seated `plan.md`, capable, bound card, f013). Spawn the
-  **named Commander** with that `cli:` verbatim. **No spotter. No 15 s
-  monitor. Do not spawn Gene during the phase.** Do not auto-continue
-  onto a different Grok.
+- Fly iff `python main.py protocol fly` prints `fly: yes` (Gene
+  `go: yes` still on seated `plan.md`, capable, bound card, f013).
+  Spawn the **named Commander** with that `cli:` verbatim. **No
+  spotter. No 15 s monitor. Do not spawn Gene during the phase.**
+  Do not auto-continue onto a different Grok.
 - Mortimer `need_builder: yes` → spawn Gus (not Wernher).
 - Gene / Linus / Lars `need_mortimer` for a **paid CTT node** (bank ≥
   cost, parents owned, kRPC has no UnlockTech) → spawn **Mortimer**.
   He edits `persistent.sfs` ResearchAndDevelopment only, then
   `python main.py load rd-<node>`. Do not `load persistent` (F-014).
   Do not ask Os. Then Gene.
-- Pilot returns **0** with no abort and science started → spawn **Gene**
-  only (Learn). Spawn **Lars** on miss: nonzero exit, ABORT, `science
-  (none)`, or sci unchanged after a briefed recover (then maybe Linus).
+- Pilot returns **0** with no abort: if seated `plan.md` has
+  `campaign: uncrewed` and `go: yes`, **desk** then `protocol fly`.
+  `fly: yes` → spawn the **named Commander** again with that `cli:`
+  (last recommended). **Do not hire Gene.** `fly: wait` (leftover
+  hangar, empty card, f013, `go: wait`, Os wait) → spawn **Gene**
+  once (**batch Learn**). Crewed / `campaign: none` / firsts → Gene
+  Learn each hop. Spawn **Lars** on miss: nonzero exit, ABORT,
+  `science (none)`, or sci unchanged after a briefed recover (then
+  maybe Linus).
 - Pilot returns **4 OFFPLAN**, **2 ABORT**, or **1 SESSION** → spawn
   **Lars**. Spawn Wernher **iff** Lars said `stack: ok` **and** the abort
   is a kRPC trap (`AttributeError` / `StreamError` / protobuf /
@@ -161,8 +171,9 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   Gene again. Never a heredoc. Every Lars science-miss packet names
   **tree** and whether the sit’s Science instrument is unlocked (F-013).
   Do not send him to patch a Geiger dwell at Start.
-- Fly next only if Gene returned `go: yes` **and** `phase:` is in
-  `blocks.md`.
+- Fly next only if `protocol fly` prints `fly: yes` **and** `phase:`
+  is in `blocks.md` (uncrewed campaign continue counts; no new Gene
+  `go:` between hops).
 - Os says PR / press / README / article / funding → spawn **Verena
   Grokman, Communications**. Gene `need_pr: yes` or `pr: <slug>` → same.
   First sci in the bank / first orbit / first unlock / first crewed on

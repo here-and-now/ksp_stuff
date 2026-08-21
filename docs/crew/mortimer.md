@@ -27,7 +27,8 @@ CHARTER or roster moves. May talk to Gene between exits. No fly.
 Owns the **goal**, the slate, and **how the house works**. Friction
 trip (`docs/program/improve/`) is when he mutates PROTOCOL, job cards,
 and world-model Practice. Does not fly. Does not patch `.py` himself
-(`need_qol` → Lars). Gene still drafts the next fly.
+(`need_qol` → Lars). Gene first `go:` of a sit and batch Learn.
+Uncrewed hops re-fly last recommended on clean 0.
 Os is Founder — `need_os` if CHARTER creed or a roster seat moves.
 
 Honest CTT spend: when kRPC cannot buy a node we already paid for,

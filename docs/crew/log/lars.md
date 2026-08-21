@@ -25,3 +25,4 @@
 - 2026-08-21 — hop Hangars seated/VAB Hammer (not Flea). hop_apo 18 km clamp.
 - 2026-08-20 — hop OffPlan is FlyingLow 50 km; SRB overshoot of hop_apo is not OFFPLAN.
 - 2026-08-21 — hop waits landed in Flight; no dismiss on flying recoverable=no.
+- 2026-08-21 — Catastrophic flying q=0 is crash UI: Space Center, abort, no wait landed.

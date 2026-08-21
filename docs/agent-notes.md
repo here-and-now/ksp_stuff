@@ -557,6 +557,11 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   Pad recovers partial HD; Z-100 cannot feed a full 641 s sample.
 - **2026-08-20** — Hop leftover Flight Results: `vessel.met` frozen,
   `recoverable` never true. `go_space_center` dismisses that modal.
+- **2026-08-21** — Catastrophic Failure Flight Results stay
+  `situation=flying` q=0 low alt with MET frozen; sit never becomes
+  `landed` and `recoverable` stays false. Space Center / Close
+  (`go_space_center`) leaves the modal. Do not Revert. Telem
+  `wreck=false` until MET-still + q=0 + alt≤250 m.
 - **2026-08-21** — FAR + RealChute + RealHeat on `KSP-rss`. No FAR
   kRPC service in 0.6 client. `dynamic_pressure` is still stock
   `flight`. RealChuteModule replaced ModuleParachute on stock chutes

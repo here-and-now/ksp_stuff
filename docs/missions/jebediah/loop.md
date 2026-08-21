@@ -150,3 +150,11 @@ Gene: 11-09-13Z hop miss. exit 0 recovered lied (pre_launch after dismiss). sci 
 Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover() still Flight at <=250 m
 Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover in Flight
 Jebediah: copy, leftover hop-flea-pbc PRELAUNCH, phase hop skip Hangar, FlyingLow geiger on kerbalism-geigercounter, wait sit=landed then recover() before dismiss
+Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, wait sit=landed then recover before dismiss
+Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, wait sit=landed then recover() recoverable=yes before dismiss, catalog 497 not hang
+Jebediah: copy, leftover hop debris recover, phase hop, no Hangar, sit=landed then recover() in Flight
+Jebediah: copy, Hangar hop-flea-pbc, light Flea, geiger on kerbalism-geigercounter FlyingLow, wait sit=landed recover before dismiss
+Gene: abort
+script: acked abort
+Jebediah: copy, fresh Hangar flea-pbc, hop geiger on kerbalism-geigercounter, crash UI detect-now
+Jebediah: copy, leftover PRELAUNCH hop-flea-pbc, skip Hangar, phase hop, geigerCounter on kerbalism-geigercounter, MET must move

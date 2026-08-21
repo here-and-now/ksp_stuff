@@ -18,7 +18,8 @@ flies. Gene never rewrites PROTOCOL.
 | Gene | Gus, VP Build | `need_builder` or after draft | plan + Linus board | `capable:` `craft:` — **no** if the sit needs a locked/missing Science part |
 | Gene | Lars, Vehicle Engineering | `need_stack: <name>` | missing block **+ tree/unlocked parts** | `stack:` `lesson:` |
 | Gene | seated Commander | `go: yes` + `capable: yes` + phase in `blocks.md` | briefing + **exact CLI** | `result:` `exit:` `handoff:` |
-| Commander | Gene | every **live** exit | `last-flight.md` + review | Learn |
+| Commander | parent | uncrewed `campaign:` **clean 0** | last `recommended:` | re-fly — **no Gene** |
+| Commander | Gene | campaign **stop**, crewed, firsts, or `campaign: none` | reviews since last Learn | batch Learn |
 | Commander | Lars / Gus / Wernher | during or after a sit | `python main.py note-tech <desk> …` → `note-tech.md` | parent files / Gene reads between exits |
 | Commander | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
 | Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
@@ -92,7 +93,9 @@ If the instrument is LOCKED: Linus does not bind it as hardware; Gus
 do not have. Parent copies that line into Lars’s packet so he is not
 sequencing a ghost instrument.
 
-**Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`; one kRPC writer; Lars XOR Wernher; re-fly only after new `go: yes`.
+**Serial:** `go: yes` (Gene only — first of the sit, or after a stop); Linus **bind** after Gus `capable:`; one kRPC writer; Lars XOR Wernher.
+
+**Uncrewed campaign (I-016):** Gene writes `campaign: uncrewed` with the first `go: yes` of a cheap probe sit (`pad`/`hop`, leftover science). He leaves `go: yes` on the plan. Parent, lock free, after clean exit **0** + abort none: `python main.py desk` then `protocol fly`. `fly: yes` → spawn the Commander with that `cli:` (last recommended). **Do not hire Gene between hops.** Pad does not idle. Stop the string (no re-fly; Gene **batch Learn**, or Lars on miss): nonzero / ABORT / `science (none)` / sci unchanged after a briefed recover; `hangar:` leftover unclear (`recover` / `blocked`); empty card; f013 fail; `go: wait`; Os wait; new craft or new card; crewed. `campaign: none` is Learn each hop. `python main.py protocol fly` still owns the gate — missing `go: yes` is wait.
 
 ## Parallel (same parent turn, still depth 1)
 
@@ -100,6 +103,7 @@ sequencing a ghost instrument.
 |---|---|
 | Linus opportunities + Gene world/tech | Gene draft `go: wait` |
 | Gus `capable` + Linus tree re-read (not bind) | Linus bind to named craft |
+| Parent **re-desk** after Gus `capable: yes` (I-014) | Linus bind / Gene merge on stale capable/f013 |
 | Disk `python main.py world` anytime | never a second writer |
 | Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab |
 | Parent `python main.py screenshot --name <slug>` | Verena `shot: now` (or Gene `shot:` at dwell / after-recover). No kRPC. |
@@ -108,7 +112,7 @@ sequencing a ghost instrument.
 | Ground `ask:` filed on world-model | addressee’s next spawn (lock free) |
 | Gene merge of world-model after Learn | never mid-phase |
 
-Not parallel: two Commanders; Gene + flight; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected. No retro while lock live.
+Not parallel: two Commanders; Gene + flight; Lars on a clean 0. Uncrewed campaign hops are **serial** re-flies after lock free, not two writers. During dwell: no children; Walt silent unless unexpected. No retro while lock live.
 
 ## Spawn packet
 
@@ -135,6 +139,8 @@ Children do not re-run `world`/`tech`/`parts` if desk is this sit.
 Disk cannot see crash UI (`scene: unknown (disk)`). Gene does not vibe
 it. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
 Parent flies only if `python main.py protocol fly` prints `fly: yes`.
+Uncrewed campaign continue uses that same print — plan still has
+Gene’s `go: yes`. Do not vibe a hop because the last exit was 0.
 
 Every ground return and Learn (Commander exit) may include:
 
@@ -151,8 +157,11 @@ the trip in `improve/README.md`. Commander `improve:` on **exit**, not
 mid-lock.
 
 Gene merge is the only `go:`. Gene **max two hires per sit** (draft iff
-the sit is unnamed, then merge; Learn-only on clean 0). Do not hire
-Gene as a merge bus after every specialist.
+the sit is unnamed, then merge). Uncrewed campaign: that merge is the
+**first** `go:` (`campaign: uncrewed`); hops between are not Gene;
+**batch Learn** at stop is the second. Crewed / `campaign: none` /
+firsts: Learn each hop. Do not hire Gene as a merge bus after every
+specialist. Do not hire Gene after every clean 0 on an uncrewed string.
 
 A **run** is one Commander command. Filename Earth UTC with seconds
 (`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
@@ -160,9 +169,9 @@ dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 
 ## Files
 
-Gene last-writes plan/briefing/Learn and chairs **flight** layers of
-`world-model.md`. Mortimer last-writes **Practice**, PROTOCOL, and job
-cards on an org hire. Gus last-writes `vab.md`/`.craft`. Linus
+Gene last-writes plan/briefing/Learn (`campaign:` on seated `plan.md`)
+and chairs **flight** layers of `world-model.md`. Mortimer last-writes
+**Practice**, PROTOCOL, and job cards on an org hire. Gus last-writes `vab.md`/`.craft`. Linus
 last-writes science boards. Verena last-writes `README.md` (portrait)
 and `docs/press/` (story layer). The Commander takes `uplink.md`. `loop.md` is
 talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.

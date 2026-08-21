@@ -120,6 +120,17 @@ class _Orbit:
         self.time_to_apoapsis = 1.0
 
 
+class _DeadVessel:
+    """kRPC active_vessel proxy whose GUID is already gone."""
+
+    def __init__(self, guid="fbacb1ed-301a-4b89-b2ff-19b3483f6fd8"):
+        self._guid = guid
+
+    @property
+    def name(self):
+        raise ValueError(f"No such vessel {self._guid}")
+
+
 class _Vessel:
     def __init__(self, modules, *, recoverable=False, sit="pre_launch", ec=10.0):
         self.name = "probe"
@@ -804,12 +815,12 @@ class TestHopSequence(unittest.TestCase):
         self.assertGreaterEqual(t[0], 5.0)
 
     def test_frozen_wreck_dismiss_without_recover_aborts(self):
-        """Flying recoverable=no: stay Flight. Dismiss does not bank science."""
+        """Catastrophic flying recoverable=no: Space Center, abort, no wait landed."""
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
         vessel.name = CRAFT
         vessel.met = 75.56
         vessel._alt = 72.0
-        vessel._speed = 127.0
+        vessel._speed = 0.0
         vessel.orbit.apoapsis_altitude = 810.0
         vessel.orbit.periapsis_altitude = -7_000_000.0
         now, sleep, t = _fast_clock()
@@ -834,15 +845,17 @@ class TestHopSequence(unittest.TestCase):
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
         self.assertEqual(vessel.control.staged, 0)
-        scene.assert_not_called()
+        scene.assert_called()
         self.assertIn("hop unpause", logs)
-        self.assertIn("hop wait landed recoverable=yes", logs)
+        self.assertTrue(any("hop crash ui sit=flying recoverable=no" in line for line in logs))
+        self.assertIn("hop dismissed crash ui", logs)
+        self.assertNotIn("hop wait landed recoverable=yes", logs)
         self.assertNotIn("hop dismissed flight results", logs)
-        self.assertNotIn("recovered", logs)
-        self.assertGreaterEqual(t[0], 30.0)
+        self.assertFalse(any(line.startswith("recovered") for line in logs))
+        self.assertLess(t[0], 15.0)
 
     def test_lithobrake_q0_flying_is_down_now(self):
-        """Lit hop, MET-still + q=0: wait landed in Flight, then recover()."""
+        """Lit hop, MET-still + q=0: unpause once; recover if sit=landed."""
         mod = _Mod("Experiment", "geigerCounter")
         vessel = _Vessel([mod], recoverable=False, sit="pre_launch", ec=9.9)
         vessel.name = CRAFT
@@ -988,10 +1001,10 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_not_called()
+        scene.assert_called()
         self.assertNotIn("hop dismissed flight results", logs)
         self.assertFalse(any(line.startswith("recovered") for line in logs))
-        self.assertGreaterEqual(t[0], 30.0)
+        self.assertLess(t[0], 15.0)
 
     def test_low_flying_recovers_in_flight(self):
         """~199 m flying: recover() while still Flight, before lithobrake."""
@@ -1126,9 +1139,50 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_not_called()
+        scene.assert_called()
         self.assertEqual(vessel.control.staged, 0)
-        self.assertGreaterEqual(t[0], 30.0)
+        self.assertLess(t[0], 15.0)
+
+    def test_crash_ui_frozen_flying_dismisses_now(self):
+        """12-04-13Z: frozen flying q=0 alt~74 is crash UI, not wait landed."""
+        vessel = _Vessel([], sit="flying", ec=9.9, recoverable=False)
+        vessel.name = CRAFT
+        vessel.met = 67.62
+        vessel._alt = 74.03
+        vessel._speed = 0.0
+        vessel._flight.dynamic_pressure = 0.0
+        vessel.orbit.apoapsis_altitude = 292.0
+        vessel.orbit.periapsis_altitude = -6_362_935.0
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        with patch("hop.go_space_center") as scene:
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("geigerCounter",),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=sleep,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertIn("not recoverable", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+        scene.assert_called()
+        self.assertTrue(
+            any(
+                "hop crash ui sit=flying recoverable=no" in line
+                and "met=67.62" in line
+                and "alt=74.0" in line
+                and "q=0" in line
+                for line in logs
+            )
+        )
+        self.assertIn("hop dismissed crash ui", logs)
+        self.assertNotIn("hop wait landed recoverable=yes", logs)
+        self.assertLess(t[0], 15.0)
+        self.assertGreaterEqual(t[0], 5.0)
 
     def test_skip_peri_on_ballistic(self):
         mod = _Mod("Experiment", "mysteryGoo")
@@ -1358,6 +1412,38 @@ class TestHopSequence(unittest.TestCase):
         gf.assert_called()
         self.assertIs(gf.call_args[0][1], leftover)
         self.assertIs(run.call_args[0][1], leftover)
+
+    def test_dead_active_guid_scans_pool(self):
+        """Dead kRPC GUID is not leftover. Living tracking Flea enters Flight."""
+        leftover = _Vessel([], sit="pre_launch")
+        leftover.name = CRAFT
+        dead = _DeadVessel()
+        session = _Session(dead)
+        session.space_center.vessels = [dead, leftover]
+        with patch("hop.game_scene", return_value="space_center"):
+            with patch("hop.go_flight") as gf:
+                with patch("hop.run_hop") as hop:
+                    with patch(
+                        "hop.run_on_vessel", return_value="recovered"
+                    ) as run:
+                        result = run_phase(session)
+        self.assertEqual(result, "recovered")
+        hop.assert_not_called()
+        gf.assert_called()
+        self.assertIs(gf.call_args[0][1], leftover)
+        self.assertIs(run.call_args[0][1], leftover)
+
+    def test_dead_active_empty_pool_hangars(self):
+        """Tracking empty: dead GUID is not leftover. Hangar."""
+        dead = _DeadVessel()
+        session = _Session(dead)
+        session.space_center.vessels = [dead]
+        with patch("hop.run_hop", return_value="recovered") as hop:
+            with patch("hop.run_on_vessel") as run:
+                result = run_phase(session)
+        self.assertEqual(result, "recovered")
+        hop.assert_called_once()
+        run.assert_not_called()
 
 
 class TestPhaseHopUncrewed(unittest.TestCase):

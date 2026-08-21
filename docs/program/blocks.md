@@ -8,7 +8,7 @@ for them.
 | Phase | CLI | Expect |
 |---|---|---|
 | pad | `python main.py pad` / `phase pad` | Hangar **seated/VAB craft file** uncrewed (`kspstuff-geiger-pbc` Geiger Counter **part**, F-013). Not `pad_pbc()`. Dry-launch only if current stage is 0 (do not light a Flea). Dwell watches `wait science run= rem=` and UT, **not** vessel MET. Physics warp 2–4× on pad/landed; **rails 0**; never WarpTo; 1× after dwell. Empty HD with nothing recording still aborts. |
-| hop | `python main.py hop` / `phase hop` | Hangar **seated/VAB craft file** uncrewed (Hammer sit: `kspstuff-hop-hammer-pbc`, 2HOT, no Geiger — F-013). Not Flea, not pad/geiger. Light → FlyingLow card (thermo on 2HOT not Stayputnik). `hop_apo` Gene 18 km is a **cut wish** (SRB cannot hold). OffPlan apo > **50 km** FlyingLow, not the 18 km clamp. Recover HD when down (`vessel.recover()`). Low flying **≤250 m** calls `recover()` only if `recoverable` (199 m living hop). MET-still + q=0 flying is **down now** (do not wait the 600 s crash UI). Frozen MET unpauses and waits **landed** in Flight, then `recover()`. Do not `go_space_center` on `flying recoverable=no` (11-28-40Z). Post-dismiss `pre_launch` recoverable is **not** recovery@EarthFlew. 1 Hz recover line names sit + recoverable. Leftover matching that name in tracking enters Flight — no second Hangar. Splash goo is **not** a hop start. |
+| hop | `python main.py hop` / `phase hop` | Hangar **seated/VAB craft file** uncrewed (Hammer sit: `kspstuff-hop-hammer-pbc`, 2HOT, no Geiger — F-013). Not Flea, not pad/geiger. Light → FlyingLow card (thermo on 2HOT not Stayputnik). `hop_apo` Gene 18 km is a **cut wish** (SRB cannot hold). OffPlan apo > **50 km** FlyingLow, not the 18 km clamp. Recover HD when down (`vessel.recover()`). Low flying **≤250 m** calls `recover()` only if `recoverable` (199 m living hop). MET-still + q=0 flying is **down now** (do not wait the 600 s crash UI). Frozen MET + flying + q=0 + low alt is **Catastrophic Flight Results**: log sit/recoverable/met/alt/q, `recover()` if recoverable, else `go_space_center` (Close / Space Center, not revert) and abort. Do not wait `sit=landed` (12-04-13Z). Post-dismiss `pre_launch` recoverable is **not** recovery@EarthFlew. 1 Hz recover line names sit + recoverable. Leftover matching that name in tracking enters Flight — no second Hangar. Dead kRPC GUID (`No such vessel`) is not leftover; empty Tracking Hangars (disk FLYING debris is not truth). Splash goo is **not** a hop start. |
 | splash | `python main.py splash` / `phase splash` | Leftover hop Flea only — no Hangar, no light, no pad motor. SpaceCenter leftover enters Flight. Wait until **splashed** (do not recover while flying even if recoverable). One Toggle `mysteryGoo` on GooExperiment. Dwell (641 s catalog, EC cap). Recover HD when splashed/recoverable. Landed is not Water. EC=0 with HD data recovers; empty HD aborts. Frozen MET / Flight Results recovers debris or leaves flight. |
 | hop-to-water | `python main.py hop-to-water` / `phase hop-to-water` | **Refused.** Start Flea cannot steer Cape Shores to Water (Stayputnik no torque, Flea no gimbal, no chute). Vertical hop lithobrakes Shores (18-32: 74 m). Do not Hangar. Do not fake an east splash. need_builder for east pitch, or skip splash. |
 | tech-unlock | `python main.py tech-unlock [node]` / `phase tech-unlock` | Ground kRPC try. Disk checks tree/parents/bank. Opens R&D. **0.6 has no UnlockTech RPC — aborts.** Paid node: **Mortimer** edits `persistent.sfs` ResearchAndDevelopment only (Os 2026-08-20). Not GameData. Not a pad/geiger sit (F-013). |
@@ -31,7 +31,9 @@ MET is 0. Empty HD with nothing recording still aborts.
 ``kspstuff-pad-pbc`` or ``kspstuff-geiger-pbc``. Empty KSC or leftover
 pad/geiger → Hangar the hop motor. ``phase hop`` on an already-launched
 matching hop craft skips Hangar. Leftover in tracking at SpaceCenter
-enters Flight — do **not** Hangar a second stack. ``hop_apo`` 18 km
+enters Flight — do **not** Hangar a second stack. A kRPC active proxy
+whose ``.name`` raises ``No such vessel`` is gone — scan the pool;
+empty Tracking Hangars. Disk desk ``sit=FLYING`` debris is not leftover. ``hop_apo`` 18 km
 is throttle-cut (solids ignore it). OffPlan is FlyingLow **50 km**, not
 the 18 km clamp — Hammer 22-56Z 18.8 km was still FlyingLow. Ballistic peri
 is negative — not OFFPLAN. No chute: wait wreck-recoverable. Empty tanks
@@ -48,9 +50,11 @@ only if the HD is empty. Flying ≤250 m calls ``vessel.recover()`` only
 when recoverable (earlier hop banked at ~199 m; 11-09-13Z after dismiss
 did not). MET-still
 + q=0 while flying is lithobrake down now — do not wait the wreck-dialog
-wall. Frozen MET / Flight Results unpauses physics and waits
-``sit=landed`` (11-23-25Z banked there). Do not ``go_space_center``
-while ``flying recoverable=no``. Post-dismiss
+wall. Frozen MET + flying + q=0 + low alt is Catastrophic Flight
+Results (12-04-13Z): log sit/recoverable/met/alt/q, ``recover()`` if
+KSP will take it, else ``go_space_center`` (Close / Space Center, not
+revert) and abort ``not recoverable``. Do not wait ``sit=landed`` —
+that sit never comes. Post-dismiss
 ``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover line
 names sit + recoverable. Still stuck: recover hop debris if KSP will
 take it. Dismiss **without** ``recover()``

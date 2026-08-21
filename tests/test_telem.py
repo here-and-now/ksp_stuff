@@ -183,6 +183,18 @@ class TestAtmosphereGate(unittest.TestCase):
         snap = read_snapshot(_Session(vessel))
         self.assertIn("empty tanks", gates(snap))
 
+    def test_low_flying_q0_frozen_met_is_wreck(self):
+        """Crash UI: MET-still + q=0 + low flying is wreck (jsonl lie otherwise)."""
+        vessel = _Vessel(alt=74.0, sit="flying", speed=0.0, fuel=0.0)
+        vessel.met = 67.62
+        vessel._flight.dynamic_pressure = 0.0
+        with Telem(_Session(vessel)) as telem:
+            first = telem.read()
+            second = telem.read()
+        self.assertFalse(first.wreck)
+        self.assertTrue(second.wreck)
+        self.assertIn("wreck", gates(second))
+
 
 class TestJsonl(unittest.TestCase):
     def test_writes_snapshot(self):

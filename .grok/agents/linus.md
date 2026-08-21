@@ -20,6 +20,9 @@ You do not edit `.py` or `.craft`. Inner hunger stays off the card.
 
 1. Packet **`docs/program/desk.md`** — leftover science, f013, stack.
    Do not re-run `world`/`tech`/`parts` if desk is this sit.
+   After a hop: **jsonl envelope** (`heading`/`horiz`) before binding
+   a biome that needs a heading (Water/east). Tape never 090 → do not
+   bind Water. last-flight is not that tape.
    `python main.py science-scan` only when rewriting the opportunities
    board, not every hire.
 2. `f013` host is not an instrument. Do **not** treat Stayputnik PAW
@@ -42,7 +45,7 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
    `experiment_id`, `part` (host on the stack), **instrument** (Science
    part name + tech node + unlocked yes|no), `duration_s`, `ec_rate`,
    and `recover_banks: yes|no`. If the instrument is LOCKED or not on
-   the craft: do not bind it as a pad/hop sit — `need_builder` or skip.
+   the craft: do not bind it as a pad/hop sit — open a vehicle ticket or skip.
    Hosted PAW is not an instrument (F-010, F-013).
 3. After `go:` idle until Gene `need_science`, or until parent calls
    because `world` sci did not move after a briefed recover.
@@ -54,7 +57,8 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 ```
 science: card|none
 f013: <instrument tech unlocked on_craft>
-need_builder: yes|no
+tickets: T-NNN | none
+need_builder: none
 need_gene: yes|no
 need_retro: none|yes
 card: docs/missions/<id>/science.md or none

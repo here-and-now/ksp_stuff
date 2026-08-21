@@ -309,8 +309,11 @@ plan. Seated `plan.md` becomes a **render** of the fly ticket (Gene
 may still write briefing prose there). `protocol fly` / `ops fly`
 read `head.json`, not two markdown files.
 
-**Commander packet `read:`:** desk.md, the fly ticket id, sit-card.json.
-Not a bible.
+**Commander packet `read:`:** skim from
+`python main.py tickets packet T-NNN` (desk, briefing, card — **no
+jsonl**). Deep dive: `python main.py tickets packet T-NNN --deep`
+(jsonl, last-flight, craft, reviews). Hank chooses `--deep` when
+`reasoning=high`. Never xhigh. Mortimer always high.
 
 **Learn:** Gene hire with evidence[] = reviews since last Learn.
 Empty `_Gene fills this.` is a kernel check: campaign stop cannot

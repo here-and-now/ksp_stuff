@@ -4,9 +4,12 @@
     "ec=0-after-loft": 1,
     "hangar-geiger-pbc-substring": 1,
     "heading-never-090": 1,
+    "hop-apo-recut-descent": 1,
     "hop-splash-15sci": 1,
     "leftover-hides-unstarted": 1,
-    "leftover-prelaunch-ghost": 1
+    "leftover-prelaunch-ghost": 2,
+    "stack": 1,
+    "unstarted-splash-telemetry": 1
   },
   "tickets": {
     "T-001": {
@@ -33,9 +36,13 @@
     "T-002": {
       "assignee": "",
       "blockers": [],
+      "close_why": "Hangar refuse is exact craft basename, not geiger-pbc substring",
       "created": "2026-08-21T20:50:05Z",
       "desk": "wernher",
-      "evidence": [],
+      "evidence": [
+        "hangar.py",
+        "tests/test_hangar.py"
+      ],
       "fingerprint": "hangar-geiger-pbc-substring",
       "id": "T-002",
       "payload": {},
@@ -45,17 +52,21 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "title": "I-013 hop Hangar substring geiger-pbc",
       "type": "systems",
-      "updated": "2026-08-21T20:50:05Z"
+      "updated": "2026-08-21T21:17:04Z"
     },
     "T-003": {
       "assignee": "",
       "blockers": [],
+      "close_why": "desk leftover is disk ships only; FLYING Debris is not a hangar job vs empty Tracking",
       "created": "2026-08-21T20:50:05Z",
       "desk": "wernher",
-      "evidence": [],
+      "evidence": [
+        "desk.py",
+        "world.py"
+      ],
       "fingerprint": "desk-leftover-vs-krpc",
       "id": "T-003",
       "payload": {},
@@ -65,30 +76,55 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "title": "I-017 desk leftover vs live Tracking",
       "type": "systems",
-      "updated": "2026-08-21T20:50:05Z"
+      "updated": "2026-08-21T21:17:04Z"
     },
     "T-004": {
       "assignee": "",
       "blockers": [],
       "created": "2026-08-21T20:50:05Z",
       "desk": "linus",
-      "evidence": [],
+      "evidence": [
+        "docs/program/desk.md",
+        "docs/program/science.md",
+        "docs/missions/jebediah/science.md"
+      ],
       "fingerprint": "leftover-hides-unstarted",
       "id": "T-004",
-      "payload": {},
+      "payload": {
+        "biome": "global",
+        "craft": "kspstuff-hop-valiant-t7-splash-pbc",
+        "duration_s": 641,
+        "ec_rate": 0.18,
+        "est": 2.4,
+        "experiment_id": "mysteryGoo",
+        "instrument": "Mystery Goo Containment Unit (GooExperiment)",
+        "on_craft": "yes",
+        "part": "GooExperiment",
+        "recover_banks": "yes",
+        "situation": "SrfSplashed",
+        "skip_locked": [
+          "evaReport",
+          "evaScience",
+          "surfaceSample",
+          "seismicScan",
+          "ROCScience"
+        ],
+        "tech": "start",
+        "unlocked": "yes"
+      },
       "priority": "P1",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "science",
-      "sci_expect": null,
+      "sci_expect": 2.4,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "title": "I-018 leftover-science hides unstarted REACH",
       "type": "science",
-      "updated": "2026-08-21T20:50:05Z"
+      "updated": "2026-08-21T21:05:29Z"
     },
     "T-005": {
       "assignee": "",
@@ -113,9 +149,13 @@
     "T-006": {
       "assignee": "",
       "blockers": [],
+      "close_why": "splash dwell no longer ABORT ec=0 (19-43-18Z snapshot lie); hop-splash does not Toggle TELEMETRY airborne",
       "created": "2026-08-21T20:50:05Z",
       "desk": "lars",
-      "evidence": [],
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T19-43-18Z-hop-splash-review.md",
+        "docs/lessons.md"
+      ],
       "fingerprint": "ec=0-after-loft",
       "id": "T-006",
       "payload": {},
@@ -125,10 +165,10 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "title": "ec=0 after loft before splash dwell",
       "type": "control",
-      "updated": "2026-08-21T20:50:05Z"
+      "updated": "2026-08-21T21:08:23Z"
     },
     "T-007": {
       "assignee": "",
@@ -155,13 +195,21 @@
       "blockers": [],
       "created": "2026-08-21T20:50:05Z",
       "desk": "gene",
-      "evidence": [],
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T19-43-18Z-hop-splash-review.md",
+        "docs/missions/jebediah/logs/2026-08-21T19-43-18Z-hop-splash.jsonl",
+        "docs/missions/jebediah/logs/2026-08-21T21-14-09Z-hop-splash.jsonl",
+        "docs/missions/jebediah/logs/2026-08-21T21-14-09Z-hop-splash-review.md"
+      ],
       "fingerprint": "hop-splash-15sci",
+      "go": "yes",
       "id": "T-008",
       "payload": {
         "campaign": "uncrewed",
         "cli": "python main.py hop-splash",
-        "go": "",
+        "craft": "kspstuff-hop-valiant-t7-splash-pbc",
+        "go": "yes",
+        "live_run": "2026-08-21T21-14-09Z-hop-splash",
         "phase": "hop-splash"
       },
       "priority": "P0",
@@ -170,11 +218,110 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "title": "hop-splash t7 toward 15 sci",
       "type": "fly",
-      "updated": "2026-08-21T20:50:05Z"
+      "updated": "2026-08-21T21:39:08Z"
+    },
+    "T-009": {
+      "assignee": "",
+      "blockers": [],
+      "created": "2026-08-21T21:05:29Z",
+      "desk": "linus",
+      "evidence": [
+        "docs/program/science.md",
+        "docs/missions/jebediah/science.md"
+      ],
+      "fingerprint": "unstarted-splash-telemetry",
+      "id": "T-009",
+      "payload": {
+        "biome": "any",
+        "craft": "kspstuff-hop-valiant-t7-splash-pbc",
+        "duration_s": 30,
+        "ec_rate": 0.052,
+        "est": 0.8,
+        "experiment_id": "kerbalism_TELEMETRY",
+        "instrument": "Stayputnik PAW (no Science part)",
+        "note": "sequential first after splash; do not Toggle airborne",
+        "on_craft": "yes",
+        "part": "probeCoreSphere_v2",
+        "recover_banks": "yes",
+        "situation": "SrfSplashed",
+        "tech": "start",
+        "unlocked": "yes"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "science",
+      "sci_expect": 0.8,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "ready",
+      "title": "splash TELEMETRY unstarted 0.80 (leftover hid)",
+      "type": "science",
+      "updated": "2026-08-21T21:05:29Z"
+    },
+    "T-010": {
+      "assignee": "",
+      "blockers": [],
+      "created": "2026-08-21T21:39:08Z",
+      "desk": "jebediah",
+      "evidence": [],
+      "fingerprint": "leftover-prelaunch-ghost",
+      "id": "T-010",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "title": "PRELAUNCH ghost after 21-14 hop-splash",
+      "type": "recover",
+      "updated": "2026-08-21T21:39:08Z"
+    },
+    "T-011": {
+      "assignee": "",
+      "blockers": [],
+      "created": "2026-08-21T21:39:08Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "hop-apo-recut-descent",
+      "id": "T-011",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "title": "hop-splash relights when apo falls below hop_apo on descent",
+      "type": "control",
+      "updated": "2026-08-21T21:39:08Z"
+    },
+    "T-012": {
+      "assignee": "",
+      "blockers": [],
+      "close_why": "from-need CLI smoke",
+      "created": "2026-08-21T21:39:33Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "stack",
+      "id": "T-012",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Gene Grokman, Flight Director",
+      "rsi_loop": "ops",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "title": "cli-smoke hop-splash",
+      "type": "control",
+      "updated": "2026-08-21T21:39:40Z"
     }
   },
-  "updated": "2026-08-21T20:50:05Z"
+  "updated": "2026-08-21T21:39:40Z"
 }

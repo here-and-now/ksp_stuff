@@ -54,8 +54,9 @@ named Start part stack you can already write.
 capable: yes|no
 craft: <filename or none>
 f013: <instrument tech unlocked on_craft>
+tickets: T-NNN | none
 need_gene: yes|no
-need_science: yes|no
+need_science: none
 need_retro: none|yes
 blocker: <only if no>
 ask:

@@ -174,7 +174,7 @@ class TestOpsNext(unittest.TestCase):
             reporter="Hank",
             desk="gene",
         )
-        g = ops.fly_gate()
+        g = ops.fly_gate(desk={"hangar": "none"}, locked=False)
         self.assertEqual(g["fly"], "wait")
 
     def test_fly_gate_yes_with_go(self):
@@ -189,7 +189,7 @@ class TestOpsNext(unittest.TestCase):
             {"go": "yes", "status": "ready", "payload": {"go": "yes", "cli": "python main.py hop-splash"}},
             who="gene",
         )
-        g = ops.fly_gate()
+        g = ops.fly_gate(desk={"hangar": "none"}, locked=False)
         self.assertEqual(g["fly"], "yes")
         self.assertEqual(g["cli"], "python main.py hop-splash")
 
@@ -200,3 +200,131 @@ class TestOpsNext(unittest.TestCase):
         )
         self.assertEqual(act["hire"][0]["desk"], "jebediah")
         self.assertIn("leftover", act["hire"][0]["why"])
+
+
+class TestPacketAndReasoning(unittest.TestCase):
+    def setUp(self):
+        self.paths = _tmp_board()
+        self.patches = [
+            patch.object(tickets, k, v) for k, v in self.paths.items()
+        ]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in self.patches:
+            p.stop()
+
+    def test_reasoning_never_xhigh_mortimer_always_high(self):
+        t = tickets.open_ticket(
+            type="ops",
+            title="hygiene",
+            reporter="Hank",
+            severity="S4",
+            priority="P3",
+            desk="hank",
+        )
+        self.assertIn(tickets.reasoning_for(t), tickets.REASONING)
+        self.assertNotEqual(tickets.reasoning_for(t), "xhigh")
+        t["desk"] = "mortimer"
+        self.assertEqual(tickets.reasoning_for(t), "high")
+        s1 = tickets.open_ticket(
+            type="recover",
+            title="wreck",
+            reporter="Hank",
+            severity="S1",
+            priority="P0",
+            desk="jebediah",
+        )
+        self.assertEqual(tickets.reasoning_for(s1), "high")
+        self.assertEqual(tickets.reasoning_for(s1, "mortimer"), "high")
+
+    def test_skim_omits_jsonl_deep_includes_it(self):
+        t = tickets.open_ticket(
+            type="control",
+            title="relight on descent",
+            reporter="Jebediah",
+            severity="S2",
+            priority="P1",
+            desk="lars",
+            payload={"live_run": "2026-08-21T21-14-09Z-hop-splash"},
+        )
+        tickets.patch_ticket(
+            t["id"],
+            {
+                "evidence": [
+                    "docs/missions/jebediah/logs/2026-08-21T21-14-09Z-hop-splash.jsonl"
+                ]
+            },
+            who="hank",
+        )
+        skim = tickets.format_packet(t["id"], deep=False)
+        deep = tickets.format_packet(t["id"], deep=True)
+        self.assertIn("docs/program/desk.md", skim)
+        self.assertNotIn(".jsonl", skim)
+        self.assertIn("packet T-001 --deep", skim)
+        self.assertIn(".jsonl", deep)
+        self.assertIn("reasoning: high", skim)
+        self.assertNotIn("xhigh", skim)
+        self.assertNotIn("xhigh", deep)
+
+    def test_from_need_stack_is_control_ticket(self):
+        t = tickets.from_need(
+            "need_stack",
+            title="hop-splash dwell",
+            reporter="Gene Grokman, Flight Director",
+        )
+        self.assertEqual(t["type"], "control")
+        self.assertEqual(t["desk"], "lars")
+        self.assertEqual(t["id"], "T-001")
+
+    def test_cmd_packet_entry_point(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+            severity="S2",
+            priority="P0",
+        )
+        buf = StringIO()
+        with redirect_stdout(buf):
+            rc = tickets.cmd_tickets(["packet", t["id"]])
+        out = buf.getvalue()
+        self.assertEqual(rc, 0)
+        self.assertIn("ticket: T-001", out)
+        self.assertIn("docs/program/desk.md", out)
+        self.assertNotIn(".jsonl", out)
+        self.assertIn("--deep", out)
+
+    def test_ops_hire_has_reasoning_and_packet(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+            severity="S2",
+            priority="P0",
+        )
+        tickets.patch_ticket(
+            t["id"],
+            {
+                "go": "yes",
+                "status": "ready",
+                "payload": {"go": "yes", "cli": "python main.py hop-splash"},
+            },
+            who="gene",
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        hire = act["hire"][0]
+        self.assertEqual(hire["desk"], "jebediah")
+        self.assertIn(hire["reasoning"], tickets.REASONING)
+        self.assertNotEqual(hire["reasoning"], "xhigh")
+        self.assertIn("tickets packet", hire["packet"])
+        text = ops.format_next(act)
+        self.assertIn("reasoning=", text)
+        self.assertIn("packet:", text)
+        self.assertNotIn("xhigh", text)

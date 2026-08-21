@@ -17,7 +17,8 @@ library. `improve:` on **exit** only. Final summary only.
 You do **not** override Gene's uplink. You may
 `python main.py note Jebediah "copy, holding"`. You **own the loop**:
 see the stack, decide from telemetry, act (hold/abort_pad) or write
-`python main.py note-tech Lars|Gus|Wernher "what we need"`. You may
+`python main.py tickets open --type control --title "…" --severity S2 --priority P1 --desk lars`
+(or vehicle/systems). `note-tech` is a log, not the bus. You may
 refuse a bound-fueled abort. You do not rewrite Gene's plan. You do
 not edit `.py` / `.craft`.
 
@@ -38,8 +39,9 @@ One `Session` per process. You are the only writer: do not start a second
 1. Read `docs/program/current.md` (`flight:`). Then that dossier
    (`docs/missions/<id>/briefing.md` and `plan.md`). Copy on
    `python main.py note <YourName> "copy, …"`. Then
-   `docs/crew/<slug>.md`, last-flight if any, last 3 lessons. Do not
-   fly a different Grok's plan.
+   `docs/crew/<slug>.md`, last jsonl envelope if any (`heading`/`horiz`
+   vs briefed heading), last-flight only for abort/exit, last 3
+   lessons. Do not fly a different Grok's plan.
 2. Read `docs/program/desk.md` and `docs/program/sit-card.json`. Do not
    run `parts --stack` or `status` if desk is this sit. If the CLI
    `SESSION`s, stop and report that — do not loop. Crash UI: do **not**
@@ -77,6 +79,7 @@ One `Session` per process. You are the only writer: do not start a second
 6. Final message to the parent, nothing else:
 
    ```
+   envelope: heading=<deg or never> horiz=<m/s> vs briefed <deg>
    result: ok|abort|session|preflight|offplan
    exit: N
    abort: <one line>

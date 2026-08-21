@@ -110,11 +110,13 @@ patch `.py` in the same turn — spawn R&D.
 ## When to spawn (do this, don't offer)
 
 Hank: **`python main.py desk`** then **`python main.py ops next`**.
-Hire exactly those desks with those ticket ids. **Missing Gene `go`
-on a fly ticket = wait** (kernel will hire Gene to stamp). Never fly
-without `python main.py ops next` showing a Commander hire (or
-`python main.py ops fly` → `fly: yes`). Lock live → no Commander,
-no Gene; ground desks may still run on other files.
+Hire exactly those desks with those ticket ids. Copy `reasoning=`
+(never **xhigh**; Mortimer always **high**). Inject the `packet:`
+command output — skim unless reasoning is high (`--deep`). **Missing
+Gene `go` on a fly ticket = wait**. Never fly without a Commander
+hire (or `ops fly` → `fly: yes`). Lock live → no Commander, no Gene;
+ground desks may still run on other files. `need_*` in a return →
+`tickets from-need`.
 
 Parent runs **`python main.py desk`** once per conference turn (disk,
 no kRPC). That **writes `docs/program/desk.md`**. After Gus

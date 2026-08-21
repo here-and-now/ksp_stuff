@@ -76,6 +76,19 @@ DEFAULT_ROUTE = {
     "ops": "hank",
 }
 
+# Spawn thinking budget. Never xhigh. Mortimer is always high.
+REASONING = ("low", "medium", "high")
+NEED_MAP = {
+    "need_stack": ("control", "lars"),
+    "need_builder": ("vehicle", "gus"),
+    "need_science": ("science", "linus"),
+    "need_pr": ("press", "verena"),
+    "need_mortimer": ("org", "mortimer"),
+    "need_qol": ("systems", "wernher"),
+    "need_os": ("org", "mortimer"),
+    "need_gene": ("fly", "gene"),
+}
+
 
 class TicketError(Exception):
     pass
@@ -144,6 +157,191 @@ def _next_id(tickets: dict[str, Any]) -> str:
     return f"T-{n + 1:03d}"
 
 
+def reasoning_for(ticket: dict[str, Any], desk: str | None = None) -> str:
+    """Hank spawn thinking budget. Never xhigh. Mortimer always high."""
+    d = (desk or ticket.get("desk") or "").lower()
+    if d == "mortimer":
+        return "high"
+    s = ticket.get("severity") or "S3"
+    p = ticket.get("priority") or "P2"
+    typ = ticket.get("type") or ""
+    if d == "jebediah":
+        return "high" if s == "S1" else "medium"
+    if s == "S1" or p == "P0":
+        return "high"
+    if typ in {"org", "rsi"}:
+        return "high"
+    if d == "gene":
+        return "high"
+    if typ in {"systems", "control"} and s in {"S1", "S2"}:
+        return "high"
+    if s == "S4" and p in {"P2", "P3"}:
+        return "low"
+    if s == "S2" or p == "P1":
+        return "high"
+    return "medium"
+
+
+def batch_reasoning(rows: list[dict[str, Any]], desk: str) -> str:
+    if desk == "mortimer":
+        return "high"
+    order = {"low": 0, "medium": 1, "high": 2}
+    lvl = "low"
+    for t in rows:
+        r = reasoning_for(t, desk)
+        if r not in order:
+            r = "medium"
+        if order[r] > order[lvl]:
+            lvl = r
+    return lvl
+
+
+def infer_links(t: dict[str, Any]) -> dict[str, Any]:
+    """Skim vs deep paths. Jsonl/PNG/reviews are deep only."""
+    skim: list[dict[str, str]] = []
+    deep: list[dict[str, str]] = []
+    seen: set[str] = set()
+
+    def add(bucket: list[dict[str, str]], kind: str, path: str, why: str) -> None:
+        if not path or path in seen:
+            return
+        seen.add(path)
+        bucket.append({"kind": kind, "path": path, "why": why})
+
+    add(skim, "desk", "docs/program/desk.md", "sit")
+    add(skim, "board", "docs/program/tickets/BOARD.md", "board")
+    payload = t.get("payload") or {}
+    typ = t.get("type")
+    craft = payload.get("craft") or payload.get("vehicle") or ""
+    if craft and not str(craft).endswith(".craft"):
+        craft_path = f"crafts/{craft}.craft"
+    else:
+        craft_path = str(craft)
+    if typ == "fly":
+        add(skim, "briefing", "docs/missions/jebediah/briefing.md", "brief")
+        add(skim, "card", "docs/missions/jebediah/science.md", "bound card")
+        add(deep, "sit-card", "docs/program/sit-card.json", "f013")
+        if craft_path:
+            add(deep, "craft", craft_path, "stack")
+        add(deep, "last-flight", "docs/last-flight.md", "last abort")
+    elif typ == "science":
+        add(skim, "science", "docs/program/science.md", "opportunities")
+        add(deep, "card", "docs/missions/jebediah/science.md", "seated card")
+    elif typ == "vehicle":
+        add(skim, "vab", "docs/program/vab.md", "VAB")
+        if craft_path:
+            add(deep, "craft", craft_path, "stack")
+    elif typ == "control":
+        add(skim, "blocks", "docs/program/blocks.md", "catalog")
+        add(deep, "last-flight", "docs/last-flight.md", "abort")
+        live = payload.get("live_run") or ""
+        if live:
+            add(
+                deep,
+                "review",
+                f"docs/missions/jebediah/logs/{live}-review.md",
+                "review",
+            )
+            add(
+                deep,
+                "jsonl",
+                f"docs/missions/jebediah/logs/{live}.jsonl",
+                "envelope",
+            )
+    elif typ == "systems":
+        add(deep, "agent-notes", "docs/agent-notes.md", "kRPC")
+    elif typ == "recover":
+        add(deep, "last-flight", "docs/last-flight.md", "abort")
+    elif typ == "org" or typ == "rsi":
+        add(skim, "ops", "docs/program/OPS.md", "ops kernel")
+    for p in t.get("evidence") or []:
+        sp = str(p)
+        if sp.endswith(".jsonl"):
+            add(deep, "jsonl", sp, "evidence")
+        elif sp.endswith(".png"):
+            add(deep, "png", sp, "stuck still")
+        else:
+            add(deep, "evidence", sp, "evidence")
+    related: list[str] = []
+    fp = t.get("fingerprint") or ""
+    if fp:
+        for other in (load_head().get("tickets") or {}).values():
+            if other.get("id") != t.get("id") and other.get("fingerprint") == fp:
+                related.append(other["id"])
+    for extra in list(t.get("blockers") or []) + list(t.get("related") or []):
+        if extra not in related:
+            related.append(extra)
+    return {"skim": skim, "deep": deep, "related": related}
+
+
+def format_packet(tid: str, *, deep: bool = False) -> str:
+    t = show_ticket(tid)
+    links = infer_links(t)
+    lvl = reasoning_for(t)
+    lines = [
+        f"ticket: {t['id']}",
+        f"type: {t.get('type')} {t.get('severity')}{t.get('priority')} "
+        f"{t.get('status')} desk={t.get('desk')}",
+        f"title: {t.get('title')}",
+        f"reasoning: {lvl}",
+        f"fingerprint: {t.get('fingerprint') or 'none'}",
+    ]
+    if t.get("summary"):
+        lines.append(f"summary: {t['summary']}")
+    lines.append("read:")
+    for item in links["skim"]:
+        lines.append(f"  - {item['path']}  # {item['why']}")
+    if deep:
+        lines.append("deep:")
+        for item in links["deep"]:
+            lines.append(f"  - {item['path']}  # {item['why']}")
+    else:
+        lines.append(f"deep: python main.py tickets packet {tid} --deep")
+    if links["related"]:
+        lines.append("related: " + ",".join(links["related"]))
+    payload = t.get("payload") or {}
+    if payload.get("cli"):
+        lines.append(f"cli: {payload['cli']}")
+    go = t.get("go") or payload.get("go")
+    if go:
+        lines.append(f"go: {go}")
+    return "\n".join(lines) + "\n"
+
+
+def packet_cmd(tids: list[str], reasoning: str) -> str:
+    if not tids:
+        return ""
+    tid = str(tids[0])
+    if not tid or tid.startswith("("):
+        return ""
+    extra = " --deep" if reasoning == "high" else ""
+    return f"python main.py tickets packet {tid}{extra}"
+
+
+def from_need(
+    need: str,
+    *,
+    title: str,
+    reporter: str,
+    severity: str = "S2",
+    priority: str = "P1",
+) -> dict[str, Any]:
+    key = need.strip().lstrip("+").split(":")[0].lower()
+    if key not in NEED_MAP:
+        raise TicketError(f"unknown need {need}")
+    typ, desk = NEED_MAP[key]
+    return open_ticket(
+        type=typ,
+        title=title,
+        reporter=reporter,
+        severity=severity,
+        priority=priority,
+        desk=desk,
+        fingerprint=key.replace("need_", ""),
+        rsi_loop="ops",
+    )
+
+
 def _write_board_md(tickets: dict[str, dict[str, Any]]) -> None:
     open_t = [
         t
@@ -156,14 +354,15 @@ def _write_board_md(tickets: dict[str, dict[str, Any]]) -> None:
         "",
         f"open: {len(open_t)} / {len(tickets)}",
         "",
-        "| id | type | S | P | status | desk | title |",
-        "|---|---|---|---|---|---|---|",
+        "| id | type | S | P | R | status | desk | title |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for t in open_t:
         title = (t.get("title") or "").replace("|", "/")
         lines.append(
             f"| {t['id']} | {t.get('type')} | {t.get('severity')} | "
-            f"{t.get('priority')} | {t.get('status')} | {t.get('desk')} | {title} |"
+            f"{t.get('priority')} | {reasoning_for(t)} | {t.get('status')} | "
+            f"{t.get('desk')} | {title} |"
         )
     lines.append("")
     PRINT.write_text("\n".join(lines), encoding="utf-8")
@@ -442,6 +641,15 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     st.add_argument("--field", required=True)
     st.add_argument("--value", required=True)
     st.add_argument("--who", required=True)
+    pk = sub.add_parser("packet")
+    pk.add_argument("id")
+    pk.add_argument("--deep", action="store_true")
+    fn = sub.add_parser("from-need")
+    fn.add_argument("--need", required=True)
+    fn.add_argument("--title", required=True)
+    fn.add_argument("--reporter", default="Gene Grokman, Flight Director")
+    fn.add_argument("--severity", default="S2", choices=SEVERITY)
+    fn.add_argument("--priority", default="P1", choices=PRIORITY)
     sub.add_parser("board")
     sub.add_parser("seed")
     args = p.parse_args(argv)
@@ -498,6 +706,19 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
         if args.act == "stamp":
             t = patch_ticket(args.id, {args.field: args.value}, who=args.who)
             print(t["id"], args.field, args.value)
+            return 0
+        if args.act == "packet":
+            print(format_packet(args.id, deep=bool(args.deep)), end="")
+            return 0
+        if args.act == "from-need":
+            t = from_need(
+                args.need,
+                title=args.title,
+                reporter=args.reporter,
+                severity=args.severity,
+                priority=args.priority,
+            )
+            print(t["id"], t["type"], t["desk"])
             return 0
         if args.act == "board":
             _rebuild()

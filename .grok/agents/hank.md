@@ -25,11 +25,22 @@ Commander is first. Ground desks batch many tickets of the same type
 on one hire. Gene is hired only to stamp `go` or batch Learn — not
 as a merge bus after Gus.
 
+`ops next` emits `reasoning=` and `packet:`. Spawn at that reasoning
+(**low** / **medium** / **high**). **Never xhigh.** Mortimer is
+always **high**. High → run the packet with `--deep`. Medium/low →
+skim packet only (no jsonl dump). Do not paste a jsonl into a skim
+prompt.
+
+Agents open tickets instead of `need_*`. If a desk still returns
+`need_stack` / `need_builder` / `need_science`, run
+`python main.py tickets from-need --need need_stack --title "…"`.
+
 Return:
 
 ```
 ops: next|idle|blocked
-hire: <desk> <T-ids> | none
+hire: <desk> <T-ids> reasoning=<low|medium|high> | none
+packet: python main.py tickets packet T-NNN [--deep]
 pad: idle|flight
 why: <one line>
 rsi: none | T-id

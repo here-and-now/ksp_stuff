@@ -6,7 +6,14 @@ import json
 from pathlib import Path
 from typing import Any
 
-from tickets import DESKS, list_tickets, load_head
+from tickets import (
+    DESKS,
+    batch_reasoning,
+    list_tickets,
+    load_head,
+    packet_cmd,
+    show_ticket,
+)
 
 ROOT = Path(__file__).resolve().parent
 LOCK = ROOT / "docs" / "program" / "flight.lock"
@@ -68,19 +75,42 @@ def next_actions(
         for t in list_tickets(open_only=True)
         if t.get("type") == "recover" and t.get("severity") == "S1"
     ]
+    recover_any = [
+        t
+        for t in list_tickets(open_only=True)
+        if t.get("type") == "recover"
+    ]
     hires: list[dict[str, Any]] = []
     pad = "flight" if live else "idle"
 
+    def _hire(desk: str, rows: list[dict[str, Any]], why: str, cli: str = "") -> None:
+        tids = [t["id"] for t in rows]
+        reasoning = batch_reasoning(rows, desk) if rows else (
+            "high" if desk == "mortimer" else "medium"
+        )
+        item: dict[str, Any] = {
+            "desk": desk,
+            "tickets": tids,
+            "reasoning": reasoning,
+            "packet": packet_cmd(tids, reasoning),
+            "why": why,
+        }
+        if cli:
+            item["cli"] = cli
+        hires.append(item)
+
     if hangar.startswith("recover ") or hangar.startswith("phase "):
         if not live:
-            hires.append(
+            rows = recover_any or recover or [
                 {
+                    "id": "",
                     "desk": "jebediah",
-                    "tickets": [t["id"] for t in recover]
-                    or ["(open recover)"],
-                    "why": f"leftover hangar={hangar}",
+                    "type": "recover",
+                    "severity": "S2",
+                    "priority": "P0",
                 }
-            )
+            ]
+            _hire("jebediah", rows, f"leftover hangar={hangar}")
             return {
                 "lock": "live" if live else "free",
                 "pad": pad,
@@ -98,13 +128,7 @@ def next_actions(
                 and t.get("type") not in {"fly", "recover"}
             ]
             if batch:
-                hires.append(
-                    {
-                        "desk": desk_name,
-                        "tickets": [t["id"] for t in batch],
-                        "why": "lock live — ground only, batched",
-                    }
-                )
+                _hire(desk_name, batch, "lock live — ground only, batched")
         return {
             "lock": "live",
             "pad": "flight",
@@ -113,13 +137,7 @@ def next_actions(
         }
 
     if recover:
-        hires.append(
-            {
-                "desk": "jebediah",
-                "tickets": [t["id"] for t in recover],
-                "why": "S1 recover",
-            }
-        )
+        _hire("jebediah", recover, "S1 recover")
         return {
             "lock": "free",
             "pad": "idle",
@@ -130,15 +148,8 @@ def next_actions(
     if fly_ready:
         t = fly_ready[0]
         cli = (t.get("payload") or {}).get("cli") or t.get("cli") or ""
-        hires.append(
-            {
-                "desk": "jebediah",
-                "tickets": [t["id"]],
-                "cli": cli,
-                "why": "lock free, go yes — pad occupancy",
-            }
-        )
-        for desk_name in ("gus", "linus", "wernher"):
+        _hire("jebediah", [t], "lock free, go yes — pad occupancy", cli=cli)
+        for desk_name in ("gus", "linus", "wernher", "lars"):
             batch = [
                 x
                 for x in list_tickets(open_only=True)
@@ -147,12 +158,10 @@ def next_actions(
                 and x.get("status") in {"inbox", "triage", "ready", "assigned"}
             ]
             if batch:
-                hires.append(
-                    {
-                        "desk": desk_name,
-                        "tickets": [x["id"] for x in batch],
-                        "why": "parallel ground while Commander flies (will be lock live)",
-                    }
+                _hire(
+                    desk_name,
+                    batch,
+                    "parallel ground while Commander flies (will be lock live)",
                 )
         return {
             "lock": "free",
@@ -169,13 +178,7 @@ def next_actions(
     ]
     if needing_go:
         t = needing_go[0]
-        hires.append(
-            {
-                "desk": "gene",
-                "tickets": [t["id"]],
-                "why": "fly ticket needs go stamp",
-            }
-        )
+        _hire("gene", [t], "fly ticket needs go stamp")
         veh = [
             x
             for x in list_tickets(open_only=True)
@@ -188,22 +191,18 @@ def next_actions(
             if x.get("type") == "science"
             and x.get("status") in {"inbox", "triage", "ready", "assigned"}
         ]
+        ctrl = [
+            x
+            for x in list_tickets(open_only=True)
+            if x.get("type") == "control"
+            and x.get("status") in {"inbox", "triage", "ready", "assigned"}
+        ]
         if veh:
-            hires.append(
-                {
-                    "desk": "gus",
-                    "tickets": [x["id"] for x in veh],
-                    "why": "batch vehicle tickets (tree/unlock)",
-                }
-            )
+            _hire("gus", veh, "batch vehicle tickets (tree/unlock)")
         if sci:
-            hires.append(
-                {
-                    "desk": "linus",
-                    "tickets": [x["id"] for x in sci],
-                    "why": "batch science tickets (bind still blocked on capable)",
-                }
-            )
+            _hire("linus", sci, "batch science tickets (bind still blocked on capable)")
+        if ctrl:
+            _hire("lars", ctrl, "batch control tickets (miss/fingerprint)")
         return {
             "lock": "free",
             "pad": "idle",
@@ -221,21 +220,9 @@ def next_actions(
             and t.get("status") in {"inbox", "triage", "ready", "assigned"}
         ]
         if batch:
-            hires.append(
-                {
-                    "desk": desk_name,
-                    "tickets": [t["id"] for t in batch],
-                    "why": "ground queue",
-                }
-            )
+            _hire(desk_name, batch, "ground queue")
     if not hires:
-        hires.append(
-            {
-                "desk": "hank",
-                "tickets": [],
-                "why": "pad idle — no fly_ready, no leftover, no ground",
-            }
-        )
+        _hire("hank", [], "pad idle — no fly_ready, no leftover, no ground")
     return {
         "lock": "free",
         "pad": "idle",
@@ -255,15 +242,22 @@ def format_next(actions: dict[str, Any]) -> str:
         tickets = ",".join(h.get("tickets") or []) or "none"
         extra = f" cli={h['cli']}" if h.get("cli") else ""
         lines.append(
-            f"  - desk: {h.get('desk')} tickets: [{tickets}]{extra}"
+            f"  - desk: {h.get('desk')} tickets: [{tickets}] "
+            f"reasoning={h.get('reasoning', 'medium')}{extra}"
         )
+        if h.get("packet"):
+            lines.append(f"    packet: {h.get('packet')}")
         lines.append(f"    why: {h.get('why')}")
     return "\n".join(lines) + "\n"
 
 
-def fly_gate() -> dict[str, str]:
+def fly_gate(
+    *,
+    desk: dict[str, str] | None = None,
+    locked: bool | None = None,
+) -> dict[str, str]:
     """Disk fly gate from tickets, not dual plan.md."""
-    act = next_actions()
+    act = next_actions(desk=desk, locked=locked)
     fid = act.get("fly_ready")
     if not fid:
         why = "no fly_ready"

@@ -18,8 +18,11 @@ meaning / horizon / story). **Practice** is Mortimer. You do not
 rewrite PROTOCOL. House friction → `improve:` / `need_mortimer: org`.
 You do not spawn children. You do not run the Commander CLI.
 You never write throttle/stage/warp/AP — the Commander is the stick.
-You **do not edit `.py` or `.craft`**. Missing block → `need_stack`.
-Missing rocket → `need_builder`. Science card → `need_science`.
+You **do not edit `.py` or `.craft`**. Missing block → open a
+**control** ticket (`tickets from-need --need need_stack`). Missing
+rocket → **vehicle** ticket (`need_builder`). Science card →
+**science** ticket (`need_science`). Do not hand cards as `need_*`
+in the return block; give ticket ids.
 Read **`docs/program/desk.md`** in the packet before drafting. Do not
 re-run world/tech/parts if desk is this sit. `hangar:` is the Hangar
 call. If `f013.unlocked` is no or `on_craft` is no → `go: wait`.
@@ -45,8 +48,8 @@ leftover science, hangar none): first `go: yes` of the sit includes
 between those hops. Working goal is **15 sci** (`survivability`).
 Same lithobrake Flea will not buy it. Leftover PRELAUNCH vs Hangar
 is yours. Do not `go: yes` as “same Flea until 15.” If remaining
-subjects cannot finish on this hang, `campaign: none` and
-`need_builder` / `need_science`.
+subjects cannot finish on this hang, `campaign: none` and open
+vehicle/science tickets.
 
 When you **are** hired after hops: **batch Learn** — every review
 **plus the jsonl envelope** (`heading` / `horiz` / pitch on
@@ -66,7 +69,7 @@ re-run `world` if desk is this sit. Do not ingest
 `docs/archive/kerbin-lessons.md`.
 
 After a miss: parent may have Lars first. Then you replan. If you need
-a name not in `blocks.md`, `need_stack: <name>` — no heredoc.
+a name not in `blocks.md`, open a control ticket — no heredoc.
 `recommended:` is the **exact** CLI for the Commander (`python main.py pad`
 or `python main.py phase <name>`).
 
@@ -116,9 +119,10 @@ takes it. `loop.md` is not the stick (L-032).
 1. Batch or one: reviews + **jsonl** `heading`/`horiz`/pitch vs
    briefed heading / `expect_*`. Fill **Learn** with those numbers.
 2. Set `phase:` / `next:` / numbers in **that** dossier `plan.md`. Brief. `seat` only to change ship (lock free).
-3. If you need a block not in `blocks.md`: `need_stack: <name>`.
-   Rocket: `need_builder`. Science card: `need_science`.
-   First sci / orbit / unlock / crewed: `need_pr: yes` (Verena, not Walt).
+3. If you need a block not in `blocks.md`:
+   `python main.py tickets from-need --need need_stack --title "<name>"`.
+   Rocket: `--need need_builder`. Science: `--need need_science`.
+   First sci / orbit / unlock / crewed: `--need need_pr` (Verena).
    If Verena asked for a window, copy `shot:` into the briefing; parent
    runs `python main.py screenshot --name <slug>` at that beat.
 4. Slate + `docs/crew/log/gene.md`. Do not Hangar over leftover crew. `hangar:` on desk.
@@ -136,15 +140,13 @@ seat: <kerbal>
 phase: <circularize|tli|…>
 next: <name>
 craft: <file or inflight>
-need_stack: none|<name>
-need_builder: none|yes
-need_science: none|yes
-need_pr: none|yes
-need_retro: none|yes
-need_mortimer: none|yes|org
+tickets: T-NNN [go=yes|wait] | none
+go: yes|wait
+need_pr: none
+need_retro: none
+need_mortimer: none
 pr: none|<slug>
 shot: none|dwell|after-recover
-go: yes|wait
 campaign: none|uncrewed
 envelope: heading=<deg or never> horiz=<m/s> vs briefed <deg>
 recommended: <one line>

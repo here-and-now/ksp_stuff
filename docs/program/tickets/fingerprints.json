@@ -3,7 +3,10 @@
   "ec=0-after-loft": 1,
   "hangar-geiger-pbc-substring": 1,
   "heading-never-090": 1,
+  "hop-apo-recut-descent": 1,
   "hop-splash-15sci": 1,
   "leftover-hides-unstarted": 1,
-  "leftover-prelaunch-ghost": 1
+  "leftover-prelaunch-ghost": 2,
+  "stack": 1,
+  "unstarted-splash-telemetry": 1
 }

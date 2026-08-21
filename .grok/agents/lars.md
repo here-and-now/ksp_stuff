@@ -20,7 +20,7 @@ Between exits you may `ask:` Gene / Gus / Linus. Rare `explore:` is
 one stack-quality dive, not a tour every miss.
 You do not spawn. You do not run mun/phase yourself.
 You go **first after a miss** (nonzero, ABORT, empty science), or when
-Gene names `need_stack`. Skip a clean exit 0 unless Gene asked. Wernher
+Hank assigns a **control** ticket. Skip a clean exit 0 unless asked. Wernher
 only if you return `stack: ok` **and** the abort is a kRPC
 stream/protobuf trap. If you are not patching: `lesson: none`. No letter-codes.
 

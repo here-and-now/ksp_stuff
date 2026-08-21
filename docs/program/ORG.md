@@ -1,7 +1,8 @@
 # Org flow — letsgrok pad campaign
 
 Os is Founder. This is what the room actually did, what hurt, and
-what we change. Interviews: Gene (Flight Director), Jeb (Commander),
+what we change. Deep interaction / latency / knowledge audit for the
+next (RO) house: [`ORG-INTERACTIONS.md`](ORG-INTERACTIONS.md). Interviews: Gene (Flight Director), Jeb (Commander),
 Gus/VAB (VP Build), Linus (Director of Research), Lars (Vehicle
 Engineering). Skeptic: spawn tax and fake handoffs.
 

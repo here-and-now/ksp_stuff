@@ -1,21 +1,31 @@
 # jebediah science card
 
-science: wait
+science: card
 flight: jebediah
-craft: none
-at: none
+craft: kspstuff-hop-flea-pbc
+at: hop
 body: Earth
 need_builder: no
-notes: science-scan REACH. Cape Surface geigerCounter **capped**. Landed
-  TELEMETRY **capped**. FlyingLow TELEMETRY **capped**. Thermo crumbs
-  0.04 — skip. FlyingLow geigerCounter 497 s / 0.005 / 2.80 hang-limited
-  (Gus capable: no). F-013: never Stayputnik PAW. Goo FlyingLow 641 s
-  same hang wall (GooExperiment on hop, not lab). Crew eva/surfaceSample
-  PBC. Gene named no craft. Asteroid not this card.
-
 recover_banks: yes
+notes: Living hop. Start FlyingLow geiger on the Geiger part; file whatever
+  records aloft. Catalog duration_s 497 is not a hang expect — Flea ~75 s
+  stock, FAR unflown, 50 km lid ~202 s. Tape 0.5 / EC 2.5 vs Engineer7500
+  1.0 / ~310 EC. Payoff is recovery@EarthFlew leftover 1.00 on a living
+  recover. Skip thermo crumbs 0.045. Do not bind 641 s goo. Do not re-pad
+  Cape. Do not transmit. F-013: never Stayputnik PAW.
 
-# No `- experiment:` lines.
-# FlyingLow geigerCounter duration_s 497 / ec_rate 0.005 — not bound
+## Flying
+- experiment_id: geigerCounter
+  situation: FlyingLow
+  part: kerbalism-geigercounter
+  instrument: kerbalism-geigercounter (Geiger Counter); tech engineering101; unlocked yes; on_craft yes
+  duration_s: 497
+  ec_rate: 0.005
+  recover_banks: yes
+
+# skip temperatureScan FlyingLow@Shores leftover 0.045 / 3 s / 0.002
+# skip mysteryGoo FlyingLow 641 s / 0.18 (hang wall)
+# skip kerbalism_TELEMETRY FlyingLow Shores — capped
 # spent Cape Surface geigerCounter duration_s 497 / ec_rate 0.005
 # spent landed TELEMETRY duration_s 29 / ec_rate 0.052
+# recovery@EarthFlew leftover 1.00 is HD recover, not a Toggle

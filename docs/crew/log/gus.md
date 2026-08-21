@@ -1,5 +1,6 @@
 # Gus Grokman — log
 
+- 2026-08-21 — kspstuff-hop-flea-pbc. kerbalism-geigercounter e101 UNLOCKED on the hop Flea (istg=1). Recover HD, not 497 s. 497×0.005=2.5 + command ~25 vs 310. Tape 0.5 vs 1.0. Not geiger-pbc. No chute. capable: yes.
 - 2026-08-20 — capable: no FlyingLow geiger 497 s. Part UNLOCKED; tape/EC fine. Hang is the wall: 50 km lid ~202 s vacuum ballistic, Flea 75 s, Hammer 15 s to 18.8 km. Chute 15 locked. Do not sign a 75 s hop as 497 s.
 - 2026-08-20 — kspstuff-geiger-pbc landed TELEMETRY. Flea istg=0. Engineer7500 tape 1.0 holds 0.75. 29×0.052=1.51 + command ~1.5 vs 310. Cape Surface geiger spent. --search telemetry parts (none), PAW not locked. capable: yes.
 - 2026-08-20 — kspstuff-hop-hammer-pbc. basicRocketry Hammer. Leftover FlyingLow thermo 86×0.002 vs 310 EC. 2HOT on stack. Cape geiger spent. F-009 hang is hop_apo not batteries. capable: yes.

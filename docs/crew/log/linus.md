@@ -1,5 +1,7 @@
 # Linus Grokman — log
 
+- 2026-08-21 — Bound kspstuff-hop-flea-pbc FlyingLow geigerCounter 497 s / 0.005 on kerbalism-geigercounter (e101 UNLOCKED, on_craft yes). Not 497 s complete. recover_banks yes. Skip thermo crumbs. No goo. No Cape. Payoff recovery@EarthFlew 1.00 living recover.
+- 2026-08-21 — Opportunities. sci 2.9559 (desk; I-012). recovery@EarthFlew leftover 1.00 living recover. FlyingLow geiger unstarted — start on kerbalism-geigercounter, not 497 s. Thermo 0.045 skip. Goo 641 s no bind. Cape spent. No bind. need_builder hop with the part.
 - 2026-08-20 — science-scan REACH. FlyingLow geiger 2.80 hang-limited (Gus no). Thermo 0.04 crumbs. Crew eva/sample PBC. Goo FlyingLow 641 s hang wall. Scan maps goo to lab — ignore. No bind. recovery leftover 1.00 is the payoff without 497 s.
 - 2026-08-20 — sci 2.43. Landed TELEMETRY capped. FlyingLow geiger unstarted 2.80 / 497 s / 0.005 on kerbalism-geigercounter. Part on pad Flea, not a 497 s hang. No bind. need_builder hop with the part.
 - 2026-08-20 — Bound leftover landed TELEMETRY 29 s / 0.052 / 0.57 on Stayputnik PAW of kspstuff-geiger-pbc. scv 0.955. Tape 0.72/1.0. Skip geigerCounter. Skip F-005 goo/thermo. recover_banks yes.

@@ -137,4 +137,13 @@ Gene: abort
 script: acked abort
 Jebediah: copy, Geiger part not PAW
 Jebediah: copy, Hammer thermo, 2HOT not PAW
+Gene: Merge. hop go. Uncrewed kspstuff-hop-flea-pbc. FlyingLow geiger 497/0.005 on the part. Recover HD. hop_apo 18 km cut wish. FAR Learn after. Do not pad. Do not Hangar geiger-pbc. go: yes.
 Jebediah: copy, landed TELEMETRY, skip geiger
+Jebediah: copy, Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover HD
+Jebediah: copy, living hop, Hangar kspstuff-hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover HD
+Gene: 10-30-35Z hop miss: dismiss was not recover. sci 2.96. FAR apo 7.6 km. hop go.
+Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, living recover() not Flight Results dismiss
+Gene: 10-42-32Z living recover. sci +1.13. FlyingLow geiger leftover 2.45. Same hop. python main.py hop.
+Jebediah: copy, fresh Hangar hop-flea-pbc, start FlyingLow geiger on kerbalism-geigercounter, recover() HD after hop down
+Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover HD, MET-still+q=0 is down now
+Gene: 11-09-13Z hop miss. exit 0 recovered lied (pre_launch after dismiss). sci 4.49. Lars recover() while Flight ≤250 m. Same hop. python main.py hop.

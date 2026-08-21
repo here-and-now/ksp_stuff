@@ -11,7 +11,14 @@ flying card (one Toggle per id; thermo on 2HOT, not Stayputnik). Idle
 TELEMETRY remaining=0 is not leftover HD. A leftover already in
 tracking while the scene is SpaceCenter is switched into Flight — do
 not Hangar a second stack. Ballistic peri is negative. No chute.
-Splash goo is not a hop start. Do not light a pad geiger.
+MET-still + q=0 while flying is down now (lithobrake / crash UI) —
+do not wait the wreck-dialog wall. Low flying (≤250 m) calls
+``vessel.recover()`` while still Flight — last living hop banked at
+~199 m. Frozen MET unpauses, then ``recover()`` before
+``go_space_center``. Dismiss is not a living recover; post-dismiss
+``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover
+line names sit + recoverable. Splash goo is not a hop start. Do not
+light a pad geiger.
 """
 
 from __future__ import annotations
@@ -24,7 +31,14 @@ from typing import Callable
 
 from card import NO_BOUND_CARD, card_flying_ids
 from emergencies import Ctx, call
-from hangar import discover_hangar, game_scene, go_flight, go_space_center, wait_vessel_ready
+from hangar import (
+    discover_hangar,
+    game_scene,
+    go_flight,
+    go_space_center,
+    run_physics,
+    wait_vessel_ready,
+)
 from pad import recover_or_abort
 from science import (
     card_has_data,
@@ -248,11 +262,58 @@ def _down(snap: object, *, flown: bool) -> bool:
     return False
 
 
-def _recoverable(vessel: object) -> bool:
+def _q_zero(snap: object) -> bool:
+    try:
+        q = float(getattr(snap, "q", float("nan")))
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(q) and q <= 0.0
+
+
+def _vessel_sit(vessel: object | None) -> str:
+    if vessel is None:
+        return "?"
+    try:
+        raw = getattr(vessel, "situation", None)
+    except Exception:
+        return "?"
+    name = getattr(raw, "name", None)
+    if name:
+        return str(name).lower()
+    text = str(raw or "").strip()
+    return text.lower() if text else "?"
+
+
+def _met_still(
+    met: float | None, prev: float | None, still: int
+) -> tuple[int, bool]:
+    """Count frozen MET. NaN MET is frozen now."""
+    if met is not None and not math.isfinite(met):
+        return still, True
+    if (
+        met is not None
+        and prev is not None
+        and abs(met - prev) < _STILL_MET
+    ):
+        n = still + 1
+        return n, n >= _STILL_N
+    return 0, False
+
+
+def _recoverable(vessel: object | None) -> bool:
+    if vessel is None:
+        return False
     try:
         return bool(getattr(vessel, "recoverable", False))
     except Exception:
         return False
+
+
+def _recover_tick(
+    vessel: object | None, on_log: Callable[[str], None] | None
+) -> None:
+    rec = "yes" if _recoverable(vessel) else "no"
+    _say(f"hop recover sit={_vessel_sit(vessel)} recoverable={rec}", on_log)
 
 
 def _hd_ready(vessel: object, ids: tuple[str, ...], started: list[str]) -> bool:
@@ -292,10 +353,11 @@ def _recover_hd(
     vessel: object, on_log: Callable[[str], None] | None
 ) -> str | None:
     """Recover when KSP will take the vessel. None if not recoverable yet."""
+    sit = _vessel_sit(vessel)
     if not _recoverable(vessel):
         return None
     result = recover_or_abort(vessel)
-    _say(result, on_log)
+    _say(f"{result} sit={sit} recoverable=yes", on_log)
     return result
 
 
@@ -323,13 +385,15 @@ def _ours(vessel: object) -> bool:
 def _try_recover(
     vessel: object | None, on_log: Callable[[str], None] | None
 ) -> str | None:
-    if vessel is None or not _recoverable(vessel):
+    sit = _vessel_sit(vessel)
+    if vessel is None or sit in _PAD_SIT or not _recoverable(vessel):
         return None
     try:
         getattr(vessel, "recover")()
-    except Exception:
+    except Exception as exc:
+        log.debug("hop recover() sit=%s: %s", sit, exc)
         return None
-    _say("recovered", on_log)
+    _say(f"recovered sit={sit} recoverable=yes", on_log)
     mission_event("recover")
     return "recovered"
 
@@ -337,13 +401,18 @@ def _try_recover(
 def _force_recover(
     vessel: object | None, on_log: Callable[[str], None] | None
 ) -> str | None:
+    """Call recover() while still Flight. pre_launch is not the hop HD."""
     if vessel is None:
+        return None
+    sit = _vessel_sit(vessel)
+    if sit in _PAD_SIT:
         return None
     try:
         getattr(vessel, "recover")()
-    except Exception:
+    except Exception as exc:
+        log.debug("hop recover() sit=%s: %s", sit, exc)
         return None
-    _say("recovered", on_log)
+    _say(f"recovered sit={sit} recoverable=yes", on_log)
     mission_event("recover")
     return "recovered"
 
@@ -362,42 +431,58 @@ def _pool(session: object, vessel: object | None) -> list[object]:
     return out
 
 
+def _unpause(
+    session: object, on_log: Callable[[str], None] | None
+) -> None:
+    """Flight Results / Hangar often freeze MET. Unpause is not recover()."""
+    _say("hop unpause", on_log)
+    try:
+        run_physics(session)
+    except Exception as exc:
+        log.warning("hop unpause: %s", exc)
+
+
+def _snap_alt(snap: object) -> float:
+    try:
+        alt = float(getattr(snap, "alt", float("nan")))
+    except (TypeError, ValueError):
+        return float("nan")
+    return alt if math.isfinite(alt) else float("nan")
+
+
+def _low_flying(snap: object) -> bool:
+    """Near-ground flying — last living hop recovered ~199 m, still Flight."""
+    sit = str(getattr(snap, "situation", "") or "")
+    if sit not in _AIR:
+        return False
+    alt = _snap_alt(snap)
+    return math.isfinite(alt) and alt <= _AIRBORNE_M
+
+
 def _finish_hd(
     session: object,
     vessel: object | None,
     on_log: Callable[[str], None] | None,
 ) -> str | None:
-    """Recover hop debris or leave Flight Results. None if neither worked."""
+    """recover() while still Flight, then dismiss. None unless recover()."""
     _say("hop finish wreck", on_log)
     got: str | None = None
-    for other in _pool(session, vessel):
-        if other is vessel or _ours(other):
+    _recover_tick(vessel, on_log)
+    got = _force_recover(vessel, on_log)
+    if got is None:
+        for other in _pool(session, vessel):
+            if other is vessel or not _ours(other):
+                continue
             hit = _try_recover(other, on_log)
             if hit is not None:
                 got = hit
-    if got is None:
-        got = _force_recover(vessel, on_log)
-    dismissed = False
+                break
     try:
         go_space_center(session)
-        dismissed = True
         _say("hop dismissed flight results", on_log)
     except Exception as exc:
         log.warning("hop dismiss flight results: %s", exc)
-    if got is None:
-        for other in _pool(session, vessel):
-            if other is vessel or _ours(other):
-                hit = _try_recover(other, on_log)
-                if hit is not None:
-                    got = hit
-                    break
-    if got is not None:
-        return got
-    if dismissed:
-        _say("recovered", on_log)
-        mission_event("recover")
-        return "recovered"
-    return None
+    return got
 
 
 def _uplink_tick(ctx: Ctx) -> None:
@@ -474,7 +559,9 @@ def run_on_vessel(
 
     Leftover (did not light) with drive files or no Experiment modules
     skips a fresh start. A Flea this process lit always starts the card.
-    Paused Flight Results (MET stuck) recovers debris or leaves flight.
+    MET-still + q=0 flying is down now. Low flying (≤250 m) calls
+    recover() while still Flight. Paused Flight Results unpauses, then
+    recover() before dismiss. Post-dismiss pre_launch is not the HD.
     """
     from phases import OffPlan, check_expect
 
@@ -496,6 +583,8 @@ def run_on_vessel(
     waiting_hd = False
     prev_met: float | None = None
     still = 0
+    unpaused = False
+    litho = False
     _say(f"hop apo={hop_apo:.0f}", on_log)
 
     with Telem(session, events=log_events) as telem:
@@ -527,7 +616,7 @@ def run_on_vessel(
                     log_events.emit("hop", result="airborne")
                     mission_event("airborne", snap)
                 left_pad = True
-            down = _down(snap, flown=left_pad)
+            down = _down(snap, flown=left_pad) or litho
 
             for reason in gates(snap):
                 if reason == "empty tanks" or reason.startswith("atmosphere"):
@@ -616,44 +705,54 @@ def run_on_vessel(
                 if not said_down:
                     _say("hop down", on_log)
                     said_down = True
+                _recover_tick(vessel, on_log)
                 got = _recover_hd(vessel, on_log)
                 if got is not None:
                     return got
+
+            met = _vessel_met(vessel)
+            frozen = False
+            if left_pad and not _recoverable(vessel):
+                still, frozen = _met_still(met, prev_met, still)
+            else:
+                still = 0
+            sit_now = str(getattr(snap, "situation", "") or "")
+            if frozen and sit_now in _AIR and _q_zero(snap):
+                litho = True
+                down = True
 
             if down and left_pad:
                 if not said_down:
                     _say("hop down", on_log)
                     said_down = True
 
+            if left_pad and (down or _low_flying(snap)):
+                got = _force_recover(vessel, on_log)
+                if got is not None:
+                    return got
+
             if down and not left_pad:
                 call("abort_pad", ctx)
                 raise MissionAbort("wreck")
 
-            met = _vessel_met(vessel)
-            if waiting_hd and not _recoverable(vessel):
-                if met is not None and not math.isfinite(met):
+            if left_pad and (waiting_hd or down or still > 0) and not _recoverable(
+                vessel
+            ):
+                _recover_tick(vessel, on_log)
+
+            if frozen:
+                if not unpaused:
+                    _unpause(session, on_log)
+                    unpaused = True
+                    still = 0
+                else:
+                    _say("hop paused wreck", on_log)
+                    log_events.emit("hop", result="paused")
+                    mission_event("paused", snap)
                     got = _finish_hd(session, vessel, on_log)
                     if got is not None:
                         return got
                     raise MissionAbort("not recoverable")
-                if (
-                    met is not None
-                    and prev_met is not None
-                    and abs(met - prev_met) < _STILL_MET
-                ):
-                    still += 1
-                    if still >= _STILL_N:
-                        _say("hop paused wreck", on_log)
-                        log_events.emit("hop", result="paused")
-                        mission_event("paused", snap)
-                        got = _finish_hd(session, vessel, on_log)
-                        if got is not None:
-                            return got
-                        raise MissionAbort("not recoverable")
-                else:
-                    still = 0
-            else:
-                still = 0
             if met is not None and math.isfinite(met):
                 prev_met = met
 

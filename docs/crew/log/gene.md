@@ -1,5 +1,11 @@
 # Gene Grokman — log
 
+- 2026-08-21 — 11-09-13Z hop miss. exit 0 recovered lied; sit=pre_launch after dismiss. sci 4.49. recoverable=no through flying wreck. FAR apo 7.5 km, MET 66, flying 75 m EC 9.9. Lars recover() while Flight ≤250 m. Same hop. python main.py hop. Do not pad. Do not Hangar geiger-pbc. go: yes.
+- 2026-08-21 — 10-47-59Z hop miss. exit 2 not recoverable. FAR apo 7.5 km, MET 65, flying 75 m q=0 EC 9.9. 600 s then dismiss; recover() never. sci 4.09 → 4.49 (+0.40 geiger; recovery leftover 0.17). Lars MET-still+q=0 down now. Same hop. python main.py hop. Do not pad. Do not Hangar geiger-pbc. go: yes.
+- 2026-08-21 — 10-42-32Z hop clean. Living recover. sci 2.96 → 4.09 (+1.13). FAR apo 7.5 km, MET 64, last flying 199 m, EC 306. Geiger 0.35/2.80 left 2.45. recovery leftover 0.17. Same hop. python main.py hop. Do not pad. Do not Hangar geiger-pbc. go: yes.
+- 2026-08-21 — 10-30-35Z hop miss. exit 0 recovered lied; sci 2.96; recovery 1.00 still. Geiger started. FAR apo 7.6 km, wreck 74 m. Lars: dismiss is not recover. KSC empty. hop go. python main.py hop. Do not pad. Do not Hangar geiger-pbc. go: yes.
+- 2026-08-21 — Merge. Gus capable kspstuff-hop-flea-pbc. Linus bound FlyingLow geiger 497/0.005 recover HD. f013 on_craft yes. hop go. python main.py hop. FAR Learn after. Do not pad. Do not Hangar geiger-pbc. go: yes.
+- 2026-08-21 — Living hop: recovery 1.00 + start FlyingLow geiger on the part (not 497 s). need_builder hop-named + Geiger. need_science. Keep hop. FAR unflown. Do not pad. go: wait.
 - 2026-08-20 — Gus no: 497 s FlyingLow vs 50 km lid. Linus unbound. No sit. Do not re-pad. go: wait.
 - 2026-08-20 — Next FlyingLow geiger 2.80 on the part. need_builder long-hang hop. need_science. Do not re-pad spent cards. go: wait.
 - 2026-08-20 — 231328Z pad recovered. sci 2.33 → 2.43. Landed TELEMETRY capped. rem=0 crumbs. Do not re-pad. go: wait.

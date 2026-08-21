@@ -6,13 +6,17 @@ is a waypoint.
 
 **Aero (2026-08-21):** FAR, RealChute, RealHeat are **installed**.
 Kerbalism Default. Not RO. Chute parts LOCKED (survivability 15).
-No FAR kRPC in this repo. First fly after FAR is an unknown envelope.
+No FAR kRPC in this repo. FAR envelope Learned: apo ~7.5 km, living
+recover on 10-42-32Z.
 
-**Recommended:** none. sci **2.43**. Gus will not sign 497 s FlyingLow
-under a 50 km lid. Linus did not bind. Do not re-pad spent cards.
-Do not Hangar a chute-less Flea as a FAR test without Gene `go:`.
-Never rails. Ast. XRL-564 someday.
-go: wait.
+**Recommended:** `python main.py hop`. sci **4.49** (11-09-13Z +0
+false recover). FlyingLow geiger leftover **2.10**. recovery leftover
+**0.17**. KSC empty. Hangar `kspstuff-hop-flea-pbc`. Start FlyingLow
+geiger on the part. Not 497 s. `recover()` while still Flight at
+≤250 m — post-dismiss `pre_launch` is not the bank. Gus `capable: yes`.
+Linus bound. f013 on_craft yes. Do not Hangar `kspstuff-geiger-pbc`.
+Do not re-pad. hop_apo 18 km is a cut wish. Never rails.
+go: yes.
 
 Canonical save `letsgrok`. `KSP-RO` is parked. Honor 4761 lives in
 `docs/archive/` only.

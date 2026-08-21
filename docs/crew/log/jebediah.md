@@ -27,3 +27,7 @@
 - 2026-08-20T22-39-32Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-20T22-39-32Z-ksc.md review=docs/missions/jebediah/logs/2026-08-20T22-39-32Z-ksc-review.md
 - 2026-08-20T22-56-44Z hop exit=4 abort=OFFPLAN apo 18858 > 18000 → docs/missions/jebediah/logs/2026-08-20T22-56-44Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T22-56-44Z-hop-review.md
 - 2026-08-20T23-13-28Z pad exit=0 → docs/missions/jebediah/logs/2026-08-20T23-13-28Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T23-13-28Z-pad-review.md
+- 2026-08-21T10-30-35Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T10-30-35Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T10-30-35Z-hop-review.md
+- 2026-08-21T10-42-32Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T10-42-32Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T10-42-32Z-hop-review.md
+- 2026-08-21T10-47-59Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T10-47-59Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T10-47-59Z-hop-review.md
+- 2026-08-21T11-09-13Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T11-09-13Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T11-09-13Z-hop-review.md

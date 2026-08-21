@@ -1,0 +1,9 @@
+# Commander → tech
+
+The seated Commander writes what the stack needed.
+Lars / Gus / Wernher / Gene read between exits. Not the stick.
+
+- 2026-08-21T10:28Z **Jebediah → Wernher:** hop SESSION: KSP at KSC paused (1 Jan 1991 22:22:39, warp 3.0) but kRPC 127.0.0.1:50000/50001 refused. No hangar, no geiger, no last-flight. Need kRPC listening before hop.
+- 2026-08-21T10:44Z **Jebediah → Lars:** hop 10-42-32Z recovered living after hop down; last 1 Hz still flying alt=199 m MET=64 EC=306, not landed/wreck. Recover shot is T+0 (scene). Want recoverable+situation on the recover line so flying-KSC-range vs splash vs wreck is obvious.
+- 2026-08-21T10:58Z **Jebediah → Lars:** hop 10-47-59Z lithobrake MET 65 alt 75 EC 9.9 q=0 still flying wreck=false; Flight Results Catastrophic no Recover button. Frozen-MET unpause only after 600s timeout (waiting_hd). recover() never; go_space_center dismissed results. Need: MET-still+q=0 flying = down now, recover() before dismiss, 1Hz recoverable+sit on the recover line. Last living hop recovered flying 199 m.
+- 2026-08-21T11:11Z **Jebediah → Lars:** 11-09-13Z hop exit 0 recovered after dismiss, not before. recoverable=no through hop down / unpause / paused wreck / finish wreck (sit stayed flying). recovered sit=pre_launch recoverable=yes only after go_space_center. Same lithobrake as 10-47-59Z: MET 65.8 alt 75 EC 9.9 apo 7.5 km. Need recover() while still Flight, not after dismiss.

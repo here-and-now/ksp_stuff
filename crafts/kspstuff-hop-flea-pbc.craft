@@ -1,6 +1,6 @@
 ship = kspstuff-hop-flea-pbc
 version = 1.12.5
-description = PBC hop. Stayputnik + Engineer7500 + 3xZ-100 + 2HOT + Goo + 3x basicFin + RT-5 Flea. No Mk1, no chute. Splash recover.
+description = PBC hop. Stayputnik + kerbalism-geigercounter (the part) + Engineer7500 + 3xZ-100 + 2HOT + Goo + 3x basicFin + RT-5 Flea. No Mk1, no chute. Recover HD. Not 497 s. Not Stayputnik PAW.
 type = VAB
 size = 2,12,2
 steamPublishedFileId = 0
@@ -40,6 +40,7 @@ PART
 	link = SurfAntenna_1344884821
 	link = GooExperiment_1158159877
 	link = sensorThermometer_1737091917
+	link = kerbalism-geigercounter_1183042711
 	link = solidBooster.sm.v2_1282901397
 	attN = bottom,solidBooster.sm.v2_1282901397
 	EVENTS
@@ -276,6 +277,42 @@ PART
 	pos = 0.0,15.05,-0.14
 	attPos = 0,0,0
 	attPos0 = 0.0,0.05,-0.14
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1130944805
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = kerbalism-geigercounter_1183042711
+	partName = Part
+	persistentId = 1183042712
+	pos = 0.20,15.05,0.0
+	attPos = 0,0,0
+	attPos0 = 0.20,0.05,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0.0,0.0,0.0,1.0

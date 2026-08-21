@@ -8,7 +8,7 @@ for them.
 | Phase | CLI | Expect |
 |---|---|---|
 | pad | `python main.py pad` / `phase pad` | Hangar **seated/VAB craft file** uncrewed (`kspstuff-geiger-pbc` Geiger Counter **part**, F-013). Not `pad_pbc()`. Dry-launch only if current stage is 0 (do not light a Flea). Dwell watches `wait science run= rem=` and UT, **not** vessel MET. Physics warp 2–4× on pad/landed; **rails 0**; never WarpTo; 1× after dwell. Empty HD with nothing recording still aborts. |
-| hop | `python main.py hop` / `phase hop` | Hangar **seated/VAB craft file** uncrewed (Hammer sit: `kspstuff-hop-hammer-pbc`, 2HOT, no Geiger — F-013). Not Flea, not pad/geiger. Light → FlyingLow card (thermo on 2HOT not Stayputnik). `hop_apo` Gene 18 km is a **cut wish** (SRB cannot hold). OffPlan apo > **50 km** FlyingLow, not the 18 km clamp. Recover HD when down. Leftover matching that name in tracking enters Flight — no second Hangar. Splash goo is **not** a hop start. |
+| hop | `python main.py hop` / `phase hop` | Hangar **seated/VAB craft file** uncrewed (Hammer sit: `kspstuff-hop-hammer-pbc`, 2HOT, no Geiger — F-013). Not Flea, not pad/geiger. Light → FlyingLow card (thermo on 2HOT not Stayputnik). `hop_apo` Gene 18 km is a **cut wish** (SRB cannot hold). OffPlan apo > **50 km** FlyingLow, not the 18 km clamp. Recover HD when down (`vessel.recover()`). Low flying **≤250 m** calls `recover()` while still Flight (199 m living hop). MET-still + q=0 flying is **down now** (do not wait the 600 s crash UI). Frozen MET unpauses then `recover()` **before** `go_space_center`. Post-dismiss `pre_launch` recoverable is **not** recovery@EarthFlew. 1 Hz recover line names sit + recoverable. Leftover matching that name in tracking enters Flight — no second Hangar. Splash goo is **not** a hop start. |
 | splash | `python main.py splash` / `phase splash` | Leftover hop Flea only — no Hangar, no light, no pad motor. SpaceCenter leftover enters Flight. Wait until **splashed** (do not recover while flying even if recoverable). One Toggle `mysteryGoo` on GooExperiment. Dwell (641 s catalog, EC cap). Recover HD when splashed/recoverable. Landed is not Water. EC=0 with HD data recovers; empty HD aborts. Frozen MET / Flight Results recovers debris or leaves flight. |
 | hop-to-water | `python main.py hop-to-water` / `phase hop-to-water` | **Refused.** Start Flea cannot steer Cape Shores to Water (Stayputnik no torque, Flea no gimbal, no chute). Vertical hop lithobrakes Shores (18-32: 74 m). Do not Hangar. Do not fake an east splash. need_builder for east pitch, or skip splash. |
 | tech-unlock | `python main.py tech-unlock [node]` / `phase tech-unlock` | Ground kRPC try. Disk checks tree/parents/bank. Opens R&D. **0.6 has no UnlockTech RPC — aborts.** Paid node: **Mortimer** edits `persistent.sfs` ResearchAndDevelopment only (Os 2026-08-20). Not GameData. Not a pad/geiger sit (F-013). |
@@ -44,9 +44,16 @@ TELEMETRY remaining=0. Leftover-HD skip (HardDrive files or Experiment
 modules gone, no second Toggle) is for an already-dead probe this process
 did not light. Empty card on a clean pad still
 aborts. EC=0 with HD data recovers on first recoverable; abort timeout
-only if the HD is empty. Frozen MET / Flight Results (recoverable never
-true) recovers hop debris or `go_space_center` so the HD banks — do not
-wait for a Recover click.
+only if the HD is empty. Flying ≤250 m calls ``vessel.recover()`` while
+still Flight (earlier hop banked at ~199 m; 11-09-13Z after dismiss
+did not). MET-still
++ q=0 while flying is lithobrake down now — do not wait the wreck-dialog
+wall. Frozen MET / Flight Results unpauses physics, then
+``vessel.recover()`` **before** ``go_space_center``. Post-dismiss
+``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover line
+names sit + recoverable. Still stuck: recover hop debris if KSP will
+take it, then dismiss the modal. Dismiss **without** ``recover()``
+aborts — it does not bank the HD. Do not wait for a Recover click.
 `python main.py splash` / `phase splash` never Hangars. Empty KSC or
 pad motor → abort (hop first). Wait for Water; do **not** recover on
 first flying recoverable (that is hop, and it kills splash dwell). Start

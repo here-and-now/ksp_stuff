@@ -490,3 +490,71 @@ python main.py pad
 - **Fix:** OffPlan apo > 50 km FlyingLow. hop_apo stays a cut wish
   (solids ignore throttle). check_expect skip_apo on hop. Modules:
   `hop.py`, `phases.py`. Gus if Gene needs a motor that *stops* at 18.
+
+## 2026-08-21T10-30-35Z-hop — Dismiss is not a living recover
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T10-30-35Z-hop`). Hangar `kspstuff-hop-flea-pbc`. Card
+  FlyingLow geiger (whatever files; 497 s not the hang). Payoff
+  recovery@EarthFlew leftover 1.00. FAR+RealHeat+RealChute; chute
+  locked. F-013 geiger on craft, engineering101.
+- **Symptom:** exit 0, abort none. `science start geigerCounter`, dwell,
+  `gate ec=0`, wait recoverable, paused wreck, dismissed Flight
+  Results, `recovered` twice. World sci still 2.9559. recovery@EarthFlew
+  leftover still 1.00. samples 49, wall 81.4 s, apo max 7571 m, MET
+  max 65.8, last flying alt=74 m, EC 310→0.
+- **Cause:** Lithobrake froze MET with `recoverable` never true.
+  `_finish_hd` treated `go_space_center` as banking the HD and logged
+  recovered even when `vessel.recover()` never ran (18-22-47Z test
+  asserted that). recovery@EarthFlew and Kerbalism files need a living
+  recover, not a crash-UI dismiss. Catalog 497 s was not the miss.
+- **Fix:** Frozen MET unpauses physics (`hangar.run_physics`) and waits
+  `vessel.recoverable`, then `recover()`. Still stuck: recover hop
+  debris if KSP will take it, then dismiss. Dismiss without `recover()`
+  aborts — do not exit 0. Modules: `hop.py`.
+
+## 2026-08-21T10-47-59Z-hop — MET-still q=0 flying is down now
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T10-47-59Z-hop`). Hangar `kspstuff-hop-flea-pbc`. Card
+  FlyingLow geiger on `kerbalism-geigercounter`. F-013 unlocked, on
+  craft. FAR+RealHeat+RealChute; chute locked.
+- **Symptom:** exit 2, `ABORT not recoverable`. Geiger started, dwell,
+  then 600 s `hop wait recoverable`. Lithobrake MET 65 alt 75 EC 9.9
+  q=0 still flying `wreck=false`. Unpause only after the wall. Flight
+  Results Catastrophic, no Recover button. `recover()` never;
+  `go_space_center` dismissed results. samples ~458, wall 619.6 s,
+  apo max 7472 m. sci 4.0894 → 4.4896 leftover geiger 2.098,
+  recovery@EarthFlew leftover 0.167. Last living hop recovered flying
+  199 m.
+- **Cause:** Frozen-MET unpause / finish-wreck ran only after
+  `waiting_hd` (EC=0 leftover, or the 600 s timeout). A lit hop with
+  science started and EC still 9.9 never set that flag, so MET-still
+  q=0 flying was treated as a live fall. Crash UI then had no Recover.
+- **Fix:** MET-still + q=0 while flying is down now, even without
+  `waiting_hd`. Unpause, `recover()` before dismiss, 1 Hz recover line
+  names sit + recoverable. Dismiss without `recover()` still aborts.
+  Modules: `hop.py`.
+
+## 2026-08-21T11-09-13Z-hop — recover() in Flight, not after dismiss
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T11-09-13Z-hop`). Hangar `kspstuff-hop-flea-pbc`. Card
+  FlyingLow geiger on `kerbalism-geigercounter`. F-013 unlocked, on
+  craft. FAR+RealHeat+RealChute; chute locked.
+- **Symptom:** exit 0, abort none, `sci_delta` 0. Geiger started, dwell,
+  lithobrake MET 65.8 alt 75 EC 9.9 apo 7.5 km. `hop recover sit=flying
+  recoverable=no` through down / unpause / paused wreck / finish wreck.
+  `hop dismissed flight results` then `recovered sit=pre_launch
+  recoverable=yes`. leftover recovery@EarthFlew 0.167, geiger FlyingLow
+  2.098. samples 54, wall 86.3 s.
+- **Cause:** `_force_recover` while flying recoverable=no threw; then
+  `go_space_center` dismissed Flight Results. `_finish_hd` recovered
+  whatever was recoverable **after** dismiss — KSP reported
+  `pre_launch` recoverable. That is not a living Flight recover; the
+  HD never banked. Recover at ~199 m flying worked on an earlier hop;
+  this path waited for the crash UI.
+- **Fix:** Call `vessel.recover()` while still Flight when flying
+  ≤250 m or already down, **before** `go_space_center`. Do not treat
+  post-dismiss `pre_launch` recoverable as hop HD. Dismiss without a
+  Flight `recover()` still aborts. Modules: `hop.py`.

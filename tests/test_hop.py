@@ -209,10 +209,9 @@ class TestHopCatalog(unittest.TestCase):
         self.assertNotIn("run_ready", text)
         self.assertNotIn("pad_pbc", text)
         self.assertNotIn("parachute", text.lower())
-        self.assertIn(
-            "from hangar import discover_hangar, game_scene, go_flight, go_space_center",
-            text,
-        )
+        self.assertIn("run_physics", text)
+        self.assertIn("go_space_center", text)
+        self.assertIn("from hangar import", text)
         self.assertIn("kspstuff-hop-hammer-pbc", text)
         self.assertIn("uncrewed", blocks.lower())
         self.assertIn("kspstuff-hop-hammer-pbc", blocks)
@@ -769,8 +768,43 @@ class TestHopSequence(unittest.TestCase):
         self.assertGreaterEqual(t[0], 8.0)
         self.assertEqual(vessel.control.staged, 0)
 
-    def test_frozen_wreck_dismisses_flight_results(self):
-        """Paused Flight Results: MET stuck, recoverable never true."""
+    def test_frozen_wreck_unpause_then_recover(self):
+        """Living recover: unpause frozen MET, then recover() — not dismiss."""
+        vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
+        vessel.name = CRAFT
+        vessel.met = 65.8
+        vessel._alt = 74.0
+        vessel._speed = 127.0
+        vessel.orbit.apoapsis_altitude = 315.0
+        vessel.orbit.periapsis_altitude = -6_362_000.0
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+
+        def unpause(_session):
+            vessel.recoverable = True
+
+        with patch("hop.run_physics", side_effect=unpause) as physics:
+            with patch("hop.go_space_center") as scene:
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("geigerCounter",),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=sleep,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        physics.assert_called()
+        scene.assert_not_called()
+        self.assertIn("hop unpause", logs)
+        self.assertNotIn("hop dismissed flight results", logs)
+        self.assertGreaterEqual(t[0], 5.0)
+
+    def test_frozen_wreck_dismiss_without_recover_aborts(self):
+        """Dismiss Flight Results without recover() does not bank science."""
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
         vessel.name = CRAFT
         vessel.met = 75.56
@@ -786,23 +820,233 @@ class TestHopSequence(unittest.TestCase):
 
         logs: list[str] = []
         with patch("hop.go_space_center", side_effect=dismiss) as scene:
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    session,
+                    vessel,
+                    science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=sleep,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertIn("not recoverable", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+        self.assertEqual(vessel.control.staged, 0)
+        scene.assert_called()
+        self.assertIn("hop unpause", logs)
+        self.assertIn("hop paused wreck", logs)
+        self.assertNotIn("recovered", logs)
+        self.assertGreaterEqual(t[0], 10.0)
+        self.assertLess(t[0], 25.0)
+
+    def test_lithobrake_q0_flying_is_down_now(self):
+        """Lit hop, MET-still + q=0 flying: do not wait the 600 s crash UI."""
+        mod = _Mod("Experiment", "geigerCounter")
+        vessel = _Vessel([mod], recoverable=False, sit="pre_launch", ec=9.9)
+        vessel.name = CRAFT
+        vessel.met = 0.0
+        vessel.parts = _Parts([_Part("kerbalism-geigercounter", [mod])])
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        order: list[str] = []
+        real_recover = vessel.recover
+
+        def recover():
+            order.append("recover")
+            real_recover()
+
+        vessel.recover = recover
+
+        def nap(dt):
+            t[0] += dt if dt else 0.01
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel._flight.dynamic_pressure = 1_200.0
+                vessel.orbit.apoapsis_altitude = 7_500.0
+                vessel.orbit.periapsis_altitude = -6_362_000.0
+                vessel.met = 10.0
+            elif vessel.situation == "flying" and mod.triggered:
+                vessel._alt = 75.0
+                vessel._speed = 0.0
+                vessel._flight.dynamic_pressure = 0.0
+                vessel.orbit.apoapsis_altitude = 327.0
+                vessel.met = 65.0
+                vessel.resources.ec = 9.9
+
+        def dismiss(*_a, **_k):
+            order.append("dismiss")
+
+        with patch("hop.go_space_center", side_effect=dismiss) as scene:
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("geigerCounter",),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertIn("not recoverable", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+        self.assertEqual(mod.triggered, ["Start Experiment"])
+        scene.assert_called()
+        self.assertIn("recover", order)
+        self.assertIn("dismiss", order)
+        self.assertLess(order.index("recover"), order.index("dismiss"))
+        self.assertIn("hop unpause", logs)
+        self.assertIn("hop paused wreck", logs)
+        self.assertTrue(any("hop recover sit=flying recoverable=no" in line for line in logs))
+        self.assertGreaterEqual(t[0], 10.0)
+        self.assertLess(t[0], 25.0)
+
+    def test_lithobrake_q0_unpause_recovers_flying(self):
+        """Living recover after MET-still q=0: recover() before dismiss."""
+        mod = _Mod("Experiment", "geigerCounter")
+        vessel = _Vessel([mod], recoverable=False, sit="pre_launch", ec=9.9)
+        vessel.name = CRAFT
+        vessel.met = 0.0
+        vessel.parts = _Parts([_Part("kerbalism-geigercounter", [mod])])
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+
+        def nap(dt):
+            t[0] += dt if dt else 0.01
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel._flight.dynamic_pressure = 1_200.0
+                vessel.orbit.apoapsis_altitude = 7_500.0
+                vessel.orbit.periapsis_altitude = -6_362_000.0
+                vessel.met = 10.0
+            elif vessel.situation == "flying" and mod.triggered:
+                vessel._alt = 75.0
+                vessel._speed = 0.0
+                vessel._flight.dynamic_pressure = 0.0
+                vessel.orbit.apoapsis_altitude = 327.0
+                vessel.met = 65.0
+
+        def unpause(_session):
+            vessel.recoverable = True
+
+        with patch("hop.run_physics", side_effect=unpause) as physics:
+            with patch("hop.go_space_center") as scene:
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("geigerCounter",),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        physics.assert_called()
+        scene.assert_not_called()
+        self.assertIn("hop unpause", logs)
+        self.assertTrue(any("sit=flying recoverable=yes" in line for line in logs))
+        self.assertNotIn("hop dismissed flight results", logs)
+        self.assertGreaterEqual(t[0], 5.0)
+        self.assertLess(t[0], 20.0)
+
+    def test_dismiss_prelaunch_is_not_hop_hd(self):
+        """11-09-13Z: recover() after go_space_center pre_launch is not the HD."""
+        vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
+        vessel.name = CRAFT
+        vessel.met = 65.8
+        vessel._alt = 75.0
+        vessel._speed = 0.0
+        vessel.orbit.apoapsis_altitude = 307.0
+        vessel.orbit.periapsis_altitude = -6_362_000.0
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        session = _Session(vessel)
+
+        def dismiss(*_a, **_k):
+            vessel.situation = "pre_launch"
+            vessel.recoverable = True
+
+        with patch("hop.go_space_center", side_effect=dismiss) as scene:
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    session,
+                    vessel,
+                    science_ids=("geigerCounter",),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=sleep,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertIn("not recoverable", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+        scene.assert_called()
+        self.assertIn("hop dismissed flight results", logs)
+        self.assertFalse(any(line.startswith("recovered") for line in logs))
+        self.assertGreaterEqual(t[0], 10.0)
+        self.assertLess(t[0], 25.0)
+
+    def test_low_flying_recovers_in_flight(self):
+        """~199 m flying: recover() while still Flight, before lithobrake."""
+        mod = _Mod("Experiment", "geigerCounter")
+        vessel = _Vessel([mod], recoverable=False, sit="pre_launch", ec=9.9)
+        vessel.name = CRAFT
+        vessel.met = 0.0
+        vessel.parts = _Parts([_Part("kerbalism-geigercounter", [mod])])
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        order: list[str] = []
+
+        def recover():
+            order.append("recover")
+            vessel.recovered = True
+
+        vessel.recover = recover
+
+        def nap(dt):
+            t[0] += dt if dt else 0.01
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel._flight.dynamic_pressure = 1_200.0
+                vessel.orbit.apoapsis_altitude = 7_500.0
+                vessel.orbit.periapsis_altitude = -6_362_000.0
+                vessel.met = 10.0
+            elif vessel.situation == "flying" and mod.triggered and not vessel.recovered:
+                vessel._alt = 199.0
+                vessel._speed = 80.0
+                vessel._flight.dynamic_pressure = 2_800.0
+                vessel.orbit.apoapsis_altitude = 430.0
+                vessel.met = 64.0
+
+        with patch("hop.go_space_center") as scene:
             result = run_on_vessel(
-                session,
+                _Session(vessel),
                 vessel,
-                science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
+                science_ids=("geigerCounter",),
                 on_log=logs.append,
                 now=now,
-                sleep=sleep,
+                sleep=nap,
                 timeout=30.0,
                 pulse=1.0,
             )
         self.assertEqual(result, "recovered")
-        self.assertFalse(vessel.recovered)
-        self.assertEqual(vessel.control.staged, 0)
-        scene.assert_called()
-        self.assertIn("recovered", logs)
-        self.assertGreaterEqual(t[0], 5.0)
-        self.assertLess(t[0], 20.0)
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(mod.triggered, ["Start Experiment"])
+        scene.assert_not_called()
+        self.assertIn("recover", order)
+        self.assertTrue(any("recovered sit=flying" in line for line in logs))
+        self.assertNotIn("hop dismissed flight results", logs)
+        self.assertLess(t[0], 15.0)
 
     def test_frozen_wreck_recovers_hop_debris(self):
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
@@ -847,16 +1091,17 @@ class TestHopSequence(unittest.TestCase):
             session.active_vessel = None
 
         with patch("hop.go_space_center") as scene:
-            result = run_on_vessel(
-                session,
-                vessel,
-                science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
-                now=now,
-                sleep=nap,
-                timeout=30.0,
-                pulse=1.0,
-            )
-        self.assertEqual(result, "recovered")
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    session,
+                    vessel,
+                    science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertIn("no vessel", str(ctx.exception))
         scene.assert_called()
         self.assertEqual(vessel.control.staged, 0)
 

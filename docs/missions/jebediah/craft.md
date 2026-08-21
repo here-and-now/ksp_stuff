@@ -1,9 +1,17 @@
 # jebediah stack
 
-status: blocked
-craft: none
-parts: []
-notes: Gus capable no. FlyingLow geiger 497 s will not finish under
-  50 km. Flea hang 75 s. Hammer 15 s to 18.8 km. Chute locked
-  (survivability 15). Tape and EC would cover; hang will not.
-  Do not Hangar geiger-pbc or hop-hammer as a 497 s FlyingLow sit.
+status: signed
+craft: kspstuff-hop-flea-pbc
+parts:
+  - probeCoreSphere.v2
+  - kerbalism-geigercounter
+  - Engineer7500
+  - batteryPack
+  - SurfAntenna
+  - GooExperiment
+  - sensorThermometer
+  - solidBooster.sm.v2
+  - basicFin
+notes: Gus capable yes. Hop Flea, Geiger Counter **part** on the stack
+  (engineering101 UNLOCKED). Recover HD, not 497 s complete. Flea hang
+  ~75 s. No chute. Do not Hangar kspstuff-geiger-pbc or hop-hammer.

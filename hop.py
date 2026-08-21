@@ -13,12 +13,13 @@ tracking while the scene is SpaceCenter is switched into Flight — do
 not Hangar a second stack. Ballistic peri is negative. No chute.
 MET-still + q=0 while flying is down now (lithobrake / crash UI) —
 do not wait the wreck-dialog wall. Low flying (≤250 m) calls
-``vessel.recover()`` while still Flight — last living hop banked at
-~199 m. Frozen MET unpauses, then ``recover()`` before
-``go_space_center``. Dismiss is not a living recover; post-dismiss
-``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover
-line names sit + recoverable. Splash goo is not a hop start. Do not
-light a pad geiger.
+``vessel.recover()`` only when ``recoverable`` — last living hop
+banked at ~199 m. Frozen MET unpauses and waits ``sit=landed`` (or
+splashed) in Flight, then ``recover()``. Do not
+``go_space_center`` on ``flying recoverable=no`` (11-28-40Z). Dismiss
+is not a living recover; post-dismiss ``pre_launch`` recoverable is
+not recovery@EarthFlew. 1 Hz recover line names sit + recoverable.
+Splash goo is not a hop start. Do not light a pad geiger.
 """
 
 from __future__ import annotations
@@ -68,6 +69,7 @@ _PULSE_S = 1.0
 _STILL_N = 5
 _STILL_MET = 0.2
 _AIR = frozenset({"flying", "sub_orbital", "suborbital", "escaping", "orbiting"})
+_GROUND = frozenset({"landed", "splashed", "wrecked", "wreck"})
 _PAD_SIT = frozenset({"pre_launch", "prelaunch"})
 _LIGHT_SIT = frozenset({"pre_launch", "prelaunch", "landed"})
 _ABORT_UPLINK = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
@@ -401,11 +403,13 @@ def _try_recover(
 def _force_recover(
     vessel: object | None, on_log: Callable[[str], None] | None
 ) -> str | None:
-    """Call recover() while still Flight. pre_launch is not the hop HD."""
+    """recover() in Flight on ground, or when recoverable. Flying no is a wait."""
     if vessel is None:
         return None
     sit = _vessel_sit(vessel)
     if sit in _PAD_SIT:
+        return None
+    if not _recoverable(vessel) and sit not in _GROUND:
         return None
     try:
         getattr(vessel, "recover")()
@@ -464,7 +468,7 @@ def _finish_hd(
     vessel: object | None,
     on_log: Callable[[str], None] | None,
 ) -> str | None:
-    """recover() while still Flight, then dismiss. None unless recover()."""
+    """recover() while still Flight. Do not dismiss flying recoverable=no."""
     _say("hop finish wreck", on_log)
     got: str | None = None
     _recover_tick(vessel, on_log)
@@ -477,6 +481,8 @@ def _finish_hd(
             if hit is not None:
                 got = hit
                 break
+    if got is None:
+        return None
     try:
         go_space_center(session)
         _say("hop dismissed flight results", on_log)
@@ -560,8 +566,9 @@ def run_on_vessel(
     Leftover (did not light) with drive files or no Experiment modules
     skips a fresh start. A Flea this process lit always starts the card.
     MET-still + q=0 flying is down now. Low flying (≤250 m) calls
-    recover() while still Flight. Paused Flight Results unpauses, then
-    recover() before dismiss. Post-dismiss pre_launch is not the HD.
+    recover() only when recoverable. Paused Flight Results unpauses
+    and waits landed in Flight, then recover(). Do not dismiss flying
+    recoverable=no. Post-dismiss pre_launch is not the HD.
     """
     from phases import OffPlan, check_expect
 
@@ -585,6 +592,7 @@ def run_on_vessel(
     still = 0
     unpaused = False
     litho = False
+    said_wait_landed = False
     _say(f"hop apo={hop_apo:.0f}", on_log)
 
     with Telem(session, events=log_events) as telem:
@@ -709,6 +717,19 @@ def run_on_vessel(
                 got = _recover_hd(vessel, on_log)
                 if got is not None:
                     return got
+            elif left_pad:
+                for other in _pool(session, vessel):
+                    if other is vessel or not _ours(other):
+                        continue
+                    hit = _try_recover(other, on_log)
+                    if hit is None:
+                        continue
+                    try:
+                        go_space_center(session)
+                        _say("hop dismissed flight results", on_log)
+                    except Exception as exc:
+                        log.warning("hop dismiss flight results: %s", exc)
+                    return hit
 
             met = _vessel_met(vessel)
             frozen = False
@@ -741,7 +762,21 @@ def run_on_vessel(
                 _recover_tick(vessel, on_log)
 
             if frozen:
-                if not unpaused:
+                sit_v = _vessel_sit(vessel)
+                if sit_v in _AIR:
+                    if not unpaused:
+                        _unpause(session, on_log)
+                        unpaused = True
+                    else:
+                        if not said_wait_landed:
+                            _say("hop wait landed recoverable=yes", on_log)
+                            said_wait_landed = True
+                        try:
+                            run_physics(session)
+                        except Exception as exc:
+                            log.warning("hop wait landed: %s", exc)
+                    still = 0
+                elif not unpaused:
                     _unpause(session, on_log)
                     unpaused = True
                     still = 0

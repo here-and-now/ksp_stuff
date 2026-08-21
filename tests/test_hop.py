@@ -804,7 +804,7 @@ class TestHopSequence(unittest.TestCase):
         self.assertGreaterEqual(t[0], 5.0)
 
     def test_frozen_wreck_dismiss_without_recover_aborts(self):
-        """Dismiss Flight Results without recover() does not bank science."""
+        """Flying recoverable=no: stay Flight. Dismiss does not bank science."""
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
         vessel.name = CRAFT
         vessel.met = 75.56
@@ -834,15 +834,15 @@ class TestHopSequence(unittest.TestCase):
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
         self.assertEqual(vessel.control.staged, 0)
-        scene.assert_called()
+        scene.assert_not_called()
         self.assertIn("hop unpause", logs)
-        self.assertIn("hop paused wreck", logs)
+        self.assertIn("hop wait landed recoverable=yes", logs)
+        self.assertNotIn("hop dismissed flight results", logs)
         self.assertNotIn("recovered", logs)
-        self.assertGreaterEqual(t[0], 10.0)
-        self.assertLess(t[0], 25.0)
+        self.assertGreaterEqual(t[0], 30.0)
 
     def test_lithobrake_q0_flying_is_down_now(self):
-        """Lit hop, MET-still + q=0 flying: do not wait the 600 s crash UI."""
+        """Lit hop, MET-still + q=0: wait landed in Flight, then recover()."""
         mod = _Mod("Experiment", "geigerCounter")
         vessel = _Vessel([mod], recoverable=False, sit="pre_launch", ec=9.9)
         vessel.name = CRAFT
@@ -851,11 +851,12 @@ class TestHopSequence(unittest.TestCase):
         now, sleep, t = _fast_clock()
         logs: list[str] = []
         order: list[str] = []
-        real_recover = vessel.recover
 
         def recover():
             order.append("recover")
-            real_recover()
+            if vessel.situation not in ("landed", "splashed") and not vessel.recoverable:
+                raise RuntimeError("not recoverable")
+            vessel.recovered = True
 
         vessel.recover = recover
 
@@ -877,12 +878,13 @@ class TestHopSequence(unittest.TestCase):
                 vessel.met = 65.0
                 vessel.resources.ec = 9.9
 
-        def dismiss(*_a, **_k):
-            order.append("dismiss")
+        def unpause(_session):
+            vessel.situation = "landed"
+            vessel._alt = 78.0
 
-        with patch("hop.go_space_center", side_effect=dismiss) as scene:
-            with self.assertRaises(MissionAbort) as ctx:
-                run_on_vessel(
+        with patch("hop.run_physics", side_effect=unpause) as physics:
+            with patch("hop.go_space_center") as scene:
+                result = run_on_vessel(
                     _Session(vessel),
                     vessel,
                     science_ids=("geigerCounter",),
@@ -892,18 +894,16 @@ class TestHopSequence(unittest.TestCase):
                     timeout=30.0,
                     pulse=1.0,
                 )
-        self.assertIn("not recoverable", str(ctx.exception))
-        self.assertFalse(vessel.recovered)
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
         self.assertEqual(mod.triggered, ["Start Experiment"])
-        scene.assert_called()
+        physics.assert_called()
         self.assertIn("recover", order)
-        self.assertIn("dismiss", order)
-        self.assertLess(order.index("recover"), order.index("dismiss"))
         self.assertIn("hop unpause", logs)
-        self.assertIn("hop paused wreck", logs)
-        self.assertTrue(any("hop recover sit=flying recoverable=no" in line for line in logs))
-        self.assertGreaterEqual(t[0], 10.0)
+        self.assertTrue(any("recovered sit=landed" in line for line in logs))
+        self.assertGreaterEqual(t[0], 5.0)
         self.assertLess(t[0], 25.0)
+        self.assertEqual(vessel.situation, "landed")
 
     def test_lithobrake_q0_unpause_recovers_flying(self):
         """Living recover after MET-still q=0: recover() before dismiss."""
@@ -958,7 +958,7 @@ class TestHopSequence(unittest.TestCase):
         self.assertLess(t[0], 20.0)
 
     def test_dismiss_prelaunch_is_not_hop_hd(self):
-        """11-09-13Z: recover() after go_space_center pre_launch is not the HD."""
+        """11-09-13Z: do not dismiss flying recoverable=no; pre_launch is not HD."""
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
         vessel.name = CRAFT
         vessel.met = 65.8
@@ -988,11 +988,10 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_called()
-        self.assertIn("hop dismissed flight results", logs)
+        scene.assert_not_called()
+        self.assertNotIn("hop dismissed flight results", logs)
         self.assertFalse(any(line.startswith("recovered") for line in logs))
-        self.assertGreaterEqual(t[0], 10.0)
-        self.assertLess(t[0], 25.0)
+        self.assertGreaterEqual(t[0], 30.0)
 
     def test_low_flying_recovers_in_flight(self):
         """~199 m flying: recover() while still Flight, before lithobrake."""
@@ -1027,6 +1026,7 @@ class TestHopSequence(unittest.TestCase):
                 vessel._flight.dynamic_pressure = 2_800.0
                 vessel.orbit.apoapsis_altitude = 430.0
                 vessel.met = 64.0
+                vessel.recoverable = True
 
         with patch("hop.go_space_center") as scene:
             result = run_on_vessel(
@@ -1102,7 +1102,8 @@ class TestHopSequence(unittest.TestCase):
                     pulse=1.0,
                 )
         self.assertIn("no vessel", str(ctx.exception))
-        scene.assert_called()
+        scene.assert_not_called()
+        self.assertFalse(vessel.recovered)
         self.assertEqual(vessel.control.staged, 0)
 
     def test_frozen_wreck_abort_if_dismiss_fails(self):
@@ -1111,8 +1112,8 @@ class TestHopSequence(unittest.TestCase):
         vessel._alt = 72.0
         vessel.orbit.apoapsis_altitude = 810.0
         vessel.orbit.periapsis_altitude = -7_000_000.0
-        now, sleep, _t = _fast_clock()
-        with patch("hop.go_space_center", side_effect=RuntimeError("scene")):
+        now, sleep, t = _fast_clock()
+        with patch("hop.go_space_center", side_effect=RuntimeError("scene")) as scene:
             with self.assertRaises(MissionAbort) as ctx:
                 run_on_vessel(
                     _Session(vessel),
@@ -1125,7 +1126,9 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
+        scene.assert_not_called()
         self.assertEqual(vessel.control.staged, 0)
+        self.assertGreaterEqual(t[0], 30.0)
 
     def test_skip_peri_on_ballistic(self):
         mod = _Mod("Experiment", "mysteryGoo")

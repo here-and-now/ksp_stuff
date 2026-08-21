@@ -18,15 +18,16 @@ Kardashev III is creed here. Joke in the TUI. Nobody preaches mid-burn.
 ## Facts (disk, 2026-08-21)
 
 Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. Tree
-**start, engineering101, basicRocketry**. Desk `sci = 4.4896`
-(10-47-59Z **4.0894 → 4.4896, +0.4002** — geiger file, recover missed).
-Cape Surface geiger **capped**. FlyingLow TELEMETRY **capped**. Landed
-TELEMETRY **capped**. FlyingLow thermo leftover **0.045**.
-`recovery@EarthFlew` leftover **0.167**. FlyingLow geiger leftover
-**2.098**. `capable: yes`. craft `kspstuff-hop-flea-pbc`. card
-`geigerCounter`. f013 `kerbalism-geigercounter` tech engineering101
-unlocked yes on_craft yes. KSC empty. hangar: none. Do not recover
-Ast. XRL-564.
+**start, engineering101, basicRocketry**. Desk `sci = 5.3289`
+(11-40-22Z **4.7898 → 5.3289, +0.5391**; 11-28-40Z unchanged;
+11-23-25Z **+0.3002**). Cape Surface geiger **capped**. FlyingLow
+TELEMETRY **capped**. Landed TELEMETRY **capped**. FlyingLow thermo
+leftover **0.045**. `recovery@EarthFlew` leftover **0.028**. FlyingLow
+geiger leftover **1.396**. `capable: yes`. craft `kspstuff-hop-flea-pbc`.
+card `geigerCounter`. f013 `kerbalism-geigercounter` tech
+engineering101 unlocked yes on_craft yes. leftover n=0. KSC empty.
+hangar: **none**. Next hop Hangars that file. Do not recover Ast.
+XRL-564.
 
 Aero stack **now on this install** (CKAN, 2026-08-21): **FAR**
 (`FerramAerospaceResearchContinued`), **RealChute** + RealChuteForStock,
@@ -45,26 +46,26 @@ Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
 
 ## Meaning (Gene)
 
-11-09-13Z hop miss: exit 0, sci **4.49 unchanged**. Geiger started.
-FAR envelope **apo 7.5 km** held. Last telem **flying 75 m**, MET 66,
-EC 9.9 — same lithobrake as 10-47-59Z. `recoverable=no` through wreck.
-`recover()` after dismiss logged recovered sit=pre_launch; not
-`recovery@EarthFlew`. Leftovers still **2.10** geiger / **0.17** HD.
-Lars: `recover()` while still Flight at ≤250 m. Same hop. Gus
-`capable: yes`. f013 on_craft yes. KSC empty. `go: yes`.
-`python main.py hop`. Catalog 497 is not a hang expect. hop_apo 18 km
-is a cut wish. OffPlan lid 50 km. Never rails. Never revert. Chute
-still locked.
+11-40-22Z hop clean: leftover PRELAUNCH entered Flight. Lit. Geiger
+on the part. Recover **sit=landed recoverable=yes** then recovered
+sit=landed — **before dismiss**. sci **4.79 → 5.33 (+0.54)**. FAR
+envelope **apo 7.7 km**, lithobrake landed **76 m**, MET 67, EC
+279→275. KSC empty. hangar none. Gus `capable: yes`. f013 on_craft
+yes. `go: wait`. Next `python main.py hop` Hangars hop-flea-pbc.
+Catalog 497 is not a hang expect. hop_apo 18 km is a cut wish.
+OffPlan lid 50 km. Never rails. Never revert. Chute still locked.
 
-10-47-59Z: geiger filed **+0.40**; recover never (600 s then dismiss).
-10-42-32Z living recover: flying 199 m, EC 306, sci **+1.13**.
-10-30-35Z taught dismiss ≠ bank (wreck 74 m, EC=0).
+11-28-40Z hop abort: flying recoverable=no then dismiss, sci
+unchanged. 11-23-25Z lithobrake landed 79 m **+0.30**. 11-09-13Z:
+dismiss then `pre_launch`. 10-47-59Z geiger **+0.40**, recover never.
+10-42-32Z living recover flying 199 m **+1.13**. 10-30-35Z taught
+dismiss ≠ bank.
 
 ## Horizon (Linus)
 
-start + e101 + basicRocketry owned. FlyingLow geiger leftover **2.10**
-still hang-limited (Flea ~64 s files ~0.35). Recovery leftover **0.17**.
-Survivability 15 wants ~10.51. **Visit Ast. XRL-564** someday.
+start + e101 + basicRocketry owned. FlyingLow geiger leftover **1.40**
+still hang-limited (Flea ~67 s files ~0.35). Recovery crumbs **0.028**.
+Survivability 15 wants ~9.67. **Visit Ast. XRL-564** someday.
 
 ## Story (Verena)
 
@@ -87,14 +88,19 @@ Still true (Kerbalism ops). Gene last-wrote.
 - Size1 Flea cannot steer Cape Shores to Water (no torque, no gimbal,
   no chute). RealChute does not change that until survivability is
   owned **and** Gus hangs a chute.
-- Flight Results dismiss is not `recover()`. Flying ≤250 m calls
-  `recover()` while still Flight. Post-dismiss `pre_launch` recoverable
-  is not `recovery@EarthFlew`. Last 1 Hz may still be flying at KSC
-  range.
+- Flight Results dismiss is not `recover()`. Do not `go_space_center`
+  on flying recoverable=no. Wait **sit=landed** in Flight, then
+  `recover()` when `recoverable=yes` **before** dismiss. Low flying
+  ≤250 m only if recoverable. Post-dismiss `pre_launch` is not
+  `recovery@EarthFlew`. Leftover PRELAUNCH matching hop name: **phase**,
+  not a second Hangar.
 
 **Open (aero):** FAR hops 10-30-35Z wreck apo 7.6 km / 10-42-32Z living
-apo 7.5 km / 10-47-59Z and 11-09-13Z lithobrake apo 7.5 km at 75 m.
-Envelope held. RealChute still locked. RealHeat not the story this fly.
+apo 7.5 km / 10-47-59Z and 11-09-13Z lithobrake flying 75 m / 11-23-25Z
+lithobrake **landed** 79 m apo 7.4 km / 11-28-40Z last flying 78.6 m
+apo 7.4 km (dismiss miss) / 11-40-22Z lithobrake **landed** 76 m apo
+7.7 km (banked). Envelope held. RealChute still locked. RealHeat not
+the story this fly.
 
 ---
 

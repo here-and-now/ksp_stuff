@@ -12,15 +12,17 @@ expect_peri_min: -500000
 expect_apo_max: 50000
 craft: kspstuff-hop-flea-pbc
 hop_apo: 18000
-go: yes
+go: wait
 recommended: python main.py hop
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 need_builder: none
 need_science: none
 need_stack: none
-# Sit: living hop. Start FlyingLow geiger leftover 2.10 on kerbalism-geigercounter.
-# Catalog 497 s is not a hang expect. Recover HD (recovery@EarthFlew leftover 0.17).
-# Hangar hop-flea-pbc (KSC empty; hop refuses pad/geiger names). Do not pad.
-# hop_apo 18 km is a cut wish. OffPlan lid 50 km.
-# FAR apo 7.5 km held (10-42-32Z living 199 m; 10-47-59Z / 11-09-13Z lithobrake 75 m).
-# Lars 11-09-13Z: recover() while still Flight at ≤250 m; post-dismiss pre_launch is not the bank.
+# Sit: 11-40-22Z hop clean. exit 0. sci 4.79 → 5.33 (+0.54). KSC empty. hangar none.
+# Recover sit=landed recoverable=yes then recovered sit=landed — before dismiss.
+# FAR apo 7.7 km, lithobrake landed 76 m, MET 67, EC 279→275. Flea spent.
+# Next: Hangar kspstuff-hop-flea-pbc. python main.py hop. Do not phase leftover.
+# Start FlyingLow geiger leftover 1.40 on kerbalism-geigercounter. Catalog 497 not a hang.
+# Skip recovery crumbs 0.028. Skip thermo 0.045. Do not pad. Do not Hangar geiger-pbc.
+# hop_apo 18 km is a cut wish. OffPlan lid 50 km. Never rails.
+# Recover: wait sit=landed in Flight, then recover() when recoverable=yes BEFORE dismiss.

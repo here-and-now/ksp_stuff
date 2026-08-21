@@ -147,3 +147,6 @@ Gene: 10-42-32Z living recover. sci +1.13. FlyingLow geiger leftover 2.45. Same 
 Jebediah: copy, fresh Hangar hop-flea-pbc, start FlyingLow geiger on kerbalism-geigercounter, recover() HD after hop down
 Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover HD, MET-still+q=0 is down now
 Gene: 11-09-13Z hop miss. exit 0 recovered lied (pre_launch after dismiss). sci 4.49. Lars recover() while Flight ≤250 m. Same hop. python main.py hop.
+Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover() still Flight at <=250 m
+Jebediah: copy, fresh Hangar hop-flea-pbc, FlyingLow geiger on kerbalism-geigercounter, recover in Flight
+Jebediah: copy, leftover hop-flea-pbc PRELAUNCH, phase hop skip Hangar, FlyingLow geiger on kerbalism-geigercounter, wait sit=landed then recover() before dismiss

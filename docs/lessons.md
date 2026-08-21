@@ -558,3 +558,25 @@ python main.py pad
   ≤250 m or already down, **before** `go_space_center`. Do not treat
   post-dismiss `pre_launch` recoverable as hop HD. Dismiss without a
   Flight `recover()` still aborts. Modules: `hop.py`.
+
+## 2026-08-21T11-28-40Z-hop — wait landed in Flight
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T11-28-40Z-hop`). Hangar `kspstuff-hop-flea-pbc`. Card
+  FlyingLow geiger on `kerbalism-geigercounter`. F-013 unlocked, on
+  craft. FAR+RealHeat+RealChute; chute locked.
+- **Symptom:** exit 2, `ABORT not recoverable`. Geiger started, dwell.
+  `hop recover sit=flying recoverable=no` through airborne / down /
+  unpause / paused wreck / finish wreck. `hop dismissed flight results`
+  then abort. sci 4.7898 unchanged. leftover recovery@EarthFlew 0.167,
+  geiger FlyingLow 1.747. samples 53, wall 84.8 s, last flying alt 78.6
+  MET 64.3 EC 9.9. Contrast 11-23-25Z: `sit=landed recoverable=yes`
+  before dismiss, sci +0.30.
+- **Cause:** `_force_recover` / `_finish_hd` called `recover()` while
+  still flying recoverable=no (throws), then `go_space_center` dismissed
+  Flight Results. 11-23-25Z banked only after sit=landed in Flight.
+  Dismiss is not a living recover.
+- **Fix:** Wait `sit=landed` (or splashed) in Flight, then `recover()`.
+  Low flying `recover()` only when recoverable. Do not
+  `go_space_center` on flying recoverable=no. Frozen MET still unpauses.
+  Modules: `hop.py`.

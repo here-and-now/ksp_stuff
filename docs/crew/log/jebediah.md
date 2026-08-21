@@ -31,3 +31,6 @@
 - 2026-08-21T10-42-32Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T10-42-32Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T10-42-32Z-hop-review.md
 - 2026-08-21T10-47-59Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T10-47-59Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T10-47-59Z-hop-review.md
 - 2026-08-21T11-09-13Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T11-09-13Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T11-09-13Z-hop-review.md
+- 2026-08-21T11-23-25Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T11-23-25Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T11-23-25Z-hop-review.md
+- 2026-08-21T11-28-40Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T11-28-40Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T11-28-40Z-hop-review.md
+- 2026-08-21T11-40-22Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T11-40-22Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T11-40-22Z-hop-review.md

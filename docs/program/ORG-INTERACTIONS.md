@@ -3,9 +3,10 @@
 Date: 2026-08-21. Tree: `letsgrok` gym (`KSP-rss`), before RO. Method:
 six parallel **explore** children (protocol, knowledge, helm, specialist
 desks, dual corpus, F-items) plus parent synthesis. Isolation `none`,
-depth 1. This file is **design input**, not CHARTER. Campaign
-postmortem of the pad sit remains `ORG.md`. Speed slice remains
-`SPEED.md`. Handoffs remain `PROTOCOL.md`.
+depth 1. This file is **design input**, not CHARTER. Os answers + locked next
+house: [`NEXT-ORG.md`](NEXT-ORG.md). Campaign postmortem of the pad
+sit remains `ORG.md`. Speed slice remains `SPEED.md`. Handoffs remain
+`PROTOCOL.md`.
 
 **Thesis.** Keep the **institution**. Throw out the **mission corpus**.
 Do not clone dossiers, Flea crafts, or the three copies of Gene’s

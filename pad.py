@@ -81,7 +81,7 @@ def pad_science_ids() -> tuple[str, ...]:
 
 
 def _uplink_tick(ctx: Ctx) -> None:
-    """Take helm radio. abort-class raises. Do not Toggle or stage."""
+    """Take uplink. abort-class raises. Do not Toggle or stage."""
     cmd = take()
     if cmd is None:
         return
@@ -491,12 +491,19 @@ def install_and_launch(session: object, *, recover: bool = True) -> None:
     if hangar is None:
         raise MissionAbort("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
     if src.is_file():
-        folder = hangar.ships("VAB")
-        folder.mkdir(parents=True, exist_ok=True)
-        dest = folder / f"{wanted}.craft"
-        dest.write_bytes(src.read_bytes())
-        log.info("pad Hangar %s uncrewed", wanted)
-        hangar.launch(session, wanted, recover=recover, uncrewed=True)
+        from hangar import install_signed
+        from session import SessionError
+
+        try:
+            install_signed(
+                session,
+                wanted,
+                hangar=hangar,
+                recover=recover,
+                src=src,
+            )
+        except SessionError as exc:
+            raise MissionAbort(str(exc)) from exc
         return
     if wanted != TEMPLATE and TEMPLATE not in wanted:
         raise MissionAbort(

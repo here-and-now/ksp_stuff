@@ -30,10 +30,33 @@ class TechNode:
 
 
 @dataclass(slots=True)
+class ScienceSubject:
+    id: str
+    sci: float
+    cap: float
+    scv: float = 0.0
+
+    @property
+    def leftover(self) -> float:
+        if self.cap <= 0:
+            return 0.0
+        return max(0.0, self.cap - self.sci)
+
+
+@dataclass(slots=True)
+class SaveVessel:
+    name: str
+    sit: str
+    type: str
+    landed: bool
+
+
+@dataclass(slots=True)
 class Research:
     science: float | None = None
     unlocked: tuple[str, ...] = ()
     parts_by_node: dict[str, tuple[str, ...]] = field(default_factory=dict)
+    subjects: tuple[ScienceSubject, ...] = ()
 
 
 @dataclass
@@ -47,6 +70,7 @@ class World:
     catalog: Catalog
     tree: dict[str, TechNode]
     save_path: Path | None = None
+    vessels: tuple[SaveVessel, ...] = ()
 
     @property
     def hangar(self) -> Hangar:
@@ -79,12 +103,14 @@ def load_world(
     tree_url = ""
     home_hint = "unknown"
     research = Research()
+    vessels: tuple[SaveVessel, ...] = ()
     if save_path.is_file():
         text = save_path.read_text(encoding="utf-8", errors="replace")
         mode = _game_mode(text)
         tree_url = _tech_tree_url(text)
         home_hint = _home_hint(text)
         research = parse_research(text)
+        vessels = tuple(parse_vessels(text))
     else:
         log.warning("no persistent.sfs at %s", save_path)
 
@@ -101,6 +127,7 @@ def load_world(
         catalog=catalog,
         tree=tree,
         save_path=save_path if save_path.is_file() else None,
+        vessels=vessels,
     )
 
 
@@ -240,7 +267,104 @@ def parse_research(text: str) -> Research:
         science=sci,
         unlocked=tuple(unlocked),
         parts_by_node={k: tuple(v) for k, v in parts_by_node.items()},
+        subjects=tuple(parse_science_subjects(block)),
     )
+
+
+def parse_science_subjects(block: str) -> list[ScienceSubject]:
+    """R&D ``Science { id sci cap scv }`` — leftover = cap − sci."""
+    out: list[ScienceSubject] = []
+    current: dict[str, str] = {}
+    in_sci = False
+    depth = 0
+    for line in block.splitlines():
+        s = line.strip()
+        if s == "Science":
+            in_sci = True
+            current = {}
+            depth = 0
+            continue
+        if not in_sci:
+            continue
+        if s == "{":
+            depth += 1
+            continue
+        if s == "}":
+            depth -= 1
+            if depth <= 0:
+                in_sci = False
+                sid = current.get("id", "")
+                if sid:
+                    out.append(
+                        ScienceSubject(
+                            id=sid,
+                            sci=_sf(current.get("sci"), 0.0),
+                            cap=_sf(current.get("cap"), 0.0),
+                            scv=_sf(current.get("scv"), 0.0),
+                        )
+                    )
+                current = {}
+            continue
+        if "=" in s:
+            key, _, val = s.partition("=")
+            current[key.strip()] = val.strip()
+    return out
+
+
+def _sf(raw: str | None, default: float) -> float:
+    if not raw:
+        return default
+    try:
+        return float(raw.split("//", 1)[0].strip())
+    except ValueError:
+        return default
+
+
+def parse_vessels(text: str) -> list[SaveVessel]:
+    """FLIGHTSTATE vessels. Skip RSS asteroids (type SpaceObject). F-006."""
+    idx = text.find("FLIGHTSTATE")
+    chunk = text[idx:] if idx >= 0 else text
+    out: list[SaveVessel] = []
+    current: dict[str, str] = {}
+    in_v = False
+    depth = 0
+    for line in chunk.splitlines():
+        s = line.strip()
+        if s == "VESSEL":
+            in_v = True
+            current = {}
+            depth = 0
+            continue
+        if not in_v:
+            continue
+        if s == "{":
+            depth += 1
+            continue
+        if s == "}":
+            depth -= 1
+            if depth <= 0:
+                in_v = False
+                typ = current.get("type", "")
+                if typ.lower() not in {"spaceobject", "flag", "eva"}:
+                    name = current.get("name", "")
+                    if name:
+                        out.append(
+                            SaveVessel(
+                                name=name,
+                                sit=current.get("sit", "?"),
+                                type=typ or "?",
+                                landed=current.get("landed", "").lower()
+                                in {"true", "1"},
+                            )
+                        )
+                current = {}
+            continue
+        if depth == 1 and "=" in s:
+            key, _, val = s.partition("=")
+            k = key.strip()
+            if k in {"name", "sit", "type", "landed"} and k not in current:
+                current[k] = val.strip()
+    return out
 
 
 def unlocked_parts(world: World) -> list[PartDef]:
@@ -376,14 +500,15 @@ def _format_part_line(part: PartDef) -> str:
     )
 
 
-def _instrument_parts(world: World, eid: str) -> list[PartDef]:
+def instrument_parts(world: World, eid: str) -> list[PartDef]:
     """Science-category parts that *are* this experiment (Goo, 2HOT, Geiger)."""
     out = [
         p
         for p in world.catalog.parts.values()
         if p.category.lower() == "science" and eid in p.experiments
     ]
-    out.sort(key=lambda p: (p.tech, p.name))
+    unlocked = set(world.research.unlocked)
+    out.sort(key=lambda p: (0 if p.tech in unlocked else 1, p.tech, p.name))
     return out
 
 
@@ -415,7 +540,7 @@ def format_hosted(world: World, parts: list[PartDef]) -> str:
     ]
     for eid in eids:
         hosts = [p for p in parts if eid in p.experiments and p.category.lower() != "science"]
-        instruments = _instrument_parts(world, eid)
+        instruments = instrument_parts(world, eid)
         host_s = ",".join(f"{p.name}({p.title})" for p in hosts) or "(none in this list)"
         if instruments:
             on_stack = [p for p in instruments if p.name in {x.name for x in parts}]
@@ -471,7 +596,7 @@ def _format_search_hosted(world: World, q: str, *, unlocked: bool) -> str:
         hosts = _host_parts(world, eid)
         if unlocked:
             hosts = [p for p in hosts if p.tech in unlocked_nodes]
-        inst = _instrument_parts(world, eid)
+        inst = instrument_parts(world, eid)
         joined = ",".join(p.name for p in hosts[:8])
         host_s = joined or ("(none unlocked)" if unlocked else "(none)")
         lines.append(f"  {eid:28} hosted_on={host_s}")

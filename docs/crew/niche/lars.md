@@ -1,6 +1,6 @@
 # Niche — Lars Grokman (private until conference)
 
-Field: the helm clock. Sequencing. What MET, Toggle, scene, and recover
+Field: the flight clock. Sequencing. What MET, Toggle, scene, and recover
 actually do.
 
 Thesis: one cause, one file. Wall-clock is not Kerbal time. A Flea this

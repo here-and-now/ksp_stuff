@@ -400,7 +400,7 @@ def _maybe_shot(snap: Snapshot) -> None:
 
 
 def _record_run(session: Any, snap: Snapshot) -> None:
-    """Write this pulse to the seated jsonl. No-op if helm has not started."""
+    """Write this pulse to the seated jsonl. No-op if flight has not started."""
     try:
         from flightlog import record
     except Exception:

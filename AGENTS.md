@@ -24,7 +24,7 @@ python main.py tech start
 python main.py parts --unlocked
 python main.py status          # one snapshot
 python main.py screenshot      # KSP window PNG (off-focus / other workspace)
-python main.py screenshot --name stuck-<stem>  # Gene / helm: one still when logs cannot explain the scene; read the PNG
+python main.py screenshot --name stuck-<stem>  # Gene / Commander: one still when logs cannot explain the scene; read the PNG
 # live pad/hop also writes screenshots/runs/<stamp>-<command>/ (~1 min + events; do not read)
 ```
 
@@ -89,15 +89,15 @@ the matching `.grok/agents/*.md` as the prompt body.
 second `Session` — that is fine. Never two `phase`/`pad`
 processes (`docs/program/flight.lock`).
 
-Style kv in portraits is parsed above `## Log` only. `apply_ascent` is
-not wired from pad/hop. Telem gates always win. Logs:
+Portrait kv is only the header (before the first `##`). Style numbers
+are not applied to flight. Telem gates always win. Logs:
 `docs/crew/log/<slug>.md`.
 
 **Radio + plan:** Gene owns `docs/program/plan.md` and
 `docs/program/briefing.md` **between exits**. Uplink
-(`docs/program/uplink.md`) is last-write-wins; **helm takes**
+(`docs/program/uplink.md`) is last-write-wins; **the Commander takes**
 (`phase` / `pad`, not `status`). `loop.md` is talk, not the
-helm. `helm-tech.md` is Commander → tech (`note-tech`). Bound+fueled `abort` is refused. Parent does **not**
+stick. `note-tech.md` is Commander → tech (`note-tech`). Bound+fueled `abort` is refused. Parent does **not**
 patch `.py` in the same turn — spawn R&D.
 
 ---
@@ -111,7 +111,7 @@ same file. Lock live → no Gus/Linus/Gene.
 Parent runs **`python main.py desk`** once per conference turn (disk,
 no kRPC). That **writes `docs/program/desk.md`**. Packet `read:` is
 that file + ≤2 role paths. Children do not re-run `world`/`tech`/`parts`
-if desk is this sit. `leftover:` is the Hangar call. Missing `f013` on
+if desk is this sit. `hangar:` is the Hangar call. Missing `f013` on
 bind / capable / `go:` / Lars miss → wait. Gene **max two hires per
 sit** (draft iff unnamed, then merge).
 
@@ -163,7 +163,7 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   a **clean** Learn → spawn Verena **once** with that `live_run`.
   Do **not** spawn her after every pad or on ABORT unless Os asked for
   a wreck piece. She writes from disk. On `shot: now|dwell|after-recover`
-  the **parent** grabs the KSP window (no kRPC, not the helm):
+  the **parent** grabs the KSP window (no kRPC, not the Commander):
 
   `python main.py screenshot --name <slug>`
 

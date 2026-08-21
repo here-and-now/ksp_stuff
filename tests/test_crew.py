@@ -15,8 +15,8 @@ class TestCrew(unittest.TestCase):
         text = (
             "duty: ceo\n"
             "energy_cap: 1.25\n"
-            "## Log\n"
-            "- 2026-08-20 — go: wait leftover\n"
+            "## Notes\n"
+            "go: wait leftover\n"
         )
         kv = _parse_kv(text)
         self.assertEqual(kv["duty"], "ceo")

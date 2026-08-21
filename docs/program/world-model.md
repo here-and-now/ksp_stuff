@@ -101,8 +101,8 @@ Still true as ops:
 
 - `desk.md` is the sit. Children do not re-run `world`/`tech`/`parts`
   if that file is this sit.
-- `leftover:` is the Hangar call (`none` / `recover <name>` /
-  `hangar-blocked`). Disk cannot see crash UI (`scene: unknown`).
+- `hangar:` is the Hangar call (`none` / `recover <name>` /
+  `blocked`). Disk cannot see crash UI (`scene: unknown`).
 - `f013` (instrument, tech, unlocked, on_craft, host) on every bind /
   capable / `go:` / miss. Missing line = wait. PAW host ≠ instrument.
 - `agents_md: false`. Job card + desk.md. Portrait logs:

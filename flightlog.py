@@ -1,6 +1,6 @@
 """On-disk 1 Hz flight recorder. Not for the TUI.
 
-One **run** is one helm command (`python main.py pad`). Files live
+One **run** is one Commander command (`python main.py pad`). Files live
 under the seated mission ``logs/``. Stamp is Earth UTC with seconds
 plus Kerbal UT/MET in the jsonl start event.
 """
@@ -110,7 +110,7 @@ def locked_flight() -> str:
 
 
 class WriterLockError(RuntimeError):
-    """A second phase/mun/recover tried to take the helm."""
+    """A second pad/phase tried to take the stick."""
 
 
 def _pid_alive(pid: int) -> bool:
@@ -141,7 +141,7 @@ def acquire_lock(command: str) -> None:
             raise WriterLockError(
                 f"writer already running pid={old_pid} command={old_cmd}"
             )
-        log.info("stale flight.lock pid=%s — taking helm", old_pid)
+        log.info("stale flight.lock pid=%s — taking the stick", old_pid)
     LOCK.write_text(
         f"pid={os.getpid()}\ncommand={command}\nflight={_flight}\n",
         encoding="utf-8",

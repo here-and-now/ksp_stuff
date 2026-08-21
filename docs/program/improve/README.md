@@ -1,6 +1,6 @@
 # Improve queue — RSI bus
 
-House friction, not helm physics (`docs/lessons.md`). Anyone already
+House friction, not flight physics (`docs/lessons.md`). Anyone already
 spawned may return `improve:`. Parent numbers `I-NNN`. **Mortimer
 Grokman, CEO** last-writes the house when a trip fires. Gene still
 owns `go:`.

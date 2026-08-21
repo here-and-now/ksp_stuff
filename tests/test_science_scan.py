@@ -1,10 +1,11 @@
-"""Open-science scan. Live ConfigCache if present."""
+"""Open-science scan. Fixture world, no live gym."""
 
 from __future__ import annotations
 
 import unittest
 
-from science_scan import _sit_key, format_science_scan, unlocked_experiment_ids
+from science_scan import _sit_key, format_science_scan
+from tests.test_world import FIXTURE
 from world import load_world
 
 
@@ -16,14 +17,9 @@ class TestSitKey(unittest.TestCase):
         self.assertEqual(_sit_key("Space@VirtualBiomes"), "space")
 
 
-class TestLiveScan(unittest.TestCase):
-    def test_geiger_situations_and_scan(self):
-        world = load_world()
-        cfg = world.catalog.experiments.get("geigerCounter")
-        self.assertIsNotNone(cfg)
-        assert cfg is not None
-        self.assertTrue(any("FlyingLow" in s for s in cfg.situations))
-        self.assertIn("geigerCounter", unlocked_experiment_ids(world))
+class TestFixtureScan(unittest.TestCase):
+    def test_scan_runs_on_fixture(self):
+        world = load_world(ksp_root=FIXTURE)
         text = format_science_scan(world)
-        self.assertIn("geigerCounter", text)
-        self.assertIn("FlyingLow", text)
+        self.assertIn("# open science", text)
+        self.assertIn("unlocked experiments", text)

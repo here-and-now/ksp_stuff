@@ -1,17 +1,16 @@
 """Persistent program staff. Markdown in docs/crew/, not a package.
 
-Style keys are parsed from the portrait **above** ``## Log`` only.
-``apply_ascent`` is not wired from pad/hop; Telem gates always win.
-Logs live in ``docs/crew/log/``, not the voice file.
+Portrait kv is only the header (before the first ``##``). Style numbers
+are not applied to flight. Logs live in ``docs/crew/log/``.
 """
 
 from __future__ import annotations
 
 import logging
 import re
-from dataclasses import dataclass, fields, replace
+from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import Any
+
 
 log = logging.getLogger("kspstuff")
 
@@ -76,7 +75,7 @@ class Person:
 def _parse_kv(text: str) -> dict[str, str]:
     out: dict[str, str] = {}
     for raw in text.splitlines():
-        if raw.startswith("## Log"):
+        if raw.startswith("## "):
             break
         line = raw.strip()
         if not line or line.startswith("#") or ":" not in line:
@@ -158,18 +157,6 @@ def current_assignment() -> dict[str, str]:
 
 def current_pilot() -> Person:
     return load_person(current_assignment()["pilot"])
-
-
-def apply_ascent(cfg: Any, style: Style) -> Any:
-    """Copy style onto an AscentConfig. Unknown fields stay as the caller set."""
-    return replace(
-        cfg,
-        target_altitude=style.target_altitude,
-        max_q=style.max_q,
-        energy_cap=style.energy_cap,
-        turn_start_altitude=style.turn_start_altitude,
-        turn_end_altitude=style.turn_end_altitude,
-    )
 
 
 def append_log(person: Person, line: str) -> None:

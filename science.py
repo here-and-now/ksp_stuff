@@ -825,7 +825,7 @@ def card_wait_line(
     sit: str | None = None,
     ec: float | None = None,
 ) -> str:
-    """Why helm is sitting: experiment remaining / running, plus clock.
+    """Why the Commander is sitting: experiment remaining / running, plus clock.
 
     Not a timer. Commander reads this. Empty card → ``wait science none``.
     """
@@ -836,7 +836,15 @@ def card_wait_line(
         run = "1" if status_running(module) else "0"
         st = _status_text(module) or "?"
         part_s = _part_stem(part) or _part_name(part) or "?"
-        bits.append(f"{eid} part={part_s} run={run} rem={rem_s} {st}")
+        if rem is not None and rem <= 0 and run == "1":
+            file_s = "recording"
+        elif rem is not None and rem <= 0:
+            file_s = "spent"
+        else:
+            file_s = "open"
+        bits.append(
+            f"{eid} part={part_s} run={run} rem={rem_s} file={file_s} {st}"
+        )
     body = ",".join(bits) if bits else "none"
     extra: list[str] = []
     if met is not None and met == met:
@@ -1147,7 +1155,7 @@ _SPLASH_SIT = frozenset(
 
 
 def card_flying_ids(text: str) -> tuple[str, ...]:
-    """Ids helm may start airborne. Splash/landed rows are not a hop start."""
+    """Ids the Commander may start airborne. Splash/landed rows are not a hop start."""
     found: list[str] = []
     seen: set[str] = set()
     section = ""
@@ -1204,7 +1212,7 @@ def card_flying_ids(text: str) -> tuple[str, ...]:
 
 
 def card_splash_ids(text: str) -> tuple[str, ...]:
-    """Ids helm may start when splashed. FlyingLow is not a splash start."""
+    """Ids the Commander may start when splashed. FlyingLow is not a splash start."""
     found: list[str] = []
     seen: set[str] = set()
     section = ""
@@ -1254,7 +1262,7 @@ def card_splash_ids(text: str) -> tuple[str, ...]:
 
 
 def card_pad_ids(text: str) -> tuple[str, ...]:
-    """Ids helm may start on the pad. FlyingLow / splash are not a pad start."""
+    """Ids the Commander may start on the pad. FlyingLow / splash are not a pad start."""
     found: list[str] = []
     seen: set[str] = set()
     section = ""

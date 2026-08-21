@@ -32,7 +32,7 @@ Environment memory is **query tools**, not this file:
 
 ```bash
 python main.py desk                    # writes docs/program/desk.md (lock, leftover, f013, sci, stack)
-python main.py helm-card               # seated sit map for helm
+python main.py sit-card                # seated sit map for the Commander
 python main.py world
 python main.py tech
 python main.py parts --unlocked          # placeable parts; hosts=N is PAW, not extra parts
@@ -52,8 +52,8 @@ before the part is unlocked (F-013). Read-only exploration of parts and
 science modules is allowed for Gene, Lars, Mortimer, and Gus.
 
 ```bash
-python main.py screenshot --name stuck-<stem>   # Gene / helm, stuck only; read the PNG
-# helm also writes screenshots/runs/<stamp>-<command>/ (~1 min + events; do not read)
+python main.py screenshot --name stuck-<stem>   # Gene / Commander, stuck only; read the PNG
+# flight also writes screenshots/runs/<stamp>-<command>/ (~1 min + events; do not read)
 ```
 
 Meaning, horizon, story: `docs/program/world-model.md` (Gene chairs
@@ -65,12 +65,12 @@ Improve queue: `docs/program/improve/`. Job cards: `.grok/agents/*.md`
 
 ## How it runs
 
-Three loops. Many **missions**, one seated helm.
-Planning is a **conference on files**. Flying is Gene → helm.
+Three loops. Many **missions**, one seated Commander.
+Planning is a **conference on files**. Flying is Gene → Commander.
 
 | Name | Title | Owns | Never |
 |---|---|---|---|
-| **Jeb / seated helm** | Commander | flying `phase` / `pad`; `uplink.md`; `flight.lock` | a second writer |
+| **Jeb / seated Commander** | Commander | flying `phase` / `pad`; `uplink.md`; `flight.lock` | a second writer |
 | **Gene Grokman** | Flight Director | seated dossier, briefing, `go:` | `.py`, `.craft`, stick |
 | **Gus Grokman** | VP Build | `.craft`, `vab.md` | Hangar, uplink, `.py` |
 | **Linus Grokman** | Director of Research | `science.md`, experiment card, horizon layer | Commander radio, Hangar |
@@ -78,7 +78,7 @@ Planning is a **conference on files**. Flying is Gene → helm.
 | **Wernher Grokman** | Avionics | kRPC 0.6 traps | craft, sequencing |
 | **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; `.py` except via `need_qol` → Lars |
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
-| **Verena Grokman** | Communications | `README.md`, `docs/press/` | helm, Hangar, uplink, `.py` |
+| **Verena Grokman** | Communications | `README.md`, `docs/press/` | stick, Hangar, uplink, `.py` |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
 
 Linus briefs **Gene** (what / when / which part). Gene copies that into
@@ -93,7 +93,7 @@ the story layer. Disagreement → Gene `go: wait`.
 
 Parent packet `read:` is **`docs/program/desk.md`** + ≤2 role paths.
 Children do not re-run `world`/`tech`/`parts` if desk is this sit.
-`leftover:` on desk **is** the Hangar call. Missing `f013` on bind /
+`hangar:` on desk **is** the Hangar call (`none` / `recover` / `blocked`). Missing `f013` on bind /
 capable / `go:` / Lars miss → wait.
 
 **Conference (parent, depth 1, different files):** Linus opportunities →
@@ -129,7 +129,7 @@ goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
 
 - `docs/program/ship.md` — last heartbeat + `as_of` + flight id
 - `python main.py radio` — Gene's inbox
-- `docs/program/uplink.md` — helm *takes*
+- `docs/program/uplink.md` — Commander *takes*
 - `docs/missions/<id>/briefing.md` + `loop.md` — Gene → that pilot
 - `python main.py seat <id>` / `missions` / `vab` / `science` / `pad`
 

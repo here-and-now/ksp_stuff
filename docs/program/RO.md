@@ -2,7 +2,7 @@
 
 Do **not** seat this tree until a **new science sandbox** exists and
 KSP has finished the first ModuleManager boot. Gym (`KSP-rss` /
-letsgrok) stays default until then. No Gene, no helm, no Mortimer
+letsgrok) stays default until then. No Gene, no Commander, no Mortimer
 org-hire against RO until `desk` sees this save.
 
 ## Already on disk (`~/Games/KSP-RO`)

@@ -9,7 +9,7 @@ titles. Drop RAF/spy/radio-compact.
 | **1235Z** | **Retired** as speech. Earth UTC with seconds: `2026-08-20T12-35-42Z`. |
 | **dossier** | Intel-ish. Folder is a **mission** (`docs/missions/jebediah/`). |
 | **handoff** | Shift-change. File is `last-flight.md`. |
-| **helm** | Navy/MCC. Keep for the **writer process**; speech is Commander. |
+| **Commander** | Seated writer process (`phase` / `pad`). Speech is name + title. |
 | **uplink** | RF to a spacecraft. File is a stick note. Keep until it hurts. |
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |
@@ -23,11 +23,11 @@ titles. Drop RAF/spy/radio-compact.
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
 | **improve:** | RSI suggestion. Parent files `I-NNN`. Mortimer on friction trip. |
 | **ask:** | Ground question for another desk. Parent files it; one reply wave if it blocks `go:`. |
-| **helm-tech.md** | Commander → Lars/Gus/Wernher. `python main.py note-tech`. Loop, not the plan. |
-| **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, leftover, f013, sci, stack. Packet food. Gitignored live tape. |
+| **note-tech.md** | Commander → Lars/Gus/Wernher. `python main.py note-tech`. Loop, not the plan. |
+| **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
 | **KSP-RO** | `~/Games/KSP-RO`. Express RO + Kerbalism-RO + RONoCareer. Seat with `KSPSTUFF_KSP` after first boot + `letsgrok` sandbox. See `RO.md`. |
 | **science-scan** | Linus. GameData Situation + save leftovers vs REACH. kRPC has no subject list. |
-| **helm-card** | `python main.py helm-card` — seated sit map for Jeb. |
+| **sit-card** | `python main.py sit-card` — seated sit map for the Commander. |
 | **explore:** | Rare field itch (new rocket, stack dive, subject map). Not every Learn. |
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |
 | **tech-unlock** | Catalog CLI (kRPC). 0.6 has no purchase RPC — aborts. Paid node: Mortimer edits the save then `python main.py load rd-<node>`. **Never** `load persistent` (F-014 / I-010). |

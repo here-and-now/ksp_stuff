@@ -1,8 +1,8 @@
-"""One disk snapshot for Gene / Linus / Gus / Lars packets. No kRPC."""
+"""One disk sit for Gene / Linus / Gus / Lars packets. No kRPC."""
 
 from __future__ import annotations
 
-import json
+from dataclasses import dataclass
 from pathlib import Path
 
 from missions import (
@@ -13,36 +13,72 @@ from missions import (
     seated_science_path,
     vab_kv,
 )
+from session import SessionError
 from world import (
+    SaveVessel,
     World,
-    _instrument_parts,
     craft_part_names,
     format_stack,
+    instrument_parts,
     load_world,
 )
 
 LAST_FLIGHT = Path("docs/last-flight.md")
 LOCK = Path("docs/program/flight.lock")
-HELM_TECH = Path("docs/program/helm-tech.md")
-DESK_JSON = Path("docs/program/desk.json")
+NOTE_TECH = Path("docs/program/note-tech.md")
+_LEGACY_NOTE_TECH = Path("docs/program/helm-tech.md")
 DESK_MD = Path("docs/program/desk.md")
-HELM_CARD = Path("docs/program/helm-card.json")
+SIT_CARD = Path("docs/program/sit-card.json")
+
+
+@dataclass(frozen=True, slots=True)
+class F013:
+    eid: str
+    instrument: str
+    tech: str
+    unlocked: str
+    on_craft: str
+    host: str
+
+
+@dataclass(frozen=True, slots=True)
+class DeskSit:
+    lock: str
+    hangar: str
+    active_vessel: str
+    seat: str
+    sci: float | None
+    sci_delta: str
+    unlocked: str
+    capable: str
+    craft: str
+    card: tuple[str, ...]
+    last_command: str
+    last_exit: str
+    last_abort: str
+    review: str
+    note_tech: str
+    f013: tuple[F013, ...]
+    stack: tuple[str, ...]
+    vessels: tuple[str, ...]
+    leftover_science: tuple[str, ...]
+    stack_dump: str
 
 
 def lock_state() -> str:
     return "live" if LOCK.is_file() else "free"
 
 
-def leftover_decision(
+def hangar_call(
     *,
-    vessels: tuple,
+    vessels: tuple[SaveVessel, ...],
     lock: str,
 ) -> tuple[str, str]:
-    """Hangar call from the save. Disk cannot see crash UI (scene unknown)."""
-    ships = list(vessels)
+    """Hangar vs recover from the save. Disk cannot see crash UI."""
+    ships = vessels
     active = ships[0].name if ships else "none"
     if lock == "live":
-        return "hangar-blocked", active
+        return "blocked", active
     if not ships:
         return "none", "none"
     names = ", ".join(v.name for v in ships[:3])
@@ -89,137 +125,203 @@ def latest_review() -> Path | None:
     return files[0] if files else None
 
 
-def experiment_budget(world: World, eid: str) -> str:
-    cfg = world.catalog.experiments.get(eid)
-    if cfg is None:
-        return f"{eid}  (no ExperimentCfg)"
-    dur = ""
-    if (
-        cfg.size_mb
-        and cfg.size_mb < 20
-        and cfg.data_rate
-        and cfg.data_rate > 0
-    ):
-        dur = f" duration_s={cfg.size_mb / cfg.data_rate:.0f}"
-    ec = f" ec_rate={cfg.ec_rate:g}" if cfg.ec_rate else ""
-    mb = f" size_mb={cfg.size_mb:g}" if cfg.size_mb and cfg.size_mb < 20 else ""
-    return f"{eid:28}{dur}{ec}{mb}".rstrip()
-
-
-def leftover_lines(world: World, *, limit: int = 12) -> list[str]:
-    lines = ["# leftover science (cap − sci). Missing id = unstarted."]
-    open_n = 0
-    for sub in world.research.subjects:
-        left = sub.leftover
-        mark = "capped" if left < 0.02 else f"left={left:.3f}"
-        if left < 0.02:
-            continue
-        open_n += 1
-        if open_n <= limit:
-            lines.append(
-                f"  {sub.id:44} sci={sub.sci:.3f}/{sub.cap:.3f} {mark}"
-            )
-    if open_n == 0:
-        lines.append("  (none open in save — unstarted not listed)")
-    return lines
-
-
-def vessel_lines(world: World) -> list[str]:
-    ships = [v for v in world.vessels]
-    lines = [
-        f"# leftover vessels (F-006; skip SpaceObject) n={len(ships)}"
-    ]
-    if not ships:
-        lines.append("  (none — KSC empty of ships; asteroids omitted)")
-        return lines
-    for v in ships[:12]:
-        land = " landed" if v.landed else ""
-        lines.append(f"  {v.name}  sit={v.sit} type={v.type}{land}")
-    return lines
-
-
-def f013_record(world: World, eid: str, stack: list[str]) -> dict[str, str]:
+def f013_for(world: World, eid: str, stack: list[str]) -> F013:
     unlocked = set(world.research.unlocked)
     on = set(stack)
-    inst = _instrument_parts(world, eid)
+    inst = instrument_parts(world, eid)
     if inst:
         p = inst[0]
-        return {
-            "instrument": p.name,
-            "tech": p.tech or "none",
-            "unlocked": "yes" if p.tech in unlocked else "no",
-            "on_craft": "yes" if p.name in on else "no",
-            "host": "none",
-        }
+        return F013(
+            eid=eid,
+            instrument=p.name,
+            tech=p.tech or "none",
+            unlocked="yes" if p.tech in unlocked else "no",
+            on_craft="yes" if p.name in on else "no",
+            host="none",
+        )
     host_name = "none"
     for n in stack:
         part = world.catalog.get(n)
         if part and eid in (part.experiments or []):
             host_name = n
             break
-    return {
-        "instrument": "none",
-        "tech": "none",
-        "unlocked": "n/a",
-        "on_craft": "yes" if host_name != "none" else "no",
-        "host": host_name if host_name != "none" else "PAW",
-    }
+    return F013(
+        eid=eid,
+        instrument="none",
+        tech="none",
+        unlocked="n/a",
+        on_craft="yes" if host_name != "none" else "no",
+        host=host_name if host_name != "none" else "PAW",
+    )
 
 
-def f013_block(world: World, eids: list[str], stack: list[str]) -> list[str]:
-    if not eids:
-        return [
-            "f013:",
-            "  instrument: none",
-            "  tech: none",
-            "  unlocked: n/a",
-            "  on_craft: no",
-            "  host: none",
-        ]
-    rec = f013_record(world, eids[0], stack)
-    lines = [
-        "f013:",
-        f"  instrument: {rec['instrument']}",
-        f"  tech: {rec['tech']}",
-        f"  unlocked: {rec['unlocked']}",
-        f"  on_craft: {rec['on_craft']}",
-        f"  host: {rec['host']}",
-        "# f013 all bound ids (instrument vs host)",
-    ]
-    for eid in eids:
-        r = f013_record(world, eid, stack)
-        lines.append(
-            f"  {eid}  part={r['instrument']} tech={r['tech']} "
-            f"unlocked={r['unlocked']} on_craft={r['on_craft']} host={r['host']}"
-        )
-    return lines
+def _empty_f013() -> F013:
+    return F013(
+        eid="",
+        instrument="none",
+        tech="none",
+        unlocked="n/a",
+        on_craft="no",
+        host="none",
+    )
 
 
-def sci_delta(world: World) -> str:
-    now = world.research.science
+def prior_sci(text: str) -> float | None:
+    for raw in text.splitlines()[:24]:
+        if raw.startswith("sci:") and "delta" not in raw:
+            token = raw.split(":", 1)[1].strip()
+            try:
+                return float(token)
+            except ValueError:
+                return None
+    return None
+
+
+def sci_delta(now: float | None, before: float | None) -> str:
     if now is None:
         return "none"
-    prev = None
-    if DESK_JSON.is_file():
-        try:
-            prev = json.loads(DESK_JSON.read_text(encoding="utf-8")).get("sci")
-        except (OSError, json.JSONDecodeError, TypeError):
-            prev = None
-    if prev is None:
-        return f"{now:.4f} (no prior desk.json)"
-    try:
-        before = float(prev)
-    except (TypeError, ValueError):
-        return f"{now:.4f}"
+    if before is None:
+        return f"{now:.4f} (no prior desk.md)"
     return f"{before:.4f} → {now:.4f} ({now - before:+.4f})"
 
 
-def write_desk_json(world: World) -> None:
-    DESK_JSON.parent.mkdir(parents=True, exist_ok=True)
-    DESK_JSON.write_text(
-        json.dumps({"sci": world.research.science}, indent=2) + "\n",
-        encoding="utf-8",
+def _note_tech_path() -> Path | None:
+    if NOTE_TECH.is_file():
+        return NOTE_TECH
+    if _LEGACY_NOTE_TECH.is_file():
+        return _LEGACY_NOTE_TECH
+    return None
+
+
+def _last_note_tech() -> str:
+    path = _note_tech_path()
+    if path is None:
+        return ""
+    notes = [
+        ln.strip()
+        for ln in path.read_text(encoding="utf-8").splitlines()
+        if ln.startswith("- ")
+    ]
+    return notes[-1][2:] if notes else ""
+
+
+def leftover_science_lines(world: World, *, limit: int = 12) -> tuple[str, ...]:
+    rows: list[str] = []
+    for sub in world.research.subjects:
+        if sub.leftover < 0.02:
+            continue
+        rows.append(
+            f"{sub.id:44} sci={sub.sci:.3f}/{sub.cap:.3f} left={sub.leftover:.3f}"
+        )
+        if len(rows) >= limit:
+            break
+    return tuple(rows)
+
+
+def build_sit(world: World | None = None) -> DeskSit:
+    world = world or load_world()
+    vab = vab_kv()
+    capable = vab.get("capable", "?")
+    try:
+        craft = hangar_craft_name()
+    except SessionError:
+        craft = vab.get("craft", "") or "(none)"
+    sci_path = seated_science_path()
+    card_text = sci_path.read_text(encoding="utf-8") if sci_path.is_file() else ""
+    eids = tuple(card_experiments(card_text))
+    last = {"command": "", "exit": "", "abort": ""}
+    if LAST_FLIGHT.is_file():
+        last = parse_last_flight(LAST_FLIGHT.read_text(encoding="utf-8"))
+    review = latest_review()
+    craft_md = seated_craft_path()
+    names = (
+        craft_part_names(craft_md.read_text(encoding="utf-8"))
+        if craft_md.is_file()
+        else []
     )
+    lock = lock_state()
+    hangar, active = hangar_call(vessels=world.vessels, lock=lock)
+    now = world.research.science
+    before = prior_sci(DESK_MD.read_text(encoding="utf-8")) if DESK_MD.is_file() else None
+    rows = leftover_science_lines(world)
+    f013 = tuple(f013_for(world, eid, names) for eid in eids) or (_empty_f013(),)
+    return DeskSit(
+        lock=lock,
+        hangar=hangar,
+        active_vessel=active,
+        seat=seated_id(),
+        sci=now,
+        sci_delta=sci_delta(now, before),
+        unlocked=",".join(world.research.unlocked) or "(none)",
+        capable=capable,
+        craft=craft,
+        card=eids,
+        last_command=last["command"],
+        last_exit=last["exit"],
+        last_abort=last["abort"],
+        review=review.as_posix() if review else "none",
+        note_tech=_last_note_tech(),
+        f013=f013,
+        stack=tuple(names),
+        vessels=tuple(v.name for v in world.vessels[:12]),
+        leftover_science=rows,
+        stack_dump=(
+            format_stack(world, names, label=f"seated {seated_id()}").rstrip()
+            if names
+            else ""
+        ),
+    )
+
+
+def format_sit(sit: DeskSit) -> str:
+    sci_s = f"{sit.sci:.4f}" if sit.sci is not None else "?"
+    rec = sit.f013[0]
+    lines = [
+        f"lock: {sit.lock}",
+        "scene: unknown",
+        f"active_vessel: {sit.active_vessel}",
+        f"hangar: {sit.hangar}",
+        f"seat: {sit.seat}",
+        f"sci: {sci_s}",
+        f"sci_delta: {sit.sci_delta}",
+        f"unlocked: {sit.unlocked}",
+        f"capable: {sit.capable}",
+        f"craft: {sit.craft}",
+        f"card: {','.join(sit.card) if sit.card else 'none'}",
+        (
+            f"last: command={sit.last_command or '?'} "
+            f"exit={sit.last_exit or '?'} abort={sit.last_abort or 'none'}"
+        ),
+        f"review: {sit.review}",
+        "f013:",
+        f"  instrument: {rec.instrument}",
+        f"  tech: {rec.tech}",
+        f"  unlocked: {rec.unlocked}",
+        f"  on_craft: {rec.on_craft}",
+        f"  host: {rec.host}",
+    ]
+    if sit.note_tech:
+        lines.append(f"note-tech: {sit.note_tech}")
+    if sit.card:
+        lines.append("# f013 bound ids")
+        for row in sit.f013:
+            lines.append(
+                f"  {row.eid}  part={row.instrument} tech={row.tech} "
+                f"unlocked={row.unlocked} on_craft={row.on_craft} host={row.host}"
+            )
+    lines.append(f"# leftover vessels n={len(sit.vessels)}")
+    if sit.vessels:
+        lines.extend(f"  {name}" for name in sit.vessels)
+    else:
+        lines.append("  (none — KSC empty of ships; asteroids omitted)")
+    lines.append("# leftover science (cap − sci). Missing id = unstarted.")
+    if sit.leftover_science:
+        lines.extend(f"  {row}" for row in sit.leftover_science)
+    else:
+        lines.append("  (none open in save — unstarted not listed)")
+    if sit.stack_dump:
+        lines.append(sit.stack_dump)
+    return "\n".join(lines) + "\n"
 
 
 def write_desk_md(text: str) -> None:
@@ -228,133 +330,51 @@ def write_desk_md(text: str) -> None:
 
 
 def format_desk(world: World | None = None) -> str:
-    world = world or load_world()
-    sci = world.research.science
-    sci_s = f"{sci:.4f}" if sci is not None else "?"
-    unlocked = ",".join(world.research.unlocked) or "(none)"
-    vab = vab_kv()
-    capable = vab.get("capable", "?")
-    try:
-        craft = hangar_craft_name()
-    except Exception:
-        craft = vab.get("craft", "") or "(none)"
-    sci_path = seated_science_path()
-    card_text = sci_path.read_text(encoding="utf-8") if sci_path.is_file() else ""
-    eids = card_experiments(card_text)
-    last = {"command": "", "exit": "", "abort": ""}
-    if LAST_FLIGHT.is_file():
-        last = parse_last_flight(LAST_FLIGHT.read_text(encoding="utf-8"))
-    helm = ""
-    if HELM_TECH.is_file():
-        notes = [
-            ln.strip()
-            for ln in HELM_TECH.read_text(encoding="utf-8").splitlines()
-            if ln.startswith("- ")
-        ]
-        helm = notes[-1][2:] if notes else ""
-    review = latest_review()
-    craft_md = seated_craft_path()
-    names = (
-        craft_part_names(craft_md.read_text(encoding="utf-8"))
-        if craft_md.is_file()
-        else []
-    )
-
-    lock = lock_state()
-    leftover, active = leftover_decision(vessels=world.vessels, lock=lock)
-    lines = [
-        f"lock: {lock}",
-        "scene: unknown",
-        f"active_vessel: {active}",
-        f"leftover: {leftover}",
-        f"seat: {seated_id()}",
-        f"sci: {sci_s}",
-        f"sci_delta: {sci_delta(world)}",
-        f"unlocked: {unlocked}",
-        f"capable: {capable}",
-        f"craft: {craft}",
-        f"card: {','.join(eids) if eids else 'none'}",
-        (
-            f"last: command={last['command'] or '?'} "
-            f"exit={last['exit'] or '?'} abort={last['abort'] or 'none'}"
-        ),
-        f"review: {review.as_posix() if review else 'none'}",
-    ]
-    if helm:
-        lines.append(f"helm-tech: {helm}")
-    lines.extend(vessel_lines(world))
-    lines.extend(leftover_lines(world))
-    lines.append("# experiment budgets (catalog, not napkin)")
-    seen: set[str] = set()
-    for eid in list(eids) + [
-        "geigerCounter",
-        "kerbalism_TELEMETRY",
-        "temperatureScan",
-        "mysteryGoo",
-    ]:
-        if eid in seen:
-            continue
-        seen.add(eid)
-        lines.append(f"  {experiment_budget(world, eid)}")
-    lines.extend(f013_block(world, eids, names))
-    if names:
-        lines.append(format_stack(world, names, label=f"seated {seated_id()}").rstrip())
-    from science_scan import format_science_scan
-
-    lines.append(format_science_scan(world).rstrip())
-    write_desk_json(world)
-    text = "\n".join(lines) + "\n"
+    sit = build_sit(world)
+    text = format_sit(sit)
     write_desk_md(text)
     return text
 
 
-def helm_card(world: World | None = None) -> dict:
-    """Slots for the seated card + stack. Helm loop, not Gene's plan."""
+def sit_card(world: World | None = None) -> dict:
+    """Bound-card slots for the Commander. Same F013 as desk."""
+    import json
+
     world = world or load_world()
-    try:
-        craft = hangar_craft_name()
-    except Exception:
-        craft = vab_kv().get("craft", "")
-    path = seated_science_path()
-    text = path.read_text(encoding="utf-8") if path.is_file() else ""
-    eids = card_experiments(text)
-    craft_md = seated_craft_path()
-    names = (
-        craft_part_names(craft_md.read_text(encoding="utf-8"))
-        if craft_md.is_file()
-        else []
-    )
-    unlocked = set(world.research.unlocked)
+    sit = build_sit(world)
     slots = []
     do_not: list[str] = []
-    for eid in eids:
-        inst = _instrument_parts(world, eid)
-        part = inst[0].name if inst else "PAW"
-        cfg = world.catalog.experiments.get(eid)
+    for row in sit.f013:
+        if not row.eid:
+            continue
+        cfg = world.catalog.experiments.get(row.eid)
         hang = None
         if cfg and cfg.size_mb and cfg.data_rate and cfg.data_rate > 0:
             hang = round(cfg.size_mb / cfg.data_rate, 1)
-        on = (inst[0].name in names) if inst else True
         slots.append(
             {
-                "eid": eid,
-                "part": part,
+                "eid": row.eid,
+                "part": row.instrument,
                 "hang_s": hang,
-                "on_craft": on,
-                "unlocked": (inst[0].tech in unlocked) if inst else True,
+                "on_craft": row.on_craft == "yes",
+                "unlocked": row.unlocked == "yes",
+                "host": row.host,
             }
         )
-        if inst and inst[0].name not in names:
-            do_not.append(f"{eid} missing {inst[0].name}")
-    if not eids:
-        do_not.append("empty card — do not pad goo+thermo fallback")
+        if row.unlocked != "yes" or row.on_craft != "yes" or row.instrument == "none":
+            do_not.append(
+                f"{row.eid} instrument={row.instrument} "
+                f"unlocked={row.unlocked} on_craft={row.on_craft} host={row.host}"
+            )
+    if not sit.card:
+        do_not.append("empty card — do not pad a fallback")
     card = {
-        "craft": craft,
-        "hangar": True,
+        "craft": sit.craft,
+        "hangar": sit.hangar,
         "slots": slots,
         "do_not_toggle": do_not,
         "wait": "run=1 or UT+=hang_s — rem=0 is not a file (file=recording)",
     }
-    HELM_CARD.parent.mkdir(parents=True, exist_ok=True)
-    HELM_CARD.write_text(json.dumps(card, indent=2) + "\n", encoding="utf-8")
+    SIT_CARD.parent.mkdir(parents=True, exist_ok=True)
+    SIT_CARD.write_text(json.dumps(card, indent=2) + "\n", encoding="utf-8")
     return card

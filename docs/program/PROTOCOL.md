@@ -19,7 +19,7 @@ flies. Gene never rewrites PROTOCOL.
 | Gene | Lars, Vehicle Engineering | `need_stack: <name>` | missing block **+ tree/unlocked parts** | `stack:` `lesson:` |
 | Gene | seated Commander | `go: yes` + `capable: yes` + phase in `blocks.md` | briefing + **exact CLI** | `result:` `exit:` `handoff:` |
 | Helm | Gene | every **live** exit | `last-flight.md` + review | Learn |
-| Helm | Lars / Gus / Wernher | during or after a sit | `python main.py note-tech <desk> …` → `helm-tech.md` | parent files / Gene reads between exits |
+| Commander | Lars / Gus / Wernher | during or after a sit | `python main.py note-tech <desk> …` → `note-tech.md` | parent files / Gene reads between exits |
 | Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
 | Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
 | Any spawned desk | improve queue | `improve:` on return | friction / suggest / code | parent files `I-NNN`; Mortimer on trip |
@@ -37,17 +37,17 @@ flies. Gene never rewrites PROTOCOL.
 | Parent | KSP window | Verena `shot: now` (or Gene `shot:` at dwell / after-recover) | `python main.py screenshot --name <slug>` | `screenshots/<slug>.png` |
 | Gene or seated Commander | KSP window | stuck: last-flight / review / jsonl cannot explain the scene | `python main.py screenshot --name stuck-<stem>` then **read the PNG** | what the window shows |
 
-Linus ↛ helm. Gus ↛ Hangar. Helm ↛ `.py`/`.craft`. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
+Linus ↛ Commander. Gus ↛ Hangar. Commander ↛ `.py`/`.craft`. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
 Mortimer ↛ GameData. Mortimer ↛ flight/UT in the save. Mortimer **may**
 edit `persistent.sfs` ResearchAndDevelopment (`sci`, `Tech` node) when
 Linus/Lars/Gene brief a paid unlock.
-Helm ↛ revert / quickload / return to VAB / rewind UT. Crash UI is
+Commander ↛ revert / quickload / return to VAB / rewind UT. Crash UI is
 honest: recover the leftover or Hangar the next stack. Os will not
 click it. Screenshot when stuck; do not wait for a founder click.
 
 **Ground talk (between exits, lock free):** Gene, Linus, Gus, Lars,
 Wernher, Mortimer, Verena may address each other by name. Still not
-helm. Still not mid-phase. Still different files in one turn. They
+the stick. Still not mid-phase. Still different files in one turn. They
 do not spawn each other.
 
 ## World model
@@ -103,12 +103,12 @@ Lars’s packet so he is not sequencing a ghost instrument.
 | Disk `python main.py world` anytime | never a second writer |
 | Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab |
 | Parent `python main.py screenshot --name <slug>` | Verena `shot: now` (or Gene `shot:` at dwell / after-recover). No kRPC. |
-| Gene / helm `python main.py screenshot --name stuck-<stem>` | logs first; one still; read the PNG. No kRPC. |
+| Gene / Commander `python main.py screenshot --name stuck-<stem>` | logs first; one still; read the PNG. No kRPC. |
 | Retro comments on open F- items | Gene chairs ops; Mortimer if org/goal |
 | Ground `ask:` filed on world-model | addressee’s next spawn (lock free) |
 | Gene merge of world-model after Learn | never mid-phase |
 
-Not parallel: two helms; Gene + helm; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected. No retro while lock live.
+Not parallel: two Commanders; Gene + flight; Lars on a clean 0. During dwell: no children; Walt silent unless unexpected. No retro while lock live.
 
 ## Spawn packet
 
@@ -130,11 +130,11 @@ not “newest file”. Parent copies **f013** from desk. Do not send
 `docs/archive/kerbin-lessons.md`. Children do not re-run
 `world`/`tech`/`parts` if desk is this sit.
 
-`leftover:` on desk **is** the Hangar decision (`none` | `recover <name>`
-| `hangar-blocked`). Gene does not vibe it. Missing `f013` on bind /
+`hangar:` on desk **is** the Hangar decision (`none` | `recover <name>`
+| `blocked`). Gene does not vibe it. Missing `f013` on bind /
 capable / `go:` / Lars miss → wait.
 
-Every ground return and Learn helm may include:
+Every ground return and Learn (Commander exit) may include:
 
 ```
 improve:
@@ -152,7 +152,7 @@ Gene merge is the only `go:`. Gene **max two hires per sit** (draft iff
 the sit is unnamed, then merge; Learn-only on clean 0). Do not hire
 Gene as a merge bus after every specialist.
 
-A **run** is one helm command. Filename Earth UTC with seconds
+A **run** is one Commander command. Filename Earth UTC with seconds
 (`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
 dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 
@@ -171,7 +171,7 @@ Helm cadence (capture only — do not read): `screenshots/runs/<stamp>-<command>
 
 ```bash
 python main.py screenshot --name <slug>         # screenshots/<slug>.png
-python main.py screenshot --name stuck-<stem>   # Gene / helm, stuck only
+python main.py screenshot --name stuck-<stem>   # Gene / Commander, stuck only
 python main.py screenshot --full                # monitor-size, then restore tile
 ```
 

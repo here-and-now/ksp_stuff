@@ -20,7 +20,7 @@ Commander. Gene decides the plan; you propose a rocket.
 
 ## Read
 
-0. Packet **`docs/program/desk.md`**. leftover, f013, unlocked, stack.
+0. Packet **`docs/program/desk.md`**. hangar, f013, unlocked, stack.
    Do not re-run `world`/`tech`/`parts` if desk is this sit.
 1. `f013.unlocked=no` or `on_craft=no` → `capable: no`. Stayputnik
    hosting an experiment id is not hardware.

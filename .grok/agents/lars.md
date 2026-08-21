@@ -31,7 +31,7 @@ filename” (unit tests used to forge that). Do not read
 `docs/archive/kerbin-lessons.md`.
 
 0. Packet **`docs/program/desk.md`**: sci_delta, f013, review path,
-   leftover. Do not re-run `tech`/`parts` if desk is this sit.
+   hangar. Do not re-run `tech`/`parts` if desk is this sit.
 1. Named live review + `docs/last-flight.md` if present
 2. If `f013.unlocked=no`, do not patch a dwell for that instrument.
 3. `docs/program/blocks.md`

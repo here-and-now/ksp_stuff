@@ -1,6 +1,6 @@
 # Feedback board
 
-Process and role — not helm bugs (`docs/lessons.md`). **New house
+Process and role — not flight bugs (`docs/lessons.md`). **New house
 friction goes to [`improve/`](improve/README.md)** (`I-NNN`, Mortimer
 on trip). This table is the gym record. Open F-005–F-015 were queued
 as I-001–I-011. Anyone already spawned may still file here as a

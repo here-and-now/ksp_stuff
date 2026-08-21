@@ -1,20 +1,20 @@
-"""Gene → flying script. Last write wins. Helm (phase/mun/recover) takes.
+"""Gene → flying script. Last write wins. The Commander takes it.
 
 Files (git-friendly, next to the slate):
 
 - ``docs/program/uplink.md`` — one command. Gene/parent writes; the
-  flying ``FlightWatch(uplink=True)`` *takes* it. ``status`` must not.
-- ``docs/program/loop.md`` — one-line notes. Not the helm (L-032).
-- ``docs/program/helm-tech.md`` — Commander → Lars/Gus/Wernher. What
-  the stack needed. Helm owns the loop; Gene still owns the CLI.
+  flying process *takes* it. ``status`` must not.
+- ``docs/program/loop.md`` — one-line notes. Not the stick (L-032).
+- ``docs/program/note-tech.md`` — Commander → Lars/Gus/Wernher. What
+  the stack needed. Gene still owns the CLI.
 - ``docs/program/plan.md`` — live numbers ``set`` can change; ``phase`` /
   ``expect_*`` survive ``save_plan`` (L-037).
 
-Gene is not on the helm every tick. Mid-phase the parent may
-``abort|hold`` on wreck-class only. FlightWatch wreck/ESC gates still
-abort even if he said nothing. Bound+fueled ``abort`` is refused
-(L-033). mun/recover/phase start with ``clear()`` so a leftover abort
-cannot kill the next pad (L-026).
+Gene is not on console every tick. Mid-phase the parent may
+``abort|hold`` on wreck-class only. Telem wreck gates still abort even
+if he said nothing. Bound+fueled ``abort`` is refused (L-033). pad/hop
+start with ``clear()`` so a leftover abort cannot kill the next pad
+(L-026).
 """
 
 from __future__ import annotations
@@ -30,8 +30,9 @@ log = logging.getLogger("kspstuff")
 
 UPLINK_PATH = Path("docs/program/uplink.md")
 LAST_PATH = Path("docs/program/uplink.last")
-LOOP_PATH = Path("docs/program/loop.md")  # shim; helm notes go to the dossier
-HELM_TECH_PATH = Path("docs/program/helm-tech.md")
+LOOP_PATH = Path("docs/program/loop.md")  # shim; Commander notes go to the dossier
+NOTE_TECH_PATH = Path("docs/program/note-tech.md")
+_LEGACY_NOTE_TECH = Path("docs/program/helm-tech.md")
 PLAN_PATH = Path("docs/program/plan.md")  # shim; canonical is missions/<id>/plan.md
 SHIP_PATH = Path("docs/program/ship.md")
 
@@ -52,7 +53,7 @@ def loop_file() -> Path:
     path = seated_loop_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     if not path.is_file():
-        path.write_text("# Gene ↔ this mission. Not the helm.\n", encoding="utf-8")
+        path.write_text("# Gene ↔ this mission. Not the stick.\n", encoding="utf-8")
     return path
 
 _VERBS = tuple(
@@ -222,21 +223,24 @@ def note_tech(desk: str, text: str, *, who: str = "") -> Path:
     """Commander → tech desks. Does not rewrite Gene's plan."""
     from datetime import datetime, timezone
 
-    HELM_TECH_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if not HELM_TECH_PATH.is_file():
-        HELM_TECH_PATH.write_text(
-            "# Helm → tech\n\n"
-            "Jebediah (or seated Commander) writes what the stack needed.\n"
+    path = NOTE_TECH_PATH
+    if _LEGACY_NOTE_TECH.is_file() and not path.is_file():
+        path = _LEGACY_NOTE_TECH
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.is_file():
+        path.write_text(
+            "# Commander → tech\n\n"
+            "The seated Commander writes what the stack needed.\n"
             "Lars / Gus / Wernher / Gene read between exits. Not the stick.\n\n",
             encoding="utf-8",
         )
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
-    speaker = (who or "helm").strip() or "helm"
+    speaker = (who or "Commander").strip() or "Commander"
     dest = (desk or "tech").strip() or "tech"
     line = f"- {stamp} **{speaker} → {dest}:** {text.rstrip()}\n"
-    with HELM_TECH_PATH.open("a", encoding="utf-8") as fh:
+    with path.open("a", encoding="utf-8") as fh:
         fh.write(line)
-    return HELM_TECH_PATH
+    return path
 
 
 def _parse(text: str) -> Command | None:
@@ -274,7 +278,7 @@ def _ack_file(raw: str | None) -> None:
 
 
 def take() -> Command | None:
-    """Consume uplink.md. Only the helm writer may call this."""
+    """Consume uplink.md. Only the Commander process may call this."""
     cmd = peek()
     if cmd is None:
         return None
@@ -349,7 +353,7 @@ def radio_text() -> str:
     if SHIP_PATH.is_file():
         bits.append("SHIP " + SHIP_PATH.read_text(encoding="utf-8").strip())
     else:
-        bits.append("SHIP (none — helm not publishing yet)")
+        bits.append("SHIP (none — flight not publishing yet)")
     cmd = peek()
     bits.append("UPLINK " + (cmd.raw if cmd else "(clear)"))
     bits.append("PLAN " + " ".join(f"{k}={v:g}" for k, v in desk.plan.items()))

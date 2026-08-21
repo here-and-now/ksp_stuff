@@ -37,7 +37,7 @@ polls kRPC (~0.1 s): scene Flight, `active_vessel`, `parts.all` non-empty,
 `flight()` callable. Then it prints `hangar ready <name> sit=… parts=N`.
 PRELAUNCH is ready (MET may still be 0 until dry-launch). Screenshot is grim, not kRPC.
 
-**What helm can see.** In Flight: streams (alt, q, orbit, MET, EC),
+**What the Commander can see.** In Flight: streams (alt, q, orbit, MET, EC),
 situation, parts/modules, recoverability. Screenshot is grim, not kRPC.
 Helm cannot see the VAB, the tech tree, or “parts that unlock later.”
 That is `python main.py world|tech|parts`.

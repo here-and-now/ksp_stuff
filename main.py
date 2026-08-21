@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
 import time
@@ -561,7 +562,7 @@ def main(argv: list[str] | None = None) -> int:
     note_p.add_argument("text", nargs="+")
     nt = sub.add_parser(
         "note-tech",
-        help="Commander → Lars/Gus/Wernher (docs/program/helm-tech.md)",
+        help="Commander → Lars/Gus/Wernher (docs/program/note-tech.md)",
     )
     nt.add_argument("desk", help="Lars|Gus|Wernher|Gene")
     nt.add_argument("text", nargs="+")
@@ -576,7 +577,19 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("missions", help="Print docs/missions/INDEX.md (no kRPC)")
     sub.add_parser("vab", help="Print VAB board + seated craft.md (no kRPC)")
     sub.add_parser("science", help="Print Linus board; career snapshot if connected")
+    sub.add_parser(
+        "science-scan",
+        help="Open science at this tree (GameData Situation + save leftovers, no kRPC)",
+    )
     sub.add_parser("world", help="KSP root, save, tree, science (no kRPC)")
+    sub.add_parser(
+        "desk",
+        help="One disk snapshot for Gene/Linus/Gus/Lars packets (no kRPC)",
+    )
+    sub.add_parser(
+        "sit-card",
+        help="Write docs/program/sit-card.json for the seated sit (no kRPC)",
+    )
     tech_p = sub.add_parser("tech", help="Disk tech tree + save unlocks (no kRPC)")
     tech_p.add_argument("node", nargs="?", default=None, help="RDNode id (start, basicRocketry, …)")
     parts_p = sub.add_parser("parts", help="Disk parts catalog (no kRPC)")
@@ -644,7 +657,7 @@ def main(argv: list[str] | None = None) -> int:
         from uplink import note_tech
 
         path = note_tech(args.desk, " ".join(args.text), who="Jebediah")
-        print(f"helm-tech {path}", flush=True)
+        print(f"note-tech {path}", flush=True)
         return 0
     if args.cmd == "review":
         from review import latest_jsonl, write_review
@@ -728,6 +741,27 @@ def main(argv: list[str] | None = None) -> int:
         except WorldError as exc:
             print(f"# catalog: {exc}", flush=True)
         return 0
+    if args.cmd == "desk":
+        from desk import format_desk
+        from world import WorldError
+
+        try:
+            print(format_desk(), end="")
+        except WorldError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        return 0
+    if args.cmd == "sit-card":
+        from desk import sit_card
+        from world import WorldError
+
+        try:
+            card = sit_card()
+        except WorldError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+        print(json.dumps(card, indent=2))
+        return 0
     if args.cmd in {"world", "tech", "parts"}:
         from world import (
             WorldError,
@@ -781,6 +815,16 @@ def main(argv: list[str] | None = None) -> int:
             ),
             end="",
         )
+        return 0
+    if args.cmd == "science-scan":
+        from science_scan import format_science_scan
+        from world import WorldError, load_world
+
+        try:
+            print(format_science_scan(load_world()), end="")
+        except WorldError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
         return 0
     if args.cmd == "science":
         from missions import SCIENCE_PATH, seated_id, seated_science_path

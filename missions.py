@@ -1,6 +1,6 @@
-"""Many dossiers, one helm (L-038).
+"""Many dossiers, one Commander (L-038).
 
-A mission is one crewed stack until recover, home, or missing. The helm
+A mission is one crewed stack until recover, home, or missing. The Commander
 (``phase`` / ``mun`` / ``recover``) flies only the seated id in
 ``docs/program/current.md``. Uplink / ship / lock stay global.
 """
@@ -159,7 +159,7 @@ def list_ids() -> list[str]:
 
 
 def lock_held() -> str | None:
-    """Return lock text if a helm pid is alive, else None."""
+    """Return lock text if a flight pid is alive, else None."""
     from flightlog import LOCK, _pid_alive
 
     if not LOCK.is_file():
@@ -208,10 +208,10 @@ def sync_shim(flight_id: str | None = None) -> None:
 
 
 def seat(who: str) -> str:
-    """Point current.md at a mission. Refuses lost and a live helm."""
+    """Point current.md at a mission. Refuses lost and a live flight."""
     held = lock_held()
     if held:
-        raise RuntimeError(f"helm is live — cannot seat\n{held.strip()}")
+        raise RuntimeError(f"flight is live — cannot seat\n{held.strip()}")
     text = who.strip()
     if (ROOT / text).is_dir():
         fid = text
@@ -261,7 +261,7 @@ def write_index() -> Path:
     rows = [
         "# Missions\n",
         "\n",
-        "One helm. Seat with `python main.py seat <id>`.\n",
+        "One Commander. Seat with `python main.py seat <id>`.\n",
         "\n",
         "| Id | Pilot | Status | Body | Peri | Apo | Next |\n",
         "|---|---|---|---|---|---|---|\n",

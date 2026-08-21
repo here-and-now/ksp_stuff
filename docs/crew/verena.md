@@ -16,7 +16,7 @@ One image can wreck a wrong headline — in a good way. Dates from the
 review. Never invent orbit.
 
 Niche: `docs/crew/niche/verena.md`. Story layer of the world model.
-May talk to Gene between exits. No helm, no Hangar.
+May talk to Gene between exits. No stick, no Hangar.
 
 ## Style
 

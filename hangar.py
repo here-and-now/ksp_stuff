@@ -796,7 +796,8 @@ class Hangar:
 
 
 def discover_ksp() -> Path | None:
-    """``KSPSTUFF_KSP`` wins. Else gym ``KSP-rss``, then ``KSP-RO``, then Steam."""
+    """``KSPSTUFF_KSP`` wins. Else ``~/Games/KSP-rss`` if that tree exists.
+    ``KSP-RO`` only when the gym directory is absent. Steam last."""
     env = os.environ.get("KSPSTUFF_KSP")
     if env:
         p = Path(env).expanduser()

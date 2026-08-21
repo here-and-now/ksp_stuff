@@ -6,7 +6,7 @@ pad / FlyingLow hop / FlyingHigh 50 km lid — not splash, not space.
 
 from __future__ import annotations
 
-from world import World, _instrument_parts
+from world import World, instrument_parts
 
 # RSS Kerbin-scale body multipliers used on Earth subjects we already banked.
 _SIT_SCALE = {
@@ -69,7 +69,7 @@ def format_science_scan(world: World) -> str:
     for eid in sorted(owned_ids):
         cfg = world.catalog.experiments.get(eid)
         sits = list(cfg.situations) if cfg and cfg.situations else ["Surface@Biomes"]
-        inst = _instrument_parts(world, eid)
+        inst = instrument_parts(world, eid)
         owned_nodes = set(world.research.unlocked)
         if inst and inst[0].tech not in owned_nodes:
             inst_s = f"{inst[0].name} tech={inst[0].tech} LOCKED"

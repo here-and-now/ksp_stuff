@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 from catalog import cfg_name, craft_name, load_catalog, scan_config_cache
-from hangar import DEFAULT_SAVE, RSS_KSP, STEAM_KSP, discover_hangar, discover_ksp
+from hangar import DEFAULT_SAVE, RO_KSP, RSS_KSP, STEAM_KSP, discover_hangar, discover_ksp
 from world import (
     craft_part_names,
     filter_parts,
@@ -17,12 +17,44 @@ from world import (
     format_world,
     load_world,
     parse_research,
+    parse_science_subjects,
     parse_tech_tree,
+    parse_vessels,
     unlocked_parts,
 )
 
 FIXTURE = Path(__file__).resolve().parent / "fixtures" / "world"
 RSS_CACHE = Path.home() / "Games" / "KSP-rss" / "GameData" / "ModuleManager.ConfigCache"
+
+
+class TestSaveParsers(unittest.TestCase):
+    def test_science_leftover_is_cap_minus_sci(self):
+        block = (
+            "Science\n{\n"
+            "id = temperatureScan@EarthFlyingLowShores\n"
+            "sci = 2.055\n"
+            "scv = 0.021\n"
+            "cap = 2.10\n"
+            "}\n"
+        )
+        subs = parse_science_subjects(block)
+        self.assertEqual(len(subs), 1)
+        self.assertAlmostEqual(subs[0].leftover, 0.045, places=3)
+
+    def test_vessels_skip_asteroids(self):
+        text = (
+            "FLIGHTSTATE\n{\n"
+            "VESSEL\n{\nname = Ast. XRL-564\ntype = SpaceObject\n"
+            "sit = ORBITING\nlanded = False\n}\n"
+            "VESSEL\n{\nname = kspstuff-hop-hammer-pbc\ntype = Probe\n"
+            "sit = PRELAUNCH\nlanded = True\n}\n"
+            "}\n"
+        )
+        ships = parse_vessels(text)
+        self.assertEqual(len(ships), 1)
+        self.assertEqual(ships[0].name, "kspstuff-hop-hammer-pbc")
+        self.assertEqual(ships[0].sit, "PRELAUNCH")
+        self.assertTrue(ships[0].landed)
 
 
 class TestNames(unittest.TestCase):
@@ -182,6 +214,19 @@ class TestDiscover(unittest.TestCase):
             self.assertEqual(hangar.save, DEFAULT_SAVE)
         finally:
             if old is not None:
+                os.environ["KSPSTUFF_KSP"] = old
+
+    def test_env_can_select_ro_tree(self):
+        if not (RO_KSP / "GameData" / "RealismOverhaul").is_dir():
+            self.skipTest("no KSP-RO RealismOverhaul")
+        old = os.environ.get("KSPSTUFF_KSP")
+        try:
+            os.environ["KSPSTUFF_KSP"] = str(RO_KSP)
+            self.assertEqual(discover_ksp(), RO_KSP)
+        finally:
+            if old is None:
+                os.environ.pop("KSPSTUFF_KSP", None)
+            else:
                 os.environ["KSPSTUFF_KSP"] = old
 
     def test_explicit_save(self):

@@ -21,8 +21,10 @@ from session import ConnectionSettings, Session, SessionError
 log = logging.getLogger("kspstuff")
 
 SKIP_SAVES = {"training", "scenarios", "missions"}
+REPO_CRAFTS = Path(__file__).resolve().parent / "crafts"
 STEAM_KSP = Path.home() / ".steam/steam/steamapps/common/Kerbal Space Program"
 RSS_KSP = Path.home() / "Games" / "KSP-rss"
+RO_KSP = Path.home() / "Games" / "KSP-RO"
 DEFAULT_SAVE = "letsgrok"
 
 # Empty Mk1/Mk1-3 pods are not probes. KSP then shows "No Control" and
@@ -362,6 +364,41 @@ def wait_vessel_ready(
             return last
         time.sleep(0.1)
     raise SessionError(f"timed out waiting for vessel ready ({last})")
+
+
+def install_signed(
+    session: Any,
+    name: str,
+    *,
+    hangar: Any,
+    recover: bool = True,
+    uncrewed: bool = True,
+    refuse: tuple[str, ...] = (),
+    src: Path | None = None,
+) -> str:
+    """Byte-copy ``crafts/<name>.craft`` into the save VAB and launch.
+
+    Pad and hop both call this. ``refuse`` substrings abort (hop: pad/geiger).
+    """
+    token = (name or "").strip()
+    if not token:
+        raise SessionError("install_signed: empty craft name")
+    low = token.lower()
+    for tag in refuse:
+        if tag.lower() in low:
+            raise SessionError(f"Hangar refused {token} ({tag})")
+    path = src or (REPO_CRAFTS / f"{token}.craft")
+    if not path.is_file():
+        raise SessionError(f"missing craft {path}")
+    if hangar is None:
+        raise SessionError("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
+    folder = hangar.ships("VAB")
+    folder.mkdir(parents=True, exist_ok=True)
+    dest = folder / f"{token}.craft"
+    dest.write_bytes(path.read_bytes())
+    log.info("Hangar %s uncrewed", token)
+    hangar.launch(session, token, recover=recover, uncrewed=uncrewed)
+    return token
 
 
 def go_ksc(session: Any, *, timeout: float = 45.0) -> str:
@@ -759,7 +796,7 @@ class Hangar:
 
 
 def discover_ksp() -> Path | None:
-    """RSS install first. Steam stock is last. ``KSPSTUFF_KSP`` wins."""
+    """``KSPSTUFF_KSP`` wins. Else gym ``KSP-rss``, then ``KSP-RO``, then Steam."""
     env = os.environ.get("KSPSTUFF_KSP")
     if env:
         p = Path(env).expanduser()
@@ -770,6 +807,9 @@ def discover_ksp() -> Path | None:
         return rss
     if rss.is_dir() and (rss / "GameData").is_dir():
         return rss
+    ro = RO_KSP
+    if (ro / "GameData" / "RealismOverhaul").is_dir():
+        return ro
     if STEAM_KSP.is_dir():
         return STEAM_KSP
     return None

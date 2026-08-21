@@ -25,7 +25,8 @@ want**: rare field exploration, some Learns, moments (not a person,
 not every chat). Verena is allowed to be loud on the story layer.
 No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
 `docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
-Words: `docs/program/GLOSSARY.md`.
+Words: `docs/program/GLOSSARY.md`. RO start: `docs/program/RO.md`
+(do not seat `KSP-RO` until Os says and a new science sandbox exists).
 
 Environment memory is **query tools**, not this file:
 

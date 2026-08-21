@@ -3,7 +3,10 @@
 Streams use kRPC 0.6 ``add_stream(getattr, obj, name)``. Gates use the
 live body's ``atmosphere_depth``. Each :meth:`Telem.read` writes a
 ``kind=state`` row to the seated run jsonl (alt, apo, peri, situation,
-MET, EC, fuel). :class:`EventLog` stays in-memory unless given a path.
+MET, EC, fuel, surface horiz, heading). :class:`EventLog` stays
+in-memory unless given a path. ``vessel.flight()`` with no frame is
+the vessel origin — ``speed`` is always ~0. Surface kinematics use
+the body's ``reference_frame`` (Jeb 14:37Z / 16:14Z).
 """
 
 from __future__ import annotations
@@ -86,6 +89,8 @@ class Snapshot:
     throttle: float = float("nan")
     thrust: float = float("nan")
     speed: float = float("nan")
+    horiz: float = float("nan")
+    heading: float = float("nan")
     met: float = float("nan")
     ec: float | None = None
     fuel: float | None = None
@@ -113,6 +118,7 @@ def format_snapshot(snap: Snapshot) -> str:
         f"alt={snap.alt:.1f} peri={snap.peri:.1f} apo={snap.apo:.1f} "
         f"atm={snap.atm_depth:.1f} in_atmo={int(snap.in_atmo)} "
         f"ec={ec} fuel={fuel} wreck={int(snap.wreck)} "
+        f"horiz={snap.horiz:.0f} hdg={snap.heading:.0f} "
         f"vessel={snap.vessel}"
     )
 
@@ -250,6 +256,7 @@ class Telem:
         self.events = events if events is not None else EventLog()
         self.scene = scene
         self._flight: Any = None
+        self._kin: Any = None
         self._orbit: Any = None
         self._body: Any = None
         self._streams: dict[str, Any] = {}
@@ -264,6 +271,7 @@ class Telem:
                 pass
         self._streams.clear()
         self._flight = None
+        self._kin = None
         self._orbit = None
         self._body = None
         self._vessel = None
@@ -285,10 +293,21 @@ class Telem:
         self._flight = vessel.flight()
         self._orbit = vessel.orbit
         self._body = self._orbit.body
+        self._kin = self._flight
+        try:
+            rf = getattr(self._body, "reference_frame", None)
+            if rf is not None:
+                self._kin = vessel.flight(rf)
+        except TypeError:
+            self._kin = self._flight
+        except Exception:
+            self._kin = self._flight
         add_stream: Callable[..., Any] = self.session.add_stream
         for group, prop in _STREAM_PROPS:
             obj = self._flight if group == "flight" else self._orbit
             self._streams[f"{group}.{prop}"] = add_stream(getattr, obj, prop)
+        for prop in ("speed", "horizontal_speed", "heading"):
+            self._streams[f"kin.{prop}"] = add_stream(getattr, self._kin, prop)
 
     def _stream(self, key: str, fallback: Any = float("nan")) -> float:
         stream = self._streams.get(key)
@@ -341,11 +360,12 @@ class Telem:
             thrust = float(vessel.thrust)
         except Exception:
             pass
-        speed = float("nan")
-        try:
-            speed = float(vessel.flight().speed)
-        except Exception:
-            pass
+        speed = self._stream("kin.speed")
+        horiz = self._stream("kin.horizontal_speed")
+        heading = self._stream("kin.heading")
+        if not math.isfinite(speed) or speed <= 0.05:
+            if math.isfinite(horiz) and abs(horiz) > 0.05:
+                speed = abs(horiz)
         met = _finite(getattr(vessel, "met", float("nan")))
         wreck = sit in {"wrecked", "wreck"} or (
             math.isfinite(alt) and alt < -10.0
@@ -386,6 +406,8 @@ class Telem:
             throttle=throttle,
             thrust=thrust,
             speed=speed,
+            horiz=horiz,
+            heading=heading,
             met=met,
             ec=ec,
             fuel=fuel,

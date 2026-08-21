@@ -21,6 +21,17 @@ python main.py pad
 
 ---
 
+## 2026-08-21T16-14Z — jsonl speed=0 is the vessel frame
+
+- **When:** hop-to-water 15-26 through 16-25. Jeb HUD horiz ~20–90 m/s,
+  heading 090 then 290. jsonl `speed` was 0 on every sample.
+- **Cause:** `vessel.flight()` with no reference frame is the vessel
+  origin. Speed in that frame is always ~0.
+- **Fix:** stream `speed` / `horizontal_speed` / `heading` from
+  `vessel.flight(body.reference_frame)`. hop-to-water holds throttle
+  0.4 through slew (do not slam 1.0 after 25°). Modules: `telem.py`,
+  `hop.py`.
+
 ## 2026-08-21T16-11-58Z-hop-to-water — do not slam pitch 65 at TWR 5
 
 - **When:** 2026-08-21 letsgrok `python main.py hop-to-water`

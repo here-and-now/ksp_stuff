@@ -49,15 +49,18 @@ class _Body:
         self.name = name
         self.atmosphere_depth = depth
         self.has_atmosphere = has
+        self.reference_frame = object()
 
 
 class _Flight:
-    def __init__(self, alt=100.0, q=0.0, surf=80.0, speed=0.0):
+    def __init__(self, alt=100.0, q=0.0, surf=80.0, speed=0.0, heading=0.0, horiz=None):
         self.mean_altitude = alt
         self.dynamic_pressure = q
         self.surface_altitude = surf
         self.speed = speed
         self.vertical_speed = 0.0
+        self.heading = heading
+        self.horizontal_speed = speed if horiz is None else horiz
 
 
 class _Orbit:
@@ -99,11 +102,11 @@ class _Vessel:
         self.resources = _Resources({"ElectricCharge": ec, "SolidFuel": fuel})
         self.thrust = 0.0
         self.met = 0.0
-        self._flight = _Flight(alt=alt, speed=speed)
+        self._flight = _Flight(alt=alt, speed=speed, heading=90.0, horiz=speed)
         self.orbit = _Orbit(_Body(depth=depth), peri=-500_000.0, apo=alt)
         self.parts = type("P", (), {"all": []})()
 
-    def flight(self):
+    def flight(self, ref=None):
         return self._flight
 
     def recover(self):
@@ -239,8 +242,24 @@ class TestJsonl(unittest.TestCase):
         self.assertEqual(row["ec"], 0.0)
         self.assertEqual(row["fuel"], 3.5)
         self.assertEqual(row["lf"], 3.5)
+        self.assertAlmostEqual(row["speed"], 429.0)
+        self.assertAlmostEqual(row["horiz"], 429.0)
+        self.assertAlmostEqual(row["heading"], 90.0)
         self.assertIn("ec=0", row.get("flags") or [])
         self.assertEqual(row["ut"], 62610.0)
+
+    def test_vessel_frame_speed_zero_still_logs_horiz(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        tmp.write_text("", encoding="utf-8")
+        _bind_run_jsonl(self, tmp)
+        vessel = _Vessel(alt=500.0, sit="flying", speed=0.0)
+        vessel._flight = _Flight(alt=500.0, speed=0.0, heading=90.0, horiz=44.0)
+        session = _Session(vessel)
+        with Telem(session, scene="flight") as telem:
+            snap = telem.read()
+        self.assertAlmostEqual(snap.horiz, 44.0)
+        self.assertAlmostEqual(snap.heading, 90.0)
+        self.assertAlmostEqual(snap.speed, 44.0)
 
     def test_empty_eventlog_does_not_skip_seated_jsonl(self):
         tmp = Path(tempfile.mkdtemp()) / "pad.jsonl"

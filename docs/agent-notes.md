@@ -239,7 +239,11 @@ in this tree — Lars writes it when Gene `need_stack`.
 
 Pad/hop use `telem.Telem` (getattr streams). **`watch.py` / `FlightWatch` are
 not in this tree.** Hold `flight` / `orbit`; never `vessel.flight()`
-per pulse. Writes stay RPC. `status` is the one-shot Session probe.
+per pulse. `vessel.flight()` with **no** frame is the vessel origin —
+`speed` is always ~0 (Jeb hop-to-water jsonl). Surface `speed` /
+`horizontal_speed` / `heading` stream from
+`vessel.flight(body.reference_frame)`. Writes stay RPC. `status` is the
+one-shot Session probe.
 
 UI `TelemetrySample` / pyqtSignal is parked with the rest of the UI.
 

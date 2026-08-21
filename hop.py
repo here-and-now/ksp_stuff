@@ -1122,7 +1122,17 @@ def run_on_vessel(
                     mission_event("light", snap)
 
             if left_pad and not down:
-                _hold_or_cut(vessel, snap, hop_apo)
+                if wait_water:
+                    try:
+                        apo = float(getattr(snap, "apo", float("nan")))
+                        if math.isfinite(apo) and apo >= hop_apo:
+                            vessel.control.throttle = 0.0
+                        else:
+                            vessel.control.throttle = WATER_SLEW_THROTTLE
+                    except Exception:
+                        pass
+                else:
+                    _hold_or_cut(vessel, snap, hop_apo)
 
             if wait_water and lit and not down and left_pad:
                 water_pitch, slewing = _slew_east_pitch(water_pitch, pulse)

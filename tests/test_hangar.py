@@ -77,10 +77,17 @@ class TestKscReady(unittest.TestCase):
         self.assertIn("tracking", why)
 
     def test_flight_results_can_revert_is_not_ksc(self):
-        session = _Session(scene="space_center", revert=True)
+        wreck = type("V", (), {"name": "wreck"})()
+        session = _Session(scene="space_center", revert=True, vessels=(wreck,))
         ok, why = ksc_ready(session)
         self.assertFalse(ok)
         self.assertIn("flight results", why)
+
+    def test_stale_can_revert_empty_ksc_is_ready(self):
+        session = _Session(scene="space_center", revert=True, vessels=())
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
 
     def test_ksc_clean(self):
         session = _Session(scene="space_center", revert=False)
@@ -115,7 +122,8 @@ class TestGoSpaceCenter(unittest.TestCase):
         self.assertEqual(session.space_center.reverts, 0)
 
     def test_timeout_if_results_stuck(self):
-        session = _Session(scene="space_center", revert=True)
+        wreck = type("V", (), {"name": "wreck"})()
+        session = _Session(scene="space_center", revert=True, vessels=(wreck,))
         session.space_center.load_space_center = lambda: None  # type: ignore[method-assign]
         with patch("hangar.time.sleep"):
             with patch("hangar.time.monotonic", side_effect=[0.0, 0.0, 2.0]):
@@ -125,7 +133,8 @@ class TestGoSpaceCenter(unittest.TestCase):
         self.assertEqual(session.space_center.reverts, 0)
 
     def test_stuck_results_do_not_reload_loop(self):
-        session = _Session(scene="space_center", revert=True)
+        wreck = type("V", (), {"name": "wreck"})()
+        session = _Session(scene="space_center", revert=True, vessels=(wreck,))
         n = {"n": 0}
 
         def stuck() -> None:
@@ -141,7 +150,8 @@ class TestGoSpaceCenter(unittest.TestCase):
 
 class TestHangarLaunchGate(unittest.TestCase):
     def test_no_launch_vessel_while_flight_results(self):
-        session = _Session(scene="tracking_station", revert=True)
+        wreck = type("V", (), {"name": "wreck"})()
+        session = _Session(scene="tracking_station", revert=True, vessels=(wreck,))
         session.space_center.load_space_center = lambda: None  # type: ignore[method-assign]
         hangar = Hangar(ksp_root=Path("/tmp"), save="letsgrok")
         with patch("hangar.time.sleep"):

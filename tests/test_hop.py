@@ -19,6 +19,9 @@ from hop import (
     WATER_HEADING_DEG,
     WATER_PITCH_DEG,
     WATER_PITCH_FROM_UP,
+    WATER_PITCH_SLEW_DPS,
+    WATER_PITCH_UP,
+    WATER_SLEW_THROTTLE,
     hop_craft_name,
     hop_craft_path,
     hop_offplan_apo,
@@ -2079,7 +2082,10 @@ class TestHopToWater(unittest.TestCase):
         self.assertTrue(water_can_steer(WATER_CRAFT))
         self.assertTrue(water_can_steer("kspstuff-hop-valiant-t7-pbc"))
         self.assertEqual(WATER_PITCH_FROM_UP, 25.0)
+        self.assertEqual(WATER_PITCH_UP, 90.0)
         self.assertEqual(WATER_PITCH_DEG, 65.0)
+        self.assertEqual(WATER_PITCH_SLEW_DPS, 10.0)
+        self.assertEqual(WATER_SLEW_THROTTLE, 0.4)
         self.assertEqual(WATER_HEADING_DEG, 90.0)
         self.assertTrue(hop_craft_path(WATER_CRAFT).is_file())
 
@@ -2126,6 +2132,10 @@ class TestHopToWater(unittest.TestCase):
         self.assertIn("Flea still", blocks)
         self.assertIn("do not light", blocks)
         self.assertIn("PRELAUNCH is a lie", blocks)
+        self.assertIn("through burnout", blocks)
+        self.assertIn("after left_pad", blocks)
+        self.assertIn("0.4", blocks)
+        self.assertIn("16-11-58Z", blocks)
 
     def test_pitch_east_waits_splash(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -2155,7 +2165,7 @@ class TestHopToWater(unittest.TestCase):
                 flying_recovered.append(vessel.recovered)
                 if tel.triggered:
                     vessel.recoverable = True
-                if t[0] >= 3.0:
+                if t[0] >= 5.0:
                     vessel.control.throttle = 0.0
                     vessel.resources.fuel = 0.0
                     vessel.situation = "splashed"
@@ -2194,6 +2204,144 @@ class TestHopToWater(unittest.TestCase):
                 for line in logs
             )
         )
+
+    def test_holds_ap_east_through_burnout(self):
+        """15-26-18Z: do not disengage AP at fuel=0 while still flying."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([tel, goo], recoverable=False)
+        vessel.name = WATER_CRAFT
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        dry_engaged: list[bool] = []
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 12_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel.control.throttle = 1.0
+                vessel.resources.fuel = 5.0
+            elif vessel.situation == "flying":
+                if vessel.resources.fuel <= 0:
+                    dry_engaged.append(vessel.auto_pilot.engaged)
+                if vessel.resources.fuel > 0 and t[0] >= 2.0:
+                    vessel.control.throttle = 0.0
+                    vessel.resources.fuel = 0.0
+                elif vessel.resources.fuel <= 0 and t[0] >= 4.0:
+                    vessel.situation = "splashed"
+                    vessel._alt = 0.0
+                    vessel._speed = 0.0
+            elif vessel.situation == "splashed" and goo.triggered:
+                goo.fields["status"] = "Done"
+                goo.fields["Has Data"] = True
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("kerbalism_TELEMETRY",),
+            splash_ids=("mysteryGoo",),
+            wait_water=True,
+            on_log=logs.append,
+            now=now,
+            sleep=nap,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(dry_engaged)
+        self.assertTrue(all(dry_engaged))
+        self.assertFalse(vessel.auto_pilot.engaged)
+        self.assertTrue(
+            any("hold east through burnout" in line for line in logs)
+        )
+
+    def test_slew_east_after_pad_low_throttle(self):
+        """16-11-58Z: do not slam AP 65 at light TWR 5 (bare stack shears)."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([tel, goo], recoverable=False)
+        vessel.name = WATER_CRAFT
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        pad_pitch: list[float] = []
+        pad_engaged: list[bool] = []
+        air_pitch: list[float] = []
+        air_throt: list[float] = []
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                pad_pitch.append(vessel.auto_pilot.target_pitch)
+                pad_engaged.append(vessel.auto_pilot.engaged)
+                vessel.situation = "landed"
+                vessel._alt = 40.0
+                vessel._speed = 20.0
+                vessel.control.throttle = 1.0
+                vessel.resources.fuel = 5.0
+            elif vessel.situation == "landed":
+                pad_pitch.append(vessel.auto_pilot.target_pitch)
+                pad_engaged.append(vessel.auto_pilot.engaged)
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 12_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel.control.throttle = 1.0
+            elif vessel.situation == "flying":
+                air_pitch.append(vessel.auto_pilot.target_pitch)
+                air_throt.append(vessel.control.throttle)
+                if tel.triggered:
+                    vessel.recoverable = True
+                if t[0] >= 6.0:
+                    vessel.control.throttle = 0.0
+                    vessel.resources.fuel = 0.0
+                    vessel.situation = "splashed"
+                    vessel._alt = 0.0
+                    vessel._speed = 0.0
+            elif vessel.situation == "splashed" and goo.triggered:
+                goo.fields["status"] = "Done"
+                goo.fields["Has Data"] = True
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("kerbalism_TELEMETRY",),
+            splash_ids=("mysteryGoo",),
+            wait_water=True,
+            on_log=logs.append,
+            now=now,
+            sleep=nap,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(pad_pitch)
+        self.assertTrue(all(p != WATER_PITCH_DEG for p in pad_pitch))
+        self.assertTrue(all(not e for e in pad_engaged))
+        self.assertTrue(air_pitch)
+        self.assertLess(air_pitch[0], WATER_PITCH_UP)
+        self.assertGreater(air_pitch[0], WATER_PITCH_DEG)
+        self.assertTrue(any(abs(th - WATER_SLEW_THROTTLE) < 1e-6 for th in air_throt))
+        self.assertEqual(vessel.auto_pilot.target_pitch, WATER_PITCH_DEG)
+        self.assertTrue(any("slew" in line and "after pad" in line for line in logs))
 
     def test_landed_aborts_not_splashed(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")

@@ -15,18 +15,19 @@ unmanned. Mk1 locked (`simpleCommandModules`, 90). Chute locked
 (`survivability`, 15).
 
 **Bound** `docs/missions/jebediah/science.md` on Gus-signed
-**`kspstuff-hop-valiant-east-pbc`**: FlyingLow@Water thermo **138 /
-0.002 / 2.10** + TELEMETRY **30 / 0.052 / 1.40**. Not spent Shores
-FlyingHigh. Not t7. Working goal **15**. Bank **10.96** → need
-**~4.04**. Do not re-pad Cape. Do not re-fly spent FlyingHigh Shores.
+**`kspstuff-hop-valiant-east-one-pbc`**: FlyingLow@Water thermo **138 /
+0.002 / 2.10** + TELEMETRY **30 / 0.052 / 1.40**. Same shorts. Not
+spent Shores FlyingHigh. Not t7. leftover **east-bare / east-pbc** is
+Gene hangar. Working goal **15**. Bank **10.96** → need **~4.04**. Do
+not re-pad Cape. Do not re-fly spent FlyingHigh Shores.
 
 ---
 
 ## Banked (do not re-fly)
 
 Live `sci = 10.9586` (desk). Unlocked: **`start`, `engineering101`,
-`basicRocketry`**. hangar **none**. KSC empty. Do not recover
-Ast. XRL-564.
+`basicRocketry`**. leftover **east-bare / east-pbc** — Gene hangar,
+not this bind. Desk leftover vessels n=0. Do not recover Ast. XRL-564.
 
 Save leftovers (cap − sci). Missing id = unstarted:
 
@@ -57,16 +58,17 @@ goo 6.
 
 ## Instruments on the capable craft (this bind)
 
-Gus `capable: yes` **`kspstuff-hop-valiant-east-pbc`**. 2× FL-T100 +
-Valiant gimbal 7.5° east. 13-08-57Z apo **12.3 km**. Tape **1.0**.
-Do not co-run geiger. Does **not** finish 497 s / 641 s. Does **not**
-loft FlyingHigh.
+Gus `capable: yes` **`kspstuff-hop-valiant-east-one-pbc`**. Stayputnik
+**stack-only**; 2HOT + Z-100 + 16-S + Engineer7500 **srf on upper
+FL-T100**; 2× FL-T100 + Valiant Boattail. **No fins, no goo, no
+geiger part.** Same motor as 13-08-57Z apo **12.3 km**. Tape **1.0**.
+Does **not** loft FlyingHigh.
 
 | experiment_id | instrument | tech | unlocked | on_craft |
 |---|---|---|---|---|
-| `geigerCounter` | `kerbalism-geigercounter` | e101 | **yes** | **yes** — not bound (497 s / tape) |
+| `geigerCounter` | `kerbalism-geigercounter` | e101 | **yes** | **no** — not this stack |
 | `temperatureScan` | `sensorThermometer` (2HOT) | start | **yes** | **yes** — bound FlyingLow@Water |
-| `mysteryGoo` | `GooExperiment` | start | **yes** | yes — skip 641 s |
+| `mysteryGoo` | `GooExperiment` | start | **yes** | **no** — not this stack |
 | `kerbalism_TELEMETRY` | Stayputnik PAW | start | **yes** | hosted — bound FlyingLow@Water |
 
 Stayputnik PAW is **not** the Geiger. `seismicScan` landing LOCKED.

@@ -21,6 +21,49 @@ python main.py pad
 
 ---
 
+## 2026-08-21T16-11-58Z-hop-to-water — do not slam pitch 65 at TWR 5
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T16-11-58Z-hop-to-water`). Hangar
+  `kspstuff-hop-valiant-east-bare-pbc`. F-013 2HOT start unlocked on
+  craft. Bank 10.96 unchanged. Os: stack breaks apart, no decoupler.
+  Do not Hangar. Do not re-fly.
+- **Symptom:** exit 2 `ABORT not splashed`. Pitch 25° heading 90 at
+  light, throttle 1. Fuel=0 MET 11.7 apo max **5.3 km** (prior 2×T100
+  hops 10–12 km). T+54 `sit=landed` Shores alt=71 EC=0. Never
+  `sit=splashed`.
+- **Cause:** `_steer_east` set `target_pitch=65` `engaged=True` on the
+  same pulse as `_light` at TWR ~5. Stayputnik has no wheel. Valiant
+  100 kN. Bare stack has no decoupler — joints shear. East Δv never
+  built; apo halved.
+- **Fix:** Light vertical. After `left_pad`, slew AP 10 °/s toward
+  65 heading 90 at throttle **0.4**, then hold through burnout. Do
+  not command 65 on the pad. Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-21T15-26-18Z-hop-to-water — AP must hold east through burnout
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T15-26-18Z-hop-to-water`). Hangar
+  `kspstuff-hop-valiant-east-pbc`. F-013 2HOT start unlocked on craft.
+  Bank 10.96 unchanged. leftover PRELAUNCH east-pbc. Do not Hangar.
+- **Symptom:** exit 2 `ABORT not recoverable`. Pitch 25° heading 90
+  logged. T+2 HDG 090 horiz ~21–27 m/s (still Shores, water on the
+  horizon). Burnout MET~27 fuel=0 apo max **10.0 km**. T+63 HDG 304
+  horiz still ~25 m/s. Lithobrake MET 100 alt 28.5 flying
+  recoverable=no q=0. Never `sit=splashed`. jsonl `speed=0` all
+  samples (HUD was ~90 m/s).
+- **Cause:** `_steer_east` ran only while `_burning`; `_release_steer`
+  at fuel=0. Stayputnik has no torque after cutoff, so the stack
+  weathervaned. Separately, 25° was **commanded** not flown: T+2 FPA
+  ~13° / ~20 m/s east — 7.5° gimbal + fins + FAR did not rotate onto
+  the 25° program. Holding AP after cutoff cannot mint the missing
+  east Δv.
+- **Fix:** Keep AP `target_pitch=65` heading 90 **through burnout**
+  (surface frame, `engaged=True`). Release when down/splashed, not at
+  fuel=0. If the next hop still Shores at ~25 m/s east, that is Gus
+  (gimbal / fins / a wheel), not another pitch number. Modules:
+  `hop.py`, `blocks.md`.
+
 ## 2026-08-21T15-26-18Z-hop-to-water — Close is not a reload loop
 
 - **When:** 2026-08-21 letsgrok `python main.py hop-to-water`

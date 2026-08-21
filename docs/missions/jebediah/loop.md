@@ -169,3 +169,11 @@ Jebediah: copy, hop-to-water, east Valiant kspstuff-hop-valiant-east-pbc, pitch 
 Jebediah: copy, leftover east-pbc, hop-to-water 25° east heading 90, wait splash, thermo 138s + TELEMETRY 30s, no Hangar
 Jebediah: copy, leftover east-pbc hop-to-water, light, pitch 25 east after left_pad, wait splash, Water shorts, recover HD
 Jebediah: copy, fresh Hangar east-pbc after Close-until-KSC, pitch 25 east heading 90, wait splash, Water shorts, recover HD
+Jebediah: copy, hop-to-water, Hangar east Valiant, pitch 25 from vertical heading 90 after left_pad, wait splash, Water shorts, recover HD
+Jebediah: copy, hop-to-water, Hangar kspstuff-hop-valiant-east-pbc, pitch 25 east after left_pad, wait splash, Water thermo+TELEMETRY, recover HD
+Jebediah: copy, leftover east-pbc PRELAUNCH, hop-to-water, AP 65/090 through burnout, wait splash, thermo 138s sensorThermometer + TELEMETRY 30s Stayputnik, recover HD
+Jebediah: copy, leftover east-pbc recover dark, Hangar east-bare, pitch 25 east through burnout, wait splash Water shorts
+Jebediah: copy, fresh Hangar east-bare, pitch 25 east through burnout, wait splash Water shorts
+Jebediah: copy, empty KSC, Hangar east-bare, pitch 25 east through burnout, wait splash, file Water shorts
+Gene: 16-11-58Z shear: unmatched east-bare recover then Hangar east-one. Light vertical; slew after left_pad at 0.4. go: yes hop-to-water.
+Jebediah: copy, leftover east-bare recover no light, Hangar east-one, light vertical, slew 65 HDG 090 after left_pad at 0.4, wait splash 2HOT 138s TELEMETRY 30s

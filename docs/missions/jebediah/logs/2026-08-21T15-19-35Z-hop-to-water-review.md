@@ -1,11 +1,11 @@
-# Review 2026-08-21T15-14-49Z-hop-to-water
+# Review 2026-08-21T15-19-35Z-hop-to-water
 
 command: hop-to-water
 exit: 2
 abort: Hangar waits: KSC not clean (timed out waiting for KSC (still flight results (can_revert); Flight Results not dismissed)). Close until KSC, no revert, no launch_vessel
-log: docs/missions/jebediah/logs/2026-08-21T15-14-49Z-hop-to-water.jsonl
-earth: 2026-08-21 15:14:49 UTC
-kerbal_ut: 2d 12:58:38 UT
+log: docs/missions/jebediah/logs/2026-08-21T15-19-35Z-hop-to-water.jsonl
+earth: 2026-08-21 15:19:35 UTC
+kerbal_ut: 2d 12:40:25 UT
 kerbal_met: ?
 samples: 0 (~1 Hz)
 duration: 0.0 s wall
@@ -52,6 +52,5 @@ last:
 
 ## Learn
 
-Hangar Close timed out: Flight Results still up (`can_revert`). No
-envelope. Close-once reload loop already patched. Do not Hangar from
-Gene. Do not revert. 15-26-18Z later Hangared and lit.
+Same as 15-14-49Z: Hangar wait Flight Results timeout, empty envelope.
+Close-once reload already patched. Then 15-26-18Z Hangar ready.

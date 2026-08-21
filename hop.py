@@ -93,8 +93,15 @@ _ABORT_UPLINK = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
 _UPLINK_SKIP = frozenset({"science", "stage"})
 # Valiant gimbal (MM 7.5°) is authority, not the hop angle.
 # 7.5° from vertical stayed Shores (14-33-29Z apo 12.1 km).
+# 25° is the path. Do not slam target_pitch=65 at light: east-bare
+# 16-11-58Z apo 5.3 km, joints shear, no decoupler, TWR 5, Stayputnik
+# has no wheel. Slew after left_pad at WATER_SLEW_THROTTLE. Hold AP
+# through burnout; Stayputnik has no torque after cutoff.
 WATER_PITCH_FROM_UP = 25.0
-WATER_PITCH_DEG = 90.0 - WATER_PITCH_FROM_UP
+WATER_PITCH_UP = 90.0
+WATER_PITCH_DEG = WATER_PITCH_UP - WATER_PITCH_FROM_UP
+WATER_PITCH_SLEW_DPS = 10.0
+WATER_SLEW_THROTTLE = 0.4
 WATER_HEADING_DEG = 90.0
 WATER_CRAFT = "kspstuff-hop-valiant-east-pbc"
 
@@ -824,8 +831,20 @@ def _burning(vessel: object, snap: object) -> bool:
     return throttle > 0.05
 
 
-def _steer_east(vessel: object) -> None:
-    """AP 25° from vertical, heading 90 (east). Gimbal only while burning."""
+def _slew_east_pitch(cmd: float, dt: float) -> tuple[float, bool]:
+    """Step target_pitch from vertical toward WATER_PITCH_DEG.
+
+    True while still slewing. 16-11-58Z slammed 65 at TWR 5.
+    """
+    step = WATER_PITCH_SLEW_DPS * (dt if dt > 0.0 else _PULSE_S)
+    nxt = cmd - step
+    if nxt <= WATER_PITCH_DEG:
+        return WATER_PITCH_DEG, False
+    return nxt, True
+
+
+def _steer_east(vessel: object, pitch: float = WATER_PITCH_DEG) -> None:
+    """AP heading 90 (east). Caller slews pitch; hold through burnout."""
     try:
         vessel.control.sas = False
     except Exception:
@@ -834,13 +853,19 @@ def _steer_east(vessel: object) -> None:
     if ap is None:
         raise MissionAbort("east pitch failed: no auto_pilot")
     try:
-        ap.target_pitch = WATER_PITCH_DEG
+        frame = getattr(vessel, "surface_reference_frame", None)
+        if frame is not None and hasattr(ap, "reference_frame"):
+            ap.reference_frame = frame
+        ap.target_pitch = float(pitch)
         ap.target_heading = WATER_HEADING_DEG
         ap.target_roll = 0.0
+        # 0.6: engage() may be missing; engaged bool is the live setter.
+        ap.engaged = True
         if hasattr(ap, "engage"):
-            ap.engage()
-        else:
-            ap.engaged = True
+            try:
+                ap.engage()
+            except Exception:
+                ap.engaged = True
     except Exception as exc:
         raise MissionAbort(f"east pitch failed: {exc}") from exc
 
@@ -908,10 +933,14 @@ def run_on_vessel(
     Matching leftover: live sit/fuel/recoverable before light — disk
     PRELAUNCH is a lie. Dry wreck leftover does not start the card.
 
-    ``wait_water``: pitch 25° east during the burn, do not recover on
-    first flying recoverable, abort landed only after ``left_pad``
-    (pad sit=landed is hop-off, same as ``_down(flown)``), splash
-    dwell after ``sit=splashed``.
+    ``wait_water``: light vertical, then **slew** 25° east after
+    ``left_pad`` at ``WATER_SLEW_THROTTLE`` (16-11-58Z slam
+    ``target_pitch=65`` at TWR 5 sheared the bare stack), **hold AP
+    through burnout** (do not disengage at fuel=0 — 15-26-18Z
+    weathervaned HDG 304), do not recover on first flying
+    recoverable, abort landed only after ``left_pad`` (pad
+    sit=landed is hop-off, same as ``_down(flown)``), splash dwell
+    after ``sit=splashed``.
     """
     from phases import OffPlan, check_expect
 
@@ -938,12 +967,16 @@ def run_on_vessel(
     litho = False
     said_crash = False
     said_pitch = False
+    said_hold = False
+    said_slew = False
     water_splashed = False
+    water_pitch = WATER_PITCH_UP
     splash_names = splash_ids if splash_ids is not None else ()
     _say(f"hop apo={hop_apo:.0f}", on_log)
     if wait_water:
         _say(
-            f"hop-to-water pitch {WATER_PITCH_FROM_UP:g}° east, wait splash",
+            f"hop-to-water slew pitch {WATER_PITCH_FROM_UP:g}° east after pad "
+            f"(throttle {WATER_SLEW_THROTTLE:g}), hold through burnout, wait splash",
             on_log,
         )
 
@@ -1091,17 +1124,30 @@ def run_on_vessel(
             if left_pad and not down:
                 _hold_or_cut(vessel, snap, hop_apo)
 
-            if wait_water and lit and not down:
-                if _burning(vessel, snap):
-                    _steer_east(vessel)
-                    if not said_pitch:
+            if wait_water and lit and not down and left_pad:
+                water_pitch, slewing = _slew_east_pitch(water_pitch, pulse)
+                _steer_east(vessel, pitch=water_pitch)
+                if slewing:
+                    try:
+                        vessel.control.throttle = WATER_SLEW_THROTTLE
+                    except Exception:
+                        pass
+                    if not said_slew:
                         _say(
-                            f"hop-to-water pitch {WATER_PITCH_FROM_UP:g}° east",
+                            "hop-to-water slew pitch east after pad "
+                            f"throttle={WATER_SLEW_THROTTLE:g}",
                             on_log,
                         )
-                        said_pitch = True
-                else:
-                    _release_steer(vessel)
+                        said_slew = True
+                elif not said_pitch:
+                    _say(
+                        f"hop-to-water pitch {WATER_PITCH_FROM_UP:g}° east",
+                        on_log,
+                    )
+                    said_pitch = True
+                if not _burning(vessel, snap) and not said_hold:
+                    _say("hop-to-water hold east through burnout", on_log)
+                    said_hold = True
 
             if left_pad and not down and not science_attempted:
                 if (not did_light) and _keep_hd(
@@ -1370,8 +1416,9 @@ def run_hop_to_water(
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
 ) -> str:
-    """Valiant: Hangar seated craft, pitch 25° east on the burn, wait splash.
+    """Valiant: Hangar seated craft, slew 25° east after pad, wait splash.
 
+    Do not slam AP 65 at light (16-11-58Z TWR 5 sheared east-bare).
     Flea still refuses (no Hangar). Unmatched leftover recovers first.
     Matching leftover enters Flight. Gate live sit/fuel/recoverable
     before light — disk PRELAUNCH is a lie (14-52-25Z wreck flying

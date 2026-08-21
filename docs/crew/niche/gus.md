@@ -12,6 +12,6 @@ shape from a constraint, not from Gene's last sentence.
 Open:
 - Lithobrake Flea will not buy 15. t7 pencil is the ≥50 km hang, not 8.65.
 - TD-12 (e101) two-stage Hammer/Valiant — hop only lights once. Next shape, not this sit.
-- East-pitch / torque at Start if splash ever comes back.
+- Bare east-bare Heaviest+rigid dumped at max-q. east-one: core Heaviest only, radials on the tank. Wheel still stability.
 
 `.craft` is conference. This page is the itch.

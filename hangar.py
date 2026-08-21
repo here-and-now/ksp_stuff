@@ -552,18 +552,30 @@ def _can_revert(session: Any) -> bool:
     return False
 
 
+def _flight_vessels(session: Any) -> bool:
+    """Any kRPC vessel. Empty KSC after leftover recover is not a flight."""
+    try:
+        vessels = getattr(getattr(session, "space_center", None), "vessels", None)
+        return bool(list(vessels or []))
+    except Exception:
+        return False
+
+
 def ksc_ready(session: Any) -> tuple[bool, str]:
     """KSC overview with no Flight Results. Empty Tracking is not KSC.
 
     ``game_scene`` can already read ``space_center`` while the modal is
-    still up (14-52-25Z). ``can_revert_to_launch`` True is that dialog.
+    still up (14-52-25Z). ``can_revert_to_launch`` True is that dialog
+    **when a flight still exists**. After leftover recover the window
+    can already be empty night KSC with a stale can_revert (16-06-15Z /
+    16-12 Hangar timeout). Never revert.
     """
     scene = game_scene(session).lower().replace(" ", "_")
     if scene in _TRACKING:
         return False, "tracking (empty Tracking is not KSC)"
     if scene != "space_center":
         return False, f"scene {scene}"
-    if _can_revert(session):
+    if _can_revert(session) and _flight_vessels(session):
         return False, "flight results (can_revert)"
     return True, "ksc"
 

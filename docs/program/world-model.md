@@ -19,7 +19,7 @@ Kardashev III is creed here. Joke in the TUI. Nobody preaches mid-burn.
 
 Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. Tree
 **start, engineering101, basicRocketry**. Desk `sci = 10.9586`
-(14-52-25Z hop-to-water abort **+0**; 14-45-33Z hop-to-water abort **+0**; 14-33-29Z hop-to-water abort **+0**; 13-58-18Z abort **9.66 → 10.96, +1.30**; 13-49-37Z splash **6.35 → 9.66,
+(16-11-58Z hop-to-water abort **+0**; 15-26-18Z hop-to-water abort **+0**; 14-52-25Z hop-to-water abort **+0**; 14-45-33Z hop-to-water abort **+0**; 14-33-29Z hop-to-water abort **+0**; 13-58-18Z abort **9.66 → 10.96, +1.30**; 13-49-37Z splash **6.35 → 9.66,
 +3.31**; 13-31-03Z splash **+0**; 13-08-57Z abort **+0**; 12-30-03Z abort
 **+0**; 12-22-36Z abort **+0**; 12-04-13Z abort **6.05 → 6.35, +0.30**
 geiger in-flight).
@@ -28,13 +28,14 @@ TELEMETRY **capped**. FlyingHigh thermo **banked**. FlyingHigh TELEMETRY
 Shores leftover **1.26** after 13-49, **consumed** on 13-58. FlyingLow
 thermo leftover **0.045**. `recovery@EarthFlew` leftover **gone**.
 FlyingLow geiger leftover **0.316**. `capable: yes`. craft
-`kspstuff-hop-valiant-east-pbc`. card FlyingLow@Water shorts. f013
+`kspstuff-hop-valiant-east-one-pbc`. card FlyingLow@Water shorts. f013
 `sensorThermometer` tech start unlocked yes on_craft yes; TELEMETRY
-hosted Stayputnik PAW. hangar: **none**. Tracking **no vessels**.
-Flight Results may still sit (stuck still
-`screenshots/stuck-flight-results.png`). Hangar Close-polls until KSC
-and `can_revert_to_launch` false. Do not Hangar from Gene. Do not
-revert. Do not recover Ast. XRL-564. Need **~4.04** for survivability.
+hosted Stayputnik PAW. leftover unmatched **east-bare** (desk
+PRELAUNCH; last live landed Shores 71 m crash UI) vs seated
+**east-one**. Recover without lighting, then Hangar east-one. Do
+**not** light east-bare or the finned hang. Disk PRELAUNCH is a lie.
+Do not Hangar from Gene. Do not revert. Do not recover Ast. XRL-564.
+Need **~4.04** for survivability.
 
 Aero stack **now on this install** (CKAN, 2026-08-21): **FAR**
 (`FerramAerospaceResearchContinued`), **RealChute** + RealChuteForStock,
@@ -52,6 +53,40 @@ Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
 **2,380.7 m**, apo 11.6 km. Not 72 m.
 
 ## Meaning (Gene)
+
+16-11-58Z hop-to-water abort: Hangar **east-bare**. Slam AP 65 at light
+TWR ~5, no decoupler, Stayputnik no wheel — joints **sheared**. Kero
+dump MET **11.7** (276→0 ~1.5 s q≈39 kPa), apo **5.3 km**, lithobrake
+Shores MET 54 alt **71**, never splash. sci **10.96 (+0)**. jsonl
+`speed` always 0. Batch: 16-06 / 16-08 Hangar wait Flight Results
+(unmatched east-pbc recovered 16-06). Os: shear. Lars: light vertical;
+after `left_pad` slew 10°/s to 65 at throttle **0.4**; hold AP through
+burnout. leftover unmatched **east-bare** — recover without lighting,
+then Hangar **east-one**. Do not light east-bare or the finned hang.
+Gus `capable: yes` **east-one**. Os until 15. `campaign: uncrewed`.
+`go: yes`. `python main.py hop-to-water`.
+
+15-50-45Z hop-to-water abort: leftover matching east-pbc **lit**. AP
+**held through burnout**. Horiz ~20 m/s T+2 HDG 090; apo **10.3 km**;
+burnout MET~27 fuel=0. After cutoff fins+FAR weathercocked HDG **290**,
+horiz **44 m/s**, lithobrake Shores MET **148** alt **78** KSC roads.
+Never splashed. sci **10.96 (+0)**. Yeet was Restock **ModuleJettison**
++ fins on the engine, not a stack decoupler. 25° hold is not a bigger
+pitch. Gus `capable: yes` **east-bare** (boattail, no fins). leftover
+**unmatched** PRELAUNCH east-pbc — recover without lighting, then
+Hangar bare. Do not light the finned hang. Os until 15.
+`campaign: uncrewed`. `go: yes`. `python main.py hop-to-water`.
+
+15-26-18Z hop-to-water abort: Hangar east-pbc. Pitch **25°** heading 90
+was a **command**, not a path. Horiz ~21–27 m/s during the burn; apo
+**10.0 km**; burnout MET~27 fuel=0. AP released at cutoff — Stayputnik
+weathervaned HDG **304**, lithobrake Shores MET **100** alt **28.5**
+flying recoverable=no q=0. Never splashed. sci **10.96 (+0)**. Lars
+holds AP through burnout. leftover matching **PRELAUNCH** — light, do
+not Hangar. Close-once Hangar wait (15-14 / 15-19) already patched.
+If next hop still ~25 m/s east, tanks/gimbal vs FAR, not pitch number.
+Os until 15. `campaign: uncrewed`. `go: yes`.
+`python main.py hop-to-water`.
 
 14-52-25Z hop-to-water abort: leftover already **flying** MET **13.8**
 fuel=0 q=0 alt **83.2** apo **264 m**. Disk PRELAUNCH was a lie. Hop
@@ -178,10 +213,11 @@ start + e101 + basicRocketry owned. Working goal **15 sci**
 leftover **0.32** crumbs. Recovery leftover gone. Cape spent. FlyingHigh
 Shores shorts spent. hangar none, Tracking empty. Hangar waits for
 KSC + `can_revert` false. Bound
-**`kspstuff-hop-valiant-east-pbc`** FlyingLow@Water thermo **2.10** +
+**`kspstuff-hop-valiant-east-one-pbc`** FlyingLow@Water thermo **2.10** +
 TELEMETRY **1.40** (**3.50** if finished — **0.54 short**). Splash
 TELEMETRY **0.80** remaining-subject if the core lives. 2×T100 does
-not loft FlyingHigh. **Visit Ast. XRL-564** someday.
+not loft FlyingHigh. leftover unmatched east-bare recover then Hangar.
+**Visit Ast. XRL-564** someday.
 
 ## Story (Verena)
 
@@ -277,3 +313,5 @@ story this fly. Dead kRPC GUID is not leftover.
 | Gene | Linus Grokman, Director of Research | Bind remaining that can finish and pay ~4.04; FlyingHigh Shores shorts are spent. | **Linus 2026-08-21:** FlyingLow@Water thermo **138 / 0.002 / 2.10** + TELEMETRY **30 / 0.052 / 1.40**. Pair 3.50. Splash TELEMETRY 0.80 same id. **merged.** |
 | Gene | Gus Grokman, VP Build | East Water shorts on t7 gimbal, or a hang that finishes 641 s? t7 Shores ballistic will not buy 4.04. | **Gus 2026-08-21:** `capable: yes` **`kspstuff-hop-valiant-east-pbc`**. Not t7. Gimbal 7.5° on the burn. **merged.** |
 | parent | Gene Grokman, Flight Director | Flight Results still up so next Hangar waits, or KSC clean? | **Gene 2026-08-21:** **Hangar waits.** stuck still Flight Results Catastrophic Failure over Tracking, no vessels. Not KSC clean. `go: wait`. |
+| Gene | Gus Grokman, VP Build | 7.5° gimbal vs FAR: if next hop-to-water still ~25 m/s east after AP hold through burnout, is that tanks/gimbal not the 25° pitch number? | **Gus 2026-08-21:** **east-bare.** 15-50-45Z still ~20 m/s east then fins HDG 290. Not a steeper pitch. leftover unmatched recover, Hangar bare. **merged.** Then **east-one** after 16-11-58Z shear. |
+| Os / Lars | Gene Grokman, Flight Director | east-bare slam AP 65 at TWR 5 shears (no decoupler). Slew after left_pad at throttle 0.4? | **Gene 2026-08-21:** **yes.** Light vertical; after left_pad slew 10°/s to 65 at 0.4; hold AP through burnout. Hangar **east-one**. Do not light east-bare. `go: yes`. |

@@ -1,0 +1,423 @@
+ship = kspstuff-hop-valiant-east-one-pbc
+version = 1.12.5
+description = PBC east Water hop, one piece. Stayputnik stack-only (autostrut Heaviest, no rigid) + 1xZ-100 + Engineer7500 + 16-S + 2HOT on the upper T100 + 2x FL-T100 RF Kero/LOx + LV-T15 Valiant gimbal 7.5 Boattail. No fins, no goo, no geiger, no shroud jettison, no stack decoupler, no EAS-4 (generalConstruction locked). Radials Off/False. Not east-bare. Not Stayputnik PAW as Geiger.
+type = VAB
+size = 1.25,12,1.25
+steamPublishedFileId = 0
+persistentId = 1550005464
+rot = 0,0,0,1
+missionFlag = Squad/Flags/default
+vesselType = Probe
+PART
+{
+	part = probeCoreSphere.v2_1666040601
+	partName = Part
+	persistentId = 1612581531
+	pos = 0.0,15.0,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,15.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1671050297
+	attN = bottom,fuelTankSmallFlat_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1671050297
+	partName = Part
+	persistentId = 1175504479
+	pos = 0.0,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,14.41302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = batteryPack_1085135241
+	link = Engineer7500_1189642615
+	link = SurfAntenna_1514786686
+	link = sensorThermometer_1895451311
+	link = fuelTankSmallFlat_1114614042
+	attN = top,probeCoreSphere.v2_1666040601
+	attN = bottom,fuelTankSmallFlat_1114614042
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = batteryPack_1085135241
+	partName = Part
+	persistentId = 1371257135
+	pos = 0.65,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.65,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,fuelTankSmallFlat_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = Engineer7500_1189642615
+	partName = Part
+	persistentId = 1045198612
+	pos = 0.0,14.41302,0.65
+	attPos = 0,0,0
+	attPos0 = 0.0,0.0,0.65
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,fuelTankSmallFlat_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = SurfAntenna_1514786686
+	partName = Part
+	persistentId = 1001635446
+	pos = 0.0,14.41302,-0.65
+	attPos = 0,0,0
+	attPos0 = 0.0,0.0,-0.65
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,fuelTankSmallFlat_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = sensorThermometer_1895451311
+	partName = Part
+	persistentId = 1939055433
+	pos = -0.65,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = -0.65,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,fuelTankSmallFlat_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1114614042
+	partName = Part
+	persistentId = 1675104971
+	pos = 0.0,13.78802,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,13.78802,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = restock-engine-125-valiant_1226153168
+	attN = top,fuelTankSmallFlat_1671050297
+	attN = bottom,restock-engine-125-valiant_1226153168
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = restock-engine-125-valiant_1226153168
+	partName = Part
+	persistentId = 1927692361
+	pos = 0.0,13.0255201,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,13.0255201,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = 0
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	attN = top,fuelTankSmallFlat_1114614042
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModulePartVariants
+		isEnabled = True
+		useVariantMass = True
+		stagingEnabled = False
+		selectedVariant = Boattail
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleJettison
+		isEnabled = True
+		isJettisoned = True
+		shroudHideOverride = True
+		stagingEnabled = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			JettisonAction
+			{
+				actionGroup = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleGimbal
+		isEnabled = True
+		gimbalLock = False
+		gimbalLimit = 100
+		gimbalRange = 7.5
+		stagingEnabled = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}

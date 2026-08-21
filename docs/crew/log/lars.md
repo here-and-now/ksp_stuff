@@ -1,5 +1,7 @@
 # Lars Grokman — log
 
+- 2026-08-21 — 16-11-58Z hop-to-water: east-bare apo 5.3 km — do not slam AP 65 at light TWR 5 (no decoupler, joints shear). Slew east after pad at throttle 0.4. Do not Hangar.
+- 2026-08-21 — 15-26-18Z hop-to-water: hold AP east through burnout (do not release at fuel=0). 25° was commanded, not flown (~20 m/s east). leftover PRELAUNCH east-pbc — do not Hangar.
 - 2026-08-20 — Os: inner MET-clock hunger, niche private, ground ask. 19-26 unpause in; confirm on next Hangar.
 - 2026-08-20 — Cape pad: experiment id, double Toggle, dwell, EC cap.
 - 2026-08-20 — hop block: light, FlyingLow card, recover when down.

@@ -5,9 +5,10 @@ for the next CTT node (`survivability`, chutes LOCKED) **without
 cheats.** Save `letsgrok` / `~/Games/KSP-rss`. CTT+PBC. Probes first.
 Moon is a waypoint. RO sandbox is the next tree, not this save.
 
-**Bank:** desk **sci 10.96** (14-52-25Z **+0**; 14-45-33Z **+0**;
-14-33-29Z **+0**; 13-58-18Z **+1.30**; 13-49-37Z **+3.31**). Need
-**~4.04** honest. FlyingHigh shorts spent.
+**Bank:** desk **sci 10.96** (16-11-58Z **+0**; 15-26-18Z **+0**;
+14-52-25Z **+0**; 14-45-33Z **+0**; 14-33-29Z **+0**; 13-58-18Z
+**+1.30**; 13-49-37Z **+3.31**). Need **~4.04** honest. FlyingHigh
+shorts spent.
 Do not spend until the bank pays. No GameData, no rewind UT, no revert,
 no fake recover, no Stayputnik-as-Geiger, no kRPC UnlockTech.
 
@@ -18,14 +19,15 @@ recover on 10-42-32Z; lithobrake landed recover on 11-23-25Z,
 11-40-22Z, **11-47-13Z**. Repeating lithobrake Flea hops will **not**
 buy 15. 13-08-57Z Valiant 2×T100 apo **12.3 km** is not FlyingHigh.
 
-**Recommended:** `python main.py hop-to-water`. Hangar Close-polls
-until KSC + `can_revert_to_launch` false. Do **not** Hangar from Gene.
-Do **not** revert. 14-52-25Z leftover wreck was not PRELAUNCH. Lars
-leftover gate + hangar-flight-results in. Gus `capable: yes`
-**`kspstuff-hop-valiant-east-pbc`**. Linus bound FlyingLow@Water shorts.
-Pitch **25°** from vertical. hop_apo **18 km** not 80. Pair **3.50** +
-splash TELEMETRY **0.80** if the core lives. Flea refused. Os until 15.
-`go: yes`. `campaign: uncrewed`.
+**Recommended:** `python main.py hop-to-water`. leftover unmatched
+east-bare — **recover without lighting**, then Hangar **east-one**.
+Do not light east-bare or the finned hang. 16-11-58Z slam AP 65 at
+TWR 5 sheared, apo 5.3 km, Shores 71 m. Light vertical; after
+`left_pad` slew **10°/s** to 65 at throttle **0.4**; hold AP through
+burnout. Gus `capable: yes` **`kspstuff-hop-valiant-east-one-pbc`**.
+Linus bound FlyingLow@Water shorts. hop_apo **18 km** not 80. Pair
+**3.50** + splash TELEMETRY **0.80** if the core lives. Flea refused.
+Os until 15. `go: yes`. `campaign: uncrewed`.
 
 
 Canonical save `letsgrok`. `KSP-RO` is parked. Honor 4761 lives in

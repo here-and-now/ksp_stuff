@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-21 — Os: 10.96 of 15, path solid, do not bog down on Flight Results. Hangar waits until KSC is real. Never revert. Water sit stays the path.
 - 2026-08-21 — Os: working goal bank 15 sci for survivability, no cheats. sci 6.35, need ~8.65. Same Flea lithobrake is not the path. I-015 closed. I-013/I-017 hop.py → Lars. Gene replans. Gus a new cheap stack.
 - 2026-08-21 — I-016: uncrewed campaign. Gene first go: + batch Learn. Parent re-flies last recommended on clean 0. I-014 re-desk after capable. hop.py I-013/I-015 left to Lars.
 - 2026-08-20 — Paid basicRocketry: sci 6.12557697→1.12557697. Backup persistent.sfs.bak-basicRocketry. `load rd-basicRocketry` seated Ast. XRL-564 again; `ksc` (F-015). Swivel/Hammer/FL-T100 unlocked. Gus hangs an engine.

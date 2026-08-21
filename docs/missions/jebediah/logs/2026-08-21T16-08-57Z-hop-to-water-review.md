@@ -1,11 +1,11 @@
-# Review 2026-08-21T15-14-49Z-hop-to-water
+# Review 2026-08-21T16-08-57Z-hop-to-water
 
 command: hop-to-water
 exit: 2
 abort: Hangar waits: KSC not clean (timed out waiting for KSC (still flight results (can_revert); Flight Results not dismissed)). Close until KSC, no revert, no launch_vessel
-log: docs/missions/jebediah/logs/2026-08-21T15-14-49Z-hop-to-water.jsonl
-earth: 2026-08-21 15:14:49 UTC
-kerbal_ut: 2d 12:58:38 UT
+log: docs/missions/jebediah/logs/2026-08-21T16-08-57Z-hop-to-water.jsonl
+earth: 2026-08-21 16:08:57 UTC
+kerbal_ut: 2d 12:56:41 UT
 kerbal_met: ?
 samples: 0 (~1 Hz)
 duration: 0.0 s wall
@@ -37,7 +37,7 @@ tags: {}
 ## Events
 
 - T+0s start command=hop-to-water crew=
-- T+52s end samples=1
+- T+45s end samples=1
 
 ## Handoff
 
@@ -52,6 +52,7 @@ last:
 
 ## Learn
 
-Hangar Close timed out: Flight Results still up (`can_revert`). No
-envelope. Close-once reload loop already patched. Do not Hangar from
-Gene. Do not revert. 15-26-18Z later Hangared and lit.
+16-08-57Z hop-to-water abort +0. Hangar wait again: Flight Results
+(`can_revert`), timed out, no launch. Envelope empty. Same Close-until-KSC
+as 16-06. 16-11-58Z Hangar **east-bare** then succeeded — modal was
+the block, not the stack name.

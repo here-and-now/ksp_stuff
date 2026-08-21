@@ -1,11 +1,11 @@
-# Review 2026-08-21T15-14-49Z-hop-to-water
+# Review 2026-08-21T16-06-15Z-hop-to-water
 
 command: hop-to-water
 exit: 2
 abort: Hangar waits: KSC not clean (timed out waiting for KSC (still flight results (can_revert); Flight Results not dismissed)). Close until KSC, no revert, no launch_vessel
-log: docs/missions/jebediah/logs/2026-08-21T15-14-49Z-hop-to-water.jsonl
-earth: 2026-08-21 15:14:49 UTC
-kerbal_ut: 2d 12:58:38 UT
+log: docs/missions/jebediah/logs/2026-08-21T16-06-15Z-hop-to-water.jsonl
+earth: 2026-08-21 16:06:15 UTC
+kerbal_ut: 2d 12:54:52 UT
 kerbal_met: ?
 samples: 0 (~1 Hz)
 duration: 0.0 s wall
@@ -37,7 +37,7 @@ tags: {}
 ## Events
 
 - T+0s start command=hop-to-water crew=
-- T+52s end samples=1
+- T+95s end samples=1
 
 ## Handoff
 
@@ -46,12 +46,16 @@ command: hop-to-water
 exit: 2
 abort: Hangar waits: KSC not clean (timed out waiting for KSC (still flight results (can_revert); Flight Results not dismissed)). Close until KSC, no revert, no launch_vessel
 last:
+  hop leftover unmatched kspstuff-hop-valiant-east-pbc sit=pre_launch recoverable=yes — recover, do not light
+  recovered unmatched leftover sit=pre_launch recoverable=yes
   ABORT Hangar waits: KSC not clean (timed out waiting for KSC (still flight results (can_revert); Flight Results not dismissed)). Close until KSC, no revert, no launch_vessel
 
 ```
 
 ## Learn
 
-Hangar Close timed out: Flight Results still up (`can_revert`). No
-envelope. Close-once reload loop already patched. Do not Hangar from
-Gene. Do not revert. 15-26-18Z later Hangared and lit.
+16-06-15Z hop-to-water abort +0. Unmatched leftover **east-pbc**
+`sit=pre_launch recoverable=yes` recovered **without lighting**. Hangar
+then waited: Flight Results still up (`can_revert`), timed out, no
+`launch_vessel`. Envelope empty. Close until KSC, no revert. Next
+Hangar **east-bare** only after the window is KSC.

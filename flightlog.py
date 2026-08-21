@@ -123,6 +123,22 @@ def _pid_alive(pid: int) -> bool:
     return True
 
 
+def writer_lock_live() -> bool:
+    """True only if flight.lock names a still-running pid."""
+    if not LOCK.is_file():
+        return False
+    raw = LOCK.read_text(encoding="utf-8")
+    pid = 0
+    for line in raw.splitlines():
+        if line.startswith("pid="):
+            try:
+                pid = int(line.split("=", 1)[1].strip())
+            except ValueError:
+                pid = 0
+            break
+    return _pid_alive(pid)
+
+
 def acquire_lock(command: str) -> None:
     LOCK.parent.mkdir(parents=True, exist_ok=True)
     if LOCK.is_file():

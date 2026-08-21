@@ -24,7 +24,7 @@ from hop import (
     run_phase,
 )
 from phases import OffPlan, check_expect
-from science import HOP_EXPERIMENTS, card_experiment_ids, card_flying_ids
+from card import HOP_EXPERIMENTS, NO_BOUND_CARD, card_experiment_ids, card_flying_ids
 from telem import MissionAbort
 
 
@@ -185,7 +185,19 @@ class TestHopCatalog(unittest.TestCase):
         self.assertEqual(CRAFT, "kspstuff-hop-flea-pbc")
         self.assertTrue(hop_craft_path("kspstuff-hop-flea-pbc").is_file())
         self.assertTrue(hop_craft_path("kspstuff-hop-hammer-pbc").is_file())
-        self.assertEqual(hop_craft_name(), "kspstuff-hop-hammer-pbc")
+        from session import SessionError
+
+        with patch(
+            "missions.hangar_craft_name",
+            return_value="kspstuff-hop-hammer-pbc",
+        ):
+            self.assertEqual(hop_craft_name(), "kspstuff-hop-hammer-pbc")
+        with patch(
+            "missions.hangar_craft_name",
+            side_effect=SessionError("VAB capable=no — no Hangar (L-039)"),
+        ):
+            with self.assertRaises(SessionError):
+                hop_craft_name()
 
     def test_source_is_not_a_godfile(self):
         text = Path("hop.py").read_text(encoding="utf-8")
@@ -228,8 +240,8 @@ class TestCardIds(unittest.TestCase):
             ("kerbalism_TELEMETRY", "temperatureScan"),
         )
 
-    def test_empty_falls_back(self):
-        self.assertEqual(card_experiment_ids(""), HOP_EXPERIMENTS)
+    def test_empty_is_empty(self):
+        self.assertEqual(card_experiment_ids(""), ())
 
     def test_flying_skips_splash_goo(self):
         text = (
@@ -248,11 +260,20 @@ class TestCardIds(unittest.TestCase):
         )
         self.assertNotIn("mysteryGoo", card_flying_ids(text))
 
-    def test_live_card_is_flying_not_splash_goo(self):
-        ids = hop_science_ids()
+    def test_fixture_card_is_flying_not_splash_goo(self):
+        path = Path("tests/fixtures/cards/hop-flying.md")
+        with patch("missions.seated_science_path", return_value=path):
+            ids = hop_science_ids()
         self.assertIn("temperatureScan", ids)
         self.assertNotIn("mysteryGoo", ids)
         self.assertNotIn("geigerCounter", ids)
+
+    def test_empty_card_aborts(self):
+        empty = Path("tests/fixtures/cards/empty.md")
+        with patch("missions.seated_science_path", return_value=empty):
+            with self.assertRaises(MissionAbort) as ctx:
+                hop_science_ids()
+        self.assertIn(NO_BOUND_CARD, str(ctx.exception))
 
 
 class TestHopExpect(unittest.TestCase):
@@ -718,7 +739,7 @@ class TestHopSequence(unittest.TestCase):
     def test_falling_probe_waits_while_met_moves(self):
         """Live fall: MET moving. Do not dismiss Flight Results yet."""
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         vessel.met = 70.0
         vessel._alt = 400.0
         vessel.orbit.apoapsis_altitude = 800.0
@@ -751,7 +772,7 @@ class TestHopSequence(unittest.TestCase):
     def test_frozen_wreck_dismisses_flight_results(self):
         """Paused Flight Results: MET stuck, recoverable never true."""
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         vessel.met = 75.56
         vessel._alt = 72.0
         vessel._speed = 127.0
@@ -785,13 +806,13 @@ class TestHopSequence(unittest.TestCase):
 
     def test_frozen_wreck_recovers_hop_debris(self):
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         vessel.met = 75.56
         vessel._alt = 72.0
         vessel.orbit.apoapsis_altitude = 810.0
         vessel.orbit.periapsis_altitude = -7_000_000.0
         debris = _Vessel([], sit="landed", ec=0.0, recoverable=True)
-        debris.name = hop_craft_name() + " Debris"
+        debris.name = CRAFT + " Debris"
         debris.met = 75.56
         session = _Session(vessel)
         session.space_center.vessels = [vessel, debris]
@@ -814,7 +835,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_gone_vessel_finishes_hd(self):
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         vessel._alt = 72.0
         vessel.orbit.apoapsis_altitude = 200.0
         vessel.orbit.periapsis_altitude = -6_000_000.0
@@ -972,7 +993,7 @@ class TestHopSequence(unittest.TestCase):
         import flightlog
 
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         vessel.met = 7.0
         vessel._alt = 2123.0
         vessel.orbit.apoapsis_altitude = 11562.0
@@ -1038,7 +1059,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_already_launched_hop_skips_hangar(self):
         vessel = _Vessel([])
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         session = _Session(vessel)
         with patch("hop.run_hop") as hop:
             with patch("hop.run_on_vessel", return_value="recovered") as run:
@@ -1050,7 +1071,7 @@ class TestHopSequence(unittest.TestCase):
     def test_spacecenter_leftover_enters_flight_not_hangar(self):
         """KSC overview + leftover Flea: enter Flight. Do not Hangar."""
         vessel = _Vessel([], sit="pre_launch")
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         session = _Session(vessel)
         entered: list[object] = []
 
@@ -1073,7 +1094,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_tracking_leftover_enters_flight_when_active_none(self):
         leftover = _Vessel([], sit="pre_launch")
-        leftover.name = hop_craft_name()
+        leftover.name = CRAFT
         session = _Session(None)  # type: ignore[arg-type]
         session.active_vessel = None
         session.space_center.vessels = [leftover]
@@ -1199,9 +1220,10 @@ class TestHopHangar(unittest.TestCase):
             session.active_vessel = None
             with patch("hop.discover_hangar", return_value=fake):
                 with patch("hop.hop_craft_name", return_value="kspstuff-hop-hammer-pbc"):
-                    with patch("hop.time.sleep"):
-                        with patch("hop.run_on_vessel", return_value="recovered") as run:
-                            result = run_hop(session)
+                    with patch("hop.hop_science_ids", return_value=("temperatureScan",)):
+                        with patch("hop.time.sleep"):
+                            with patch("hop.run_on_vessel", return_value="recovered") as run:
+                                result = run_hop(session)
             self.assertEqual(result, "recovered")
             self.assertEqual(fake.calls[0]["name"], "kspstuff-hop-hammer-pbc")
             self.assertTrue(fake.calls[0]["uncrewed"])
@@ -1268,7 +1290,7 @@ class TestGoFlight(unittest.TestCase):
         from hangar import go_flight
 
         vessel = _Vessel([])
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         session = _FlightSession(vessel, scene="space_center")
         with patch("hangar.time.sleep"):
             go_flight(session, vessel, timeout=2.0)
@@ -1288,14 +1310,14 @@ class TestGoFlight(unittest.TestCase):
         from session import SessionError
 
         vessel = _Vessel([])
-        vessel.name = hop_craft_name()
+        vessel.name = CRAFT
         session = _FlightSession(vessel, scene="space_center", stuck=True)
         with patch("hangar.time.sleep"):
             with patch("hangar.time.monotonic", side_effect=[0.0, 1.0, 1.0]):
                 with self.assertRaises(SessionError) as ctx:
                     go_flight(session, vessel, timeout=0.01)
         self.assertIn("flight", str(ctx.exception))
-        self.assertIn(hop_craft_name(), str(ctx.exception))
+        self.assertIn(CRAFT, str(ctx.exception))
 
 
 class TestLoadSave(unittest.TestCase):

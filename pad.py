@@ -7,8 +7,8 @@ honestly. Do not ``pad_pbc()`` a geiger sit — that template has no
 Geiger Counter part (F-013). Pad EC=0 with data recovers; empty HD
 aborts. Science clock is rem / running / UT, not vessel MET. Dry-launch
 only when it will not light the motor. Pad dwell may physics-warp
-2–4× (rails 0, never WarpTo); back to 1× after. Empty card falls back
-to PAD_EXPERIMENTS.
+2–4× (rails 0, never WarpTo); back to 1× after. Empty card aborts
+(``no bound card``) before Hangar.
 """
 
 from __future__ import annotations
@@ -18,13 +18,12 @@ import time
 from pathlib import Path
 from typing import Callable
 
+from card import NO_BOUND_CARD, card_pad_ids
 from emergencies import Ctx, call
 from hangar import discover_hangar, game_scene, go_flight, run_physics, wait_vessel_ready
 from science import (
-    PAD_EXPERIMENTS,
     card_complete,
     card_has_data,
-    card_pad_ids,
     card_run_rem,
     card_wait_line,
     hd_has_data,
@@ -64,20 +63,18 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
 def pad_science_ids() -> tuple[str, ...]:
     """Seated pad card. FlyingLow / splash are not a pad start.
 
-    Empty file falls back to ``PAD_EXPERIMENTS``. A bound geiger card is
-    not F-005 goo+thermo.
+    Empty or missing card aborts. A bound geiger card is not F-005
+    goo+thermo.
     """
-    try:
-        from missions import seated_science_path
+    from missions import seated_science_path
 
-        path = seated_science_path()
-        if path.is_file():
-            ids = card_pad_ids(path.read_text(encoding="utf-8"))
-            if ids:
-                return ids
-    except Exception:
-        pass
-    return PAD_EXPERIMENTS
+    path = seated_science_path()
+    if not path.is_file():
+        raise MissionAbort(NO_BOUND_CARD)
+    ids = card_pad_ids(path.read_text(encoding="utf-8"))
+    if not ids:
+        raise MissionAbort(NO_BOUND_CARD)
+    return ids
 
 
 def _uplink_tick(ctx: Ctx) -> None:
@@ -527,6 +524,7 @@ def run_pad(
     events: EventLog | None = None,
 ) -> str:
     """Hangar + Kerbalism pad science. Probes are uncrewed."""
+    pad_science_ids()
     log_events = events if events is not None else EventLog()
     install_and_launch(session, recover=recover)
     try:

@@ -28,10 +28,10 @@ exits. Still no Commander radio. Still no Hangar.
 ## Notes
 
 Owns `science.md` and mission cards (`experiment_id`, `part`,
-`duration_s`, `ec_rate`, `recover_banks`). Query
-`python main.py parts --unlocked --module Experiment`. Horizon layer
-of the world model. Does not Hangar. One line of future in the notes
-is enough — Gene chairs the merge.
+`duration_s`, `ec_rate`, `recover_banks`). Desk `f013` is tree +
+instrument. Stayputnik PAW is not a Geiger. Horizon layer of the
+world model. Does not Hangar. One line of future in the notes is
+enough — Gene chairs the merge.
 
 Os is Founder. Same pad card is not more science (F-005). Humor: none
 in the card; dry if he must. Rare explore: a full remaining-subject

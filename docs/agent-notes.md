@@ -116,7 +116,7 @@ Press stills: Verena `shot:` → parent `--name <slug>`. Ops: Gene
 `--name stuck-<stem>` when last-flight / jsonl cannot explain the
 scene, then read the PNG. grim is not kRPC.
 
-Helm cadence (no kRPC, do **not** read unless stuck): pad/hop
+Flight cadence (no kRPC, do **not** read unless stuck): pad/hop
 `Telem.read` grabs `screenshots/runs/<stamp>-<command>/T+MMMMMM-<event>.png`
 about every 60 s and on sit/stage/light/wreck/first EC=0, plus named
 events (science, recover, airborne). Failures are debug-only — never

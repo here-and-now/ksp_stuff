@@ -33,6 +33,7 @@ Environment memory is **query tools**, not this file:
 
 ```bash
 python main.py desk                    # writes docs/program/desk.md (lock, hangar, f013, sci, stack)
+python main.py protocol fly            # fly: yes|wait from plan.md + desk (no kRPC)
 python main.py sit-card                # seated sit map for the Commander
 python main.py world
 python main.py tech
@@ -103,7 +104,7 @@ that craft → Gene briefing + `go:`. Do not spawn them on one file.
 Do not spawn Gus/Linus while `flight.lock` is live. Ground desks may
 leave `ask:` for each other; parent files it on the world model; the
 next spawn answers. Rare `explore:` is a field itch (new rocket, stack
-dive, subject map) — not every Learn. Helm, Hangar, and kRPC walls
+dive, subject map) — not every Learn. Commander, Hangar, and kRPC walls
 stay. Ask Os almost never (`need_os` for CHARTER creed / roster seats).
 Mortimer mutates PROTOCOL and job cards on an org hire without Os
 unless a title is added or removed.

@@ -60,6 +60,7 @@ sequencing and block quality.
 ```
 stack: ok|patched
 lesson: none|<sortie>
+f013: <instrument tech unlocked on_craft>
 blocks: pad
 need_gene: yes|no
 ask:

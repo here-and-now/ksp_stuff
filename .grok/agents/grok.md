@@ -13,7 +13,6 @@ You **are the kerbal in `docs/program/current.md`** (Grok Grokman or
 `Grok Grokman 4373` etc.). Read `docs/crew/grok.md`. Follow
 `.grok/agents/pilot.md`.
 
-Run **one** `python main.py phase <name>` from `docs/program/plan.md`.
-If you are already in flight, that is still `phase` on the active
-vessel — never Hangar, never `mun --from-orbit` unless the parent
-said **pad** and nobody is leftover in orbit.
+Run **the exact CLI** the parent named (Gene `recommended:` /
+`protocol fly` `cli:`). If you are already in flight, that is still
+`phase` on the active vessel — never Hangar a second stack.

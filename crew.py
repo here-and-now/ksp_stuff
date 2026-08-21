@@ -1,14 +1,14 @@
 """Persistent program staff. Markdown in docs/crew/, not a package.
 
-Portrait kv is only the header (before the first ``##``). Style numbers
-are not applied to flight. Logs live in ``docs/crew/log/``.
+Portrait kv is only the header (before the first ``##``). Logs live in
+``docs/crew/log/``.
 """
 
 from __future__ import annotations
 
 import logging
 import re
-from dataclasses import dataclass, fields
+from dataclasses import dataclass
 from pathlib import Path
 
 
@@ -40,26 +40,6 @@ for _first, _slug in (
 _SLUG["Wernher von Kerman"] = "wernher"
 _SLUG["Wernher von Grokman"] = "wernher"
 
-# Library defaults, then clamp. Matches mun.py / L-015 / L-008.
-_STYLE_CLAMP: dict[str, tuple[float, float]] = {
-    "target_altitude": (80_000.0, 400_000.0),
-    "max_q": (8_000.0, 50_000.0),
-    "energy_cap": (1.05, 1.45),
-    "suicide_start_alt": (20_000.0, 40_000.0),
-    "turn_start_altitude": (800.0, 5_000.0),
-    "turn_end_altitude": (50_000.0, 80_000.0),
-}
-
-
-@dataclass(slots=True)
-class Style:
-    target_altitude: float = 250_000.0
-    max_q: float = 40_000.0
-    energy_cap: float = 1.4
-    suicide_start_alt: float = 25_000.0
-    turn_start_altitude: float = 1_200.0
-    turn_end_altitude: float = 70_000.0
-
 
 @dataclass(slots=True)
 class Person:
@@ -68,7 +48,6 @@ class Person:
     duty: str
     kerbal: str | None
     path: Path
-    style: Style
     body: str
 
 
@@ -86,20 +65,6 @@ def _parse_kv(text: str) -> dict[str, str]:
         if key:
             out[key] = val
     return out
-
-
-def _style_from(kv: dict[str, str]) -> Style:
-    kwargs: dict[str, float] = {}
-    for f in fields(Style):
-        if f.name not in kv:
-            continue
-        try:
-            value = float(kv[f.name])
-        except ValueError:
-            continue
-        lo, hi = _STYLE_CLAMP[f.name]
-        kwargs[f.name] = min(hi, max(lo, value))
-    return Style(**kwargs)
 
 
 def slug_for(name: str) -> str:
@@ -137,7 +102,6 @@ def load_person(name_or_slug: str) -> Person:
         duty=kv.get("duty", "pilot"),
         kerbal=kerbal_name,
         path=path,
-        style=_style_from(kv),
         body=text,
     )
 

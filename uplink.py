@@ -110,6 +110,8 @@ _PLAN_META = (
     "expect_apo_max",
     "craft",
     "hop_apo",
+    "go",
+    "recommended",
 )
 
 

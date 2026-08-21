@@ -62,5 +62,5 @@ plan `tech: engineering101`) is **not** a flight. No Hangar, no Toggle,
 no Geiger dwell. kRPC 0.6 can open R&D and read the bank; it cannot
 buy a node unless an UnlockTech RPC exists. Abort — do not patch the
 save. After a real buy, `parts --unlocked` lists `kerbalism-geigercounter`.
-Helm `uplink.md` verbs: `hold|cut|no_warp|stage|recover|science|abort_pad`.
+Commander `uplink.md` verbs: `hold|cut|no_warp|stage|recover|science|abort_pad`.
 `loop.md` is not the stick.

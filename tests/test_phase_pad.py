@@ -131,6 +131,7 @@ class TestPhasePad(unittest.TestCase):
         # assert_seated would SESSION (crew=[] vs Jeb). heartbeat after
         # recover would MissionAbort (no vessel). Skip both → 0.
         with patch("pad.time.sleep"):
-            code = cmd_phase(session, args)
+            with patch("pad.pad_science_ids", return_value=()):
+                code = cmd_phase(session, args)
         self.assertEqual(code, 0)
         self.assertIsNone(session.active_vessel)

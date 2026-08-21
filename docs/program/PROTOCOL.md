@@ -18,9 +18,9 @@ flies. Gene never rewrites PROTOCOL.
 | Gene | Gus, VP Build | `need_builder` or after draft | plan + Linus board | `capable:` `craft:` — **no** if the sit needs a locked/missing Science part |
 | Gene | Lars, Vehicle Engineering | `need_stack: <name>` | missing block **+ tree/unlocked parts** | `stack:` `lesson:` |
 | Gene | seated Commander | `go: yes` + `capable: yes` + phase in `blocks.md` | briefing + **exact CLI** | `result:` `exit:` `handoff:` |
-| Helm | Gene | every **live** exit | `last-flight.md` + review | Learn |
+| Commander | Gene | every **live** exit | `last-flight.md` + review | Learn |
 | Commander | Lars / Gus / Wernher | during or after a sit | `python main.py note-tech <desk> …` → `note-tech.md` | parent files / Gene reads between exits |
-| Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
+| Commander | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
 | Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
 | Any spawned desk | improve queue | `improve:` on return | friction / suggest / code | parent files `I-NNN`; Mortimer on trip |
 | Any spawned desk | feedback board | `feedback:` on return | good / bad / suggest | prefer `improve:`; gym F- table remains |
@@ -79,18 +79,18 @@ an honest `go:`** (hardware, leftover, hang, EC), parent hires those
 addressees **once** before Gene merge (`desk.md` + the question). No
 second round in the same sit. Leftover asks wait until the next real
 hire. `explore:` is rare — parent may keep them on `.craft` / stack
-after Learn if lock is free and Os is not mid-go. Helm never `ask:`s
-the model. Ask Os almost never (`need_os`).
+after Learn if lock is free and Os is not mid-go. The Commander never
+`ask:`s the model. Ask Os almost never (`need_os`).
 
 **Tree + hardware (F-013):** experiment_id is not a part. Every bind /
 capable / `go:` / Lars science-miss packet must say **tree node** and
 whether the **Science-category instrument** is unlocked and on the
-craft. Stayputnik PAW is a host, not a Geiger Counter.
-`python main.py tech` + `parts --unlocked` + `parts --unlocked --search
-<id>` + `parts --stack`. If the instrument is LOCKED: Linus does not
-bind it as hardware; Gus `capable: no`; Gene `go: wait`; Lars does not
-patch a sit for a part we do not have. Parent copies that line into
-Lars’s packet so he is not sequencing a ghost instrument.
+craft. Stayputnik PAW is a host, not a Geiger Counter. Desk `f013` is
+that line — do not send `tech` / `parts --search` if desk is this sit.
+If the instrument is LOCKED: Linus does not bind it as hardware; Gus
+`capable: no`; Gene `go: wait`; Lars does not patch a sit for a part we
+do not have. Parent copies that line into Lars’s packet so he is not
+sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`; one kRPC writer; Lars XOR Wernher; re-fly only after new `go: yes`.
 
@@ -124,15 +124,17 @@ return: the named block
 ```
 
 Packet `read:` is **`docs/program/desk.md`** (parent just wrote it) plus
-at most two role paths. Helm `cli:` is Gene `recommended:` **copied
-verbatim** (F-004). Lars miss packet names the **live** review path,
-not “newest file”. Parent copies **f013** from desk. Do not send
-`docs/archive/kerbin-lessons.md`. Children do not re-run
-`world`/`tech`/`parts` if desk is this sit.
+at most two role paths. Commander `cli:` is Gene `recommended:` **copied
+verbatim** (F-004) from `python main.py protocol fly`. Lars miss packet
+names the **live** review path, not “newest file”. Parent copies
+**f013** from desk. Do not send `docs/archive/kerbin-lessons.md`.
+Children do not re-run `world`/`tech`/`parts` if desk is this sit.
 
-`hangar:` on desk **is** the Hangar decision (`none` | `recover <name>`
-| `blocked`). Gene does not vibe it. Missing `f013` on bind /
-capable / `go:` / Lars miss → wait.
+`hangar:` on desk **is** the Hangar decision (`none` |
+`phase <name> sit=<SIT>` | `recover <name> sit=<SIT>` | `blocked`).
+Disk cannot see crash UI (`scene: unknown (disk)`). Gene does not vibe
+it. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
+Parent flies only if `python main.py protocol fly` prints `fly: yes`.
 
 Every ground return and Learn (Commander exit) may include:
 
@@ -145,7 +147,7 @@ need_mortimer: none | org
 ```
 
 Parent files `docs/program/improve/I-NNN.md`. Spawn Mortimer only on
-the trip in `improve/README.md`. Helm `improve:` on **exit**, not
+the trip in `improve/README.md`. Commander `improve:` on **exit**, not
 mid-lock.
 
 Gene merge is the only `go:`. Gene **max two hires per sit** (draft iff
@@ -162,12 +164,12 @@ Gene last-writes plan/briefing/Learn and chairs **flight** layers of
 `world-model.md`. Mortimer last-writes **Practice**, PROTOCOL, and job
 cards on an org hire. Gus last-writes `vab.md`/`.craft`. Linus
 last-writes science boards. Verena last-writes `README.md` (portrait)
-and `docs/press/` (story layer). Helm takes `uplink.md`. `loop.md` is
+and `docs/press/` (story layer). The Commander takes `uplink.md`. `loop.md` is
 talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
 
 Milestone stills (no kRPC). Press: Verena `shot:` → parent grab. **Stuck:** Gene (between exits) or the seated Commander may grab **one** still when last-flight, the review, and the jsonl cannot explain the scene (empty events, crash UI, leftover vs KSC). Read the PNG. Not a heartbeat. Not press.
 
-Helm cadence (capture only — do not read): `screenshots/runs/<stamp>-<command>/` about every 60 s of a live `pad`/`hop`, plus sit/stage/light/science/recover/wreck. Library for Verena or a stuck debug. Never clobber press heroes.
+Flight cadence (capture only — do not read): `screenshots/runs/<stamp>-<command>/` about every 60 s of a live `pad`/`hop`, plus sit/stage/light/science/recover/wreck. Library for Verena or a stuck debug. Never clobber press heroes.
 
 ```bash
 python main.py screenshot --name <slug>         # screenshots/<slug>.png
@@ -188,7 +190,7 @@ Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` 
 ## Feedback
 
 Process lives in `docs/program/improve/` (`I-NNN`) for the RSI house.
-Gym record remains `docs/program/feedback.md` (`F-NNN`). Helm bugs stay in
+Gym record remains `docs/program/feedback.md` (`F-NNN`). Flight bugs stay in
 `docs/lessons.md` as **run — title** headings (the filename stem, not letter-codes).
 
 Every return may include:

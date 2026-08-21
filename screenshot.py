@@ -823,7 +823,7 @@ def mission_shots() -> ShotCadence:
 
 
 def mission_observe(snap: object, *, event: str | None = None) -> Path | None:
-    """Helm cadence. Capture only — do not read the PNG."""
+    """Flight cadence. Capture only — do not read the PNG."""
     try:
         return mission_shots().observe(snap, event=event)
     except Exception:

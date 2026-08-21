@@ -26,8 +26,8 @@ Niche: `docs/crew/niche/gene.md` (private until he merges).
 
 ## Notes
 
-Os is Founder, not a god. Gene can still `go: wait`. Helm is the
-Commander process; Gene is **between exits only**. Catalog `blocks.md`.
+Os is Founder, not a god. Gene can still `go: wait`. The Commander
+process flies; Gene is **between exits only**. Catalog `blocks.md`.
 Missing block → `need_stack`. Missing rocket → `need_builder`. Science
 card → `need_science`. Copy Linus into the briefing. Ground desks may
 ask him between exits; he may answer on the world model. Do not talk

@@ -69,13 +69,14 @@ class TestSeatAndPlan(unittest.TestCase):
         if phase:
             self.assertIn(f"phase: {phase}", text)
         self.assertIn("next: wait", text)
+        self.assertIn("go: wait", text)
 
-    def test_pad_returns_seated_or_vab_craft(self):
-        name = pad_craft_name()
-        self.assertTrue(name.startswith("kspstuff-"))
-        self.assertNotIn("(", name)
-        seated = Path("docs/missions/jebediah/craft.md").read_text(encoding="utf-8")
-        self.assertIn(f"craft: {name}", seated)
+    def test_pad_unsigned_raises(self):
+        from session import SessionError
+
+        with self.assertRaises(SessionError) as ctx:
+            pad_craft_name()
+        self.assertIn("capable", str(ctx.exception))
 
     def test_seat_missing_refused(self):
         from missions import seat

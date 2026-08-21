@@ -17,7 +17,7 @@ library. `improve:` on **exit** only. Final summary only.
 You do **not** override Gene's uplink. You may
 `python main.py note Jebediah "copy, holding"`. You **own the loop**:
 see the stack, decide from telemetry, act (hold/abort_pad) or write
-`python main.py note-tech Lars|Gus|Wernher "what we need"`. Helm may
+`python main.py note-tech Lars|Gus|Wernher "what we need"`. You may
 refuse a bound-fueled abort. You do not rewrite Gene's plan. You do
 not edit `.py` / `.craft`.
 
@@ -30,7 +30,8 @@ source .venv/bin/activate
 
 KSP + kRPC must already listen on `127.0.0.1:50000` and `:50001`.
 One `Session` per process. You are the only writer: do not start a second
-`pad` or `phase`. `status` is allowed (read-only second connection).
+`pad` or `phase`. Do **not** run `status` while `flight.lock` is live
+(second Session). Pre-flight knowledge is desk + `sit-card.json`.
 
 ## Do
 
@@ -38,16 +39,16 @@ One `Session` per process. You are the only writer: do not start a second
    (`docs/missions/<id>/briefing.md` and `plan.md`). Copy on
    `python main.py note <YourName> "copy, …"`. Then
    `docs/crew/<slug>.md`, last-flight if any, last 3 lessons. Do not
-   fly a different Grok's plan. Style still comes from crew.py.
-2. `.venv/bin/python -u main.py parts --stack` once (disk). You **want**
-   to know the craft: parts you can see vs hosted PAW experiments.
-   Then `.venv/bin/python -u main.py status` once. If `SESSION` connect fails,
-   stop and report that — do not loop. Crash UI: do **not** stop for Os.
+   fly a different Grok's plan.
+2. Read `docs/program/desk.md` and `docs/program/sit-card.json`. Do not
+   run `parts --stack` or `status` if desk is this sit. If the CLI
+   `SESSION`s, stop and report that — do not loop. Crash UI: do **not**
+   stop for Os.
    Do **not** revert, quickload, return to VAB, or rewind UT. Screenshot
    once if last-flight / jsonl cannot tell (`--name stuck-<stem>`),
    **read the PNG**, then recover the leftover or abort. grim is not
    kRPC. Not every flight. Not `--full` unless unreadable. Not press.
-   Helm also writes `screenshots/runs/<stamp>-<command>/` (~1 min and
+   Flight cadence stills live in `screenshots/runs/<stamp>-<command>/` (~1 min and
    sit/stage/light/science/recover). Capture only; do not read those
    unless you are stuck.
 3. Run **the exact CLI the parent named** (Gene's `recommended:`). Pad
@@ -58,7 +59,7 @@ One `Session` per process. You are the only writer: do not start a second
    Never wait on a timer. Before every sit, name **what** you are
    waiting for **and on which part** (load, experiment remaining on the
    Geiger Counter vs Stayputnik PAW, recoverable) from the last CLI
-   line, `parts --stack`, or a `status` ping. You want to learn how
+   line, desk, or sit-card. You want to learn how
    this stack works. If you cannot name the part, you are not waiting
    — you are stalling. Load is `hangar ready`. Science is `wait science
    <id> run= rem=` on the **instrument** Gene named, not a duplicate

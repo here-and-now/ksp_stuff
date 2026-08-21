@@ -48,6 +48,7 @@ def _sit(**kwargs) -> DeskSit:
         vessels=(),
         leftover_science=(),
         stack_dump="",
+        mods=(),
     )
     base.update(kwargs)
     return DeskSit(**base)
@@ -76,6 +77,8 @@ class TestDesk(unittest.TestCase):
     def test_format_sit_has_hangar_and_f013_not_gym_scan(self):
         text = format_sit(_sit())
         self.assertIn("hangar: none", text)
+        self.assertIn("scene: unknown (disk)", text)
+        self.assertIn("mods: none", text)
         self.assertIn("f013:", text)
         self.assertIn("instrument: none", text)
         self.assertNotIn("geigerCounter", text)
@@ -101,7 +104,15 @@ class TestDesk(unittest.TestCase):
             SaveVessel(name="kspstuff-hop-flea-pbc", sit="FLYING", type="Ship", landed=False),
         )
         hangar, active = hangar_call(vessels=ships, lock="free")
-        self.assertEqual(hangar, "recover kspstuff-hop-flea-pbc")
+        self.assertEqual(hangar, "recover kspstuff-hop-flea-pbc sit=FLYING")
+        self.assertEqual(active, "kspstuff-hop-flea-pbc")
+
+    def test_hangar_phase_prelaunch(self):
+        ships = (
+            SaveVessel(name="kspstuff-hop-flea-pbc", sit="PRELAUNCH", type="Ship", landed=True),
+        )
+        hangar, active = hangar_call(vessels=ships, lock="free")
+        self.assertEqual(hangar, "phase kspstuff-hop-flea-pbc sit=PRELAUNCH")
         self.assertEqual(active, "kspstuff-hop-flea-pbc")
 
     def test_hangar_blocked_when_lock_live(self):

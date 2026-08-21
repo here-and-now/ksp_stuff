@@ -30,9 +30,8 @@ from hop import (
     _vessel_met,
 )
 from pad import dwell_for_card
+from card import NO_BOUND_CARD, card_splash_ids
 from science import (
-    SPLASH_EXPERIMENTS,
-    card_splash_ids,
     hd_has_data,
     start_experiments,
 )
@@ -57,18 +56,16 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
 
 
 def splash_science_ids() -> tuple[str, ...]:
-    """Splash card only. FlyingLow is not a splash start."""
-    try:
-        from missions import seated_science_path
+    """Splash card only. FlyingLow is not a splash start. Empty card aborts."""
+    from missions import seated_science_path
 
-        path = seated_science_path()
-        if path.is_file():
-            ids = card_splash_ids(path.read_text(encoding="utf-8"))
-            if ids:
-                return ids
-    except Exception:
-        pass
-    return SPLASH_EXPERIMENTS
+    path = seated_science_path()
+    if not path.is_file():
+        raise MissionAbort(NO_BOUND_CARD)
+    ids = card_splash_ids(path.read_text(encoding="utf-8"))
+    if not ids:
+        raise MissionAbort(NO_BOUND_CARD)
+    return ids
 
 
 def _sit(snap: object) -> str:
@@ -285,6 +282,7 @@ def run_phase(
         )
     if _is_pad_motor(vessel):
         raise MissionAbort("splash refused kspstuff-pad-pbc — need hop Flea")
+    splash_science_ids()
     _ensure_flight(session, vessel, on_log)
     live = session.active_vessel if hasattr(session, "active_vessel") else vessel
     try:

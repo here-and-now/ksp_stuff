@@ -16,12 +16,11 @@ from pad import (
     recover_or_abort,
     run_on_vessel,
 )
+from card import NO_BOUND_CARD, card_pad_ids
 from science import (
     PAD_EC_MARGIN,
-    PAD_EXPERIMENTS,
     card_complete,
     card_has_data,
-    card_pad_ids,
     card_wait_line,
     experiment_done,
     hd_has_data,
@@ -565,14 +564,23 @@ class TestPadCardIds(unittest.TestCase):
         self.assertNotIn("mysteryGoo", card_pad_ids(text))
         self.assertNotIn("kerbalism_TELEMETRY", card_pad_ids(text))
 
-    def test_empty_falls_back_to_pad_experiments(self):
+    def test_empty_card_aborts(self):
         self.assertEqual(card_pad_ids(""), ())
         with patch("missions.seated_science_path") as path:
             path.return_value = Path("/no/such/science.md")
-            self.assertEqual(pad_science_ids(), PAD_EXPERIMENTS)
+            with self.assertRaises(MissionAbort) as ctx:
+                pad_science_ids()
+            self.assertIn(NO_BOUND_CARD, str(ctx.exception))
+        empty = Path("tests/fixtures/cards/empty.md")
+        with patch("missions.seated_science_path", return_value=empty):
+            with self.assertRaises(MissionAbort) as ctx:
+                pad_science_ids()
+            self.assertIn(NO_BOUND_CARD, str(ctx.exception))
 
-    def test_live_card_is_geiger_not_f005(self):
-        ids = pad_science_ids()
+    def test_fixture_card_is_geiger_not_f005(self):
+        path = Path("tests/fixtures/cards/pad-geiger.md")
+        with patch("missions.seated_science_path", return_value=path):
+            ids = pad_science_ids()
         self.assertEqual(ids, ("geigerCounter",))
         self.assertNotIn("mysteryGoo", ids)
         self.assertNotIn("temperatureScan", ids)

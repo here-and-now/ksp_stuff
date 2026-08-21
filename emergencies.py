@@ -1,4 +1,4 @@
-"""Named emergency callables. Helm and Gene uplink use this table.
+"""Named emergency callables. Commander and Gene uplink use this table.
 
 New names require a library change, not a heredoc in a phase.
 ``loop.md`` is not the stick.

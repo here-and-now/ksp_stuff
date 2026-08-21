@@ -22,12 +22,11 @@ import time
 from pathlib import Path
 from typing import Callable
 
+from card import NO_BOUND_CARD, card_flying_ids
 from emergencies import Ctx, call
 from hangar import discover_hangar, game_scene, go_flight, go_space_center, wait_vessel_ready
 from pad import recover_or_abort
 from science import (
-    HOP_EXPERIMENTS,
-    card_flying_ids,
     card_has_data,
     hd_has_data,
     iter_science_modules,
@@ -85,15 +84,33 @@ def hop_target_apo() -> float:
     return min(HOP_APO_CLAMP[1], max(HOP_APO_CLAMP[0], apo))
 
 
-def hop_craft_name() -> str:
-    """Seated / VAB / mission craft. Fallback Flea if VAB unsigned."""
+def hop_match_name() -> str:
+    """Leftover match. Unsigned / none is still the Flea name, not Hangar."""
     try:
-        from missions import hangar_craft_name
+        from missions import mission_meta, seated_craft_path, vab_kv
 
-        name = hangar_craft_name().strip()
+        seated = {}
+        path = seated_craft_path()
+        if path.is_file():
+            from missions import _parse_kv
+
+            seated = _parse_kv(path)
+        kv = vab_kv()
+        name = (
+            seated.get("craft") or kv.get("craft") or mission_meta().get("craft") or ""
+        ).strip()
+        if name and not name.startswith("(") and name.lower() != "none":
+            return name
     except Exception:
-        name = ""
-    return name or CRAFT
+        pass
+    return CRAFT
+
+
+def hop_craft_name() -> str:
+    """Seated / VAB Hangar name. Unsigned VAB is not a Flea sit."""
+    from missions import hangar_craft_name
+
+    return hangar_craft_name().strip()
 
 
 def hop_craft_path(name: str | None = None) -> Path:
@@ -101,18 +118,16 @@ def hop_craft_path(name: str | None = None) -> Path:
 
 
 def hop_science_ids() -> tuple[str, ...]:
-    """Flying card only. Splash goo is not a hop start."""
-    try:
-        from missions import seated_science_path
+    """Flying card only. Splash goo is not a hop start. Empty card aborts."""
+    from missions import seated_science_path
 
-        path = seated_science_path()
-        if path.is_file():
-            ids = card_flying_ids(path.read_text(encoding="utf-8"))
-            if ids:
-                return ids
-    except Exception:
-        pass
-    return HOP_EXPERIMENTS
+    path = seated_science_path()
+    if not path.is_file():
+        raise MissionAbort(NO_BOUND_CARD)
+    ids = card_flying_ids(path.read_text(encoding="utf-8"))
+    if not ids:
+        raise MissionAbort(NO_BOUND_CARD)
+    return ids
 
 
 def _vessel_name(vessel: object) -> str:
@@ -128,7 +143,7 @@ def _is_hop_craft(vessel: object) -> bool:
     name = _vessel_name(vessel).lower()
     if not name or _is_pad_motor(vessel):
         return False
-    wanted = hop_craft_name().lower()
+    wanted = hop_match_name().lower()
     return bool(wanted) and wanted in name
 
 
@@ -178,7 +193,12 @@ def install_and_launch(session: object, *, recover: bool = True) -> None:
 
     Byte-copy the repo file — never Hangar pad/geiger. Same pointer as pad.
     """
-    name = hop_craft_name()
+    from session import SessionError
+
+    try:
+        name = hop_craft_name()
+    except SessionError as exc:
+        raise MissionAbort(str(exc)) from exc
     low = name.lower()
     if any(tag in low for tag in _NOT_HOP):
         raise MissionAbort(
@@ -188,7 +208,6 @@ def install_and_launch(session: object, *, recover: bool = True) -> None:
     if hangar is None:
         raise MissionAbort("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
     from hangar import install_signed
-    from session import SessionError
 
     try:
         install_signed(
@@ -297,7 +316,7 @@ def _ours(vessel: object) -> bool:
     name = _vessel_name(vessel).lower()
     if not name or _is_pad_motor(vessel):
         return False
-    wanted = hop_craft_name().lower()
+    wanted = hop_match_name().lower()
     return (wanted and wanted in name) or "debris" in name
 
 
@@ -666,6 +685,7 @@ def run_hop(
     abort: Callable[[], bool] | None = None,
 ) -> str:
     """``python main.py hop``: Hangar the seated hop craft uncrewed, then light."""
+    hop_science_ids()
     install_and_launch(session)
     try:
         msg = wait_vessel_ready(session)

@@ -29,7 +29,7 @@ Replace Gene-after-every-`need_*` with:
 2. Same turn: Linus opportunities ∥ Gus capable (not bind).
 3. Linus bind after `capable: yes`.
 4. **One** Gene merge → only `go:`.
-5. Helm. Learn = one Gene. Miss = Lars then one Gene.
+5. Commander. Learn = one Gene. Miss = Lars then one Gene.
 
 Legal parallel stays file-split. Illegal: two Commanders, Gene+flight, two
 desks on one file, bind before capable.

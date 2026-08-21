@@ -7,7 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from crew import Person, Style, _parse_kv, append_log
+from crew import Person, _parse_kv, append_log
 
 
 class TestCrew(unittest.TestCase):
@@ -32,7 +32,6 @@ class TestCrew(unittest.TestCase):
                 duty="fdo",
                 kerbal=None,
                 path=Path(tmp) / "gene.md",
-                style=Style(),
                 body="",
             )
             with patch("crew.CREW_LOG_DIR", log_dir):

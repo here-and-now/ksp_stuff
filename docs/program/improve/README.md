@@ -30,8 +30,8 @@ suggest: <one line>
 code: none | <path>
 ```
 
-Helm **physics** stays a dated `lessons.md` heading (Lars XOR Wernher).
-Helm **house** (packet, desk, spawn tax) lives here.
+Flight **physics** stays a dated `lessons.md` heading (Lars XOR Wernher).
+House friction (packet, desk, spawn tax) lives here.
 
 ## Mortimer return
 

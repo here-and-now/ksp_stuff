@@ -33,21 +33,21 @@ spawned. `vessel.flight()` / control in SpaceCenter raise
 (`active_vessel` + `GameScene.flight`); do **not** Hangar a second stack
 on that pad.
 
-**Load / ready.** Helm must not sleep 30–60 s for Hangar. `hangar.wait_vessel_ready`
+**Load / ready.** The Commander must not sleep 30–60 s for Hangar. `hangar.wait_vessel_ready`
 polls kRPC (~0.1 s): scene Flight, `active_vessel`, `parts.all` non-empty,
 `flight()` callable. Then it prints `hangar ready <name> sit=… parts=N`.
 PRELAUNCH is ready (MET may still be 0 until dry-launch). Screenshot is grim, not kRPC.
 
 **What the Commander can see.** In Flight: streams (alt, q, orbit, MET, EC),
 situation, parts/modules, recoverability. Screenshot is grim, not kRPC.
-Helm cannot see the VAB, the tech tree, or “parts that unlock later.”
-That is `python main.py world|tech|parts`.
+The Commander cannot see the VAB, the tech tree, or “parts that unlock later.”
+That is desk / `python main.py world|tech|parts`.
 
 **Save load (Mortimer only).** After an honest RD edit, copy to
 `rd-<node>.sfs` then `python main.py load rd-<node>` (`SpaceCenter.load`).
 `load persistent` autosaves RAM onto persistent.sfs first and **wipes
-the spend**. Not quickload. Not revert-to-launch. Os is not asked. Helm
-never loads a save. After a named RD load, if Flight is an RSS asteroid,
+the spend**. Not quickload. Not revert-to-launch. Os is not asked. The
+Commander never loads a save. After a named RD load, if Flight is an RSS asteroid,
 `python main.py ksc` — do not recover the rock (F-015).
 
 **Honest play.** Never revert, quickload, return to VAB, or rewind UT.

@@ -49,12 +49,13 @@ Grokman, Flight Director. Never machine slugs in speech. For talk: load
 `docs/crew/<slug>.md` and answer **in that voice** (Build: `gus.md`).
 Do not spawn a child just to chat.
 
-Four loops: **Helm** (Commander flying `phase`/`pad`), **Flight
+Three loops: **Commander** (flying `phase`/`pad`), **Flight
 Director** (Gene between exits), **R&D** (exactly one of Lars or
-Wernher), **RSI** (Mortimer on friction trip only). Ground conference:
-**Linus** + **Gus** + Gene on *different* files. Gene chairs flight
-layers of `docs/program/world-model.md`. Mortimer chairs **Practice**.
-Helm / Hangar / kRPC walls stay. Do not spawn a desk only to chat.
+Wernher). **RSI** is Mortimer on a friction trip, not a fourth fly
+loop. Ground conference: **Linus** + **Gus** + Gene on *different*
+files. Gene chairs flight layers of `docs/program/world-model.md`.
+Mortimer chairs **Practice**. Commander / Hangar / kRPC walls stay.
+Do not spawn a desk only to chat.
 File `ask:` on the world model; **one reply wave** before merge if the
 ask blocks `go:`. Rare `explore:` is a field itch, not every Learn.
 Spawn prompts do not inject niche notebooks.
@@ -79,7 +80,7 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI Gene named. Shared card: `.grok/agents/pilot.md`. One screenshot when logs cannot explain the scene. | 15 s narration, Hangar over leftover crew |
 | **Vehicle Engineering** | `lars` | Lars Grokman | Block *code*, `blocks.md`. Misses only. | Craft, tech tree, kRPC stream traps |
 | **Avionics** | `wernher` | Wernher Grokman | kRPC 0.6 traps after Lars `ok` | Craft, sequencing, science board |
-| **Communications** | `verena` | Verena Grokman | README, `docs/press/`, `shot:` request | Helm, Hangar, uplink, `.py`, Walt’s TUI line |
+| **Communications** | `verena` | Verena Grokman | README, `docs/press/`, `shot:` request | Commander, Hangar, uplink, `.py`, Walt’s TUI line |
 | **Spotter** | — | — | **Do not spawn** | — |
 
 If the named type is missing this session, spawn `general-purpose` with
@@ -115,9 +116,13 @@ if desk is this sit. `hangar:` is the Hangar call. Missing `f013` on
 bind / capable / `go:` / Lars miss → wait. Gene **max two hires per
 sit** (draft iff unnamed, then merge).
 
+Spawn the Commander only if **`python main.py protocol fly`** prints
+`fly: yes`. Copy `cli:` verbatim. Missing `go:` on seated `plan.md` is
+wait in code, not only in this file.
+
 Every spawn is a **packet** (`docs/program/PROTOCOL.md`): `to` name+title,
 `task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_run`
-id on a miss. Helm `cli:` is Gene `recommended:` copied verbatim.
+id on a miss. Commander `cli:` is Gene `recommended:` copied verbatim.
 Do not tell children to read `docs/archive/kerbin-lessons.md`.
 
 - Os says fly / go / recommended → if the **last Gene return already
@@ -133,10 +138,11 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   the only `go:`. `go: wait` only when blocked (no capable, no bind,
   F-013 locked/missing instrument, leftover vs Hangar unclear). Do not
   STOP on `wait` when `need_*` is the work.
-- Fly iff merge Gene `go: yes` and (pad: Gus `capable: yes`) and phase
-  in `blocks.md`. Spawn the **named Commander** with Gene
-  `recommended:` verbatim. **No spotter. No 15 s monitor. Do not spawn
-  Gene during the phase.** Do not auto-continue onto a different Grok.
+- Fly iff `python main.py protocol fly` prints `fly: yes` (merge Gene
+  `go: yes` on seated `plan.md`, capable, bound card, f013). Spawn the
+  **named Commander** with that `cli:` verbatim. **No spotter. No 15 s
+  monitor. Do not spawn Gene during the phase.** Do not auto-continue
+  onto a different Grok.
 - Mortimer `need_builder: yes` → spawn Gus (not Wernher).
 - Gene / Linus / Lars `need_mortimer` for a **paid CTT node** (bank ≥
   cost, parents owned, kRPC has no UnlockTech) → spawn **Mortimer**.
@@ -218,7 +224,7 @@ Parent re-flies via a new Commander only after Gene `go: yes`.
 When something is unexpected (exception, wreck, bad Pe, warp stuck, empty
 tanks, pre-flight fail):
 
-1. **Stop** (`watch.freeze` / `apply_hold` if still connected).
+1. **Stop** (`emergencies.hold` / `apply_hold` if still connected).
 2. Spawn **Lars** (Vehicle Engineering). Wernher only on a kRPC trap if Lars did not patch.
 3. They append `docs/lessons.md` and patch the named `.py`.
 4. `docs/agent-notes.md` only for still-current API facts.
@@ -229,8 +235,8 @@ tanks, pre-flight fail):
 Connection → streams → control writes → `.craft` / `launch_vessel` → mission
 loops. Lessons already record kRPC 0.6 traps (`engaged`, protobuf
 `get_services`, stream `getattr` form, warp-in-atmo, rails altitude cap,
-pad DIP/ESC, FlightWatch). Helm / Flight Director / R&D.
+pad DIP/ESC, Telem). Commander / Flight Director / R&D.
 
-Every burn/warp/ascent loop holds a `watch.FlightWatch` and calls `pulse()`
+Every burn/warp/ascent loop holds a `telem.Telem` and calls `pulse()`
 each iteration (1 Hz log, faster gates). Print-only heartbeats are not
 intervention. `python main.py status` is the one-shot.

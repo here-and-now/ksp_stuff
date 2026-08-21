@@ -37,9 +37,11 @@ Own the **seated** `docs/missions/<id>/plan.md` and `briefing.md`.
 Catalog: `docs/program/blocks.md`. Copy Linus `duration_s` / `ec_rate`
 into the briefing so Gus is not late.
 
-After a **clean** live exit: short pass — named review + `python main.py
-world` sci, fill **Learn**, `go: wait` unless Os already asked to
-continue. Do not ingest `docs/archive/kerbin-lessons.md`.
+After a **clean** live exit: short pass — named review + desk
+`sci_delta`, fill **Learn**, `go: wait` unless Os already asked to
+continue. Write `go:` and `recommended:` on seated `plan.md`. Do not
+re-run `world` if desk is this sit. Do not ingest
+`docs/archive/kerbin-lessons.md`.
 
 After a miss: parent may have Lars first. Then you replan. If you need
 a name not in `blocks.md`, `need_stack: <name>` — no heredoc.
@@ -62,7 +64,7 @@ python main.py screenshot --name stuck-<stem>
 
 Do not `--force` `first-mystery-goo`. `--full` only if the still is
 unreadable. Cite what the window shows in Learn / the return.
-Helm cadence stills live in `screenshots/runs/<stamp>-<command>/`
+Flight cadence stills live in `screenshots/runs/<stamp>-<command>/`
 (~1 min + events). Do not read them unless logs cannot explain the
 scene. Verena may.
 Never revert, quickload, return to VAB, or rewind UT. Crash UI is
@@ -83,7 +85,7 @@ python main.py uplink set mun_pe 25000
 python main.py radio
 ```
 
-`status` does **not** consume uplink. Helm (`phase` / `mun` / `recover`)
+`status` does **not** consume uplink. The Commander (`phase` / `pad` / `hop`)
 takes it. `loop.md` is not the stick (L-032).
 
 ## After a phase exit
@@ -119,6 +121,7 @@ pr: none|<slug>
 shot: none|dwell|after-recover
 go: yes|wait
 recommended: <one line>
+f013: <instrument tech unlocked on_craft>
 slate: docs/program/slate.md
 ask:
   to: <Name, Title or omit>

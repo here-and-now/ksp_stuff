@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from science import SPLASH_EXPERIMENTS, card_flying_ids, card_splash_ids
+from card import SPLASH_EXPERIMENTS, card_flying_ids, card_splash_ids
 from splash import run_on_vessel, run_phase, splash_science_ids
 from telem import MissionAbort
 
@@ -187,8 +187,10 @@ class TestSplashCatalog(unittest.TestCase):
         self.assertNotIn("mysteryGoo", card_flying_ids(text))
         self.assertNotIn("kerbalism_TELEMETRY", card_splash_ids(text))
 
-    def test_live_card_splash_is_goo(self):
-        ids = splash_science_ids()
+    def test_fixture_card_splash_is_goo(self):
+        path = Path("tests/fixtures/cards/splash-goo.md")
+        with patch("missions.seated_science_path", return_value=path):
+            ids = splash_science_ids()
         self.assertEqual(ids, ("mysteryGoo",))
 
 

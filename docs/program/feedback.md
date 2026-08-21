@@ -15,15 +15,15 @@ Parent numbers items `F-001`…. Retro only when Os asks, Gene/Mortimer
 | [F-002](feedback/F-002.md) | Lars not after a clean recover | Gene | accepted |
 | [F-003](feedback/F-003.md) | Tests must not write last-flight | Lars | accepted |
 | [F-004](feedback/F-004.md) | Helm CLI is Gene recommended verbatim | Jeb | accepted |
-| [F-005](feedback/F-005.md) | Same pad card is not more science | Gene | open |
-| [F-006](feedback/F-006.md) | World disk vs live leftover hop | Gene | open |
+| [F-005](feedback/F-005.md) | Same pad card is not more science | Gene | accepted |
+| [F-006](feedback/F-006.md) | World disk vs live leftover hop | Gene | accepted |
 | [F-007](feedback/F-007.md) | Hop recover hung on crash dialog | Jeb | open |
 | [F-008](feedback/F-008.md) | Hop recovered before thermo dwell | Jeb | open |
 | [F-009](feedback/F-009.md) | 75 s hang cannot finish leftover thermo | Linus | open |
-| [F-010](feedback/F-010.md) | Experiment id is not a part | Gus | open |
+| [F-010](feedback/F-010.md) | Experiment id is not a part | Gus | accepted |
 | [F-011](feedback/F-011.md) | Disk kRPC settings were not what notes said | Wernher | open |
 | [F-012](feedback/F-012.md) | Pad unpause does not start MET | Jeb | open |
-| [F-013](feedback/F-013.md) | Tree and parts never reached Lars (or a go:) | Os | open |
+| [F-013](feedback/F-013.md) | Tree and parts never reached Lars (or a go:) | Os | accepted |
 | [F-014](feedback/F-014.md) | load persistent autosaves RAM first | Mortimer | open |
 | [F-015](feedback/F-015.md) | RD load can seat an RSS asteroid | Mortimer | open |
 

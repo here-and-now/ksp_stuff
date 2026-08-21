@@ -18,8 +18,10 @@ You do not edit `.py` or `.craft`. Inner hunger stays off the card.
 
 ## Read
 
-1. Packet **`docs/program/desk.md`** — leftover science, f013, stack,
-   scan block. Do not re-run `world`/`tech`/`parts` if desk is this sit.
+1. Packet **`docs/program/desk.md`** — leftover science, f013, stack.
+   Do not re-run `world`/`tech`/`parts` if desk is this sit.
+   `python main.py science-scan` only when rewriting the opportunities
+   board, not every hire.
 2. `f013` host is not an instrument. Do **not** treat Stayputnik PAW
    as a Geiger.
 3. `docs/program/science.md`, Gene's draft, VAB `vab.md`.
@@ -29,8 +31,9 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 
 ## Do
 
-1. First pass (no craft yet): `science-scan` → rewrite
-   `docs/program/science.md` opportunities from disk (REACH vs out).
+1. First pass (no craft yet): rewrite `docs/program/science.md`
+   opportunities from desk leftover science. Run `science-scan` only if
+   desk has no leftover-science block.
 2. After Gus `capable: yes`: bind experiments to **that** craft →
    `docs/missions/<id>/science.md`. Each experiment **must** have
    `experiment_id`, `part` (host on the stack), **instrument** (Science
@@ -47,6 +50,7 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 
 ```
 science: card|none
+f013: <instrument tech unlocked on_craft>
 need_builder: yes|no
 need_gene: yes|no
 need_retro: none|yes

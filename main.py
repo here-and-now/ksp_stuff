@@ -166,6 +166,7 @@ def cmd_pad(session: Session, args: argparse.Namespace) -> int:
         return 1
     except SessionError as exc:
         _log(f"SESSION {exc}")
+        write_handoff(command="pad", exit_code=1, abort=f"SESSION {exc}")
         return 1
     finally:
         release_lock()
@@ -210,6 +211,7 @@ def cmd_hop(session: Session, args: argparse.Namespace) -> int:
         return 1
     except SessionError as exc:
         _log(f"SESSION {exc}")
+        write_handoff(command="hop", exit_code=1, abort=f"SESSION {exc}")
         return 1
     finally:
         release_lock()
@@ -254,6 +256,7 @@ def cmd_splash(session: Session, args: argparse.Namespace) -> int:
         return 1
     except SessionError as exc:
         _log(f"SESSION {exc}")
+        write_handoff(command="splash", exit_code=1, abort=f"SESSION {exc}")
         return 1
     finally:
         release_lock()
@@ -292,6 +295,7 @@ def cmd_hop_to_water(session: Session, args: argparse.Namespace) -> int:
         return 1
     except SessionError as exc:
         _log(f"SESSION {exc}")
+        write_handoff(command="hop-to-water", exit_code=1, abort=f"SESSION {exc}")
         return 1
     finally:
         release_lock()
@@ -381,6 +385,7 @@ def cmd_tech_unlock(session: Session, args: argparse.Namespace) -> int:
         return 1
     except SessionError as exc:
         _log(f"SESSION {exc}")
+        write_handoff(command="tech-unlock", exit_code=1, abort=f"SESSION {exc}")
         return 1
     finally:
         release_lock()
@@ -444,6 +449,7 @@ def cmd_phase(session: Session, args: argparse.Namespace) -> int:
         return 1
     except SessionError as exc:
         _log(f"SESSION {exc}")
+        write_handoff(command=args.name, exit_code=1, abort=f"SESSION {exc}")
         return 1
     finally:
         release_lock()
@@ -551,7 +557,12 @@ def main(argv: list[str] | None = None) -> int:
         default=0.0,
         help="Wall-clock abort (seconds). 0 = none (default).",
     )
-    up = sub.add_parser("uplink", help="Gene → flying mun (no kRPC)")
+    proto = sub.add_parser(
+        "protocol",
+        help="Fly gate / return parse (no kRPC)",
+    )
+    proto.add_argument("rest", nargs="*", help="fly | parse --desk <slug>")
+    up = sub.add_parser("uplink", help="Gene → Commander (no kRPC)")
     up.add_argument(
         "verb",
         help="hold|cut|no_warp|stage|recover|science|abort_pad|freeze|abort|set|…",
@@ -741,6 +752,10 @@ def main(argv: list[str] | None = None) -> int:
         except WorldError as exc:
             print(f"# catalog: {exc}", flush=True)
         return 0
+    if args.cmd == "protocol":
+        from protocol import cmd_protocol
+
+        return cmd_protocol(list(args.rest))
     if args.cmd == "desk":
         from desk import format_desk
         from world import WorldError
@@ -843,6 +858,11 @@ def main(argv: list[str] | None = None) -> int:
             print(format_world(load_world()), end="")
         except WorldError as exc:
             print(f"WORLD (no disk) {exc}", flush=True)
+        from flightlog import writer_lock_live
+
+        if writer_lock_live():
+            print("SESSION flight.lock live — no career probe", flush=True)
+            return 1
         try:
             session = _connect(args)
         except SessionError as exc:
@@ -863,6 +883,12 @@ def main(argv: list[str] | None = None) -> int:
             session.close()
         return 0
 
+    if args.cmd == "status":
+        from flightlog import writer_lock_live
+
+        if writer_lock_live():
+            print("SESSION flight.lock live — no second Session", file=sys.stderr)
+            return 1
     try:
         session = _connect(args)
     except SessionError as exc:

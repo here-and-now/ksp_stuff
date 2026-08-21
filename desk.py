@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from card import card_experiments
 from missions import (
     hangar_craft_name,
     seated_craft_path,
@@ -63,16 +64,49 @@ class DeskSit:
     vessels: tuple[str, ...]
     leftover_science: tuple[str, ...]
     stack_dump: str
+    mods: tuple[str, ...]
 
 
 def lock_state() -> str:
     return "live" if LOCK.is_file() else "free"
 
 
+_MOD_FOLDERS = (
+    ("FerramAerospaceResearch", "FAR"),
+    ("RealChute", "RealChute"),
+    ("RealHeat", "RealHeat"),
+)
+_PHASE_SITS = frozenset(
+    {
+        "prelaunch",
+        "landed",
+        "srflanded",
+        "splashed",
+        "srfsplashed",
+    }
+)
+
+
+def detect_mods(ksp_root: Path | None) -> tuple[str, ...]:
+    if ksp_root is None:
+        return ()
+    gd = ksp_root / "GameData"
+    found: list[str] = []
+    for folder, label in _MOD_FOLDERS:
+        if (gd / folder).is_dir():
+            found.append(label)
+    return tuple(found)
+
+
+def _norm_sit(sit: str) -> str:
+    return sit.lower().replace(" ", "").replace("_", "").replace("-", "")
+
+
 def hangar_call(
     *,
     vessels: tuple[SaveVessel, ...],
     lock: str,
+    seated_craft: str = "",
 ) -> tuple[str, str]:
     """Hangar vs recover from the save. Disk cannot see crash UI."""
     ships = vessels
@@ -81,8 +115,18 @@ def hangar_call(
         return "blocked", active
     if not ships:
         return "none", "none"
-    names = ", ".join(v.name for v in ships[:3])
-    return f"recover {names}", active
+    craft = seated_craft.lower().strip()
+    pick = ships[0]
+    if craft:
+        for v in ships:
+            if craft in v.name.lower() or v.name.lower() in craft:
+                pick = v
+                break
+    sit = _norm_sit(pick.sit)
+    tag = pick.sit or "?"
+    if sit in _PHASE_SITS or pick.landed:
+        return f"phase {pick.name} sit={tag}", pick.name
+    return f"recover {pick.name} sit={tag}", pick.name
 
 
 def parse_last_flight(text: str) -> dict[str, str]:
@@ -96,21 +140,6 @@ def parse_last_flight(text: str) -> dict[str, str]:
         elif line.startswith("abort:"):
             out["abort"] = line.split(":", 1)[1].strip()
     return out
-
-
-def card_experiments(text: str) -> list[str]:
-    ids: list[str] = []
-    for raw in text.splitlines():
-        line = raw.strip()
-        if line.startswith("- experiment:"):
-            token = line.split(":", 1)[1].strip()
-            if token:
-                ids.append(token)
-        elif line.startswith("experiment_id:"):
-            token = line.split(":", 1)[1].strip().strip("`")
-            if token and token not in ids:
-                ids.append(token)
-    return ids
 
 
 def latest_review() -> Path | None:
@@ -240,7 +269,11 @@ def build_sit(world: World | None = None) -> DeskSit:
         else []
     )
     lock = lock_state()
-    hangar, active = hangar_call(vessels=world.vessels, lock=lock)
+    hangar, active = hangar_call(
+        vessels=world.vessels,
+        lock=lock,
+        seated_craft=craft if craft not in {"", "(none)"} else "",
+    )
     now = world.research.science
     before = prior_sci(DESK_MD.read_text(encoding="utf-8")) if DESK_MD.is_file() else None
     rows = leftover_science_lines(world)
@@ -270,15 +303,17 @@ def build_sit(world: World | None = None) -> DeskSit:
             if names
             else ""
         ),
+        mods=detect_mods(world.ksp_root),
     )
 
 
 def format_sit(sit: DeskSit) -> str:
     sci_s = f"{sit.sci:.4f}" if sit.sci is not None else "?"
     rec = sit.f013[0]
+    mods = ",".join(sit.mods) if sit.mods else "none"
     lines = [
         f"lock: {sit.lock}",
-        "scene: unknown",
+        "scene: unknown (disk)",
         f"active_vessel: {sit.active_vessel}",
         f"hangar: {sit.hangar}",
         f"seat: {sit.seat}",
@@ -287,6 +322,7 @@ def format_sit(sit: DeskSit) -> str:
         f"unlocked: {sit.unlocked}",
         f"capable: {sit.capable}",
         f"craft: {sit.craft}",
+        f"mods: {mods}",
         f"card: {','.join(sit.card) if sit.card else 'none'}",
         (
             f"last: command={sit.last_command or '?'} "
@@ -294,21 +330,23 @@ def format_sit(sit: DeskSit) -> str:
         ),
         f"review: {sit.review}",
         "f013:",
-        f"  instrument: {rec.instrument}",
-        f"  tech: {rec.tech}",
-        f"  unlocked: {rec.unlocked}",
-        f"  on_craft: {rec.on_craft}",
-        f"  host: {rec.host}",
     ]
+    for row in sit.f013:
+        lines.append(
+            f"  {row.eid or '(none)'}  part={row.instrument} tech={row.tech} "
+            f"unlocked={row.unlocked} on_craft={row.on_craft} host={row.host}"
+        )
+    lines.extend(
+        [
+            f"  instrument: {rec.instrument}",
+            f"  tech: {rec.tech}",
+            f"  unlocked: {rec.unlocked}",
+            f"  on_craft: {rec.on_craft}",
+            f"  host: {rec.host}",
+        ]
+    )
     if sit.note_tech:
         lines.append(f"note-tech: {sit.note_tech}")
-    if sit.card:
-        lines.append("# f013 bound ids")
-        for row in sit.f013:
-            lines.append(
-                f"  {row.eid}  part={row.instrument} tech={row.tech} "
-                f"unlocked={row.unlocked} on_craft={row.on_craft} host={row.host}"
-            )
     lines.append(f"# leftover vessels n={len(sit.vessels)}")
     if sit.vessels:
         lines.extend(f"  {name}" for name in sit.vessels)
@@ -361,7 +399,7 @@ def sit_card(world: World | None = None) -> dict:
                 "host": row.host,
             }
         )
-        if row.unlocked != "yes" or row.on_craft != "yes" or row.instrument == "none":
+        if row.unlocked == "no" or row.on_craft != "yes":
             do_not.append(
                 f"{row.eid} instrument={row.instrument} "
                 f"unlocked={row.unlocked} on_craft={row.on_craft} host={row.host}"

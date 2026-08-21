@@ -1,5 +1,4 @@
 # Gene's plan. `python main.py phase` runs `phase:`.
-# 497 s FlyingLow geiger cannot fit under 50 km. Wait. Do not re-pad spent cards.
 mun_pe: 25000
 suicide_start: 25000
 parking_apo: 250000
@@ -13,3 +12,5 @@ expect_peri_min: -500000
 expect_apo_max: 50000
 craft: none
 hop_apo: 18000
+go: wait
+recommended: none

@@ -43,7 +43,8 @@ README is a **front page**, not a man page. Checkout stays last.
 
 ## Read (packet `read:` ≤3, plus these if missing)
 
-1. `python main.py world` (sci, save, unlocked)
+1. Packet `docs/program/desk.md` (sci, unlocked). Do not re-run `world`
+   if desk is this sit.
 2. Seated dossier + newest **live** review if `live_run` is set
 3. `docs/press/INDEX.md` and current `README.md`
 

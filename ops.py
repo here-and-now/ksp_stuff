@@ -261,6 +261,31 @@ def format_next(actions: dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def cmd_ops() -> int:
+def fly_gate() -> dict[str, str]:
+    """Disk fly gate from tickets, not dual plan.md."""
+    act = next_actions()
+    fid = act.get("fly_ready")
+    if not fid:
+        why = "no fly_ready"
+        if act.get("hire"):
+            why = act["hire"][0].get("why") or why
+        return {"fly": "wait", "reason": why, "cli": "none"}
+    from tickets import show_ticket
+
+    t = show_ticket(fid)
+    cli = (t.get("payload") or {}).get("cli") or t.get("cli") or "none"
+    return {"fly": "yes", "reason": "ok", "cli": cli}
+
+
+def format_fly(g: dict[str, str]) -> str:
+    return f"fly: {g['fly']}\nreason: {g['reason']}\ncli: {g['cli']}\n"
+
+
+def cmd_ops(argv: list[str] | None = None) -> int:
+    verb = (argv or ["next"])[0] if argv else "next"
+    if verb == "fly":
+        g = fly_gate()
+        print(format_fly(g), end="")
+        return 0 if g["fly"] == "yes" else 2
     print(format_next(next_actions()), end="")
     return 0

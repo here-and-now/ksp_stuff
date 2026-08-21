@@ -308,6 +308,105 @@ def format_list(rows: list[dict[str, Any]]) -> str:
     return "\n".join(lines) + "\n"
 
 
+SEED = (
+    {
+        "type": "systems",
+        "title": "I-013 hop Hangar substring geiger-pbc",
+        "reporter": "Gus Grokman, Vehicle Engineering Lead",
+        "severity": "S3",
+        "priority": "P2",
+        "desk": "wernher",
+        "fingerprint": "hangar-geiger-pbc-substring",
+        "rsi_loop": "software",
+    },
+    {
+        "type": "systems",
+        "title": "I-017 desk leftover vs live Tracking",
+        "reporter": "Lars Grokman, Vehicle Systems Engineer",
+        "severity": "S2",
+        "priority": "P1",
+        "desk": "wernher",
+        "fingerprint": "desk-leftover-vs-krpc",
+        "rsi_loop": "software",
+    },
+    {
+        "type": "science",
+        "title": "I-018 leftover-science hides unstarted REACH",
+        "reporter": "Linus Grokman, Director of Research",
+        "severity": "S3",
+        "priority": "P1",
+        "desk": "linus",
+        "fingerprint": "leftover-hides-unstarted",
+        "rsi_loop": "science",
+    },
+    {
+        "type": "control",
+        "title": "I-019 leftover hop-flea vs seated craft",
+        "reporter": "Gene Grokman, Flight Director",
+        "severity": "S2",
+        "priority": "P1",
+        "desk": "lars",
+        "fingerprint": "leftover-prelaunch-ghost",
+        "rsi_loop": "vehicle",
+    },
+    {
+        "type": "control",
+        "title": "ec=0 after loft before splash dwell",
+        "reporter": "Jebediah Grokman, Commander",
+        "severity": "S2",
+        "priority": "P1",
+        "desk": "lars",
+        "fingerprint": "ec=0-after-loft",
+        "rsi_loop": "vehicle",
+    },
+    {
+        "type": "control",
+        "title": "heading never holds 090 (Water dead)",
+        "reporter": "Jebediah Grokman, Commander",
+        "severity": "S3",
+        "priority": "P2",
+        "desk": "lars",
+        "fingerprint": "heading-never-090",
+        "rsi_loop": "vehicle",
+    },
+    {
+        "type": "fly",
+        "title": "hop-splash t7 toward 15 sci",
+        "reporter": "Hank Grokman, COO",
+        "severity": "S2",
+        "priority": "P0",
+        "desk": "gene",
+        "fingerprint": "hop-splash-15sci",
+        "rsi_loop": "none",
+        "payload": {
+            "cli": "python main.py hop-splash",
+            "phase": "hop-splash",
+            "campaign": "uncrewed",
+            "go": "",
+        },
+    },
+)
+
+
+def seed_legacy(*, who: str = "hank") -> list[str]:
+    """Idempotent: skip titles already on the board."""
+    existing = {
+        t.get("title") for t in (load_head().get("tickets") or {}).values()
+    }
+    opened: list[str] = []
+    for spec in SEED:
+        if spec["title"] in existing:
+            continue
+        kw = dict(spec)
+        payload = kw.pop("payload", None)
+        t = open_ticket(**kw, payload=payload)
+        opened.append(t["id"])
+        fp = spec.get("fingerprint") or ""
+        if fp:
+            maybe_open_rsi(fp)
+    return opened
+
+
 def cmd_tickets(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(prog="tickets")
     sub = p.add_subparsers(dest="act", required=True)
@@ -344,6 +443,7 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     st.add_argument("--value", required=True)
     st.add_argument("--who", required=True)
     sub.add_parser("board")
+    sub.add_parser("seed")
     args = p.parse_args(argv)
     try:
         if args.act == "open":
@@ -402,6 +502,10 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
         if args.act == "board":
             _rebuild()
             print(PRINT.read_text(encoding="utf-8"), end="")
+            return 0
+        if args.act == "seed":
+            ids = seed_legacy()
+            print("seeded", ",".join(ids) if ids else "none")
             return 0
     except TicketError as exc:
         print(str(exc), file=__import__("sys").stderr)

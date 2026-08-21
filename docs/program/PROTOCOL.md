@@ -18,29 +18,18 @@ never routes tickets. Hank never stamps `go:`.
 | Os | named desk | talk by name | — | voice only — **no spawn** |
 | Hank | desks | `ops next` | ticket ids | ticket patches |
 | Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
-| Gene | Linus, Director of Research | `need_science` or first conference | ask | card: `experiment_id`, **part** (host), **instrument** (Science part + tech + unlocked), **duration_s**, **ec_rate**, `recover_banks` |
-| Gene | Gus, VP Build | `need_builder` or after draft | plan + Linus board | `capable:` `craft:` — **no** if the sit needs a locked/missing Science part |
-| Gene | Lars, Vehicle Engineering | `need_stack: <name>` | missing block **+ tree/unlocked parts** | `stack:` `lesson:` |
-| Gene | seated Commander | `go: yes` + `capable: yes` + phase in `blocks.md` | briefing + **exact CLI** | `result:` `exit:` `handoff:` |
-| Commander | parent | uncrewed `campaign:` **clean 0** | last `recommended:` | re-fly — **no Gene** |
-| Commander | Gene | campaign **stop**, crewed, firsts, or `campaign: none` | reviews since last Learn | batch Learn |
-| Commander | Lars / Gus / Wernher | during or after a sit | `python main.py note-tech <desk> …` → `note-tech.md` | parent files / Gene reads between exits |
-| Commander | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
-| Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
-| Any spawned desk | improve queue | `improve:` on return | friction / suggest / code | parent files `I-NNN`; Mortimer on trip |
-| Any spawned desk | feedback board | `feedback:` on return | good / bad / suggest | prefer `improve:`; gym F- table remains |
-| Parent | named desks | retro (3+ open, or Os/Gene/Mortimer ask) | open F- items | `notes/<slug>.md` in **parallel** |
-| Gene | Mortimer | `need_mortimer: yes` | paid CTT node | RD spend + `load rd-<node>` |
-| Any spawned desk | Mortimer | friction trip (`improve/` 3+ open, `need_mortimer: org`, Os org/RSI) | `I-NNN` queue | `org:` `changed:` `need_qol:` `need_os` |
-| Mortimer | Lars | `need_qol: <file>` | org/QOL `.py` | `stack:` (desk/wait/tests, not pad physics unless the miss was a fly) |
-| Gene / Linus / Lars | Mortimer | bank pays a node and kRPC cannot buy | node id, cost, parents, sci | save: `Tech` owned, `sci` spent, copy `rd-<node>.sfs`, `python main.py load rd-<node>` |
-| Mortimer / Gene | Os | `need_os: yes` | charter / roster / slate | Os ratifies |
+| Hank | Commander | `ops next` fly_ready | fly ticket + exact `cli` | `result:` `exit:` `handoff:` |
+| Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
+| Hank | Linus, Director of Research | open science tickets | ids (batch) | payload bind (blocked until vehicle `capable`) |
+| Hank | Lars, Vehicle Systems Engineer | control tickets / miss | ticket + `live_run` | `lesson:` close |
+| Hank | Wernher, Chief Systems Engineer | systems / kRPC world | ticket | systems close |
+| Commander | ticket bus | miss or leftover | `tickets open --type recover\|control` | Hank `ops next` |
+| Commander | ticket bus | campaign clean 0 | same fly ticket stays `go: yes` | Hank re-hires Commander — **no Gene** |
+| Anyone | ticket bus | friction | `tickets open` | Hank routes |
+| Hank | Mortimer | `type=ctt` / `org` / rsi×3 | ticket | RD spend / PROTOCOL mutation |
+| Hank | Verena | `type=press` firsts | ticket | `story:` `shot:` |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
-| Os | Verena, Communications | PR / README / funding story | slate or live_run | `story:` `shot:` `readme:` |
-| Gene | Verena | `need_pr: yes` after Learn | live_run, why it is a first | same |
-| Verena | Gene | next fly needs a window | proposed `shot:` | Gene copies into briefing or `go: wait` |
-| Parent | KSP window | Verena `shot: now` (or Gene `shot:` at dwell / after-recover) | `python main.py screenshot --name <slug>` | `screenshots/<slug>.png` |
-| Gene or seated Commander | KSP window | stuck: last-flight / review / jsonl cannot explain the scene | `python main.py screenshot --name stuck-<stem>` then **read the PNG** | what the window shows |
+| Gene or seated Commander | KSP window | stuck | `screenshot --name stuck-<stem>` then read PNG | scene |
 
 Linus ↛ Commander. Gus ↛ Hangar. Commander ↛ `.py`/`.craft`. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
 Mortimer ↛ GameData. Mortimer ↛ flight/UT in the save. Mortimer **may**

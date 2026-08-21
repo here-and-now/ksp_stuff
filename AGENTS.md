@@ -84,9 +84,7 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Chief Systems Engineer** | `wernher` | Wernher Grokman | World/software architecture: desk, hangar scenes, telem, kRPC, ops kernel | Vehicle *control* loops, `.craft` |
 | **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control: pad/hop/splash, recover, `blocks.md` | World-interface architecture, Hangar |
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI on the fly ticket. One stuck PNG. | `.py`, `.craft`, 15 s narration |
-| **Vehicle Engineering** | `lars` | Lars Grokman | Block *code*, `blocks.md`. Misses only. | Craft, tech tree, kRPC stream traps |
-| **Avionics** | `wernher` | Wernher Grokman | kRPC 0.6 traps after Lars `ok` | Craft, sequencing, science board |
-| **Communications** | `verena` | Verena Grokman | README, `docs/press/`, `shot:` request | Commander, Hangar, uplink, `.py`, Walt’s TUI line |
+| **Communications** | `verena` | Verena Grokman | Press tickets | Commander, Hangar, uplink, `.py` |
 | **Spotter** | — | — | **Do not spawn** | — |
 
 If the named type is missing this session, spawn `general-purpose` with
@@ -111,10 +109,12 @@ patch `.py` in the same turn — spawn R&D.
 
 ## When to spawn (do this, don't offer)
 
-Parse Gene's return block. **Missing `go:` = wait.** Never fly
-without `python main.py protocol fly` → `fly: yes`. Pad also needs
-Gus `capable: yes`. Do not spawn Gus/Linus/Gene on the same file.
-Lock live → no Gus/Linus/Gene.
+Hank: **`python main.py desk`** then **`python main.py ops next`**.
+Hire exactly those desks with those ticket ids. **Missing Gene `go`
+on a fly ticket = wait** (kernel will hire Gene to stamp). Never fly
+without `python main.py ops next` showing a Commander hire (or
+`python main.py ops fly` → `fly: yes`). Lock live → no Commander,
+no Gene; ground desks may still run on other files.
 
 Parent runs **`python main.py desk`** once per conference turn (disk,
 no kRPC). That **writes `docs/program/desk.md`**. After Gus

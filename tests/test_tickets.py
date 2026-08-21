@@ -167,6 +167,32 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(act["hire"][0]["desk"], "jebediah")
         self.assertIn("S1 recover", act["hire"][0]["why"])
 
+    def test_fly_gate_wait_without_go(self):
+        tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+        )
+        g = ops.fly_gate()
+        self.assertEqual(g["fly"], "wait")
+
+    def test_fly_gate_yes_with_go(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+        )
+        tickets.patch_ticket(
+            t["id"],
+            {"go": "yes", "status": "ready", "payload": {"go": "yes", "cli": "python main.py hop-splash"}},
+            who="gene",
+        )
+        g = ops.fly_gate()
+        self.assertEqual(g["fly"], "yes")
+        self.assertEqual(g["cli"], "python main.py hop-splash")
+
     def test_leftover_hangar_line(self):
         act = ops.next_actions(
             desk={"hangar": "phase t7 sit=LANDED"},

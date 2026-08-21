@@ -1,4 +1,8 @@
-# Improve queue — RSI bus
+# Improve queue — legacy RSI bus
+
+**Live bus is tickets:** `docs/program/OPS.md`,
+`python main.py tickets`. Open I-items were seeded onto that board.
+This folder is archive-of-record, not Hank's dispatch.
 
 House friction, not flight physics (`docs/lessons.md`). Anyone already
 spawned may return `improve:`. Parent numbers `I-NNN`. **Mortimer

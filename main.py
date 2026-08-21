@@ -832,7 +832,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "ops":
         from ops import cmd_ops
 
-        return cmd_ops()
+        return cmd_ops(list(getattr(args, "rest", []) or []))
     if args.cmd == "protocol":
         from protocol import cmd_protocol
 

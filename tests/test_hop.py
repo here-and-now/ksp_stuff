@@ -197,6 +197,17 @@ class _Session:
                 "vessels": vessels,
             },
         )()
+        gs = type(
+            "GS",
+            (),
+            {
+                "tracking_station": "tracking_station",
+                "space_center": "space_center",
+                "flight": "flight",
+            },
+        )()
+        krpc = type("K", (), {"GameScene": gs, "game_scene": "flight"})()
+        self.conn = type("C", (), {"krpc": krpc})()
 
     def add_stream(self, func, obj, name):
         class _S:
@@ -1037,10 +1048,13 @@ class TestHopSequence(unittest.TestCase):
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
         self.assertEqual(vessel.control.staged, 0)
-        scene.assert_called()
+        scene.assert_not_called()
         self.assertIn("hop unpause", logs)
         self.assertTrue(any("hop crash ui sit=flying recoverable=no" in line for line in logs))
-        self.assertIn("hop dismissed crash ui", logs)
+        self.assertTrue(
+            any("tracking (not pad reload)" in line for line in logs)
+        )
+        self.assertNotIn("hop dismissed crash ui", logs)
         self.assertNotIn("hop wait landed recoverable=yes", logs)
         self.assertNotIn("hop dismissed flight results", logs)
         self.assertFalse(any(line.startswith("recovered") for line in logs))
@@ -1194,7 +1208,8 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_called()
+        scene.assert_not_called()
+        self.assertIn("hop crash ui tracking (not pad reload)", logs)
         self.assertNotIn("hop dismissed flight results", logs)
         self.assertFalse(any(line.startswith("recovered") for line in logs))
         self.assertLess(t[0], 15.0)
@@ -1332,7 +1347,7 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_called()
+        scene.assert_not_called()
         self.assertEqual(vessel.control.staged, 0)
         self.assertLess(t[0], 15.0)
 
@@ -1377,8 +1392,8 @@ class TestHopSequence(unittest.TestCase):
                     )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_called()
-        physics.assert_not_called()
+        scene.assert_not_called()
+        physics.assert_called()
         self.assertTrue(
             any(
                 "hop crash ui sit=landed recoverable=no" in line
@@ -1387,8 +1402,9 @@ class TestHopSequence(unittest.TestCase):
                 for line in logs
             )
         )
-        self.assertIn("hop dismissed crash ui", logs)
-        self.assertNotIn("hop unpause", logs)
+        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        self.assertNotIn("hop dismissed crash ui", logs)
+        self.assertIn("hop unpause", logs)
         self.assertNotIn("hop paused wreck", logs)
         self.assertNotIn("hop finish wreck", logs)
         self.assertFalse(any(line.startswith("recovered") for line in logs))
@@ -1421,7 +1437,7 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_called()
+        scene.assert_not_called()
         self.assertTrue(
             any(
                 "hop crash ui sit=flying recoverable=no" in line
@@ -1431,7 +1447,8 @@ class TestHopSequence(unittest.TestCase):
                 for line in logs
             )
         )
-        self.assertIn("hop dismissed crash ui", logs)
+        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        self.assertNotIn("hop dismissed crash ui", logs)
         self.assertNotIn("hop wait landed recoverable=yes", logs)
         self.assertLess(t[0], 15.0)
         self.assertGreaterEqual(t[0], 5.0)
@@ -2479,14 +2496,15 @@ class TestHopToWater(unittest.TestCase):
         self.assertEqual(vessel.control.staged, 0)
         self.assertEqual(tel.triggered, [])
         self.assertEqual(thermo.triggered, [])
-        scene.assert_called()
+        scene.assert_not_called()
         self.assertTrue(any("do not light" in line for line in logs))
         self.assertTrue(
             any("sit=flying" in line and "fuel=0.0" in line for line in logs)
         )
         self.assertNotIn("hop airborne", logs)
         self.assertFalse(any(line.startswith("science ") for line in logs))
-        self.assertIn("hop dismissed crash ui", logs)
+        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        self.assertNotIn("hop dismissed crash ui", logs)
         self.assertLess(t[0], 5.0)
 
     def test_leftover_wreck_recoverable_recovers_without_science(self):

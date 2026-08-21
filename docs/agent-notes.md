@@ -364,10 +364,10 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   Recover / Cancel / Launch anyway.
   `vessel.recover()` from Space Center **returns before** the ship
   leaves the vessel list (recover-sit: still PRELAUNCH, then gone).
-  Wait until the pool is empty. Do **not** `load_space_center` after
-  a crash Close — that reloads the launch save and the same stack
-  sits on the pad at MET 0 with `can_revert_to_launch` True. That is
-  not Revert-to-Launch (we never call it) and not a living recover.
+  Wait until the pool is empty. Do **not** set `GameScene.space_center`
+  from Catastrophic Flight Results — that is the Space Center button
+  and the launch save sits on the pad at MET 0 (recover-pad-again).
+  Crash UI → Tracking Station, never revert_to_launch.
 - `launch_vessel(..., recover=True)` from **space_center** and from **flight**
   entered `flight` / `pre_launch` with `active_vessel` set. Internally KSP
   **saves** via `FlightDriver.StartWithNewLaunch` → `GamePersistence.SaveGame`.

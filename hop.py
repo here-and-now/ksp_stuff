@@ -25,8 +25,8 @@ do not wait the wreck-dialog wall. Low flying (≤250 m) calls
 ``vessel.recover()`` only when ``recoverable`` — last living hop
 banked at ~199 m. Frozen MET + flying + q=0 + low alt is Catastrophic
 Flight Results: log sit/recoverable/met/alt/q, ``recover()`` if
-``recoverable``, else ``go_space_center`` (Close until KSC, not
-revert — Tracking with the modal is not KSC) and abort. Frozen MET + ``sit=landed`` + ``recoverable=no``
+``recoverable``, else Tracking Station (not Space Center — that
+respawns the pad) and abort. Frozen MET + ``sit=landed`` + ``recoverable=no``
 is the same dialog (13-58-18Z Vessel is destroyed, no Recover):
 Close now — do not unpause-spam ``recover()``. Living land is
 ``recoverable=yes``. Dismiss is not a living recover; post-dismiss
@@ -766,12 +766,23 @@ def _wait_vessel_gone(
 def _leave_crash_ui(
     session: object, on_log: Callable[[str], None] | None
 ) -> None:
-    """Close once. Do not load_space_center (that respawns the pad)."""
+    """Leave Catastrophic Flight Results without reloading the pad.
+
+    ``GameScene.space_center`` from a crashed flight is the Space Center
+    button: vessel comes back PRELAUNCH MET 0 (recover-pad-again).
+    Tracking Station is not Revert. Never revert_to_launch.
+    """
     try:
-        go_space_center(session, reload_save=False)
-        _say("hop dismissed crash ui", on_log)
+        krpc = getattr(getattr(session, "conn", None), "krpc", None)
+        gs = getattr(krpc, "GameScene", None) if krpc is not None else None
+        ts = getattr(gs, "tracking_station", None) if gs is not None else None
+        if krpc is not None and ts is not None:
+            krpc.game_scene = ts
+            _say("hop crash ui tracking (not pad reload)", on_log)
+            return
     except Exception as exc:
-        log.warning("hop dismiss crash ui: %s", exc)
+        log.warning("hop crash ui tracking: %s", exc)
+    _say("hop crash ui abort in flight (not space_center)", on_log)
 
 
 def _finish_hd(
@@ -1307,18 +1318,14 @@ def run_on_vessel(
                     got = _force_recover(vessel, on_log)
                     if got is not None:
                         return got
-                    # Destroyed on the ground: Close now. Unpause does not
-                    # grow a Recover button (13-58-18Z).
-                    if sit_v in _GROUND:
-                        _leave_crash_ui(session, on_log)
-                        raise MissionAbort("not recoverable")
                     if not unpaused:
                         _unpause(session, on_log)
                         unpaused = True
                         still = 0
-                    else:
-                        _leave_crash_ui(session, on_log)
-                        raise MissionAbort("not recoverable")
+                        continue
+                    # Already unpaused, still no Recover — not Space Center.
+                    _leave_crash_ui(session, on_log)
+                    raise MissionAbort("not recoverable")
                 elif sit_v in _AIR:
                     if not unpaused:
                         _unpause(session, on_log)

@@ -21,6 +21,17 @@ python main.py pad
 
 ---
 
+## 2026-08-21T recover-pad-again — Space Center from crash is pad reload
+
+- **When:** east-fin hop-to-water lithobrake MET 89. Os: crash then
+  "recover" went to Space Center, ship on the pad again. Probe:
+  `pre_launch` MET 0 `can_revert_to_launch=True`. Screenshot pad pin.
+- **Cause:** `GameScene.space_center` from Catastrophic Flight Results
+  is the Space Center button. KSP restores the launch save. Unpause
+  then Close made it worse. Not `revert_to_launch` (never called).
+- **Fix:** crash UI → Tracking Station, never Space Center, never
+  unpause. Modules: `hop.py`.
+
 ## 2026-08-21T recover-sit — recover() then pad leftover is a save reload
 
 - **When:** After hop-to-water crash. KSC pin `east-one-pbc` on the

@@ -38,7 +38,7 @@ class TestProtocolDoc(unittest.TestCase):
         self.assertIn("Os is the founder", text)
         self.assertIn("Recursive self-improvement", text)
         self.assertTrue(Path("docs/program/improve/README.md").is_file())
-        self.assertTrue(Path("docs/program/improve/I-001.md").is_file())
+        self.assertTrue(Path("docs/archive/letsgrok-2026-08-21/improve/I-001.md").is_file())
         gene = Path(".grok/agents/gene.md").read_text(encoding="utf-8")
         self.assertIn("agents_md: false", gene)
         mortimer = Path(".grok/agents/mortimer.md").read_text(encoding="utf-8")
@@ -56,7 +56,6 @@ class TestLinusCardSchema(unittest.TestCase):
         self.assertIn("ec_rate", proto)
         text = Path("docs/missions/jebediah/science.md").read_text(encoding="utf-8")
         self.assertIn("recover_banks:", text)
-        self.assertIn("geigerCounter", text)
         self.assertNotIn("- experiment: mysteryGoo", text)
 
 
@@ -110,5 +109,5 @@ class TestFeedbackBoard(unittest.TestCase):
     def test_lessons_use_run_headings(self):
         text = Path("docs/lessons.md").read_text(encoding="utf-8")
         self.assertNotIn("L-NNN", text)
-        self.assertIn("## 1101Z —", text)
-        self.assertIn("## 1204Z —", text)
+        self.assertIn("## <run> — title", text)
+        self.assertNotIn("kspstuff-pad-pbc", text)

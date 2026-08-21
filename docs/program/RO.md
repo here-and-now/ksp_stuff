@@ -1,9 +1,10 @@
 # Start RO — when Os says go
 
-Do **not** seat this tree until a **new science sandbox** exists and
-KSP has finished the first ModuleManager boot. Gym (`KSP-rss` /
-letsgrok) stays default until then. No Gene, no Commander, no Mortimer
-org-hire against RO until `desk` sees this save.
+Team boards were wiped 2026-08-21 (gym tape in
+`docs/archive/letsgrok-2026-08-21/`). Do **not** seat this tree until
+a **new science sandbox** exists and KSP has finished the first
+ModuleManager boot. No Gene / Commander / Mortimer against RO until
+`desk` sees that save.
 
 ## Already on disk (`~/Games/KSP-RO`)
 

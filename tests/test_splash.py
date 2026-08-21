@@ -169,8 +169,7 @@ class TestSplashCatalog(unittest.TestCase):
         self.assertNotIn("from launch", text)
         self.assertNotIn("hangar.launch", text)
         self.assertNotIn("parachute", text.lower())
-        self.assertIn("splash", blocks)
-        self.assertIn("python main.py splash", blocks)
+        self.assertIn("Lars Grokman", blocks)
 
     def test_card_splash_skips_flying(self):
         text = (

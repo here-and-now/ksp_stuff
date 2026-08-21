@@ -202,8 +202,8 @@ class TestHopCatalog(unittest.TestCase):
             text,
         )
         self.assertIn("kspstuff-hop-hammer-pbc", text)
-        self.assertIn("uncrewed", blocks.lower())
-        self.assertIn("kspstuff-hop-hammer-pbc", blocks)
+        self.assertIn("Lars Grokman", blocks)
+        self.assertNotIn("kspstuff-hop-hammer-pbc", blocks)
 
     def test_apo_clamp(self):
         with patch("phases._kv", return_value={"hop_apo": "15000"}):
@@ -1133,6 +1133,26 @@ class _FakeHangar:
         session.active_vessel.name = name
 
 
+class TestInstallSigned(unittest.TestCase):
+    def test_copies_named_file(self):
+        from hangar import install_signed
+
+        src = hop_craft_path("kspstuff-hop-hammer-pbc")
+        with tempfile.TemporaryDirectory() as raw:
+            fake = _FakeHangar(Path(raw))
+            session = _Session(None)  # type: ignore[arg-type]
+            session.active_vessel = None
+            install_signed(
+                session,
+                "kspstuff-hop-hammer-pbc",
+                hangar=fake,
+                src=src,
+            )
+            dest = fake.ships("VAB") / "kspstuff-hop-hammer-pbc.craft"
+            self.assertTrue(dest.is_file())
+            self.assertEqual(dest.read_bytes(), src.read_bytes())
+
+
 class TestHopHangar(unittest.TestCase):
     def test_copies_hammer_not_flea_or_pad(self):
         src = hop_craft_path("kspstuff-hop-hammer-pbc").read_bytes()
@@ -1166,9 +1186,10 @@ class TestHopHangar(unittest.TestCase):
 
     def test_missing_ksp_aborts(self):
         session = _Session(None)  # type: ignore[arg-type]
-        with patch("hop.discover_hangar", return_value=None):
-            with self.assertRaises(MissionAbort) as ctx:
-                install_and_launch(session)
+        with patch("hop.hop_craft_name", return_value="kspstuff-hop-hammer-pbc"):
+            with patch("hop.discover_hangar", return_value=None):
+                with self.assertRaises(MissionAbort) as ctx:
+                    install_and_launch(session)
         self.assertIn("KSP", str(ctx.exception))
 
     def test_run_hop_hangars_then_lights(self):
@@ -1177,9 +1198,10 @@ class TestHopHangar(unittest.TestCase):
             session = _Session(None)  # type: ignore[arg-type]
             session.active_vessel = None
             with patch("hop.discover_hangar", return_value=fake):
-                with patch("hop.time.sleep"):
-                    with patch("hop.run_on_vessel", return_value="recovered") as run:
-                        result = run_hop(session)
+                with patch("hop.hop_craft_name", return_value="kspstuff-hop-hammer-pbc"):
+                    with patch("hop.time.sleep"):
+                        with patch("hop.run_on_vessel", return_value="recovered") as run:
+                            result = run_hop(session)
             self.assertEqual(result, "recovered")
             self.assertEqual(fake.calls[0]["name"], "kspstuff-hop-hammer-pbc")
             self.assertTrue(fake.calls[0]["uncrewed"])
@@ -1341,5 +1363,5 @@ class TestHopToWater(unittest.TestCase):
 
     def test_blocks_name(self):
         blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
-        self.assertIn("hop-to-water", blocks)
-        self.assertIn("Refused", blocks)
+        self.assertIn("Lars Grokman", blocks)
+        self.assertNotIn("kspstuff-hop-flea-pbc", blocks)

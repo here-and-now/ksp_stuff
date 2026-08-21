@@ -1,23 +1,2 @@
 # Linus Grokman — log
 
-- 2026-08-20 — science-scan REACH. FlyingLow geiger 2.80 hang-limited (Gus no). Thermo 0.04 crumbs. Crew eva/sample PBC. Goo FlyingLow 641 s hang wall. Scan maps goo to lab — ignore. No bind. recovery leftover 1.00 is the payoff without 497 s.
-- 2026-08-20 — sci 2.43. Landed TELEMETRY capped. FlyingLow geiger unstarted 2.80 / 497 s / 0.005 on kerbalism-geigercounter. Part on pad Flea, not a 497 s hang. No bind. need_builder hop with the part.
-- 2026-08-20 — Bound leftover landed TELEMETRY 29 s / 0.052 / 0.57 on Stayputnik PAW of kspstuff-geiger-pbc. scv 0.955. Tape 0.72/1.0. Skip geigerCounter. Skip F-005 goo/thermo. recover_banks yes.
-- 2026-08-20 — 22-56 Hammer OFFPLAN. sci 2.33. FlyingLow thermo 2.055/2.10 leftover 0.045 / 3 s crumbs. Unbind 86 s. Next: landed TELEMETRY 0.57 or FlyingLow geiger 2.80 (part + 497 s). No bind.
-- 2026-08-20 — Co-run: Hammer tape 1.0. Leftover thermo 0.279 MB / 86 s honest alone. Thermo+geiger 0.78 MB + EC fit; geiger still 497 s. No Geiger part on this craft. Card stays thermo-only. need_builder for the part.
-- 2026-08-20 — Bound leftover FlyingLow thermo 86 s / 0.002 / 1.30 on 2HOT of kspstuff-hop-hammer-pbc. scv 0.620 live. Skip Stayputnik. Skip geiger. Skip TELEMETRY. recover_banks yes.
-- 2026-08-20 — Bank 1.13. start+e101+basicRocketry. Cape Surface geiger capped. Opportunities: landed TELEMETRY 0.57; FlyingLow thermo 1.30; FlyingLow geiger 2.80 if 497 s hang. No bind. Asteroid later.
-- 2026-08-20 — Bound kspstuff-geiger-pbc Cape Surface geigerCounter 497 s / 0.005 on kerbalism-geigercounter (e101 UNLOCKED). Not Stayputnik PAW. Recover HD. Est. 1.20 → ~6.13. sci 4.93. Asteroid not this card.
-- 2026-08-20 — e101 owned. sci 4.93. kerbalism-geigercounter UNLOCKED. Flea has no Geiger part. Opportunities: Cape Surface 497 s / 0.005 / 1.20 after Gus hangs it. No PAW bind. Asteroid later.
-- 2026-08-20 — Bank 8.90 after 20-55 hop. recovery@EarthFlew 5.00 is the jump; FlyingLow TELEMETRY capped. Recommend engineering101 (5) — Geiger part THEN Gus signs. No bind. No ghost geiger.
-- 2026-08-20 — Bound leftover FlyingLow TELEMETRY 26 s / 0.052 on kspstuff-hop-flea-pbc Stayputnik. Instrument: hosted PAW, no Science part, unlocked start. Geiger skipped (kerbalism-geigercounter LOCKED engineering101). No pad. No 86 s thermo.
-- 2026-08-20 — Os F-013: I bound PAW geigerCounter without saying the Geiger part is engineering101 LOCKED. Tree first. Instrument + unlocked on every card.
-- 2026-08-20 — Os: inner Kardashev, House canon, layered world model, ground talk. Niche in. Horizon still remaining Start.
-- 2026-08-20 — Bound kspstuff-pad-pbc Cape geigerCounter 497 s / 0.005 / 0.5 MB Surface@Shores. Recover HD. Not goo+thermo (F-005). Not TELEMETRY. Est. 1.20 → 4.90, 0.10 short. pad.py still defaults PAD_EXPERIMENTS unless Lars reads the card.
-- 2026-08-20 — Opportunities only after 18-32 recover. sci 3.70 start. FlyingLow leftover TELEMETRY 0.212/1.40 (26 s / 1.19) + thermo 0.798/2.10 (86 s / 1.30). Files 0.92 MB fit tape. Node is 86 s thermo (hang 75 s short) or splash goo 2.40. No bind.
-- 2026-08-20 — Bound remaining FlyingLow Shores on kspstuff-hop-flea-pbc Hangar: TELEMETRY 28 s / 0.052 (1.29 left), thermo 112 s / 0.002 (1.70 left). Recover HD. Splash not a hop start. Node if hang holds 112 s.
-- 2026-08-20 — Bank rewrite: sci 3.20 start. Cape goo+thermo capped. Hop FlyingLow TELEMETRY 0.110/1.40 + thermo 0.401/2.10 credited while recording (15-58-12Z); 17-02-13Z recover moved 0. No splash. HD 1.20 vs 1.0 did not zero either partial. Remaining thermo+TELEMETRY buys the node. No bind.
-- 2026-08-20 — Bound kspstuff-hop-flea-pbc: TELEMETRY 30 s / 0.052, FlyingLow thermo 138 s / 0.002, splash goo 641 s / 0.18. Recover HD. Not Cape pad. 5 sci is TELEMETRY+splash if the can lives.
-- 2026-08-20 — Opportunities: 1235Z banked Earth landed goo (global) + Shores thermo. Next: pad geiger 497 s / 0.005, or leave pad (FlyingLow/splash). No bind.
-- 2026-08-20 — Cape pad card: mysteryGoo 740 s / 0.18 EC/s, temperatureScan 138 s. Recover HD.
-- 2026-08-20 — Earth/PBC. Kerbin hop card dead.

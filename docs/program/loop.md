@@ -1,1 +1,1 @@
-# Gene ↔ seated pilot. Not the stick.
+# Gene ↔ seated Commander. Not the stick.

@@ -1,0 +1,26 @@
+# Lars Grokman — log
+
+- 2026-08-20 — Os: inner MET-clock hunger, niche private, ground ask. 19-26 unpause in; confirm on next Hangar.
+- 2026-08-20 — Cape pad: experiment id, double Toggle, dwell, EC cap.
+- 2026-08-20 — hop block: light, FlyingLow card, recover when down.
+- 2026-08-20 — hop Hangar kspstuff-hop-flea-pbc (not pad-pbc).
+- 2026-08-20 — hop EC=0 with HD recovers; no timeout dump.
+- 2026-08-20 — leftover hop recovers HD without a fresh Experiment start.
+- 2026-08-20 — paused Flight Results hop recovers debris or leaves flight.
+- 2026-08-20 — hop/pad 1 Hz snapshots land on the seated jsonl.
+- 2026-08-20 — fresh Hangar hop starts the flying card (not leftover keep-HD).
+- 2026-08-20 — leftover Flea at SpaceCenter enters Flight (no second Hangar).
+- 2026-08-20 — hop flying card: one Toggle per id (2HOT thermo, not Stayputnik).
+- 2026-08-20 — splash block: leftover Flea, wait Water, goo dwell, recover HD.
+- 2026-08-20 — hop-to-water refused: Start Flea cannot steer Cape Shores to Water.
+- 2026-08-20 — pad reads seated science.md (geiger when bound, not F-005 goo+thermo).
+- 2026-08-20 — pad dwell: MET frozen / empty HD aborts, not catalog-wall recover.
+- 2026-08-20 — pad Hangar run_physics (always unpause + 1×) so MET can move.
+- 2026-08-20 — pad dry-launch: leave pre_launch (SRB istg=0) so MET ticks.
+- 2026-08-20 — Named Lars Grokman, Vehicle Engineering.
+- 2026-08-20 — tech-unlock catalog: kRPC R&D scene + spend if UnlockTech exists. Not GameData.
+- 2026-08-20 — pad Hangars seated/VAB .craft (geiger-pbc), not pad_pbc() template.
+- 2026-08-21 — pad dwell: rem/running/UT not MET; physics 2–4× rails 0.
+- 2026-08-20 — geigerCounter: native kerbalism-geigercounter rank 0, Stayputnik PAW skip.
+- 2026-08-21 — hop Hangars seated/VAB Hammer (not Flea). hop_apo 18 km clamp.
+- 2026-08-20 — hop OffPlan is FlyingLow 50 km; SRB overshoot of hop_apo is not OFFPLAN.

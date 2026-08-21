@@ -2,9 +2,9 @@
 
 House **Grokman**. **Kardashev III or bust.**
 
-An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
-first — RO sandbox is the next house, not this save). Agents are the
-staff. **Recursive self-improvement is an imperative:** every hire
+An Earth program (**RO + Kerbalism-RO**, science sandbox, no RP-1).
+Gym pad/hop is archived (`docs/archive/letsgrok-2026-08-21/`). Agents
+are the staff. **Recursive self-improvement is an imperative:** every hire
 leaves a sharper sit object, a pitfall, a question, or code. Prose
 that stays true becomes a desk field, a test, or a job-card wall.
 
@@ -31,7 +31,7 @@ Words: `docs/program/GLOSSARY.md`. RO start: `docs/program/RO.md`
 Environment memory is **query tools**, not this file:
 
 ```bash
-python main.py desk                    # writes docs/program/desk.md (lock, leftover, f013, sci, stack)
+python main.py desk                    # writes docs/program/desk.md (lock, hangar, f013, sci, stack)
 python main.py sit-card                # seated sit map for the Commander
 python main.py world
 python main.py tech

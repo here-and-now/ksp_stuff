@@ -588,17 +588,18 @@ def _close_to_ksc(session: Session) -> None:
 def go_space_center(session: Session, *, timeout: float = 45.0) -> None:
     """Leave flight/editor/Flight Results for the KSC overview. No click.
 
-    Always Close (scene setter + ``load_space_center``). A leftover dirty
-    flight can still report ``game_scene == space_center`` (L-022) while
-    Flight Results sits on Tracking (14-52-25Z). Poll until KSC is
-    actually clean. Never revert.
+    Close **once** (scene setter + ``load_space_center``), then poll.
+    Repeating ``load_space_center`` every tick reloads KSC in a loop
+    (15-26-18Z after crash recover). A leftover dirty flight can still
+    report ``game_scene == space_center`` (L-022) while Flight Results
+    sits on Tracking. Poll until KSC is actually clean. Never revert.
     """
     session.require_connected()
     log.info("scene %s → space_center", game_scene(session))
+    _close_to_ksc(session)
     deadline = time.monotonic() + timeout
     last = game_scene(session)
     while time.monotonic() < deadline:
-        _close_to_ksc(session)
         try:
             session.space_center = session.conn.space_center
         except Exception:

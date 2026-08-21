@@ -737,25 +737,12 @@ def _crash_line(
 def _leave_crash_ui(
     session: object, on_log: Callable[[str], None] | None
 ) -> None:
-    """Close until KSC. Never revert.
-
-    ``game_scene`` can read space_center while Flight Results is still
-    up over Tracking (14-52-25Z). ``go_space_center`` polls until KSC
-    is clean; ``load_space_center`` is a second Close.
-    """
+    """Close once, then poll. Never revert. Never reload-loop."""
     try:
         go_space_center(session)
         _say("hop dismissed crash ui", on_log)
     except Exception as exc:
         log.warning("hop dismiss crash ui: %s", exc)
-    sc = getattr(session, "space_center", None)
-    fn = getattr(sc, "load_space_center", None)
-    if not callable(fn):
-        return
-    try:
-        fn()
-    except Exception as exc:
-        log.warning("hop load_space_center: %s", exc)
 
 
 def _finish_hd(
@@ -1223,8 +1210,11 @@ def run_on_vessel(
                 call("abort_pad", ctx)
                 raise MissionAbort("wreck")
 
-            if left_pad and (waiting_hd or down or still > 0) and not _recoverable(
-                vessel
+            if (
+                left_pad
+                and not said_crash
+                and (waiting_hd or down or still > 0)
+                and not _recoverable(vessel)
             ):
                 _recover_tick(vessel, on_log)
 

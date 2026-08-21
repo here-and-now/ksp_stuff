@@ -21,6 +21,20 @@ python main.py pad
 
 ---
 
+## 2026-08-21T15-26-18Z-hop-to-water — Close is not a reload loop
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T15-26-18Z-hop-to-water`). East Valiant, pitch 25° east,
+  lithobrake flying recoverable=no. Os: after crash recover, KSP
+  reload-looped (scene switch).
+- **Symptom:** crash UI then `go_space_center` / `load_space_center`
+  every 0.3 s for the Close poll. Looks like recover → reload → reload.
+- **Cause:** `go_space_center` called `_close_to_ksc` (scene setter +
+  `load_space_center`) **inside** the wait loop. `_leave_crash_ui` then
+  called `load_space_center` again.
+- **Fix:** Close **once**, then poll `ksc_ready`. No second
+  `load_space_center` after dismiss. Modules: `hangar.py`, `hop.py`.
+
 ## 1101Z — Pad recover is not science
 
 - **When:** 2026-08-20 letsgrok `python main.py pad` (1101Z). Uncrewed

@@ -347,8 +347,11 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   (`vessel.met` stuck, `recoverable` false, toolbar empty). The scene
   setter is **not** enough: `game_scene` can already read
   `space_center` while Flight Results is still up over Tracking
-  (14-52-25Z, empty Tracking, Revert live). Poll
-  `can_revert_to_launch()` until false; `tracking_station` is not KSC.
+  (14-52-25Z, empty Tracking, Revert live). Close **once**
+  (scene setter + one `load_space_center`), then poll
+  `can_revert_to_launch()` until false. Do **not** call
+  `load_space_center` every tick — that reloads KSC in a loop
+  (15-26-18Z after crash recover). `tracking_station` is not KSC.
   `can_revert_to_launch` True is that dialog — **read it, do not call
   `revert_to_launch`**. It restores the *current* flight’s pad, not a
   new craft. Never revert, quickload, return to VAB, or rewind UT from

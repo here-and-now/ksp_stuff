@@ -124,6 +124,20 @@ class TestGoSpaceCenter(unittest.TestCase):
         self.assertIn("Flight Results", str(ctx.exception))
         self.assertEqual(session.space_center.reverts, 0)
 
+    def test_stuck_results_do_not_reload_loop(self):
+        session = _Session(scene="space_center", revert=True)
+        n = {"n": 0}
+
+        def stuck() -> None:
+            n["n"] += 1
+
+        session.space_center.load_space_center = stuck  # type: ignore[method-assign]
+        with patch("hangar.time.sleep"):
+            with self.assertRaises(SessionError):
+                go_space_center(session, timeout=5.0)
+        self.assertLessEqual(n["n"], 1)
+        self.assertEqual(session.space_center.reverts, 0)
+
 
 class TestHangarLaunchGate(unittest.TestCase):
     def test_no_launch_vessel_while_flight_results(self):

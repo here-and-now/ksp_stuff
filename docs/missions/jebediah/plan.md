@@ -5,24 +5,23 @@ parking_apo: 250000
 parking_peri: 75000
 suicide_throttle: 1
 landing_pe: 18000
-phase: hop
-next: hop
+phase: hop-to-water
+next: hop-to-water
 expect_body: Earth
 expect_peri_min: -500000
-expect_apo_max: 140000
-craft: kspstuff-hop-valiant-pbc
-hop_apo: 80000
+expect_apo_max: 50000
+craft: kspstuff-hop-valiant-east-pbc
+hop_apo: 18000
 go: yes
-campaign: none
-recommended: python main.py hop
+campaign: uncrewed
+recommended: python main.py hop-to-water
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 need_builder: none
 need_science: none
 need_stack: none
-# Sit: leftover PRELAUNCH kspstuff-hop-flea-pbc vs seated Valiant.
-# hop recovers unmatched without lighting, then Hangars valiant-pbc.
-# Do not fly the Flea. Do not Hangar from this desk.
-# Gus capable yes. Linus FlyingHigh shorts 138/0.002 + 30/0.052.
-# hop_apo 80 km cut. OffPlan 140 km Space. File FlyingHigh ≥50 km.
-# Shorts ~4.50 if finished — not 15. Skip FlyingLow crumbs. Do not pad.
-# Never rails. Never revert. Crash UI: recover if yes else Space Center.
+# Water sit. Bank 10.96 +0. Need ~4.04. FlyingHigh Shores spent.
+# 14-52-25Z leftover wreck lit as hop. hangar none, Tracking no vessels.
+# Lars hangar-flight-results in: Close until KSC + can_revert false.
+# Do not Hangar from Gene. Do not revert. Flea refused.
+# leftover dry wreck gated — do not light. hop_apo 18 km FlyingLow.
+# Pitch 25° from vertical, heading 90. Wait splash. Never rails.

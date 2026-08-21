@@ -1,5 +1,7 @@
 # Gus Grokman — log
 
+- 2026-08-21 — kspstuff-hop-valiant-east-pbc. t7 90 km Shores will not buy ~4.04. Same 2×T100 Valiant as 13-08-57Z apo 12.3 km. Gimbal 7.5° during burn; Stayputnik no torque after cutoff. ~2.1 t / ~1.55 km/s SL. 138×0.002+30×0.052=1.84 vs 310; splash goo 641×0.18=115 vs 310. Geiger part on craft. No chute. Not t7. capable: yes.
+- 2026-08-21 — kspstuff-hop-valiant-t7-pbc. 2×T100 apo 12.3 km is not ≥50 km. Same Valiant, 7×FL-T100. ~4.8 t / TWR ~2.1 / ~3.0 km/s SL. 138×0.002+30×0.052=1.84 vs 310. Geiger part on craft. leftover PRELAUNCH valiant-pbc — do not Hangar. hop_apo 80 km still a wish. capable: yes.
 - 2026-08-21 — kspstuff-hop-valiant-pbc. Not another Flea. Valiant istg=1 + 2×FL-T100 RF Kero/LOx + kerbalism-geigercounter e101 UNLOCKED. hop_apo cut + 5° gimbal. ~2.1 t / ~1.55 km/s SL. 3×0.002 vs 310. No chute. leftover PRELAUNCH flea — do not Hangar. Flea cannot pay 8.65. capable: yes.
 - 2026-08-21 — alt kspstuff-hop-hammer-far-pbc. Did not touch hop-flea-pbc. Hammer istg=1 + kerbalism-geigercounter e101 UNLOCKED. Envelope, not 497 s. Stock 15 s / 18.8 km OFFPLAN. 15×0.005=0.075 vs 310. Tape 0.5 vs 1.0. No chute. vab craft still hop-flea-pbc. capable: yes.
 - 2026-08-21 — kspstuff-hop-flea-pbc. kerbalism-geigercounter e101 UNLOCKED on the hop Flea (istg=1). Recover HD, not 497 s. 497×0.005=2.5 + command ~25 vs 310. Tape 0.5 vs 1.0. Not geiger-pbc. No chute. capable: yes.

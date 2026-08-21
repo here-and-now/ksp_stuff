@@ -8,9 +8,9 @@ for them.
 | Phase | CLI | Expect |
 |---|---|---|
 | pad | `python main.py pad` / `phase pad` | Hangar **seated/VAB craft file** uncrewed (`kspstuff-geiger-pbc` Geiger Counter **part**, F-013). Not `pad_pbc()`. Dry-launch only if current stage is 0 (do not light a Flea). Dwell watches `wait science run= rem=` and UT, **not** vessel MET. Physics warp 2–4× on pad/landed; **rails 0**; never WarpTo; 1× after dwell. Empty HD with nothing recording still aborts. |
-| hop | `python main.py hop` / `phase hop` | Hangar **seated/VAB craft file** uncrewed (Valiant sit: `kspstuff-hop-valiant-pbc`; Hammer sit: `kspstuff-hop-hammer-pbc`, 2HOT — F-013). Not Flea, not exact pad/geiger names. Light → bound flying card (thermo on 2HOT not Stayputnik). `hop_apo` Gene **80 km** is a real cut on Valiant; FlyingLow clamp is **8–18 km**. OffPlan apo > **50 km** FlyingLow, or **140 km** Space when the card is FlyingHigh. Unmatched leftover (PRELAUNCH Flea vs seated Valiant) recovers without lighting, then Hangars the seated craft. Recover HD when down (`vessel.recover()`). Low flying **≤250 m** calls `recover()` only if `recoverable` (199 m living hop). MET-still + q=0 flying is **down now** (do not wait the 600 s crash UI). Frozen MET + flying + q=0 + low alt is **Catastrophic Flight Results**: log sit/recoverable/met/alt/q, `recover()` if recoverable, else `go_space_center` (Close / Space Center, not revert) and abort. Do not wait `sit=landed` (12-04-13Z). Post-dismiss `pre_launch` recoverable is **not** recovery@EarthFlew. 1 Hz recover line names sit + recoverable. Live kRPC hop ship leftover enters Flight — no second Hangar. Dead GUID / FLYING Debris is not leftover; empty Tracking Hangars. Splash goo is **not** a hop start. |
+| hop | `python main.py hop` / `phase hop` | Hangar **seated/VAB craft file** uncrewed (Valiant sit: `kspstuff-hop-valiant-pbc`; Hammer sit: `kspstuff-hop-hammer-pbc`, 2HOT — F-013). Not Flea, not exact pad/geiger names. Light → bound flying card (thermo on 2HOT not Stayputnik). FlyingLow Toggle **airborne**. FlyingHigh Toggle **only ≥50 km** — not T+1 FlyingLow (~100 m); **one** Toggle (a second at the lid stops Kerbalism). **13-31-03Z:** t7 apo 88.8 km, lid MET~98 alt 50.4 km, card started T+1 FlyingLow, splash recover sci +0. `hop_apo` Gene **80 km** is a real cut on Valiant; FlyingLow clamp is **8–18 km**. OffPlan apo > **50 km** FlyingLow, or **140 km** Space when the card is FlyingHigh. **13-08-57Z:** Valiant + 2×FL-T100 dry MET~27 alt~7 km apo **12.3 km** — never FlyingHigh; that loft is Gus tanks, not hop.py. Unmatched leftover (PRELAUNCH Flea vs seated Valiant) recovers without lighting, then Hangars the seated craft. Recover HD when down (`vessel.recover()`). Low flying **≤250 m** calls `recover()` only if `recoverable` (199 m living hop). MET-still + q=0 flying is **down now** (do not wait the 600 s crash UI). Frozen MET + flying + q=0 + low alt is **Catastrophic Flight Results**: log sit/recoverable/met/alt/q, `recover()` if recoverable, else `go_space_center` (Close until KSC, not revert) and abort. Frozen landed `recoverable=no` is the same dialog (13-58-18Z Vessel is destroyed): Close now, do not unpause-spam `recover()`. Do not wait `sit=landed` that never comes (12-04-13Z). Post-dismiss `pre_launch` recoverable is **not** recovery@EarthFlew. 1 Hz recover line names sit + recoverable. Live kRPC hop ship leftover enters Flight — no second Hangar. Gate live sit/fuel/recoverable before light (disk PRELAUNCH is a lie). Dead GUID / FLYING Debris is not leftover; empty Tracking Hangars leftover scan, but **empty Tracking is not KSC clean** — Flight Results over Tracking (**14-52-25Z**) still has Revert; Hangar does not `launch_vessel` until scene is KSC and `can_revert_to_launch` is false. Splash goo is **not** a hop start. |
 | splash | `python main.py splash` / `phase splash` | Leftover hop Flea only — no Hangar, no light, no pad motor. SpaceCenter leftover enters Flight. Wait until **splashed** (do not recover while flying even if recoverable). One Toggle `mysteryGoo` on GooExperiment. Dwell (641 s catalog, EC cap). Recover HD when splashed/recoverable. Landed is not Water. EC=0 with HD data recovers; empty HD aborts. Frozen MET / Flight Results recovers debris or leaves flight. |
-| hop-to-water | `python main.py hop-to-water` / `phase hop-to-water` | **Refused.** Start Flea cannot steer Cape Shores to Water (Stayputnik no torque, Flea no gimbal, no chute). Vertical hop lithobrakes Shores (18-32: 74 m). Do not Hangar. Do not fake an east splash. need_builder for east pitch, or skip splash. |
+| hop-to-water | `python main.py hop-to-water` / `phase hop-to-water` | **Valiant gimbal.** Hangar seated hop craft (Gus Water sit: `kspstuff-hop-valiant-east-pbc`, 2×FL-T100 + LV-T15). Pitch **25°** from vertical, heading **90** (east) during the **one burn**. Gimbal **7.5°** is authority — **7.5° from vertical stayed Shores** (14-33-29Z apo 12.1 km, horiz ~34 m/s, lithobrake 74.5 m, never splashed). Stayputnik has no torque after cutoff — do not coast-SAS. Flying card once airborne. **Do not recover** on first flying recoverable. Wait **splashed**, then splash dwell + HD recover. Landed after **left_pad** is not Water (Shores abort `not splashed`). Pad `sit=landed` after light is hop-off (14-45-33Z MET 0.6, 37.5 m / 49 m/s) — do not abort before airborne. Flea still **refused** (no Hangar, no fake splash). Unmatched leftover recovers first, then Hangar. Matching leftover enters Flight. Gate live sit/fuel/recoverable before light — disk PRELAUNCH is a lie (**14-52-25Z** flying MET 13.8 fuel=0, science started on wreck). Dry wreck leftover: recover if `recoverable`, else Close until KSC (`can_revert` false — **14-52-25Z** Flight Results over Tracking is not KSC) and abort — do not light, do not Toggle. Never revert. Hangar waits; do not `launch_vessel` over the modal. `hop_apo` 80 km is the wrong cut for this 2×T100 hang. |
 | tech-unlock | `python main.py tech-unlock [node]` / `phase tech-unlock` | Ground kRPC try. Disk checks tree/parents/bank. Opens R&D. **0.6 has no UnlockTech RPC — aborts.** Paid node: **Mortimer** edits `persistent.sfs` ResearchAndDevelopment only (Os 2026-08-20). Not GameData. Not a pad/geiger sit (F-013). |
 
 `python main.py pad` Hangars the **named** stack uncrewed (seated
@@ -30,22 +30,33 @@ MET is 0. Empty HD with nothing recording still aborts.
 ``crafts/kspstuff-hop-hammer-pbc.craft``. Does **not** Hangar
 ``kspstuff-pad-pbc`` or ``kspstuff-geiger-pbc`` (exact names, not a
 ``geiger-pbc`` substring). Empty KSC or leftover
-pad/geiger → Hangar the hop motor. ``phase hop`` on an already-launched
+pad/geiger → Hangar the hop motor. Hangar ``go_space_center`` Closes
+until KSC is clean (scene ``space_center``, ``can_revert_to_launch``
+false) **before** ``launch_vessel``. Flight Results over Tracking
+(14-52-25Z) is not KSC — empty Tracking is not a green light. Never
+revert. ``phase hop`` on an already-launched
 matching hop craft skips Hangar. Leftover in tracking at SpaceCenter
 enters Flight — do **not** Hangar a second stack. A kRPC active proxy
 whose ``.name`` raises ``No such vessel`` is gone — scan the pool;
 empty Tracking Hangars. Disk desk ``sit=FLYING`` debris is not leftover.
+Disk PRELAUNCH is a lie: gate live sit/fuel/recoverable before light.
 Unmatched leftover (Flea vs seated Valiant) ``recover()`` without lighting
 — do not Hangar over it, then Hangar the seated craft. ``hop_apo`` 18 km
 is throttle-cut (solids ignore it); FlyingHigh unclamps to Space so Gene
-80 km is a real cut. OffPlan is FlyingLow **50 km** or FlyingHigh **140 km**
-Space, not the 18 km clamp — Hammer 22-56Z 18.8 km was still FlyingLow. Ballistic peri
+80 km is a real cut **if the stack can reach it**. OffPlan is FlyingLow
+**50 km** or FlyingHigh **140 km** Space, not the 18 km clamp — Hammer
+22-56Z 18.8 km was still FlyingLow. Valiant 13-08-57Z (2×FL-T100, throttle
+1 until dry) peaked apo 12.3 km — do **not** fake FlyingHigh in
+``hop.py``; that is Gus tanks/Δv. Ballistic peri
 is negative — not OFFPLAN. No chute: wait wreck-recoverable. Empty tanks
 after the motor are expected. Start the **flying** card once airborne
-(TELEMETRY on Stayputnik + thermo on 2HOT; one Toggle per id; splash goo
-is not a hop start). Do **not** Toggle Stayputnik ``temperatureScan`` —
-that second start stops Kerbalism (1119Z). A hop this process
-**lit** always starts that card. Do **not** skip start because idle
+(FlyingLow) or at alt **≥50 km** (FlyingHigh — 13-31-03Z Toggle at T+1
+FlyingLow banked crumbs, not the lid). TELEMETRY on Stayputnik + thermo
+on 2HOT; **one** Toggle per id; do **not** Toggle again at the lid
+(that second start stops Kerbalism). Splash goo is not a hop start. Do
+**not** Toggle Stayputnik ``temperatureScan`` — that second start stops
+Kerbalism (1119Z). A hop this process **lit** always starts that card
+at the right lid. Do **not** skip start because idle
 TELEMETRY remaining=0. Leftover-HD skip (HardDrive files or Experiment
 modules gone, no second Toggle) is for an already-dead probe this process
 did not light. Empty card on a clean pad still
@@ -57,8 +68,9 @@ did not). MET-still
 wall. Frozen MET + flying + q=0 + low alt is Catastrophic Flight
 Results (12-04-13Z): log sit/recoverable/met/alt/q, ``recover()`` if
 KSP will take it, else ``go_space_center`` (Close / Space Center, not
-revert) and abort ``not recoverable``. Do not wait ``sit=landed`` —
-that sit never comes. Post-dismiss
+revert) and abort ``not recoverable``. Frozen landed
+``recoverable=no`` (13-58-18Z Vessel is destroyed) is that same Close
+— do not unpause-spam. Do not wait ``sit=landed`` that never comes. Post-dismiss
 ``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover line
 names sit + recoverable. Still stuck: recover hop debris if KSP will
 take it. Dismiss **without** ``recover()``
@@ -68,10 +80,21 @@ pad motor → abort (hop first). Wait for Water; do **not** recover on
 first flying recoverable (that is hop, and it kills splash dwell). Start
 goo only when `splashed`. One Toggle. Dwell then recover HD.
 
-`python main.py hop-to-water` does **not** fly. This Flea cannot pitch
-east: no reaction wheel, no SRB gimbal, fins are passive, chute is
-survivability 15. 18-32 fell on Shores. Gene: skip splash, or Gus a
-stack that can steer.
+`python main.py hop-to-water` Hangars the **named** Valiant hop
+(`kspstuff-hop-valiant-east-pbc` when seated/VAB). Engages AP
+`target_pitch=65` `target_heading=90` while the Valiant burns
+(25° from vertical; gimbal 7.5° is authority). Releases AP at cutoff.
+Starts the flying card airborne. Matching leftover: live sit/fuel/
+recoverable before light (disk PRELAUNCH is a lie). Dry wreck leftover
+does not Toggle. Hangar waits for KSC with no Flight Results before
+`launch_vessel` (14-52-25Z). Never revert.
+Does **not** recover while flying (hop recover-on-down would kill
+splash). Wait `sit=splashed`, then the splash card dwell and HD
+recover — same Water wait as `splash`. Landed after left_pad (Shores)
+aborts `not splashed`. Pad `sit=landed` after light is hop-off — same
+as `_down(flown)`: do not treat it as a Shores miss. Start Flea still
+aborts before Hangar: no torque, no gimbal, 18-32 lithobrake 74 m. Do
+not fake an east splash on a vertical Flea.
 
 `python main.py tech-unlock engineering101` (or `phase tech-unlock` with
 plan `tech: engineering101`) is **not** a flight. No Hangar, no Toggle,

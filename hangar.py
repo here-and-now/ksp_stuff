@@ -530,29 +530,86 @@ def go_flight(
     )
 
 
-def go_space_center(session: Session, *, timeout: float = 45.0) -> None:
-    """Leave flight/editor/dialogs for the KSC overview. No human click.
+_TRACKING = frozenset({"tracking_station", "trackingstation", "tracking"})
+_REVERT_PROBES = ("can_revert_to_launch", "can_revert")
 
-    Always apply the scene setter. A leftover dirty flight can still
-    report ``game_scene == space_center`` (L-022).
+
+def _can_revert(session: Any) -> bool:
+    """Flight Results still has Revert to Launch. Read only — never revert."""
+    sc = getattr(session, "space_center", None)
+    if sc is None:
+        return False
+    for name in _REVERT_PROBES:
+        fn = getattr(sc, name, None)
+        try:
+            if callable(fn):
+                if bool(fn()):
+                    return True
+            elif fn is not None and bool(fn):
+                return True
+        except Exception:
+            continue
+    return False
+
+
+def ksc_ready(session: Any) -> tuple[bool, str]:
+    """KSC overview with no Flight Results. Empty Tracking is not KSC.
+
+    ``game_scene`` can already read ``space_center`` while the modal is
+    still up (14-52-25Z). ``can_revert_to_launch`` True is that dialog.
+    """
+    scene = game_scene(session).lower().replace(" ", "_")
+    if scene in _TRACKING:
+        return False, "tracking (empty Tracking is not KSC)"
+    if scene != "space_center":
+        return False, f"scene {scene}"
+    if _can_revert(session):
+        return False, "flight results (can_revert)"
+    return True, "ksc"
+
+
+def _close_to_ksc(session: Session) -> None:
+    """Space Center / Close. Never revert, quickload, or return to VAB."""
+    krpc = getattr(getattr(session, "conn", None), "krpc", None)
+    if krpc is not None:
+        try:
+            krpc.game_scene = krpc.GameScene.space_center
+        except Exception as exc:
+            log.warning("game_scene setter failed (%s); load_space_center", exc)
+    sc = getattr(session, "space_center", None)
+    fn = getattr(sc, "load_space_center", None) if sc is not None else None
+    if callable(fn):
+        try:
+            fn()
+        except Exception as exc:
+            log.warning("load_space_center: %s", exc)
+
+
+def go_space_center(session: Session, *, timeout: float = 45.0) -> None:
+    """Leave flight/editor/Flight Results for the KSC overview. No click.
+
+    Always Close (scene setter + ``load_space_center``). A leftover dirty
+    flight can still report ``game_scene == space_center`` (L-022) while
+    Flight Results sits on Tracking (14-52-25Z). Poll until KSC is
+    actually clean. Never revert.
     """
     session.require_connected()
-    krpc = session.conn.krpc
     log.info("scene %s → space_center", game_scene(session))
-    try:
-        krpc.game_scene = krpc.GameScene.space_center
-    except Exception as exc:
-        log.warning("game_scene setter failed (%s); load_space_center", exc)
-        session.space_center.load_space_center()
     deadline = time.monotonic() + timeout
+    last = game_scene(session)
     while time.monotonic() < deadline:
-        if game_scene(session) == "space_center":
+        _close_to_ksc(session)
+        try:
             session.space_center = session.conn.space_center
+        except Exception:
+            pass
+        ok, last = ksc_ready(session)
+        if ok:
             time.sleep(1.0)
             return
         time.sleep(0.3)
     raise SessionError(
-        f"timed out waiting for space_center (still {game_scene(session)})"
+        f"timed out waiting for KSC (still {last}; Flight Results not dismissed)"
     )
 
 
@@ -699,6 +756,8 @@ class Hangar:
     ) -> None:
         """Launch from KSC. Recovers junk flights and pre-flight dialogs itself.
 
+        Close until KSC is clean before ``launch_vessel`` (14-52-25Z
+        Flight Results over Tracking is not KSC). Never revert.
         Probes: ``uncrewed=True`` (empty crew list). Do not seat a kerbal
         in a Stayputnik (L-017 is Mk1-only).
         """
@@ -709,6 +768,15 @@ class Hangar:
             go_space_center(session)
         except Exception as exc:
             log.warning("go_space_center: %s", exc)
+            raise SessionError(
+                f"Hangar waits: KSC not clean ({exc}). "
+                "Close until KSC, no revert, no launch_vessel"
+            ) from exc
+        ok, why = ksc_ready(session)
+        if not ok:
+            raise SessionError(
+                f"Hangar waits: {why}. Close until KSC, no revert, no launch_vessel"
+            )
         # Recover pad leftover before seating crew — assigned kerbals
         # on that stack are not available until it is gone (L-027).
         clear_launch_site(session, site)

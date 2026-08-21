@@ -158,3 +158,14 @@ Gene: abort
 script: acked abort
 Jebediah: copy, fresh Hangar flea-pbc, hop geiger on kerbalism-geigercounter, crash UI detect-now
 Jebediah: copy, leftover PRELAUNCH hop-flea-pbc, skip Hangar, phase hop, geigerCounter on kerbalism-geigercounter, MET must move
+Jebediah: copy, leftover Flea recover no light, Hangar Valiant, FlyingHigh thermo 138s 2HOT + TELEMETRY 30s Stayputnik, hop_apo 80km, recover HD
+Jebediah: copy, leftover PRELAUNCH valiant-pbc recover no light, Hangar t7, FlyingHigh thermo 138s 2HOT + TELEMETRY 30s Stayputnik, hop_apo 80km OffPlan 140km, file ≥50km, no geiger, no 2×T100
+Jebediah: copy, leftover t7 PRELAUNCH light no Hangar, hop_apo 80km, FlyingHigh Toggle only ≥50km 2HOT 138s + Stayputnik TELEMETRY 30s, recover HD
+Jebediah: copy, leftover t7 PRELAUNCH light or Hangar per hop.py, Toggle FlyingHigh >=50 km, recover HD, Os until sci 15
+Gene: Water merge. hop-to-water go. Uncrewed kspstuff-hop-valiant-east-pbc. Pitch 7.5° east on the burn. FlyingLow@Water thermo 138/0.002 + TELEMETRY 30/0.052. Wait splash. hop_apo 18 km. Flea refused. Do not pad. Do not Hangar. go: yes.
+Jebediah: copy, hop-to-water east Valiant, pitch 7.5 heading 90 on burn, FlyingLow Water shorts, wait splash then recover HD
+Gene: Water merge. hop-to-water go. Uncrewed kspstuff-hop-valiant-east-pbc. Pitch 7.5 east. FlyingLow@Water thermo 138/0.002 + TELEMETRY 30/0.052. Wait splash. hop_apo 18 km. Flea refused. campaign uncrewed. go yes.
+Jebediah: copy, hop-to-water, east Valiant kspstuff-hop-valiant-east-pbc, pitch 7.5 east, wait splash then Water shorts thermo+TELEMETRY, recover HD
+Jebediah: copy, leftover east-pbc, hop-to-water 25° east heading 90, wait splash, thermo 138s + TELEMETRY 30s, no Hangar
+Jebediah: copy, leftover east-pbc hop-to-water, light, pitch 25 east after left_pad, wait splash, Water shorts, recover HD
+Jebediah: copy, fresh Hangar east-pbc after Close-until-KSC, pitch 25 east heading 90, wait splash, Water shorts, recover HD

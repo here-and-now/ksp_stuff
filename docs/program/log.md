@@ -2,6 +2,7 @@
 
 Append-only decisions. Environment facts come from `python main.py world`.
 
+- 2026-08-21 — Water sit. `python main.py hop-to-water`. Craft `kspstuff-hop-valiant-east-pbc`. Pitch 7.5° east. FlyingLow@Water shorts. hangar none. campaign uncrewed. go: yes.
 - 2026-08-20 — Canonical KSP `~/Games/KSP-rss`, save `letsgrok` (SCIENCE_SANDBOX, Earth). Steam Kerbin, `Grok`, `test`, and old careers are dead.
 - 2026-08-20 — Honor PBC, Kerbalism Default (science + LS + reliability), RF resource names (no ullage yet), RA omni-only.
 - 2026-08-20 — Queries (`world` / `tech` / `parts`) are the environment memory. Do not wiki Start parts.

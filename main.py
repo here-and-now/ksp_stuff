@@ -511,7 +511,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     water_p = sub.add_parser(
         "hop-to-water",
-        help="Refused: Start Flea cannot steer Cape Shores to Water",
+        help="Valiant east pitch 25°, wait Water splash dwell (Flea refused)",
     )
     water_p.add_argument(
         "--timeout",

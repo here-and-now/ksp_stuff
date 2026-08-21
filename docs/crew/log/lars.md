@@ -28,3 +28,9 @@
 - 2026-08-21 — Catastrophic flying q=0 is crash UI: Space Center, abort, no wait landed.
 - 2026-08-21 — hop Hangar: exact pad/geiger names (I-013). Leftover is live kRPC hop ship, not FLYING Debris (I-017).
 - 2026-08-21 — hop-flyinghigh: unmatched leftover Flea recovers without lighting; FlyingHigh hop_apo/OffPlan to Space 140 km.
+- 2026-08-21 — 13-08-57Z Valiant 2×T100 dry apo 12.3 km: FlyingHigh is Gus tanks, not hop.py.
+- 2026-08-21 — 13-31-03Z t7 apo 88.8 km: FlyingHigh Toggle only ≥50 km, not T+1 FlyingLow.
+- 2026-08-21 — 13-58-18Z frozen landed recoverable=no is crash UI: Close, no unpause-spam.
+- 2026-08-21 — hop-to-water: Valiant pitches 7.5° east on the burn, waits splash; Flea still refused.
+- 2026-08-21 — 14-33-29Z hop-to-water: 7.5° from vertical stayed Shores (apo 12.1 km); pitch 25° east on the burn.
+- 2026-08-21 — 14-52-25Z Flight Results over Tracking is not KSC: Close until `can_revert` false; Hangar does not `launch_vessel` over the modal. Never revert.

@@ -6,5 +6,5 @@ status: available
 body: Earth
 peri: —
 apo: —
-next: hop
-notes: Living hop. recovery leftover 0.17 + start FlyingLow geiger leftover 2.10 on the part. Not 497 s. recover() while Flight ≤250 m. go: yes. python main.py hop.
+next: hop-to-water
+notes: Water sit. kspstuff-hop-valiant-east-pbc. Pitch 7.5° east. Wait splash. FlyingLow@Water thermo 138/0.002 + TELEMETRY 30/0.052. go: yes. python main.py hop-to-water.

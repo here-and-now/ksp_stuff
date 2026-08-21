@@ -8,7 +8,6 @@ Thesis: the log can lie; the still and the envelope have to agree before
 Hunger: a house that can tell the truth at 2.4 km and still bank 15.
 
 Open:
-- Honest path to survivability 15. Not same Flea until 15. Leftover PRELAUNCH unmatched: hop recovers, then Hangar Valiant.
-- Promote Linus/Gus remaining-subject / new-stack answers.
+- Honest path to survivability 15. Bank 10.96. Need ~4.04. Water sit flying: FlyingLow shorts 3.50 + splash TELEMETRY 0.80 if the core lives. Not t7. Not Flea.
 
 Do not copy this into plan.md until Gene chairs a merge.

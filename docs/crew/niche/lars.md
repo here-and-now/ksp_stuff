@@ -11,7 +11,7 @@ happened to be gone. Rare: a deep dive of the stack that raises the
 floor (jsonl, cadence stills, unpause).
 
 Open:
-- hop-to-water stays refused until Gus gives torque.
+- none this sit (Flight Results Close until KSC before Hangar).
 
 Os 2026-08-21: science clock is rem / running / UT, not vessel MET.
 

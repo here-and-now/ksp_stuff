@@ -39,3 +39,11 @@
 - 2026-08-21T12-04-13Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-21T12-04-13Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T12-04-13Z-hop-review.md
 - 2026-08-21T12-22-36Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T12-22-36Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T12-22-36Z-hop-review.md
 - 2026-08-21T12-30-03Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T12-30-03Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T12-30-03Z-hop-review.md
+- 2026-08-21T13-08-57Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T13-08-57Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T13-08-57Z-hop-review.md
+- 2026-08-21T13-31-03Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T13-31-03Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T13-31-03Z-hop-review.md
+- 2026-08-21T13-49-37Z hop exit=0 → docs/missions/jebediah/logs/2026-08-21T13-49-37Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T13-49-37Z-hop-review.md
+- 2026-08-21T13-58-18Z hop exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T13-58-18Z-hop.md review=docs/missions/jebediah/logs/2026-08-21T13-58-18Z-hop-review.md
+- 2026-08-21T14-33-29Z hop-to-water exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T14-33-29Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T14-33-29Z-hop-to-water-review.md
+- 2026-08-21T14-45-33Z hop-to-water exit=2 abort=not splashed → docs/missions/jebediah/logs/2026-08-21T14-45-33Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T14-45-33Z-hop-to-water-review.md
+- 2026-08-21T14-52-25Z hop-to-water exit=2 abort=not recoverable → docs/missions/jebediah/logs/2026-08-21T14-52-25Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T14-52-25Z-hop-to-water-review.md
+- 2026-08-21T15-14-49Z hop-to-water exit=2 abort=Hangar waits: KSC not clean (timed out waiting for KSC (still flight results (can_revert); Flight Results not dismissed)). Close until KSC, no revert, no launch_vessel → docs/missions/jebediah/logs/2026-08-21T15-14-49Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T15-14-49Z-hop-to-water-review.md

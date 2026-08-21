@@ -344,10 +344,15 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   if the roster is busy. `conn.krpc.game_scene = GameScene.space_center`
   (or deprecated `space_center.load_space_center`) leaves a junk flight /
   modal without a click. Catastrophic Flight Results pauses physics
-  (`vessel.met` stuck, `recoverable` false, toolbar empty); the same
-  scene setter dismisses it. `can_revert_to_launch` exists but restores
-  the *current* flight’s pad, not a new craft. **Do not call it.** Never
-  revert, quickload, return to VAB, or rewind UT from the crash dialog.
+  (`vessel.met` stuck, `recoverable` false, toolbar empty). The scene
+  setter is **not** enough: `game_scene` can already read
+  `space_center` while Flight Results is still up over Tracking
+  (14-52-25Z, empty Tracking, Revert live). Poll
+  `can_revert_to_launch()` until false; `tracking_station` is not KSC.
+  `can_revert_to_launch` True is that dialog — **read it, do not call
+  `revert_to_launch`**. It restores the *current* flight’s pad, not a
+  new craft. Never revert, quickload, return to VAB, or rewind UT from
+  the crash dialog. Hangar does not `launch_vessel` until KSC is clean.
   Honest leftover: recover or Hangar the next stack. Os will not click
   Recover / Cancel / Launch anyway.
 - `launch_vessel(..., recover=True)` from **space_center** and from **flight**

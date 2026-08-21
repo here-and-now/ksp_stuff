@@ -638,3 +638,158 @@ python main.py pad
   the seated craft. FlyingHigh card: `hop_apo` unclamps to Space
   (140 km); OffPlan apo > atmosphere_depth, not 50 km. FlyingLow
   clamp 8–18 km stays. Modules: `hop.py`.
+
+## 2026-08-21T13-08-57Z-hop — Valiant 2×T100 is not FlyingHigh
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T13-08-57Z-hop`). Seated `kspstuff-hop-valiant-pbc`. Bound
+  FlyingHigh thermo 138 s + TELEMETRY 30 s. F-013 2HOT start unlocked
+  on craft; TELEMETRY Stayputnik PAW. leftover unmatched Flea recovered
+  without lighting, then Hangar Valiant. `hop_apo` 80 km.
+- **Symptom:** exit 2 `ABORT not recoverable`. T100 burnout MET~27
+  alt~7 km, apo max 12335 m then ~7.6 km; never ≥50 km. Throttle 1
+  until dry (Kerosene 450 → 0). Card started T+1 FlyingLow. EC 310→0,
+  crash UI sit=flying recoverable=no met=158.86 alt=39.6 q=0. sci 6.35
+  unchanged. leftover now PRELAUNCH Valiant.
+- **Cause:** tanks/Δv, not sequencing. Gus 2×FL-T100 + Valiant ~1.55
+  km/s SL cannot loft RSS FlyingHigh. hop already unclamped the 80 km
+  cut and 140 km Space OffPlan; the motor emptied below the lid.
+- **Fix:** none in `hop.py` — do not fake FlyingHigh. Gene: `need_builder`
+  more tank/motor before another FlyingHigh hop. Modules: none.
+
+## 2026-08-21T13-31-03Z-hop — FlyingHigh Toggle only ≥50 km
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T13-31-03Z-hop`). Seated `kspstuff-hop-valiant-t7-pbc`.
+  Bound FlyingHigh thermo 138 s + TELEMETRY 30 s. F-013 2HOT start
+  unlocked on craft; TELEMETRY Stayputnik PAW. leftover unmatched
+  2×T100 recovered without lighting, Hangar t7. `hop_apo` 80 km.
+- **Symptom:** exit 0 splash recover. apo max 88.8 km. FlyingHigh lid
+  MET~98 alt 50.4 km. Card `science start temperatureScan,kerbalism_TELEMETRY`
+  at T+1 alt ~100 m FlyingLow. sit=splashed recoverable=yes MET 440
+  EC 0. sci 6.35 (+0). leftover PRELAUNCH t7.
+- **Cause:** hop started the bound card on first airborne, not at the
+  50 km FlyingHigh lid. Kerbalism filed FlyingLow crumbs. A second
+  Toggle at the lid would stop Kerbalism (one Toggle per id).
+- **Fix:** FlyingHigh waits alt ≥50 km before Toggle. Log
+  `science wait FlyingHigh`. Down below the lid after lighting aborts
+  `no science (FlyingHigh lid)` — do not bank FlyingLow. Modules:
+  `hop.py`.
+
+## 2026-08-21T13-58-18Z-hop — Frozen landed recoverable=no is crash UI
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T13-58-18Z-hop`). Seated `kspstuff-hop-valiant-t7-pbc`.
+  Bound FlyingHigh thermo + TELEMETRY. F-013 2HOT start unlocked on
+  craft. `hop_apo` 80 km. hangar none after wreck; KSC empty. Do not
+  Hangar this leftover.
+- **Symptom:** exit 2 `ABORT not recoverable`. Lid Toggle ok ~T+98 alt
+  ≥50 km, apo max 90.1 km, sci +1.30 (9.66 → 10.96). Down: last flying
+  alt 161 m q=32.7k then `sit=landed` alt=33 m MET frozen 407.5 q=0
+  EC=0 `recoverable=no`. Stuck PNG: Vessel is destroyed, Shores Landed
+  32 m, no Recover. `hop recover sit=landed recoverable=no` then
+  unpause-spam, paused wreck, finish wreck, abort. Isolation none.
+- **Cause:** Crash UI only matched frozen flying q=0 low (12-04-13Z
+  never lands). This wreck reported `landed`. `_force_recover` called
+  `recover()` on ground even when `recoverable=no`; frozen-MET then
+  `run_physics` instead of Close. Unpause does not grow a Recover
+  button on a destroyed vessel.
+- **Fix:** Frozen MET + `sit=landed` + `recoverable=no` is crash UI
+  now: log sit/recoverable/met/alt/q, `go_space_center` (Close / Space
+  Center, not revert), abort `not recoverable`. Do not unpause-spam.
+  `recover()` only when `recoverable`. Living land stays
+  `recoverable=yes`. Modules: `hop.py`.
+
+## hop-to-water — Valiant pitches 7.5° east, waits splash
+
+- **When:** 2026-08-21 Gene `need_stack` after Gus signed
+  `kspstuff-hop-valiant-east-pbc` (Valiant gimbal 7.5°, 2×FL-T100).
+  Linus Water shorts. Flea hop-to-water was refused (18-32 Shores).
+- **Symptom:** `python main.py hop-to-water` aborted before Hangar.
+  Vertical hop recover-on-down banks Shores or an empty KSC. Splash
+  never sees `splashed`.
+- **Cause:** Stayputnik + Flea cannot steer. Gus now has gimbal during
+  the burn; Stayputnik still has no torque after cutoff. Hop recovers
+  on first flying recoverable — that kills a Water dwell.
+- **Fix:** Valiant `hop-to-water` Hangars the seated craft, AP
+  `target_pitch=82.5` heading 90 while burning, flying card airborne,
+  no recover until `sit=splashed`, then splash dwell + HD. Landed
+  aborts `not splashed`. Flea still refused, no Hangar. Modules:
+  `hop.py`, `splash.py`, `blocks.md`.
+
+## 2026-08-21T14-33-29Z-hop-to-water — 7.5° east is still Shores
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T14-33-29Z-hop-to-water`). Hangar
+  `kspstuff-hop-valiant-east-pbc`. F-013 2HOT start unlocked on craft.
+  Card thermo + TELEMETRY. Do not Hangar this leftover PRELAUNCH
+  east-pbc.
+- **Symptom:** exit 2 `ABORT not recoverable`. Pitch 7.5° east logged.
+  Burnout MET~26 fuel=0 apo max **12.1 km** (vertical 13-08-57Z was
+  12.3 km). Never `sit=splashed`. Crash UI flying recoverable=no
+  met=154.50 alt=74.5 q=0. Sci +0. Stills: biome **Shores** T+1 through
+  T+124, horiz ~7 m/s then ~34–44 m/s, water on the horizon.
+- **Cause:** AP `target_pitch=82.5` held gimbal **range** as the hop
+  angle. 7.5° from vertical does not clear Cape Shores to Water on this
+  2×T100 hang (FAR eats the east). Gimbal 7.5° is authority, not the
+  flight path.
+- **Fix:** Pitch **25°** from vertical (`target_pitch=65`, heading 90)
+  during the one burn. Still release AP at cutoff. Flea still refused.
+  Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-21T14-45-33Z-hop-to-water — pad landed is not Shores
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T14-45-33Z-hop-to-water`). Matching leftover
+  `kspstuff-hop-valiant-east-pbc` entered Flight. F-013 2HOT start
+  unlocked on craft. Sci 10.96 unchanged. Do not Hangar.
+- **Symptom:** exit 2 `ABORT not splashed` at MET 0.6. Light logged;
+  pitch 25° never ran. Two jsonl samples: pre_launch then `sit=landed`
+  alt=97 throttle=1 thrust=89k q=461. Still: 37.5 m terrain, vs=49.2
+  m/s, HDG 357, engine on, Shores. KSP still Landed on pad hop-off.
+- **Cause:** `wait_water` aborted `landed_dry` before `left_pad`.
+  `_down(flown)` already ignores pad landed; the Shores gate did not.
+  Abort sat above `_light` / `_steer_east` on the next pulse.
+- **Fix:** Abort landed only after `left_pad` (airborne), same as
+  `_down`. Pad sit=landed after light keeps burning and pitches east.
+  Shores lithobrake after flight still aborts `not splashed`. Modules:
+  `hop.py`, `blocks.md`.
+
+## 2026-08-21T14-52-25Z-hop-to-water — leftover wreck is not a light
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T14-52-25Z-hop-to-water`). Matching leftover
+  `kspstuff-hop-valiant-east-pbc`. F-013 2HOT start unlocked on craft.
+  Desk hangar PRELAUNCH was a lie. Bank 10.96 unchanged. Do not Hangar.
+- **Symptom:** exit 2 `ABORT not recoverable`. Live leftover already
+  flying MET frozen 13.8 fuel=0 thrust=0 EC=9.3 speed=0 q=0. Hop
+  logged airborne and started thermo+TELEMETRY on the wreck. Crash UI
+  Catastrophic Failure T+13 pad collision. `go_space_center` logged
+  dismissed; Flight Results still up; tracking empty.
+- **Cause:** matching leftover enters Flight and treats flying as an
+  already-lit hop. Disk PRELAUNCH skipped the wreck gate. Fuel=0 +
+  q=0 + speed=0 is crash UI, not a pad to light.
+- **Fix:** Gate live sit/fuel/recoverable **before** light. Dry wreck
+  leftover recovers if `recoverable`, else Close (`go_space_center` +
+  `load_space_center`) and abort `not recoverable` — no Toggle. Pad
+  leftover with fuel still lights. Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-21T14-52-25Z-hop-to-water — Flight Results is not KSC
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T14-52-25Z-hop-to-water`). Gene
+  `need_stack: hangar-flight-results`. F-013 2HOT start unlocked on
+  craft. Bank 10.96 unchanged. Do not Hangar. Do not re-fly. Isolation
+  none.
+- **Symptom:** `go_space_center` logged dismissed. Stuck still
+  `screenshots/stuck-flight-results.png`: Catastrophic Flight Results
+  still modal over Tracking, no vessels, Revert / Space Center / Close
+  live. Empty Tracking is not KSC. Os will not click. Never revert.
+- **Cause:** kRPC `game_scene` can already read `space_center` while
+  Flight Results sits on Tracking. Hangar treated that as KSC and
+  would `launch_vessel` over the modal.
+- **Fix:** `go_space_center` Closes (scene setter + `load_space_center`)
+  until scene is KSC **and** `can_revert_to_launch` is false. Tracking
+  is not KSC. Hangar raises `Hangar waits` and does not `launch_vessel`
+  until then. Never `revert_to_launch`. Modules: `hangar.py`,
+  `hop.py`, `blocks.md`.

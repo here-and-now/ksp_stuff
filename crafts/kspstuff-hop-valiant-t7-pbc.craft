@@ -1,0 +1,966 @@
+ship = kspstuff-hop-valiant-t7-pbc
+version = 1.12.5
+description = PBC FlyingHigh liquid hop. Stayputnik + kerbalism-geigercounter (the part) + Engineer7500 + 3xZ-100 + 2HOT + Goo + 3x basicFin + 7x FL-T100 (RF Kerosene/LOx) + LV-T15 Valiant. Gimbal+throttle; hop_apo cut. No Mk1, no chute. Not 2xT100. Not a Flea.
+type = VAB
+size = 2,16,2
+steamPublishedFileId = 0
+persistentId = 1672888150
+rot = 0,0,0,1
+missionFlag = Squad/Flags/default
+vesselType = Probe
+PART
+{
+	part = probeCoreSphere.v2_1666040601
+	partName = Part
+	persistentId = 1612581531
+	pos = 0.0,15.0,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,15.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = batteryPack_1085135241
+	link = batteryPack_1482868628
+	link = batteryPack_1910979825
+	link = Engineer7500_1189642615
+	link = SurfAntenna_1514786686
+	link = GooExperiment_1865582982
+	link = sensorThermometer_1895451311
+	link = kerbalism-geigercounter_1186094801
+	link = fuelTankSmallFlat_1671050297
+	attN = bottom,fuelTankSmallFlat_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_1085135241
+	partName = Part
+	persistentId = 1371257135
+	pos = 0.13,15.12,0.0
+	attPos = 0,0,0
+	attPos0 = 0.13,0.12,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_1482868628
+	partName = Part
+	persistentId = 1660451209
+	pos = 0.13,15.0,0.0
+	attPos = 0,0,0
+	attPos0 = 0.13,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_1910979825
+	partName = Part
+	persistentId = 1976547402
+	pos = 0.13,14.88,0.0
+	attPos = 0,0,0
+	attPos0 = 0.13,-0.12,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = Engineer7500_1189642615
+	partName = Part
+	persistentId = 1045198612
+	pos = 0.0,15.28,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,0.28,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = SurfAntenna_1514786686
+	partName = Part
+	persistentId = 1001635446
+	pos = -0.12,15.0,0.0
+	attPos = 0,0,0
+	attPos0 = -0.12,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = GooExperiment_1865582982
+	partName = Part
+	persistentId = 1246527409
+	pos = 0.0,15.05,0.14
+	attPos = 0,0,0
+	attPos0 = 0.0,0.05,0.14
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = sensorThermometer_1895451311
+	partName = Part
+	persistentId = 1939055433
+	pos = 0.0,15.05,-0.14
+	attPos = 0,0,0
+	attPos0 = 0.0,0.05,-0.14
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = kerbalism-geigercounter_1186094801
+	partName = Part
+	persistentId = 1983049639
+	pos = 0.2,15.05,0.0
+	attPos = 0,0,0
+	attPos0 = 0.2,0.05,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1671050297
+	partName = Part
+	persistentId = 1175504479
+	pos = 0.0,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,14.41302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1443731105
+	attN = top,probeCoreSphere.v2_1666040601
+	attN = bottom,fuelTankSmallFlat_1443731105
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1443731105
+	partName = Part
+	persistentId = 1588841698
+	pos = 0.0,13.78802,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,13.78802,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1120660612
+	attN = top,fuelTankSmallFlat_1671050297
+	attN = bottom,fuelTankSmallFlat_1120660612
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1120660612
+	partName = Part
+	persistentId = 1021387043
+	pos = 0.0,13.16302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,13.16302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1978949792
+	attN = top,fuelTankSmallFlat_1443731105
+	attN = bottom,fuelTankSmallFlat_1978949792
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1978949792
+	partName = Part
+	persistentId = 1197525158
+	pos = 0.0,12.53802,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,12.53802,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1960865343
+	attN = top,fuelTankSmallFlat_1120660612
+	attN = bottom,fuelTankSmallFlat_1960865343
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1960865343
+	partName = Part
+	persistentId = 1889016981
+	pos = 0.0,11.91302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,11.91302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1140172381
+	attN = top,fuelTankSmallFlat_1978949792
+	attN = bottom,fuelTankSmallFlat_1140172381
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1140172381
+	partName = Part
+	persistentId = 1156741536
+	pos = 0.0,11.28802,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,11.28802,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = fuelTankSmallFlat_1114614042
+	attN = top,fuelTankSmallFlat_1960865343
+	attN = bottom,fuelTankSmallFlat_1114614042
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = fuelTankSmallFlat_1114614042
+	partName = Part
+	persistentId = 1675104971
+	pos = 0.0,10.66302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,10.66302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = restock-engine-125-valiant_1226153168
+	attN = top,fuelTankSmallFlat_1140172381
+	attN = bottom,restock-engine-125-valiant_1226153168
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 500
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 225
+			maxAmount = 225
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 275
+			maxAmount = 275
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 225
+		maxAmount = 225
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 275
+		maxAmount = 275
+	}
+}
+PART
+{
+	part = restock-engine-125-valiant_1226153168
+	partName = Part
+	persistentId = 1927692361
+	pos = 0.0,9.9005201,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,9.9005201,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = 0
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = basicFin_1562494527
+	link = basicFin_1169236445
+	link = basicFin_1855602232
+	attN = top,fuelTankSmallFlat_1114614042
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = basicFin_1562494527
+	partName = Part
+	persistentId = 1347814544
+	pos = 0.0,9.7805201,0.623
+	attPos = 0,0,0
+	attPos0 = 0.0,-0.12,0.623
+	rot = 0.0,0.707106829,0.0,0.707106829
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.707106829,0.0,0.707106829
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,restock-engine-125-valiant_1226153168
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = basicFin_1169236445
+	partName = Part
+	persistentId = 1352751940
+	pos = 0.539533575,9.7805201,-0.3115
+	attPos = 0,0,0
+	attPos0 = 0.539533575,-0.12,-0.3115
+	rot = 0.0,0.965925872,0.0,-0.258819103
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.965925872,0.0,-0.258819103
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,restock-engine-125-valiant_1226153168
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = basicFin_1855602232
+	partName = Part
+	persistentId = 1759123314
+	pos = -0.539533575,9.7805201,-0.3115
+	attPos = 0,0,0
+	attPos0 = -0.539533575,-0.12,-0.3115
+	rot = 0.0,0.258819014,0.0,-0.965925872
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.258819014,0.0,-0.965925872
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,restock-engine-125-valiant_1226153168
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}

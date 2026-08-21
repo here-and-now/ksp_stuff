@@ -2,28 +2,34 @@
 
 Hangar the seated / VAB ``.craft`` uncrewed (Hammer sit:
 ``kspstuff-hop-hammer-pbc``; not pad/geiger). Light, start the
-Kerbalism flying card once airborne, dwell through the ballistic,
-recover the HD when landed/splashed/wreck-recoverable — or when EC=0
-and the HD already has data. Leftover with HardDrive files or no
-Experiment modules recovers without a second start — only if this
-process did **not** light. A hop this process lit always starts the
-flying card (one Toggle per id; thermo on 2HOT, not Stayputnik). Idle
-TELEMETRY remaining=0 is not leftover HD. A leftover already in
+Kerbalism flying card once airborne (FlyingLow) or at alt ≥50 km
+(FlyingHigh — not T+1 FlyingLow crumbs; one Toggle, not a second at
+the lid), dwell through the ballistic, recover the HD when
+landed/splashed/wreck-recoverable — or when EC=0 and the HD already
+has data. Leftover with HardDrive files or no Experiment modules
+recovers without a second start — only if this process did **not**
+light. A hop this process lit always starts the flying card (one
+Toggle per id; thermo on 2HOT, not Stayputnik). Idle TELEMETRY
+remaining=0 is not leftover HD. A leftover already in
 tracking while the scene is SpaceCenter is switched into Flight — do
 not Hangar a second stack. Unmatched leftover (PRELAUNCH Flea vs
 seated Valiant) recovers without lighting, then Hangars the seated
 craft. Leftover is the live kRPC pool, not save
-FLYING debris. A dead kRPC GUID (``No such vessel``) is not leftover
-— scan tracking; empty Tracking Hangars. ``… Debris`` is not a hop
-leftover. Ballistic peri is negative. No chute.
+FLYING debris. Disk PRELAUNCH is a lie — gate live sit/fuel/
+recoverable before light (14-52-25Z flying MET 13.8 fuel=0). A dead
+kRPC GUID (``No such vessel``) is not leftover — scan tracking; empty
+Tracking Hangars. ``… Debris`` is not a hop leftover. Ballistic peri
+is negative. No chute.
 MET-still + q=0 while flying is down now (lithobrake / crash UI) —
 do not wait the wreck-dialog wall. Low flying (≤250 m) calls
 ``vessel.recover()`` only when ``recoverable`` — last living hop
 banked at ~199 m. Frozen MET + flying + q=0 + low alt is Catastrophic
 Flight Results: log sit/recoverable/met/alt/q, ``recover()`` if
-``recoverable``, else ``go_space_center`` (Close / Space Center, not
-revert) and abort. Do not wait ``sit=landed`` that never comes
-(12-04-13Z). Dismiss is not a living recover; post-dismiss
+``recoverable``, else ``go_space_center`` (Close until KSC, not
+revert — Tracking with the modal is not KSC) and abort. Frozen MET + ``sit=landed`` + ``recoverable=no``
+is the same dialog (13-58-18Z Vessel is destroyed, no Recover):
+Close now — do not unpause-spam ``recover()``. Living land is
+``recoverable=yes``. Dismiss is not a living recover; post-dismiss
 ``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover
 line names sit + recoverable. Splash goo is not a hop start. Do not
 light a pad geiger.
@@ -37,7 +43,7 @@ import time
 from pathlib import Path
 from typing import Callable
 
-from card import NO_BOUND_CARD, card_flying_ids, parse_card
+from card import NO_BOUND_CARD, card_flying_ids, card_splash_ids, parse_card
 from emergencies import Ctx, call
 from hangar import (
     discover_hangar,
@@ -85,6 +91,12 @@ _PAD_SIT = frozenset({"pre_launch", "prelaunch"})
 _LIGHT_SIT = frozenset({"pre_launch", "prelaunch", "landed"})
 _ABORT_UPLINK = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
 _UPLINK_SKIP = frozenset({"science", "stage"})
+# Valiant gimbal (MM 7.5°) is authority, not the hop angle.
+# 7.5° from vertical stayed Shores (14-33-29Z apo 12.1 km).
+WATER_PITCH_FROM_UP = 25.0
+WATER_PITCH_DEG = 90.0 - WATER_PITCH_FROM_UP
+WATER_HEADING_DEG = 90.0
+WATER_CRAFT = "kspstuff-hop-valiant-east-pbc"
 
 
 def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
@@ -115,6 +127,11 @@ def hop_wants_flying_high() -> bool:
 def hop_offplan_apo() -> float:
     """OffPlan apo lid. FlyingLow 50 km; FlyingHigh is Space (140 km)."""
     return FLYING_HIGH_M if hop_wants_flying_high() else FLYING_LOW_M
+
+
+def hop_science_alt() -> float:
+    """Toggle lid (m). FlyingLow airborne (0); FlyingHigh ≥50 km."""
+    return FLYING_LOW_M if hop_wants_flying_high() else 0.0
 
 
 def hop_target_apo() -> float:
@@ -182,6 +199,27 @@ def hop_science_ids() -> tuple[str, ...]:
     if not ids:
         raise MissionAbort(NO_BOUND_CARD)
     return ids
+
+
+def water_can_steer(name: str | None = None) -> bool:
+    """Valiant gimbal can pitch east. Flea/Hammer cannot."""
+    token = _craft_token(name if name is not None else hop_craft_name())
+    return "valiant" in token
+
+
+def hop_to_water_science() -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """Flying + splash ids. Empty both aborts. Splash goo is not a flying start."""
+    from missions import seated_science_path
+
+    path = seated_science_path()
+    if not path.is_file():
+        raise MissionAbort(NO_BOUND_CARD)
+    text = path.read_text(encoding="utf-8")
+    flying = card_flying_ids(text)
+    splash = card_splash_ids(text)
+    if not flying and not splash:
+        raise MissionAbort(NO_BOUND_CARD)
+    return flying, splash
 
 
 def _vessel_name(vessel: object) -> str:
@@ -378,6 +416,17 @@ def _airborne(snap: object) -> bool:
     return math.isfinite(alt_f) and alt_f >= _AIRBORNE_M
 
 
+def _science_ready(snap: object) -> bool:
+    """FlyingLow: airborne. FlyingHigh: alt ≥50 km. Not a second Toggle."""
+    if not _airborne(snap):
+        return False
+    lid = hop_science_alt()
+    if lid <= 0.0:
+        return True
+    alt = _snap_alt(snap)
+    return math.isfinite(alt) and alt >= lid
+
+
 def _down(snap: object, *, flown: bool) -> bool:
     """Landed on the pad before ignition is not down. Wreck always is."""
     if bool(getattr(snap, "wreck", False)):
@@ -401,6 +450,50 @@ def _snap_q(snap: object) -> float:
 def _q_zero(snap: object) -> bool:
     q = _snap_q(snap)
     return math.isfinite(q) and q <= 0.0
+
+
+def _snap_fuel(snap: object) -> float:
+    raw = getattr(snap, "fuel", float("nan"))
+    if raw is None:
+        return float("nan")
+    try:
+        fuel = float(raw)
+    except (TypeError, ValueError):
+        return float("nan")
+    return fuel if math.isfinite(fuel) else float("nan")
+
+
+def _snap_speed(snap: object) -> float:
+    try:
+        speed = float(getattr(snap, "speed", float("nan")))
+    except (TypeError, ValueError):
+        return float("nan")
+    return speed if math.isfinite(speed) else float("nan")
+
+
+def leftover_wreck_before_light(snap: object, vessel: object | None) -> bool:
+    """Refuse light on a leftover wreck. Disk PRELAUNCH is not this gate.
+
+    Pad leftover may light only with fuel. Flying leftover with fuel=0
+    and q=0 / not moving is the 14-52-25Z crash UI — do not start
+    science. Living ballistic (speed/q) with empty tanks is not this.
+    """
+    sit = str(getattr(snap, "situation", "") or "").lower()
+    if not sit or sit == "?":
+        sit = _vessel_sit(vessel)
+    fuel = _snap_fuel(snap)
+    dry = math.isfinite(fuel) and fuel <= 0.0
+    if sit in _LIGHT_SIT:
+        return dry
+    if sit not in _AIR and sit not in _GROUND:
+        return False
+    if not dry:
+        return False
+    if _recoverable(vessel):
+        return True
+    speed = _snap_speed(snap)
+    still = not math.isfinite(speed) or speed <= 0.5
+    return _q_zero(snap) and still
 
 
 def _fmt(val: float | None, digits: int) -> str:
@@ -547,13 +640,13 @@ def _try_recover(
 def _force_recover(
     vessel: object | None, on_log: Callable[[str], None] | None
 ) -> str | None:
-    """recover() in Flight on ground, or when recoverable. Flying no is crash UI."""
+    """recover() in Flight when recoverable. Do not invent recover() if no."""
     if vessel is None:
         return None
     sit = _vessel_sit(vessel)
     if sit in _PAD_SIT:
         return None
-    if not _recoverable(vessel) and sit not in _GROUND:
+    if not _recoverable(vessel):
         return None
     try:
         getattr(vessel, "recover")()
@@ -608,11 +701,22 @@ def _low_flying(snap: object) -> bool:
     return math.isfinite(alt) and alt <= _AIRBORNE_M
 
 
-def _crash_ui(snap: object, *, frozen: bool) -> bool:
-    """Catastrophic Flight Results: MET frozen, flying, q=0, low."""
+def _crash_ui(
+    snap: object, vessel: object | None, *, frozen: bool
+) -> bool:
+    """Catastrophic Flight Results: MET frozen, no Recover button.
+
+    Flying q=0 low (12-04-13Z) or landed/splashed recoverable=no
+    (13-58-18Z Vessel is destroyed).
+    """
     if not frozen:
         return False
-    return _low_flying(snap) and _q_zero(snap)
+    if _low_flying(snap) and _q_zero(snap):
+        return True
+    sit = str(getattr(snap, "situation", "") or "").lower()
+    if not sit or sit == "?":
+        sit = _vessel_sit(vessel)
+    return sit in _GROUND and not _recoverable(vessel)
 
 
 def _crash_line(
@@ -633,12 +737,25 @@ def _crash_line(
 def _leave_crash_ui(
     session: object, on_log: Callable[[str], None] | None
 ) -> None:
-    """Close / Space Center. Never revert."""
+    """Close until KSC. Never revert.
+
+    ``game_scene`` can read space_center while Flight Results is still
+    up over Tracking (14-52-25Z). ``go_space_center`` polls until KSC
+    is clean; ``load_space_center`` is a second Close.
+    """
     try:
         go_space_center(session)
         _say("hop dismissed crash ui", on_log)
     except Exception as exc:
         log.warning("hop dismiss crash ui: %s", exc)
+    sc = getattr(session, "space_center", None)
+    fn = getattr(sc, "load_space_center", None)
+    if not callable(fn):
+        return
+    try:
+        fn()
+    except Exception as exc:
+        log.warning("hop load_space_center: %s", exc)
 
 
 def _finish_hd(
@@ -705,6 +822,55 @@ def _light(vessel: object, on_log: Callable[[str], None] | None) -> None:
     _say("hop light", on_log)
 
 
+def _burning(vessel: object, snap: object) -> bool:
+    """Throttle on with fuel. Cutoff is coast — Stayputnik cannot steer."""
+    try:
+        fuel = float(getattr(snap, "fuel", float("nan")))
+    except (TypeError, ValueError):
+        fuel = float("nan")
+    if math.isfinite(fuel) and fuel <= 0.0:
+        return False
+    try:
+        throttle = float(getattr(vessel.control, "throttle", 0.0) or 0.0)
+    except Exception:
+        return False
+    return throttle > 0.05
+
+
+def _steer_east(vessel: object) -> None:
+    """AP 25° from vertical, heading 90 (east). Gimbal only while burning."""
+    try:
+        vessel.control.sas = False
+    except Exception:
+        pass
+    ap = getattr(vessel, "auto_pilot", None)
+    if ap is None:
+        raise MissionAbort("east pitch failed: no auto_pilot")
+    try:
+        ap.target_pitch = WATER_PITCH_DEG
+        ap.target_heading = WATER_HEADING_DEG
+        ap.target_roll = 0.0
+        if hasattr(ap, "engage"):
+            ap.engage()
+        else:
+            ap.engaged = True
+    except Exception as exc:
+        raise MissionAbort(f"east pitch failed: {exc}") from exc
+
+
+def _release_steer(vessel: object) -> None:
+    ap = getattr(vessel, "auto_pilot", None)
+    if ap is None:
+        return
+    try:
+        if hasattr(ap, "disengage"):
+            ap.disengage()
+        else:
+            ap.engaged = False
+    except Exception:
+        pass
+
+
 def _hold_or_cut(vessel: object, snap: object, hop_apo: float) -> None:
     """Throttle 0 at hop_apo. An SRB ignores this — do not OffPlan the coast."""
     try:
@@ -738,15 +904,27 @@ def run_on_vessel(
     sleep: Callable[[float], None] | None = None,
     timeout: float | None = None,
     pulse: float = _PULSE_S,
+    wait_water: bool = False,
+    splash_ids: tuple[str, ...] | None = None,
 ) -> str:
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars.
 
     Leftover (did not light) with drive files or no Experiment modules
-    skips a fresh start. A Flea this process lit always starts the card.
-    MET-still + q=0 flying is down now. Low flying (≤250 m) calls
-    recover() only when recoverable. Frozen MET + flying + q=0 + low
-    alt is crash UI: recover() if recoverable, else Space Center and
-    abort. Do not wait landed. Post-dismiss pre_launch is not the HD.
+    skips a fresh start. A hop this process lit always starts the card
+    — FlyingLow once airborne, FlyingHigh only at alt ≥50 km (do not
+    Toggle FlyingLow then again at the lid). MET-still + q=0 flying is
+    down now. Low flying (≤250 m) calls recover() only when recoverable.
+    Frozen MET + flying + q=0 + low alt is crash UI: recover() if
+    recoverable, else Space Center and abort. Frozen landed
+    recoverable=no is the same: Close, do not unpause. Living land is
+    recoverable=yes. Post-dismiss pre_launch is not the HD.
+    Matching leftover: live sit/fuel/recoverable before light — disk
+    PRELAUNCH is a lie. Dry wreck leftover does not start the card.
+
+    ``wait_water``: pitch 25° east during the burn, do not recover on
+    first flying recoverable, abort landed only after ``left_pad``
+    (pad sit=landed is hop-off, same as ``_down(flown)``), splash
+    dwell after ``sit=splashed``.
     """
     from phases import OffPlan, check_expect
 
@@ -765,13 +943,22 @@ def run_on_vessel(
     science_attempted = False
     pulses = 0
     said_down = False
+    said_lid = False
     waiting_hd = False
     prev_met: float | None = None
     still = 0
     unpaused = False
     litho = False
     said_crash = False
+    said_pitch = False
+    water_splashed = False
+    splash_names = splash_ids if splash_ids is not None else ()
     _say(f"hop apo={hop_apo:.0f}", on_log)
+    if wait_water:
+        _say(
+            f"hop-to-water pitch {WATER_PITCH_FROM_UP:g}° east, wait splash",
+            on_log,
+        )
 
     with Telem(session, events=log_events) as telem:
         while True:
@@ -795,6 +982,28 @@ def run_on_vessel(
             ctx.vessel = vessel
             snap = telem.read()
             pulses += 1
+            if not did_light and leftover_wreck_before_light(snap, vessel):
+                sit = str(getattr(snap, "situation", "") or "") or _vessel_sit(
+                    vessel
+                )
+                rec = "yes" if _recoverable(vessel) else "no"
+                _say(
+                    f"hop leftover sit={sit} fuel={_fmt(_snap_fuel(snap), 1)} "
+                    f"recoverable={rec} met={_fmt(_vessel_met(vessel), 2)} "
+                    "— do not light",
+                    on_log,
+                )
+                if _recoverable(vessel):
+                    got = _force_recover(vessel, on_log)
+                    if got is not None:
+                        return got
+                if sit in _LIGHT_SIT:
+                    raise MissionAbort("leftover dry — do not light")
+                if not said_crash:
+                    _crash_line(vessel, snap, on_log)
+                    said_crash = True
+                _leave_crash_ui(session, on_log)
+                raise MissionAbort("not recoverable")
             airborne = _airborne(snap)
             if airborne:
                 if not left_pad:
@@ -803,6 +1012,20 @@ def run_on_vessel(
                     mission_event("airborne", snap)
                 left_pad = True
             down = _down(snap, flown=left_pad) or litho
+            sit_now = str(getattr(snap, "situation", "") or "").lower()
+            splashed = sit_now in {"splashed"}
+            landed_dry = sit_now in {"landed"}
+            if wait_water and splashed:
+                water_splashed = True
+                if not said_down:
+                    _say("hop-to-water splash", on_log)
+                    said_down = True
+                break
+            if wait_water and left_pad and landed_dry and not splashed:
+                _release_steer(vessel)
+                if not _recoverable(vessel):
+                    _leave_crash_ui(session, on_log)
+                raise MissionAbort("not splashed")
 
             for reason in gates(snap):
                 if reason == "empty tanks" or reason.startswith("atmosphere"):
@@ -819,19 +1042,25 @@ def run_on_vessel(
                 if reason == "ec=0":
                     has = _keep_hd(vessel, ids, started, left_pad=left_pad)
                     if has:
-                        if left_pad and _recoverable(vessel) and not said_down:
-                            _say("hop down", on_log)
-                            said_down = True
-                        got = _recover_hd(vessel, on_log)
-                        if got is not None:
-                            return got
-                        # HD has data: wait recoverable. Do not timeout-dump
-                        # a live fall. Paused wreck is handled below.
-                        if left_pad:
-                            if not waiting_hd:
-                                _say("hop ec=0 wait recoverable", on_log)
+                        if wait_water and not splashed:
+                            if left_pad and not waiting_hd:
+                                _say("hop ec=0 wait splash", on_log)
                                 log_events.emit("science_dwell", result="ec")
                             waiting_hd = True
+                        else:
+                            if left_pad and _recoverable(vessel) and not said_down:
+                                _say("hop down", on_log)
+                                said_down = True
+                            got = _recover_hd(vessel, on_log)
+                            if got is not None:
+                                return got
+                            # HD has data: wait recoverable. Do not timeout-dump
+                            # a live fall. Paused wreck is handled below.
+                            if left_pad:
+                                if not waiting_hd:
+                                    _say("hop ec=0 wait recoverable", on_log)
+                                    log_events.emit("science_dwell", result="ec")
+                                waiting_hd = True
                     elif not left_pad or down:
                         call("abort_pad", ctx)
                         raise MissionAbort(reason)
@@ -875,16 +1104,29 @@ def run_on_vessel(
             if left_pad and not down:
                 _hold_or_cut(vessel, snap, hop_apo)
 
+            if wait_water and lit and not down:
+                if _burning(vessel, snap):
+                    _steer_east(vessel)
+                    if not said_pitch:
+                        _say(
+                            f"hop-to-water pitch {WATER_PITCH_FROM_UP:g}° east",
+                            on_log,
+                        )
+                        said_pitch = True
+                else:
+                    _release_steer(vessel)
+
             if left_pad and not down and not science_attempted:
-                science_attempted = True
                 if (not did_light) and _keep_hd(
                     vessel, ids, started, left_pad=True
                 ):
+                    science_attempted = True
                     _say("science keep HD", on_log)
                     log_events.emit("science", result="keep")
                     mission_event("science", snap)
                     waiting_hd = True
-                else:
+                elif _science_ready(snap):
+                    science_attempted = True
                     started = start_experiments(vessel, names=ids, on_log=on_log)
                     if started:
                         _say("science " + ",".join(started), on_log)
@@ -895,9 +1137,34 @@ def run_on_vessel(
                     elif ids:
                         call("abort_pad", ctx)
                         raise MissionAbort("no science (wanted " + ",".join(ids) + ")")
+                elif hop_wants_flying_high() and not said_lid:
+                    _say("science wait FlyingHigh", on_log)
+                    said_lid = True
+
+            missed_lid = (
+                hop_wants_flying_high()
+                and did_light
+                and not started
+                and left_pad
+                and down
+            )
+            if missed_lid:
+                call("abort_pad", ctx)
+                raise MissionAbort("no science (FlyingHigh lid)")
+
+            waiting_lid = (
+                hop_wants_flying_high()
+                and did_light
+                and not started
+                and left_pad
+                and not down
+            )
 
             # First recoverable after flight — situation may stay flying.
-            if left_pad and _recoverable(vessel):
+            # hop-to-water must not recover here (that kills splash dwell).
+            if waiting_lid or wait_water:
+                pass
+            elif left_pad and _recoverable(vessel):
                 if not said_down:
                     _say("hop down", on_log)
                     said_down = True
@@ -935,7 +1202,19 @@ def run_on_vessel(
                     _say("hop down", on_log)
                     said_down = True
 
-            if left_pad and (down or _low_flying(snap)):
+            if (
+                hop_wants_flying_high()
+                and did_light
+                and not started
+                and left_pad
+                and down
+            ):
+                call("abort_pad", ctx)
+                raise MissionAbort("no science (FlyingHigh lid)")
+
+            if waiting_lid or wait_water:
+                pass
+            elif left_pad and (down or _low_flying(snap)):
                 got = _force_recover(vessel, on_log)
                 if got is not None:
                     return got
@@ -951,13 +1230,18 @@ def run_on_vessel(
 
             if frozen:
                 sit_v = _vessel_sit(vessel)
-                if _crash_ui(snap, frozen=True):
+                if _crash_ui(snap, vessel, frozen=True):
                     if not said_crash:
                         _crash_line(vessel, snap, on_log)
                         said_crash = True
                     got = _force_recover(vessel, on_log)
                     if got is not None:
                         return got
+                    # Destroyed on the ground: Close now. Unpause does not
+                    # grow a Recover button (13-58-18Z).
+                    if sit_v in _GROUND:
+                        _leave_crash_ui(session, on_log)
+                        raise MissionAbort("not recoverable")
                     if not unpaused:
                         _unpause(session, on_log)
                         unpaused = True
@@ -987,6 +1271,11 @@ def run_on_vessel(
 
             elapsed = clock() - t0
             if pulses > 1 and elapsed >= budget:
+                if wait_water and not splashed:
+                    if left_pad and landed_dry:
+                        raise MissionAbort("not splashed")
+                    nap(pulse)
+                    continue
                 if left_pad:
                     got = _recover_hd(vessel, on_log)
                     if got is not None:
@@ -1004,6 +1293,24 @@ def run_on_vessel(
                 _say(f"hop timeout {elapsed:.0f}s", on_log)
                 raise MissionAbort("timeout")
             nap(pulse)
+
+    if wait_water and water_splashed:
+        _release_steer(vessel)
+        from splash import run_on_vessel as run_splash_vessel
+
+        return run_splash_vessel(
+            session,
+            vessel,
+            events=log_events,
+            on_log=on_log,
+            science_ids=splash_names,
+            abort=abort,
+            now=now,
+            sleep=sleep,
+            timeout=timeout,
+            pulse=pulse,
+        )
+    raise MissionAbort("not splashed" if wait_water else "timeout")
 
 
 def run_hop(
@@ -1073,6 +1380,52 @@ def run_hop_to_water(
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
 ) -> str:
-    """Named catalog block. Does not Hangar. Does not fake Water."""
-    _say(HOP_TO_WATER_ABORT, on_log)
-    raise MissionAbort(HOP_TO_WATER_ABORT)
+    """Valiant: Hangar seated craft, pitch 25° east on the burn, wait splash.
+
+    Flea still refuses (no Hangar). Unmatched leftover recovers first.
+    Matching leftover enters Flight. Gate live sit/fuel/recoverable
+    before light — disk PRELAUNCH is a lie (14-52-25Z wreck flying
+    MET 13.8 fuel=0). Do not recover on first flying recoverable.
+    Pad sit=landed after light is hop-off — abort landed only after
+    left_pad (Shores).
+    """
+    from session import SessionError
+
+    try:
+        name = hop_craft_name()
+    except SessionError as exc:
+        raise MissionAbort(str(exc)) from exc
+    if not water_can_steer(name):
+        _say(HOP_TO_WATER_ABORT, on_log)
+        raise MissionAbort(HOP_TO_WATER_ABORT)
+    flying, splash = hop_to_water_science()
+    leftover = _find_unmatched_leftover(session)
+    if leftover is not None:
+        _recover_unmatched_leftover(session, leftover, on_log)
+    vessel = _find_hop_vessel(session)
+    if vessel is None or _is_pad_motor(vessel):
+        install_and_launch(session)
+        try:
+            msg = wait_vessel_ready(session)
+        except Exception as exc:
+            raise MissionAbort(f"no vessel after launch: {exc}") from exc
+        _say(msg, on_log)
+        vessel = _active_vessel(session)
+        if vessel is None:
+            raise MissionAbort("no vessel after launch")
+        if _is_pad_motor(vessel):
+            raise MissionAbort("Hangar put kspstuff-pad-pbc — refused")
+    else:
+        _ensure_flight(session, vessel, on_log)
+        live = _active_vessel(session)
+        if live is not None and _is_hop_craft(live):
+            vessel = live
+    return run_on_vessel(
+        session,
+        vessel,
+        on_log=on_log,
+        abort=abort,
+        science_ids=flying,
+        wait_water=True,
+        splash_ids=splash,
+    )

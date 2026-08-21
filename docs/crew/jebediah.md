@@ -49,32 +49,4 @@ click the crash dialog.
 
 energy_cap 1.25 is tighter than the library default 1.4.
 
-## Log
-
-- 2026-08-21 — Os: more control + telemetry; he owns the loop; note-tech to Lars/Gus/Wernher.
-- 2026-08-21 — Os: he WANTS to learn the craft — parts, PAW vs instrument, how it actually works. parts --stack before fly.
-- 2026-08-20 — Os: wait only with a named clock from data. hangar ready + wait science rem=.
-- 2026-08-20 — 1235Z pad, 3×Z-100, dwell ~12 min, recovered. sci 2.22.
-- 2026-08-20 — 1204Z pad abort ec=0.
-- 2026-08-20 — First seat on letsgrok. Uncrewed Stayputnik, Jeb still the named Commander.
-- 2026-08-20T15-58-12Z hop exit=2 abort=timeout → docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md
-- 2026-08-20T16-24-37Z hop exit=2 abort=no science (wanted kerbalism_TELEMETRY,temperatureScan) → docs/missions/jebediah/logs/2026-08-20T16-24-37Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T16-24-37Z-hop-review.md
-- 2026-08-20T16-36-39Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-20T16-36-39Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T16-36-39Z-hop-review.md
-- 2026-08-20T17-02-13Z hop exit=0 → docs/missions/jebediah/logs/2026-08-20T17-02-13Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T17-02-13Z-hop-review.md
-- 2026-08-20T18-02-57Z hop exit=0 → docs/missions/jebediah/logs/2026-08-20T18-02-57Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T18-02-57Z-hop-review.md
-- 2026-08-20T18-22-47Z hop exit=0 → docs/missions/jebediah/logs/2026-08-20T18-22-47Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T18-22-47Z-hop-review.md
-- 2026-08-20T18-32-48Z hop exit=0 → docs/missions/jebediah/logs/2026-08-20T18-32-48Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T18-32-48Z-hop-review.md
-- 2026-08-20T19-06-59Z pad exit=0 → docs/missions/jebediah/logs/2026-08-20T19-06-59Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T19-06-59Z-pad-review.md
-- 2026-08-20T19-26-57Z pad exit=2 abort=MET frozen, empty HD → docs/missions/jebediah/logs/2026-08-20T19-26-57Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T19-26-57Z-pad-review.md
-- 2026-08-20T20-08-26Z pad exit=2 abort=MET frozen, empty HD → docs/missions/jebediah/logs/2026-08-20T20-08-26Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T20-08-26Z-pad-review.md
-- 2026-08-20T20-41-10Z pad exit=2 abort=abort_pad → docs/missions/jebediah/logs/2026-08-20T20-41-10Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T20-41-10Z-pad-review.md
-- 2026-08-20T20-55-22Z hop exit=0 → docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop-review.md
-- 2026-08-20T21-32-13Z load exit=0 → docs/missions/jebediah/logs/2026-08-20T21-32-13Z-load.md review=docs/missions/jebediah/logs/2026-08-20T21-32-13Z-load-review.md
-- 2026-08-20T21-34-44Z load exit=0 → docs/missions/jebediah/logs/2026-08-20T21-34-44Z-load.md review=docs/missions/jebediah/logs/2026-08-20T21-34-44Z-load-review.md
-- 2026-08-20T21-40-04Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-20T21-40-04Z-ksc.md review=docs/missions/jebediah/logs/2026-08-20T21-40-04Z-ksc-review.md
-- 2026-08-20T22-11-44Z pad exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-20T22-11-44Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T22-11-44Z-pad-review.md
-- 2026-08-20T22-20-36Z pad exit=0 → docs/missions/jebediah/logs/2026-08-20T22-20-36Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T22-20-36Z-pad-review.md
-- 2026-08-20T22-39-04Z load exit=0 → docs/missions/jebediah/logs/2026-08-20T22-39-04Z-load.md review=docs/missions/jebediah/logs/2026-08-20T22-39-04Z-load-review.md
-- 2026-08-20T22-39-32Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-20T22-39-32Z-ksc.md review=docs/missions/jebediah/logs/2026-08-20T22-39-32Z-ksc-review.md
-- 2026-08-20T22-56-44Z hop exit=4 abort=OFFPLAN apo 18858 > 18000 → docs/missions/jebediah/logs/2026-08-20T22-56-44Z-hop.md review=docs/missions/jebediah/logs/2026-08-20T22-56-44Z-hop-review.md
-- 2026-08-20T23-13-28Z pad exit=0 → docs/missions/jebediah/logs/2026-08-20T23-13-28Z-pad.md review=docs/missions/jebediah/logs/2026-08-20T23-13-28Z-pad-review.md
+Logs: `docs/crew/log/jebediah.md`.

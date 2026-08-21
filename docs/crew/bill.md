@@ -28,6 +28,4 @@ Not Gus. Not Lars. He flies the stack they signed. Notices flameout
 and empty packs. Follow `pilot.md`. Os is Founder. Stuck: one
 screenshot if last-flight cannot explain the scene; read the PNG.
 
-## Log
-
-- 2026-08-20 — letsgrok. Not seated. PBC: probes first.
+Logs: `docs/crew/log/bill.md`.

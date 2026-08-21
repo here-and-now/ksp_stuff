@@ -25,6 +25,9 @@ class TestProtocolDoc(unittest.TestCase):
             "need_retro",
             "feedback.md",
             "F-NNN",
+            "improve:",
+            "desk.md",
+            "Practice",
         ):
             self.assertIn(needle, text)
         self.assertNotIn("L-NNN", text)
@@ -33,6 +36,14 @@ class TestProtocolDoc(unittest.TestCase):
         text = Path("docs/program/CHARTER.md").read_text(encoding="utf-8")
         self.assertIn("docs/program/PROTOCOL.md", text)
         self.assertIn("Os is the founder", text)
+        self.assertIn("Recursive self-improvement", text)
+        self.assertTrue(Path("docs/program/improve/README.md").is_file())
+        self.assertTrue(Path("docs/program/improve/I-001.md").is_file())
+        gene = Path(".grok/agents/gene.md").read_text(encoding="utf-8")
+        self.assertIn("agents_md: false", gene)
+        mortimer = Path(".grok/agents/mortimer.md").read_text(encoding="utf-8")
+        self.assertIn("agents_md: false", mortimer)
+        self.assertIn("need_qol", mortimer)
         self.assertTrue(Path("docs/program/GLOSSARY.md").is_file())
         self.assertTrue(Path("docs/missions/jebediah/logs").is_dir())
         self.assertFalse(Path("docs/missions/jebediah/sorties").is_dir())
@@ -40,10 +51,11 @@ class TestProtocolDoc(unittest.TestCase):
 
 class TestLinusCardSchema(unittest.TestCase):
     def test_pad_card_has_budget_fields(self):
+        proto = Path("docs/program/PROTOCOL.md").read_text(encoding="utf-8")
+        self.assertIn("duration_s", proto)
+        self.assertIn("ec_rate", proto)
         text = Path("docs/missions/jebediah/science.md").read_text(encoding="utf-8")
         self.assertIn("recover_banks:", text)
-        self.assertIn("duration_s:", text)
-        self.assertIn("ec_rate:", text)
         self.assertIn("geigerCounter", text)
         self.assertNotIn("- experiment: mysteryGoo", text)
 

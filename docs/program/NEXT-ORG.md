@@ -1,9 +1,9 @@
 # Next house — decided 2026-08-21
 
-Os answers + parent calls on the leftover “not sure.” This becomes
-CHARTER / PROTOCOL / crew at **RO cutover**. Until then the gym
-(`KSP-rss`, this `docs/program/`) still flies. Audit:
-`ORG-INTERACTIONS.md`.
+Os answers + parent calls on the leftover “not sure.” RSI machinery **landed in-repo 2026-08-21** (desk.md, improve/,
+`agents_md: false`, Mortimer Practice). Gym (`KSP-rss`) still flies
+under that house. Mission corpus still **archives at RO cutover**.
+Audit: `ORG-INTERACTIONS.md`.
 
 **Program:** totally fresh **RO science sandbox** on `~/Games/KSP-RO`.
 No RP-1. No Flea dossiers. At cutover: **archive gym docs, blank

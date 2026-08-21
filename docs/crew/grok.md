@@ -21,6 +21,4 @@ tenth personality. After a real run, copy this file and add one log
 line. Os is Founder. PBC: probes first — may never sit. Stuck: follow
 `pilot.md` screenshot.
 
-## Log
-
-- 2026-08-20 — letsgrok. No flights.
+Logs: `docs/crew/log/grok.md`.

@@ -1,7 +1,8 @@
 """Persistent program staff. Markdown in docs/crew/, not a package.
 
-Style keys actually change the next flight, then get clamped so a
-personality cannot disable FlightWatch or lithobrake gates.
+Style keys are parsed from the portrait **above** ``## Log`` only.
+``apply_ascent`` is not wired from pad/hop; Telem gates always win.
+Logs live in ``docs/crew/log/``, not the voice file.
 """
 
 from __future__ import annotations
@@ -15,6 +16,7 @@ from typing import Any
 log = logging.getLogger("kspstuff")
 
 CREW_DIR = Path("docs/crew")
+CREW_LOG_DIR = CREW_DIR / "log"
 CURRENT_PATH = Path("docs/program/current.md")
 
 # House is Grokman. Stock KSP roster may still say Kerman — both slug.
@@ -74,6 +76,8 @@ class Person:
 def _parse_kv(text: str) -> dict[str, str]:
     out: dict[str, str] = {}
     for raw in text.splitlines():
+        if raw.startswith("## Log"):
+            break
         line = raw.strip()
         if not line or line.startswith("#") or ":" not in line:
             continue
@@ -169,7 +173,12 @@ def apply_ascent(cfg: Any, style: Style) -> Any:
 
 
 def append_log(person: Person, line: str) -> None:
-    text = person.path.read_text(encoding="utf-8")
+    CREW_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    path = CREW_LOG_DIR / f"{person.slug}.md"
+    if path.is_file():
+        text = path.read_text(encoding="utf-8")
+    else:
+        text = f"# {person.name} — log\n\n"
     if not text.endswith("\n"):
         text += "\n"
-    person.path.write_text(f"{text}- {line.rstrip()}\n", encoding="utf-8")
+    path.write_text(f"{text}- {line.rstrip()}\n", encoding="utf-8")

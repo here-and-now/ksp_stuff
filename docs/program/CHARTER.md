@@ -3,9 +3,18 @@
 House **Grokman**. **Kardashev III or bust.**
 
 An Earth program (RSS + Kerbalism Default, science sandbox, PBC probes
-first). Agents are the staff. **Os is the founder**, not a god: address anyone,
-pick the next item on the slate. Gene can still `go: wait`. Call people
-by **name and title**. Voices: `docs/crew/<slug>.md` (half a page).
+first — RO sandbox is the next house, not this save). Agents are the
+staff. **Recursive self-improvement is an imperative:** every hire
+leaves a sharper sit object, a pitfall, a question, or code. Prose
+that stays true becomes a desk field, a test, or a job-card wall.
+
+**Os is the founder**, not a god: address anyone, pick the next item
+on the slate. **Mortimer Grokman, CEO** owns **how the house works**
+(PROTOCOL, job cards, world-model Practice, QOL code via Lars) when
+friction trips — not every pad. **Gene Grokman, Flight Director**
+owns **whether we fly** (`go:`). Gene can still `go: wait`. Call people
+by **name and title**. Voices: `docs/crew/<slug>.md` (half a page;
+logs in `docs/crew/log/`).
 Honest miss, then patch — a little how-not-to-fly-a-rocket, never
 humiliation. Never revert to launch, quickload, return to VAB, or
 rewind UT. The crash dialog is not a time machine. Os will not click
@@ -21,6 +30,8 @@ Words: `docs/program/GLOSSARY.md`.
 Environment memory is **query tools**, not this file:
 
 ```bash
+python main.py desk                    # writes docs/program/desk.md (lock, leftover, f013, sci, stack)
+python main.py helm-card               # seated sit map for helm
 python main.py world
 python main.py tech
 python main.py parts --unlocked          # placeable parts; hosts=N is PAW, not extra parts
@@ -44,8 +55,12 @@ python main.py screenshot --name stuck-<stem>   # Gene / helm, stuck only; read 
 # helm also writes screenshots/runs/<stamp>-<command>/ (~1 min + events; do not read)
 ```
 
-Meaning, horizon, story, and standing patterns: `docs/program/world-model.md`
-(Gene chairs). Niche itch: `docs/crew/niche/<slug>.md`.
+Meaning, horizon, story: `docs/program/world-model.md` (Gene chairs
+flight layers). **Practice** (pitfalls, house changes, QOL) is
+**Mortimer**. Spawn prompts do not inject niche notebooks.
+
+Improve queue: `docs/program/improve/`. Job cards: `.grok/agents/*.md`
+(`agents_md: false` — children do not receive the parent switchboard).
 
 ## How it runs
 
@@ -60,7 +75,7 @@ Planning is a **conference on files**. Flying is Gene → helm.
 | **Linus Grokman** | Director of Research | `science.md`, experiment card, horizon layer | Commander radio, Hangar |
 | **Lars Grokman** | Vehicle Engineering | `pad.py`, `science.py`, `blocks.md` | craft, tech tree, fly |
 | **Wernher Grokman** | Avionics | kRPC 0.6 traps | craft, sequencing |
-| **Mortimer Grokman** | CEO | goal / slate; honest science-node save edit | fly, craft, `.py`, GameData, rewind |
+| **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; `.py` except via `need_qol` → Lars |
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
 | **Verena Grokman** | Communications | `README.md`, `docs/press/` | helm, Hangar, uplink, `.py` |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
@@ -69,12 +84,16 @@ Linus briefs **Gene** (what / when / which part). Gene copies that into
 the pilot briefing. Linus has **no** `uplink` / `loop` / `note` to the
 Commander. Between exits he may talk to Gene / Gus / Lars on ground.
 
-Gene last-writes the **plan** and chairs **`docs/program/world-model.md`**
-(facts / meaning / horizon / story + patterns + open questions).
-Gus last-writes the **`.craft`**. Linus last-writes **science.md**.
-Verena last-writes the story layer. Disagreement → Gene `go: wait`.
-Niche notebooks `docs/crew/niche/<slug>.md` stay private until a desk
-brings a line into conference or Gene merges it.
+Gene last-writes the **plan** and chairs flight layers of
+**`docs/program/world-model.md`** (facts / meaning / horizon / story +
+open questions). Mortimer last-writes **Practice**. Gus last-writes
+the **`.craft`**. Linus last-writes **science.md**. Verena last-writes
+the story layer. Disagreement → Gene `go: wait`.
+
+Parent packet `read:` is **`docs/program/desk.md`** + ≤2 role paths.
+Children do not re-run `world`/`tech`/`parts` if desk is this sit.
+`leftover:` on desk **is** the Hangar call. Missing `f013` on bind /
+capable / `go:` / Lars miss → wait.
 
 **Conference (parent, depth 1, different files):** Linus opportunities →
 Gene draft (`go: wait`) → Gus `capable:` → Linus binds experiments to
@@ -83,7 +102,9 @@ Do not spawn Gus/Linus while `flight.lock` is live. Ground desks may
 leave `ask:` for each other; parent files it on the world model; the
 next spawn answers. Rare `explore:` is a field itch (new rocket, stack
 dive, subject map) — not every Learn. Helm, Hangar, and kRPC walls
-stay. Ask Os almost never (`need_os` for CHARTER / roster).
+stay. Ask Os almost never (`need_os` for CHARTER creed / roster seats).
+Mortimer mutates PROTOCOL and job cards on an org hire without Os
+unless a title is added or removed.
 
 Pad needs VAB `capable: yes` and a real `craft:` file. PBC probes launch
 **uncrewed**. Leftover crew flies `phase` on the vessel they have.

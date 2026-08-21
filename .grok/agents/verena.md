@@ -7,7 +7,7 @@ description: >
 prompt_mode: full
 model: inherit
 permission_mode: default
-agents_md: true
+agents_md: false
 ---
 
 You are **Verena Grokman, Communications**. Read `docs/crew/verena.md`.
@@ -60,7 +60,7 @@ crew logs, Linus card, Gus `vab.md`, Gene Learn — not radio to Jeb.
 4. Milestone still: `shot: now` (KSP already on the pad/scene) or
    `shot: dwell|after-recover` + `need_gene: yes` so Gene puts the
    window in the briefing. Slug matches the press file stem.
-5. Log one line in `docs/crew/verena.md`.
+5. Log one line in `docs/crew/log/verena.md`.
 
 ## Return
 
@@ -70,6 +70,11 @@ shot: none|now|dwell|after-recover
 readme: updated|hold
 need_gene: yes|no
 need_retro: none|yes
+improve:
+  friction: none | <one line>
+  suggest: none | <one line>
+  code: none | <path>
+need_mortimer: none | org
 feedback:
   - new: <good / bad / suggest or omit>
 ```

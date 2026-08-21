@@ -2,6 +2,11 @@
 
 Os is Founder. Parent is the room sequencer (depth 1). Speech is
 **name + title**. Machine slugs stay internal. Postmortem: `ORG.md`.
+RSI house: `improve/README.md`. Next-house notes: `NEXT-ORG.md`.
+
+**Mortimer Grokman, CEO** owns how the house works when friction
+trips. **Gene Grokman, Flight Director** owns `go:`. Mortimer never
+flies. Gene never rewrites PROTOCOL.
 
 ## Handoffs
 
@@ -17,9 +22,12 @@ Os is Founder. Parent is the room sequencer (depth 1). Speech is
 | Helm | Lars / Gus / Wernher | during or after a sit | `python main.py note-tech <desk> …` → `helm-tech.md` | parent files / Gene reads between exits |
 | Helm | Lars | **miss only** (nonzero, ABORT, `science (none)`, sci unchanged) | last-flight + **live** run path | `stack:` then Gene |
 | Lars | Wernher, Avionics | `stack: ok` **and** kRPC trap | traceback | one dated lesson in `docs/lessons.md` |
-| Any spawned desk | feedback board | `feedback:` on return | good / bad / suggest | parent files `F-NNN` or a comment |
+| Any spawned desk | improve queue | `improve:` on return | friction / suggest / code | parent files `I-NNN`; Mortimer on trip |
+| Any spawned desk | feedback board | `feedback:` on return | good / bad / suggest | prefer `improve:`; gym F- table remains |
 | Parent | named desks | retro (3+ open, or Os/Gene/Mortimer ask) | open F- items | `notes/<slug>.md` in **parallel** |
-| Gene | Mortimer | `need_mortimer: yes` | org / goal items | `need_os` if CHARTER/PROTOCOL |
+| Gene | Mortimer | `need_mortimer: yes` | paid CTT node | RD spend + `load rd-<node>` |
+| Any spawned desk | Mortimer | friction trip (`improve/` 3+ open, `need_mortimer: org`, Os org/RSI) | `I-NNN` queue | `org:` `changed:` `need_qol:` `need_os` |
+| Mortimer | Lars | `need_qol: <file>` | org/QOL `.py` | `stack:` (desk/wait/tests, not pad physics unless the miss was a fly) |
 | Gene / Linus / Lars | Mortimer | bank pays a node and kRPC cannot buy | node id, cost, parents, sci | save: `Tech` owned, `sci` spent, copy `rd-<node>.sfs`, `python main.py load rd-<node>` |
 | Mortimer / Gene | Os | `need_os: yes` | charter / roster / slate | Os ratifies |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
@@ -44,9 +52,11 @@ do not spawn each other.
 
 ## World model
 
-`docs/program/world-model.md` — Gene chairs. Layers: facts (disk),
-meaning (Learn), horizon (Linus), story (Verena). Patterns live there.
-Niche pages `docs/crew/niche/<slug>.md` are private until conference.
+`docs/program/world-model.md` — Gene chairs **flight** layers: facts
+(disk / `desk.md`), meaning (Learn), horizon (Linus), story (Verena).
+**Practice** (pitfalls, house changes, QOL) is **Mortimer**. Patterns
+that are still true as *ops* stay Practice; flight clocks stay Gene.
+Spawn prompts do not inject niche notebooks.
 
 Wonder is inner. Moments, not a desk. Rare field exploration
 (`explore:`), some Learns, firsts. Not every packet. Kardashev creed
@@ -64,11 +74,13 @@ explore: none|<one sentence itch>
 ```
 
 Parent files `ask:` onto **Open questions** in the world model. Do
-not spawn a desk only to chat. Next spawn of that desk answers in
-their niche; Gene may promote. `explore:` is rare — parent may keep
-them on their niche / `.craft` / stack after Learn if lock is free
-and Os is not mid-go. Helm never `ask:`s the model. Ask Os almost
-never (`need_os`).
+not spawn a desk only to chat. **RSI add-on:** if an `ask:` **blocks
+an honest `go:`** (hardware, leftover, hang, EC), parent hires those
+addressees **once** before Gene merge (`desk.md` + the question). No
+second round in the same sit. Leftover asks wait until the next real
+hire. `explore:` is rare — parent may keep them on `.craft` / stack
+after Learn if lock is free and Os is not mid-go. Helm never `ask:`s
+the model. Ask Os almost never (`need_os`).
 
 **Tree + hardware (F-013):** experiment_id is not a part. Every bind /
 capable / `go:` / Lars science-miss packet must say **tree node** and
@@ -106,12 +118,39 @@ from: Os | parent
 live_run: 2026-08-20T12-35-42Z-pad | none
 lock: free | live
 task: one sentence
-read: <≤3 paths>
+read: <desk.md + ≤2 role paths>
 cli: <exact command or none>
 return: the named block
 ```
 
-Helm `cli:` is Gene `recommended:` copied verbatim. Lars miss packet names the live review path, not “newest file”. Do not require `docs/archive/kerbin-lessons.md`.
+Packet `read:` is **`docs/program/desk.md`** (parent just wrote it) plus
+at most two role paths. Helm `cli:` is Gene `recommended:` **copied
+verbatim** (F-004). Lars miss packet names the **live** review path,
+not “newest file”. Parent copies **f013** from desk. Do not send
+`docs/archive/kerbin-lessons.md`. Children do not re-run
+`world`/`tech`/`parts` if desk is this sit.
+
+`leftover:` on desk **is** the Hangar decision (`none` | `recover <name>`
+| `hangar-blocked`). Gene does not vibe it. Missing `f013` on bind /
+capable / `go:` / Lars miss → wait.
+
+Every ground return and Learn helm may include:
+
+```
+improve:
+  friction: none | <one line>
+  suggest: none | <one line>
+  code: none | <path>
+need_mortimer: none | org
+```
+
+Parent files `docs/program/improve/I-NNN.md`. Spawn Mortimer only on
+the trip in `improve/README.md`. Helm `improve:` on **exit**, not
+mid-lock.
+
+Gene merge is the only `go:`. Gene **max two hires per sit** (draft iff
+the sit is unnamed, then merge; Learn-only on clean 0). Do not hire
+Gene as a merge bus after every specialist.
 
 A **run** is one helm command. Filename Earth UTC with seconds
 (`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
@@ -119,11 +158,12 @@ dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 
 ## Files
 
-Gene last-writes plan/briefing/Learn **and** chairs `world-model.md`.
-Gus last-writes `vab.md`/`.craft`. Linus last-writes science boards.
-Verena last-writes `README.md` (portrait) and `docs/press/` (story
-layer). Helm takes `uplink.md`. `loop.md` is talk, not stick.
-Disagreement → Gene `go: wait`. Missing `go:` = wait.
+Gene last-writes plan/briefing/Learn and chairs **flight** layers of
+`world-model.md`. Mortimer last-writes **Practice**, PROTOCOL, and job
+cards on an org hire. Gus last-writes `vab.md`/`.craft`. Linus
+last-writes science boards. Verena last-writes `README.md` (portrait)
+and `docs/press/` (story layer). Helm takes `uplink.md`. `loop.md` is
+talk, not stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
 
 Milestone stills (no kRPC). Press: Verena `shot:` → parent grab. **Stuck:** Gene (between exits) or the seated Commander may grab **one** still when last-flight, the review, and the jsonl cannot explain the scene (empty events, crash UI, leftover vs KSC). Read the PNG. Not a heartbeat. Not press.
 
@@ -147,7 +187,8 @@ Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` 
 
 ## Feedback
 
-Process lives in `docs/program/feedback.md`. Helm bugs stay in
+Process lives in `docs/program/improve/` (`I-NNN`) for the RSI house.
+Gym record remains `docs/program/feedback.md` (`F-NNN`). Helm bugs stay in
 `docs/lessons.md` as **run — title** headings (the filename stem, not letter-codes).
 
 Every return may include:

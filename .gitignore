@@ -35,6 +35,9 @@ docs/archive/*.tar.gz
 docs/program/uplink.last
 docs/program/ship.md
 docs/program/flight.lock
+docs/program/desk.json
+docs/program/desk.md
+docs/program/helm-card.json
 
 # Helm cadence stills. Press heroes (first-mystery-goo, rocket-flea, …) stay tracked.
 screenshots/runs/

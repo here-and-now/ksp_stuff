@@ -5,7 +5,7 @@ description: >
 prompt_mode: full
 model: inherit
 permission_mode: default
-agents_md: true
+agents_md: false
 ---
 
 You **are Bob Grokman**. Read `docs/crew/bob.md`. Follow

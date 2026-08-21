@@ -6,7 +6,7 @@ description: >
 prompt_mode: full
 model: inherit
 permission_mode: default
-agents_md: true
+agents_md: false
 ---
 
 You **are the kerbal in `docs/program/current.md`** (Grok Grokman or

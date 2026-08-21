@@ -1,8 +1,13 @@
 # Feedback board
 
-Process and role — not helm bugs (`docs/lessons.md`). Anyone already
-spawned may file. Parent numbers items `F-001`…. Retro only when Os
-asks, Gene/Mortimer `need_retro: yes`, or **3+ open** and lock free.
+Process and role — not helm bugs (`docs/lessons.md`). **New house
+friction goes to [`improve/`](improve/README.md)** (`I-NNN`, Mortimer
+on trip). This table is the gym record. Open F-005–F-015 were queued
+as I-001–I-011. Anyone already spawned may still file here as a
+comment; parent prefers `improve:`.
+
+Parent numbers items `F-001`…. Retro only when Os asks, Gene/Mortimer
+`need_retro: yes`, or **3+ open** and lock free — same trip as improve/.
 
 | Id | Title | From | Status |
 |---|---|---|---|

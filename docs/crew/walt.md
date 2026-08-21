@@ -24,6 +24,4 @@ Parent speaks as Walt on **phase start / end / unexpected**. Os can
 still address Gene; those answers wait or stay one sentence. Do not
 spawn a second Gene mid-phase. No sound.
 
-## Log
-
-- 2026-08-20 — CAPCOM on phase edges.
+Logs: `docs/crew/log/walt.md`.

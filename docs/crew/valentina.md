@@ -32,6 +32,4 @@ Stuck: one screenshot if last-flight cannot explain the scene; read the PNG.
 When Jeb is in the seat she is not automatically CAPCOM — that is Walt
 to Os. She can still be seated later.
 
-## Log
-
-- 2026-08-20 — letsgrok. Not seated. Ready when Gene names her.
+Logs: `docs/crew/log/valentina.md`.

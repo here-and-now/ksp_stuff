@@ -1,9 +1,13 @@
 # Agent workflow (no UI)
 
-Read **`docs/program/CHARTER.md`**, then **`docs/lessons.md`**, then
-**`docs/agent-notes.md`**. If `docs/last-flight.md` exists, read that
-before flying. Seat and slate: `docs/program/current.md` (`flight:`),
-`docs/program/slate.md`, `docs/missions/INDEX.md`.
+Read **`docs/program/CHARTER.md`**, then **`docs/program/PROTOCOL.md`**.
+If `docs/last-flight.md` exists, read that before flying. Sit object:
+**`python main.py desk`** → `docs/program/desk.md`. Seat and slate:
+`docs/program/current.md` (`flight:`), `docs/program/slate.md`,
+`docs/missions/INDEX.md`. Children do **not** receive this file
+(`.grok/agents/*.md` has `agents_md: false`). kRPC traps:
+`docs/agent-notes.md`. Miss physics: `docs/lessons.md`. House friction:
+`docs/program/improve/`.
 
 This repo is an **agent-driven kRPC project**. Do not open the PyQt UI.
 Do not browse the web (`web_search`, `web_fetch`, `open_page`). kRPC facts
@@ -45,29 +49,31 @@ Grokman, Flight Director. Never machine slugs in speech. For talk: load
 `docs/crew/<slug>.md` and answer **in that voice** (Build: `gus.md`).
 Do not spawn a child just to chat.
 
-Three loops: **Helm** (Commander flying `phase`/`pad`), **Flight
+Four loops: **Helm** (Commander flying `phase`/`pad`), **Flight
 Director** (Gene between exits), **R&D** (exactly one of Lars or
-Wernher). Ground conference: **Linus** + **Gus** + Gene on
-*different* files. Between exits they may **talk** (ask each other;
-Gene chairs `docs/program/world-model.md`). Helm / Hangar / kRPC walls
-stay. Do not spawn a desk only to chat. File `ask:` on the world
-model; the next spawn of that desk answers. Rare `explore:` is a
-field itch, not every Learn. Niche pages `docs/crew/niche/` stay
-private until conference.
+Wernher), **RSI** (Mortimer on friction trip only). Ground conference:
+**Linus** + **Gus** + Gene on *different* files. Gene chairs flight
+layers of `docs/program/world-model.md`. Mortimer chairs **Practice**.
+Helm / Hangar / kRPC walls stay. Do not spawn a desk only to chat.
+File `ask:` on the world model; **one reply wave** before merge if the
+ask blocks `go:`. Rare `explore:` is a field itch, not every Learn.
+Spawn prompts do not inject niche notebooks.
 
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
 **phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN). Speak as
-Gene / the seated kerbal on those edges. Mid-phase you may
+**Walt** on those edges (name + title). Mid-phase you may
 `python main.py uplink abort|hold` on wreck-class only. Do **not** spawn
-Gene while a phase is running. `ship.md` is for `radio`, not chat.
+Gene while a phase is running. Os “how’s it going?” → **read
+`docs/program/ship.md`**, speak as Walt — no hire, no `status` Session.
+`ship.md` is radio, not chat.
 
 Spawn children **as soon as the work is independent**. Depth is one: only
 the parent calls `spawn_subagent`. A child cannot spawn another child.
 
 | Title | `subagent_type` | Name | Does | Does not |
 |---|---|---|---|---|
-| **CEO** | `mortimer` | Mortimer Grokman | Goal / slate; honest CTT spend in the save when kRPC cannot buy | Fly, `.craft`, `.py`, GameData, rewind UT |
-| **Flight Director** | `gene` | Gene Grokman | Between phases: dossier, briefing, `go:`, chairs world model. `need_stack` / `need_builder` / `need_science`. One screenshot when logs cannot explain the scene. | `control.*`, `.py`, `.craft`, poll, seat while lock live |
+| **CEO** | `mortimer` | Mortimer Grokman | Goal / slate; house RSI (Practice, PROTOCOL, job cards) on friction trip; honest CTT spend | Fly, Hangar, GameData, rewind UT; `.py` except `need_qol` → Lars |
+| **Flight Director** | `gene` | Gene Grokman | Between phases: dossier, briefing, `go:` (max 2 hires/sit), chairs flight world-model. `need_stack` / `need_builder` / `need_science`. One stuck PNG. | `control.*`, `.py`, `.craft`, PROTOCOL, poll, seat while lock live |
 | **VP Build** | `gus` | Gus Grokman | `.craft`, `vab.md`, `capable:`. Gene decides. | Fly, Hangar, uplink, `.py` |
 | **Director of Research** | `linus` | Linus Grokman | Science board + experiment card. Horizon layer. Briefs Gene; may ask Gus/Lars between exits. | Commander radio, Hangar, `.craft`, `.py` |
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI Gene named. Shared card: `.grok/agents/pilot.md`. One screenshot when logs cannot explain the scene. | 15 s narration, Hangar over leftover crew |
@@ -83,8 +89,9 @@ the matching `.grok/agents/*.md` as the prompt body.
 second `Session` — that is fine. Never two `phase`/`pad`
 processes (`docs/program/flight.lock`).
 
-Style in `docs/crew/*.md` changes ascent/landing numbers through
-`crew.py`, then clamps. `FlightWatch` gates always win.
+Style kv in portraits is parsed above `## Log` only. `apply_ascent` is
+not wired from pad/hop. Telem gates always win. Logs:
+`docs/crew/log/<slug>.md`.
 
 **Radio + plan:** Gene owns `docs/program/plan.md` and
 `docs/program/briefing.md` **between exits**. Uplink
@@ -99,24 +106,37 @@ patch `.py` in the same turn — spawn R&D.
 
 Parse Gene's return block. **Missing `go:` = wait.** Never auto-fly.
 Pad also needs Gus `capable: yes`. Do not spawn Gus/Linus/Gene on the
-same file. Conference: Linus opportunities **parallel** with Gene
-world/tech; then Gene draft (`go: wait`) → Gus `capable:` → Linus
-**bind** to that craft → Gene `go:`. Lock live → no Gus/Linus/Gene.
+same file. Lock live → no Gus/Linus/Gene.
+
+Parent runs **`python main.py desk`** once per conference turn (disk,
+no kRPC). That **writes `docs/program/desk.md`**. Packet `read:` is
+that file + ≤2 role paths. Children do not re-run `world`/`tech`/`parts`
+if desk is this sit. `leftover:` is the Hangar call. Missing `f013` on
+bind / capable / `go:` / Lars miss → wait. Gene **max two hires per
+sit** (draft iff unnamed, then merge).
 
 Every spawn is a **packet** (`docs/program/PROTOCOL.md`): `to` name+title,
 `task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_run`
 id on a miss. Helm `cli:` is Gene `recommended:` copied verbatim.
 Do not tell children to read `docs/archive/kerbin-lessons.md`.
 
-- Os says fly / go / recommended → spawn **Gene Grokman, Flight Director**.
-  Gene return must include `flight:` matching `current.md` (or a `seat`
-  that already ran with lock free). If `go:` is missing or `wait` → STOP
-  (one TUI line). If `need_stack` is not `none` → spawn **Lars**, then
-  Gene again. If `need_builder` → spawn **Gus**, then Gene. If
-  `need_science` → spawn **Linus**, then Gene. Then spawn the **named
-  Commander**: the exact CLI Gene recommended (`python main.py pad` or
-  `python main.py phase <name>`). **No spotter. No 15 s monitor. Do not
-  spawn Gene during the phase.** Do not auto-continue onto a different Grok.
+- Os says fly / go / recommended → if the **last Gene return already
+  names `need_*`** and desk sci/tree/craft is unchanged, spawn those
+  desks (do not hire Gene first). Else spawn **Gene Grokman, Flight
+  Director** once (draft). Gene return must include `flight:` matching
+  `current.md`.
+- `need_stack` / `need_builder` / `need_science` already named → spawn
+  those specialists **without Gene between them**. Legal parallel:
+  Linus opportunities ∥ Gus `capable:` (not bind); Linus opportunities
+  ∥ Lars `need_stack`. Linus **bind** only after Gus `capable: yes`.
+- After that set returns → spawn Gene **once** (merge). That Gene is
+  the only `go:`. `go: wait` only when blocked (no capable, no bind,
+  F-013 locked/missing instrument, leftover vs Hangar unclear). Do not
+  STOP on `wait` when `need_*` is the work.
+- Fly iff merge Gene `go: yes` and (pad: Gus `capable: yes`) and phase
+  in `blocks.md`. Spawn the **named Commander** with Gene
+  `recommended:` verbatim. **No spotter. No 15 s monitor. Do not spawn
+  Gene during the phase.** Do not auto-continue onto a different Grok.
 - Mortimer `need_builder: yes` → spawn Gus (not Wernher).
 - Gene / Linus / Lars `need_mortimer` for a **paid CTT node** (bank ≥
   cost, parents owned, kRPC has no UnlockTech) → spawn **Mortimer**.
@@ -155,17 +175,18 @@ Do not tell children to read `docs/archive/kerbin-lessons.md`.
   then **read the PNG**. Logs first. Empty jsonl, crash UI, leftover vs
   KSC. Not a heartbeat. Not press. grim is not kRPC (not a second writer).
 - `status` must not overwrite `docs/last-flight.md`.
-- Any return `feedback:` → parent files `docs/program/feedback.md`
-  (`F-NNN` or a comment). Do not spawn a desk just to complain.
+- Any return `improve:` → parent files `docs/program/improve/I-NNN.md`.
+  Do not spawn Mortimer to chat. Spawn **Mortimer** iff lock free and
+  **3+ open** I- items, or `need_mortimer: org`, or Os says org/RSI,
+  or a Practice pitfall repeats. His `need_qol:` → **Lars** (org `.py`).
+  `need_os` only for CHARTER creed or roster seats.
+- Any return `feedback:` → prefer `improve:`; gym board
+  `docs/program/feedback.md` may still get a comment.
 - Any return `ask:` → parent files **Open questions** on
-  `docs/program/world-model.md`. Do not spawn a desk only to chat.
-  Next spawn of that desk answers. Rare `explore:` after Learn, lock
-  free, Os not mid-go — keep them on niche / `.craft` / stack once.
-- Retro (comment round, then Gene, then Mortimer if needed): Os says
-  retro / feedback / org, or Gene/Mortimer `need_retro: yes`, or **3+
-  open** F- items and lock **free**. Parallel `notes/<slug>.md` only
-  for desks the items touch. Gene `need_mortimer` / Mortimer `need_os`
-  for CHARTER/PROTOCOL/roster. Lock live → no retro.
+  `docs/program/world-model.md`. If the ask **blocks `go:`**, one reply
+  spawn of that desk before merge. Else next real hire answers.
+- Retro is the Mortimer friction trip (not a second bus). Lock live →
+  no org hire.
 
 Isolation is `none` (shared tree, one game). Do not use a worktree for
 pilot/fixer — they must see the same `.py` files and the same KSP save.

@@ -4,18 +4,19 @@ Gene Grokman, Flight Director **chairs**. Others propose. Canonical
 only after he merges a layer. Niche pages under `docs/crew/niche/` are
 **private until conference** — not this file.
 
-Four layers, one index:
+Five layers, one index:
 
 | Layer | Owner | Source of truth |
 |---|---|---|
-| **Facts** | disk | `python main.py world` / `tech` / `parts` |
+| **Facts** | disk | `docs/program/desk.md` / `python main.py world` |
 | **Meaning** | Gene | Learn on the named review |
 | **Horizon** | Linus | remaining subjects, what a node buys |
 | **Story** | Verena | `docs/press/`, README — never invent orbit |
+| **Practice** | **Mortimer** | pitfalls, house changes, QOL — RSI |
 
-Patterns live **here**, not a second lessons bible. `docs/lessons.md`
-stays the engineering patch log. Gene copies a pattern up when it is
-still true.
+Flight patterns Gene still last-writes under **Patterns**. House
+ops that stay true (F-013, leftover-or-Hangar, `load rd-<node>`) live
+in **Practice**. `docs/lessons.md` stays the engineering patch log.
 
 Kardashev III is **creed in this file**. Joke in the TUI. Nobody
 preaches mid-burn.
@@ -45,15 +46,15 @@ Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
 The hop was a Flea to ~2.4 km under power, not a 72 m wreck. Kerbalism
 file science is the MET clock. Unpause moves UT; PRELAUNCH does not
 increment MET. 1235Z goo/thermo could bank as samples without it.
-23-13 landed TELEMETRY rem=0 filed crumbs (+0.10); subject now capped.
-Do not re-pad. FlyingLow geiger 2.80 waits a 497 s hang. Never rails.
-Visit Ast. XRL-564 is horizon. Honest: never revert.
+Bank 2.43. 497 s FlyingLow cannot fit under 50 km (~202 s lid). Gus
+capable: no. Linus did not bind. Never rails. Visit Ast. XRL-564 is
+horizon. Honest: never revert.
 
 ## Horizon (Linus)
 
-start + e101 + **basicRocketry** owned. Next bind: FlyingLow
-geigerCounter on `kerbalism-geigercounter` after Gus hangs it on the
-hop stack. Survivability still 15. **Visit Ast. XRL-564** someday.
+start + e101 + basicRocketry owned. FlyingLow geiger 2.80 blocked by
+hang vs lid. Survivability 15 wants 12.57. **Visit Ast. XRL-564**
+someday.
 
 ## Story (Verena)
 
@@ -89,6 +90,31 @@ Still true. Gene last-wrote.
   (`kerbalism-geigercounter`) is **engineering101, locked**. Stayputnik
   PAW is not that instrument. Conference must pass tree + unlocked
   Science parts to Gus, Gene, and Lars.
+
+## Practice (Mortimer)
+
+House, not this save’s apo. RSI cut 2026-08-21. Open gym F-items are
+`docs/program/improve/I-001`…`I-011` — **friction trip is live**
+(3+ open). Parent hires Mortimer when lock is free.
+
+Still true as ops:
+
+- `desk.md` is the sit. Children do not re-run `world`/`tech`/`parts`
+  if that file is this sit.
+- `leftover:` is the Hangar call (`none` / `recover <name>` /
+  `hangar-blocked`). Disk cannot see crash UI (`scene: unknown`).
+- `f013` (instrument, tech, unlocked, on_craft, host) on every bind /
+  capable / `go:` / miss. Missing line = wait. PAW host ≠ instrument.
+- `agents_md: false`. Job card + desk.md. Portrait logs:
+  `docs/crew/log/`.
+- Gene max two hires per sit. Lars miss only. Wernher iff `stack: ok`
+  and a kRPC trap.
+- `python main.py load rd-<node>` never `load persistent`. After load,
+  `ksc` if Flight is an asteroid. Do not recover the rock.
+- One kRPC writer. No rewind UT. Crash UI is leftover-or-Hangar.
+- Helm live: no Gene, no `status`. Os asks → parent reads `ship.md`.
+- `improve:` files `I-NNN`. Mortimer mutates the house; Gene mutates
+  the fly.
 
 ## Open questions (between exits)
 

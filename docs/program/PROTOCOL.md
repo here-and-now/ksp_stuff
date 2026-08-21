@@ -1,19 +1,23 @@
 # Protocol — who hands to whom
 
-Os is Founder. Parent is the room sequencer (depth 1). Speech is
-**name + title**. Machine slugs stay internal. Postmortem: `ORG.md`.
-RSI house: `improve/README.md`. Next-house notes: `NEXT-ORG.md`.
+Os is Founder. **Hank Grokman, COO** is the room sequencer (depth 1).
+Speech is **name + title**. Ticket bus: `docs/program/OPS.md`.
+Machine slugs stay internal.
 
-**Mortimer Grokman, CEO** owns how the house works when friction
-trips. **Gene Grokman, Flight Director** owns `go:`. Mortimer never
-flies. Gene never rewrites PROTOCOL.
+**Mortimer Grokman, CEO** owns the objective and org RSI. **Hank**
+owns who is hired and the pad. **Gene Grokman, Launch / Flight
+Director** stamps `go:` on a fly ticket. Mortimer never flies. Gene
+never routes tickets. Hank never stamps `go:`.
 
 ## Handoffs
 
 | From | To | When | Hands | Returns |
 |---|---|---|---|---|
-| Os | Gene, Flight Director | go / fly / science | slate item | `go:` `phase:` `need_*` `recommended:` (exact CLI) |
+| Os | Hank, COO | loop / ops / “keep flying” | — | `python main.py ops next` then those hires |
+| Os | Mortimer, CEO | objective / CHARTER / RSI org | slate | `goal:` |
 | Os | named desk | talk by name | — | voice only — **no spawn** |
+| Hank | desks | `ops next` | ticket ids | ticket patches |
+| Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
 | Gene | Linus, Director of Research | `need_science` or first conference | ask | card: `experiment_id`, **part** (host), **instrument** (Science part + tech + unlocked), **duration_s**, **ec_rate**, `recover_banks` |
 | Gene | Gus, VP Build | `need_builder` or after draft | plan + Linus board | `capable:` `craft:` — **no** if the sit needs a locked/missing Science part |
 | Gene | Lars, Vehicle Engineering | `need_stack: <name>` | missing block **+ tree/unlocked parts** | `stack:` `lesson:` |
@@ -130,9 +134,19 @@ return: the named block
 Packet `read:` is **`docs/program/desk.md`** (parent just wrote it) plus
 at most two role paths. Commander `cli:` is Gene `recommended:` **copied
 verbatim** (F-004) from `python main.py protocol fly`. Lars miss packet
-names the **live** review path, not “newest file”. Parent copies
-**f013** from desk. Do not send `docs/archive/kerbin-lessons.md`.
-Children do not re-run `world`/`tech`/`parts` if desk is this sit.
+names the **live** review path **and** the seated **jsonl** (body-frame
+tape), not “newest file”. Parent copies **f013** from desk. Do not
+send `docs/archive/kerbin-lessons.md`. Children do not re-run
+`world`/`tech`/`parts` if desk is this sit.
+
+**Envelope (jsonl, not last-flight prose):** Learn / miss / bind that
+claims a heading or a biome cites `kind=state` rows: `heading`,
+`horiz`, pitch/`tgt_pitch` from the live jsonl (or review rollup of
+that tape). `docs/last-flight.md` is abort/exit only — it can look like
+skill while heading never 090. Gene batch Learn names those numbers.
+Linus does not bind Water/east if the tape never held heading. Lars
+does not patch a miss from last-flight alone. Commander result cites
+heading vs briefed 090, not “flew east.”
 
 `hangar:` on desk **is** the Hangar decision (`none` |
 `phase <name> sit=<SIT>` | `recover <name> sit=<SIT>` | `blocked`).

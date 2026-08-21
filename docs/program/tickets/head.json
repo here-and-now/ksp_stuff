@@ -1,0 +1,27 @@
+{
+  "fingerprints": {},
+  "tickets": {
+    "T-001": {
+      "assignee": "",
+      "blockers": [],
+      "close_why": "kernel smoke",
+      "created": "2026-08-21T20:42:25Z",
+      "desk": "jebediah",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-001",
+      "payload": {},
+      "priority": "P0",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "done",
+      "title": "test leftover",
+      "type": "recover",
+      "updated": "2026-08-21T20:42:30Z"
+    }
+  },
+  "updated": "2026-08-21T20:42:30Z"
+}

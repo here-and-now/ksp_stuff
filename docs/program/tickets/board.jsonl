@@ -1,0 +1,2 @@
+{"at": "2026-08-21T20:42:25Z", "op": "open", "ticket": {"assignee": "", "blockers": [], "created": "2026-08-21T20:42:25Z", "desk": "jebediah", "evidence": [], "fingerprint": "", "id": "T-001", "payload": {}, "priority": "P0", "reporter": "Hank Grokman, COO", "rsi_loop": "none", "sci_expect": null, "severity": "S1", "sla_s": null, "status": "inbox", "title": "test leftover", "type": "recover", "updated": "2026-08-21T20:42:25Z"}}
+{"at": "2026-08-21T20:42:30Z", "fields": {"close_why": "kernel smoke", "status": "done"}, "id": "T-001", "op": "patch", "who": "hank"}

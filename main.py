@@ -612,6 +612,10 @@ def main(argv: list[str] | None = None) -> int:
         default=0.0,
         help="Wall-clock abort (seconds). 0 = none (default).",
     )
+    tk = sub.add_parser("tickets", help="Hank ticket bus (no kRPC)")
+    tk.add_argument("rest", nargs=argparse.REMAINDER, help="open|list|show|…")
+    ops_p = sub.add_parser("ops", help="Hank dispatch next (no kRPC)")
+    ops_p.add_argument("rest", nargs="*", help="next")
     proto = sub.add_parser(
         "protocol",
         help="Fly gate / return parse (no kRPC)",
@@ -821,6 +825,14 @@ def main(argv: list[str] | None = None) -> int:
         except WorldError as exc:
             print(f"# catalog: {exc}", flush=True)
         return 0
+    if args.cmd == "tickets":
+        from tickets import cmd_tickets
+
+        return cmd_tickets(list(args.rest))
+    if args.cmd == "ops":
+        from ops import cmd_ops
+
+        return cmd_ops()
     if args.cmd == "protocol":
         from protocol import cmd_protocol
 

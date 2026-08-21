@@ -580,14 +580,21 @@ def ksc_ready(session: Any) -> tuple[bool, str]:
     return True, "ksc"
 
 
-def _close_to_ksc(session: Session) -> None:
-    """Space Center / Close. Never revert, quickload, or return to VAB."""
+def _close_to_ksc(session: Session, *, reload_save: bool = True) -> None:
+    """Space Center / Close. Never revert, quickload, or return to VAB.
+
+    ``load_space_center`` reloads the last launch save — after a crash
+    that puts the same stack on the pad at MET 0 (recover-sit). Crash
+    Close uses ``reload_save=False`` (scene setter only).
+    """
     krpc = getattr(getattr(session, "conn", None), "krpc", None)
     if krpc is not None:
         try:
             krpc.game_scene = krpc.GameScene.space_center
         except Exception as exc:
             log.warning("game_scene setter failed (%s); load_space_center", exc)
+    if not reload_save:
+        return
     sc = getattr(session, "space_center", None)
     fn = getattr(sc, "load_space_center", None) if sc is not None else None
     if callable(fn):
@@ -597,18 +604,19 @@ def _close_to_ksc(session: Session) -> None:
             log.warning("load_space_center: %s", exc)
 
 
-def go_space_center(session: Session, *, timeout: float = 45.0) -> None:
+def go_space_center(
+    session: Session, *, timeout: float = 45.0, reload_save: bool = True
+) -> None:
     """Leave flight/editor/Flight Results for the KSC overview. No click.
 
-    Close **once** (scene setter + ``load_space_center``), then poll.
-    Repeating ``load_space_center`` every tick reloads KSC in a loop
-    (15-26-18Z after crash recover). A leftover dirty flight can still
-    report ``game_scene == space_center`` (L-022) while Flight Results
-    sits on Tracking. Poll until KSC is actually clean. Never revert.
+    Close **once** (scene setter, optional ``load_space_center``), then
+    poll. Repeating ``load_space_center`` every tick reloads KSC in a
+    loop (15-26-18Z). After a crash, ``reload_save=False`` — reloading
+    the launch save respawns the stack on the pad. Never revert.
     """
     session.require_connected()
     log.info("scene %s → space_center", game_scene(session))
-    _close_to_ksc(session)
+    _close_to_ksc(session, reload_save=reload_save)
     deadline = time.monotonic() + timeout
     last = game_scene(session)
     while time.monotonic() < deadline:

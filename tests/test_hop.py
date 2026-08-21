@@ -30,6 +30,7 @@ from hop import (
     hop_target_apo,
     install_and_launch,
     leftover_wreck_before_light,
+    _wait_vessel_gone,
     run_hop,
     run_hop_to_water,
     run_on_vessel,
@@ -2565,3 +2566,16 @@ class TestHopToWater(unittest.TestCase):
         self.assertTrue(leftover_wreck_before_light(pad, vessel))
         pad.fuel = 5.0
         self.assertFalse(leftover_wreck_before_light(pad, vessel))
+
+
+class TestWaitVesselGone(unittest.TestCase):
+    def test_returns_when_pool_empty(self):
+        session = type(
+            "S", (), {"space_center": type("C", (), {"vessels": []})()}
+        )()
+        vessel = _Vessel([], sit="pre_launch", recoverable=True)
+        logs: list[str] = []
+        with patch("hop._vessel_live", return_value=False):
+            with patch("hop._pool", return_value=[]):
+                _wait_vessel_gone(session, vessel, logs.append, timeout=1.0)
+        self.assertTrue(any("gone" in line for line in logs))

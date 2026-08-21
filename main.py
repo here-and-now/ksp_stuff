@@ -618,6 +618,15 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Path to a .craft file; list parts on that vehicle",
     )
+    recp = sub.add_parser(
+        "recover-probe",
+        help="Print scene/revert/vessels after a crash. Never revert.",
+    )
+    recp.add_argument(
+        "--recover",
+        action="store_true",
+        help="vessel.recover() pad leftover MET<1. Not revert_to_launch.",
+    )
     shot_p = sub.add_parser(
         "screenshot",
         help="Capture the KSP window (no kRPC; works off-focus / other workspace)",
@@ -897,6 +906,10 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.cmd == "status":
             return cmd_status(session)
+        if args.cmd == "recover-probe":
+            from recover_probe import cmd_recover_probe
+
+            return cmd_recover_probe(session, recover=bool(getattr(args, "recover", False)))
         if args.cmd == "pad":
             return cmd_pad(session, args)
         if args.cmd == "hop":

@@ -21,6 +21,19 @@ python main.py pad
 
 ---
 
+## 2026-08-21T recover-sit — recover() then pad leftover is a save reload
+
+- **When:** After hop-to-water crash. KSC pin `east-one-pbc` on the
+  pad. Probe: `sit=pre_launch` MET 0 `recoverable=yes`
+  `can_revert_to_launch=True`. `recover()` returned; kRPC still listed
+  the ship. Seconds later the pad was empty (Os: vessel is gone).
+- **Cause:** `recover()` is async. `load_space_center` after Close
+  reloads the **launch save**, so the same stack is on the pad again.
+  That is not `revert_to_launch` (never called).
+- **Fix:** Wait until the vessel list is empty after `recover()`.
+  Crash Close: scene setter only (`reload_save=False`). Modules:
+  `hop.py`, `hangar.py`, `recover_probe.py`.
+
 ## 2026-08-21T16-14Z — jsonl speed=0 is the vessel frame
 
 - **When:** hop-to-water 15-26 through 16-25. Jeb HUD horiz ~20–90 m/s,

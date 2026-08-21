@@ -352,10 +352,7 @@ def _recover_unmatched_leftover(
         raise MissionAbort(f"unmatched leftover recover failed: {exc}") from exc
     _say(f"recovered unmatched leftover sit={sit} recoverable=yes", on_log)
     mission_event("recover")
-    try:
-        go_space_center(session)
-    except Exception:
-        pass
+    _wait_vessel_gone(session, vessel, on_log)
     return "recovered"
 
 
@@ -741,12 +738,37 @@ def _crash_line(
     )
 
 
+def _wait_vessel_gone(
+    session: object,
+    vessel: object | None,
+    on_log: Callable[[str], None] | None,
+    *,
+    timeout: float = 8.0,
+) -> None:
+    """recover() returns before KSP drops the ship (recover-sit probe)."""
+    name = _vessel_name(vessel) if vessel is not None else ""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        live = _vessel_live(vessel) if vessel is not None else False
+        pool = _pool(session, None)
+        named = [
+            other
+            for other in pool
+            if name and (_vessel_name(other) or "") == name
+        ]
+        if (not live) and not named:
+            _say("hop recover gone", on_log)
+            return
+        time.sleep(0.3)
+    _say("hop recover still listed after recover()", on_log)
+
+
 def _leave_crash_ui(
     session: object, on_log: Callable[[str], None] | None
 ) -> None:
-    """Close once, then poll. Never revert. Never reload-loop."""
+    """Close once. Do not load_space_center (that respawns the pad)."""
     try:
-        go_space_center(session)
+        go_space_center(session, reload_save=False)
         _say("hop dismissed crash ui", on_log)
     except Exception as exc:
         log.warning("hop dismiss crash ui: %s", exc)
@@ -772,8 +794,9 @@ def _finish_hd(
                 break
     if got is None:
         return None
+    _wait_vessel_gone(session, vessel, on_log)
     try:
-        go_space_center(session)
+        go_space_center(session, reload_save=False)
         _say("hop dismissed flight results", on_log)
     except Exception as exc:
         log.warning("hop dismiss flight results: %s", exc)
@@ -1222,8 +1245,9 @@ def run_on_vessel(
                     hit = _try_recover(other, on_log)
                     if hit is None:
                         continue
+                    _wait_vessel_gone(session, other, on_log)
                     try:
-                        go_space_center(session)
+                        go_space_center(session, reload_save=False)
                         _say("hop dismissed flight results", on_log)
                     except Exception as exc:
                         log.warning("hop dismiss flight results: %s", exc)

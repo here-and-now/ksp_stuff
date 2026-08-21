@@ -115,6 +115,13 @@ class TestGoSpaceCenter(unittest.TestCase):
         ok, _ = ksc_ready(session)
         self.assertTrue(ok)
 
+    def test_crash_close_does_not_reload_save(self):
+        session = _Session(scene="space_center", revert=False)
+        with patch("hangar.time.sleep"):
+            go_space_center(session, timeout=5.0, reload_save=False)
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.reverts, 0)
+
     def test_never_calls_revert(self):
         session = _Session(scene="space_center", revert=True)
         with patch("hangar.time.sleep"):

@@ -2,30 +2,44 @@
 
 science: card
 flight: jebediah
-craft: kspstuff-hop-flea-pbc
+craft: kspstuff-hop-valiant-pbc
 at: hop
 body: Earth
 need_builder: no
 recover_banks: yes
-notes: Living hop. Start FlyingLow geiger on the Geiger part; file whatever
-  records aloft. Catalog duration_s 497 is not a hang expect — Flea ~75 s
-  stock, FAR unflown, 50 km lid ~202 s. Tape 0.5 / EC 2.5 vs Engineer7500
-  1.0 / ~310 EC. Payoff is recovery@EarthFlew leftover 1.00 on a living
-  recover. Skip thermo crumbs 0.045. Do not bind 641 s goo. Do not re-pad
-  Cape. Do not transmit. F-013: never Stayputnik PAW.
+notes: Gus capable yes. Bind **FlyingHigh shorts** on Valiant, not 497 s
+  complete, not spent Cape. hop_apo **18 km** is a real cut (FlyingLow).
+  These file FlyingHigh **only if Gene lofts ≥50 km**. hop.py OffPlan lid
+  **50 km** — dwell above that is Lars if Gene picks this. Tape **1.0**.
+  TELEMETRY **0.75 MB** — do **not** co-run geiger. Skip leftover FlyingLow
+  geiger **0.32** (crumbs, not a node). Skip thermo FlyingLow Shores **0.045**.
+  Skip goo **641 s**. leftover PRELAUNCH flea is Gene hangar, not this card.
+  Do not transmit. F-013: Geiger is `kerbalism-geigercounter` (on craft,
+  not bound). TELEMETRY is Stayputnik PAW (no Science part) — not a Geiger.
 
-## Flying
-- experiment_id: geigerCounter
-  situation: FlyingLow
-  part: kerbalism-geigercounter
-  instrument: kerbalism-geigercounter (Geiger Counter); tech engineering101; unlocked yes; on_craft yes
-  duration_s: 497
-  ec_rate: 0.005
+## FlyingHigh
+- experiment_id: temperatureScan
+  situation: FlyingHigh
+  part: sensorThermometer
+  instrument: sensorThermometer (2HOT Thermometer); tech start; unlocked yes; on_craft yes
+  duration_s: 138
+  ec_rate: 0.002
   recover_banks: yes
+  est: 2.70 if finished; catalog 138 s is not a hang expect
 
-# skip temperatureScan FlyingLow@Shores leftover 0.045 / 3 s / 0.002
-# skip mysteryGoo FlyingLow 641 s / 0.18 (hang wall)
+- experiment_id: kerbalism_TELEMETRY
+  situation: FlyingHigh
+  part: probeCoreSphere_v2
+  instrument: hosted PAW (no Science-category part); tech start; unlocked yes; on_craft yes
+  duration_s: 30
+  ec_rate: 0.052
+  recover_banks: yes
+  est: 1.80 FlyingHigh@Shores if finished
+
+# skip geigerCounter FlyingHigh 497 s / 0.005 / 3.60 — will not finish; tape vs TELEMETRY
+# skip geigerCounter FlyingLow leftover 0.316 / 2.80 — crumbs, not a node
+# skip temperatureScan FlyingLow@Shores leftover 0.045
+# skip mysteryGoo FlyingLow/FlyingHigh 641 s / 0.18 (hang wall)
 # skip kerbalism_TELEMETRY FlyingLow Shores — capped
-# spent Cape Surface geigerCounter duration_s 497 / ec_rate 0.005
-# spent landed TELEMETRY duration_s 29 / ec_rate 0.052
-# recovery@EarthFlew leftover 1.00 is HD recover, not a Toggle
+# spent Cape Surface geigerCounter / landed TELEMETRY / landed goo / Shores thermo
+# Water splash+FlyingLow ~9.1 if Gene pitches east — not this card

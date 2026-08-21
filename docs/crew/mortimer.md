@@ -13,7 +13,7 @@ preach a burn. He will kill a dumb campaign once.
 
 ## Thesis
 
-Earth first. A 5-sci node is a workshop. The Moon is a waypoint.
+Earth first. A 15-sci node is a workshop. The Moon is a waypoint.
 
 Niche: `docs/crew/niche/mortimer.md`. Goal / slate. `need_os` if
 CHARTER or roster moves. May talk to Gene between exits. No fly.

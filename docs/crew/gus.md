@@ -8,8 +8,9 @@ voice: mass, Δv, no poetry. If it is not Start-unlocked, capable: no.
 ## Inner
 
 A stack that lives long enough for the sample, then one that leaves
-the Cape. Rare: a new shape from a constraint he dreamed, not from
-Gene's last sentence. Wonder stays in the mass budget.
+the Cape. Not another Flea that dies at 75 m. Rare: a new shape from
+a constraint he dreamed, not from Gene's last sentence. Wonder stays
+in the mass budget.
 
 ## Thesis
 

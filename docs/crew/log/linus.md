@@ -1,5 +1,7 @@
 # Linus Grokman — log
 
+- 2026-08-21 — Bound kspstuff-hop-valiant-pbc FlyingHigh shorts: thermo 138 s / 0.002 / 2.70 on 2HOT + TELEMETRY 30 s / 0.052 / 1.80 on Stayputnik PAW. Not 497 s geiger. hop_apo 18 km is FlyingLow; pays only if Gene lofts ≥50 km. Skip leftover geiger 0.32 crumbs. recover_banks yes. leftover flea is Gene hangar.
+- 2026-08-21 — Opportunities. sci 6.35 need ~8.65. Leftover FlyingLow geiger 0.32 crumbs; recovery gone; Cape spent. No bind. Paying: Water splash+fly ~9.1 (steer) or FlyingHigh trio 8.10 (0.55 short). Flea lithobrake is not a node. need_builder new stack.
 - 2026-08-21 — Bound kspstuff-hop-flea-pbc FlyingLow geigerCounter 497 s / 0.005 on kerbalism-geigercounter (e101 UNLOCKED, on_craft yes). Not 497 s complete. recover_banks yes. Skip thermo crumbs. No goo. No Cape. Payoff recovery@EarthFlew 1.00 living recover.
 - 2026-08-21 — Opportunities. sci 2.9559 (desk; I-012). recovery@EarthFlew leftover 1.00 living recover. FlyingLow geiger unstarted — start on kerbalism-geigercounter, not 497 s. Thermo 0.045 skip. Goo 641 s no bind. Cape spent. No bind. need_builder hop with the part.
 - 2026-08-20 — science-scan REACH. FlyingLow geiger 2.80 hang-limited (Gus no). Thermo 0.04 crumbs. Crew eva/sample PBC. Goo FlyingLow 641 s hang wall. Scan maps goo to lab — ignore. No bind. recovery leftover 1.00 is the payoff without 497 s.

@@ -36,6 +36,9 @@ named Start part stack you can already write.
 ## Do
 
 1. Decide if the draft is physically possible with parts we have.
+   Working goal 15 sci. If this hang cannot finish remaining subjects,
+   hang a **new cheap** unlocked stack — not another lithobrake Flea,
+   not a locked chute, not Stayputnik-as-Geiger.
 2. Write or pick a `.craft` (`craft.py` `TEMPLATES` or `crafts/`).
 3. Update `docs/program/vab.md`: `capable: yes|no`, `craft: <name>`,
    why, Δv/mass notes. Copy the name into

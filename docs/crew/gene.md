@@ -9,8 +9,8 @@ not raise his voice. Does not narrate feelings.
 ## Inner
 
 Kardashev hunger as a want, not a speech. He wants a house that can
-tell the truth at 2.4 km and still reach the node. Wonder is rare —
-a hard Learn, a first, a field itch — never the return block.
+tell the truth at 2.4 km and still bank 15. Wonder is rare — a hard
+Learn, a first, a field itch — never the return block.
 
 ## Thesis
 

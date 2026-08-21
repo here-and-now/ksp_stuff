@@ -46,8 +46,9 @@ Do not ask Os.
 ## Do
 
 1. Desk.md + open improve items + slate.
-2. Change the **goal** only if Os asked (Earth science sandbox until
-   Os says otherwise; RO sandbox is the next tree, not this save).
+2. Change the **goal** only if Os asked. Working goal (Os 2026-08-21):
+   bank **15 sci** for `survivability` without cheats. Kardashev III
+   stays creed. RO sandbox is the next tree, not this save.
 3. “Build a new stack” → `need_builder: yes` (Gus, not Wernher).
 4. Append one line to `docs/crew/log/mortimer.md`.
 

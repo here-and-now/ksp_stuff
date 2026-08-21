@@ -619,3 +619,22 @@ python main.py pad
   `go_space_center` (Close / Space Center, not revert) and abort `not
   recoverable`. Do not wait the 600 s wall. Telem marks wreck on
   MET-still + q=0 + low flying. Modules: `hop.py`, `telem.py`.
+
+## 2026-08-21T12-30-03Z-hop — unmatched Flea; FlyingHigh lid
+
+- **When:** 2026-08-21 letsgrok `python main.py hop`
+  (`2026-08-21T12-30-03Z-hop`). Gene `need_stack: hop-flyinghigh`.
+  Seated `kspstuff-hop-valiant-pbc`. Bound FlyingHigh thermo 138 s +
+  TELEMETRY 30 s. F-013 2HOT start unlocked on craft. leftover
+  PRELAUNCH `kspstuff-hop-flea-pbc`.
+- **Symptom:** exit 2 `ABORT not recoverable`. hop entered leftover
+  Flea, lit it, FAR apo 7.7 km, lithobrake MET 65.7 alt 74.6 q=0
+  recoverable=no. sci 6.35 (+0). `hop_apo` 18 km clamp + OffPlan 50 km
+  would cut a Valiant FlyingHigh loft to FlyingLow crumbs.
+- **Cause:** leftover match used seated name only after Valiant; CLI
+  hop still Hangared/entered the Flea. OffPlan lid was FlyingLow 50 km.
+  `hop_apo` clamped 8–18 km so Gene 80 km could not cut.
+- **Fix:** Unmatched leftover recovers without lighting, then Hangars
+  the seated craft. FlyingHigh card: `hop_apo` unclamps to Space
+  (140 km); OffPlan apo > atmosphere_depth, not 50 km. FlyingLow
+  clamp 8–18 km stays. Modules: `hop.py`.

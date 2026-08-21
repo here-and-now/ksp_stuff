@@ -9,19 +9,15 @@ phase: hop
 next: hop
 expect_body: Earth
 expect_peri_min: -500000
-expect_apo_max: 50000
-craft: kspstuff-hop-flea-pbc
-hop_apo: 18000
+expect_apo_max: 140000
+craft: kspstuff-hop-valiant-pbc
+hop_apo: 80000
 go: yes
 campaign: none
-recommended: python main.py phase hop
+recommended: python main.py hop
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad
 need_builder: none
 need_science: none
 need_stack: none
-# Sit: 12-22-36Z hop abort. sci 6.35 (+0). Crash UI detect-now. leftover PRELAUNCH.
-# Skip Hangar. python main.py phase hop. Keep Flea. Hammer-far waits.
-# FlyingLow geiger leftover 0.32. Skip thermo 0.045. Do not pad.
-# hop_apo 18 km is a cut wish. OffPlan lid 50 km. Never rails.
-# Crash UI: recover() if yes; else Space Center/Close abort. No unpause-spam.
-# Living recover waits landed.
+# leftover PRELAUNCH hop-flea-pbc unmatched: recover without light, then
+# Hangar valiant-pbc. hop_apo 80 km. OffPlan 140 km. campaign none.

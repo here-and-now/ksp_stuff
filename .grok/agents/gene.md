@@ -41,7 +41,11 @@ Write `campaign:` on seated `plan.md`. Cheap probe sit (`pad`/`hop`,
 leftover science, hangar none): first `go: yes` of the sit includes
 `campaign: uncrewed`. **Leave `go: yes`.** Parent re-flies last
 `recommended:` on clean 0 without hiring you. Do not flip `wait`
-between those hops.
+between those hops. Working goal is **15 sci** (`survivability`).
+Same lithobrake Flea will not buy it. Leftover PRELAUNCH vs Hangar
+is yours. Do not `go: yes` as “same Flea until 15.” If remaining
+subjects cannot finish on this hang, `campaign: none` and
+`need_builder` / `need_science`.
 
 When you **are** hired after hops: **batch Learn** — every review
 since the last Learn + desk `sci_delta`. Then `go: wait` and

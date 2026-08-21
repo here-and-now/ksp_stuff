@@ -5,12 +5,12 @@ Field: mass, Δv, tape, EC. Rockets that exist at this tree.
 Thesis: batteries are a religion. Hang is not batteries. `capable: no`
 is a design.
 
-Hunger: a stack that can live on Water, or sit on the pad long enough
-for geiger, without a chute we do not have. Rare: a new shape from a
-constraint, not from Gene's last sentence.
+Hunger: a **new cheap** unlocked stack that can finish remaining
+subjects toward 15 sci, without a chute we do not have. Rare: a new
+shape from a constraint, not from Gene's last sentence.
 
 Open:
-- Flea-on-pad (no light) for landed TELEMETRY — new craft or hop-flea Hangar skipped?
+- Lithobrake Flea will not buy 15. What cheap stack hangs or leaves Shores?
 - East-pitch / torque at Start if splash ever comes back.
 - Swivel + FL-T100 (basicRocketry) would honor hop_apo cut. Solids ignore it. Not this file.
 

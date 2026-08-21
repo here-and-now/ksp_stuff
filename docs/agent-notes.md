@@ -423,8 +423,9 @@ EC=0 if the HD has data (L-045). Done: PAW `status` (recording/running vs
 done/depleted/reset required), `Has Data`, remaining sample/data 0,
 Stop inactive after we saw it running. No clean flag → wall-clock cap.
 
-Kerbin FlyingLow / FlyingHigh split is 18 km (stock). Hop `hop_apo`
-defaults 15 km so the coast stays FlyingLow.
+RSS Earth FlyingLow / FlyingHigh split is 50 km (stock Kerbin 18 km).
+Hop `hop_apo` FlyingLow clamp 8–18 km; FlyingHigh card unclamps to
+Space (atmosphere_depth 140 km). OffPlan is that lid, not the cut.
 
 ---
 

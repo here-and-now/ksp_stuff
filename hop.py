@@ -10,8 +10,12 @@ process did **not** light. A hop this process lit always starts the
 flying card (one Toggle per id; thermo on 2HOT, not Stayputnik). Idle
 TELEMETRY remaining=0 is not leftover HD. A leftover already in
 tracking while the scene is SpaceCenter is switched into Flight — do
-not Hangar a second stack. A dead kRPC GUID (``No such vessel``) is
-not leftover — scan tracking; empty Tracking Hangars. Ballistic peri is negative. No chute.
+not Hangar a second stack. Unmatched leftover (PRELAUNCH Flea vs
+seated Valiant) recovers without lighting, then Hangars the seated
+craft. Leftover is the live kRPC pool, not save
+FLYING debris. A dead kRPC GUID (``No such vessel``) is not leftover
+— scan tracking; empty Tracking Hangars. ``… Debris`` is not a hop
+leftover. Ballistic peri is negative. No chute.
 MET-still + q=0 while flying is down now (lithobrake / crash UI) —
 do not wait the wreck-dialog wall. Low flying (≤250 m) calls
 ``vessel.recover()`` only when ``recoverable`` — last living hop
@@ -33,7 +37,7 @@ import time
 from pathlib import Path
 from typing import Callable
 
-from card import NO_BOUND_CARD, card_flying_ids
+from card import NO_BOUND_CARD, card_flying_ids, parse_card
 from emergencies import Ctx, call
 from hangar import (
     discover_hangar,
@@ -59,13 +63,17 @@ log = logging.getLogger("kspstuff")
 CRAFT = "kspstuff-hop-flea-pbc"
 PAD_CRAFT = "kspstuff-pad-pbc"
 GEIGER_CRAFT = "kspstuff-geiger-pbc"
-_NOT_HOP = (PAD_CRAFT, GEIGER_CRAFT, "pad-pbc", "geiger-pbc")
+_NOT_HOP = (PAD_CRAFT, GEIGER_CRAFT)
+_DEBRIS_SUFFIX = " debris"
 REPO_CRAFTS = Path(__file__).resolve().parent / "crafts"
 HOP_APO_DEFAULT = 15_000.0
 HOP_APO_CLAMP = (8_000.0, 18_000.0)
-# hop_apo is a cut *wish*. Solids cannot hold. OffPlan is FlyingLow, not the clamp.
+# hop_apo is a cut. Solids ignore it. FlyingLow clamp 8–18 km.
+# FlyingHigh card unclamps to Space (RSS Earth atmosphere_depth).
 HOP_APO_MAX = 18_000.0
 FLYING_LOW_M = 50_000.0
+FLYING_HIGH_M = 140_000.0
+_HOP_PREFIX = "kspstuff-hop-"
 DEFAULT_HOP_S = 600.0
 _AIRBORNE_M = 250.0
 _PULSE_S = 1.0
@@ -85,8 +93,32 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
         on_log(msg)
 
 
+def hop_wants_flying_high() -> bool:
+    """Bound flying card names FlyingHigh. Missing card is FlyingLow."""
+    try:
+        from missions import seated_science_path
+
+        path = seated_science_path()
+        if not path.is_file():
+            return False
+        text = path.read_text(encoding="utf-8")
+    except Exception:
+        return False
+    for row in parse_card(text):
+        sit = (row.situation or "").lower().replace(" ", "").replace("_", "")
+        sec = (row.section or "").lower().replace(" ", "").replace("_", "")
+        if "flyinghigh" in sit or "flyinghigh" in sec:
+            return True
+    return False
+
+
+def hop_offplan_apo() -> float:
+    """OffPlan apo lid. FlyingLow 50 km; FlyingHigh is Space (140 km)."""
+    return FLYING_HIGH_M if hop_wants_flying_high() else FLYING_LOW_M
+
+
 def hop_target_apo() -> float:
-    """Gene ``hop_apo`` (m). Cut wish. Clamp 8–18 km. OffPlan is FlyingLow."""
+    """Gene ``hop_apo`` (m). FlyingLow clamp 8–18 km; FlyingHigh to Space."""
     raw = ""
     try:
         from phases import _kv
@@ -100,7 +132,10 @@ def hop_target_apo() -> float:
         apo = HOP_APO_DEFAULT
     if not math.isfinite(apo):
         apo = HOP_APO_DEFAULT
-    return min(HOP_APO_CLAMP[1], max(HOP_APO_CLAMP[0], apo))
+    lo, hi = HOP_APO_CLAMP
+    if hop_wants_flying_high():
+        hi = hop_offplan_apo()
+    return min(hi, max(lo, apo))
 
 
 def hop_match_name() -> str:
@@ -156,17 +191,62 @@ def _vessel_name(vessel: object) -> str:
         return ""
 
 
+def _craft_token(name: str) -> str:
+    """Vessel/craft name without KSP `` Debris`` suffix."""
+    low = (name or "").strip().lower()
+    if low.endswith(_DEBRIS_SUFFIX):
+        return low[: -len(_DEBRIS_SUFFIX)].rstrip()
+    return low
+
+
+def _is_debris_name(name: str) -> bool:
+    return (name or "").strip().lower().endswith(_DEBRIS_SUFFIX)
+
+
+def _is_not_hop_name(name: str) -> bool:
+    """Exact pad/geiger craft names (plus Debris suffix), not a substring."""
+    return _craft_token(name) in {PAD_CRAFT.lower(), GEIGER_CRAFT.lower()}
+
+
 def _is_pad_motor(vessel: object) -> bool:
-    name = _vessel_name(vessel).lower()
-    return any(tag in name for tag in _NOT_HOP)
+    return _is_not_hop_name(_vessel_name(vessel))
+
+
+def _is_hop_motor(vessel: object) -> bool:
+    """Living hop stack (Flea/Hammer/Valiant). Not pad, geiger, or Debris."""
+    name = _vessel_name(vessel)
+    if not name or _is_not_hop_name(name) or _is_debris_name(name):
+        return False
+    token = _craft_token(name)
+    wanted = hop_match_name().lower()
+    if wanted and wanted in name.lower():
+        return True
+    return _HOP_PREFIX in token
 
 
 def _is_hop_craft(vessel: object) -> bool:
-    name = _vessel_name(vessel).lower()
-    if not name or _is_pad_motor(vessel):
+    """Living hop ship matching the seated name. Debris is not leftover."""
+    name = _vessel_name(vessel)
+    if not name or _is_not_hop_name(name) or _is_debris_name(name):
         return False
     wanted = hop_match_name().lower()
-    return bool(wanted) and wanted in name
+    return bool(wanted) and wanted in name.lower()
+
+
+def _is_unmatched_hop(vessel: object) -> bool:
+    """Hop motor in the pool that is not the seated/VAB craft."""
+    return _is_hop_motor(vessel) and not _is_hop_craft(vessel)
+
+
+def _vessel_live(vessel: object | None) -> bool:
+    """False if the kRPC proxy GUID is already gone."""
+    if vessel is None:
+        return False
+    try:
+        getattr(vessel, "name")
+    except Exception:
+        return False
+    return True
 
 
 def _active_vessel(session: object) -> object | None:
@@ -174,35 +254,64 @@ def _active_vessel(session: object) -> object | None:
         vessel = session.active_vessel  # type: ignore[attr-defined]
     except Exception:
         return None
-    if vessel is None:
-        return None
-    try:
-        # Dead GUID: kRPC still returns a proxy; .name raises No such vessel.
-        getattr(vessel, "name")
-    except Exception:
+    if not _vessel_live(vessel):
         return None
     return vessel
 
 
 def _find_hop_vessel(session: object) -> object | None:
-    """Active leftover, else tracking pool. Prefer the Flea over debris.
+    """Active leftover, else live tracking pool. Not Debris, not save ghosts.
 
     Dead GUID (``No such vessel``) is not leftover — scan tracking.
+    Empty live pool Hangars. Disk FLYING debris is not leftover.
     """
     active = _active_vessel(session)
     if active is not None and _is_hop_craft(active):
         return active
-    craft = None
-    debris = None
     for other in _pool(session, active):
-        if other is None or not _is_hop_craft(other):
-            continue
-        if "debris" in _vessel_name(other).lower():
-            debris = debris or other
-        else:
-            craft = other
-            break
-    return craft or debris
+        if other is not None and other is not active and _is_hop_craft(other):
+            return other
+    return None
+
+
+def _find_unmatched_leftover(session: object) -> object | None:
+    """Live unmatched hop motor. Flea vs seated Valiant. Not Debris."""
+    active = _active_vessel(session)
+    if active is not None and _is_unmatched_hop(active):
+        return active
+    for other in _pool(session, active):
+        if other is not None and other is not active and _is_unmatched_hop(other):
+            return other
+    return None
+
+
+def _recover_unmatched_leftover(
+    session: object,
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+) -> str:
+    """Recover unmatched leftover. Do not light. Do not Hangar over it."""
+    name = _vessel_name(vessel) or "?"
+    sit = _vessel_sit(vessel)
+    rec = "yes" if _recoverable(vessel) else "no"
+    _say(
+        f"hop leftover unmatched {name} sit={sit} recoverable={rec} "
+        "— recover, do not light",
+        on_log,
+    )
+    if not _recoverable(vessel):
+        raise MissionAbort("unmatched leftover not recoverable")
+    try:
+        getattr(vessel, "recover")()
+    except Exception as exc:
+        raise MissionAbort(f"unmatched leftover recover failed: {exc}") from exc
+    _say(f"recovered unmatched leftover sit={sit} recoverable=yes", on_log)
+    mission_event("recover")
+    try:
+        go_space_center(session)
+    except Exception:
+        pass
+    return "recovered"
 
 
 def _ensure_flight(
@@ -224,7 +333,8 @@ def _ensure_flight(
 def install_and_launch(session: object, *, recover: bool = True) -> None:
     """Copy the Gus-signed hop ``.craft`` into VAB and launch uncrewed.
 
-    Byte-copy the repo file — never Hangar pad/geiger. Same pointer as pad.
+    Byte-copy the repo file — never Hangar pad/geiger. Exact names, not
+    a substring (hop-*-geiger-pbc may carry the part). Same pointer as pad.
     """
     from session import SessionError
 
@@ -232,8 +342,7 @@ def install_and_launch(session: object, *, recover: bool = True) -> None:
         name = hop_craft_name()
     except SessionError as exc:
         raise MissionAbort(str(exc)) from exc
-    low = name.lower()
-    if any(tag in low for tag in _NOT_HOP):
+    if _is_not_hop_name(name):
         raise MissionAbort(
             f"hop Hangar refused {name} — need a hop motor (not pad/geiger)"
         )
@@ -411,11 +520,12 @@ def _vessel_met(vessel: object | None) -> float | None:
 
 
 def _ours(vessel: object) -> bool:
-    name = _vessel_name(vessel).lower()
+    name = _vessel_name(vessel)
     if not name or _is_pad_motor(vessel):
         return False
     wanted = hop_match_name().lower()
-    return (wanted and wanted in name) or "debris" in name
+    low = name.lower()
+    return (wanted and wanted in low) or _is_debris_name(name)
 
 
 def _try_recover(
@@ -456,15 +566,16 @@ def _force_recover(
 
 
 def _pool(session: object, vessel: object | None) -> list[object]:
+    """Live kRPC vessels only. Dead GUID / save FLYING ghosts stay out."""
     out: list[object] = []
-    if vessel is not None:
+    if _vessel_live(vessel):
         out.append(vessel)
     try:
         extra = list(getattr(getattr(session, "space_center", None), "vessels", []) or [])
     except Exception:
         extra = []
     for other in extra:
-        if other is not None and other not in out:
+        if other is not None and other not in out and _vessel_live(other):
             out.append(other)
     return out
 
@@ -730,14 +841,24 @@ def run_on_vessel(
                 apo_f = float(apo)
             except (TypeError, ValueError):
                 apo_f = float("nan")
+            lid = hop_offplan_apo()
+            label = "Space" if hop_wants_flying_high() else "FlyingLow"
+            if hop_wants_flying_high():
+                atm = getattr(snap, "atm_depth", float("nan"))
+                try:
+                    atm_f = float(atm)
+                except (TypeError, ValueError):
+                    atm_f = float("nan")
+                if math.isfinite(atm_f) and atm_f > 0.0:
+                    lid = atm_f
             if (
                 left_pad
                 and not down
                 and not waiting_hd
                 and math.isfinite(apo_f)
-                and apo_f > FLYING_LOW_M
+                and apo_f > lid
             ):
-                raise OffPlan(f"apo {apo_f:.0f} > {FLYING_LOW_M:.0f} FlyingLow")
+                raise OffPlan(f"apo {apo_f:.0f} > {lid:.0f} {label}")
             if left_pad and not down and not waiting_hd:
                 check_expect(snap, skip_peri=True, skip_apo=True)
 
@@ -893,6 +1014,9 @@ def run_hop(
 ) -> str:
     """``python main.py hop``: Hangar the seated hop craft uncrewed, then light."""
     hop_science_ids()
+    leftover = _find_unmatched_leftover(session)
+    if leftover is not None:
+        _recover_unmatched_leftover(session, leftover, on_log)
     install_and_launch(session)
     try:
         msg = wait_vessel_ready(session)
@@ -916,8 +1040,15 @@ def run_phase(
     """``phase hop``: Hangar if empty or leftover pad motor; else leftover Flight.
 
     Tracking leftover at SpaceCenter is switched into Flight. Do not Hangar
-    a second hop on that pad. Do not fly leftover pad/geiger as a hop.
+    a second hop on that pad. Unmatched leftover recovers without lighting
+    (PRELAUNCH Flea vs seated Valiant), then Hangars the seated craft.
+    Do not fly leftover pad/geiger as a hop.
+    Live kRPC hop ship only — FLYING Debris is not leftover.
     """
+    leftover = _find_unmatched_leftover(session)
+    if leftover is not None:
+        _recover_unmatched_leftover(session, leftover, on_log)
+        return run_hop(session, on_log=on_log, abort=abort)
     vessel = _find_hop_vessel(session)
     if vessel is None or _is_pad_motor(vessel):
         return run_hop(session, on_log=on_log, abort=abort)

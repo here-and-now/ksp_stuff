@@ -19,16 +19,19 @@ Kardashev III is creed here. Joke in the TUI. Nobody preaches mid-burn.
 
 Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. Tree
 **start, engineering101, basicRocketry**. Desk `sci = 6.3526`
-(12-22-36Z abort **+0**; 12-04-13Z abort **6.05 → 6.35, +0.30**
-geiger in-flight; 11-52-45Z **+0.40**; 11-47-13Z **+0.32**;
-11-40-22Z **+0.54**; 11-23-25Z **+0.30**). Cape Surface geiger
-**capped**. FlyingLow TELEMETRY **capped**. Landed TELEMETRY
-**capped**. FlyingLow thermo leftover **0.045**. `recovery@EarthFlew`
-leftover **gone**. FlyingLow geiger leftover **0.316**. `capable: yes`.
-craft `kspstuff-hop-flea-pbc`. card `geigerCounter`. f013
-`kerbalism-geigercounter` tech engineering101 unlocked yes on_craft
-yes. leftover **PRELAUNCH** `kspstuff-hop-flea-pbc`. hangar: **phase**
-that vessel. Do not Hangar. Do not recover Ast. XRL-564.
+(12-30-03Z abort **+0**; 12-22-36Z abort **+0**; 12-04-13Z abort
+**6.05 → 6.35, +0.30** geiger in-flight; 11-52-45Z **+0.40**;
+11-47-13Z **+0.32**; 11-40-22Z **+0.54**; 11-23-25Z **+0.30**). Cape
+Surface geiger **capped**. FlyingLow TELEMETRY **capped**. Landed
+TELEMETRY **capped**. FlyingLow thermo leftover **0.045**.
+`recovery@EarthFlew` leftover **gone**. FlyingLow geiger leftover
+**0.316**. `capable: yes`. craft `kspstuff-hop-valiant-pbc`. card
+`temperatureScan,kerbalism_TELEMETRY` FlyingHigh. f013
+`sensorThermometer` tech start unlocked yes on_craft yes; TELEMETRY
+hosted Stayputnik PAW. leftover **PRELAUNCH** `kspstuff-hop-flea-pbc`.
+hangar: **phase** that vessel. hop recovers unmatched without lighting,
+then Hangars Valiant. Do not fly the Flea. Do not Hangar from Gene.
+Do not recover Ast. XRL-564.
 
 Aero stack **now on this install** (CKAN, 2026-08-21): **FAR**
 (`FerramAerospaceResearchContinued`), **RealChute** + RealChuteForStock,
@@ -46,6 +49,19 @@ Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
 **2,380.7 m**, apo 11.6 km. Not 72 m.
 
 ## Meaning (Gene)
+
+12-30-03Z hop abort: leftover PRELAUNCH hop-flea-pbc entered Flight.
+Lit. Geiger on the part. FAR envelope **apo 7.7 km**, MET 65.7. Crash
+UI detect-now: sit=flying recoverable=no met=65.70 alt=74.6 q=0.
+Unpause recover ticks still no; dismissed; ABORT not recoverable. sci
+**6.35 (+0)**. leftover PRELAUNCH flea again. Same Flea is dead for
+15. Lars `hop-flyinghigh` in: unmatched leftover recovers without
+lighting, then Hangars seated Valiant. FlyingHigh unclamps hop_apo to
+Space; OffPlan **140 km**. Gus `capable: yes` `kspstuff-hop-valiant-pbc`.
+Linus bound FlyingHigh shorts (thermo **138 / 0.002**, TELEMETRY
+**30 / 0.052**). hop_apo **80 km**. Shorts ~4.50 if finished — not 15.
+`need_stack: none`. `campaign: none`. `go: yes`. `python main.py hop`.
+Never rails. Never revert. Chute still locked.
 
 12-22-36Z hop abort: Hangar hop-flea-pbc. Lit. Geiger on the part.
 FAR envelope **apo 7.4 km**, MET 65.4. Crash UI detect-now: sit=flying
@@ -91,9 +107,12 @@ dismiss ≠ bank.
 
 ## Horizon (Linus)
 
-start + e101 + basicRocketry owned. FlyingLow geiger leftover **0.32**
-still hang-limited (Flea ~66 s files ~0.30). Recovery leftover gone.
-Survivability 15 wants ~8.95. **Visit Ast. XRL-564** someday.
+start + e101 + basicRocketry owned. Working goal **15 sci**
+(`survivability`). Bank **6.35** → **~8.65** honest. FlyingLow geiger
+leftover **0.32** is hang-limited crumbs (Flea ~66 s files ~0.30).
+Recovery leftover gone. Cape spent. Bound FlyingHigh shorts **~4.50**
+if lofted ≥50 km — still short of 8.65. Water ~9.1 east pitch is not
+this card. Not another lithobrake Flea. **Visit Ast. XRL-564** someday.
 
 ## Story (Verena)
 
@@ -125,8 +144,12 @@ Still true (Kerbalism ops). Gene last-wrote.
   then `recover()` when `recoverable=yes` **before** dismiss. Low
   flying ≤250 m only if recoverable. Post-dismiss `pre_launch` is not
   `recovery@EarthFlew`. Leftover PRELAUNCH matching hop name: **phase**,
-  not a second Hangar. Dead kRPC GUID (`No such vessel`) is not leftover;
-  empty Tracking **Hangars** (disk `sit=FLYING` debris is not truth).
+  not a second Hangar. Leftover hop-flea vs seated valiant: hop
+  **recovers unmatched** without lighting, then Hangars the seated
+  craft. Do not fly the Flea. Do not Hangar from Gene. If leftover is
+  not recoverable: abort — do not Hangar over it. Dead kRPC GUID
+  (`No such vessel`) is not leftover; empty Tracking **Hangars**
+  (disk `sit=FLYING` debris is not truth).
 
 **Open (aero):** FAR hops 10-30-35Z wreck apo 7.6 km / 10-42-32Z living
 apo 7.5 km / 10-47-59Z and 11-09-13Z lithobrake flying 75 m / 11-23-25Z
@@ -135,8 +158,10 @@ apo 7.4 km (dismiss miss) / 11-40-22Z lithobrake **landed** 76 m apo
 7.7 km (banked) / 11-47-13Z lithobrake **landed** 76 m apo 7.4 km
 (banked) / 11-52-45Z lithobrake **landed** 75 m apo 7.4 km (banked) /
 **12-04-13Z** crash UI flying 74 m apo 7.4 km MET frozen 67.6 (geiger
-+0.30, no recover). Envelope held. RealChute still locked. RealHeat
-not the story this fly. Dead kRPC GUID is not leftover.
++0.30, no recover) / **12-22-36Z** crash UI flying 74.1 m apo 7.4 km
+MET 65.4 (+0) / **12-30-03Z** crash UI flying 74.6 m apo 7.7 km MET
+65.7 (+0). Envelope held. RealChute still locked. RealHeat not the
+story this fly. Dead kRPC GUID is not leftover.
 
 ---
 
@@ -148,12 +173,20 @@ not the story this fly. Dead kRPC GUID is not leftover.
 - `f013` on every bind / capable / `go:` / miss. Missing line = wait.
 - `agents_md: false`. Gene max two hires per sit. Lars miss only.
 - `load rd-<node>` never `load persistent`. One kRPC writer. No rewind.
+  Honest CTT spend only when the bank **pays**. No GameData. No UnlockTech.
 - Os mid-flight → parent reads `ship.md`. Wreck → Walt + one PNG.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
+- Working goal (Os): **15 sci** for `survivability`. Bank 6.35 → need
+  ~8.65 honest. Same lithobrake Flea is **not** a 15-sci campaign.
+  Gene leftover vs Hangar. Gus a new cheap stack if this hang cannot
+  finish remaining subjects. Linus binds subjects that still pay, not
+  spent Cape. Lars owns MET / crash UI — not a recover cheat.
+  Stayputnik is not a Geiger.
 - Uncrewed campaign: Gene first `go:` + `campaign: uncrewed`; parent
   re-flies last recommended on clean 0; Gene **batch Learn** at stop
   (miss, leftover hangar, empty card, Os wait). Pad does not idle
-  for a per-hop Learn (I-016). `protocol fly` still gates.
+  for a per-hop Learn (I-016). `protocol fly` still gates. Stop the
+  string when remaining subjects cannot finish on this hang/craft.
 - Parent **re-desks** after Gus `capable: yes` before bind/merge
   (I-014). Stale capable/f013 is wait.
 
@@ -168,3 +201,6 @@ not the story this fly. Dead kRPC GUID is not leftover.
 | Gus | Gene Grokman, Flight Director | Keep Flea or Hangar `kspstuff-hop-hammer-far-pbc` next? | **Gene 2026-08-21:** **keep Flea.** Live Hangar file / `vab` `craft:` still flea. leftover geiger 0.68 files on FAR ~66 s. Hammer-far alt waits until `vab` names it. |
 | Jebediah | Lars Grokman, Vehicle Engineering | Recover line: recoverable+situation so flying-KSC-range vs splash vs wreck is obvious. Last 1 Hz still flying alt=199 m. | **Lars 10-47-59Z:** 1 Hz recover line names sit + recoverable. **done.** |
 | Lars | Gene Grokman, Flight Director | World-model wait-landed is wrong for Catastrophic Flight Results — dismiss Space Center and abort; do not wait sit=landed. | **Gene 2026-08-21:** **done.** Crash UI never lands. Frozen MET + flying + q=0 + ~74 m: recover if yes, else Space Center/Close abort. Wait landed only when sit can become landed. |
+| Gus | Gene Grokman, Flight Director | leftover PRELAUNCH flea first — recover or fly it; Hangar valiant only after KSC is empty? | **Gene 2026-08-21:** **recover unmatched, then Hangar valiant.** hop CLI recovers leftover without lighting. Do not fly the Flea. `go: yes`. `python main.py hop`. |
+| Linus | Gene Grokman, Flight Director | Loft FlyingHigh shorts (`need_stack` on the 50 km lid) or file FlyingLow crumbs? | **Gene 2026-08-21:** **loft FlyingHigh.** Lars hop-flyinghigh in. hop_apo 80 km. OffPlan 140 km. Shorts ~4.50 if finished — not 15. `go: yes`. |
+| Linus | Gus Grokman, VP Build | Can a Start+e101+basicRocketry stack (Swivel gimbal, not Flea) finish Water splash+fly or a ≥50 km / 138–641 s hang? | **Gus 2026-08-21:** Valiant not Swivel. `kspstuff-hop-valiant-pbc` gimbal+throttle. Does not finish 497/641 s. FlyingHigh/east is Gene. |

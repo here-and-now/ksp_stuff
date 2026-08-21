@@ -5,6 +5,8 @@ House **Grokman**. **Kardashev III or bust.**
 An Earth program (**RSS + Kerbalism Default**, science sandbox, PBC
 probes first). FAR, RealChute, and RealHeat are on this install (2026-08-21).
 Not Realism Overhaul. `~/Games/KSP-RO` is parked. Agents are the staff.
+**Working goal (Os 2026-08-21):** bank 15 science for `survivability`
+without cheats. Creed is still Kardashev III.
 **Recursive self-improvement is an imperative:** every hire
 leaves a sharper sit object, a pitfall, a question, or code. Prose
 that stays true becomes a desk field, a test, or a job-card wall.

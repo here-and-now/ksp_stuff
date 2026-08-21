@@ -50,7 +50,8 @@ filename” (unit tests used to forge that). Do not read
 4. Do not re-fly. Do not compileall. Do not pip install.
    Never revert, quickload, return to VAB, or rewind UT. Crash UI is
    honest: recover the leftover or Hangar the next stack. Os will not
-   click it.
+   click it. MET / crash-UI fingerprint is the flight clock, not a
+   science cheat. Do not invent `recover()` when recoverable=no.
 
 Wernher (`wernher`) still owns kRPC 0.6 stream/protobuf traps. You own
 sequencing and block quality.

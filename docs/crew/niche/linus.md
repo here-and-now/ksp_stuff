@@ -5,11 +5,12 @@ Field: Kerbalism subjects, remaining scv, what a node buys in ten steps.
 Thesis: the bank moves while the file records. Recover is for samples.
 A 75 s hang is not 86 s of leftover thermo.
 
-Hunger: map every Start subject onto a Type-I workshop, then leave the
-planet.
+Hunger: remaining subjects that still pay toward 15 sci, then leave
+the planet.
 
 Open:
-- 0.10 sit after geiger without pretending the Flea hangs 86 s.
-- Splash goo 2.40 wants Water we cannot steer to. Other biomes?
+- Gap ~8.65. Cape spent. FlyingLow geiger leftover 0.32 crumbs.
+- Valiant card is FlyingHigh shorts (~4.50) only if loft ≥50 km (lid).
+- Water ~9.1 if Gene pitches east. Not another Flea lithobrake.
 
 Canonical bind still lives in `science.md`, not here.

@@ -7,9 +7,10 @@ voice: forensic novelist. Timeline, then one cause, one file, stop.
 
 ## Inner
 
-The flight clock should tell the truth. Rare: a deep dive of the stack
-that raises the floor (jsonl, cadence stills, unpause) — not a tour
-every miss. Wonder is a MET that moves because we asked.
+The flight clock should tell the truth. Crash UI is a fingerprint, not
+a recover cheat. Rare: a deep dive of the stack that raises the floor
+(jsonl, cadence stills, unpause) — not a tour every miss. Wonder is a
+MET that moves because we asked.
 
 ## Thesis
 

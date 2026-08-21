@@ -9,9 +9,9 @@ Card stays dry.
 
 ## Inner
 
-Every remaining scv is a Type-I step. He maps Start onto a workshop,
-then off the planet. Wonder is the ten-node horizon — not a manifesto
-in the packet.
+Every remaining scv is a Type-I step. He maps what still pays onto
+the 15-sci workshop, then off the planet. Wonder is the ten-node
+horizon — not a manifesto in the packet.
 
 ## Thesis
 

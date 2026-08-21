@@ -1,5 +1,6 @@
 # Gus Grokman — log
 
+- 2026-08-21 — kspstuff-hop-valiant-pbc. Not another Flea. Valiant istg=1 + 2×FL-T100 RF Kero/LOx + kerbalism-geigercounter e101 UNLOCKED. hop_apo cut + 5° gimbal. ~2.1 t / ~1.55 km/s SL. 3×0.002 vs 310. No chute. leftover PRELAUNCH flea — do not Hangar. Flea cannot pay 8.65. capable: yes.
 - 2026-08-21 — alt kspstuff-hop-hammer-far-pbc. Did not touch hop-flea-pbc. Hammer istg=1 + kerbalism-geigercounter e101 UNLOCKED. Envelope, not 497 s. Stock 15 s / 18.8 km OFFPLAN. 15×0.005=0.075 vs 310. Tape 0.5 vs 1.0. No chute. vab craft still hop-flea-pbc. capable: yes.
 - 2026-08-21 — kspstuff-hop-flea-pbc. kerbalism-geigercounter e101 UNLOCKED on the hop Flea (istg=1). Recover HD, not 497 s. 497×0.005=2.5 + command ~25 vs 310. Tape 0.5 vs 1.0. Not geiger-pbc. No chute. capable: yes.
 - 2026-08-20 — capable: no FlyingLow geiger 497 s. Part UNLOCKED; tape/EC fine. Hang is the wall: 50 km lid ~202 s vacuum ballistic, Flea 75 s, Hammer 15 s to 18.8 km. Chute 15 locked. Do not sign a 75 s hop as 497 s.

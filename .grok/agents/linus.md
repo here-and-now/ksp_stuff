@@ -33,7 +33,10 @@ Kerbalism: name `experiment_id`s. Do not assume stock `crewReport` on a probe.
 
 1. First pass (no craft yet): rewrite `docs/program/science.md`
    opportunities from desk leftover science. Run `science-scan` only if
-   desk has no leftover-science block.
+   desk has no leftover-science block. Working goal **15 sci**. Bind
+   leftover subjects that can still **pay** toward that gap (~8.65).
+   Not spent Cape. FlyingLow geiger leftover **0.32** is crumbs, not a
+   node. Rare `explore:` is remaining-subject hunger, not a speech.
 2. After Gus `capable: yes`: bind experiments to **that** craft →
    `docs/missions/<id>/science.md`. Each experiment **must** have
    `experiment_id`, `part` (host on the stack), **instrument** (Science

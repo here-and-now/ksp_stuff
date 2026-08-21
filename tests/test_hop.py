@@ -12,9 +12,11 @@ from unittest.mock import patch
 
 from hop import (
     CRAFT,
+    FLYING_HIGH_M,
     HOP_TO_WATER_ABORT,
     hop_craft_name,
     hop_craft_path,
+    hop_offplan_apo,
     hop_science_ids,
     hop_target_apo,
     install_and_launch,
@@ -228,14 +230,27 @@ class TestHopCatalog(unittest.TestCase):
         self.assertIn("kspstuff-hop-hammer-pbc", blocks)
 
     def test_apo_clamp(self):
-        with patch("phases._kv", return_value={"hop_apo": "15000"}):
-            self.assertEqual(hop_target_apo(), 15_000.0)
-        with patch("phases._kv", return_value={"hop_apo": "18000"}):
-            self.assertEqual(hop_target_apo(), 18_000.0)
-        with patch("phases._kv", return_value={"hop_apo": "40000"}):
-            self.assertEqual(hop_target_apo(), 18_000.0)
-        with patch("phases._kv", return_value={"hop_apo": "1000"}):
-            self.assertEqual(hop_target_apo(), 8_000.0)
+        with patch("hop.hop_wants_flying_high", return_value=False):
+            with patch("phases._kv", return_value={"hop_apo": "15000"}):
+                self.assertEqual(hop_target_apo(), 15_000.0)
+            with patch("phases._kv", return_value={"hop_apo": "18000"}):
+                self.assertEqual(hop_target_apo(), 18_000.0)
+            with patch("phases._kv", return_value={"hop_apo": "40000"}):
+                self.assertEqual(hop_target_apo(), 18_000.0)
+            with patch("phases._kv", return_value={"hop_apo": "1000"}):
+                self.assertEqual(hop_target_apo(), 8_000.0)
+
+    def test_apo_unclamp_flyinghigh(self):
+        with patch("hop.hop_wants_flying_high", return_value=True):
+            self.assertEqual(hop_offplan_apo(), FLYING_HIGH_M)
+            with patch("phases._kv", return_value={"hop_apo": "80000"}):
+                self.assertEqual(hop_target_apo(), 80_000.0)
+            with patch("phases._kv", return_value={"hop_apo": "40000"}):
+                self.assertEqual(hop_target_apo(), 40_000.0)
+            with patch("phases._kv", return_value={"hop_apo": "200000"}):
+                self.assertEqual(hop_target_apo(), FLYING_HIGH_M)
+            with patch("phases._kv", return_value={"hop_apo": "1000"}):
+                self.assertEqual(hop_target_apo(), 8_000.0)
 
 
 class TestCardIds(unittest.TestCase):
@@ -604,18 +619,74 @@ class TestHopSequence(unittest.TestCase):
         vessel.orbit.apoapsis_altitude = 55_000.0
         vessel.orbit.periapsis_altitude = -6_000_000.0
         now, sleep, _t = _fast_clock()
-        with self.assertRaises(OffPlan) as ctx:
-            run_on_vessel(
-                _Session(vessel),
-                vessel,
-                science_ids=("mysteryGoo",),
-                now=now,
-                sleep=sleep,
-                timeout=5.0,
-                pulse=1.0,
-            )
+        with patch("hop.hop_wants_flying_high", return_value=False):
+            with self.assertRaises(OffPlan) as ctx:
+                run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("mysteryGoo",),
+                    now=now,
+                    sleep=sleep,
+                    timeout=5.0,
+                    pulse=1.0,
+                )
         self.assertIn("apo", str(ctx.exception))
         self.assertIn("FlyingLow", str(ctx.exception))
+        self.assertFalse(vessel.recovered)
+
+    def test_flyinghigh_80km_is_not_offplan(self):
+        """Valiant loft 80 km is FlyingHigh, under Space 140 km."""
+        mod = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([mod], recoverable=False)
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        now, sleep, t = _fast_clock()
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 55_000.0
+                vessel.orbit.apoapsis_altitude = 80_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying" and mod.triggered:
+                vessel.situation = "landed"
+                vessel._alt = 80.0
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("hop.hop_wants_flying_high", return_value=True):
+            with patch("phases._kv", return_value={"hop_apo": "80000"}):
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("temperatureScan",),
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+
+    def test_flyinghigh_space_is_offplan(self):
+        mod = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([mod], sit="flying")
+        vessel._alt = 80_000.0
+        vessel.orbit.apoapsis_altitude = 150_000.0
+        vessel.orbit.periapsis_altitude = -6_000_000.0
+        now, sleep, _t = _fast_clock()
+        with patch("hop.hop_wants_flying_high", return_value=True):
+            with self.assertRaises(OffPlan) as ctx:
+                run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("temperatureScan",),
+                    now=now,
+                    sleep=sleep,
+                    timeout=5.0,
+                    pulse=1.0,
+                )
+        self.assertIn("apo", str(ctx.exception))
+        self.assertIn("Space", str(ctx.exception))
         self.assertFalse(vessel.recovered)
 
     def test_hammer_18km_overshoot_is_not_offplan(self):
@@ -1363,9 +1434,10 @@ class TestHopSequence(unittest.TestCase):
         vessel = _Vessel([])
         vessel.name = CRAFT
         session = _Session(vessel)
-        with patch("hop.run_hop") as hop:
-            with patch("hop.run_on_vessel", return_value="recovered") as run:
-                result = run_phase(session)
+        with patch("hop.hop_match_name", return_value=CRAFT):
+            with patch("hop.run_hop") as hop:
+                with patch("hop.run_on_vessel", return_value="recovered") as run:
+                    result = run_phase(session)
         self.assertEqual(result, "recovered")
         hop.assert_not_called()
         run.assert_called_once()
@@ -1380,13 +1452,14 @@ class TestHopSequence(unittest.TestCase):
         def fake_flight(sess, v=None, **_kwargs):
             entered.append(v or sess.active_vessel)
 
-        with patch("hop.game_scene", return_value="space_center"):
-            with patch("hop.go_flight", side_effect=fake_flight) as gf:
-                with patch("hop.run_hop") as hop:
-                    with patch(
-                        "hop.run_on_vessel", return_value="recovered"
-                    ) as run:
-                        result = run_phase(session)
+        with patch("hop.hop_match_name", return_value=CRAFT):
+            with patch("hop.game_scene", return_value="space_center"):
+                with patch("hop.go_flight", side_effect=fake_flight) as gf:
+                    with patch("hop.run_hop") as hop:
+                        with patch(
+                            "hop.run_on_vessel", return_value="recovered"
+                        ) as run:
+                            result = run_phase(session)
         self.assertEqual(result, "recovered")
         hop.assert_not_called()
         gf.assert_called()
@@ -1400,13 +1473,14 @@ class TestHopSequence(unittest.TestCase):
         session = _Session(None)  # type: ignore[arg-type]
         session.active_vessel = None
         session.space_center.vessels = [leftover]
-        with patch("hop.game_scene", return_value="space_center"):
-            with patch("hop.go_flight") as gf:
-                with patch("hop.run_hop") as hop:
-                    with patch(
-                        "hop.run_on_vessel", return_value="recovered"
-                    ) as run:
-                        result = run_phase(session)
+        with patch("hop.hop_match_name", return_value=CRAFT):
+            with patch("hop.game_scene", return_value="space_center"):
+                with patch("hop.go_flight") as gf:
+                    with patch("hop.run_hop") as hop:
+                        with patch(
+                            "hop.run_on_vessel", return_value="recovered"
+                        ) as run:
+                            result = run_phase(session)
         self.assertEqual(result, "recovered")
         hop.assert_not_called()
         gf.assert_called()
@@ -1420,13 +1494,14 @@ class TestHopSequence(unittest.TestCase):
         dead = _DeadVessel()
         session = _Session(dead)
         session.space_center.vessels = [dead, leftover]
-        with patch("hop.game_scene", return_value="space_center"):
-            with patch("hop.go_flight") as gf:
-                with patch("hop.run_hop") as hop:
-                    with patch(
-                        "hop.run_on_vessel", return_value="recovered"
-                    ) as run:
-                        result = run_phase(session)
+        with patch("hop.hop_match_name", return_value=CRAFT):
+            with patch("hop.game_scene", return_value="space_center"):
+                with patch("hop.go_flight") as gf:
+                    with patch("hop.run_hop") as hop:
+                        with patch(
+                            "hop.run_on_vessel", return_value="recovered"
+                        ) as run:
+                            result = run_phase(session)
         self.assertEqual(result, "recovered")
         hop.assert_not_called()
         gf.assert_called()
@@ -1444,6 +1519,104 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(result, "recovered")
         hop.assert_called_once()
         run.assert_not_called()
+
+    def test_flying_debris_is_not_leftover(self):
+        """Live pool Debris FLYING is not leftover. Hangar (I-017)."""
+        ghost = _Vessel([], sit="flying")
+        ghost.name = f"{CRAFT} Debris"
+        session = _Session(ghost)
+        with patch("hop.run_hop", return_value="recovered") as hop:
+            with patch("hop.run_on_vessel") as run:
+                result = run_phase(session)
+        self.assertEqual(result, "recovered")
+        hop.assert_called_once()
+        run.assert_not_called()
+
+    def test_dead_guid_plus_flying_debris_hangars(self):
+        """Ghost FLYING debris in the pool is not leftover. Hangar."""
+        dead = _DeadVessel()
+        ghost = _Vessel([], sit="flying")
+        ghost.name = f"{CRAFT} Debris"
+        session = _Session(dead)
+        session.space_center.vessels = [dead, ghost]
+        with patch("hop.run_hop", return_value="recovered") as hop:
+            with patch("hop.run_on_vessel") as run:
+                result = run_phase(session)
+        self.assertEqual(result, "recovered")
+        hop.assert_called_once()
+        run.assert_not_called()
+
+    def test_unmatched_flea_recovers_without_light(self):
+        """PRELAUNCH Flea vs seated Valiant: recover, do not light, then Hangar."""
+        flea = _Vessel([], sit="pre_launch", recoverable=True)
+        flea.name = CRAFT
+        session = _Session(flea)
+        logs: list[str] = []
+        with patch(
+            "hop.hop_match_name", return_value="kspstuff-hop-valiant-pbc"
+        ):
+            with patch("hop.run_hop", return_value="recovered") as hop:
+                with patch("hop.run_on_vessel") as run:
+                    result = run_phase(session, on_log=logs.append)
+        self.assertEqual(result, "recovered")
+        self.assertTrue(flea.recovered)
+        self.assertEqual(flea.control.staged, 0)
+        hop.assert_called_once()
+        run.assert_not_called()
+        self.assertTrue(any("unmatched" in line for line in logs))
+        self.assertTrue(any("do not light" in line for line in logs))
+
+    def test_unmatched_flea_not_recoverable_does_not_hangar(self):
+        flea = _Vessel([], sit="pre_launch", recoverable=False)
+        flea.name = CRAFT
+        session = _Session(flea)
+        with patch(
+            "hop.hop_match_name", return_value="kspstuff-hop-valiant-pbc"
+        ):
+            with patch("hop.run_hop") as hop:
+                with patch("hop.run_on_vessel") as run:
+                    with self.assertRaises(MissionAbort) as ctx:
+                        run_phase(session)
+        self.assertIn("unmatched leftover not recoverable", str(ctx.exception))
+        self.assertFalse(flea.recovered)
+        self.assertEqual(flea.control.staged, 0)
+        hop.assert_not_called()
+        run.assert_not_called()
+
+    def test_cli_hop_recovers_unmatched_before_hangar(self):
+        flea = _Vessel([], sit="pre_launch", recoverable=True)
+        flea.name = CRAFT
+        session = _Session(flea)
+        with patch(
+            "hop.hop_match_name", return_value="kspstuff-hop-valiant-pbc"
+        ):
+            with patch("hop.hop_science_ids", return_value=("temperatureScan",)):
+                with patch("hop.install_and_launch") as hangar:
+                    with patch("hop.wait_vessel_ready", return_value="ready"):
+                        with patch(
+                            "hop.run_on_vessel", return_value="recovered"
+                        ) as run:
+                            result = run_hop(session)
+        self.assertEqual(result, "recovered")
+        self.assertTrue(flea.recovered)
+        self.assertEqual(flea.control.staged, 0)
+        hangar.assert_called_once()
+        run.assert_called_once()
+
+    def test_hop_name_with_geiger_pbc_is_leftover_not_pad(self):
+        """Substring geiger-pbc is not the pad motor (I-013)."""
+        vessel = _Vessel([])
+        vessel.name = "kspstuff-hop-flea-geiger-pbc"
+        session = _Session(vessel)
+        with patch(
+            "hop.hop_match_name", return_value="kspstuff-hop-flea-geiger-pbc"
+        ):
+            with patch("hop.run_hop") as hop:
+                with patch("hop.run_on_vessel", return_value="recovered") as run:
+                    result = run_phase(session)
+        self.assertEqual(result, "recovered")
+        hop.assert_not_called()
+        run.assert_called_once()
 
 
 class TestPhaseHopUncrewed(unittest.TestCase):
@@ -1538,6 +1711,21 @@ class TestHopHangar(unittest.TestCase):
                     install_and_launch(session)
             self.assertIn("refused", str(ctx.exception))
             self.assertIn(bad, str(ctx.exception))
+
+    def test_allows_hop_name_containing_geiger_pbc(self):
+        """Refuse exact pad/geiger names, not substring geiger-pbc (I-013)."""
+        session = _Session(None)  # type: ignore[arg-type]
+        session.active_vessel = None
+        with tempfile.TemporaryDirectory() as raw:
+            fake = _FakeHangar(Path(raw))
+            with patch(
+                "hop.hop_craft_name", return_value="kspstuff-hop-flea-geiger-pbc"
+            ):
+                with patch("hop.discover_hangar", return_value=fake):
+                    with patch("hangar.install_signed", return_value="ok") as inst:
+                        install_and_launch(session)
+        inst.assert_called_once()
+        self.assertEqual(inst.call_args.args[1], "kspstuff-hop-flea-geiger-pbc")
 
     def test_missing_ksp_aborts(self):
         session = _Session(None)  # type: ignore[arg-type]

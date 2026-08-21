@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from hangar import _can_revert, game_scene, ksc_ready
+from hangar import _can_revert, game_scene, go_space_center, ksc_ready
 from session import Session
 
 
@@ -22,7 +22,9 @@ def _enum(v: object, attr: str) -> str:
     return str(raw or "?")
 
 
-def cmd_recover_probe(session: Session, *, recover: bool = False) -> int:
+def cmd_recover_probe(
+    session: Session, *, recover: bool = False, space_center: bool = False
+) -> int:
     sc = session.space_center
     scene = game_scene(session)
     ok, why = ksc_ready(session)
@@ -50,7 +52,10 @@ def cmd_recover_probe(session: Session, *, recover: bool = False) -> int:
         active = sc.active_vessel
     except Exception:
         active = None
-    print(f"active: {getattr(active, 'name', None)}", flush=True)
+    try:
+        print(f"active: {getattr(active, 'name', None)}", flush=True)
+    except Exception as exc:
+        print(f"active: dead ({exc})", flush=True)
     for v in vessels[:12]:
         name = getattr(v, "name", "?")
         sit = _sit(v)
@@ -75,19 +80,28 @@ def cmd_recover_probe(session: Session, *, recover: bool = False) -> int:
             f"met={met} fuel={fuel} alt={alt}",
             flush=True,
         )
+    if space_center:
+        print("go_space_center total wreck — not revert_to_launch", flush=True)
+        go_space_center(session, reload_save=True)
+        print(f"scene now {game_scene(session)}", flush=True)
+        return 0
     if not recover:
-        print("never revert_to_launch; pass --recover to recover() pad leftover", flush=True)
+        print("never revert_to_launch; pass --recover or --space-center", flush=True)
         return 0
     pad = None
     for v in vessels:
+        try:
+            rec = bool(getattr(v, "recoverable", False))
+        except Exception:
+            continue
+        if not rec:
+            continue
         sit = _sit(v)
-        rec = bool(getattr(v, "recoverable", False))
-        met = float(getattr(v, "met", 0.0) or 0.0)
-        if rec and sit in {"pre_launch", "prelaunch", "landed"} and met < 1.0:
+        if sit in {"pre_launch", "prelaunch", "landed", "splashed"}:
             pad = v
             break
     if pad is None:
-        print("recover: no pad leftover recoverable MET<1", flush=True)
+        print("recover: no recoverable leftover", flush=True)
         return 2
     name = getattr(pad, "name", "?")
     scene = game_scene(session)
@@ -98,6 +112,10 @@ def cmd_recover_probe(session: Session, *, recover: bool = False) -> int:
         go_flight(session, pad)
         print(f"scene now {game_scene(session)} sit={_sit(pad)} met={getattr(pad, 'met', None)}", flush=True)
     print(f"recover() {name} sit={_sit(pad)} recoverable={int(bool(getattr(pad, 'recoverable', False)))}", flush=True)
+    try:
+        session.conn.krpc.paused = False
+    except Exception:
+        pass
     pad.recover()
     print("recover() returned", flush=True)
     return 0

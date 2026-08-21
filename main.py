@@ -680,7 +680,12 @@ def main(argv: list[str] | None = None) -> int:
     recp.add_argument(
         "--recover",
         action="store_true",
-        help="vessel.recover() pad leftover MET<1. Not revert_to_launch.",
+        help="vessel.recover() leftover. Not revert_to_launch.",
+    )
+    recp.add_argument(
+        "--space-center",
+        action="store_true",
+        help="Total wreck: Close to KSC. Not revert.",
     )
     shot_p = sub.add_parser(
         "screenshot",
@@ -964,7 +969,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.cmd == "recover-probe":
             from recover_probe import cmd_recover_probe
 
-            return cmd_recover_probe(session, recover=bool(getattr(args, "recover", False)))
+            return cmd_recover_probe(
+                session,
+                recover=bool(getattr(args, "recover", False)),
+                space_center=bool(getattr(args, "space_center", False)),
+            )
         if args.cmd == "pad":
             return cmd_pad(session, args)
         if args.cmd == "hop":

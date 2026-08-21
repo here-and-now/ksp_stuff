@@ -3,7 +3,7 @@
 Streams use kRPC 0.6 ``add_stream(getattr, obj, name)``. Gates use the
 live body's ``atmosphere_depth``. Each :meth:`Telem.read` writes a
 ``kind=state`` row to the seated run jsonl (alt, apo, peri, situation,
-MET, EC, fuel, surface horiz, heading). :class:`EventLog` stays
+MET, EC, fuel, surface horiz, heading, pitch, AoA, biome). :class:`EventLog` stays
 in-memory unless given a path. ``vessel.flight()`` with no frame is
 the vessel origin — ``speed`` is always ~0. Surface kinematics use
 the body's ``reference_frame`` (Jeb 14:37Z / 16:14Z).
@@ -91,6 +91,9 @@ class Snapshot:
     speed: float = float("nan")
     horiz: float = float("nan")
     heading: float = float("nan")
+    pitch: float = float("nan")
+    aoa: float = float("nan")
+    biome: str = ""
     met: float = float("nan")
     ec: float | None = None
     fuel: float | None = None
@@ -119,6 +122,7 @@ def format_snapshot(snap: Snapshot) -> str:
         f"atm={snap.atm_depth:.1f} in_atmo={int(snap.in_atmo)} "
         f"ec={ec} fuel={fuel} wreck={int(snap.wreck)} "
         f"horiz={snap.horiz:.0f} hdg={snap.heading:.0f} "
+        f"pitch={snap.pitch:.0f} aoa={snap.aoa:.0f} biome={snap.biome or '?'} "
         f"vessel={snap.vessel}"
     )
 
@@ -179,10 +183,13 @@ def reliability_broken(vessel: Any) -> str | None:
         return None
     for part in parts:
         try:
+            pname = str(getattr(part, "name", "?") or "?")
+        except Exception:
+            continue
+        try:
             modules = list(part.modules)
         except Exception:
             continue
-        pname = getattr(part, "name", "?")
         for module in modules:
             hit = _module_flag(
                 module, "broken", "isBroken", "malfunction", "failed"
@@ -308,6 +315,8 @@ class Telem:
             self._streams[f"{group}.{prop}"] = add_stream(getattr, obj, prop)
         for prop in ("speed", "horizontal_speed", "heading"):
             self._streams[f"kin.{prop}"] = add_stream(getattr, self._kin, prop)
+        for prop in ("pitch", "angle_of_attack"):
+            self._streams[f"att.{prop}"] = add_stream(getattr, self._flight, prop)
 
     def _stream(self, key: str, fallback: Any = float("nan")) -> float:
         stream = self._streams.get(key)
@@ -363,6 +372,9 @@ class Telem:
         speed = self._stream("kin.speed")
         horiz = self._stream("kin.horizontal_speed")
         heading = self._stream("kin.heading")
+        pitch = self._stream("att.pitch")
+        aoa = self._stream("att.angle_of_attack")
+        biome = str(getattr(vessel, "biome", "") or "")
         if not math.isfinite(speed) or speed <= 0.05:
             if math.isfinite(horiz) and abs(horiz) > 0.05:
                 speed = abs(horiz)
@@ -408,6 +420,9 @@ class Telem:
             speed=speed,
             horiz=horiz,
             heading=heading,
+            pitch=pitch,
+            aoa=aoa,
+            biome=biome,
             met=met,
             ec=ec,
             fuel=fuel,

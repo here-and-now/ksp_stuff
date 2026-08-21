@@ -84,6 +84,8 @@ class ExperimentCfg:
     sample_amount: float | None = None
     ec_rate: float | None = None
     size_mb: float | None = None
+    science_cap: float | None = None
+    situations: tuple[str, ...] = ()
 
 
 def merge_experiment_cfg(
@@ -94,6 +96,8 @@ def merge_experiment_cfg(
     sample_amount: float | None = None,
     ec_rate: float | None = None,
     size_mb: float | None = None,
+    science_cap: float | None = None,
+    situations: tuple[str, ...] | None = None,
 ) -> None:
     token = (eid or "").strip()
     if not token:
@@ -106,6 +110,8 @@ def merge_experiment_cfg(
             sample_amount=sample_amount,
             ec_rate=ec_rate,
             size_mb=size_mb,
+            science_cap=science_cap,
+            situations=situations or (),
         )
         return
     if data_rate is not None and data_rate > 0:
@@ -120,6 +126,11 @@ def merge_experiment_cfg(
     if size_mb is not None:
         if cur.size_mb is None or size_mb > cur.size_mb:
             cur.size_mb = size_mb
+    if science_cap is not None:
+        if cur.science_cap is None or science_cap > cur.science_cap:
+            cur.science_cap = science_cap
+    if situations:
+        cur.situations = tuple(dict.fromkeys([*cur.situations, *situations]))
 
 
 def _cfg_float(value: str) -> float | None:
@@ -235,6 +246,8 @@ def scan_config_cache(path: str | Path) -> Catalog:
     exp_id = ""
     exp_base: float | None = None
     exp_scale: float | None = None
+    exp_cap: float | None = None
+    exp_sits: list[str] = []
     exp_depth = 0
 
     def _commit() -> None:
@@ -271,9 +284,12 @@ def scan_config_cache(path: str | Path) -> Catalog:
 
     def _reset_expdef() -> None:
         nonlocal exp_id, exp_base, exp_scale, exp_depth
+        nonlocal exp_cap, exp_sits
         exp_id = ""
         exp_base = None
         exp_scale = None
+        exp_cap = None
+        exp_sits = []
         exp_depth = 0
 
     def _commit_expdef() -> None:
@@ -282,7 +298,13 @@ def scan_config_cache(path: str | Path) -> Catalog:
         size = None
         if exp_base is not None and exp_scale is not None:
             size = exp_base * exp_scale
-        merge_experiment_cfg(cat.experiments, exp_id, size_mb=size)
+        merge_experiment_cfg(
+            cat.experiments,
+            exp_id,
+            size_mb=size,
+            science_cap=exp_cap,
+            situations=tuple(exp_sits),
+        )
 
     with cache.open(encoding="utf-8", errors="replace") as fh:
         for raw in fh:
@@ -310,15 +332,22 @@ def scan_config_cache(path: str | Path) -> Catalog:
                         _commit_expdef()
                         in_expdef = False
                     continue
-                if exp_depth != 1 or "=" not in s:
+                if "=" not in s:
                     continue
                 key, _, rest = s.partition("=")
                 key = key.strip()
                 value = rest.strip()
+                if key == "Situation":
+                    exp_sits.append(value)
+                    continue
+                if exp_depth != 1:
+                    continue
                 if key == "id" and not exp_id:
                     exp_id = value
                 elif key == "baseValue" and exp_base is None:
                     exp_base = _cfg_float(value)
+                elif key == "scienceCap" and exp_cap is None:
+                    exp_cap = _cfg_float(value)
                 elif key == "dataScale" and exp_scale is None:
                     exp_scale = _cfg_float(value)
                 continue

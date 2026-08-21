@@ -42,3 +42,6 @@ docs/program/sit-card.json
 
 # Cadence stills. Press heroes (first-mystery-goo, rocket-flea, …) stay tracked.
 screenshots/runs/
+screenshots/stuck-*.png
+screenshots/ksp-*.png
+screenshots/hop-wait-recover.png

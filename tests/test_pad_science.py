@@ -915,10 +915,19 @@ class TestCardWaitLine(unittest.TestCase):
         self.assertTrue(line.startswith("wait science"))
         self.assertIn("geigerCounter", line)
         self.assertIn("part=", line)
+        self.assertIn("file=open", line)
         self.assertIn("rem=0.4", line)
-        self.assertIn("run=1", line)
         self.assertIn("met=12.3", line)
         self.assertIn("sit=landed", line)
+
+    def test_rem_zero_running_is_recording(self):
+        mod = _Mod("Experiment", "geigerCounter", running=True)
+        mod.fields["remaining"] = 0
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("kerbalism-geigercounter", [mod])])
+        line = card_wait_line(vessel, ("geigerCounter",))
+        self.assertIn("file=recording", line)
+        self.assertIn("run=1", line)
 
 
 class _Uplink:

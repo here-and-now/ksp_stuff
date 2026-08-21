@@ -184,18 +184,23 @@ def install_and_launch(session: object, *, recover: bool = True) -> None:
         raise MissionAbort(
             f"hop Hangar refused {name} — need a hop motor (not pad/geiger)"
         )
-    src = hop_craft_path(name)
-    if not src.is_file():
-        raise MissionAbort(f"missing hop craft {src}")
     hangar = discover_hangar()
     if hangar is None:
         raise MissionAbort("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
-    folder = hangar.ships("VAB")
-    folder.mkdir(parents=True, exist_ok=True)
-    dest = folder / f"{name}.craft"
-    dest.write_bytes(src.read_bytes())
-    log.info("hop Hangar %s uncrewed", name)
-    hangar.launch(session, name, recover=recover, uncrewed=True)
+    from hangar import install_signed
+    from session import SessionError
+
+    try:
+        install_signed(
+            session,
+            name,
+            hangar=hangar,
+            recover=recover,
+            refuse=_NOT_HOP,
+            src=hop_craft_path(name),
+        )
+    except SessionError as exc:
+        raise MissionAbort(str(exc)) from exc
 
 
 def _airborne(snap: object) -> bool:

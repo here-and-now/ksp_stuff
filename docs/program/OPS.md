@@ -117,6 +117,8 @@ Every ticket:
 - `status` — `inbox` `triage` `ready` `assigned` `in_progress` `blocked` `verify` `done` `wont`
 - `blockers` — other ticket ids
 - `fingerprint` — stable class (`heading-never-090`, `ec=0-after-loft`, `leftover-prelaunch-ghost`, `science-skip-no-modules`, `hangar-can-revert`)
+- `category` — `craft` | `science_opportunity` | `bug` | `improvement` | `flight` | `recover` | `org` | `control` | `systems` | `press` | `ops` (replaces cards)
+- `tags` — free list (`hard-splash`, `heading-090`, `east-t3`)
 - `rsi_loop` — `org` | `ops` | `software` | `vehicle` | `science` | `none`
 - `payload` — type-specific (see below)
 - `evidence` — paths (jsonl, PNG, lesson heading)

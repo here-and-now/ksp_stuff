@@ -1,14 +1,21 @@
 {
   "fingerprints": {
+    "catastrophic-splash": 1,
     "desk-leftover-vs-krpc": 1,
+    "east-valiant-water": 1,
     "ec=0-after-loft": 1,
     "hangar-geiger-pbc-substring": 1,
-    "heading-never-090": 1,
+    "heading-never-090": 2,
     "hop-apo-recut-descent": 1,
     "hop-splash-15sci": 1,
+    "hop-to-water-east": 1,
     "leftover-hides-unstarted": 1,
     "leftover-prelaunch-ghost": 2,
+    "science-skip-no-modules": 1,
+    "splash-goo-15": 1,
+    "splash-telemetry": 1,
     "stack": 1,
+    "telem-hz": 1,
     "unstarted-splash-telemetry": 1
   },
   "tickets": {
@@ -82,14 +89,16 @@
       "updated": "2026-08-21T21:17:04Z"
     },
     "T-004": {
-      "assignee": "",
+      "assignee": "linus",
       "blockers": [],
+      "close_why": "board names missing-id as unstarted; leftover-science is started leftover only; splash goo/TELEMETRY and Water siblings listed as unstarted REACH; no t7-splash bind",
       "created": "2026-08-21T20:50:05Z",
       "desk": "linus",
       "evidence": [
         "docs/program/desk.md",
         "docs/program/science.md",
-        "docs/missions/jebediah/science.md"
+        "docs/missions/jebediah/science.md",
+        "docs/program/science.md"
       ],
       "fingerprint": "leftover-hides-unstarted",
       "id": "T-004",
@@ -121,10 +130,10 @@
       "sci_expect": 2.4,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "done",
       "title": "I-018 leftover-science hides unstarted REACH",
       "type": "science",
-      "updated": "2026-08-21T21:05:29Z"
+      "updated": "2026-08-21T21:51:51Z"
     },
     "T-005": {
       "assignee": "",
@@ -171,28 +180,35 @@
       "updated": "2026-08-21T21:08:23Z"
     },
     "T-007": {
-      "assignee": "",
+      "assignee": "lars",
       "blockers": [],
+      "close_why": "16-57-24Z heading never 090 was target_roll=0 near vertical; hop-to-water now points surface target_direction and leaves roll unset",
       "created": "2026-08-21T20:50:05Z",
       "desk": "lars",
-      "evidence": [],
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T16-33-22Z-hop-to-water-review.md",
+        "docs/missions/jebediah/logs/2026-08-21T16-57-24Z-hop-to-water.jsonl",
+        "docs/missions/jebediah/logs/2026-08-21T16-33-22Z-hop-to-water.jsonl"
+      ],
       "fingerprint": "heading-never-090",
       "id": "T-007",
       "payload": {},
-      "priority": "P2",
+      "priority": "P1",
       "reporter": "Jebediah Grokman, Commander",
       "rsi_loop": "vehicle",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "title": "heading never holds 090 (Water dead)",
       "type": "control",
-      "updated": "2026-08-21T20:50:05Z"
+      "updated": "2026-08-21T21:56:15Z"
     },
     "T-008": {
       "assignee": "",
-      "blockers": [],
+      "blockers": [
+        "T-013"
+      ],
       "created": "2026-08-21T20:50:05Z",
       "desk": "gene",
       "evidence": [
@@ -212,23 +228,26 @@
         "live_run": "2026-08-21T21-14-09Z-hop-splash",
         "phase": "hop-splash"
       },
-      "priority": "P0",
+      "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "ready",
+      "status": "blocked",
       "title": "hop-splash t7 toward 15 sci",
       "type": "fly",
-      "updated": "2026-08-21T21:39:08Z"
+      "updated": "2026-08-21T21:46:32Z"
     },
     "T-009": {
-      "assignee": "",
+      "assignee": "linus",
       "blockers": [],
+      "close_why": "bound splash TELEMETRY first on east-t3 (30/0.052/0.80) then goo 641/0.18/2.40; sequential SrfSplashed",
       "created": "2026-08-21T21:05:29Z",
       "desk": "linus",
       "evidence": [
+        "docs/program/science.md",
+        "docs/missions/jebediah/science.md",
         "docs/program/science.md",
         "docs/missions/jebediah/science.md"
       ],
@@ -236,14 +255,14 @@
       "id": "T-009",
       "payload": {
         "biome": "any",
-        "craft": "kspstuff-hop-valiant-t7-splash-pbc",
+        "craft": "none",
         "duration_s": 30,
         "ec_rate": 0.052,
         "est": 0.8,
         "experiment_id": "kerbalism_TELEMETRY",
         "instrument": "Stayputnik PAW (no Science part)",
-        "note": "sequential first after splash; do not Toggle airborne",
-        "on_craft": "yes",
+        "note": "unstarted; leftover hid; sequential first after splash; do not bind t7-splash; wait T-014 capable; Water biome bind needs heading 090 tape",
+        "on_craft": "wait",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
         "situation": "SrfSplashed",
@@ -256,30 +275,33 @@
       "sci_expect": 0.8,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "done",
       "title": "splash TELEMETRY unstarted 0.80 (leftover hid)",
       "type": "science",
-      "updated": "2026-08-21T21:05:29Z"
+      "updated": "2026-08-21T21:58:55Z"
     },
     "T-010": {
-      "assignee": "",
+      "assignee": "jebediah",
       "blockers": [],
+      "close_why": "Jeb recover() t7-splash PRELAUNCH recoverable=1; KSC clean sci 13.3",
       "created": "2026-08-21T21:39:08Z",
       "desk": "jebediah",
       "evidence": [],
       "fingerprint": "leftover-prelaunch-ghost",
       "id": "T-010",
-      "payload": {},
-      "priority": "P1",
+      "payload": {
+        "cli": "python main.py recover-probe --recover"
+      },
+      "priority": "P0",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "title": "PRELAUNCH ghost after 21-14 hop-splash",
       "type": "recover",
-      "updated": "2026-08-21T21:39:08Z"
+      "updated": "2026-08-21T21:48:15Z"
     },
     "T-011": {
       "assignee": "",
@@ -321,7 +343,339 @@
       "title": "cli-smoke hop-splash",
       "type": "control",
       "updated": "2026-08-21T21:39:40Z"
+    },
+    "T-013": {
+      "assignee": "jebediah",
+      "blockers": [],
+      "created": "2026-08-21T21:46:32Z",
+      "desk": "gene",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "hop-to-water-east",
+      "go": "yes",
+      "id": "T-013",
+      "payload": {
+        "campaign": "uncrewed",
+        "cli": "python main.py hop-to-water",
+        "craft": "kspstuff-hop-valiant-east-t3-pbc",
+        "go": "",
+        "landing": {
+          "alt_before": 225.987,
+          "biome": "Shores",
+          "dt_s": 0.78,
+          "heading": 301.232,
+          "horiz": 40.705,
+          "hz_median": 0.46,
+          "impact_ms": 229.919,
+          "landing": "catastrophic",
+          "met": 212.2,
+          "path": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "run": "2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "samples": 99,
+          "sit": "splashed",
+          "speed": 233.494,
+          "v_vert": null
+        },
+        "phase": "hop-to-water",
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      },
+      "priority": "P0",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "verify",
+      "tags": [
+        "catastrophic",
+        "landing"
+      ],
+      "title": "hop-to-water east slew toward Water splash",
+      "type": "fly",
+      "updated": "2026-08-21T22:25:50Z"
+    },
+    "T-014": {
+      "assignee": "gus",
+      "blockers": [],
+      "capable": "yes",
+      "close_why": "Gus capable yes kspstuff-hop-valiant-east-t3-pbc Goo+TELEMETRY host 20xZ-100 fins on lowest T100",
+      "created": "2026-08-21T21:46:32Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "east-valiant-water",
+      "id": "T-014",
+      "payload": {
+        "alts": [
+          "kspstuff-hop-valiant-east-fin-pbc",
+          "kspstuff-hop-valiant-east-bare-pbc",
+          "kspstuff-hop-valiant-east-one-pbc",
+          "kspstuff-hop-valiant-east-pbc",
+          "kspstuff-hop-valiant-t7-splash-pbc"
+        ],
+        "craft": "kspstuff-hop-valiant-east-t3-pbc",
+        "phase": "hop-to-water"
+      },
+      "priority": "P0",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "title": "sign east Valiant for hop-to-water (FAR fins, 090)",
+      "type": "vehicle",
+      "updated": "2026-08-21T21:57:38Z"
+    },
+    "T-015": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-21T22:25:50Z",
+      "desk": "lars",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "catastrophic-splash",
+      "id": "T-015",
+      "payload": {
+        "landing": {
+          "alt_before": 225.987,
+          "biome": "Shores",
+          "dt_s": 0.78,
+          "heading": 301.232,
+          "horiz": 40.705,
+          "hz_median": 0.46,
+          "impact_ms": 229.919,
+          "landing": "catastrophic",
+          "met": 212.2,
+          "path": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "run": "2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "samples": 99,
+          "sit": "splashed",
+          "speed": 233.494,
+          "v_vert": null
+        },
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      },
+      "priority": "P0",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "hard-splash",
+        "east-t3",
+        "catastrophic",
+        "landing"
+      ],
+      "title": "east-t3 catastrophic splash 230 m/s (no chute)",
+      "type": "control",
+      "updated": "2026-08-21T22:25:50Z"
+    },
+    "T-016": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-21T22:25:50Z",
+      "desk": "lars",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "heading-never-090",
+      "id": "T-016",
+      "payload": {
+        "landing": {
+          "alt_before": 225.987,
+          "biome": "Shores",
+          "dt_s": 0.78,
+          "heading": 301.232,
+          "horiz": 40.705,
+          "hz_median": 0.46,
+          "impact_ms": 229.919,
+          "landing": "catastrophic",
+          "met": 212.2,
+          "path": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "run": "2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "samples": 99,
+          "sit": "splashed",
+          "speed": 233.494,
+          "v_vert": null
+        },
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      },
+      "priority": "P0",
+      "reporter": "Jebediah Grokman, Commander",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "heading-090",
+        "east-t3",
+        "catastrophic",
+        "landing"
+      ],
+      "title": "east-t3 heading 301 not 090 after target_direction patch",
+      "type": "control",
+      "updated": "2026-08-21T22:25:50Z"
+    },
+    "T-017": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-21T22:25:50Z",
+      "desk": "lars",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "science-skip-no-modules",
+      "id": "T-017",
+      "payload": {
+        "landing": {
+          "alt_before": 225.987,
+          "biome": "Shores",
+          "dt_s": 0.78,
+          "heading": 301.232,
+          "horiz": 40.705,
+          "hz_median": 0.46,
+          "impact_ms": 229.919,
+          "landing": "catastrophic",
+          "met": 212.2,
+          "path": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "run": "2026-08-21T22-03-59Z-hop-to-water.jsonl",
+          "samples": 99,
+          "sit": "splashed",
+          "speed": 233.494,
+          "v_vert": null
+        },
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+      },
+      "priority": "P1",
+      "reporter": "Jebediah Grokman, Commander",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "science-skip",
+        "catastrophic",
+        "landing"
+      ],
+      "title": "hard splash dropped Experiment modules before goo Toggle",
+      "type": "control",
+      "updated": "2026-08-21T22:25:50Z"
+    },
+    "T-018": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "close_why": "cruise 5 Hz / 20 Hz near surface; landing class on attach-run",
+      "created": "2026-08-21T22:25:50Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "telem-hz",
+      "id": "T-018",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Os, Founder",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "telem",
+        "hz"
+      ],
+      "title": "high-rate telem tape + landing class on fly tickets",
+      "type": "systems",
+      "updated": "2026-08-21T22:25:50Z"
+    },
+    "T-019": {
+      "assignee": "",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-21T22:25:50Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "splash-goo-15",
+      "id": "T-019",
+      "payload": {
+        "craft": "kspstuff-hop-valiant-east-t3-pbc",
+        "duration_s": 641,
+        "ec_rate": 0.18,
+        "est": 2.4,
+        "experiment_id": "mysteryGoo",
+        "instrument": "Mystery Goo Containment Unit",
+        "on_craft": "yes",
+        "part": "GooExperiment",
+        "recover_banks": true,
+        "seq": 1,
+        "situation": "SrfSplashed",
+        "tech": "start",
+        "unlocked": "yes"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "splash",
+        "goo",
+        "east-t3"
+      ],
+      "title": "splash mysteryGoo 2.40 closes 15",
+      "type": "science",
+      "updated": "2026-08-21T22:26:06Z"
+    },
+    "T-020": {
+      "assignee": "",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-21T22:25:50Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "splash-telemetry",
+      "id": "T-020",
+      "payload": {
+        "craft": "kspstuff-hop-valiant-east-t3-pbc",
+        "duration_s": 30,
+        "ec_rate": 0.052,
+        "est": 0.8,
+        "experiment_id": "kerbalism_TELEMETRY",
+        "instrument": "Stayputnik PAW",
+        "on_craft": "yes",
+        "part": "probeCoreSphere_v2",
+        "recover_banks": true,
+        "seq": 0,
+        "situation": "SrfSplashed",
+        "tech": "start",
+        "unlocked": "yes"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "splash",
+        "telemetry",
+        "east-t3"
+      ],
+      "title": "splash TELEMETRY 0.80 sequential first",
+      "type": "science",
+      "updated": "2026-08-21T22:26:06Z"
     }
   },
-  "updated": "2026-08-21T21:39:40Z"
+  "updated": "2026-08-21T22:26:06Z"
 }

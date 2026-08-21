@@ -328,3 +328,113 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("reasoning=", text)
         self.assertIn("packet:", text)
         self.assertNotIn("xhigh", text)
+
+    def test_category_and_tags_on_open(self):
+        t = tickets.open_ticket(
+            type="control",
+            title="hard splash 233 m/s",
+            reporter="Hank",
+            category="bug",
+            tags=["Hard Splash", "east-t3"],
+            desk="lars",
+        )
+        self.assertEqual(t["category"], "bug")
+        self.assertEqual(t["tags"], ["hard-splash", "east-t3"])
+        rows = tickets.list_tickets(category="bug", tag="hard-splash")
+        self.assertEqual([r["id"] for r in rows], [t["id"]])
+
+    def test_science_ids_from_ticket_payload(self):
+        tickets.open_ticket(
+            type="science",
+            title="splash goo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "mysteryGoo",
+                "situation": "SrfSplashed",
+                "part": "GooExperiment",
+            },
+        )
+        tickets.open_ticket(
+            type="science",
+            title="flying thermo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "FlyingLow",
+            },
+        )
+        self.assertEqual(
+            tickets.science_ids_for(situation="splash"),
+            ("mysteryGoo",),
+        )
+        self.assertEqual(
+            tickets.science_ids_for(situation="flying"),
+            ("temperatureScan",),
+        )
+        tickets.open_ticket(
+            type="science",
+            title="splash telem first",
+            reporter="Linus",
+            payload={
+                "experiment_id": "kerbalism_TELEMETRY",
+                "situation": "SrfSplashed",
+                "seq": 0,
+            },
+        )
+        self.assertEqual(
+            tickets.science_ids_for(situation="splash"),
+            ("kerbalism_TELEMETRY", "mysteryGoo"),
+        )
+
+    def test_attach_run_landing_on_skim_not_jsonl(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-to-water",
+            reporter="Hank",
+            desk="gene",
+            severity="S2",
+            priority="P0",
+        )
+        path = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "telem"
+            / "hard-splash.jsonl"
+        )
+        tickets.attach_run(t["id"], path, who="hank")
+        skim = tickets.format_packet(t["id"], deep=False)
+        deep = tickets.format_packet(t["id"], deep=True)
+        self.assertIn("landing: catastrophic", skim)
+        self.assertIn("category: flight", skim)
+        self.assertIn("docs/program/tickets/BRIEF.md", skim)
+        self.assertNotIn("hard-splash.jsonl", skim)
+        self.assertIn("hard-splash.jsonl", deep)
+        self.assertIn("catastrophic", tickets.format_inbox("gene"))
+
+    def test_cmd_inbox_and_landing(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        t = tickets.open_ticket(
+            type="control",
+            title="heading 301",
+            reporter="Jebediah",
+            desk="lars",
+            tags=["heading-090"],
+        )
+        buf = StringIO()
+        with redirect_stdout(buf):
+            rc = tickets.cmd_tickets(["inbox", "--desk", "lars"])
+        self.assertEqual(rc, 0)
+        self.assertIn(t["id"], buf.getvalue())
+        path = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "telem"
+            / "hard-splash.jsonl"
+        )
+        buf2 = StringIO()
+        with redirect_stdout(buf2):
+            rc2 = tickets.cmd_tickets(["landing", str(path)])
+        self.assertEqual(rc2, 0)
+        self.assertIn("catastrophic", buf2.getvalue())

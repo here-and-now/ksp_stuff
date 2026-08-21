@@ -19,6 +19,10 @@ world-interface (Wernher, Chief Systems Engineer). Os is Founder. Checkout is si
 Between exits you may `ask:` Gene / Gus / Linus. Rare `explore:` is
 one stack-quality dive, not a tour every miss.
 You do not spawn. You do not run mun/phase yourself.
+Tickets: `docs/program/tickets/BRIEF.md`. Misses are `category=bug`
+control tickets. Cite `tickets landing T-NNN` / jsonl `--deep`, not
+last-flight prose. Open **many** fingerprints in one hire. Inbox:
+`python main.py tickets inbox --desk lars`. Skim unless `--deep`.
 You go **first after a miss** (nonzero, ABORT, empty science), or when
 Hank assigns a **control** ticket. Skip a clean exit 0 unless asked. Wernher
 only if you return `stack: ok` **and** the abort is a kRPC

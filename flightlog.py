@@ -1,8 +1,11 @@
-"""On-disk 1 Hz flight recorder. Not for the TUI.
+"""On-disk flight recorder. Not for the TUI.
 
 One **run** is one Commander command (`python main.py pad`). Files live
 under the seated mission ``logs/``. Stamp is Earth UTC with seconds
-plus Kerbal UT/MET in the jsonl start event.
+plus Kerbal UT/MET in the jsonl start event. Cadence is Telem
+``pulse_s`` (cruise ~5 Hz, ~20 Hz near the surface). A ``kind=landing``
+row is the flying→splashed/landed transition. ``docs/flights/index.jsonl``
+indexes runs for the ticket bus.
 """
 
 from __future__ import annotations
@@ -21,6 +24,7 @@ from typing import Any
 log = logging.getLogger("kspstuff")
 
 FLIGHTS = Path("docs/flights")
+INDEX = FLIGHTS / "index.jsonl"
 LOCK = Path("docs/program/flight.lock")
 
 _path: Path | None = None
@@ -244,7 +248,7 @@ def event(kind: str, msg: str, **extra: Any) -> None:
 
 
 def record(state: Any, tag: str = "", *, ut: float | None = None, force: bool = False) -> None:
-    """1 Hz snapshots, or immediately on flag change."""
+    """Snapshots. ``force=True`` (Telem.read) writes every pulse."""
     global _last_flags, _last_write
     if _path is None:
         return
@@ -298,9 +302,70 @@ def close() -> Path | None:
     if _path is not None:
         event("end", f"samples={_count}")
         done = _path
+        _index_run(done)
         _path = None
     release_lock()
     return done
+
+
+def _index_run(path: Path) -> None:
+    """Append one index row. No-op under unittest / missing tape."""
+    if not live_records() or path is None or not path.is_file():
+        return
+    try:
+        from telem import landing_from_jsonl
+
+        landing = landing_from_jsonl(path)
+    except Exception:
+        landing = {"path": str(path), "run": path.name}
+    row = {
+        "stamp": _stamp,
+        "command": _command,
+        "flight": _flight,
+        "path": str(path),
+        "samples": _count,
+        "landing": landing.get("landing"),
+        "impact_ms": landing.get("impact_ms"),
+        "heading": landing.get("heading"),
+        "sit": landing.get("sit"),
+    }
+    try:
+        INDEX.parent.mkdir(parents=True, exist_ok=True)
+        with INDEX.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(row, default=str) + "\n")
+    except Exception:
+        log.debug("flights index write failed", exc_info=True)
+
+
+def latest_run() -> Path | None:
+    """Newest jsonl on the flights index, else newest seated logs jsonl."""
+    if INDEX.is_file():
+        last = None
+        for line in INDEX.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            p = Path(str(row.get("path") or ""))
+            if p.is_file():
+                last = p
+        if last is not None:
+            return last
+    if _path is not None and _path.is_file():
+        return _path
+    try:
+        from missions import seated_id, seated_logs_dir
+
+        dest = seated_logs_dir(seated_id())
+    except Exception:
+        dest = FLIGHTS
+    if not dest.is_dir():
+        return None
+    files = sorted(dest.glob("*.jsonl"))
+    return files[-1] if files else None
 
 
 def _jsonable(val: Any) -> Any:

@@ -9,7 +9,19 @@ import unittest
 from pathlib import Path
 
 from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold
-from telem import EventLog, Telem, format_snapshot, gates, in_atmosphere, read_snapshot
+from telem import (
+    EventLog,
+    Telem,
+    classify_impact,
+    format_landing,
+    format_snapshot,
+    gates,
+    in_atmosphere,
+    landing_from_jsonl,
+    pulse_s,
+    read_snapshot,
+    Snapshot,
+)
 import uplink
 
 
@@ -53,13 +65,24 @@ class _Body:
 
 
 class _Flight:
-    def __init__(self, alt=100.0, q=0.0, surf=80.0, speed=0.0, heading=0.0, horiz=None):
+    def __init__(
+        self,
+        alt=100.0,
+        q=0.0,
+        surf=80.0,
+        speed=0.0,
+        heading=0.0,
+        horiz=None,
+        v_vert=0.0,
+    ):
         self.mean_altitude = alt
         self.dynamic_pressure = q
         self.surface_altitude = surf
         self.speed = speed
-        self.vertical_speed = 0.0
+        self.vertical_speed = v_vert
         self.heading = heading
+        self.pitch = 90.0
+        self.angle_of_attack = 0.0
         self.horizontal_speed = speed if horiz is None else horiz
 
 
@@ -102,6 +125,7 @@ class _Vessel:
         self.resources = _Resources({"ElectricCharge": ec, "SolidFuel": fuel})
         self.thrust = 0.0
         self.met = 0.0
+        self.biome = "Shores"
         self._flight = _Flight(alt=alt, speed=speed, heading=90.0, horiz=speed)
         self.orbit = _Orbit(_Body(depth=depth), peri=-500_000.0, apo=alt)
         self.parts = type("P", (), {"all": []})()
@@ -245,6 +269,9 @@ class TestJsonl(unittest.TestCase):
         self.assertAlmostEqual(row["speed"], 429.0)
         self.assertAlmostEqual(row["horiz"], 429.0)
         self.assertAlmostEqual(row["heading"], 90.0)
+        self.assertAlmostEqual(row["pitch"], 90.0)
+        self.assertAlmostEqual(row["aoa"], 0.0)
+        self.assertEqual(row["biome"], "Shores")
         self.assertIn("ec=0", row.get("flags") or [])
         self.assertEqual(row["ut"], 62610.0)
 
@@ -329,3 +356,56 @@ class TestEmergencies(unittest.TestCase):
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertIn("lithobrake", ctx.notes)
         self.assertTrue(any(e["event"] == "call" for e in ctx.events.events))
+
+
+class TestLandingTape(unittest.TestCase):
+    def test_classify_impact_thresholds(self):
+        self.assertEqual(classify_impact(5.0), "soft")
+        self.assertEqual(classify_impact(20.0), "firm")
+        self.assertEqual(classify_impact(60.0), "hard")
+        self.assertEqual(classify_impact(233.0), "catastrophic")
+        self.assertEqual(classify_impact(float("nan")), "")
+
+    def test_pulse_s_bursts_near_surface(self):
+        cruise = pulse_s(Snapshot(situation="flying", alt=40_000.0, v_vert=-50.0))
+        near = pulse_s(Snapshot(situation="flying", alt=400.0, v_vert=-200.0))
+        self.assertLess(near, cruise)
+        self.assertAlmostEqual(near, 0.05)
+        self.assertAlmostEqual(cruise, 0.2)
+
+    def test_streams_vertical_speed(self):
+        vessel = _Vessel(alt=400.0, sit="flying", speed=200.0)
+        vessel._flight.vertical_speed = -180.0
+        session = _Session(vessel)
+        with Telem(session) as telem:
+            snap = telem.read()
+        self.assertAlmostEqual(snap.v_vert, -180.0)
+        names = [c[2] for c in session.stream_calls]
+        self.assertIn("vertical_speed", names)
+
+    def test_sit_change_emits_landing_event(self):
+        vessel = _Vessel(alt=200.0, sit="flying", speed=233.0)
+        vessel._flight.vertical_speed = -220.0
+        vessel._flight.horizontal_speed = 40.0
+        events = EventLog()
+        with Telem(_Session(vessel), events=events) as telem:
+            air = telem.read()
+            vessel.situation = "splashed"
+            vessel._flight.mean_altitude = -2.0
+            down = telem.read()
+        self.assertEqual(air.landing, "")
+        self.assertEqual(down.landing, "catastrophic")
+        hits = [e for e in events.events if e.get("event") == "landing"]
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0]["landing"], "catastrophic")
+
+    def test_landing_from_hard_splash_fixture(self):
+        path = Path(__file__).resolve().parent / "fixtures" / "telem" / "hard-splash.jsonl"
+        row = landing_from_jsonl(path)
+        self.assertEqual(row["landing"], "catastrophic")
+        self.assertGreater(row["impact_ms"], 100.0)
+        self.assertEqual(row["sit"], "splashed")
+        line = format_landing(row)
+        self.assertIn("catastrophic", line)
+        self.assertIn("impact=", line)
+        self.assertNotIn(".jsonl", line.split("impact")[0])

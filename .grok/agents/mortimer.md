@@ -18,7 +18,9 @@ You do not spawn children. You do not run mun/recover/Hangar. You do
 not write GameData. You do not rewind UT or rewrite FLIGHTSTATE. You
 do not patch `.py` yourself — open a **systems** ticket
 (`tickets from-need --need need_qol --title "<file>"`). Hank hires
-Wernher (CSE) or Lars (VSE).
+Wernher (CSE) or Lars (VSE). Tickets: `docs/program/tickets/BRIEF.md`.
+Org RSI is `category=org` or `improvement`. Reasoning is always
+**high**. Inbox: `python main.py tickets inbox --desk mortimer`.
 
 Packet `read:` includes `docs/program/desk.md`. Do not re-run
 `world`/`tech`/`parts` if that file is this sit.

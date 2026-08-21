@@ -3,10 +3,15 @@
 Streams use kRPC 0.6 ``add_stream(getattr, obj, name)``. Gates use the
 live body's ``atmosphere_depth``. Each :meth:`Telem.read` writes a
 ``kind=state`` row to the seated run jsonl (alt, apo, peri, situation,
-MET, EC, fuel, surface horiz, heading, pitch, AoA, biome). :class:`EventLog` stays
-in-memory unless given a path. ``vessel.flight()`` with no frame is
-the vessel origin — ``speed`` is always ~0. Surface kinematics use
-the body's ``reference_frame`` (Jeb 14:37Z / 16:14Z).
+MET, EC, fuel, surface horiz, heading, pitch, AoA, biome, v_vert).
+:class:`EventLog` stays in-memory unless given a path.
+``vessel.flight()`` with no frame is the vessel origin — ``speed`` is
+always ~0. Surface kinematics use the body's ``reference_frame``.
+
+Cadence is adaptive: cruise ~5 Hz, ~20 Hz near the surface so a hard
+splash is a tape, not three rows 2 s apart. Landing class is derived
+from the flying→splashed/landed transition and linked onto the fly
+ticket (skim: one line; jsonl stays ``--deep``).
 """
 
 from __future__ import annotations
@@ -34,6 +39,16 @@ _STREAM_PROPS: tuple[tuple[str, str], ...] = (
 )
 
 _PAD = frozenset({"pre_launch", "prelaunch", "landed", "splashed"})
+_DOWN = frozenset({"landed", "splashed"})
+_AIR = frozenset({"flying", "sub_orbital", "suborbital", "escaping", "orbiting"})
+CRUISE_HZ = 5.0
+NEAR_HZ = 20.0
+NEAR_ALT_M = 2000.0
+TTI_BURST_S = 8.0
+IMPACT_SOFT_MS = 15.0
+IMPACT_FIRM_MS = 50.0
+IMPACT_HARD_MS = 100.0
+G0 = 9.80665
 _FUELS = (
     "ElectricCharge",
     "SolidFuel",
@@ -90,6 +105,9 @@ class Snapshot:
     thrust: float = float("nan")
     speed: float = float("nan")
     horiz: float = float("nan")
+    v_vert: float = float("nan")
+    g: float = float("nan")
+    landing: str = ""
     heading: float = float("nan")
     pitch: float = float("nan")
     aoa: float = float("nan")
@@ -121,7 +139,8 @@ def format_snapshot(snap: Snapshot) -> str:
         f"alt={snap.alt:.1f} peri={snap.peri:.1f} apo={snap.apo:.1f} "
         f"atm={snap.atm_depth:.1f} in_atmo={int(snap.in_atmo)} "
         f"ec={ec} fuel={fuel} wreck={int(snap.wreck)} "
-        f"horiz={snap.horiz:.0f} hdg={snap.heading:.0f} "
+        f"horiz={snap.horiz:.0f} vz={snap.v_vert:.0f} "
+        f"hdg={snap.heading:.0f} "
         f"pitch={snap.pitch:.0f} aoa={snap.aoa:.0f} biome={snap.biome or '?'} "
         f"vessel={snap.vessel}"
     )
@@ -234,6 +253,158 @@ def gates(snap: Snapshot) -> list[str]:
     return out
 
 
+def impact_speed(
+    *,
+    v_vert: float = float("nan"),
+    speed: float = float("nan"),
+    horiz: float = float("nan"),
+) -> float:
+    """Signed-down speed at contact. Prefer |v_vert|, else speed, else horiz."""
+    if math.isfinite(v_vert):
+        return abs(float(v_vert))
+    if math.isfinite(speed) and speed > 0.05:
+        if math.isfinite(horiz) and abs(horiz) + 0.05 < speed:
+            down = speed * speed - horiz * horiz
+            if down > 0:
+                return math.sqrt(down)
+        return abs(float(speed))
+    if math.isfinite(horiz):
+        return abs(float(horiz))
+    return float("nan")
+
+
+def classify_impact(speed_ms: float) -> str:
+    """soft <15, firm <50, hard <100, catastrophic ≥100 m/s. Empty if unknown."""
+    if not math.isfinite(speed_ms) or speed_ms < 0:
+        return ""
+    if speed_ms >= IMPACT_HARD_MS:
+        return "catastrophic"
+    if speed_ms >= IMPACT_FIRM_MS:
+        return "hard"
+    if speed_ms >= IMPACT_SOFT_MS:
+        return "firm"
+    return "soft"
+
+
+def pulse_s(snap: Snapshot) -> float:
+    """Hop loop nap. Cruise 5 Hz; 20 Hz below 2 km or time-to-impact < 8 s."""
+    sit = (snap.situation or "").lower()
+    if sit in _PAD and sit not in {"splashed", "landed"}:
+        return 1.0 / CRUISE_HZ
+    alt = snap.alt
+    vz = snap.v_vert
+    if sit in _DOWN:
+        return 1.0 / CRUISE_HZ
+    if math.isfinite(alt) and alt < NEAR_ALT_M:
+        return 1.0 / NEAR_HZ
+    if math.isfinite(vz) and vz < 0 and math.isfinite(alt) and alt > 0:
+        tti = alt / max(0.1, -vz)
+        if tti < TTI_BURST_S:
+            return 1.0 / NEAR_HZ
+    return 1.0 / CRUISE_HZ
+
+
+def format_landing(row: dict[str, Any]) -> str:
+    landing = row.get("landing") or "unknown"
+    impact = row.get("impact_ms")
+    try:
+        imp = f"{float(impact):.0f}"
+    except (TypeError, ValueError):
+        imp = "?"
+    hdg = row.get("heading")
+    try:
+        hdg_s = f"{float(hdg):.0f}"
+    except (TypeError, ValueError):
+        hdg_s = "?"
+    sit = row.get("sit") or row.get("situation") or "?"
+    return f"landing: {landing} impact={imp} m/s heading={hdg_s} sit={sit}"
+
+
+def landing_from_jsonl(path: str | Path) -> dict[str, Any]:
+    """Disk, no kRPC. First flying→splashed/landed transition on a run tape."""
+    src = Path(path)
+    rows: list[dict[str, Any]] = []
+    if src.is_file():
+        for line in src.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rows.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    states = [r for r in rows if r.get("kind") == "state"]
+    dts = []
+    prev_t = None
+    for r in states:
+        t = r.get("t")
+        try:
+            tf = float(t)
+        except (TypeError, ValueError):
+            continue
+        if prev_t is not None and tf > prev_t:
+            dts.append(tf - prev_t)
+        prev_t = tf
+    dts.sort()
+    hz_median = None
+    if dts:
+        med = dts[len(dts) // 2]
+        hz_median = round(1.0 / med, 2) if med > 0 else None
+    last_air: dict[str, Any] | None = None
+    landing_row: dict[str, Any] | None = None
+    for r in rows:
+        if r.get("kind") == "landing":
+            landing_row = r
+            break
+    down: dict[str, Any] | None = None
+    for r in states:
+        sit = str(r.get("situation") or "").lower()
+        if sit in _AIR:
+            last_air = r
+        elif sit in _DOWN and down is None:
+            down = r
+            break
+    air = last_air or {}
+    hit = down or {}
+    v_vert = _finite(air.get("v_vert"), float("nan"))
+    speed = _finite(air.get("speed"), float("nan"))
+    horiz = _finite(air.get("horiz"), float("nan"))
+    impact = impact_speed(v_vert=v_vert, speed=speed, horiz=horiz)
+    landing = ""
+    if landing_row and landing_row.get("landing"):
+        landing = str(landing_row.get("landing") or "")
+        impact = _finite(landing_row.get("impact_ms"), impact)
+    if not landing:
+        landing = classify_impact(impact) or "unknown"
+    met_air = _finite(air.get("met"), float("nan"))
+    met_down = _finite(hit.get("met"), float("nan"))
+    dt_s = None
+    if math.isfinite(met_air) and math.isfinite(met_down):
+        dt_s = round(met_down - met_air, 3)
+    out: dict[str, Any] = {
+        "run": src.name,
+        "path": str(src),
+        "landing": landing,
+        "impact_ms": None if not math.isfinite(impact) else round(float(impact), 3),
+        "v_vert": None if not math.isfinite(v_vert) else round(float(v_vert), 3),
+        "speed": None if not math.isfinite(speed) else round(float(speed), 3),
+        "horiz": None if not math.isfinite(horiz) else round(float(air.get("horiz") or horiz), 3),
+        "heading": None
+        if not math.isfinite(_finite(air.get("heading")))
+        else round(float(air.get("heading")), 3),
+        "alt_before": None
+        if not math.isfinite(_finite(air.get("alt")))
+        else round(float(air.get("alt")), 3),
+        "sit": hit.get("situation") or (landing_row or {}).get("sit") or "",
+        "biome": hit.get("biome") or air.get("biome") or "",
+        "met": None if not math.isfinite(met_down) else round(float(met_down), 3),
+        "dt_s": dt_s,
+        "samples": len(states),
+        "hz_median": hz_median,
+    }
+    return out
+
+
 class EventLog:
     def __init__(self, path: str | Path | None = None) -> None:
         self.path = Path(path) if path else None
@@ -250,7 +421,7 @@ class EventLog:
 
 
 class Telem:
-    """Subscribe once; :meth:`read` each loop. No 1 Hz prose controller."""
+    """Subscribe once; :meth:`read` each loop. Cadence is :func:`pulse_s`."""
 
     def __init__(
         self,
@@ -269,6 +440,14 @@ class Telem:
         self._streams: dict[str, Any] = {}
         self._vessel: Any = None
         self._met_was: float | None = None
+        self._prev_v_vert: float | None = None
+        self._prev_met_g: float | None = None
+        self._prev_sit: str = ""
+        self._prev_speed: float | None = None
+        self._prev_horiz: float | None = None
+        self._prev_alt: float | None = None
+        self._prev_heading: float | None = None
+        self._landed: bool = False
 
     def close(self) -> None:
         for stream in self._streams.values():
@@ -283,6 +462,8 @@ class Telem:
         self._body = None
         self._vessel = None
         self._met_was = None
+        self._prev_v_vert = None
+        self._prev_met_g = None
 
     def __enter__(self) -> Telem:
         return self
@@ -313,7 +494,7 @@ class Telem:
         for group, prop in _STREAM_PROPS:
             obj = self._flight if group == "flight" else self._orbit
             self._streams[f"{group}.{prop}"] = add_stream(getattr, obj, prop)
-        for prop in ("speed", "horizontal_speed", "heading"):
+        for prop in ("speed", "horizontal_speed", "heading", "vertical_speed"):
             self._streams[f"kin.{prop}"] = add_stream(getattr, self._kin, prop)
         for prop in ("pitch", "angle_of_attack"):
             self._streams[f"att.{prop}"] = add_stream(getattr, self._flight, prop)
@@ -371,6 +552,7 @@ class Telem:
             pass
         speed = self._stream("kin.speed")
         horiz = self._stream("kin.horizontal_speed")
+        v_vert = self._stream("kin.vertical_speed")
         heading = self._stream("kin.heading")
         pitch = self._stream("att.pitch")
         aoa = self._stream("att.angle_of_attack")
@@ -396,6 +578,43 @@ class Telem:
             wreck = True
         if math.isfinite(met):
             self._met_was = met
+        g_load = float("nan")
+        if (
+            self._prev_v_vert is not None
+            and self._prev_met_g is not None
+            and math.isfinite(v_vert)
+            and math.isfinite(met)
+        ):
+            dt_g = met - self._prev_met_g
+            if dt_g > 0.02:
+                g_load = (v_vert - self._prev_v_vert) / dt_g / G0
+        if math.isfinite(v_vert) and math.isfinite(met):
+            self._prev_v_vert = v_vert
+            self._prev_met_g = met
+        landing = ""
+        if sit in _DOWN and not self._landed:
+            impact = impact_speed(
+                v_vert=v_vert,
+                speed=self._prev_speed if self._prev_speed is not None else speed,
+                horiz=self._prev_horiz if self._prev_horiz is not None else horiz,
+            )
+            landing = classify_impact(impact)
+            self._landed = True
+            self.events.emit(
+                "landing",
+                landing=landing,
+                impact_ms=impact,
+                v_vert=self._prev_v_vert if self._prev_v_vert is not None else v_vert,
+                speed=self._prev_speed if self._prev_speed is not None else speed,
+                horiz=self._prev_horiz if self._prev_horiz is not None else horiz,
+                alt_before=self._prev_alt,
+                heading=self._prev_heading if self._prev_heading is not None else heading,
+                sit=sit,
+                met=met,
+                biome=biome,
+            )
+        elif sit in _AIR:
+            self._landed = False
         broken = reliability_broken(vessel)
         stage = None
         try:
@@ -419,6 +638,9 @@ class Telem:
             thrust=thrust,
             speed=speed,
             horiz=horiz,
+            v_vert=v_vert,
+            g=g_load,
+            landing=landing,
             heading=heading,
             pitch=pitch,
             aoa=aoa,
@@ -438,6 +660,16 @@ class Telem:
             self.events.emit("gate", reason=reason)
         if snap.ec is not None and snap.ec <= 0:
             self.events.emit("resource_low", resource="ElectricCharge", amount=snap.ec)
+        if sit in _AIR:
+            self._prev_sit = sit
+            if math.isfinite(speed):
+                self._prev_speed = speed
+            if math.isfinite(horiz):
+                self._prev_horiz = horiz
+            if math.isfinite(alt):
+                self._prev_alt = alt
+            if math.isfinite(heading):
+                self._prev_heading = heading
         _record_run(self.session, snap)
         _maybe_shot(snap)
         return snap
@@ -466,6 +698,30 @@ def _record_run(session: Any, snap: Snapshot) -> None:
     tag = snap.scene if snap.scene and snap.scene != "?" else ""
     try:
         record(snap, tag=tag, ut=ut, force=True)
+        if snap.landing:
+            from flightlog import event
+
+            event(
+                "landing",
+                format_landing(
+                    {
+                        "landing": snap.landing,
+                        "impact_ms": impact_speed(
+                            v_vert=snap.v_vert, speed=snap.speed, horiz=snap.horiz
+                        ),
+                        "heading": snap.heading,
+                        "sit": snap.situation,
+                    }
+                ),
+                landing=snap.landing,
+                v_vert=snap.v_vert,
+                speed=snap.speed,
+                horiz=snap.horiz,
+                heading=snap.heading,
+                sit=snap.situation,
+                met=snap.met,
+                biome=snap.biome,
+            )
     except Exception:
         log.debug("flightlog record failed", exc_info=True)
 

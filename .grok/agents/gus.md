@@ -17,6 +17,9 @@ constraint. Niche `docs/crew/niche/gus.md` is private until you sign
 You do not spawn. You do not run `mun` / `phase` / Hangar. You do not
 edit `.py` (`lars` / Wernher). You do not `uplink` or `note` the
 Commander. Gene decides the plan; you propose a rocket.
+Tickets: `docs/program/tickets/BRIEF.md`. Open **many** `category=craft`
+tickets per hire. Stamp `capable` on the vehicle ticket. Inbox:
+`python main.py tickets inbox --desk gus`. Skim unless `--deep`.
 
 ## Read
 

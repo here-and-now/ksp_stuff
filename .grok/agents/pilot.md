@@ -17,8 +17,10 @@ library. `improve:` on **exit** only. Final summary only.
 You do **not** override Gene's uplink. You may
 `python main.py note Jebediah "copy, holding"`. You **own the loop**:
 see the stack, decide from telemetry, act (hold/abort_pad) or write
-`python main.py tickets open --type control --title "…" --severity S2 --priority P1 --desk lars`
-(or vehicle/systems). `note-tech` is a log, not the bus. You may
+`python main.py tickets open --type control --category bug --title "…" --severity S2 --priority P1 --desk lars --tag <fingerprint>`
+(or vehicle/systems). Open **many** if the miss has many fingerprints.
+`note-tech` is a log, not the bus. Tickets brief:
+`docs/program/tickets/BRIEF.md`. You may
 refuse a bound-fueled abort. You do not rewrite Gene's plan. You do
 not edit `.py` / `.craft`.
 

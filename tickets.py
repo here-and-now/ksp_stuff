@@ -28,6 +28,32 @@ TYPES = (
     "press",
     "ops",
 )
+CATEGORIES = (
+    "craft",
+    "science_opportunity",
+    "bug",
+    "improvement",
+    "flight",
+    "recover",
+    "org",
+    "control",
+    "systems",
+    "press",
+    "ops",
+)
+TYPE_CATEGORY = {
+    "fly": "flight",
+    "science": "science_opportunity",
+    "vehicle": "craft",
+    "control": "bug",
+    "systems": "bug",
+    "org": "org",
+    "rsi": "improvement",
+    "ctt": "org",
+    "recover": "recover",
+    "press": "press",
+    "ops": "ops",
+}
 SEVERITY = ("S1", "S2", "S3", "S4")
 PRIORITY = ("P0", "P1", "P2", "P3")
 STATUS = (
@@ -96,6 +122,28 @@ class TicketError(Exception):
 
 def _now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _norm_tag(tag: str) -> str:
+    return "-".join(str(tag).strip().lower().replace("_", "-").split())
+
+
+def _norm_tags(tags: Any) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in tags or []:
+        t = _norm_tag(raw)
+        if t and t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out
+
+
+def _norm_category(category: str | None, typ: str) -> str:
+    cat = (category or "").strip().lower()
+    if cat in CATEGORIES:
+        return cat
+    return TYPE_CATEGORY.get(typ, "ops")
 
 
 def _load_events() -> list[dict[str, Any]]:
@@ -210,6 +258,7 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
 
     add(skim, "desk", "docs/program/desk.md", "sit")
     add(skim, "board", "docs/program/tickets/BOARD.md", "board")
+    add(skim, "brief", "docs/program/tickets/BRIEF.md", "how")
     payload = t.get("payload") or {}
     typ = t.get("type")
     craft = payload.get("craft") or payload.get("vehicle") or ""
@@ -219,14 +268,14 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
         craft_path = str(craft)
     if typ == "fly":
         add(skim, "briefing", "docs/missions/jebediah/briefing.md", "brief")
-        add(skim, "card", "docs/missions/jebediah/science.md", "bound card")
-        add(deep, "sit-card", "docs/program/sit-card.json", "f013")
+        telem = payload.get("telem_run") or ""
+        if telem:
+            add(deep, "jsonl", str(telem), "telem run")
         if craft_path:
             add(deep, "craft", craft_path, "stack")
         add(deep, "last-flight", "docs/last-flight.md", "last abort")
-    elif typ == "science":
+    elif typ == "science" or t.get("category") == "science_opportunity":
         add(skim, "science", "docs/program/science.md", "opportunities")
-        add(deep, "card", "docs/missions/jebediah/science.md", "seated card")
     elif typ == "vehicle":
         add(skim, "vab", "docs/program/vab.md", "VAB")
         if craft_path:
@@ -282,10 +331,25 @@ def format_packet(tid: str, *, deep: bool = False) -> str:
         f"ticket: {t['id']}",
         f"type: {t.get('type')} {t.get('severity')}{t.get('priority')} "
         f"{t.get('status')} desk={t.get('desk')}",
+        f"category: {t.get('category') or TYPE_CATEGORY.get(t.get('type') or '', 'ops')}",
         f"title: {t.get('title')}",
         f"reasoning: {lvl}",
         f"fingerprint: {t.get('fingerprint') or 'none'}",
     ]
+    tags = t.get("tags") or []
+    if tags:
+        lines.append("tags: " + ",".join(tags))
+    landing = (t.get("payload") or {}).get("landing")
+    if isinstance(landing, dict) and landing:
+        try:
+            from telem import format_landing
+
+            lines.append(format_landing(landing))
+        except Exception:
+            lines.append(
+                f"landing: {landing.get('landing')} impact={landing.get('impact_ms')} "
+                f"sit={landing.get('sit')}"
+            )
     if t.get("summary"):
         lines.append(f"summary: {t['summary']}")
     lines.append("read:")
@@ -354,15 +418,17 @@ def _write_board_md(tickets: dict[str, dict[str, Any]]) -> None:
         "",
         f"open: {len(open_t)} / {len(tickets)}",
         "",
-        "| id | type | S | P | R | status | desk | title |",
-        "|---|---|---|---|---|---|---|---|",
+        "| id | type | cat | S | P | R | status | desk | tags | title |",
+        "|---|---|---|---|---|---|---|---|---|---|",
     ]
     for t in open_t:
         title = (t.get("title") or "").replace("|", "/")
+        cat = t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")
+        tags = ",".join(t.get("tags") or [])
         lines.append(
-            f"| {t['id']} | {t.get('type')} | {t.get('severity')} | "
+            f"| {t['id']} | {t.get('type')} | {cat} | {t.get('severity')} | "
             f"{t.get('priority')} | {reasoning_for(t)} | {t.get('status')} | "
-            f"{t.get('desk')} | {title} |"
+            f"{t.get('desk')} | {tags} | {title} |"
         )
     lines.append("")
     PRINT.write_text("\n".join(lines), encoding="utf-8")
@@ -379,6 +445,8 @@ def open_ticket(
     fingerprint: str = "",
     rsi_loop: str = "none",
     payload: dict[str, Any] | None = None,
+    category: str | None = None,
+    tags: list[str] | None = None,
 ) -> dict[str, Any]:
     if type not in TYPES:
         raise TicketError(f"bad type {type}")
@@ -403,6 +471,8 @@ def open_ticket(
         "blockers": [],
         "fingerprint": fingerprint.strip(),
         "rsi_loop": rsi_loop,
+        "category": _norm_category(category, type),
+        "tags": _norm_tags(tags),
         "payload": payload or {},
         "evidence": [],
         "sci_expect": None,
@@ -435,6 +505,13 @@ def patch_ticket(tid: str, fields: dict[str, Any], *, who: str) -> dict[str, Any
         raise TicketError("bad severity")
     if "priority" in fields and fields["priority"] not in PRIORITY:
         raise TicketError("bad priority")
+    if "category" in fields:
+        fields = {
+            **fields,
+            "category": _norm_category(str(fields.get("category") or ""), cur.get("type") or "ops"),
+        }
+    if "tags" in fields:
+        fields = {**fields, "tags": _norm_tags(fields.get("tags"))}
     now = _now()
     _append({"op": "patch", "at": now, "id": tid, "who": who, "fields": fields})
     return _rebuild()["tickets"][tid]
@@ -445,6 +522,8 @@ def list_tickets(
     status: str | None = None,
     desk: str | None = None,
     open_only: bool = True,
+    category: str | None = None,
+    tag: str | None = None,
 ) -> list[dict[str, Any]]:
     tickets = (load_head().get("tickets") or {}).values()
     out = []
@@ -455,9 +534,98 @@ def list_tickets(
             continue
         if desk and t.get("desk") != desk:
             continue
+        if category and (t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")) != category:
+            continue
+        if tag and _norm_tag(tag) not in (t.get("tags") or []):
+            continue
         out.append(t)
     out.sort(key=lambda t: (t.get("severity", "S4"), t.get("priority", "P3"), t["id"]))
     return out
+
+
+def science_ids_for(*, situation: str = "", craft: str = "") -> tuple[str, ...]:
+    """Bound experiment ids from science tickets. Empty → caller falls back to card."""
+    want = situation.lower().replace(" ", "").replace("_", "")
+    craft_l = craft.strip().lower()
+    found: list[tuple[int, str, str]] = []
+    for t in list_tickets(open_only=True):
+        if t.get("type") != "science" and t.get("category") != "science_opportunity":
+            continue
+        pl = t.get("payload") or {}
+        eid = str(pl.get("experiment_id") or pl.get("eid") or "").strip()
+        if not eid:
+            continue
+        if craft_l:
+            got = str(pl.get("craft") or "").strip().lower()
+            if got and got != craft_l:
+                continue
+        if want:
+            sit = str(pl.get("situation") or "").lower().replace(" ", "").replace("_", "")
+            if sit and want not in sit and sit not in want:
+                continue
+        try:
+            seq = int(pl.get("seq", 100))
+        except (TypeError, ValueError):
+            seq = 100
+        found.append((seq, t["id"], eid))
+    found.sort()
+    out: list[str] = []
+    for _, _, eid in found:
+        if eid not in out:
+            out.append(eid)
+    return tuple(out)
+
+
+def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, Any]:
+    """Link a telem jsonl onto a ticket. Landing summary goes on payload (skim)."""
+    p = str(path)
+    cur = show_ticket(tid)
+    evs = list(cur.get("evidence") or [])
+    if p not in evs:
+        evs.append(p)
+    payload = dict(cur.get("payload") or {})
+    payload["telem_run"] = p
+    try:
+        from telem import landing_from_jsonl
+
+        payload["landing"] = landing_from_jsonl(Path(p))
+    except Exception:
+        pass
+    tags = list(cur.get("tags") or [])
+    landing = payload.get("landing") or {}
+    kind = str(landing.get("landing") or "")
+    if kind:
+        tags = _norm_tags(tags + [kind, "landing"])
+    return patch_ticket(
+        tid,
+        {"evidence": evs, "payload": payload, "tags": tags},
+        who=who,
+    )
+
+
+def inbox_for(desk: str) -> list[dict[str, Any]]:
+    return list_tickets(desk=desk, open_only=True)
+
+
+def format_inbox(desk: str) -> str:
+    rows = inbox_for(desk)
+    if not rows:
+        return f"inbox {desk}: none\n"
+    lines = [f"inbox {desk}: {len(rows)}"]
+    for t in rows:
+        cat = t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")
+        tags = ",".join(t.get("tags") or []) or "-"
+        lines.append(
+            f"{t['id']} {cat} {t.get('severity')}{t.get('priority')} "
+            f"{t.get('status')} tags={tags} {t.get('title')}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def add_tags(tid: str, tags: list[str], *, who: str = "hank") -> dict[str, Any]:
+    cur = show_ticket(tid)
+    merged = _norm_tags(list(cur.get("tags") or []) + list(tags))
+    return patch_ticket(tid, {"tags": merged}, who=who)
 
 
 def show_ticket(tid: str) -> dict[str, Any]:
@@ -500,9 +668,14 @@ def format_list(rows: list[dict[str, Any]]) -> str:
         return "tickets: none\n"
     lines = [f"tickets: {len(rows)}"]
     for t in rows:
+        cat = t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")
+        tags = ",".join(t.get("tags") or [])
+        extra = f" {cat}"
+        if tags:
+            extra += f" [{tags}]"
         lines.append(
             f"{t['id']} {t.get('type')} {t.get('severity')}{t.get('priority')} "
-            f"{t.get('status')} desk={t.get('desk')} {t.get('title')}"
+            f"{t.get('status')} desk={t.get('desk')}{extra} {t.get('title')}"
         )
     return "\n".join(lines) + "\n"
 
@@ -618,9 +791,13 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     op.add_argument("--desk", default="", choices=("",) + DESKS)
     op.add_argument("--fingerprint", default="")
     op.add_argument("--rsi-loop", default="none")
+    op.add_argument("--category", default="", choices=("",) + CATEGORIES)
+    op.add_argument("--tag", action="append", default=[])
     ls = sub.add_parser("list")
     ls.add_argument("--status", default="", choices=("",) + STATUS)
     ls.add_argument("--desk", default="", choices=("",) + DESKS)
+    ls.add_argument("--category", default="", choices=("",) + CATEGORIES)
+    ls.add_argument("--tag", default="")
     ls.add_argument("--all", action="store_true")
     sh = sub.add_parser("show")
     sh.add_argument("id")
@@ -650,6 +827,18 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     fn.add_argument("--reporter", default="Gene Grokman, Flight Director")
     fn.add_argument("--severity", default="S2", choices=SEVERITY)
     fn.add_argument("--priority", default="P1", choices=PRIORITY)
+    tg = sub.add_parser("tag")
+    tg.add_argument("id")
+    tg.add_argument("--add", action="append", default=[], dest="tags")
+    tg.add_argument("--who", default="hank")
+    ib = sub.add_parser("inbox")
+    ib.add_argument("--desk", required=True, choices=DESKS)
+    ld = sub.add_parser("landing")
+    ld.add_argument("target", help="ticket id or jsonl path")
+    ar = sub.add_parser("attach-run")
+    ar.add_argument("id")
+    ar.add_argument("--path", required=True)
+    ar.add_argument("--who", default="hank")
     sub.add_parser("board")
     sub.add_parser("seed")
     args = p.parse_args(argv)
@@ -664,6 +853,8 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
                 desk=args.desk or None,
                 fingerprint=args.fingerprint,
                 rsi_loop=args.rsi_loop,
+                category=args.category or None,
+                tags=list(args.tag or []),
             )
             rsi = maybe_open_rsi(args.fingerprint)
             print(t["id"], t["desk"], t["status"])
@@ -675,6 +866,8 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
                 status=args.status or None,
                 desk=args.desk or None,
                 open_only=not args.all,
+                category=args.category or None,
+                tag=args.tag or None,
             )
             print(format_list(rows), end="")
             return 0
@@ -719,6 +912,34 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
                 priority=args.priority,
             )
             print(t["id"], t["type"], t["desk"])
+            return 0
+        if args.act == "tag":
+            t = add_tags(args.id, list(args.tags or []), who=args.who)
+            print(t["id"], "tags", ",".join(t.get("tags") or []))
+            return 0
+        if args.act == "inbox":
+            print(format_inbox(args.desk), end="")
+            return 0
+        if args.act == "landing":
+            target = args.target
+            path = target
+            if target.startswith("T-"):
+                cur = show_ticket(target)
+                path = (cur.get("payload") or {}).get("telem_run") or ""
+                if not path:
+                    evs = [e for e in (cur.get("evidence") or []) if str(e).endswith(".jsonl")]
+                    path = evs[-1] if evs else ""
+                if not path:
+                    raise TicketError(f"{target} has no telem run")
+            from telem import format_landing, landing_from_jsonl
+
+            row = landing_from_jsonl(path)
+            print(format_landing(row))
+            print(json.dumps(row, indent=2, sort_keys=True))
+            return 0
+        if args.act == "attach-run":
+            t = attach_run(args.id, args.path, who=args.who)
+            print(t["id"], "telem", (t.get("payload") or {}).get("telem_run"))
             return 0
         if args.act == "board":
             _rebuild()

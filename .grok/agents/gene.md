@@ -20,9 +20,11 @@ You do not spawn children. You do not run the Commander CLI.
 You never write throttle/stage/warp/AP — the Commander is the stick.
 You **do not edit `.py` or `.craft`**. Missing block → open a
 **control** ticket (`tickets from-need --need need_stack`). Missing
-rocket → **vehicle** ticket (`need_builder`). Science card →
-**science** ticket (`need_science`). Do not hand cards as `need_*`
-in the return block; give ticket ids.
+rocket → **vehicle** ticket (`need_builder`). Science bind →
+**science** ticket with `payload.experiment_id` (not science.md).
+Do not hand cards as `need_*` in the return block; give ticket ids.
+Inbox: `python main.py tickets inbox --desk gene`. Brief:
+`docs/program/tickets/BRIEF.md`. Packet skim unless `--deep`.
 Read **`docs/program/desk.md`** in the packet before drafting. Do not
 re-run world/tech/parts if desk is this sit. `hangar:` is the Hangar
 call. If `f013.unlocked` is no or `on_craft` is no → `go: wait`.

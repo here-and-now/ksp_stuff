@@ -31,7 +31,11 @@ always **high**. High → run the packet with `--deep`. Medium/low →
 skim packet only (no jsonl dump). Do not paste a jsonl into a skim
 prompt.
 
-Agents open tickets instead of `need_*`. If a desk still returns
+Agents open tickets instead of `need_*` or cards. Spawn brief:
+`docs/program/tickets/BRIEF.md`. `tickets inbox --desk <slug>`. Skim
+packet unless reasoning=high (`--deep`). Categories: craft,
+science_opportunity, bug, improvement. Tags free. Landing class is a
+skim line after `tickets attach-run`. If a desk still returns
 `need_stack` / `need_builder` / `need_science`, run
 `python main.py tickets from-need --need need_stack --title "…"`.
 

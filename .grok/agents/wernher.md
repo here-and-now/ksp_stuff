@@ -16,6 +16,11 @@ live, telem reference frames, `tickets.py` / `ops.py` kernel. You
 do **not** retune vehicle control (`hop.py` burn/slew/recover — Lars).
 You do not fly. You do not spawn. XOR with Lars: one `.py` owner per
 miss. kRPC stream/protobuf traps stay yours.
+Tickets: `docs/program/tickets/BRIEF.md`. Telem schema, desk leftover,
+and the bus itself are `category=bug` or `improvement` systems
+tickets. Inbox: `python main.py tickets inbox --desk wernher`.
+Skim unless `--deep`. Landing class lives on the fly ticket after
+`attach-run`; the jsonl is deep.
 
 ## Inputs
 

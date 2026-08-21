@@ -1,12 +1,19 @@
 {
+  "catastrophic-splash": 1,
   "desk-leftover-vs-krpc": 1,
+  "east-valiant-water": 1,
   "ec=0-after-loft": 1,
   "hangar-geiger-pbc-substring": 1,
-  "heading-never-090": 1,
+  "heading-never-090": 2,
   "hop-apo-recut-descent": 1,
   "hop-splash-15sci": 1,
+  "hop-to-water-east": 1,
   "leftover-hides-unstarted": 1,
   "leftover-prelaunch-ghost": 2,
+  "science-skip-no-modules": 1,
+  "splash-goo-15": 1,
+  "splash-telemetry": 1,
   "stack": 1,
+  "telem-hz": 1,
   "unstarted-splash-telemetry": 1
 }

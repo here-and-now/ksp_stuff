@@ -121,7 +121,10 @@ return: the named block
 ```
 
 Packet `read:` is **`docs/program/desk.md`** (parent just wrote it) plus
-at most two role paths. Commander `cli:` is Gene `recommended:` **copied
+at most two role paths. Tickets how-to is always skim:
+`docs/program/tickets/BRIEF.md`. `tickets inbox --desk <you>`.
+Jsonl / PNG only on `--deep`. Landing class is a skim line on the fly
+ticket after `tickets attach-run`. Commander `cli:` is Gene `recommended:` **copied
 verbatim** (F-004) from `python main.py protocol fly`. Lars miss packet
 names the **live** review path **and** the seated **jsonl** (body-frame
 tape), not “newest file”. Parent copies **f013** from desk. Do not

@@ -202,8 +202,8 @@ class TestHopCatalog(unittest.TestCase):
             text,
         )
         self.assertIn("kspstuff-hop-hammer-pbc", text)
-        self.assertIn("Lars Grokman", blocks)
-        self.assertNotIn("kspstuff-hop-hammer-pbc", blocks)
+        self.assertIn("uncrewed", blocks.lower())
+        self.assertIn("kspstuff-hop-hammer-pbc", blocks)
 
     def test_apo_clamp(self):
         with patch("phases._kv", return_value={"hop_apo": "15000"}):
@@ -1363,5 +1363,5 @@ class TestHopToWater(unittest.TestCase):
 
     def test_blocks_name(self):
         blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
-        self.assertIn("Lars Grokman", blocks)
-        self.assertNotIn("kspstuff-hop-flea-pbc", blocks)
+        self.assertIn("hop-to-water", blocks)
+        self.assertIn("Refused", blocks)

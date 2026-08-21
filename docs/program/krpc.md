@@ -1,18 +1,19 @@
 # kRPC 0.6 — desk briefing
 
-RSS + Kerbalism Default, save `letsgrok`. Plugin and client **0.6.0**.
-Traps stay in [`docs/agent-notes.md`](../agent-notes.md). This file is
-who may touch what. **Do not write GameData.**
+RSS + Kerbalism Default, save `letsgrok` on `~/Games/KSP-rss`. Plugin
+and client **0.6.0**. FAR / RealChute / RealHeat are **physics mods**,
+not kRPC services. Traps stay in [`docs/agent-notes.md`](../agent-notes.md).
+**Do not write GameData.**
 
 One **writer** per process: `Session.connect` on `127.0.0.1:50000` (RPC)
-and `:50001` (stream). Helm owns throttle, AP, stage. Disk queries
-(`python main.py world|tech|parts`) never open a client. `status` and
-`python main.py science` (career line) **do** — they are a second Session.
-While `flight.lock` is live, do not run them.
+and `:50001` (stream). The Commander owns throttle, AP, stage. Disk
+queries (`python main.py world|tech|parts`) never open a client. `status`
+and `python main.py science` (career line) **do** — they are a second
+Session. While `flight.lock` is live, do not run them.
 
-There is **no Kerbalism kRPC service**. Science is `MODULE Experiment`
-via `part.modules`. Bundled `KRPC.RemoteTech.dll` is a stub; getattr is
-not “the mod is installed.” MechJeb is absent.
+There is **no Kerbalism kRPC service**. There is **no FAR kRPC** in
+this client. Science is `MODULE Experiment` via `part.modules`. Bundled
+`KRPC.RemoteTech.dll` is a stub. MechJeb is absent.
 
 ---
 

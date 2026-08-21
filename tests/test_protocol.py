@@ -109,5 +109,5 @@ class TestFeedbackBoard(unittest.TestCase):
     def test_lessons_use_run_headings(self):
         text = Path("docs/lessons.md").read_text(encoding="utf-8")
         self.assertNotIn("L-NNN", text)
-        self.assertIn("## <run> — title", text)
-        self.assertNotIn("kspstuff-pad-pbc", text)
+        self.assertIn("## 1101Z —", text)
+        self.assertIn("## 1204Z —", text)

@@ -2,9 +2,10 @@
 
 House **Grokman**. **Kardashev III or bust.**
 
-An Earth program (**RO + Kerbalism-RO**, science sandbox, no RP-1).
-Gym pad/hop is archived (`docs/archive/letsgrok-2026-08-21/`). Agents
-are the staff. **Recursive self-improvement is an imperative:** every hire
+An Earth program (**RSS + Kerbalism Default**, science sandbox, PBC
+probes first). FAR, RealChute, and RealHeat are on this install (2026-08-21).
+Not Realism Overhaul. `~/Games/KSP-RO` is parked. Agents are the staff.
+**Recursive self-improvement is an imperative:** every hire
 leaves a sharper sit object, a pitfall, a question, or code. Prose
 that stays true becomes a desk field, a test, or a job-card wall.
 
@@ -25,8 +26,8 @@ want**: rare field exploration, some Learns, moments (not a person,
 not every chat). Verena is allowed to be loud on the story layer.
 No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
 `docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
-Words: `docs/program/GLOSSARY.md`. RO start: `docs/program/RO.md`
-(do not seat `KSP-RO` until Os says and a new science sandbox exists).
+Words: `docs/program/GLOSSARY.md`. Parked RO tree: `docs/program/RO.md`
+(do not seat `KSP-RO`). Live seat: `~/Games/KSP-rss`, save `letsgrok`.
 
 Environment memory is **query tools**, not this file:
 

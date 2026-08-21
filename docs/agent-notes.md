@@ -29,13 +29,15 @@ wrapper → update the table here → next slice. Encode knowledge in helpers
 
 ---
 
-## Environment (live 2026-08-20, RSS)
+## Environment (live 2026-08-21, RSS)
 
 | | |
 |---|---|
 | KSP | 1.12.5.3190 LinuxPlayer, portable `~/Games/KSP-rss` |
 | Save | `letsgrok` (`SCIENCE_SANDBOX`). Env `KSPSTUFF_KSP`, `KSPSTUFF_SAVE` |
-| Plugin | `GameData/kRPC` **0.6.0** (manual drop-in; CKAN 51 modules + kRPC) |
+| Plugin | `GameData/kRPC` **0.6.0** (manual drop-in) |
+| Aero | **FAR**, **RealChute** (+ ForStock), **RealHeat** — GameData 2026-08-21 |
+| Kerbalism | Profile **default** (not RO) |
 | Client | `.venv`, Python 3.14.7, `krpc==0.6.0` |
 | Sockets | `127.0.0.1:50000` RPC, `127.0.0.1:50001` stream |
 | Settings | `GameData/kRPC/PluginData/settings.cfg` — disk 2026-08-20: `autoStartServers = False`, `autoAcceptConnections = True`, `pauseServerWithGame = False` |
@@ -555,3 +557,24 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   Pad recovers partial HD; Z-100 cannot feed a full 641 s sample.
 - **2026-08-20** — Hop leftover Flight Results: `vessel.met` frozen,
   `recoverable` never true. `go_space_center` dismisses that modal.
+- **2026-08-21** — FAR + RealChute + RealHeat on `KSP-rss`. No FAR
+  kRPC service in 0.6 client. `dynamic_pressure` is still stock
+  `flight`. RealChuteModule replaced ModuleParachute on stock chutes
+  (MM cache). Unlocked chute search is empty (survivability 15).
+  RealHeat retunes shock/convection; not a heatshield part. hop.py
+  still forbids parachute in the craft. First FAR hop is unflown.
+
+## FAR / RealChute / RealHeat (disk 2026-08-21)
+
+Physics, not a new hangar catalog.
+
+- **FAR:** `FerramAerospaceResearch` + FARAeroPartModule on parts.
+  Stock gravity-turn / Q numbers from the Flea hop are **not** a FAR
+  envelope. Telem still streams stock `dynamic_pressure`.
+- **RealChute:** `RealChuteModule` + `ProceduralChute` on Mk16 / Mk25
+  / RC_* . Tech **survivability** (15 sci) or later. We have 2.43 sci.
+  Do not tell Gus we have a chute.
+- **RealHeat:** `REALHEAT` cfg (shock multipliers). Ballistic hops and
+  recoveries can cook parts stock heat would spare. No kRPC.
+- **Not RO:** RealFuels-Stockalike may already be on this tree. That is
+  not RealismOverhaul. Parked copy is `~/Games/KSP-RO`.

@@ -1,3 +1,59 @@
-# Conference log
+# Program log
 
-RO house. Gym tape: `docs/archive/letsgrok-2026-08-21/program/log.md`.
+Append-only decisions. Environment facts come from `python main.py world`.
+
+- 2026-08-20 — Canonical KSP `~/Games/KSP-rss`, save `letsgrok` (SCIENCE_SANDBOX, Earth). Steam Kerbin, `Grok`, `test`, and old careers are dead.
+- 2026-08-20 — Honor PBC, Kerbalism Default (science + LS + reliability), RF resource names (no ullage yet), RA omni-only.
+- 2026-08-20 — Queries (`world` / `tech` / `parts`) are the environment memory. Do not wiki Start parts.
+- 2026-08-20 — Do not fly hop/mun until the new pad compose exists. VAB `capable: no`.
+- 2026-08-20 — Slice 2–4: telem events, emergency catalog, pad_pbc craft, `python main.py pad`. VAB capable: kspstuff-pad-pbc.
+- 2026-08-20 — 1119Z pad started mysteryGoo + temperatureScan then double Toggle (L-043). Save sci 0. Re-fly pad. Not hop/mun.
+- 2026-08-20 — 1136Z pad started mysteryGoo + temperatureScan once (L-043 held). Recovered. Save sci 0. Hold. Os next. Not hop/mun.
+- 2026-08-20 — Os go for science. world sci 0. `pad` recovers on Start; Kerbalism HD needs dwell. need_stack pad-dwell. go: wait. Not hop/mun.
+- 2026-08-20 — L-044 in. Pad go. Uncrewed kspstuff-pad-pbc. mysteryGoo + temperatureScan. Dwell minutes, recover HD. Not hop/mun.
+- 2026-08-20 — 1204Z pad EC=0 at T+483 s. L-045 in (recover if HD has data). world sci 0.80. need_builder more EC for full goo. go: wait. Not hop/mun.
+- 2026-08-20 — VAB 3×Z-100. Pad go. Uncrewed kspstuff-pad-pbc. mysteryGoo + temperatureScan. Dwell minutes, recover HD. Not hop/mun.
+- 2026-08-20 — 1235Z pad exit 0. Dwell timeout 740 s. Recovered. 3×Z-100 held. world sci 2.22. Still start. Same pad card done. go: wait. Not hop/mun.
+- 2026-08-20 — Os: more science, off the ground. Cape landed goo+thermo capped. Next hop. need_stack hop, need_builder, need_science. go: wait. Do not pad.
+- 2026-08-20 — Hop conference in. Gus capable kspstuff-hop-flea-pbc. Linus flying card bound. Catalog hop does not Hangar. go: wait. need_stack hop. Do not pad.
+- 2026-08-20 — Lars Hangar in. hop go. `python main.py hop` Hangars uncrewed kspstuff-hop-flea-pbc, lights, FlyingLow TELEMETRY+thermo, recover HD. Splash goo off. hop_apo 15 km. Do not pad.
+- 2026-08-20 — 16-24-37Z leftover hop abort `no science`. Experiment modules gone. HD not taken. world sci 3.20. Lars patched keep HD. `phase hop` recover. Do not Hangar. Do not pad.
+- 2026-08-20 — 16-36-39Z leftover hop abort. Paused Flight Results; HD not taken. world sci 3.20. Os Escape hid modal; still paused flight 72 m, not KSC. Lars frozen-MET recover debris then leave flight. `phase hop` recover. Do not Hangar. Do not pad. Do not revert.
+- 2026-08-20 — Lars hop-jsonl in. Telem.read force-writes kind=state onto seated jsonl. Pad same path. 15-58 envelope stays empty. Next hop can. Verena rewriting hop around Os still. go: wait. Do not fly.
+- 2026-08-20 — Os Flea still `rocket-flea.png`: altimeter 2,123 m (not 72 m). 15-58 hop jsonl start+end only; envelope empty. 72 m is the wreck leftover (`first-hop.png`). need_stack hop-jsonl. Verena after numbers. go: wait. Do not fly.
+- 2026-08-20 — Os still re-read: drums **002423** / KER **2,380.7 m** (not 002123 / 2,090.7). Apo 11,581.8 m. 72 m leftover wreck. Verena patched. go: wait. Do not fly.
+- 2026-08-20 — Os go, will watch. world sci 3.20, start, KSC empty. Remaining FlyingLow payable. First-run card spent. need_science bind remaining TELEMETRY ~28/0.052 + thermo ~112/0.002. Then `python main.py hop`. Do not pad. go: wait.
+- 2026-08-20 — Linus remaining FlyingLow bound. hop go. `python main.py hop` Hangars uncrewed kspstuff-hop-flea-pbc, lights, TELEMETRY 28/0.052 + thermo 112/0.002 airborne, recover HD. Splash goo off. hop_apo 15 km. Do not pad.
+- 2026-08-20 — 18-02-57Z hop exit 0 recovered empty. `science keep HD` on a lit Flea. sci 3.20. Lars patched. Pad leftover PRELAUNCH Flea. Skip Hangar. remaining FlyingLow. `python main.py phase hop`. Do not pad. go: yes.
+- 2026-08-20 — leftover Flea in tracking. `phase hop` SESSION SpaceCenter. Lars scene-enter in. Both patches in. `python main.py phase hop` enter Flight. Do not Hangar. Do not pad. go: yes.
+- 2026-08-20 — 18-22-47Z hop exit 0. Scene-enter worked. Double Toggle temperatureScan stopped Kerbalism. sci 3.20. No recovered line. Lars one-id + recovered. Pad leftover PRELAUNCH. Skip Hangar. `python main.py phase hop`. Do not pad. go: yes.
+- 2026-08-20 — 18-32-48Z hop recovered. sci 3.20 → 3.70. Still start. FlyingLow leftover TELEMETRY 1.19 + thermo 1.30. Need 1.30 for a node. Card spent. KSC empty. need_science remaining. Do not pad. go: wait.
+- 2026-08-20 — Os max Start harvest. sci 3.70. Remaining FlyingLow (bind) then splash (need_stack) then pad new IDs. Do not Hangar. Do not pad Cape. go: wait.
+- 2026-08-20 — Sequential Start harvest. Next: pad geiger on pad-pbc. Then Flea-on-pad TELEMETRY. Splash after hop-to-water. Gus capable: no. Do not Hangar. Do not pad Cape. go: wait.
+- 2026-08-20 — Pad geiger bound 497/0.005. Gus capable pad-pbc. pad.py still defaults goo+thermo. need_stack pad-card. Do not fly F-005. hop-to-water refused. go: wait.
+- 2026-08-20 — pad-card in. geiger 497/0.005 bound. pad go. `python main.py pad` Hangars uncrewed kspstuff-pad-pbc. Do not hop. Do not splash. Not F-005.
+- 2026-08-20 — 19-06-59Z pad recovered empty. geiger Toggle, MET 0. sci 3.70. Lars MET patch. KSC empty. `python main.py pad`. Do not hop. Do not splash. go: yes.
+- 2026-08-20 — 19-26-57Z pad abort MET frozen, empty HD. run_physics always paused=False + 1×. Leftover PRELAUNCH already Toggled — Hangar fresh. `python main.py pad`. Do not hop. go: yes.
+- 2026-08-20 — 20-08-26Z pad abort MET frozen after unpause. PRELAUNCH does not tick MET. Dry-launch in. Leftover Toggled — Hangar fresh. `python main.py pad`. Do not hop. go: yes.
+- 2026-08-20 — Os ad astra. sci still 3.70. Pad geiger. Dry-launch in. Leftover PRELAUNCH — Hangar fresh. `python main.py pad`. Do not hop. go: yes.
+- 2026-08-20 — Os: no Geiger Counter part. Pad-geiger sit killed. F-010. Unbound seated card. Next leftover FlyingLow TELEMETRY on Flea. need_builder. need_science. Do not pad. go: wait.
+- 2026-08-20 — Leftover FlyingLow TELEMETRY 26/0.052 bound. F-013 hosted PAW start not locked. Geiger LOCKED. hop go. `python main.py hop`. Do not pad.
+- 2026-08-20 — 20-55-22Z hop recovered. sci 3.70 → 8.90. FlyingLow TELEMETRY capped. recovery@EarthFlew 5.00. Still start. 5-sci node payable. Do not pad. go: wait.
+- 2026-08-20 — Gene calls engineering101 (5). Then Gus signs kerbalism-geigercounter. Do not bind PAW geiger. No buy CLI. need_stack tech-unlock. Do not pad. Do not hop. go: wait.
+- 2026-08-20 — Mortimer unlocked engineering101. Disk sci 4.93. Geiger Counter UNLOCKED. Wait Os reload letsgrok. need_builder + need_science after. Do not pad. Do not hop. go: wait.
+- 2026-08-20 — Next sit: Cape pad Geiger Counter part. Gus hangs it. Linus binds that part not PAW. Ast. XRL-564 horizon. Do not hop TELEMETRY. Do not pad Cape goo. go: wait.
+- 2026-08-20 — Gus signed kspstuff-geiger-pbc. Linus bound geiger 497/0.005 on the part. pad.py still Hangars pad_pbc() template. need_stack pad-geiger-hangar. go: wait.
+- 2026-08-20 — Lars Hangars geiger file. Flea istg=1 — pad skip stage. MET will not tick. need_builder restage istg=0. go: wait.
+- 2026-08-20 — Gus restaged Flea istg=0. pad go. `python main.py pad` Hangars kspstuff-geiger-pbc. Geiger 497/0.005 on the part. Do not light. Do not hop.
+- 2026-08-21 — Os: science does not need MET. Physics warp only. Rails 0. Never WarpTo. Cape geiger sit. `python main.py pad`. go: yes.
+- 2026-08-20 — 22-11-44Z pad abort. Stayputnik PAW Toggle, Geiger part skipped. Native rank 0. Hangar fresh. `python main.py pad`. Do not phase-pad. go: yes.
+- 2026-08-20 — 22-20-36Z pad recovered. sci 4.93 → 6.13. Cape Surface geiger capped. rem=0 still filed. Gene calls basicRocketry (5). Do not pad. Do not hop. go: wait.
+- 2026-08-20 — Mortimer bought basicRocketry. sci 1.13. Next: FlyingLow geiger 2.80 on the part. Gus hangs it on hop-flea. Linus binds. Do not pad. Do not hop TELEMETRY. go: wait.
+- 2026-08-20 — Reconcile: Hammer leftover FlyingLow thermo. hop.py still Hangars Flea. need_stack hop-hammer-hangar. need_science 2HOT 86/0.002. hop_apo 18000. go: wait.
+- 2026-08-20 — Hammer thermo-only. Tape/EC fit. No Geiger hang. hop go. `python main.py hop`. hop_apo 18000. Never rails.
+- 2026-08-20 — 22-56-44Z hop OFFPLAN apo 18858. Lars OffPlan 50 km. Live sci 2.33. FlyingLow thermo leftover crumbs. Do not re-fly 86 s card. go: wait.
+- 2026-08-20 — Next: pad landed TELEMETRY 29/0.052 / 0.57 on geiger-pbc. need_builder + need_science. Do not Toggle Cape geiger. go: wait.
+- 2026-08-20 — Landed TELEMETRY 29/0.052 bound. pad go. `python main.py pad` Hangars kspstuff-geiger-pbc. Do not Toggle Cape geiger. Do not hop.
+- 2026-08-20 — 23-13-28Z pad recovered. sci 2.33 → 2.43. Landed TELEMETRY capped. rem=0 filed crumbs not 0.57. Do not re-pad. go: wait.
+- 2026-08-20 — Os science again. Next: FlyingLow geiger 2.80. Gus long-hang hop with the part. Linus bind. Do not re-pad. go: wait.
+- 2026-08-20 — Gus capable: no. 497 s FlyingLow cannot fit under 50 km. Linus did not bind. No sit. go: wait.

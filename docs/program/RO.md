@@ -1,10 +1,8 @@
 # Start RO — when Os says go
 
-Team boards were wiped 2026-08-21 (gym tape in
-`docs/archive/letsgrok-2026-08-21/`). Do **not** seat this tree until
-a **new science sandbox** exists and KSP has finished the first
-ModuleManager boot. No Gene / Commander / Mortimer against RO until
-`desk` sees that save.
+**Parked.** Os 2026-08-21: continue **`letsgrok` on `~/Games/KSP-rss`**
+(FAR / RealChute / RealHeat on that tree). Do **not** set
+`KSPSTUFF_KSP` to `KSP-RO`. Do not hire Gene against this copy.
 
 ## Already on disk (`~/Games/KSP-RO`)
 

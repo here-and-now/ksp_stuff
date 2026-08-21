@@ -7,4 +7,4 @@ body: Earth
 peri: —
 apo: —
 next: wait
-notes: RO sandbox. No sit until desk + capable + bind.
+notes: 497 s FlyingLow geiger cannot fit under 50 km. No capable+bound sit. Do not re-pad. go: wait.

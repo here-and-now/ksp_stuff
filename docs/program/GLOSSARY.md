@@ -25,7 +25,7 @@ titles. Drop RAF/spy/radio-compact.
 | **ask:** | Ground question for another desk. Parent files it; one reply wave if it blocks `go:`. |
 | **note-tech.md** | Commander → Lars/Gus/Wernher. `python main.py note-tech`. Loop, not the plan. |
 | **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
-| **KSP-RO** | `~/Games/KSP-RO`. Express RO + Kerbalism-RO + RONoCareer. Seat with `KSPSTUFF_KSP` after first boot + `letsgrok` sandbox. See `RO.md`. |
+| **KSP-RO** | Parked Express RO tree. Do not seat. Live gym is `~/Games/KSP-rss` / letsgrok. |
 | **science-scan** | Linus. GameData Situation + save leftovers vs REACH. kRPC has no subject list. |
 | **sit-card** | `python main.py sit-card` — seated sit map for the Commander. |
 | **explore:** | Rare field itch (new rocket, stack dive, subject map). Not every Learn. |

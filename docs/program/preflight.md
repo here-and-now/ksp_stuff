@@ -1,8 +1,12 @@
-# Preflight
+# Preflight — Earth science sandbox (`letsgrok` / `KSP-rss`)
 
-- [ ] First boot `~/Games/KSP-RO` (ModuleManager). See `RO.md`.
-- [ ] New science sandbox named `letsgrok` (not a copied Steam save).
-- [ ] `export KSPSTUFF_KSP=$HOME/Games/KSP-RO`
-- [ ] `python main.py desk` — hangar none, f013 none, capable no
-- [ ] Gus stack + Linus bind + Gene `go:`
-- [ ] Never revert / quickload / rewind UT
+- [x] `python main.py world` — Earth, SCIENCE_SANDBOX, sci 2.43,
+      start + e101 + basicRocketry
+- [x] FAR + RealChute + RealHeat in GameData (2026-08-21)
+- [x] No unlocked chute (survivability 15)
+- [x] Gus `capable: no` — 497 s FlyingLow geiger will not hang
+- [x] Linus: no bind
+- [ ] Gene `go:` — **wait**. FAR envelope unflown. Do not Hangar a
+      Flea as a FAR checkout without a new `go:`
+- [x] Never revert / quickload / rewind UT
+- [x] Do not seat `KSP-RO`

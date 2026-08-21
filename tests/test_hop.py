@@ -14,7 +14,9 @@ from hop import (
     CRAFT,
     FLYING_HIGH_M,
     FLYING_LOW_M,
+    HOP_SPLASH_ABORT,
     HOP_TO_WATER_ABORT,
+    SPLASH_CRAFT,
     WATER_CRAFT,
     WATER_HEADING_DEG,
     WATER_PITCH_DEG,
@@ -27,11 +29,13 @@ from hop import (
     hop_offplan_apo,
     hop_science_alt,
     hop_science_ids,
+    hop_splash_science,
     hop_target_apo,
     install_and_launch,
     leftover_wreck_before_light,
     _wait_vessel_gone,
     run_hop,
+    run_hop_splash,
     run_hop_to_water,
     run_on_vessel,
     run_phase,
@@ -63,6 +67,7 @@ class _Mod:
 
     def trigger_event(self, name):
         self.triggered.append(name)
+        self.fields["status"] = "Running"
 
     def get_field(self, key):
         return self.fields[key]
@@ -232,6 +237,7 @@ class TestHopCatalog(unittest.TestCase):
         self.assertIn("hop", NAMES)
         self.assertIn("splash", NAMES)
         self.assertIn("hop-to-water", NAMES)
+        self.assertIn("hop-splash", NAMES)
         self.assertEqual(HOP_EXPERIMENTS, ("kerbalism_TELEMETRY", "temperatureScan"))
         self.assertEqual(CRAFT, "kspstuff-hop-flea-pbc")
         self.assertTrue(hop_craft_path("kspstuff-hop-flea-pbc").is_file())
@@ -292,6 +298,15 @@ class TestHopCatalog(unittest.TestCase):
                 self.assertEqual(hop_target_apo(), FLYING_HIGH_M)
             with patch("phases._kv", return_value={"hop_apo": "1000"}):
                 self.assertEqual(hop_target_apo(), 8_000.0)
+
+    def test_apo_unclamp_hop_splash(self):
+        with patch("hop.hop_wants_flying_high", return_value=False):
+            with patch(
+                "phases._kv",
+                return_value={"hop_apo": "80000", "phase": "hop-splash"},
+            ):
+                self.assertEqual(hop_target_apo(space=True), 80_000.0)
+                self.assertEqual(hop_target_apo(), 18_000.0)
 
 
 class TestCardIds(unittest.TestCase):
@@ -1048,11 +1063,11 @@ class TestHopSequence(unittest.TestCase):
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
         self.assertEqual(vessel.control.staged, 0)
-        scene.assert_not_called()
+        scene.assert_called()
         self.assertIn("hop unpause", logs)
         self.assertTrue(any("hop crash ui sit=flying recoverable=no" in line for line in logs))
         self.assertTrue(
-            any("tracking (not pad reload)" in line for line in logs)
+            any("space_center (total wreck)" in line for line in logs)
         )
         self.assertNotIn("hop dismissed crash ui", logs)
         self.assertNotIn("hop wait landed recoverable=yes", logs)
@@ -1208,8 +1223,8 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_not_called()
-        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        scene.assert_called()
+        self.assertIn("hop crash ui space_center (total wreck)", logs)
         self.assertNotIn("hop dismissed flight results", logs)
         self.assertFalse(any(line.startswith("recovered") for line in logs))
         self.assertLess(t[0], 15.0)
@@ -1347,7 +1362,7 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_not_called()
+        scene.assert_called()
         self.assertEqual(vessel.control.staged, 0)
         self.assertLess(t[0], 15.0)
 
@@ -1392,7 +1407,7 @@ class TestHopSequence(unittest.TestCase):
                     )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_not_called()
+        scene.assert_called()
         physics.assert_called()
         self.assertTrue(
             any(
@@ -1402,7 +1417,7 @@ class TestHopSequence(unittest.TestCase):
                 for line in logs
             )
         )
-        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        self.assertIn("hop crash ui space_center (total wreck)", logs)
         self.assertNotIn("hop dismissed crash ui", logs)
         self.assertIn("hop unpause", logs)
         self.assertNotIn("hop paused wreck", logs)
@@ -1437,7 +1452,7 @@ class TestHopSequence(unittest.TestCase):
                 )
         self.assertIn("not recoverable", str(ctx.exception))
         self.assertFalse(vessel.recovered)
-        scene.assert_not_called()
+        scene.assert_called()
         self.assertTrue(
             any(
                 "hop crash ui sit=flying recoverable=no" in line
@@ -1447,7 +1462,7 @@ class TestHopSequence(unittest.TestCase):
                 for line in logs
             )
         )
-        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        self.assertIn("hop crash ui space_center (total wreck)", logs)
         self.assertNotIn("hop dismissed crash ui", logs)
         self.assertNotIn("hop wait landed recoverable=yes", logs)
         self.assertLess(t[0], 15.0)
@@ -2536,6 +2551,51 @@ class TestHopToWater(unittest.TestCase):
         self.assertTrue(any("do not light" in line for line in logs))
         self.assertLess(t[0], 2.0)
 
+    def test_leftover_splashed_starts_card_before_recover(self):
+        """18-03-12Z: leftover sit=splashed EC=0 recoverable — start splash, not dark recover."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([tel, goo], sit="splashed", ec=0.0, recoverable=True)
+        vessel.name = SPLASH_CRAFT
+        vessel.met = 532.18
+        vessel._alt = 0.6
+        vessel._speed = 0.0
+        vessel.resources.fuel = 0.0
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        order: list[str] = []
+
+        def nap(dt):
+            if tel.triggered and "tel" not in order:
+                order.append("tel")
+                tel.fields["status"] = "Done"
+                tel.fields["Has Data"] = True
+            elif goo.triggered:
+                if "goo" not in order:
+                    order.append("goo")
+                goo.fields["status"] = "Done"
+                goo.fields["Has Data"] = True
+            t[0] += dt if dt else 0.01
+
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("temperatureScan", "kerbalism_TELEMETRY"),
+            splash_ids=("kerbalism_TELEMETRY", "mysteryGoo"),
+            wait_splash=True,
+            on_log=logs.append,
+            now=now,
+            sleep=nap,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(order, ["tel", "goo"])
+        self.assertFalse(any("do not light" in line for line in logs))
+        self.assertTrue(any(line.startswith("science ") for line in logs))
+
     def test_hop_to_water_leftover_wreck_does_not_hangar(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
         vessel = _Vessel([tel], sit="flying", ec=9.3, recoverable=False)
@@ -2597,3 +2657,157 @@ class TestWaitVesselGone(unittest.TestCase):
             with patch("hop._pool", return_value=[]):
                 _wait_vessel_gone(session, vessel, logs.append, timeout=1.0)
         self.assertTrue(any("gone" in line for line in logs))
+
+
+class TestHopSplash(unittest.TestCase):
+    def test_flea_refuses_without_hangar(self):
+        session = _Session(None)  # type: ignore[arg-type]
+        with patch("hop.hop_craft_name", return_value=CRAFT):
+            with patch("hop.install_and_launch") as hangar:
+                with self.assertRaises(MissionAbort) as ctx:
+                    run_hop_splash(session)
+        hangar.assert_not_called()
+        self.assertEqual(str(ctx.exception), HOP_SPLASH_ABORT)
+
+    def test_valiant_hangars_vertical(self):
+        with tempfile.TemporaryDirectory() as raw:
+            fake = _FakeHangar(Path(raw))
+            session = _Session(None)  # type: ignore[arg-type]
+            session.active_vessel = None
+            with patch("hop.discover_hangar", return_value=fake):
+                with patch("hop.hop_craft_name", return_value=SPLASH_CRAFT):
+                    with patch(
+                        "hop.hop_splash_science",
+                        return_value=("kerbalism_TELEMETRY", "mysteryGoo"),
+                    ):
+                        with patch("hop.time.sleep"):
+                            with patch(
+                                "hop.run_on_vessel", return_value="recovered"
+                            ) as run:
+                                result = run_hop_splash(session)
+        self.assertEqual(result, "recovered")
+        self.assertEqual(fake.calls[0]["name"], SPLASH_CRAFT)
+        kwargs = run.call_args.kwargs
+        self.assertTrue(kwargs.get("wait_splash"))
+        self.assertFalse(kwargs.get("wait_water"))
+        self.assertEqual(kwargs.get("science_ids"), ())
+        self.assertEqual(
+            kwargs.get("splash_ids"),
+            ("kerbalism_TELEMETRY", "mysteryGoo"),
+        )
+
+    def test_cmd_phase_skips_seat_and_aborts_flea(self):
+        from main import cmd_phase
+
+        session = _Session(_Vessel([]))
+        args = argparse.Namespace(name="hop-splash", timeout=0.0)
+        with patch("hop.hop_craft_name", return_value=CRAFT):
+            with patch("missions.assert_seated") as seated:
+                code = cmd_phase(session, args)
+        seated.assert_not_called()
+        self.assertEqual(code, 2)
+
+    def test_blocks_name(self):
+        blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
+        self.assertIn("hop-splash", blocks)
+        self.assertIn("t7-splash", blocks)
+        self.assertIn("east slew", blocks)
+        self.assertIn("80 km", blocks)
+        self.assertIn("east-fin PRELAUNCH", blocks)
+
+    def test_vertical_no_east_no_flying_toggle(self):
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        thermo = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([tel, goo, thermo], recoverable=False)
+        vessel.name = SPLASH_CRAFT
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel, thermo]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        flying_recovered: list[bool] = []
+        air_heading: list[float] = []
+        order: list[str] = []
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 40_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel.control.throttle = 1.0
+                vessel.resources.fuel = 5.0
+            elif vessel.situation == "flying":
+                flying_recovered.append(vessel.recovered)
+                air_heading.append(vessel.auto_pilot.target_heading)
+                if tel.triggered and "tel" not in order:
+                    order.append("tel-air")
+                if t[0] >= 5.0:
+                    vessel.control.throttle = 0.0
+                    vessel.resources.fuel = 0.0
+                    vessel.situation = "splashed"
+                    vessel._alt = 0.0
+                    vessel._speed = 0.0
+            elif vessel.situation == "splashed":
+                if tel.triggered and "tel" not in order:
+                    order.append("tel")
+                    tel.fields["status"] = "Done"
+                    tel.fields["Has Data"] = True
+                elif goo.triggered:
+                    if "goo" not in order:
+                        order.append("goo")
+                    goo.fields["status"] = "Done"
+                    goo.fields["Has Data"] = True
+                    vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch(
+            "phases._kv",
+            return_value={"hop_apo": "80000", "phase": "hop-splash"},
+        ):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("temperatureScan", "kerbalism_TELEMETRY"),
+                splash_ids=("kerbalism_TELEMETRY", "mysteryGoo"),
+                wait_splash=True,
+                on_log=logs.append,
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertTrue(flying_recovered)
+        self.assertFalse(any(flying_recovered))
+        self.assertFalse(thermo.triggered)
+        self.assertNotIn("tel-air", order)
+        self.assertEqual(order, ["tel", "goo"])
+        self.assertFalse(any(h == WATER_HEADING_DEG for h in air_heading))
+        self.assertNotEqual(vessel.auto_pilot.target_heading, WATER_HEADING_DEG)
+        self.assertTrue(any("no flying Toggle" in line for line in logs))
+        self.assertFalse(any("east" in line and "slew" in line for line in logs))
+
+    def test_splash_card_empty_flying(self):
+        text = Path("docs/missions/jebediah/science.md").read_text(encoding="utf-8")
+        from card import card_flying_ids, card_splash_ids
+
+        self.assertEqual(card_flying_ids(text), ())
+        self.assertEqual(
+            card_splash_ids(text),
+            ("kerbalism_TELEMETRY", "mysteryGoo"),
+        )
+        path = Path("docs/missions/jebediah/science.md")
+        with patch("missions.seated_science_path", return_value=path):
+            self.assertEqual(
+                hop_splash_science(),
+                ("kerbalism_TELEMETRY", "mysteryGoo"),
+            )
+        self.assertTrue(hop_craft_path(SPLASH_CRAFT).is_file())
+        self.assertTrue(water_can_steer(SPLASH_CRAFT))

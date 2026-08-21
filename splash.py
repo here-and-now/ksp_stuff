@@ -156,8 +156,9 @@ def run_on_vessel(
                         got = _finish_hd(session, vessel, on_log)
                         if got is not None:
                             return got
-                    call("abort_pad", ctx)
-                    raise MissionAbort(reason)
+                    # Card not started (17-46-04Z hop-splash): do not kill
+                    # splash wait on EC=0. Start TELEMETRY/goo after Water.
+                    continue
 
             if sit in _PAD_SIT:
                 raise MissionAbort("not splashed (still on pad)")
@@ -193,27 +194,48 @@ def run_on_vessel(
                 prev_met = met
             nap(pulse)
 
-    started = start_experiments(vessel, names=ids, on_log=on_log)
-    if started:
-        _say("science " + ",".join(started), on_log)
-        log_events.emit("science", ids=list(started))
-        mission_event("science")
-        dwell_for_card(
-            session,
-            vessel,
-            science_ids=tuple(started),
-            events=log_events,
-            on_log=on_log,
-            ctx=ctx,
-            now=now,
-            sleep=sleep,
-            timeout=timeout,
-            abort=abort,
-            pulse=pulse,
-        )
-    elif ids:
-        call("abort_pad", ctx)
-        raise MissionAbort("no science (wanted " + ",".join(ids) + ")")
+    # Card order: TELEMETRY 30 s then goo 641 s (tape 1.0 — not both at once).
+    for eid in ids:
+        started = start_experiments(vessel, names=(eid,), on_log=on_log)
+        if started:
+            _say("science " + ",".join(started), on_log)
+            log_events.emit("science", ids=list(started))
+            mission_event("science")
+            dwell_for_card(
+                session,
+                vessel,
+                science_ids=tuple(started),
+                events=log_events,
+                on_log=on_log,
+                ctx=ctx,
+                now=now,
+                sleep=sleep,
+                timeout=timeout,
+                abort=abort,
+                pulse=pulse,
+            )
+        else:
+            if hd_has_data(vessel) or eid == "kerbalism_TELEMETRY":
+                _say(
+                    f"science keep {eid} (already started or HD)",
+                    on_log,
+                )
+                dwell_for_card(
+                    session,
+                    vessel,
+                    science_ids=(eid,),
+                    events=log_events,
+                    on_log=on_log,
+                    ctx=ctx,
+                    now=now,
+                    sleep=sleep,
+                    timeout=timeout,
+                    abort=abort,
+                    pulse=pulse,
+                )
+            else:
+                call("abort_pad", ctx)
+                raise MissionAbort("no science (wanted " + eid + ")")
 
     got = _recover_hd(vessel, on_log)
     if got is not None:

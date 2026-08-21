@@ -21,6 +21,46 @@ python main.py pad
 
 ---
 
+## 2026-08-21T18-15-08Z-hop-splash — splash TELEMETRY/goo without Experiment modules
+
+- **When:** hop-splash Hangar t7-splash worked. Vertical loft, splash MET 475 sit=splashed biome **Forest** (not Water). jsonl heading 228 horiz 62 pitch 13 aoa 0. EC=0 fuel=0. leftover wreck recover+Hangar first. sci +0.
+- **Symptom:** `science skip (no Experiment modules)` then ABORT `no science (wanted kerbalism_TELEMETRY)`. Stayputnik still hosts TELEMETRY PAW; GooExperiment still on craft. experiments=0 on leftover wreck.
+- **Cause:** `start_experiments` only walked Kerbalism `Experiment` / `ModuleScienceExperiment` **by module name**. After splash those modules are gone; hosted TELEMETRY and goo PAW remain.
+- **Fix:** treat a start-PAW module with a mapped part (Stayputnik → `kerbalism_TELEMETRY`, GooExperiment → `mysteryGoo`) as science. Stock `run()` fallback if still empty. Do not Toggle antenna. Modules: `science.py`.
+
+## 2026-08-21T18-03-12Z-hop-splash — splashed leftover is splash card, not dark recover
+
+- **When:** leftover from 17-46-04Z already `sit=splashed` MET 532 fuel=0 EC=0 recoverable=yes. hop-splash 18-03-12Z recovered without lighting. jsonl heading 29 horiz 78 pitch 0.77 aoa 0 biome **Shores**. TELEMETRY/goo never Toggle. sci +0. 24×Z-100 unused.
+- **Symptom:** `leftover_wreck_before_light` true on dry splashed + recoverable → `do not light` then `recover()`. Exit 0. Card unstarted.
+- **Cause:** leftover wreck treated **splashed** like flying/landed dry wreck. hop-splash exists to start splash TELEMETRY then goo **after Water**, including EC=0 leftover (17-46 already skipped abort; 18-03 skipped the start).
+- **Fix:** when `wait_splash`/`wait_water` and `sit=splashed`, skip leftover-wreck recover; enter splash dwell. Modules: `hop.py`.
+
+## 2026-08-21T17-46-04Z-hop-splash — EC=0 before splash science is not abort
+
+- **When:** hop-splash t7-splash, apo 80 km vertical loft, splashed MET ~532, then ABORT `ec=0`. sci +0. TELEMETRY/goo never Toggle. jsonl had heading/horiz; no pitch/AoA/biome. FAR belly-flop look was the 80 km coast, not a re-entry burn.
+- **Symptom:** `splash wait water` then `gate ec=0` while already Water. Card unstarted.
+- **Cause:** splash wait treated EC=0 as abort before start. Dwell first pulse with no HD data same. Telem streamed heading/horiz only.
+- **Fix:** skip EC=0 abort until the splash card has started (or HD has data). jsonl `pitch` / `aoa` / `biome`. Modules: `splash.py`, `hop.py`, `pad.py`, `telem.py`.
+
+## 2026-08-21T16-57-24Z-hop-to-water — hop-splash is vertical wait splash
+
+- **When:** 2026-08-21 Gene `need_stack: hop-splash` after
+  `2026-08-21T16-57-24Z-hop-to-water` abort `not recoverable`. Linus
+  splash TELEMETRY then mysteryGoo 641 s; flying ids empty. leftover
+  east-fin PRELAUNCH ghost. Os 15 sci. Do not Hangar. Do not re-fly.
+- **Symptom:** `hop` aborts empty flying. hop recovers on first splash
+  and kills dwell. `hop-to-water` waits splash but slews 090 (heading
+  never holds, apo 3.66 km, lithobrake Shores). `splash` does not
+  Hangar or light.
+- **Cause:** `phases.NAMES` had no `hop-splash`. FlyingLow 18 km clamp
+  is the wrong cut for t7 (Gene `hop_apo` 80 km, OffPlan 140 km). East
+  slew is dead (no reaction wheel).
+- **Fix:** `hop-splash` in `phases.NAMES` / `blocks.md`. Hangar seated
+  t7-splash, recover unmatched leftover without lighting, light
+  vertical, no flying Toggle, `hop_apo` 80 km, wait splashed, splash
+  dwell (TELEMETRY then goo). Crash UI Tracking, not Space Center.
+  Flea refused. Modules: `hop.py`, `splash.py`, `phases.py`, `main.py`.
+
 ## 2026-08-21T recover-pad-again — Space Center from crash is pad reload
 
 - **When:** east-fin hop-to-water lithobrake MET 89. Os: crash then

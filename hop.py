@@ -141,8 +141,8 @@ def hop_science_alt() -> float:
     return FLYING_LOW_M if hop_wants_flying_high() else 0.0
 
 
-def hop_target_apo() -> float:
-    """Gene ``hop_apo`` (m). FlyingLow clamp 8–18 km; FlyingHigh to Space."""
+def hop_target_apo(*, space: bool | None = None) -> float:
+    """Gene ``hop_apo`` (m). FlyingLow clamp 8–18 km; FlyingHigh / hop-splash to Space."""
     raw = ""
     try:
         from phases import _kv
@@ -156,9 +156,10 @@ def hop_target_apo() -> float:
         apo = HOP_APO_DEFAULT
     if not math.isfinite(apo):
         apo = HOP_APO_DEFAULT
+    loft = hop_wants_flying_high() if space is None else bool(space)
     lo, hi = HOP_APO_CLAMP
-    if hop_wants_flying_high():
-        hi = hop_offplan_apo()
+    if loft:
+        hi = FLYING_HIGH_M
     return min(hi, max(lo, apo))
 
 
@@ -227,6 +228,19 @@ def hop_to_water_science() -> tuple[tuple[str, ...], tuple[str, ...]]:
     if not flying and not splash:
         raise MissionAbort(NO_BOUND_CARD)
     return flying, splash
+
+
+def hop_splash_science() -> tuple[str, ...]:
+    """Splash ids only. Empty flying is the sit. Empty splash aborts."""
+    from missions import seated_science_path
+
+    path = seated_science_path()
+    if not path.is_file():
+        raise MissionAbort(NO_BOUND_CARD)
+    ids = card_splash_ids(path.read_text(encoding="utf-8"))
+    if not ids:
+        raise MissionAbort(NO_BOUND_CARD)
+    return ids
 
 
 def _vessel_name(vessel: object) -> str:
@@ -475,12 +489,34 @@ def _snap_speed(snap: object) -> float:
     return speed if math.isfinite(speed) else float("nan")
 
 
+def _experiment_count(vessel: object | None) -> int:
+    """Kerbalism Experiment modules still on the stack. 0 = science wreck."""
+    if vessel is None:
+        return 0
+    try:
+        parts = list(getattr(getattr(vessel, "parts", None), "all", []) or [])
+    except Exception:
+        return 0
+    n = 0
+    for part in parts:
+        try:
+            mods = list(getattr(part, "modules", []) or [])
+        except Exception:
+            continue
+        for mod in mods:
+            if getattr(mod, "name", "") in {"Experiment", "ModuleScienceExperiment"}:
+                n += 1
+    return n
+
+
 def leftover_wreck_before_light(snap: object, vessel: object | None) -> bool:
     """Refuse light on a leftover wreck. Disk PRELAUNCH is not this gate.
 
     Pad leftover may light only with fuel. Flying leftover with fuel=0
     and q=0 / not moving is the 14-52-25Z crash UI — do not start
     science. Living ballistic (speed/q) with empty tanks is not this.
+    hop-splash ``sit=splashed`` leftover is not this (18-03-12Z starts
+    the splash card).
     """
     sit = str(getattr(snap, "situation", "") or "").lower()
     if not sit or sit == "?":
@@ -764,14 +800,24 @@ def _wait_vessel_gone(
 
 
 def _leave_crash_ui(
-    session: object, on_log: Callable[[str], None] | None
+    session: object,
+    on_log: Callable[[str], None] | None,
+    *,
+    total_wreck: bool = False,
 ) -> None:
-    """Leave Catastrophic Flight Results without reloading the pad.
+    """Leave Catastrophic Flight Results.
 
-    ``GameScene.space_center`` from a crashed flight is the Space Center
-    button: vessel comes back PRELAUNCH MET 0 (recover-pad-again).
-    Tracking Station is not Revert. Never revert_to_launch.
+    Total wreck (nothing left to recover): Space Center is honest
+    (Os). Living leftover must not be lit as a new hop — recover
+    dark, then Hangar. Never revert_to_launch.
     """
+    if total_wreck:
+        try:
+            go_space_center(session, reload_save=True)
+            _say("hop crash ui space_center (total wreck)", on_log)
+        except Exception as exc:
+            log.warning("hop crash ui space_center: %s", exc)
+        return
     try:
         krpc = getattr(getattr(session, "conn", None), "krpc", None)
         gs = getattr(krpc, "GameScene", None) if krpc is not None else None
@@ -951,6 +997,7 @@ def run_on_vessel(
     timeout: float | None = None,
     pulse: float = _PULSE_S,
     wait_water: bool = False,
+    wait_splash: bool = False,
     splash_ids: tuple[str, ...] | None = None,
 ) -> str:
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars.
@@ -975,12 +1022,21 @@ def run_on_vessel(
     recoverable, abort landed only after ``left_pad`` (pad
     sit=landed is hop-off, same as ``_down(flown)``), splash dwell
     after ``sit=splashed``.
+
+    ``wait_splash``: light **vertical**, **no** east slew (16-57-24Z
+    heading never 090), **no** flying Toggle, ``hop_apo`` 80 km is a
+    real cut, wait ``sit=splashed``, then splash dwell.
     """
     from phases import OffPlan, check_expect
 
+    wait_down = wait_water or wait_splash
     log_events = events if events is not None else EventLog()
-    ids = science_ids if science_ids is not None else hop_science_ids()
-    hop_apo = hop_target_apo()
+    ids = (
+        ()
+        if wait_splash
+        else (science_ids if science_ids is not None else hop_science_ids())
+    )
+    hop_apo = hop_target_apo(space=True) if wait_splash else hop_target_apo()
     ctx = Ctx(session=session, vessel=vessel, events=log_events, science_ids=ids)
     clock = now if now is not None else time.monotonic
     nap = sleep if sleep is not None else time.sleep
@@ -1007,7 +1063,12 @@ def run_on_vessel(
     water_pitch = WATER_PITCH_UP
     splash_names = splash_ids if splash_ids is not None else ()
     _say(f"hop apo={hop_apo:.0f}", on_log)
-    if wait_water:
+    if wait_splash:
+        _say(
+            "hop-splash light vertical, no flying Toggle, wait splash",
+            on_log,
+        )
+    elif wait_water:
         _say(
             f"hop-to-water slew pitch {WATER_PITCH_FROM_UP:g}° east after pad "
             f"(throttle {WATER_SLEW_THROTTLE:g}), hold through burnout, wait splash",
@@ -1036,7 +1097,17 @@ def run_on_vessel(
             ctx.vessel = vessel
             snap = telem.read()
             pulses += 1
-            if not did_light and leftover_wreck_before_light(snap, vessel):
+            sit_live = str(getattr(snap, "situation", "") or "").lower()
+            leftover_splash = (
+                wait_down
+                and sit_live in {"splashed"}
+                and _experiment_count(vessel) > 0
+            )
+            if (
+                not did_light
+                and leftover_wreck_before_light(snap, vessel)
+                and not leftover_splash
+            ):
                 sit = str(getattr(snap, "situation", "") or "") or _vessel_sit(
                     vessel
                 )
@@ -1056,7 +1127,11 @@ def run_on_vessel(
                 if not said_crash:
                     _crash_line(vessel, snap, on_log)
                     said_crash = True
-                _leave_crash_ui(session, on_log)
+                _leave_crash_ui(
+                    session,
+                    on_log,
+                    total_wreck=_experiment_count(vessel) == 0,
+                )
                 raise MissionAbort("not recoverable")
             airborne = _airborne(snap)
             if airborne:
@@ -1069,13 +1144,16 @@ def run_on_vessel(
             sit_now = str(getattr(snap, "situation", "") or "").lower()
             splashed = sit_now in {"splashed"}
             landed_dry = sit_now in {"landed"}
-            if wait_water and splashed:
+            if wait_down and splashed:
                 water_splashed = True
                 if not said_down:
-                    _say("hop-to-water splash", on_log)
+                    _say(
+                        "hop-splash splash" if wait_splash else "hop-to-water splash",
+                        on_log,
+                    )
                     said_down = True
                 break
-            if wait_water and left_pad and landed_dry and not splashed:
+            if wait_down and left_pad and landed_dry and not splashed:
                 _release_steer(vessel)
                 if not _recoverable(vessel):
                     _leave_crash_ui(session, on_log)
@@ -1096,7 +1174,7 @@ def run_on_vessel(
                 if reason == "ec=0":
                     has = _keep_hd(vessel, ids, started, left_pad=left_pad)
                     if has:
-                        if wait_water and not splashed:
+                        if wait_down and not splashed:
                             if left_pad and not waiting_hd:
                                 _say("hop ec=0 wait splash", on_log)
                                 log_events.emit("science_dwell", result="ec")
@@ -1115,6 +1193,10 @@ def run_on_vessel(
                                     _say("hop ec=0 wait recoverable", on_log)
                                     log_events.emit("science_dwell", result="ec")
                                 waiting_hd = True
+                    elif wait_down:
+                        if left_pad and not waiting_hd:
+                            _say("hop ec=0 wait splash (no science yet)", on_log)
+                        waiting_hd = True
                     elif not left_pad or down:
                         call("abort_pad", ctx)
                         raise MissionAbort(reason)
@@ -1124,9 +1206,13 @@ def run_on_vessel(
                 apo_f = float(apo)
             except (TypeError, ValueError):
                 apo_f = float("nan")
-            lid = hop_offplan_apo()
-            label = "Space" if hop_wants_flying_high() else "FlyingLow"
-            if hop_wants_flying_high():
+            lid = FLYING_HIGH_M if wait_splash else hop_offplan_apo()
+            label = (
+                "Space"
+                if wait_splash or hop_wants_flying_high()
+                else "FlyingLow"
+            )
+            if hop_wants_flying_high() and not wait_splash:
                 atm = getattr(snap, "atm_depth", float("nan"))
                 try:
                     atm_f = float(atm)
@@ -1193,6 +1279,15 @@ def run_on_vessel(
                     _say("hop-to-water hold east through burnout", on_log)
                     said_hold = True
 
+            if wait_splash and left_pad and not down and not science_attempted:
+                started = start_experiments(
+                    vessel, names=("kerbalism_TELEMETRY",), on_log=on_log
+                )
+                if started:
+                    science_attempted = True
+                    _say("science " + ",".join(started), on_log)
+                    log_events.emit("science", ids=list(started))
+                    mission_event("science", snap)
             if left_pad and not down and not science_attempted:
                 if (not did_light) and _keep_hd(
                     vessel, ids, started, left_pad=True
@@ -1220,6 +1315,7 @@ def run_on_vessel(
 
             missed_lid = (
                 hop_wants_flying_high()
+                and not wait_splash
                 and did_light
                 and not started
                 and left_pad
@@ -1231,6 +1327,7 @@ def run_on_vessel(
 
             waiting_lid = (
                 hop_wants_flying_high()
+                and not wait_splash
                 and did_light
                 and not started
                 and left_pad
@@ -1238,8 +1335,8 @@ def run_on_vessel(
             )
 
             # First recoverable after flight — situation may stay flying.
-            # hop-to-water must not recover here (that kills splash dwell).
-            if waiting_lid or wait_water:
+            # hop-to-water / hop-splash must not recover here (kills splash dwell).
+            if waiting_lid or wait_down:
                 pass
             elif left_pad and _recoverable(vessel):
                 if not said_down:
@@ -1282,6 +1379,7 @@ def run_on_vessel(
 
             if (
                 hop_wants_flying_high()
+                and not wait_splash
                 and did_light
                 and not started
                 and left_pad
@@ -1290,7 +1388,7 @@ def run_on_vessel(
                 call("abort_pad", ctx)
                 raise MissionAbort("no science (FlyingHigh lid)")
 
-            if waiting_lid or wait_water:
+            if waiting_lid or wait_down:
                 pass
             elif left_pad and (down or _low_flying(snap)):
                 got = _force_recover(vessel, on_log)
@@ -1323,8 +1421,8 @@ def run_on_vessel(
                         unpaused = True
                         still = 0
                         continue
-                    # Already unpaused, still no Recover — not Space Center.
-                    _leave_crash_ui(session, on_log)
+                    # Already unpaused, still no Recover — total wreck.
+                    _leave_crash_ui(session, on_log, total_wreck=True)
                     raise MissionAbort("not recoverable")
                 elif sit_v in _AIR:
                     if not unpaused:
@@ -1348,7 +1446,7 @@ def run_on_vessel(
 
             elapsed = clock() - t0
             if pulses > 1 and elapsed >= budget:
-                if wait_water and not splashed:
+                if wait_down and not splashed:
                     if left_pad and landed_dry:
                         raise MissionAbort("not splashed")
                     nap(pulse)
@@ -1371,7 +1469,7 @@ def run_on_vessel(
                 raise MissionAbort("timeout")
             nap(pulse)
 
-    if wait_water and water_splashed:
+    if wait_down and water_splashed:
         _release_steer(vessel)
         from splash import run_on_vessel as run_splash_vessel
 
@@ -1387,7 +1485,7 @@ def run_on_vessel(
             timeout=timeout,
             pulse=pulse,
         )
-    raise MissionAbort("not splashed" if wait_water else "timeout")
+    raise MissionAbort("not splashed" if wait_down else "timeout")
 
 
 def run_hop(
@@ -1505,5 +1603,94 @@ def run_hop_to_water(
         abort=abort,
         science_ids=flying,
         wait_water=True,
+        splash_ids=splash,
+    )
+
+
+HOP_SPLASH_ABORT = (
+    "hop-splash refused: Start Flea cannot loft Cape Shores to Water "
+    "(vertical hang lithobrakes Shores; 16-57-24Z east slew is dead). "
+    "need t7-splash Valiant"
+)
+
+SPLASH_CRAFT = "kspstuff-hop-valiant-t7-splash-pbc"
+
+
+def run_hop_splash(
+    session: object,
+    *,
+    on_log: Callable[[str], None] | None = None,
+    abort: Callable[[], bool] | None = None,
+) -> str:
+    """Valiant t7: Hangar seated craft, light vertical, wait splash dwell.
+
+    No east slew. No flying Toggle. hop_apo 80 km is a real cut.
+    Flea refuses (no Hangar). Unmatched leftover (east-fin PRELAUNCH
+    ghost) recovers without lighting, then Hangar. Matching leftover
+    enters Flight. Gate live sit/fuel/recoverable before light.
+    """
+    from session import SessionError
+
+    try:
+        name = hop_craft_name()
+    except SessionError as exc:
+        raise MissionAbort(str(exc)) from exc
+    if not water_can_steer(name):
+        _say(HOP_SPLASH_ABORT, on_log)
+        raise MissionAbort(HOP_SPLASH_ABORT)
+    splash = hop_splash_science()
+    leftover = _find_unmatched_leftover(session)
+    if leftover is None:
+        leftover = _find_hop_vessel(session)
+    if leftover is not None:
+        sit = _vessel_sit(leftover)
+        n_exp = _experiment_count(leftover)
+        wreck = n_exp == 0 or sit in {"pre_launch", "prelaunch"}
+        if wreck:
+            _ensure_flight(session, leftover, on_log)
+            rec = "yes" if _recoverable(leftover) else "no"
+            _say(
+                f"hop leftover wreck sit={sit} recoverable={rec} "
+                f"experiments={n_exp} — recover, Hangar new",
+                on_log,
+            )
+            if _recoverable(leftover):
+                try:
+                    getattr(leftover, "recover")()
+                    _say("recovered leftover wreck", on_log)
+                    mission_event("recover")
+                except Exception as exc:
+                    _say(f"leftover wreck recover failed: {exc}", on_log)
+                _wait_vessel_gone(session, leftover, on_log)
+            try:
+                go_space_center(session, reload_save=True)
+            except Exception:
+                pass
+            leftover = None
+    vessel = leftover
+    if vessel is None or _is_pad_motor(vessel):
+        install_and_launch(session)
+        try:
+            msg = wait_vessel_ready(session)
+        except Exception as exc:
+            raise MissionAbort(f"no vessel after launch: {exc}") from exc
+        _say(msg, on_log)
+        vessel = _active_vessel(session)
+        if vessel is None:
+            raise MissionAbort("no vessel after launch")
+        if _is_pad_motor(vessel):
+            raise MissionAbort("Hangar put kspstuff-pad-pbc — refused")
+    else:
+        _ensure_flight(session, vessel, on_log)
+        live = _active_vessel(session)
+        if live is not None and _is_hop_craft(live):
+            vessel = live
+    return run_on_vessel(
+        session,
+        vessel,
+        on_log=on_log,
+        abort=abort,
+        science_ids=(),
+        wait_splash=True,
         splash_ids=splash,
     )

@@ -301,6 +301,51 @@ def cmd_hop_to_water(session: Session, args: argparse.Namespace) -> int:
         release_lock()
 
 
+def cmd_hop_splash(session: Session, args: argparse.Namespace) -> int:
+    from emergencies import Ctx, call as emergency_call
+    from flightlog import WriterLockError, release_lock, start
+    from hop import run_hop_splash
+    from phases import OffPlan
+
+    t0 = time.monotonic()
+    try:
+        start("hop-splash", crew="", session=session)
+
+        def abort() -> bool:
+            if args.timeout <= 0:
+                return False
+            return time.monotonic() - t0 > args.timeout
+
+        try:
+            result = run_hop_splash(session, on_log=_log, abort=abort)
+        except OffPlan as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"OFFPLAN {exc}")
+            write_handoff(command="hop-splash", exit_code=4, abort=f"OFFPLAN {exc}")
+            return 4
+        except MissionAbort as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"ABORT {exc}")
+            write_handoff(command="hop-splash", exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command="hop-splash", exit_code=1, abort=f"SESSION {exc}")
+            return 1
+        _log(result)
+        write_handoff(command="hop-splash", exit_code=0)
+        return 0
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        write_handoff(command="hop-splash", exit_code=1, abort=f"SESSION {exc}")
+        return 1
+    finally:
+        release_lock()
+
+
 def cmd_ksc(session: Session) -> int:
     from flightlog import WriterLockError, release_lock, start
     from hangar import go_ksc
@@ -514,6 +559,16 @@ def main(argv: list[str] | None = None) -> int:
         help="Valiant slew 25° east after pad, wait Water splash (Flea refused)",
     )
     water_p.add_argument(
+        "--timeout",
+        type=float,
+        default=0.0,
+        help="Wall-clock abort (seconds). 0 = none (default).",
+    )
+    splash_loft_p = sub.add_parser(
+        "hop-splash",
+        help="t7 vertical loft, wait Water splash dwell (no east slew, no flying Toggle)",
+    )
+    splash_loft_p.add_argument(
         "--timeout",
         type=float,
         default=0.0,
@@ -918,6 +973,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_splash(session, args)
         if args.cmd == "hop-to-water":
             return cmd_hop_to_water(session, args)
+        if args.cmd == "hop-splash":
+            return cmd_hop_splash(session, args)
         if args.cmd == "tech-unlock":
             return cmd_tech_unlock(session, args)
         if args.cmd == "load":

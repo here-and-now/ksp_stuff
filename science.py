@@ -2,7 +2,8 @@
 
 Stock leftover: ``vessel.parts.experiments`` → ``Experiment.run``.
 Kerbalism pad/hop: ``part.modules`` named ``Experiment``, started via
-events — not ``Experiment.run``. ``Module.fields`` is PAW gui names;
+events — not ``Experiment.run``. Splash wreck may drop those modules;
+Stayputnik TELEMETRY PAW and GooExperiment still start. ``Module.fields`` is PAW gui names;
 ``experiment_id`` is a hidden field (``field_list`` / ``get_field_by_id``
 / ``config``). Pad dwells until HD has the card (status / Has Data /
 remaining, else cfg ``data_rate`` × ScienceDefs size, capped by remaining
@@ -91,6 +92,8 @@ _PART_EXPERIMENTS = {
     "GooExperiment": "mysteryGoo",
     "sensorThermometer": "temperatureScan",
     "kerbalism-geigercounter": "geigerCounter",
+    "probeCoreSphere_v2": "kerbalism_TELEMETRY",
+    "probeCoreSphere": "kerbalism_TELEMETRY",
 }
 _EID_KEYS = ("experiment_id", "experimentID", "experiment")
 _DONE_STATUS = (
@@ -261,6 +264,23 @@ def _is_science_module(name: str) -> bool:
         return True
     low = n.lower()
     return low in {m.lower() for m in _KERBALISM_MODULES} or low in _KERBALISM_MODULE_ALIASES
+
+
+def _module_has_start(module: Any) -> bool:
+    try:
+        names = list(_attr(module, "events") or [])
+    except Exception:
+        names = []
+    try:
+        event_list = list(_attr(module, "event_list") or [])
+    except Exception:
+        event_list = []
+    for ev in event_list:
+        gui = str(_attr(ev, "gui_name", "") or "")
+        ident = str(_attr(ev, "name", "") or "")
+        if _matches_start(gui) or _matches_start(ident):
+            return True
+    return any(_matches_start(str(n)) for n in names)
 
 
 def _is_drive_module(name: str) -> bool:
@@ -611,9 +631,14 @@ def iter_science_modules(vessel: Any) -> list[tuple[Any, Any, str]]:
             continue
         for module in modules:
             try:
-                if not _is_science_module(_mod_name(module)):
-                    continue
-                add(part, module, _infer_eid(part, module))
+                named = _is_science_module(_mod_name(module))
+                eid = _infer_eid(part, module)
+                if not named:
+                    # Splash wreck: Kerbalism Experiment gone; Stayputnik
+                    # TELEMETRY and GooExperiment still have a start PAW.
+                    if not eid or not _module_has_start(module):
+                        continue
+                add(part, module, eid)
             except Exception:
                 continue
     finder = _attr(_attr(vessel, "parts"), "modules_with_name")
@@ -666,7 +691,11 @@ def start_experiments(
 
     found = iter_science_modules(vessel)
     if not found:
+        stock = run_ready(vessel, names=want_list, on_log=on_log)
+        if stock:
+            return stock
         _say("science skip (no Experiment modules)")
+        return done
 
     best: dict[str, tuple[int, Any, Any, str]] = {}
     found_order: list[str] = []

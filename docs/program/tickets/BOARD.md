@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 10 / 49
+open: 10 / 50
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|

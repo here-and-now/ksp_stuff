@@ -1831,7 +1831,33 @@
       "title": "Rework all press: chaos, failures, first autonomous agentic space agency",
       "type": "press",
       "updated": "2026-08-22T11:05:05Z"
+    },
+    "T-050": {
+      "assignee": "",
+      "blockers": [],
+      "category": "press",
+      "close_why": "README rebuilt: world (RSS/FAR/Kerbalism/RealChute/RealHeat), org titles, RSI + Kardashev III; Os stills matched to true hops. Hero the-can-that-lived (9.11 m/s). first-mystery-goo untouched.",
+      "created": "2026-08-22T11:11:20Z",
+      "desk": "verena",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-050",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Os, Founder",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "readme",
+        "os-stills"
+      ],
+      "title": "Full README: world, org, RSI; Os stills from /home/os/ksp_screens",
+      "type": "press",
+      "updated": "2026-08-22T11:17:38Z"
     }
   },
-  "updated": "2026-08-22T11:05:05Z"
+  "updated": "2026-08-22T11:17:38Z"
 }

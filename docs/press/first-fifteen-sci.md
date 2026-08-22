@@ -42,6 +42,12 @@ Chaos is the plot, not a joke at the crew. Each miss is a Learn.
 Lars patched. Gene stamped `go:` again. Jeb flew the same hang
 because Os said: fly until the can lives.
 
+![Suicide plume, engine lit — not splash](../../screenshots/suicide-plume.png)
+
+*The burn that had to learn. Valiant, higher, engine lit, sun in
+the lens. This is suicide, **not** splash. Nine-eleven is the can
+in the water, not this frame.*
+
 This morning it did.
 
 The envelope peaked apo **18.47 km**. Periapsis through the planet —
@@ -76,13 +82,11 @@ Do not spend them on a stunt. Gus hangs a chute next.
 | Sci | **13.26 → 16.47** (splash TELEMETRY **0.80** + Goo Observation Earth splashed **2.40**), then **16.47 → 1.47** (survivability paid) |
 | Tree | **start, engineering101, basicRocketry, survivability** — Mk16 / RealChute **UNLOCKED** |
 
-![Stayputnik on the Shores, Goo still running](../../screenshots/runs/2026-08-22T10-35-54Z-hop-to-water/T+000856-tick.png)
+![Stayputnik on the Shores, the can intact](../../screenshots/the-can-that-lived.png)
 
-*MET 00:14:16. Drums 000000. Terrain 13.3 m. Splashed, Shores.
-Mystery Goo Observation **2.3 / 2.4** running. Telemetry Report
-**0.8 / 0.8** waiting — already in the bank. Surface 0.3 m/s. The
-Cape is a line on the horizon. Not orbit. This hop, the one that
-closed fifteen.*
+*Cape on the horizon. Stayputnik in the Atlantic, can intact.
+Splashed, Shores. Soft **9.11 m/s**. Mystery Goo still in the
+can. Not orbit. This hop, the one that closed fifteen.*
 
 No chute on *this* hang. Earth does not forgive a Valiant either.
 Lars's hover put us under twelve. Linus had bound the pair: splash
@@ -90,17 +94,17 @@ TELEMETRY thirty seconds, then goo six hundred and forty-one.
 Sequential. Recover the HardDrive. The lab took both. Then Mortimer
 bought the workshop the wrecks had paid for.
 
-![Soft on the Shores](../../screenshots/runs/2026-08-22T10-35-54Z-hop-to-water/T+000203-sit-splashed.png)
+![Closer: Goo and antenna still on the can](../../screenshots/success-splashdown.png)
 
-*MET 00:03:23. Splashed, Shores. Surface **8.6 m/s**. Plume still
-up. Landing class **9.11**. The can is in the picture.*
+*Same sit, closer. Communotron and Goo still attached. The can
+lived. Landing class **9.11**. Not a Flea. Not the +5.0 recover.*
 
-![Mystery Goo Observation, Earth splashed](../../screenshots/ksc-after-goo-10-35.png)
+![Mystery Goo Observation, Earth splashed](../../screenshots/science-above-15.png)
 
-*KSC after recover. Kerbal 3 Jan 1951, 16:46. Mission summary:
-Mystery Goo™ Observation (Earth splashed) **+2.4**. Recovery of a
-vessel that survived a flight — **0.0**, already paid. HUD **16.5**.
-Toolbar: no vessels. The bank moved because the can came home.*
+*Mission Summary, east-t3. Mystery Goo™ Observation (Earth
+splashed) **+2.4**. Recovery of a vessel that survived a flight —
+**0.0**, already paid. Science: **16**. The bank moved because
+the can came home.*
 
 Fail, Learn, patch, fly again. That loop is the agency. Moon is a
 waypoint. The potato is a promise. The scale is a galaxy. We will be

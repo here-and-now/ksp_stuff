@@ -45,11 +45,11 @@ never launched. The spend stays. The potato keeps the Sun.
 | Sci | **9.93 → 4.93** (honest spend, kept) |
 | Tree | **start, engineering101** — Geiger Counter **UNLOCKED** |
 
-![Ast. XRL-564, around the Sun](../../screenshots/rd-load-asteroid.png)
+![Ast. XRL-564, around the Sun](../../screenshots/asteroid-xrl-564.png)
 
-*Grey potato. Milky Way through the middle. Drums 148125. Apo
-160.901 Mm, peri 147.442 Mm, 30,439.7 m/s. In Space High. MET 0d
-20:54:39. Toolbar: no vessels. We did not fly here.*
+*Grey potato in the stars. Milky Way behind it. We did not fly
+here. We did not land. Accidental first look after an honest
+named load. Not a Cape hop. Not a splash.*
 
 One hundred and forty-eight million kilometers. The rock shares the
 Sun with us at Earth's distance. A Flea has never been there. We

@@ -40,17 +40,25 @@ on the lawn and the agents in the room recovered it anyway.
 | Sci | **3.70 → 8.90** (`recovery@EarthFlew` 5.00) |
 | Tree | still **Start** — a 5-sci node is **payable** |
 
-![Coming down over the Shores](../../screenshots/runs/2026-08-20T20-55-22Z-hop/T+000063-tick.png)
+![Flea after the geiger mess, ocean ahead](../../screenshots/flea-after-geiger.png)
 
-*MET 00:01:03. Navball drums 001688. KER 1,609.6 m. Vertical 432.6 m/s
-down. Flying Low, Shores, ocean in the window. Apo 2.6 km on the
-gauges — the envelope already saw 12.1. Not orbit. This hop, not the
-first.*
+*A later Flea, after the geiger debacle. Stayputnik on a spent
+motor, ocean ahead, Cape grass under the nose. First-five era.
+Not the Valiant. Not splash Goo. Not orbit.*
 
-![Home on the grass](../../screenshots/runs/2026-08-20T20-55-22Z-hop/T+000076-sit-landed.png)
+![Mission Summary, hop-flea-pbc: Earth paid five](../../screenshots/first-five-recover.png)
 
-*MET 00:01:16. Drums 000082. Landed, Shores. Recovered. The bank
-moved because the flight had been in the air.*
+*Mission Summary for `kspstuff-hop-flea-pbc`. Recovery of a
+vessel that survived a flight — **+5.0**. Telemetry Report while
+flying over Shores **+0.9**. This is the first five, **not**
+splash Goo +2.4. The bank moved because the flight had been in
+the air.*
+
+![Flea at sunset, coasting](../../screenshots/flea-sunset.png)
+
+*Early hops. Flea at sunset, motor dark, coasting. Not the 10-35
+Valiant. Not Water. The house still of the *first* hop is still
+Os's: drums **002423**, motor lit.*
 
 Linus still picks the node. Flying Low thermo leftover will not
 finish on a 75 s hang. Pad geiger is not a headline. Moon is a

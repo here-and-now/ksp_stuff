@@ -89,5 +89,4 @@ last:
 
 ## Learn
 
-_Gene fills this. What worked, what failed, what to change in
-the library vs this pilot's style. One short paragraph._
+Latch **held**. MET **79.1** thr **0** fuel **111.1** apo **18.7 km**. Envelope heading **never 090** (pad **299**, burn **300**, splash **304**; three 080–100 fly-throughs, not a hold) horiz **24.3** vs briefed **090**. Suicide **in**: MET **171** thr **1** vz **−194**; held through vz **−65**; still thr **1** at vz **+24.5** fuel **47**; recut MET **176.5** vz **+140** leftover **16.6**. Relight MET **208.9** vz **−126** fuel **11.5**. Splash MET **225** sit=splashed biome **Shores** impact **220 m/s** heading **304** horiz **24.3**. sci **13.26 Δ0**. science skip no Experiment modules. Overburn past −20 then leftover crumbs lofted. T-024 **in** (cut when vz ≥ −20 **seen**). T-016 hardware.

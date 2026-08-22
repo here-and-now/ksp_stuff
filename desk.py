@@ -326,6 +326,7 @@ def format_sit(sit: DeskSit) -> str:
         "scene: unknown (disk)",
         f"active_vessel: {sit.active_vessel}",
         f"hangar: {sit.hangar}",
+        f"leftover: {len(sit.vessels)}",
         f"seat: {sit.seat}",
         f"sci: {sci_s}",
         f"sci_delta: {sit.sci_delta}",

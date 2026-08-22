@@ -148,6 +148,17 @@ def fly_gate(
         return _out("wait", "hangar blocked", rec)
     if hangar.startswith("recover "):
         return _out("wait", f"leftover {hangar}", rec)
+    vessels = getattr(sit, "vessels", ()) or ()
+    if vessels:
+        return _out("wait", "leftover", rec)
+    leftover = getattr(sit, "leftover", None)
+    if leftover is not None:
+        try:
+            n = int(str(leftover).strip().lstrip("n=").split()[0])
+        except ValueError:
+            n = 0
+        if n > 0:
+            return _out("wait", "leftover", rec)
     if phase not in names:
         return _out("wait", f"phase {phase or '(none)'} not in blocks", rec)
     if hangar.startswith("phase "):

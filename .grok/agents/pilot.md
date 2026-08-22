@@ -49,18 +49,20 @@ One `Session` per process. You are the only writer: do not start a second
 2. Read `docs/program/desk.md` and `docs/program/sit-card.json`. Do not
    run `parts --stack` or `status` if desk is this sit. If the CLI
    `SESSION`s, stop and report that — do not loop. Crash UI: do **not**
-   stop for Os.
+   stop for Os. Do **not** recover leftover. Do **not** Close the crash
+   dialog. Hop abort `ksc leftover` is a handoff to **Hank**.
    Do **not** revert, quickload, return to VAB, or rewind UT. Screenshot
    once if last-flight / jsonl cannot tell (`--name stuck-<stem>`),
-   **read the PNG**, then recover the leftover or abort. grim is not
+   **read the PNG**, then abort. grim is not
    kRPC. Not every flight. Not `--full` unless unreadable. Not press.
    Flight cadence stills live in `screenshots/runs/<stamp>-<command>/` (~1 min and
    sit/stage/light/science/recover). Capture only; do not read those
    unless you are stuck.
 3. Run **the exact CLI the parent named** (`payload.cli` / `protocol fly`). Pad
-   Hangar is `.venv/bin/python -u main.py pad`. Leftover vessel is
-   `python main.py phase pad`. Do not guess `phase` vs `pad`. Not hop.
-   Not mun. Background the CLI.
+   Hangar is `.venv/bin/python -u main.py pad`. Unmatched leftover is
+   **Hank** (`recover-probe` / `ksc`), not this CLI. Matching leftover
+   that is the sortie is Gene's leftover_policy (the fly CLI). Do not
+   guess `phase` vs `pad`. Not mun. Background the CLI.
 
    Never wait on a timer. Before every sit, name **what** you are
    waiting for **and on which part** (load, experiment remaining on the
@@ -90,7 +92,9 @@ One `Session` per process. You are the only writer: do not start a second
    last: <3 heartbeat lines>
    ```
 
-   Miss → `tickets open --type recover|control`. `note-tech` is tape, not the bus.
+   Miss → `tickets open --type control`. Leftover / crash UI → Hank
+   (`ksc leftover`). Splash HD recover of **this** hop after a briefed
+   dwell stays the CLI (mission). `note-tech` is tape, not the bus.
    Do not emit `envelope:` / `need_*` / `improve:` / `feedback:`.
 
 ## Do not

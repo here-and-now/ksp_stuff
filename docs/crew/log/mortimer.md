@@ -1,5 +1,7 @@
 # Mortimer Grokman — log
 
+- 2026-08-22 — T-048 paid survivability: sci 16.4716835→1.4716835. Backup persistent.sfs.bak-survivability. `load rd-survivability` seated Ast. XRL-564; `ksc` (F-015). Rock not recovered. Spend kept. Mk16/RC_cone Available. Gus hangs a chute.
+- 2026-08-22 — T-030: leftover/KSC is Hank (`recover-probe` / `ksc`). Commander hop is flight. Gene honesty, `go: wait` on dirty hangar. Lars not leftover recover-then-Hangar. Wernher kernel T-029.
 - 2026-08-21 — I-020: jsonl envelope is the tape. Gene/Linus/Lars/Jeb cite heading/horiz/pitch; last-flight is abort/exit. Water died on heading never 090.
 - 2026-08-21 — Os: 10.96 of 15, path solid, do not bog down on Flight Results. Hangar waits until KSC is real. Never revert. Water sit stays the path.
 - 2026-08-21 — Os: working goal bank 15 sci for survivability, no cheats. sci 6.35, need ~8.65. Same Flea lithobrake is not the path. I-015 closed. I-013/I-017 hop.py → Lars. Gene replans. Gus a new cheap stack.

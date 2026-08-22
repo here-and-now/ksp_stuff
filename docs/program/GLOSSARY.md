@@ -17,6 +17,7 @@ titles. Drop RAF/spy/radio-compact.
 | **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene; batch Learn at stop. `none` = Learn each hop. Plan.md is a render. |
 | **CAPCOM** | NASA loop. Walt. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
+| **leftover / KSC** | Space Center wreck or unmatched vessel. **Hank** `recover-probe` [`--recover`\|`--space-center`] or `ksc`. Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
 | **F-001** | Gym archive (`docs/program/feedback.md`). Live friction is `type=ops --tag feedback` or `type=rsi`. |
 | **need_stack** | Leftover return shim (`tickets from-need` → `type=control` Lars). Desks open tickets, not this token. |

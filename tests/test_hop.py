@@ -15,13 +15,24 @@ from hop import (
     CRAFT,
     FLYING_HIGH_M,
     FLYING_LOW_M,
+    GOO_CRASH_MS,
     HOP_SPLASH_ABORT,
     HOP_TO_WATER_ABORT,
     SPLASH_CRAFT,
     WATER_BRAKE_ALT_MAX_M,
+    WATER_BRAKE_FUEL_MIN,
+    WATER_BRAKE_GATE_S,
+    WATER_BRAKE_HZ,
+    WATER_BRAKE_HOVER_THROTTLE,
+    WATER_BRAKE_LIGHT_PAD_M,
+    WATER_BRAKE_LIGHT_TTI_S,
     WATER_BRAKE_SPEED_M,
     WATER_BRAKE_TTI_S,
     WATER_BRAKE_VZ_CUT,
+    _hover_throttle,
+    _nap_dt,
+    _suicide_need,
+    _suicide_throttle,
     WATER_CRAFT,
     WATER_HEADING_DEG,
     WATER_PITCH_DEG,
@@ -29,10 +40,15 @@ from hop import (
     WATER_PITCH_SLEW_DPS,
     WATER_PITCH_UP,
     WATER_SLEW_THROTTLE,
+    _coast_impact_ms,
+    _coast_ok,
     _hold_or_cut,
     _steer_east,
+    _suicide_gate,
     _suicide_hold,
+    _suicide_light,
     _suicide_now,
+    _suicide_tti,
     east_direction,
     hop_craft_name,
     hop_craft_path,
@@ -43,6 +59,8 @@ from hop import (
     hop_target_apo,
     install_and_launch,
     leftover_wreck_before_light,
+    leftover_ksc_call,
+    abort_ksc_leftover,
     _wait_vessel_gone,
     run_hop,
     run_hop_splash,
@@ -152,6 +170,13 @@ class _Flight:
     def speed(self):
         return self._vessel._speed
 
+    @property
+    def vertical_speed(self):
+        vz = getattr(self._vessel, "_vz", None)
+        if vz is None:
+            return float("nan")
+        return float(vz)
+
 
 class _Orbit:
     def __init__(self, apo=80.0, peri=-500_000.0):
@@ -189,9 +214,10 @@ class _Vessel:
         self.orbit = _Orbit()
         self._alt = 80.0
         self._speed = 0.0
+        self._vz = None
         self._flight = _Flight(self)
 
-    def flight(self):
+    def flight(self, _rf=None):
         return self._flight
 
     def recover(self):
@@ -1773,7 +1799,7 @@ class TestHopSequence(unittest.TestCase):
         run.assert_not_called()
 
     def test_unmatched_flea_recovers_without_light(self):
-        """PRELAUNCH Flea vs seated Valiant: recover, do not light, then Hangar."""
+        """PRELAUNCH Flea vs seated Valiant: abort ksc leftover. Do not recover."""
         flea = _Vessel([], sit="pre_launch", recoverable=True)
         flea.name = CRAFT
         session = _Session(flea)
@@ -1783,14 +1809,16 @@ class TestHopSequence(unittest.TestCase):
         ):
             with patch("hop.run_hop", return_value="recovered") as hop:
                 with patch("hop.run_on_vessel") as run:
-                    result = run_phase(session, on_log=logs.append)
-        self.assertEqual(result, "recovered")
-        self.assertTrue(flea.recovered)
+                    with self.assertRaises(MissionAbort) as ctx:
+                        run_phase(session, on_log=logs.append)
+        self.assertIn("ksc leftover", str(ctx.exception))
+        self.assertIn("recover-probe --recover", str(ctx.exception))
+        self.assertFalse(flea.recovered)
         self.assertEqual(flea.control.staged, 0)
-        hop.assert_called_once()
+        hop.assert_not_called()
         run.assert_not_called()
         self.assertTrue(any("unmatched" in line for line in logs))
-        self.assertTrue(any("do not light" in line for line in logs))
+        self.assertTrue(any("ksc leftover" in line or "ksc: leftover" in line for line in logs))
 
     def test_unmatched_flea_not_recoverable_does_not_hangar(self):
         flea = _Vessel([], sit="pre_launch", recoverable=False)
@@ -1803,7 +1831,8 @@ class TestHopSequence(unittest.TestCase):
                 with patch("hop.run_on_vessel") as run:
                     with self.assertRaises(MissionAbort) as ctx:
                         run_phase(session)
-        self.assertIn("unmatched leftover not recoverable", str(ctx.exception))
+        self.assertIn("ksc leftover", str(ctx.exception))
+        self.assertIn("recover-probe --space-center", str(ctx.exception))
         self.assertFalse(flea.recovered)
         self.assertEqual(flea.control.staged, 0)
         hop.assert_not_called()
@@ -1822,12 +1851,13 @@ class TestHopSequence(unittest.TestCase):
                         with patch(
                             "hop.run_on_vessel", return_value="recovered"
                         ) as run:
-                            result = run_hop(session)
-        self.assertEqual(result, "recovered")
-        self.assertTrue(flea.recovered)
+                            with self.assertRaises(MissionAbort) as ctx:
+                                run_hop(session)
+        self.assertIn("ksc leftover", str(ctx.exception))
+        self.assertFalse(flea.recovered)
         self.assertEqual(flea.control.staged, 0)
-        hangar.assert_called_once()
-        run.assert_called_once()
+        hangar.assert_not_called()
+        run.assert_not_called()
 
     def test_hop_name_with_geiger_pbc_is_leftover_not_pad(self):
         """Substring geiger-pbc is not the pad motor (I-013)."""
@@ -2187,6 +2217,8 @@ class TestHopToWater(unittest.TestCase):
         self.assertIn("22-03-59Z", blocks)
         self.assertIn("22-45-26Z", blocks)
         self.assertIn("22-57-36Z", blocks)
+        self.assertIn("23-15-52Z", blocks)
+        self.assertIn("10-11-27Z", blocks)
         self.assertIn("suicide", blocks.lower())
 
     def test_pitch_east_waits_splash(self):
@@ -2471,6 +2503,41 @@ class TestHopToWater(unittest.TestCase):
         self.assertFalse(_suicide_now(lofting))
         dry = type("S", (), {"fuel": 0.0, "alt": 2_000.0, "speed": 220.0})()
         self.assertFalse(_suicide_now(dry))
+        early_23 = type(
+            "S",
+            (),
+            {
+                "fuel": 106.0,
+                "alt": 3_750.0,
+                "speed": 204.0,
+                "v_vert": -194.0,
+            },
+        )()
+        self.assertGreater(3_750.0 / 194.0, WATER_BRAKE_TTI_S)
+        self.assertFalse(_suicide_now(early_23))
+        crumbs = type(
+            "S",
+            (),
+            {
+                "fuel": 0.61,
+                "alt": 1_050.0,
+                "speed": 183.0,
+                "v_vert": -183.0,
+            },
+        )()
+        self.assertLessEqual(0.61, WATER_BRAKE_FUEL_MIN)
+        self.assertFalse(_suicide_now(crumbs))
+        late = type(
+            "S",
+            (),
+            {
+                "fuel": 16.6,
+                "alt": 1_050.0,
+                "speed": 183.0,
+                "v_vert": -183.0,
+            },
+        )()
+        self.assertTrue(_suicide_now(late))
 
     def test_suicide_hold_ignores_tti_until_vz_cut(self):
         """22-57-36Z: MET 181 tti 19 vz −72 must stay on; vz +19 cuts."""
@@ -2499,6 +2566,44 @@ class TestHopToWater(unittest.TestCase):
         )()
         self.assertFalse(_suicide_hold(up))
         self.assertGreater(WATER_BRAKE_VZ_CUT, -72.3)
+
+    def test_suicide_hold_does_not_predict_cut_at_minus_30(self):
+        """08-44-32Z: MET 178 vz −29.9 leftover 60 stays on; +24 is a cut."""
+        mid = type(
+            "S",
+            (),
+            {
+                "fuel": 60.6,
+                "alt": 1_682.0,
+                "speed": 31.8,
+                "v_vert": -29.88,
+            },
+        )()
+        self.assertTrue(_suicide_hold(mid))
+        self.assertTrue(_suicide_hold(mid, prev_vz=-113.06, dt=1.56))
+        from_23 = type(
+            "S",
+            (),
+            {
+                "fuel": 70.2,
+                "alt": 3_456.0,
+                "speed": 75.7,
+                "v_vert": -65.16,
+            },
+        )()
+        self.assertTrue(_suicide_hold(from_23, prev_vz=-194.4, dt=2.1))
+        seen = type(
+            "S",
+            (),
+            {
+                "fuel": 47.3,
+                "alt": 3_414.0,
+                "speed": 38.3,
+                "v_vert": 24.47,
+            },
+        )()
+        self.assertFalse(_suicide_hold(seen))
+        self.assertFalse(_suicide_now(seen))
 
     def test_hold_or_cut_latches_and_suicides(self):
         """22-03-59Z / T-011: do not recut 0.4 when apo falls; leftover LF later."""
@@ -2535,6 +2640,29 @@ class TestHopToWater(unittest.TestCase):
         )
         self.assertTrue(cut)
         self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertGreater(_suicide_tti(near), WATER_BRAKE_LIGHT_TTI_S)
+        light = type(
+            "S",
+            (),
+            {
+                "apo": 800.0,
+                "fuel": 40.0,
+                "alt": 700.0,
+                "speed": 220.0,
+                "v_vert": -220.0,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            light,
+            18_000.0,
+            cut=cut,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+        )
+        self.assertTrue(braking)
         self.assertEqual(vessel.control.throttle, 1.0)
         hop, hop_brake = _hold_or_cut(
             vessel, near, 18_000.0, cut=True, hold=1.0, brake=False
@@ -2566,7 +2694,8 @@ class TestHopToWater(unittest.TestCase):
             brake=True,
         )
         self.assertTrue(braking)
-        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertGreater(_suicide_tti(start), WATER_BRAKE_LIGHT_TTI_S)
         risen = type(
             "S",
             (),
@@ -2590,7 +2719,7 @@ class TestHopToWater(unittest.TestCase):
         )
         self.assertTrue(cut)
         self.assertTrue(braking)
-        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(vessel.control.throttle, 0.0)
         lofted = type(
             "S",
             (),
@@ -2614,6 +2743,749 @@ class TestHopToWater(unittest.TestCase):
         self.assertTrue(cut)
         self.assertFalse(braking)
         self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_hold_or_cut_suicide_holds_at_minus_30_then_skips_high_relight(self):
+        """08-44-32Z: vz −29.9 leftover 60 stays on; tti 19 leftover is not a slam."""
+        vessel = _Vessel([])
+        first = type(
+            "S",
+            (),
+            {
+                "apo": 2_000.0,
+                "fuel": 60.6,
+                "alt": 1_682.0,
+                "speed": 31.8,
+                "v_vert": -29.88,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            first,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+            prev_vz=-113.06,
+            dt=1.56,
+        )
+        self.assertTrue(cut)
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        high = type(
+            "S",
+            (),
+            {
+                "apo": 3_444.0,
+                "fuel": 16.6,
+                "alt": 2_526.0,
+                "speed": 129.0,
+                "v_vert": -125.8,
+            },
+        )()
+        self.assertGreater(2_526.0 / 125.8, WATER_BRAKE_TTI_S)
+        self.assertFalse(_suicide_now(high))
+        cut, braking = _hold_or_cut(
+            vessel,
+            high,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+        )
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        cut, braking = _hold_or_cut(
+            vessel,
+            high,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+            hover=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        slam = type(
+            "S",
+            (),
+            {
+                "apo": 2_700.0,
+                "fuel": 16.6,
+                "alt": 1_050.0,
+                "speed": 183.0,
+                "v_vert": -183.0,
+            },
+        )()
+        self.assertTrue(_suicide_now(slam))
+        cut, braking = _hold_or_cut(
+            vessel,
+            slam,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+            spent=True,
+        )
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_nap_dt_bursts_while_braking(self):
+        snap = type(
+            "S",
+            (),
+            {"situation": "flying", "alt": 3_456.0, "v_vert": -65.16},
+        )()
+        self.assertEqual(_nap_dt(1.0, snap, braking=True), 1.0)
+        self.assertAlmostEqual(
+            _nap_dt(None, snap, braking=True), 1.0 / WATER_BRAKE_HZ
+        )
+        self.assertGreater(_nap_dt(None, snap, braking=False), 0.15)
+        self.assertGreater(WATER_BRAKE_GATE_S, 1.0)
+
+    def test_suicide_gate_cuts_at_vz_not_minus_30(self):
+        """08-44-32Z leftover 60: 20 Hz gate holds through −30 and cuts at −10."""
+        vessel = _Vessel([])
+        vessel.resources.fuel = 60.6
+        vessel._alt = 1_682.0
+        vessel._speed = 31.8
+        vessel._vz = -29.88
+        snap = type(
+            "S",
+            (),
+            {
+                "fuel": 60.6,
+                "alt": 1_682.0,
+                "speed": 31.8,
+                "v_vert": -29.88,
+            },
+        )()
+        now, sleep, t = _fast_clock()
+
+        def nap(dt):
+            step = dt if dt else 1.0 / WATER_BRAKE_HZ
+            thr = vessel.control.throttle
+            if thr >= 1.0:
+                vessel._vz += 55.0 * step
+            elif thr > 0.0:
+                vessel._vz = min(-8.0, vessel._vz + 8.0 * step)
+            t[0] += step
+            if t[0] > 0.8:
+                t[0] = WATER_BRAKE_GATE_S + 1.0
+
+        still = _suicide_gate(vessel, snap, sleep=nap, now=now, hover=True)
+        self.assertTrue(still)
+        self.assertGreater(vessel.control.throttle, 0.0)
+        self.assertLess(vessel.control.throttle, 1.0)
+        self.assertGreaterEqual(vessel._vz, WATER_BRAKE_VZ_CUT)
+        self.assertLess(vessel._vz, 20.0)
+        self.assertFalse(_coast_ok(snap))
+
+    def test_suicide_light_is_tti_3_5_not_watch_12(self):
+        """09-48 MET 175 alt 2378 vz −223 is watch; light at TTI ≤ 3.5."""
+        watch = type(
+            "S",
+            (),
+            {
+                "fuel": 110.1,
+                "alt": 2_377.7,
+                "speed": 223.8,
+                "v_vert": -223.0,
+            },
+        )()
+        light = type(
+            "S",
+            (),
+            {
+                "fuel": 110.1,
+                "alt": 700.0,
+                "speed": 223.8,
+                "v_vert": -223.0,
+            },
+        )()
+        recut = type(
+            "S",
+            (),
+            {
+                "fuel": 50.41,
+                "alt": 1_674.9,
+                "speed": 11.6,
+                "v_vert": -7.7,
+            },
+        )()
+        self.assertEqual(WATER_BRAKE_LIGHT_TTI_S, 3.5)
+        self.assertLessEqual(_suicide_tti(watch), WATER_BRAKE_TTI_S)
+        self.assertTrue(_suicide_now(watch))
+        self.assertFalse(_suicide_light(watch))
+        self.assertTrue(_suicide_light(light))
+        self.assertGreater(_suicide_tti(recut), WATER_BRAKE_TTI_S)
+        self.assertFalse(_suicide_now(recut))
+        self.assertTrue(_suicide_need(recut))
+        self.assertTrue(_suicide_now(recut, hover=True))
+        rebuild = type(
+            "S",
+            (),
+            {
+                "fuel": 50.41,
+                "alt": 1_659.2,
+                "speed": 21.5,
+                "v_vert": -20.1,
+            },
+        )()
+        self.assertTrue(_suicide_now(rebuild, hover=True))
+        self.assertFalse(_suicide_light(rebuild))
+
+    def test_hold_or_cut_09_48_watch_not_thr1_until_light_or_hover(self):
+        """09-48: TTI 11 dump is watch; leftover 50 at vz −20 hovers without TTI≤12."""
+        vessel = _Vessel([])
+        watch = type(
+            "S",
+            (),
+            {
+                "apo": 4_911.0,
+                "fuel": 110.1,
+                "alt": 2_377.7,
+                "speed": 223.8,
+                "v_vert": -223.0,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            watch,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        recut = type(
+            "S",
+            (),
+            {
+                "apo": 1_676.8,
+                "fuel": 50.41,
+                "alt": 1_674.9,
+                "speed": 11.6,
+                "v_vert": -7.7,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            recut,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+            hover=True,
+        )
+        self.assertTrue(braking)
+        self.assertAlmostEqual(
+            vessel.control.throttle, WATER_BRAKE_HOVER_THROTTLE
+        )
+        self.assertFalse(_coast_ok(recut))
+        rebuild = type(
+            "S",
+            (),
+            {
+                "apo": 1_676.7,
+                "fuel": 50.41,
+                "alt": 1_659.2,
+                "speed": 21.5,
+                "v_vert": -20.1,
+            },
+        )()
+        self.assertGreater(_suicide_tti(rebuild), WATER_BRAKE_TTI_S)
+        cut, braking = _hold_or_cut(
+            vessel,
+            rebuild,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+            hover=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+
+    def test_suicide_gate_waits_light_tti_then_holds_through_minus_30(self):
+        """09-48: do not throttle 1 at TTI 11; 08-44: once lit, hold through −30."""
+        vessel = _Vessel([])
+        vessel.resources.fuel = 110.1
+        vessel._alt = 2_377.7
+        vessel._speed = 223.8
+        vessel._vz = -223.0
+        watch = type(
+            "S",
+            (),
+            {
+                "fuel": 110.1,
+                "alt": 2_377.7,
+                "speed": 223.8,
+                "v_vert": -223.0,
+            },
+        )()
+        now, sleep, t = _fast_clock()
+        seen = []
+
+        def wait_nap(dt):
+            step = dt if dt else 1.0 / WATER_BRAKE_HZ
+            seen.append(vessel.control.throttle)
+            vessel._alt = max(1.0, vessel._alt + vessel._vz * step)
+            t[0] += step
+            if t[0] > 0.2:
+                t[0] = WATER_BRAKE_GATE_S + 1.0
+
+        still = _suicide_gate(vessel, watch, sleep=wait_nap, now=now)
+        self.assertTrue(still)
+        self.assertTrue(seen)
+        self.assertTrue(all(thr == 0.0 for thr in seen))
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+        vessel.resources.fuel = 110.1
+        vessel._alt = 700.0
+        vessel._speed = 223.8
+        vessel._vz = -223.0
+        light = type(
+            "S",
+            (),
+            {
+                "fuel": 110.1,
+                "alt": 700.0,
+                "speed": 223.8,
+                "v_vert": -223.0,
+            },
+        )()
+        self.assertTrue(_suicide_light(light))
+        now, sleep, t = _fast_clock()
+        lit = []
+
+        def burn_nap(dt):
+            step = dt if dt else 1.0 / WATER_BRAKE_HZ
+            lit.append(vessel.control.throttle)
+            if vessel.control.throttle >= 1.0:
+                vessel._vz += 55.0 * step
+            t[0] += step
+
+        still = _suicide_gate(vessel, light, sleep=burn_nap, now=now)
+        self.assertIn(1.0, lit)
+        self.assertGreaterEqual(vessel._vz, WATER_BRAKE_VZ_CUT)
+        self.assertLess(vessel._vz, 20.0)
+        self.assertFalse(_coast_ok(light))
+        self.assertTrue(still or vessel.control.throttle == 0.0)
+
+    def test_suicide_gate_09_48_hover_relights_without_tti12(self):
+        """09-48 leftover 50 at vz −20 must throttle 1 even when TTI is 83 s."""
+        vessel = _Vessel([])
+        vessel.resources.fuel = 50.41
+        vessel._alt = 1_659.2
+        vessel._speed = 21.5
+        vessel._vz = -20.1
+        rebuild = type(
+            "S",
+            (),
+            {
+                "fuel": 50.41,
+                "alt": 1_659.2,
+                "speed": 21.5,
+                "v_vert": -20.1,
+            },
+        )()
+        self.assertGreater(_suicide_tti(rebuild), WATER_BRAKE_TTI_S)
+        now, sleep, t = _fast_clock()
+        lit = []
+
+        def burn_nap(dt):
+            step = dt if dt else 1.0 / WATER_BRAKE_HZ
+            lit.append(vessel.control.throttle)
+            if vessel.control.throttle >= 1.0:
+                vessel._vz += 55.0 * step
+            t[0] += step
+
+        still = _suicide_gate(
+            vessel, rebuild, sleep=burn_nap, now=now, hover=True
+        )
+        self.assertIn(1.0, lit)
+        self.assertGreaterEqual(vessel._vz, WATER_BRAKE_VZ_CUT)
+        self.assertFalse(_coast_ok(rebuild))
+        self.assertTrue(still or vessel.control.throttle == 0.0)
+
+    def test_suicide_10_11_crumbs_at_195_do_not_rebuild(self):
+        """10-11-27Z: MET 208.9 crumbs 1.98 vz −9.4 alt 195 is not a hover."""
+        crumbs = type(
+            "S",
+            (),
+            {
+                "fuel": 1.98,
+                "alt": 195.3,
+                "speed": 9.2,
+                "v_vert": -9.4,
+            },
+        )()
+        leftover = type(
+            "S",
+            (),
+            {
+                "fuel": 40.0,
+                "alt": 195.3,
+                "speed": 9.2,
+                "v_vert": -9.4,
+            },
+        )()
+        self.assertGreater(_coast_impact_ms(crumbs), GOO_CRASH_MS)
+        self.assertFalse(_coast_ok(crumbs))
+        self.assertFalse(_suicide_need(crumbs))
+        self.assertFalse(_suicide_now(crumbs, hover=True))
+        self.assertTrue(_suicide_need(leftover))
+        self.assertTrue(_suicide_now(leftover, hover=True))
+        self.assertFalse(_suicide_hold(leftover))
+        vessel = _Vessel([])
+        cut, braking = _hold_or_cut(
+            vessel,
+            leftover,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+            hover=True,
+        )
+        self.assertTrue(braking)
+        self.assertAlmostEqual(
+            vessel.control.throttle, WATER_BRAKE_HOVER_THROTTLE
+        )
+        self.assertGreater(_hover_throttle(vessel), 0.0)
+        self.assertLess(_hover_throttle(vessel), 1.0)
+        vessel.resources.fuel = 40.0
+        vessel._alt = 195.3
+        vessel._speed = 9.2
+        vessel._vz = -9.4
+        now, sleep, t = _fast_clock()
+        seen = []
+
+        def nap(dt):
+            step = dt if dt else 1.0 / WATER_BRAKE_HZ
+            seen.append(vessel.control.throttle)
+            thr = vessel.control.throttle
+            if thr >= 1.0:
+                vessel._vz += 55.0 * step
+            elif thr > 0.0:
+                vessel._vz = min(-8.0, vessel._vz + 4.0 * step)
+                vessel._alt = max(2.0, vessel._alt + vessel._vz * step)
+            t[0] += step
+            if t[0] > 0.4:
+                t[0] = WATER_BRAKE_GATE_S + 1.0
+
+        still = _suicide_gate(
+            vessel, leftover, sleep=nap, now=now, hover=True
+        )
+        self.assertTrue(still)
+        self.assertTrue(seen)
+        self.assertNotIn(1.0, seen)
+        self.assertGreater(max(seen), 0.0)
+        self.assertLess(vessel._vz, 0.0)
+        crumbs_cut, crumbs_brake = _hold_or_cut(
+            vessel,
+            crumbs,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+            hover=True,
+        )
+        self.assertFalse(crumbs_brake)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_suicide_throttle_kill_then_hover(self):
+        """Kill is throttle 1; vz-cut with leftover is TWR≈1, not slam 1."""
+        vessel = _Vessel([])
+        kill = type(
+            "S",
+            (),
+            {
+                "fuel": 108.7,
+                "alt": 2_415.1,
+                "speed": 223.6,
+                "v_vert": -222.5,
+            },
+        )()
+        band = type(
+            "S",
+            (),
+            {
+                "fuel": 40.0,
+                "alt": 195.3,
+                "speed": 9.2,
+                "v_vert": -9.4,
+            },
+        )()
+        self.assertEqual(_suicide_throttle(vessel, kill, lit=False), 0.0)
+        self.assertEqual(_suicide_throttle(vessel, kill, lit=True), 1.0)
+        self.assertAlmostEqual(
+            _suicide_throttle(vessel, band, lit=True),
+            WATER_BRAKE_HOVER_THROTTLE,
+        )
+        self.assertGreater(WATER_BRAKE_LIGHT_PAD_M, 0.0)
+        self.assertLess(WATER_BRAKE_LIGHT_PAD_M, 195.0)
+
+    def test_coast_ok_is_goo_crash_not_vz_cut(self):
+        """09-11 recut 1766/−19 and 08-44 1682/−30 coast well above Goo 12."""
+        recut_09 = type(
+            "S",
+            (),
+            {
+                "fuel": 57.1,
+                "alt": 1_766.0,
+                "speed": 20.1,
+                "v_vert": -19.31,
+            },
+        )()
+        recut_08 = type(
+            "S",
+            (),
+            {
+                "fuel": 60.6,
+                "alt": 1_682.0,
+                "speed": 31.8,
+                "v_vert": -29.88,
+            },
+        )()
+        near = type(
+            "S",
+            (),
+            {
+                "fuel": 40.0,
+                "alt": 2.0,
+                "speed": 8.2,
+                "v_vert": -8.0,
+            },
+        )()
+        loft = type(
+            "S",
+            (),
+            {
+                "fuel": 30.3,
+                "alt": 910.0,
+                "speed": 7.4,
+                "v_vert": 2.71,
+            },
+        )()
+        self.assertEqual(GOO_CRASH_MS, 12.0)
+        self.assertGreater(WATER_BRAKE_VZ_CUT, -GOO_CRASH_MS)
+        self.assertGreater(_coast_impact_ms(recut_09), 80.0)
+        self.assertFalse(_coast_ok(recut_09))
+        self.assertGreater(_coast_impact_ms(recut_08), 80.0)
+        self.assertFalse(_coast_ok(recut_08))
+        self.assertLessEqual(_coast_impact_ms(near), GOO_CRASH_MS)
+        self.assertTrue(_coast_ok(near))
+        self.assertFalse(_coast_ok(loft))
+
+    def test_hold_or_cut_hover_slam_leftover_57_until_coast_ok(self):
+        """09-11 leftover 57 at vz −19 is hover-slam, not TTI pulse or spent-cut."""
+        vessel = _Vessel([])
+        arm = type(
+            "S",
+            (),
+            {
+                "apo": 4_982.0,
+                "fuel": 114.1,
+                "alt": 2_462.0,
+                "speed": 223.5,
+                "v_vert": -222.5,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            arm,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        recut = type(
+            "S",
+            (),
+            {
+                "apo": 1_782.0,
+                "fuel": 57.1,
+                "alt": 1_766.0,
+                "speed": 20.1,
+                "v_vert": -19.31,
+            },
+        )()
+        self.assertLess(recut.v_vert, WATER_BRAKE_VZ_CUT)
+        self.assertFalse(_coast_ok(recut))
+        cut, braking = _hold_or_cut(
+            vessel,
+            recut,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        at_cut = type(
+            "S",
+            (),
+            {
+                "apo": 1_760.0,
+                "fuel": 50.0,
+                "alt": 1_750.0,
+                "speed": 9.5,
+                "v_vert": -9.5,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            at_cut,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+            hover=True,
+        )
+        self.assertTrue(braking)
+        self.assertAlmostEqual(
+            vessel.control.throttle, WATER_BRAKE_HOVER_THROTTLE
+        )
+        self.assertFalse(_coast_ok(at_cut))
+        rebuild = type(
+            "S",
+            (),
+            {
+                "apo": 1_763.0,
+                "fuel": 57.1,
+                "alt": 1_158.0,
+                "speed": 110.1,
+                "v_vert": -110.3,
+            },
+        )()
+        self.assertLessEqual(1_158.0 / 110.3, WATER_BRAKE_TTI_S)
+        self.assertTrue(_suicide_now(rebuild))
+        self.assertTrue(_suicide_now(rebuild, hover=True))
+        self.assertFalse(_suicide_now(rebuild, spent=True))
+        cut, braking = _hold_or_cut(
+            vessel,
+            rebuild,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+            hover=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        near = type(
+            "S",
+            (),
+            {
+                "apo": 8.0,
+                "fuel": 40.0,
+                "alt": 2.0,
+                "speed": 8.2,
+                "v_vert": -8.0,
+            },
+        )()
+        self.assertTrue(_coast_ok(near))
+        self.assertFalse(_suicide_now(near, hover=True))
+        cut, braking = _hold_or_cut(
+            vessel,
+            near,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=True,
+        )
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        pulse = type(
+            "S",
+            (),
+            {
+                "apo": 593.0,
+                "fuel": 13.8,
+                "alt": 443.0,
+                "speed": 55.2,
+                "v_vert": -55.5,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            pulse,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+            spent=True,
+        )
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        crumbs = type(
+            "S",
+            (),
+            {
+                "apo": 345.0,
+                "fuel": 1.16,
+                "alt": 333.0,
+                "speed": 16.5,
+                "v_vert": -16.8,
+            },
+        )()
+        self.assertFalse(_suicide_now(crumbs))
+        self.assertFalse(_suicide_now(crumbs, hover=True))
+        cut, braking = _hold_or_cut(
+            vessel,
+            crumbs,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=False,
+            hover=True,
+        )
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_suicide_hold_cuts_seen_plus_vz(self):
+        """08-44-32Z MET 188.9 vz +2.7 is a cut, not a leftover loft."""
+        up = type(
+            "S",
+            (),
+            {
+                "fuel": 30.3,
+                "alt": 910.0,
+                "speed": 7.4,
+                "v_vert": 2.71,
+            },
+        )()
+        self.assertFalse(_suicide_hold(up))
+        self.assertFalse(_suicide_now(up))
+        loft = type(
+            "S",
+            (),
+            {
+                "fuel": 8.46,
+                "alt": 967.0,
+                "speed": 85.9,
+                "v_vert": 85.18,
+            },
+        )()
+        self.assertFalse(_suicide_hold(loft))
+        self.assertFalse(_suicide_now(loft))
 
     def test_wait_water_does_not_recut_then_suicides(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -2905,7 +3777,7 @@ class TestHopToWater(unittest.TestCase):
         self.assertTrue(any(line.startswith("science ") for line in logs))
 
     def test_hop_to_water_splashed_leftover_recovers_then_hangars(self):
-        """22-45-26Z: matching sit=splashed fuel=0 recoverable — recover, Hangar, loft."""
+        """22-45-26Z: matching sit=splashed fuel=0 recoverable — abort ksc leftover."""
         leftover = _Vessel([], sit="splashed", ec=0.0, recoverable=True)
         leftover.name = WATER_CRAFT
         leftover.met = 212.2
@@ -2933,24 +3805,24 @@ class TestHopToWater(unittest.TestCase):
                         with patch(
                             "hop.wait_vessel_ready", return_value="hangar ready"
                         ):
-                            with patch("hop.go_space_center"):
+                            with patch("hop.go_space_center") as scene:
                                 with patch("hop._wait_vessel_gone"):
                                     with patch(
                                         "hop.run_on_vessel",
                                         return_value="recovered",
                                     ) as run:
-                                        result = run_hop_to_water(
-                                            session, on_log=logs.append
-                                        )
-        self.assertEqual(result, "recovered")
-        self.assertTrue(leftover.recovered)
+                                        with self.assertRaises(MissionAbort) as ctx:
+                                            run_hop_to_water(
+                                                session, on_log=logs.append
+                                            )
+        self.assertIn("ksc leftover", str(ctx.exception))
+        self.assertIn("recover-probe --recover", str(ctx.exception))
+        self.assertFalse(leftover.recovered)
         self.assertEqual(leftover.control.staged, 0)
-        hangar.assert_called_once()
-        run.assert_called_once()
-        self.assertIs(run.call_args.args[1], fresh)
-        self.assertTrue(
-            any("recover, Hangar new" in line for line in logs)
-        )
+        hangar.assert_not_called()
+        run.assert_not_called()
+        scene.assert_not_called()
+        self.assertTrue(any("ksc leftover" in line or "ksc: leftover" in line for line in logs))
         self.assertTrue(any("sit=splashed" in line for line in logs))
 
     def test_hop_to_water_leftover_wreck_does_not_hangar(self):
@@ -3001,6 +3873,30 @@ class TestHopToWater(unittest.TestCase):
         self.assertTrue(leftover_wreck_before_light(pad, vessel))
         pad.fuel = 5.0
         self.assertFalse(leftover_wreck_before_light(pad, vessel))
+
+
+class TestKscLeftoverAbort(unittest.TestCase):
+    def test_recoverable_calls_recover_probe(self):
+        self.assertEqual(
+            leftover_ksc_call(True),
+            "python main.py recover-probe --recover",
+        )
+        self.assertEqual(
+            leftover_ksc_call(False),
+            "python main.py recover-probe --space-center",
+        )
+
+    def test_abort_prints_kv_and_does_not_recover(self):
+        vessel = _Vessel([], sit="splashed", recoverable=True)
+        logs: list[str] = []
+        with self.assertRaises(MissionAbort) as ctx:
+            abort_ksc_leftover(vessel, logs.append)
+        self.assertFalse(vessel.recovered)
+        self.assertIn("ksc leftover", str(ctx.exception))
+        self.assertEqual(logs[0], "ksc: leftover")
+        self.assertEqual(logs[1], "sit: splashed")
+        self.assertEqual(logs[2], "recoverable: yes")
+        self.assertEqual(logs[3], "call: python main.py recover-probe --recover")
 
 
 class TestWaitVesselGone(unittest.TestCase):
@@ -3063,6 +3959,28 @@ class TestHopSplash(unittest.TestCase):
                 code = cmd_phase(session, args)
         seated.assert_not_called()
         self.assertEqual(code, 2)
+
+    def test_leftover_wreck_aborts_ksc_leftover(self):
+        leftover = _Vessel([], sit="pre_launch", recoverable=True)
+        leftover.name = SPLASH_CRAFT
+        leftover.parts = _Parts([])
+        session = _Session(leftover)
+        logs: list[str] = []
+        with patch("hop.hop_craft_name", return_value=SPLASH_CRAFT):
+            with patch("hop.hop_match_name", return_value=SPLASH_CRAFT):
+                with patch(
+                    "hop.hop_splash_science",
+                    return_value=("kerbalism_TELEMETRY", "mysteryGoo"),
+                ):
+                    with patch("hop.install_and_launch") as hangar:
+                        with patch("hop.go_space_center") as scene:
+                            with self.assertRaises(MissionAbort) as ctx:
+                                run_hop_splash(session, on_log=logs.append)
+        self.assertIn("ksc leftover", str(ctx.exception))
+        self.assertFalse(leftover.recovered)
+        hangar.assert_not_called()
+        scene.assert_not_called()
+        self.assertTrue(any("ksc: leftover" in line for line in logs))
 
     def test_blocks_name(self):
         blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")

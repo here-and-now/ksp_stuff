@@ -72,3 +72,12 @@
 - 2026-08-21T22-45-26Z hop-to-water exit=0 → docs/missions/jebediah/logs/2026-08-21T22-45-26Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T22-45-26Z-hop-to-water-review.md
 - 2026-08-21T22-57-36Z hop-to-water exit=2 abort=no science (wanted mysteryGoo) → docs/missions/jebediah/logs/2026-08-21T22-57-36Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T22-57-36Z-hop-to-water-review.md
 - 2026-08-21T23-15-52Z hop-to-water exit=2 abort=no science (wanted mysteryGoo) → docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water-review.md
+- 2026-08-22T08-44-32Z hop-to-water exit=2 abort=no science (wanted mysteryGoo) → docs/missions/jebediah/logs/2026-08-22T08-44-32Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-22T08-44-32Z-hop-to-water-review.md
+- 2026-08-22T08-52-09Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-22T08-52-09Z-ksc.md review=docs/missions/jebediah/logs/2026-08-22T08-52-09Z-ksc-review.md
+- 2026-08-22T08-56-43Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-22T08-56-43Z-ksc.md review=docs/missions/jebediah/logs/2026-08-22T08-56-43Z-ksc-review.md
+- 2026-08-22T09-11-59Z hop-to-water exit=2 abort=no science (wanted mysteryGoo) → docs/missions/jebediah/logs/2026-08-22T09-11-59Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-22T09-11-59Z-hop-to-water-review.md
+- 2026-08-22T09-48-51Z hop-to-water exit=2 abort=no science (wanted mysteryGoo) → docs/missions/jebediah/logs/2026-08-22T09-48-51Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-22T09-48-51Z-hop-to-water-review.md
+- 2026-08-22T10-11-27Z hop-to-water exit=2 abort=no science (wanted mysteryGoo) → docs/missions/jebediah/logs/2026-08-22T10-11-27Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-22T10-11-27Z-hop-to-water-review.md
+- 2026-08-22T10-35-54Z hop-to-water exit=0 → docs/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water.md review=docs/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md
+- 2026-08-22T10-57-26Z load exit=0 → docs/missions/jebediah/logs/2026-08-22T10-57-26Z-load.md review=docs/missions/jebediah/logs/2026-08-22T10-57-26Z-load-review.md
+- 2026-08-22T10-58-01Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-22T10-58-01Z-ksc.md review=docs/missions/jebediah/logs/2026-08-22T10-58-01Z-ksc-review.md

@@ -30,14 +30,51 @@ def parse_desk(text: str | None = None) -> dict[str, str]:
         DESK.read_text(encoding="utf-8") if DESK.is_file() else ""
     )
     out: dict[str, str] = {}
+    leftover_n = ""
     for line in raw.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("# leftover vessels n="):
+            leftover_n = stripped.split("n=", 1)[1].strip()
+            continue
         if ":" not in line:
             continue
         k, _, v = line.partition(":")
         key = k.strip().lower()
         if key:
             out[key] = v.strip()
+    if leftover_n and "leftover" not in out:
+        out["leftover"] = leftover_n
     return out
+
+
+def leftover_n(desk: dict[str, str]) -> int:
+    raw = (desk.get("leftover") or "0").strip().lower()
+    if raw.startswith("n="):
+        raw = raw[2:].strip()
+    token = raw.split()[0] if raw else "0"
+    try:
+        return int(token)
+    except ValueError:
+        if token in {"", "0", "none", "no"}:
+            return 0
+        return 1
+
+
+def leftover_cli(desk: dict[str, str]) -> str:
+    hangar = (desk.get("hangar") or "none").strip().lower()
+    rec = (desk.get("recoverable") or "").strip().lower()
+    if rec in {"no", "false", "0"}:
+        return "python main.py recover-probe --space-center"
+    if hangar.startswith("recover "):
+        return "python main.py recover-probe --space-center"
+    return "python main.py recover-probe --recover"
+
+
+def leftover_sit(desk: dict[str, str]) -> bool:
+    hangar = desk.get("hangar") or "none"
+    if hangar.startswith("recover ") or hangar.startswith("phase "):
+        return True
+    return leftover_n(desk) > 0
 
 
 def _open_by_type(*types: str) -> list[dict[str, Any]]:
@@ -95,24 +132,26 @@ def next_actions(
             item["cli"] = cli
         hires.append(item)
 
-    if hangar.startswith("recover ") or hangar.startswith("phase "):
-        if not live:
-            rows = recover_any or recover or [
-                {
-                    "id": "",
-                    "desk": "jebediah",
-                    "type": "recover",
-                    "severity": "S2",
-                    "priority": "P0",
-                }
-            ]
-            _hire("jebediah", rows, f"leftover hangar={hangar}")
-            return {
-                "lock": "live" if live else "free",
-                "pad": pad,
-                "fly_ready": None,
-                "hire": hires,
+    if leftover_sit(d) and not live:
+        rows = recover_any or recover or [
+            {
+                "id": "",
+                "desk": "hank",
+                "type": "recover",
+                "severity": "S2",
+                "priority": "P0",
             }
+        ]
+        call = leftover_cli(d)
+        _hire("hank", rows, f"leftover hangar={hangar}", cli=call)
+        return {
+            "lock": "free",
+            "pad": pad,
+            "fly_ready": None,
+            "hire": hires,
+            "ksc": "leftover",
+            "call": call,
+        }
 
     if live:
         for desk_name in ("gus", "linus", "wernher", "lars", "verena"):
@@ -133,12 +172,15 @@ def next_actions(
         }
 
     if recover:
-        _hire("jebediah", recover, "S1 recover")
+        call = leftover_cli(d)
+        _hire("hank", recover, "S1 recover", cli=call)
         return {
             "lock": "free",
             "pad": "idle",
             "fly_ready": None,
             "hire": hires,
+            "ksc": "leftover",
+            "call": call,
         }
 
     if fly_ready:
@@ -227,8 +269,12 @@ def format_next(actions: dict[str, Any]) -> str:
         f"lock: {actions.get('lock')}",
         f"pad: {actions.get('pad')}",
         f"fly_ready: {actions.get('fly_ready') or 'none'}",
-        "hire:",
     ]
+    if actions.get("ksc"):
+        lines.append(f"ksc: {actions['ksc']}")
+    if actions.get("call"):
+        lines.append(f"call: {actions['call']}")
+    lines.append("hire:")
     for h in actions.get("hire") or []:
         tickets = ",".join(h.get("tickets") or []) or "none"
         extra = f" cli={h['cli']}" if h.get("cli") else ""

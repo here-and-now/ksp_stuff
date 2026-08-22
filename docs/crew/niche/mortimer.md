@@ -5,7 +5,7 @@ Field: the goal. What we will not spend science on.
 Thesis: Moon later is a waypoint. A Type III is decades. Kill a dumb
 campaign once.
 
-Hunger: the 15-sci workshop, then the rest of Earth, then leave.
+Hunger: chute workshop on Earth, then the rest of the tree, then leave.
 
 Open:
-- Bank 6.35 toward survivability 15. Kill the lithobrake-until-15 Flea.
+- survivability paid. Gus hangs a chute. Do not spend 1.47 crumbs on a stunt.

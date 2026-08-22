@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from hangar import _can_revert, game_scene, go_space_center, ksc_ready
+from hangar import _can_revert, dismiss_flight_results, game_scene, ksc_ready
 from session import Session
 
 
@@ -81,8 +81,9 @@ def cmd_recover_probe(
             flush=True,
         )
     if space_center:
-        print("go_space_center total wreck — not revert_to_launch", flush=True)
-        go_space_center(session, reload_save=True)
+        print("dismiss flight results — not revert, no click", flush=True)
+        msg = dismiss_flight_results(session)
+        print(msg, flush=True)
         print(f"scene now {game_scene(session)}", flush=True)
         return 0
     if not recover:

@@ -1,5 +1,6 @@
 # Linus Grokman — log
 
+- 2026-08-22 — Bound east-t3 T-020 splash TELEMETRY 30/0.052/0.80 Shores seq 0 then T-019 goo 641/0.18/2.40 global seq 1. Goo closes 15; do not wait 090. Water TELEMETRY not faked (T-025–T-028 unbound, no experiment_id). 23-15 220 m/s modules gone is Lars not an unbind. recover_banks yes. Not t7. Skip geiger PAW, Forest leftover 1.51, crumbs 0.32.
 - 2026-08-21 — Bound kspstuff-hop-valiant-east-t3-pbc splash pair: TELEMETRY 30 s / 0.052 / 0.80 then goo 641 s / 0.18 / 2.40. Sequential after splash. Not t7. FlyingLow@Water thermo not bound — no 090 tape. Skip Forest High leftover 1.51. Skip geiger (not on hang). Tape 1.0. recover_banks yes. T-009 closed.
 - 2026-08-21 — Opportunities east Water. sci 13.2632 need ~1.74. Unbound. No t7-splash. No Water biome until heading 090 tape. T-004 closed: missing-id = unstarted. T-009 kept: splash TELEMETRY 0.80. Splash goo 2.40 or FlyingLow@Water 3.50 close 15. Forest leftover 1.51 short. Geiger 0.32 crumbs.
 - 2026-08-21 — T-004 leftover hid unstarted splash. sci 13.2632 need ~1.74. Forest High TELEMETRY leftover 1.51 does not close. Splash goo 2.40 does. Bound t7-splash sequential TELEMETRY 30/0.052/0.80 then goo 641/0.18/2.40. Skip locked eva/sample/seismic/ROC. Skip geiger crumbs 0.32. Do not Toggle airborne.

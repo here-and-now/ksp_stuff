@@ -7,7 +7,14 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from hangar import Hangar, go_space_center, install_signed, ksc_ready, name_is_refused
+from hangar import (
+    Hangar,
+    dismiss_flight_results,
+    go_space_center,
+    install_signed,
+    ksc_ready,
+    name_is_refused,
+)
 from session import SessionError
 
 
@@ -44,6 +51,8 @@ class _SC:
         self.closes = 0
         self.reverts = 0
         self.vessels = list(vessels)
+        self.saves: list[str] = []
+        self.loads: list[str] = []
 
     def can_revert_to_launch(self):
         return bool(self._revert)
@@ -54,6 +63,13 @@ class _SC:
 
     def load_space_center(self):
         self.closes += 1
+        self._revert = False
+
+    def save(self, name):
+        self.saves.append(name)
+
+    def load(self, name):
+        self.loads.append(name)
         self._revert = False
 
 
@@ -153,6 +169,25 @@ class TestGoSpaceCenter(unittest.TestCase):
             with self.assertRaises(SessionError):
                 go_space_center(session, timeout=5.0)
         self.assertLessEqual(n["n"], 1)
+        self.assertEqual(session.space_center.reverts, 0)
+
+
+class TestDismissFlightResults(unittest.TestCase):
+    def test_overlay_save_load_not_revert(self):
+        session = _Session(scene="space_center", revert=True, vessels=())
+        with patch("hangar.time.sleep"):
+            dismiss_flight_results(session)
+        self.assertEqual(session.space_center.saves, ["leftover-ksc"])
+        self.assertEqual(session.space_center.loads, ["leftover-ksc"])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertFalse(session.space_center.can_revert_to_launch())
+
+    def test_clean_ksc_does_not_save(self):
+        session = _Session(scene="space_center", revert=False)
+        with patch("hangar.time.sleep"):
+            dismiss_flight_results(session)
+        self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.space_center.loads, [])
         self.assertEqual(session.space_center.reverts, 0)
 
 

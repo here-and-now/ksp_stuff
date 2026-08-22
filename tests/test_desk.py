@@ -77,6 +77,7 @@ class TestDesk(unittest.TestCase):
     def test_format_sit_has_hangar_and_f013_not_gym_scan(self):
         text = format_sit(_sit())
         self.assertIn("hangar: none", text)
+        self.assertIn("leftover: 0", text)
         self.assertIn("scene: unknown (disk)", text)
         self.assertIn("mods: none", text)
         self.assertIn("f013:", text)

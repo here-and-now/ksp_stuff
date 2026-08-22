@@ -21,6 +21,180 @@ python main.py pad
 
 ---
 
+## 2026-08-22T10-11-27Z-hop-to-water — 20 Hz dump 108 LF then 9 m/s rebuilt to 62
+
+- **When:** 2026-08-22 letsgrok `python main.py hop-to-water`
+  (`2026-08-22T10-11-27Z-hop-to-water`). East-t3. F-013 mysteryGoo
+  GooExperiment start unlocked=yes on_craft=yes. Do not Hangar. KSC
+  leftover is Hank (`ksc leftover`).
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`. Latch
+  hop_apo **held**: MET **79.4** thr **0** fuel **108.7**. Suicide 1 Hz
+  **never thr=1**. MET **176.1** thr 0 leftover **108.7** heading **292**
+  horiz **21.6** speed **224** vz **−223** alt **2415**. Gap MET
+  **176→209** dumped **108.7→crumbs 1.98**. MET **208.9** thr 0 fuel
+  **1.98** heading **295** horiz **1.93** speed **9.2** vz **−9.4** alt
+  **195**, then rebuild. Splash MET **214.3** sit=splashed heading
+  **304.6** horiz **2.00** speed **62.3** landing hard **62 m/s** Shores.
+  kind=state pad heading **298.9** never 090 (T-016).
+- **Cause:** 20 Hz `_suicide_gate` between Telem.read (same 09-48
+  off-tape burn). vz-cut at ≥ −10 while coast from 195 m is ~62
+  returned/spent (crumbs). Throttle 1 after the kill at leftover TWR
+  dumps to crumbs; cutting lets gravity rebuild 9→62. Goo
+  crashTolerance 12. Modules gone.
+- **Fix:** After vz ≥ −10, TWR≈1 hover until vacuum coast ≤12 — do
+  not slam 1, do not drop out at the cut, do not spent unless coast
+  ok or crumbs. Watch TTI ≤12; light at 3.5 or TWR burn-distance.
+  Crumbs still not a relight. Do not loft. Keep Hank ksc leftover.
+  Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-22T09-48-51Z-hop-to-water — suicide never throttle 1 at 1 Hz
+
+- **When:** 2026-08-22 letsgrok `python main.py hop-to-water`
+  (`2026-08-22T09-48-51Z-hop-to-water`). East-t3. F-013 mysteryGoo
+  GooExperiment start unlocked=yes on_craft=yes. Do not Hangar. KSC
+  leftover is Hank (`ksc leftover`).
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`. Latch
+  hop_apo **held**: MET **79.2** thr **0** fuel **110.1**. Suicide 1 Hz
+  **never thr=1** (one pad-light sample only). Recut MET **180.4**
+  leftover **50.4** vz **−7.7** alt 1675 (unlogged 20 Hz dump 110→50).
+  Hover did not light: MET **181.6** vz **−20.1** leftover 50.4 thr
+  **0** until TTI≤12 MET **190.6** vz **−107**. Pulses to crumbs.
+  Splash MET **212.7** sit=splashed biome Shores heading **296** horiz
+  **7.66** speed **92.5** landing hard **92 m/s**. kind=state heading
+  pad **299** never 090 (T-016).
+- **Cause:** `_suicide_gate` returned False at vz ≥ −10 **before**
+  `suicide_armed` latched, so T-040 hover waited TTI≤12 again. TTI≤12
+  first light at 2.4 km dumped ~60 LF. Gate sits between Telem.read so
+  jsonl never shows thr=1. Leftover 50 at 1.7 km cannot hover to Goo
+  12 after gravity rebuilds.
+- **Fix:** Watch TTI ≤12; **throttle 1** at live TTI ≤ **3.5**. Latch
+  armed on first braking even if the gate cuts. After vz-cut, hover
+  when vz < −10 without TTI wait; spent only if coast ≤12. Crumbs not
+  a relight. Do not loft. Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-22T09-11-59Z-hop-to-water — splash must be ≤ Goo crashTolerance 12
+
+- **When:** 2026-08-22 letsgrok `python main.py hop-to-water`
+  (`2026-08-22T09-11-59Z-hop-to-water`). East-t3. F-013 mysteryGoo
+  GooExperiment start unlocked=yes on_craft=yes. T-035 capable: no
+  (crashTolerance 12; survivability 15 LOCKED). Do not Hangar. KSC
+  leftover is Hank.
+- **Symptom:** 09-11 splash MET 211.8 sit=splashed biome Shores heading
+  **299** horiz **2.2** speed **82** landing hard **82 m/s** (jsonl
+  impact ~67). 08-44-32Z splash **119 m/s** Shores (recut vz −30 leftover
+  60 loft). `science skip (no Experiment modules)` both hops. kind=state
+  heading pad **299** never 090.
+- **Cause:** Suicide cut at vz ≥ −20 at **1766 m** leftover **57**. Vacuum
+  coast from that gate is ~186 m/s; drag still ~82. T-033 spent-latch
+  stops TTI≤12 pulse-relight (the slam) but leftover 57 is the Δv that
+  must hover-slam until coast impact ≤12. Chutes locked. Hardware cannot
+  buy the can.
+- **Fix:** Cut at vz ≥ **−10** (margin under Goo 12). Leftover after that
+  cut is spent **only if** vacuum coast ≤12. Else hover-relight when vz
+  drops below the cut — do not wait TTI≤12. Crumbs still not a relight.
+  Do not loft past the cut. Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-22T09-11-59Z-hop-to-water — leftover after vz-cut is spent
+
+- **When:** 2026-08-22 letsgrok `python main.py hop-to-water`
+  (`2026-08-22T09-11-59Z-hop-to-water`). Hangar east-t3. F-013 mysteryGoo
+  GooExperiment start unlocked on_craft; TELEMETRY Stayputnik host.
+  Bank 13.26 Δ0. Do not Hangar. KSC clean (Hank dismiss_flight_results).
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`. Latch
+  hop_apo **held**: MET **78.6** thr **0** fuel **114.1**. Suicide recut
+  MET **179.2** thr **0** vz **−19.3 leftover 57** (seen-vz ≥ −20). Then
+  TTI≤12 pulse-relight: MET **188.7** fuel 57 vz **−110**; MET **191.7**
+  leftover 28.8 vz **−13.7**; MET **199** leftover 13.8; MET **205**
+  crumbs **1.16**. Splash MET **211.8** sit=splashed biome Shores heading
+  **299** horiz **2.2** speed **82** landing hard **82 m/s** EC=0.
+  `science skip (no Experiment modules)`. kind=state heading pad **299**
+  burn **300** splash **299** — never 090 (T-016).
+- **Cause:** 20 Hz gate cut at vz ≥ −20 (08-44 was predict-cut at −30).
+  `_suicide_now` then re-armed leftover 57 when TTI fell ≤12 (MET 188.7
+  alt 1158 / vz 110). Each pulse cut at −20 again, gravity rebuilt, slam
+  to crumbs, dry fall from 333 m → 82 m/s killed GooExperiment.
+- **Fix:** Latch suicide **spent** when the vz-cut fires. Hold throttle
+  0 after vz ≥ −20. Crumbs (fuel ≤2) are not a relight; leftover 57
+  after cut is not a second slam. Do not fake 090. Modules: `hop.py`,
+  `blocks.md`.
+
+## 2026-08-22T08-44-32Z-hop-to-water — suicide recut at vz −30 leftover loft
+
+- **When:** 2026-08-22 letsgrok `python main.py hop-to-water`
+  (`2026-08-22T08-44-32Z-hop-to-water`). Hangar east-t3. F-013 mysteryGoo
+  GooExperiment start unlocked on_craft; TELEMETRY Stayputnik host.
+  Bank 13.26 unchanged. Do not Hangar.
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`. Latch
+  hop_apo **held**: MET **78.6** thr **0** fuel **114.2**. Suicide MET
+  **174.9** thr **1** vz **−209** alt 2.07 km. MET **176.5** vz **−113**
+  still thr 1. Recut MET **178.0** thr **0** vz **−29.9 leftover 60.6**.
+  Relight MET **187.2** vz **−103**; overburn MET **188.9** vz **+2.7**
+  leftover 30 then loft vz **+85**. Splash MET **218** sit=splashed
+  biome Shores heading **298** horiz **17.9** speed **120** landing
+  catastrophic **119 m/s** EC=0. `science skip (no Experiment modules)`.
+  kind=state heading pad **299** burn **301** splash **298** — never 090.
+- **Cause:** next-pulse predictor cut at vz −30 (jsonl ~1.5 s, accel
+  ~53 m/s²) before vz ≥ −20. `_suicide_now` then re-armed leftover 60
+  and lofted. Heading 090 is Stayputnik no wheel (T-016).
+- **Fix:** Hold throttle 1 until vz ≥ −20 is **seen**. 20 Hz
+  `_suicide_gate` while armed (Telem.read is ~1.5 s). Do not predict-cut.
+  Crumbs (fuel ≤2) are not a relight. Do not fake 090. Modules: `hop.py`,
+  `blocks.md`.
+
+## 2026-08-21T23-15-52Z-hop-to-water — leftover KSC is Hank recover-probe
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T23-15-52Z-hop-to-water`). T-029. Pad now empty. Do not
+  Hangar. Do not fly.
+- **Symptom:** hop leftover wreck recovered then Hangared new inside
+  the mission script. Hank never saw a recover-probe call. Last-flight
+  abort was science, leftover already gone.
+- **Telemetry:**
+  ```
+  abort: no science (wanted mysteryGoo)
+  hop leftover wreck sit=splashed recoverable=yes experiments=0 — recover, Hangar new
+  recovered leftover wreck
+  hop recover still listed after recover()
+  ```
+- **Cause:** unmatched leftover and matching wreck leftover called
+  `recover()` + `go_space_center`, then Hangar. `ops next` hired
+  Jebediah on hangar `recover`/`phase` and S1 recover.
+- **Fix:** those hop gates print `ksc leftover` and abort with
+  `python main.py recover-probe --recover` (or `--space-center` if
+  not recoverable). Empty pad still Hangars. Living leftover still
+  enters Flight. Splash/HD recover of **this** hop stays. `ops next`
+  hires hank with that CLI. `protocol.fly_gate` waits leftover n>0.
+  Unittest skips live FlyingHigh tickets in `hop_wants_flying_high`
+  (wait_water would never timeout). Modules: `hop.py`, `ops.py`,
+  `protocol.py`, `desk.py`.
+
+## 2026-08-21T23-15-52Z-hop-to-water — suicide cuts before vz lofts
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T23-15-52Z-hop-to-water`). Hangar east-t3. F-013 mysteryGoo
+  GooExperiment start unlocked on_craft; TELEMETRY Stayputnik host.
+  Chutes LOCKED. Bank 13.26 unchanged. Do not Hangar.
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`. Latch
+  hop_apo **held**: MET **79.1** thr **0** apo 18.7 km fuel **111.1**.
+  Suicide MET **171** thr **1** vz **−194** alt 3.75 km (tti 18). MET
+  **173.1** thr 1 vz **−65** (no TTI recut). MET **174.5** thr **1**
+  vz **+24.5** fuel **47**; recut MET **176.5** vz **+140** leftover
+  **16.6**. Relight MET **208.9** vz **−126** fuel 11.5 then crumbs
+  thr 1. Splash MET **225** sit=splashed biome Shores heading **303.7**
+  horiz **24.3** speed **221** landing catastrophic **220 m/s** EC=0.
+  `science skip (no Experiment modules)`. kind=state heading pad
+  **299** burn **300** splash **304** — never 090 (3× 080–100
+  fly-throughs). Landing T-013 / T-024 catastrophic.
+- **Cause:** vz latch stayed on through −65 because the next jsonl
+  sample was 1.4 s later (hz_median **0.57**) and already +24 — TWR
+  lofted leftover. Arm TTI **20** lit at 3.75 km. After recut,
+  `_suicide_now` re-armed at tti 19 with crumbs. Heading 090 is
+  Stayputnik no wheel (T-016), not this setter.
+- **Fix:** Arm TTI ≤12. Cut at vz ≥ −20 **or** when the next pulse
+  would cross it. Burst 20 Hz while braking (TTI rises as speed dies).
+  Fuel ≤2 LF is not a relight; a later TTI≤12 slam may use leftover.
+  Do not fake 090. Modules: `hop.py`, `blocks.md`.
+
 ## 2026-08-21T22-57-36Z-hop-to-water — suicide latches until vz cut
 
 - **When:** 2026-08-21 letsgrok `python main.py hop-to-water`

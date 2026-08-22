@@ -422,10 +422,45 @@ def install_signed(
     return token
 
 
+LEFTOVER_SFS = "leftover-ksc"
+
+
 def go_ksc(session: Any, *, timeout: float = 45.0) -> str:
     """Leave Flight (asteroid, debris, leftover) for Space Center. Not a load."""
     go_space_center(session, timeout=timeout)
     return "ksc"
+
+
+def dismiss_flight_results(session: Session) -> str:
+    """Drop Flight Results. kRPC only. No click. No OCR. No revert. No VAB.
+
+    Tracking / R&D leave the overlay up (08-22 leftover). Named
+    ``SpaceCenter.save`` of the recovered sit + ``load`` drops the GUI.
+    Not ``load persistent`` (F-014). Not ``revert_to_launch``. Load may
+    resume Flight on an asteroid — ``go_ksc`` after; never recover the
+    rock (I-011).
+    """
+    go_space_center(session, reload_save=False)
+    if not _can_revert(session):
+        scene = game_scene(session)
+        if scene == "flight":
+            go_ksc(session)
+        return f"scene {game_scene(session)}"
+    sc = getattr(session, "space_center", None)
+    save = getattr(sc, "save", None) if sc is not None else None
+    if not callable(save):
+        raise SessionError("Flight Results overlay: SpaceCenter.save missing")
+    log.info("flight results overlay — save %s then load (not revert)", LEFTOVER_SFS)
+    save(LEFTOVER_SFS)
+    load_save(session, LEFTOVER_SFS)
+    try:
+        session.space_center = session.conn.space_center
+    except Exception:
+        pass
+    scene = game_scene(session)
+    if scene == "flight" or _can_revert(session):
+        go_space_center(session, reload_save=False)
+    return f"scene {game_scene(session)}"
 
 
 def load_save(session: Any, name: str = "persistent") -> str:

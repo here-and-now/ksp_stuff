@@ -13,8 +13,9 @@ Toggle per id; thermo on 2HOT, not Stayputnik). Idle TELEMETRY
 remaining=0 is not leftover HD. A leftover already in
 tracking while the scene is SpaceCenter is switched into Flight — do
 not Hangar a second stack. Unmatched leftover (PRELAUNCH Flea vs
-seated Valiant) recovers without lighting, then Hangars the seated
-craft. Leftover is the live kRPC pool, not save
+seated Valiant) and matching wreck leftover abort ``ksc leftover``
+(Hank ``recover-probe`` / ``ksc``) — do not ``recover()`` or
+``go_space_center`` here. Empty pad still Hangars. Leftover is the live kRPC pool, not save
 FLYING debris. Disk PRELAUNCH is a lie — gate live sit/fuel/
 recoverable before light (14-52-25Z flying MET 13.8 fuel=0). A dead
 kRPC GUID (``No such vessel``) is not leftover — scan tracking; empty
@@ -41,7 +42,7 @@ import logging
 import math
 import time
 from pathlib import Path
-from typing import Callable
+from typing import Callable, NoReturn
 
 from card import NO_BOUND_CARD, card_flying_ids, card_splash_ids, parse_card
 from emergencies import Ctx, call
@@ -110,13 +111,49 @@ WATER_HEADING_DEG = 90.0
 # MET 84 thr 0.4; MET 136 dumped leftover 43.9 LF). Splash 230 m/s.
 # hop-splash 18-15-08Z same class: thr 1 at apo<80 km (~37 km).
 # Latch the cut. Leftover LF is a suicide burn near Water, not apo-1.
-# 22-57-36Z: first suicide MET 179.7 alt 1.95 km thr 1, then TTI 19
-# cut (MET 181 vz −72), relights lofted leftover (vz +19 / +40), splash
-# 119 m/s. TTI arms; vz cut ends the burn. TTI rising is not a recut.
-WATER_BRAKE_TTI_S = 20.0
+# 22-57-36Z: TTI-rise recut at vz −72 then leftover loft. TTI arms;
+# vz cut ends the burn. TTI rising is not a recut.
+# 23-15-52Z: armed tti 18; MET 173 vz −65 still thr 1, MET 174 vz +24
+# (jsonl hz 0.57). Relight crumbs lofted. Arm TTI ≤12. Hold until vz
+# ≥ −20 is *seen* (do not predict-cut).
+# 08-44-32Z: predictor recut MET 178 thr 0 vz −29.9 leftover 60.6,
+# then relight MET 187 lofted to vz +85; splash 119 m/s Shores,
+# Experiment modules gone. Telem.read ~1.5 s; 20 Hz gate while armed.
+# 09-11-59Z: seen-vz recut MET 179.2 vz −19.3 leftover 57, then
+# TTI≤12 pulse-relight to crumbs; splash 82 m/s Shores, modules gone.
+# Hold cut after vz ≥ −20. Crumbs (fuel ≤2) are not a relight.
+# Leftover after a vz-cut is spent — not a second slam — **only if**
+# vacuum coast impact is already ≤ GooExperiment crashTolerance 12
+# (09-11 recut alt 1766 vz −19 coasts ~186 m/s; 08-44 recut vz −30
+# leftover 60 lofted, splash 119). TTI-wait pulses are the slam;
+# leftover 57 is hover-slam (relight when vz drops below the cut,
+# do not wait TTI≤12). Chutes LOCKED. Do not loft past the cut.
+# 09-48-51Z: hop_apo latch MET 79.2 leftover 110.1. Suicide 1 Hz
+# never thr=1 (20 Hz gate between Telem.read). Recut leftover 50.4
+# vz −7.7 then TTI≤12 pulses to crumbs; splash 92.5 m/s Shores.
+# Gate returned False before suicide_armed latched, so hover never
+# ran. TTI≤12 at 2.4 km dumped ~60 LF. Arm/watch at TTI≤12; first
+# throttle 1 at live TTI ≤ ~3.5 (Valiant ~5 s to kill 220 m/s).
+# 10-11-27Z: hop_apo MET 79.4 leftover 108.7. MET 176.1 thr 0
+# leftover 108.7 vz −223 alt 2415; 20 Hz gate MET 176→209 dumped
+# 108.7→crumbs 1.98 (jsonl never thr=1). MET 208.9 thr 0 fuel 1.98
+# speed 9.2 vz −9.4 alt 195, then rebuild splash 62.3 m/s Shores.
+# vz-cut at −10 while coast > Goo 12 is a rebuild, not spent. After
+# the kill, leftover TWR>>1: throttle 1 dumps crumbs / lofts. Hover
+# at TWR≈1 until coast ≤12. Latch armed on first braking even if
+# the gate cuts. Keep Hank ksc leftover abort.
+GOO_CRASH_MS = 12.0
+WATER_BRAKE_G = 9.81
+WATER_BRAKE_TTI_S = 12.0
+WATER_BRAKE_LIGHT_TTI_S = 3.5
+WATER_BRAKE_LIGHT_PAD_M = 40.0
 WATER_BRAKE_ALT_MAX_M = 8_000.0
 WATER_BRAKE_SPEED_M = 40.0
-WATER_BRAKE_VZ_CUT = -20.0
+WATER_BRAKE_VZ_CUT = -10.0
+WATER_BRAKE_HOVER_THROTTLE = 0.25
+WATER_BRAKE_FUEL_MIN = 2.0
+WATER_BRAKE_HZ = 20.0
+WATER_BRAKE_GATE_S = 60.0
 WATER_CRAFT = "kspstuff-hop-valiant-east-pbc"
 
 
@@ -126,10 +163,21 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
         on_log(msg)
 
 
-def _nap_dt(requested: float | None, snap: object) -> float:
-    """``pulse=None`` (production) follows telem.pulse_s; tests pass 1.0."""
+def _nap_dt(
+    requested: float | None,
+    snap: object,
+    *,
+    braking: bool = False,
+) -> float:
+    """``pulse=None`` (production) follows telem.pulse_s; tests pass 1.0.
+
+    Suicide TTI rises as speed dies (23-15-52Z alt 3.4 km tti 53) — do
+    not fall back to cruise while leftover LF is still on.
+    """
     if requested is not None:
         return requested
+    if braking:
+        return 1.0 / WATER_BRAKE_HZ
     try:
         return float(telem_pulse_s(snap))
     except Exception:
@@ -139,15 +187,18 @@ def _nap_dt(requested: float | None, snap: object) -> float:
 def hop_wants_flying_high() -> bool:
     """Open science tickets with FlyingHigh, else seated card. Missing is FlyingLow."""
     try:
+        import sys
+
         from tickets import list_tickets
 
-        for t in list_tickets(open_only=True):
-            if t.get("type") != "science" and t.get("category") != "science_opportunity":
-                continue
-            pl = t.get("payload") or {}
-            sit = str(pl.get("situation") or "").lower().replace(" ", "").replace("_", "")
-            if "flyinghigh" in sit:
-                return True
+        if "unittest" not in sys.modules:
+            for t in list_tickets(open_only=True):
+                if t.get("type") != "science" and t.get("category") != "science_opportunity":
+                    continue
+                pl = t.get("payload") or {}
+                sit = str(pl.get("situation") or "").lower().replace(" ", "").replace("_", "")
+                if "flyinghigh" in sit:
+                    return True
     except Exception:
         pass
     try:
@@ -396,30 +447,52 @@ def _find_unmatched_leftover(session: object) -> object | None:
     return None
 
 
+def leftover_ksc_call(recoverable: bool) -> str:
+    if recoverable:
+        return "python main.py recover-probe --recover"
+    return "python main.py recover-probe --space-center"
+
+
+def abort_ksc_leftover(
+    vessel: object | None,
+    on_log: Callable[[str], None] | None,
+    *,
+    why: str = "",
+) -> NoReturn:
+    """Print Hank's leftover call, then abort. Do not recover. Do not KSC."""
+    sit = _vessel_sit(vessel)
+    rec = _recoverable(vessel)
+    rec_s = "yes" if rec else "no"
+    call = leftover_ksc_call(rec)
+    for line in (
+        "ksc: leftover",
+        f"sit: {sit}",
+        f"recoverable: {rec_s}",
+        f"call: {call}",
+    ):
+        print(line, flush=True)
+        _say(line, on_log)
+    extra = f" {why}" if why else ""
+    raise MissionAbort(
+        f"ksc leftover sit={sit} recoverable={rec_s} call: {call}{extra}"
+    )
+
+
 def _recover_unmatched_leftover(
     session: object,
     vessel: object,
     on_log: Callable[[str], None] | None,
-) -> str:
-    """Recover unmatched leftover. Do not light. Do not Hangar over it."""
+) -> NoReturn:
+    """Unmatched leftover is Hank's. Do not light. Do not recover here."""
     name = _vessel_name(vessel) or "?"
     sit = _vessel_sit(vessel)
     rec = "yes" if _recoverable(vessel) else "no"
     _say(
         f"hop leftover unmatched {name} sit={sit} recoverable={rec} "
-        "— recover, do not light",
+        "— ksc leftover, do not light",
         on_log,
     )
-    if not _recoverable(vessel):
-        raise MissionAbort("unmatched leftover not recoverable")
-    try:
-        getattr(vessel, "recover")()
-    except Exception as exc:
-        raise MissionAbort(f"unmatched leftover recover failed: {exc}") from exc
-    _say(f"recovered unmatched leftover sit={sit} recoverable=yes", on_log)
-    mission_event("recover")
-    _wait_vessel_gone(session, vessel, on_log)
-    return "recovered"
+    abort_ksc_leftover(vessel, on_log, why="unmatched leftover")
 
 
 def _ensure_flight(
@@ -640,11 +713,11 @@ def _vessel_fuel(vessel: object | None) -> float:
 
 
 def leftover_should_hangar_new(vessel: object | None) -> bool:
-    """Matching leftover is last loft's wreck. Recover then Hangar.
+    """Matching leftover is last loft's wreck. Abort ksc leftover.
 
     22-45-26Z sit=splashed MET 212 fuel=0 recoverable recovered and
-    exited 0 — never Hangar, never latch+suicide. hop-splash 18-03
-    still starts splash on living Water leftover. Unrecoverable
+    Hangared inside hop — that is Hank's recover-probe now. hop-splash
+    18-03 still starts splash on living Water leftover. Unrecoverable
     flying wreck is crash UI (14-52-25Z) — do not Hangar over it.
     """
     if vessel is None or not _recoverable(vessel):
@@ -665,29 +738,17 @@ def _recover_wreck_then_clear(
     session: object,
     vessel: object,
     on_log: Callable[[str], None] | None,
-) -> None:
-    """Recover matching wreck leftover. Caller Hangars seated craft."""
+) -> NoReturn:
+    """Matching wreck leftover is Hank's. Do not recover. Do not Hangar."""
     sit = _vessel_sit(vessel)
     rec = "yes" if _recoverable(vessel) else "no"
     n_exp = _experiment_count(vessel)
-    _ensure_flight(session, vessel, on_log)
     _say(
         f"hop leftover wreck sit={sit} recoverable={rec} "
-        f"experiments={n_exp} — recover, Hangar new",
+        f"experiments={n_exp} — ksc leftover, do not Hangar",
         on_log,
     )
-    if _recoverable(vessel):
-        try:
-            getattr(vessel, "recover")()
-            _say("recovered leftover wreck", on_log)
-            mission_event("recover")
-        except Exception as exc:
-            _say(f"leftover wreck recover failed: {exc}", on_log)
-        _wait_vessel_gone(session, vessel, on_log)
-    try:
-        go_space_center(session, reload_save=True)
-    except Exception:
-        pass
+    abort_ksc_leftover(vessel, on_log, why="leftover wreck")
 
 
 def _vessel_sit(vessel: object | None) -> str:
@@ -1137,30 +1198,184 @@ def _release_steer(vessel: object) -> None:
         pass
 
 
-def _suicide_now(snap: object) -> bool:
-    """Arm leftover-LF brake. TTI / alt cap start the burn, not the cut."""
+def _coast_impact_ms(snap: object) -> float:
+    """Vacuum splash speed from this alt/vz. Drag only helps.
+
+    GooExperiment crashTolerance is 12. 09-11 recut 1766 m vz −19.3
+    coasts ~186 m/s; 08-44 recut 1682 m vz −30 leftover loft splash
+    119. Horiz is Stayputnik (no wheel) — this is v_vert impact.
+    """
+    alt = _snap_alt(snap)
+    vz = _snap_v_vert(snap)
+    speed = _snap_speed(snap)
+    if math.isfinite(alt) and alt <= 0.0:
+        if math.isfinite(speed):
+            return speed
+        if math.isfinite(vz):
+            return abs(vz)
+        return 0.0
+    if not math.isfinite(alt) or alt > WATER_BRAKE_ALT_MAX_M:
+        return float("inf")
+    if math.isfinite(vz) and vz > 0.0:
+        return float("inf")
+    sink = (
+        -vz
+        if math.isfinite(vz) and vz < 0.0
+        else (speed if math.isfinite(speed) else float("nan"))
+    )
+    if not math.isfinite(sink):
+        return float("inf")
+    return math.sqrt(sink * sink + 2.0 * WATER_BRAKE_G * max(alt, 0.0))
+
+
+def _coast_ok(snap: object) -> bool:
+    """True when leftover LF may stay cut: coast ≤ Goo crashTolerance."""
+    impact = _coast_impact_ms(snap)
+    return math.isfinite(impact) and impact <= GOO_CRASH_MS
+
+
+def _suicide_tti(snap: object) -> float:
+    """Seconds to surface at current sink. inf if not falling."""
+    alt = _snap_alt(snap)
+    if not math.isfinite(alt) or alt <= 0.0:
+        return float("inf")
+    vz = _snap_v_vert(snap)
+    speed = _snap_speed(snap)
+    sink = -vz if math.isfinite(vz) and vz < 0.0 else speed
+    if not math.isfinite(sink) or sink <= 0.0:
+        return float("inf")
+    return alt / max(sink, 1.0)
+
+
+def _brake_accel(vessel: object | None) -> float:
+    """Throttle-1 accel (m/s²). NaN when mass/thrust is unbound (tests)."""
+    if vessel is None:
+        return float("nan")
+    try:
+        thrust = float(getattr(vessel, "available_thrust", 0.0) or 0.0)
+    except (TypeError, ValueError):
+        thrust = 0.0
+    if not math.isfinite(thrust) or thrust <= 1.0:
+        try:
+            thrust = float(getattr(vessel, "max_thrust", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            thrust = 0.0
+    try:
+        mass = float(getattr(vessel, "mass", 0.0) or 0.0)
+    except (TypeError, ValueError):
+        mass = 0.0
+    if (
+        not math.isfinite(thrust)
+        or not math.isfinite(mass)
+        or thrust <= 1.0
+        or mass <= 0.1
+    ):
+        return float("nan")
+    return thrust / mass
+
+
+def _hover_throttle(vessel: object | None) -> float:
+    """TWR≈1 after the kill. Throttle 1 at leftover TWR dumps crumbs (10-11)."""
+    a = _brake_accel(vessel)
+    if math.isfinite(a) and a > WATER_BRAKE_G * 1.05:
+        return min(1.0, max(0.08, WATER_BRAKE_G / a))
+    return WATER_BRAKE_HOVER_THROTTLE
+
+
+def _suicide_light(snap: object, vessel: object | None = None) -> bool:
+    """First throttle 1: live TTI ≤ ~3.5, not the TTI≤12 watch (09-48).
+
+    When mass/thrust is bound, light at burn-distance + pad so the
+    kill does not end 195 m up dry (10-11 TTI 3.5 leftover crumbs).
+    """
+    tti = _suicide_tti(snap)
+    if not math.isfinite(tti):
+        return False
+    a = _brake_accel(vessel)
+    vz = _snap_v_vert(snap)
+    sink = -vz if math.isfinite(vz) and vz < 0.0 else _snap_speed(snap)
+    alt = _snap_alt(snap)
+    if (
+        math.isfinite(a)
+        and a > WATER_BRAKE_G + 1.0
+        and math.isfinite(sink)
+        and sink > GOO_CRASH_MS
+        and math.isfinite(alt)
+        and alt > 0.0
+    ):
+        anet = a - WATER_BRAKE_G
+        t_burn = (sink - GOO_CRASH_MS) / anet
+        s_burn = sink * t_burn - 0.5 * anet * t_burn * t_burn
+        if math.isfinite(s_burn) and s_burn > 0.0:
+            return alt <= s_burn + WATER_BRAKE_LIGHT_PAD_M
+    return tti <= WATER_BRAKE_LIGHT_TTI_S
+
+
+def _suicide_need(snap: object) -> bool:
+    """Leftover brake still required: coast > Goo 12 and not loft/crumbs."""
     fuel = _snap_fuel(snap)
-    if not math.isfinite(fuel) or fuel <= 0.0:
+    if not math.isfinite(fuel) or fuel <= WATER_BRAKE_FUEL_MIN:
         return False
     alt = _snap_alt(snap)
-    speed = _snap_speed(snap)
-    if not math.isfinite(alt) or not math.isfinite(speed):
+    if not math.isfinite(alt) or alt <= 0.0:
         return False
-    if alt <= 0.0 or alt > WATER_BRAKE_ALT_MAX_M:
+    vz = _snap_v_vert(snap)
+    if math.isfinite(vz) and vz >= 0.0:
+        return False
+    return not _coast_ok(snap)
+
+
+def _suicide_now(
+    snap: object, *, spent: bool = False, hover: bool = False
+) -> bool:
+    """Arm leftover-LF watch. TTI / alt cap enter the gate, not throttle 1.
+
+    ``spent`` is leftover after a vz-cut whose coast is already ≤12
+    (or crumbs). 09-11 leftover 57 at 1766 m vz −19 is not spent.
+    ``hover`` is after the first arm: stay on until coast ≤12 — do not
+    wait TTI≤12 (09-48 leftover 50) and do not drop out at vz ≥ −10
+    (10-11 crumbs at 195 m vz −9 then splash 62). First throttle 1 is
+    ``_suicide_light``.
+    """
+    if spent:
+        return False
+    fuel = _snap_fuel(snap)
+    if not math.isfinite(fuel) or fuel <= WATER_BRAKE_FUEL_MIN:
+        return False
+    alt = _snap_alt(snap)
+    if not math.isfinite(alt) or alt <= 0.0 or alt > WATER_BRAKE_ALT_MAX_M:
+        return False
+    vz = _snap_v_vert(snap)
+    if hover:
+        return _suicide_need(snap)
+    speed = _snap_speed(snap)
+    if not math.isfinite(speed):
         return False
     if speed <= WATER_BRAKE_SPEED_M:
         return False
-    vz = _snap_v_vert(snap)
     if math.isfinite(vz) and vz >= -WATER_BRAKE_SPEED_M:
         return False
-    tti = alt / max(speed, 1.0)
-    return tti <= WATER_BRAKE_TTI_S
+    tti = _suicide_tti(snap)
+    return math.isfinite(tti) and tti <= WATER_BRAKE_TTI_S
 
 
-def _suicide_hold(snap: object) -> bool:
-    """Stay on leftover-LF brake. TTI rising is not a cut (22-57-36Z)."""
+def _suicide_hold(
+    snap: object,
+    *,
+    prev_vz: float | None = None,
+    dt: float | None = None,
+) -> bool:
+    """Kill band: vz still faster than −10. TTI rising is not a cut.
+
+    Do **not** predict-cut (08-44-32Z recut at vz −29.9 leftover 60,
+    then loft). ``prev_vz`` / ``dt`` are ignored — 20 Hz gate. After
+    vz ≥ −10 leftover is spent only if coast ≤12; else TWR≈1 hover
+    (10-11-27Z crumbs at 195 m vz −9 rebuilt to 62). Throttle 1 is
+    the kill; hold is not the spent latch.
+    """
+    del prev_vz, dt
     fuel = _snap_fuel(snap)
-    if not math.isfinite(fuel) or fuel <= 0.0:
+    if not math.isfinite(fuel) or fuel <= WATER_BRAKE_FUEL_MIN:
         return False
     alt = _snap_alt(snap)
     if not math.isfinite(alt) or alt <= 0.0:
@@ -1172,6 +1387,174 @@ def _suicide_hold(snap: object) -> bool:
     if not math.isfinite(speed):
         return False
     return speed > WATER_BRAKE_SPEED_M
+
+
+def _suicide_throttle(
+    vessel: object,
+    snap: object,
+    *,
+    lit: bool = False,
+    hover: bool = False,
+) -> float:
+    """0 / TWR≈1 / 1. Do not dump leftover at vz-cut (10-11 108→crumbs)."""
+    if not _suicide_need(snap):
+        return 0.0
+    armed = lit or hover or _suicide_light(snap, vessel)
+    if _suicide_hold(snap):
+        if armed:
+            return 1.0
+        return 0.0
+    if armed:
+        return _hover_throttle(vessel)
+    return 0.0
+
+
+def _stream_float(telem: object | None, key: str) -> float:
+    streams = getattr(telem, "_streams", None) or {}
+    stream = streams.get(key) if isinstance(streams, dict) else None
+    if stream is None:
+        return float("nan")
+    try:
+        val = float(stream())
+    except Exception:
+        return float("nan")
+    return val if math.isfinite(val) else float("nan")
+
+
+def _live_v_vert(vessel: object, telem: object | None = None) -> float:
+    vz = _stream_float(telem, "kin.vertical_speed")
+    if math.isfinite(vz):
+        return vz
+    try:
+        orbit = getattr(vessel, "orbit", None)
+        body = getattr(orbit, "body", None)
+        rf = getattr(body, "reference_frame", None)
+        kin = vessel.flight(rf) if rf is not None else vessel.flight()
+        vz = float(getattr(kin, "vertical_speed", float("nan")))
+        if math.isfinite(vz):
+            return vz
+    except Exception:
+        pass
+    try:
+        vz = float(getattr(vessel.flight(), "vertical_speed", float("nan")))
+    except Exception:
+        return float("nan")
+    return vz if math.isfinite(vz) else float("nan")
+
+
+def _live_alt(vessel: object, telem: object | None = None) -> float:
+    alt = _stream_float(telem, "flight.mean_altitude")
+    if math.isfinite(alt):
+        return alt
+    try:
+        alt = float(getattr(vessel.flight(), "mean_altitude", float("nan")))
+    except Exception:
+        return float("nan")
+    return alt if math.isfinite(alt) else float("nan")
+
+
+def _live_fuel(vessel: object) -> float:
+    from telem import resource_amount
+
+    total = 0.0
+    seen = False
+    for name in ("LiquidFuel", "SolidFuel", "Kerosene"):
+        amt = resource_amount(vessel, name)
+        if amt is None:
+            continue
+        try:
+            fuel = float(amt)
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(fuel):
+            total += fuel
+            seen = True
+    return total if seen else float("nan")
+
+
+def _suicide_gate(
+    vessel: object,
+    snap: object,
+    *,
+    sleep: Callable[[float], None],
+    now: Callable[[], float],
+    telem: object | None = None,
+    abort: Callable[[], bool] | None = None,
+    budget_s: float = WATER_BRAKE_GATE_S,
+    hover: bool = False,
+) -> bool:
+    """20 Hz leftover-LF. Telem.read is ~1.5 s (08-44-32Z) — 1 Hz never
+    saw 09-48 / 10-11 thr=1 because this loop sits between samples.
+
+    Watch at TTI≤12; throttle 1 only at live TTI ≤ 3.5 or TWR burn
+    distance (10-11). After vz ≥ −10, TWR≈1 hover until coast ≤ Goo
+    12 — do not cut (rebuild 9→62) and do not slam 1 (crumbs/loft).
+    Live vz ~0 while the snap is still sinking means the stream is
+    not bound — do not false-cut. Returns whether the brake is still
+    on.
+    """
+    dt = 1.0 / WATER_BRAKE_HZ
+    t_end = now() + budget_s
+    _steer_brake(vessel)
+    vz_snap = _snap_v_vert(snap)
+    stepped = False
+    lit = bool(hover)
+    while now() < t_end:
+        if abort is not None:
+            try:
+                if abort():
+                    break
+            except Exception:
+                pass
+        vz_live = _live_v_vert(vessel, telem)
+        if (
+            math.isfinite(vz_live)
+            and abs(vz_live) < 1.0
+            and math.isfinite(vz_snap)
+            and vz_snap < WATER_BRAKE_VZ_CUT
+            and not stepped
+        ):
+            try:
+                vessel.control.throttle = _suicide_throttle(
+                    vessel, snap, lit=lit, hover=hover
+                )
+            except Exception:
+                pass
+            return True
+        fuel_live = _live_fuel(vessel)
+        alt_live = _live_alt(vessel, telem)
+        fuel = fuel_live if math.isfinite(fuel_live) else _snap_fuel(snap)
+        alt = alt_live if math.isfinite(alt_live) else _snap_alt(snap)
+        vz = vz_live if math.isfinite(vz_live) else vz_snap
+        speed = abs(vz) if math.isfinite(vz) else _snap_speed(snap)
+        live = type(
+            "S",
+            (),
+            {
+                "fuel": fuel,
+                "alt": alt,
+                "speed": speed,
+                "v_vert": vz,
+            },
+        )()
+        if not _suicide_need(live):
+            try:
+                vessel.control.throttle = 0.0
+            except Exception:
+                pass
+            return False
+        thr = _suicide_throttle(vessel, live, lit=lit, hover=hover)
+        try:
+            vessel.control.throttle = thr
+        except Exception:
+            pass
+        if thr > 0.0:
+            lit = True
+        if not math.isfinite(vz_live):
+            return True
+        sleep(dt)
+        stepped = True
+    return True
 
 
 def _steer_brake(vessel: object) -> None:
@@ -1216,14 +1599,25 @@ def _hold_or_cut(
     hold: float = 1.0,
     brake: bool = False,
     braking: bool = False,
+    prev_vz: float | None = None,
+    dt: float | None = None,
+    spent: bool = False,
+    hover: bool = False,
 ) -> tuple[bool, bool]:
     """Throttle 0 at hop_apo and stay cut. Recut on apo fall is T-011.
 
     An SRB ignores the cut — do not OffPlan the coast. ``hold`` is 1
     except hop-to-water slew (0.4). After latch, leftover LF is a
     suicide burn iff ``brake`` (wait water/splash) — not 0.4/1.0 into
-    the drink at apo-1 (22-03-59Z, 18-15-08Z). Once armed, stay at 1
-    until vz is killed — TTI rising is not a recut (22-57-36Z).
+    the drink at apo-1 (22-03-59Z, 18-15-08Z). Once armed, watch until
+    live TTI ≤ 3.5 then kill at 1; after vz ≥ −10 hover TWR≈1 until
+    coast ≤12 (10-11-27Z dump 108→crumbs then 9→62). TTI rising is
+    not a recut (22-57-36Z). Do not dump leftover at TTI≤12 / 2.4 km
+    (09-48-51Z leftover 50 then 92 m/s). Do not predict-cut at vz −30
+    (08-44-32Z leftover 60 loft). Crumb relight (fuel ≤2) is not a
+    second slam. ``spent`` holds that cut only when coast impact ≤ Goo
+    12. ``hover`` keeps leftover until coast ≤12 — not a TTI wait
+    and not a vz −10 drop-out.
     """
     try:
         control = vessel.control
@@ -1233,9 +1627,20 @@ def _hold_or_cut(
             cut = True
         if not cut and math.isfinite(fuel) and fuel <= 0.0:
             cut = True
-        if brake and cut and (braking or _suicide_now(snap)):
-            if _suicide_hold(snap):
-                control.throttle = 1.0
+        if spent:
+            if cut:
+                control.throttle = 0.0
+            else:
+                control.throttle = hold
+            return cut, False
+        if brake and cut and (
+            braking or _suicide_now(snap, spent=spent, hover=hover)
+        ):
+            del prev_vz, dt
+            if _suicide_need(snap):
+                control.throttle = _suicide_throttle(
+                    vessel, snap, lit=hover, hover=hover
+                )
                 return cut, True
             control.throttle = 0.0
             return cut, False
@@ -1295,8 +1700,19 @@ def run_on_vessel(
     not disengage at fuel=0 — 15-26-18Z weathervaned HDG 304).
     **Latch** hop_apo — do not recut 0.4 when apo falls (22-03-59Z
     MET 84 / 136 leftover dump, splash 230 m/s). Leftover LF is a
-    suicide burn near Water: arm on TTI, **hold until vz cut**, do
-    not recut because TTI rose (22-57-36Z splash 119 m/s). Do not
+    suicide burn near Water: **watch** TTI ≤12, **light** at live TTI
+    ≤ 3.5 (or TWR burn-distance), **kill until vz ≥ −10**, then
+    **TWR≈1 hover until coast ≤12** (Goo crashTolerance 12; 20 Hz
+    gate — 08-44-32Z predict-cut at −30 leftover loft; 09-48-51Z
+    TTI≤12 dump leftover 50 then 92 m/s; **10-11-27Z** MET 176→209
+    dump 108→crumbs then vz −9.4 at 195 m rebuilt 62). TTI rising is
+    not a recut (22-57-36Z). Crumb leftover is not a relight. Latch
+    suicide **armed** on first braking even if the gate cuts (09-48
+    hover never lit). Leftover after the vz-cut is spent **only if**
+    coast impact ≤12 — else hover, do not TTI≤12 pulse and do not
+    drop throttle at vz ≥ −10 (09-11 leftover 57 splash 82; 09-48
+    leftover 50 splash 92; 10-11 crumbs splash 62).
+    Do not
     recover on first flying
     recoverable, abort landed only after ``left_pad`` (pad
     sit=landed is hop-off, same as ``_down(flown)``), splash dwell
@@ -1305,7 +1721,8 @@ def run_on_vessel(
     ``wait_splash``: light **vertical**, **no** east slew (16-57-24Z
     heading never 090), **no** flying Toggle, ``hop_apo`` 80 km is a
     real cut **and stays cut** (18-15-08Z thr 1 at apo<80 km),
-    leftover LF suicide near Water (latch until vz cut), wait
+    leftover LF suicide near Water (watch TTI ≤12, light at 3.5, kill
+    then TWR≈1 hover until coast ≤12 — 10-11), wait
     ``sit=splashed``, then splash dwell.
     """
     from phases import OffPlan, check_expect
@@ -1343,6 +1760,10 @@ def run_on_vessel(
     said_brake = False
     apo_cut = False
     braking = False
+    suicide_spent = False
+    suicide_armed = False
+    prev_brake_vz = float("nan")
+    prev_brake_met = float("nan")
     water_splashed = False
     water_pitch = WATER_PITCH_UP
     loft_hold = WATER_SLEW_THROTTLE if wait_water else 1.0
@@ -1527,6 +1948,23 @@ def run_on_vessel(
                     mission_event("light", snap)
 
             if left_pad and not down:
+                vz_now = _snap_v_vert(snap)
+                met_now = float("nan")
+                try:
+                    met_now = float(getattr(snap, "met", float("nan")))
+                except (TypeError, ValueError):
+                    met_now = float("nan")
+                dt_vz = None
+                prev_vz = None
+                if (
+                    math.isfinite(vz_now)
+                    and math.isfinite(prev_brake_vz)
+                    and math.isfinite(prev_brake_met)
+                    and math.isfinite(met_now)
+                ):
+                    dt_vz = met_now - prev_brake_met
+                    prev_vz = prev_brake_vz
+                was_braking = braking
                 apo_cut, braking = _hold_or_cut(
                     vessel,
                     snap,
@@ -1535,7 +1973,37 @@ def run_on_vessel(
                     hold=loft_hold,
                     brake=wait_down,
                     braking=braking,
+                    prev_vz=prev_vz,
+                    dt=dt_vz,
+                    spent=suicide_spent,
+                    hover=suicide_armed,
                 )
+                if wait_down and apo_cut and not suicide_spent and (
+                    braking or suicide_armed
+                ):
+                    braking = _suicide_gate(
+                        vessel,
+                        snap,
+                        sleep=nap,
+                        now=clock,
+                        telem=telem,
+                        abort=abort,
+                        hover=suicide_armed,
+                    )
+                if braking or was_braking:
+                    suicide_armed = True
+                if was_braking and not braking:
+                    fuel_now = _snap_fuel(snap)
+                    crumbs = (
+                        not math.isfinite(fuel_now)
+                        or fuel_now <= WATER_BRAKE_FUEL_MIN
+                    )
+                    if crumbs or _coast_ok(snap):
+                        suicide_spent = True
+                if math.isfinite(vz_now):
+                    prev_brake_vz = vz_now
+                if math.isfinite(met_now):
+                    prev_brake_met = met_now
 
             leftover_lf = _snap_fuel(snap)
             aim_up = (
@@ -1734,11 +2202,18 @@ def run_on_vessel(
                 prev_met = met
 
             elapsed = clock() - t0
+            hover_hz = (
+                wait_down
+                and suicide_armed
+                and not suicide_spent
+                and not down
+            )
+            fast_brake = braking or hover_hz
             if pulses > 1 and elapsed >= budget:
                 if wait_down and not splashed:
                     if left_pad and landed_dry:
                         raise MissionAbort("not splashed")
-                    nap(_nap_dt(pulse, snap))
+                    nap(_nap_dt(pulse, snap, braking=fast_brake))
                     continue
                 if left_pad:
                     got = _recover_hd(vessel, on_log)
@@ -1750,13 +2225,13 @@ def run_on_vessel(
                     if not waiting_hd:
                         _say("hop wait recoverable", on_log)
                         waiting_hd = True
-                    nap(_nap_dt(pulse, snap))
+                    nap(_nap_dt(pulse, snap, braking=fast_brake))
                     continue
                 if down and left_pad:
                     raise MissionAbort("not recoverable")
                 _say(f"hop timeout {elapsed:.0f}s", on_log)
                 raise MissionAbort("timeout")
-            nap(_nap_dt(pulse, snap))
+            nap(_nap_dt(pulse, snap, braking=fast_brake))
 
     if wait_down and water_splashed:
         _release_steer(vessel)
@@ -1783,7 +2258,10 @@ def run_hop(
     on_log: Callable[[str], None] | None = None,
     abort: Callable[[], bool] | None = None,
 ) -> str:
-    """``python main.py hop``: Hangar the seated hop craft uncrewed, then light."""
+    """``python main.py hop``: Hangar seated craft when pad empty, then light.
+
+    Unmatched leftover aborts ``ksc leftover``. Do not recover-then-Hangar.
+    """
     hop_science_ids()
     leftover = _find_unmatched_leftover(session)
     if leftover is not None:
@@ -1811,8 +2289,8 @@ def run_phase(
     """``phase hop``: Hangar if empty or leftover pad motor; else leftover Flight.
 
     Tracking leftover at SpaceCenter is switched into Flight. Do not Hangar
-    a second hop on that pad. Unmatched leftover recovers without lighting
-    (PRELAUNCH Flea vs seated Valiant), then Hangars the seated craft.
+    a second hop on that pad. Unmatched leftover aborts ``ksc leftover``
+    (PRELAUNCH Flea vs seated Valiant) — Hank recover-probe, not hop recover.
     Do not fly leftover pad/geiger as a hop.
     Live kRPC hop ship only — FLYING Debris is not leftover.
     """
@@ -1821,6 +2299,8 @@ def run_phase(
         _recover_unmatched_leftover(session, leftover, on_log)
         return run_hop(session, on_log=on_log, abort=abort)
     vessel = _find_hop_vessel(session)
+    if vessel is not None and leftover_should_hangar_new(vessel):
+        _recover_wreck_then_clear(session, vessel, on_log)
     if vessel is None or _is_pad_motor(vessel):
         return run_hop(session, on_log=on_log, abort=abort)
     _ensure_flight(session, vessel, on_log)
@@ -1849,14 +2329,13 @@ def run_hop_to_water(
     After left_pad, point surface target_direction heading 90; do not
     set target_roll=0 (16-57-24Z pad 299 tumble, never 090). Do not
     slam AP 65 at light (16-11-58Z TWR 5 sheared east-bare).
-    Flea still refuses (no Hangar). Unmatched leftover recovers first.
-    Matching leftover already down (splashed/landed dry) recovers,
-    then Hangar (22-45-26Z — do not exit recovered). Matching living
-    leftover enters Flight. Gate live sit/fuel/recoverable before
+    Flea still refuses (no Hangar). Unmatched leftover and matching
+    wreck leftover abort ``ksc leftover`` (Hank recover-probe). Matching
+    living leftover enters Flight. Gate live sit/fuel/recoverable before
     light — disk PRELAUNCH is a lie (14-52-25Z wreck flying MET 13.8
     fuel=0). Do not recover on first flying recoverable. Pad
     sit=landed after light is hop-off — abort landed only after
-    left_pad (Shores).
+    left_pad (Shores). Empty pad Hangars seated craft.
     """
     from session import SessionError
 
@@ -1921,10 +2400,12 @@ def run_hop_splash(
     """Valiant t7: Hangar seated craft, light vertical, wait splash dwell.
 
     No east slew. No flying Toggle. hop_apo 80 km is a real cut
-    (stays cut; leftover LF suicide near Water, latch until vz cut).
+    (stays cut; leftover LF suicide near Water, watch TTI ≤12,
+    light at 3.5, kill then TWR≈1 hover until coast ≤ Goo 12).
     Flea refuses (no Hangar). Unmatched leftover (east-fin PRELAUNCH
-    ghost) recovers without lighting, then Hangar. Matching leftover
-    enters Flight. Gate live sit/fuel/recoverable before light.
+    ghost) and wreck leftover abort ``ksc leftover``. Matching living
+    leftover enters Flight. Empty pad Hangars. Gate live sit/fuel/
+    recoverable before light.
     """
     from session import SessionError
 

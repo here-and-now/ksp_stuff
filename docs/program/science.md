@@ -1,4 +1,4 @@
-# Linus board — science program
+# Linus board — science dump
 
 Query, then write. Do not copy Squad Start from memory.
 
@@ -14,13 +14,9 @@ PAW. File experiments credit while recording. Do not transmit. PBC
 unmanned. Mk1 locked (`simpleCommandModules`, 90). Chute locked
 (`survivability`, 15). RW locked (`stability`, 18).
 
-**Unbound.** Os east Water campaign. Gus **T-014** east Valiant in
-parallel — **do not bind** until `capable: yes` on **that** craft.
-**Do not bind** `kspstuff-hop-valiant-t7-splash-pbc`. T-008 vertical
-splash **parked**. **Do not bind FlyingLow@Water or any Water biome**
-until a new hop-to-water **jsonl** holds **heading 090**. 16-57 / 16-33
-tapes **never 090**. last-flight is **hop-splash abort**, not that
-tape.
+Bind lives on **science-ticket payload**, not this file. Gus **T-014**
+`capable: yes` **`kspstuff-hop-valiant-east-t3-pbc`**. Do **not** bind
+`kspstuff-hop-valiant-t7-splash-pbc`. T-008 parked.
 
 Working goal **15**. Bank **13.2632** → need **~1.74**. FlyingLow
 geiger leftover **0.32** crumbs — not a node. FlyingHigh Forest
@@ -28,8 +24,29 @@ TELEMETRY leftover **1.51** does not close (13.26+1.51=14.77, **0.23
 short**).
 
 Desk leftover-science lists only started leftover **>0.02**. **Missing
-id = unstarted.** Do not treat the leftover block as the REACH board.
-**T-004** is that rule.
+id = unstarted.** **T-004** closed that rule.
+
+---
+
+## Bound (east-t3, this sit)
+
+Craft **`kspstuff-hop-valiant-east-t3-pbc`**. Sequential after
+`sit=splashed`: **T-020** then **T-019**. recover_banks **yes**. Do
+not transmit. Tape **0.75 MB** — do **not** co-run geiger. Do not
+Toggle TELEMETRY airborne (19-43 Forest leftover). 23-15-52Z abort
+wanted mysteryGoo: airborne skip (not flying ids), then splash skip
+**no Experiment modules** after **220 m/s** Shores heading **304**.
+That is Lars **T-024** / **T-016**, not an unbind. Chute still LOCKED.
+
+| ticket | experiment_id | situation | biome | part | instrument | tech | unlocked | on_craft | duration_s | ec_rate | est | recover_banks | seq |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **T-020** | `kerbalism_TELEMETRY` | SrfSplashed | **Shores** | `probeCoreSphere_v2` | Stayputnik PAW (no Science-category part) | start | yes | yes | **30** | 0.052 | **0.80** | yes | **0** |
+| **T-019** | `mysteryGoo` | SrfSplashed | **global** | `GooExperiment` | Mystery Goo Containment Unit | start | yes | yes | **641** | 0.18 | **2.40** | yes | **1** |
+
+Splash goo **2.40** closes **15**. Pair **3.20** overshoots. Goo is
+**global** — do **not** wait heading **090** to run T-019. TELEMETRY
+is biome-tagged: honest bind is **Shores** (23-15 / 22-57 / 22-03
+tapes; never 090). **Do not fake Water.**
 
 ---
 
@@ -60,8 +77,8 @@ Scan marks `*@Biomes` **capped** when one biome leftover is 0, and
 **left=sum** when any biome leftover exists. **Sibling biomes with no
 id are unstarted**, not spent. Forest FlyingHigh leftover **hides**
 unstarted FlyingHigh TELEMETRY at Water and others. Splash goo /
-splash TELEMETRY have **no save id** — unstarted, even though leftover
-does not list them. Splash goo is **global**.
+splash TELEMETRY have **no save id** — unstarted until this bind
+credits. Splash goo is **global**.
 
 Caps from Kerbalism value × situation (surface 0.3, splash 0.4,
 FlyingLow 0.7, FlyingHigh 0.9): geiger 4, thermo 3, TELEMETRY 2,
@@ -69,38 +86,21 @@ goo 6.
 
 ---
 
-## Unstarted (missing id) — leftover hid these
+## Unbound (090 tape) — not flying ids
+
+**Do not bind FlyingLow@Water or any Water biome** until a hop-to-water
+**jsonl** holds heading **090**. 23-15 / 22-57 / 22-03 / 16-57 / 16-33
+tapes **never 090**. last-flight is **23-15 abort**, not that tape.
+These tickets have **no `experiment_id`** so hop does not start them.
 
 | experiment_id | situation | duration_s | ec_rate | est. | honest |
 |---|---|---|---|---|---|
-| `mysteryGoo` | SrfSplashed **global** | **641** | 0.18 | **2.40** | **pays 15** if sit=splashed — **unbound** (not t7) |
-| `kerbalism_TELEMETRY` | SrfSplashed@Biomes | **30** | 0.052 | **0.80** | **T-009** unstarted; sequential first after splash; tape 0.75 |
+| `kerbalism_TELEMETRY` | SrfSplashed@Water | **30** | 0.052 | **0.80** | sibling of T-020 Shores; **090 first** |
+| `temperatureScan` | FlyingLow@Water | **138** | 0.002 | **2.10** | 2HOT on stack; **090 first** |
+| `kerbalism_TELEMETRY` | FlyingLow@Water | **30** | 0.052 | **1.40** | same; Water needs heading |
+| `kerbalism_TELEMETRY` | FlyingHigh@Water | **30** | 0.052 | **1.80** | unstarted sibling of Forest leftover; **090 first** |
 | `geigerCounter` | FlyingHigh **global** | **497** | 0.005 | **3.60** | unlocked e101; 497 s will not finish on a hop recover |
 | `mysteryGoo` | FlyingLow **global** | **641** | 0.18 | **4.20** | scan REACH; **will not finish** airborne |
-| `kerbalism_TELEMETRY` | FlyingHigh@Water (etc.) | **30** | 0.052 | **1.80** | unstarted sibling of Forest leftover; **090 first** |
-| `temperatureScan` | FlyingLow@Water | **138** | 0.002 | **2.10** | unstarted; **do not bind** until heading **090** |
-| `kerbalism_TELEMETRY` | FlyingLow@Water | **30** | 0.052 | **1.40** | same; Water needs heading |
-
----
-
-## East campaign — opportunities, no bind
-
-T-013 hop-to-water blocked on Gus **T-014**. Prior east stacks often
-carried **2HOT + Stayputnik**, **no Goo**. Do not assume goo on the
-unsigned east craft.
-
-| path | est. | vs gap ~1.74 | bind |
-|---|---|---|---|
-| splash goo **global** | **2.40** | **closes 15** | **no** — wait T-014 + Goo on stack + sit=splashed |
-| splash TELEMETRY (T-009) | **0.80** | 0.94 short alone | **no** — keep ticket; payload after Water too |
-| splash pair sequential | **3.20** | overshoots | **no** — TELEMETRY **30 s** then goo **641 s**; not airborne |
-| FlyingLow@Water thermo+TELEMETRY | **2.10+1.40=3.50** | **closes 15** | **no** — tape must hold **090** |
-| FlyingHigh Forest TELEMETRY leftover | **1.51** | **0.23 short** | **no** — not this hang |
-| FlyingLow geiger leftover | **0.32** | crumbs | **no** |
-
-Do **not** co-run geiger with TELEMETRY **0.75 MB**. Do **not** Toggle
-TELEMETRY airborne (19-43 Forest leftover). recover_banks **yes**. Do
-not transmit.
 
 ---
 
@@ -123,17 +123,17 @@ lie on PBC. Locked instruments are not a pad/hop sit.
 
 ---
 
-## Instruments (tree, not a bind)
+## Instruments (tree, east-t3)
 
-Seated desk craft is **t7-splash** (parked). f013 on that stack is
-not a Water bind. Stayputnik PAW is **not** the Geiger.
+Stayputnik PAW is **not** the Geiger. Hosted `geigerCounter` on
+Stayputnik is **not** bind hardware this sit.
 
-| experiment_id | instrument | tech | unlocked | on seated t7 | bind |
+| experiment_id | instrument | tech | unlocked | on east-t3 | bind |
 |---|---|---|---|---|---|
-| `mysteryGoo` | `GooExperiment` | start | **yes** | **yes** | **no** |
-| `kerbalism_TELEMETRY` | Stayputnik PAW | start | **yes** | hosted | **no** — T-009 keep |
-| `temperatureScan` | `sensorThermometer` (2HOT) | start | **yes** | **yes** | **no** — Water needs 090 |
-| `geigerCounter` | `kerbalism-geigercounter` | e101 | **yes** | **yes** | **no** — tape vs TELEMETRY |
+| `mysteryGoo` | `GooExperiment` | start | **yes** | **yes** | **T-019** splash global |
+| `kerbalism_TELEMETRY` | Stayputnik PAW (no Science part) | start | **yes** | hosted | **T-020** splash Shores |
+| `temperatureScan` | `sensorThermometer` (2HOT) | start | **yes** | **yes** | **no** — Water needs 090; Shores FlyingLow capped |
+| `geigerCounter` | `kerbalism-geigercounter` | e101 | **yes** | PAW only | **no** — not a Science-category part on hang |
 
 `seismicScan` landing LOCKED. LITE InSpace (e101, ~10 s) — orbit /
 Space ~140 km, not this hop. MITE `generalRocketry` LOCKED. SITE
@@ -157,7 +157,7 @@ LITE **unlocked** e101; envelope is the lock. MITE/SITE tree LOCKED.
 Ast. XRL-564 — InSpace someday. Do not recover the rock. Chute is
 still 15.
 
-One line of future: splash goo **2.40** (if goo flies) or FlyingLow@Water
-thermo+TELEMETRY **3.50** (if heading **090**) is the 15-sci node.
+One line of future: splash goo **2.40** on a living can closes 15.
+FlyingLow@Water thermo+TELEMETRY **3.50** only if heading **090**.
 Not Forest High TELEMETRY 1.51, not leftover geiger 0.32, not 497 s,
 not scan-REACH crew, not a t7-splash bind.

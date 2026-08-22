@@ -5,9 +5,11 @@ Speech is **name + title**. Ticket bus: `docs/program/OPS.md`.
 Machine slugs stay internal.
 
 **Mortimer Grokman, CEO** owns the objective and org RSI. **Hank**
-owns who is hired and the pad. **Gene Grokman, Launch / Flight
-Director** stamps `go:` on a fly ticket. Mortimer never flies. Gene
-never routes tickets. Hank never stamps `go:`.
+owns who is hired, the pad, and leftover/KSC hygiene
+(`recover-probe` / `ksc`). **Gene Grokman, Launch / Flight
+Director** stamps `go:` on a fly ticket and leftover **honesty**.
+Mortimer never flies. Gene never routes tickets. Hank never stamps
+`go:`. Commander hop does not recover leftover.
 
 ## Handoffs
 
@@ -19,11 +21,13 @@ never routes tickets. Hank never stamps `go:`.
 | Hank | desks | `ops next` | ticket ids | ticket patches |
 | Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
 | Hank | Commander | `ops next` fly_ready | fly ticket + exact `cli` | `result:` `exit:` `handoff:` |
+| Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover-probe` [`--recover`\|`--space-center`] or `ksc` | pad clean |
+| Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
 | Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
 | Hank | Linus, Director of Research | open science tickets | ids (batch) | payload bind (blocked until vehicle `capable`) |
 | Hank | Lars, Vehicle Systems Engineer | control tickets / miss | ticket + `live_run` | `lesson:` close |
 | Hank | Wernher, Chief Systems Engineer | systems / kRPC world | ticket | systems close |
-| Commander | ticket bus | miss or leftover | `tickets open --type recover\|control` | Hank `ops next` |
+| Commander | ticket bus | miss (not leftover hygiene) | `tickets open --type control` | Hank `ops next` |
 | Commander | ticket bus | campaign clean 0 | same fly ticket stays `go: yes` | Hank re-hires Commander — **no Gene** |
 | Anyone | ticket bus | friction | `tickets open` | Hank routes |
 | Hank | Mortimer | `type=ctt` / `org` / rsi×3 | ticket | RD spend / PROTOCOL mutation |
@@ -31,13 +35,17 @@ never routes tickets. Hank never stamps `go:`.
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
 | Gene or seated Commander | KSP window | stuck | `screenshot --name stuck-<stem>` then read PNG | scene |
 
-Linus ↛ Commander. Gus ↛ Hangar. Commander ↛ `.py`/`.craft`. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
+Linus ↛ Commander. Gus ↛ Hangar. Commander ↛ `.py`/`.craft`. Commander ↛ leftover recover / Close crash UI. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
 Mortimer ↛ GameData. Mortimer ↛ flight/UT in the save. Mortimer **may**
 edit `persistent.sfs` ResearchAndDevelopment (`sci`, `Tech` node) when
 Linus/Lars/Gene brief a paid unlock.
 Commander ↛ revert / quickload / return to VAB / rewind UT. Crash UI is
-honest: recover the leftover or Hangar the next stack. Os will not
-click it. Screenshot when stuck; do not wait for a founder click.
+honest: **Hank** `recover-probe` / `ksc` the leftover, then Hangar the
+next stack on a **clean** pad. Os will not click it. Screenshot when
+stuck; do not wait for a founder click.
+Clean-pad Hangar of the seated craft for the sortie may stay inside
+hop (`install_and_launch`) — that is **launch**, not leftover hygiene.
+Splash HD recover of **this** hop after a briefed dwell stays mission.
 
 **Ground talk (between exits, lock free):** Gene, Linus, Gus, Lars,
 Wernher, Mortimer, Verena may address each other by name. Still not
@@ -160,7 +168,9 @@ heading vs briefed 090, not “flew east.”
 `hangar:` on desk **is** the Hangar decision (`none` |
 `phase <name> sit=<SIT>` | `recover <name> sit=<SIT>` | `blocked`).
 Disk cannot see crash UI (`scene: unknown (disk)`). Gene does not vibe
-it. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
+it. Gene `go: wait` if hangar is `recover` / `blocked` — do not `go:
+yes` over a dirty hangar. Hank cleans leftover first. Missing `f013`
+on bind / capable / `go:` / Lars miss → wait.
 Parent flies only if `python main.py protocol fly` prints `fly: yes`.
 Uncrewed campaign continue uses that same print — `campaign:` and `go`
 come from the fly ticket (plan is fallback). Do not vibe a hop because
@@ -229,9 +239,9 @@ only. Idle on open science tickets, not `need_science`.
 
 **Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`.
 
-**Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover `need_*` in a child return → `tickets from-need` (shim). Desks must not emit those keys.
+**Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). Leftover `need_*` in a child return → `tickets from-need` (shim). Desks must not emit those keys.
 
-**Pilot** — `result:` `exit:` `handoff:` `abort:` `last:`. Drop `envelope:` / `improve:` / `feedback:` / `need_*`. Miss → `tickets open --type recover|control`. `note-tech` is optional tape, not the bus.
+**Pilot** — `result:` `exit:` `handoff:` `abort:` `last:`. Drop `envelope:` / `improve:` / `feedback:` / `need_*`. Miss → `tickets open --type control`. Hop abort `ksc leftover` → Hank, not Commander recover. `note-tech` is optional tape, not the bus.
 
 ## Files
 

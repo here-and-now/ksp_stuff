@@ -200,3 +200,8 @@ Jebediah: copy, T-013 hop-to-water east-t3
 Jebediah: copy, fresh Hangar, east-t3 hop-to-water, hop_apo latch, leftover-LF suicide, splash TELEMETRY then goo
 Jebediah: copy, fresh Hangar east-t3, hop-to-water, light vertical, slew 090/25 after left_pad thr 0.4, latch hop_apo, leftover-LF suicide, splash TELEMETRY 30s Stayputnik then goo 641s GooExperiment
 Jebediah: copy, T-013 hop-to-water east-t3, suicide latch until vz, TELEMETRY then goo
+Jebediah: copy, hop-to-water
+Jebediah: copy, hop-to-water
+Jebediah: copy, hop-to-water T-040
+Jebediah: copy, hop-to-water T-045
+Jebediah: copy, hop-to-water T-046

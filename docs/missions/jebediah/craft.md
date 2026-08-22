@@ -12,11 +12,9 @@ parts:
   - fuelTankSmallFlat
   - restock-engine-125-valiant
   - basicFin
-notes: Gus capable yes. **`kspstuff-hop-valiant-east-t3-pbc`**.
-  East hop-to-water hang, heading **090**. Stayputnik stack-only
-  (Heaviest, no rigid). **20×Z-100** (~2050 EC). Engineer7500 + 16-S
-  + 2HOT + Goo on Stayputnik. Extra batteries on **upper + second
-  FL-T100**. **3× FL-T100** + LV-T15 **Boattail**. **3× basicFin on
-  the lowest T100**, not the engine. No geiger. No chute. No RW.
-  TWR ~1.1 at throttle 0.4. Not east-fin. Not t7-splash. Not a Flea.
-  Not 2×T100.
+notes: T-041 **capable yes**. Hang **east-t3** is the T-040 suicide-burn
+  test article (splash target ≤ Goo **12**). T-035 capable no vs 82 m/s
+  tape still honest; this stamp is not a chute. Stayputnik stack-only
+  (Heaviest, no rigid). **20×Z-100**. Engineer7500 + 16-S + 2HOT + Goo.
+  **3× FL-T100** + Valiant Boattail. **3× basicFin on the lowest T100**.
+  No geiger. No RW. Not a Flea.

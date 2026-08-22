@@ -9,7 +9,6 @@ Hunger: remaining subjects that still pay toward 15 sci, then leave
 the planet.
 
 Open:
-- Bank 13.2632 need ~1.74. Splash goo 2.40 is the node leftover hid. Forest High TELEMETRY leftover 1.51 does not close. Geiger 0.32 crumbs.
-- Scan REACH crew/seismic/ROC are locked — not binds.
+- Bank 13.2632 need ~1.74. T-019 splash goo 2.40 global on east-t3 closes 15. T-020 splash TELEMETRY 0.80 Shores sequential first. Forest High leftover 1.51 does not close. Geiger 0.32 crumbs. Water unbound until heading 090.
 
-Canonical bind still lives in `science.md`, not here.
+Canonical bind is science-ticket payload. `science.md` is dump only.

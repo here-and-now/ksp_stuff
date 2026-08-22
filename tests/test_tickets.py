@@ -205,12 +205,18 @@ class TestOpsNext(unittest.TestCase):
             reporter="Hank",
             severity="S1",
             priority="P0",
-            desk="jebediah",
+            desk="hank",
         )
         tickets.patch_ticket("T-001", {"status": "ready"}, who="hank")
         act = ops.next_actions(desk={"hangar": "none"}, locked=False)
-        self.assertEqual(act["hire"][0]["desk"], "jebediah")
+        self.assertEqual(act["hire"][0]["desk"], "hank")
         self.assertIn("S1 recover", act["hire"][0]["why"])
+        self.assertEqual(
+            act["hire"][0]["cli"],
+            "python main.py recover-probe --recover",
+        )
+        self.assertEqual(act["ksc"], "leftover")
+        self.assertIn("recover-probe", act["call"])
 
     def test_fly_gate_wait_without_go(self):
         tickets.open_ticket(
@@ -243,8 +249,57 @@ class TestOpsNext(unittest.TestCase):
             desk={"hangar": "phase t7 sit=LANDED"},
             locked=False,
         )
-        self.assertEqual(act["hire"][0]["desk"], "jebediah")
+        self.assertEqual(act["hire"][0]["desk"], "hank")
         self.assertIn("leftover", act["hire"][0]["why"])
+        self.assertEqual(
+            act["hire"][0]["cli"],
+            "python main.py recover-probe --recover",
+        )
+        self.assertEqual(act["ksc"], "leftover")
+        text = ops.format_next(act)
+        self.assertIn("ksc: leftover", text)
+        self.assertIn("call: python main.py recover-probe --recover", text)
+
+    def test_leftover_n_hires_hank_not_commander(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+        )
+        tickets.patch_ticket(
+            t["id"],
+            {
+                "go": "yes",
+                "status": "ready",
+                "payload": {"go": "yes", "cli": "python main.py hop-splash"},
+            },
+            who="gene",
+        )
+        act = ops.next_actions(
+            desk={"hangar": "none", "leftover": "1"},
+            locked=False,
+        )
+        self.assertEqual(act["hire"][0]["desk"], "hank")
+        self.assertIsNone(act["fly_ready"])
+        self.assertIn("recover-probe", act["hire"][0]["cli"])
+
+    def test_leftover_recover_hangar_uses_space_center_call(self):
+        act = ops.next_actions(
+            desk={"hangar": "recover flea sit=FLYING"},
+            locked=False,
+        )
+        self.assertEqual(act["hire"][0]["desk"], "hank")
+        self.assertEqual(
+            act["hire"][0]["cli"],
+            "python main.py recover-probe --space-center",
+        )
+
+
+    def test_parse_desk_leftover_comment(self):
+        d = ops.parse_desk("hangar: none\n# leftover vessels n=2\n")
+        self.assertEqual(d["leftover"], "2")
+        self.assertEqual(ops.leftover_n(d), 2)
 
 
 class TestPacketAndReasoning(unittest.TestCase):

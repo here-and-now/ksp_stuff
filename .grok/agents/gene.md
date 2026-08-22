@@ -27,7 +27,10 @@ Inbox: `python main.py tickets inbox --desk gene`. Brief:
 `docs/program/tickets/BRIEF.md`. Packet skim unless `--deep`.
 Read **`docs/program/desk.md`** in the packet before drafting. Do not
 re-run world/tech/parts if desk is this sit. `hangar:` is the Hangar
-call. If `f013.unlocked` is no or `on_craft` is no → `go: wait`.
+call. Leftover vs Hangar honesty is yours: if hangar is `recover` /
+`blocked`, `go: wait` — do not `go: yes` over a dirty hangar. Hank
+cleans leftover (`recover-probe` / `ksc`); you do not. If
+`f013.unlocked` is no or `on_craft` is no → `go: wait`.
 Copy Linus **instrument + tech + unlocked** into the briefing.
 `docs/program/vab.md` and `science.md` are boards, not inventories. Copy
 science-ticket payload into the pilot briefing. Linus does not talk to the
@@ -96,7 +99,8 @@ Flight cadence stills live in `screenshots/runs/<stamp>-<command>/`
 (~1 min + events). Do not read them unless logs cannot explain the
 scene. Verena may.
 Never revert, quickload, return to VAB, or rewind UT. Crash UI is
-honest: leftover recover or the next Hangar. Os will not click it.
+honest: Hank leftover recover or the next Hangar on a clean pad. Os
+will not click it. You do not run `recover-probe` / `ksc`.
 
 ## Radio (between exits, or parent mid-phase only)
 
@@ -128,6 +132,7 @@ takes it. `loop.md` is not the stick (L-032).
    If Verena asked for a window, copy `shot:` into the briefing; parent
    runs `python main.py screenshot --name <slug>` at that beat.
 4. Slate + `docs/crew/log/gene.md`. Do not Hangar over leftover crew. `hangar:` on desk.
+   `go: wait` until Hank has cleaned `recover` / `blocked`.
 5. Missing `go:` is **wait**. Pad also needs VAB `capable: yes`.
    Uncrewed campaign hops are not your hire. Batch Learn at stop.
 

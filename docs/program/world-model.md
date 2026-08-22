@@ -19,24 +19,36 @@ Kardashev III is creed here. Joke in the TUI. Nobody preaches mid-burn.
 
 Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. Tree
 **start, engineering101, basicRocketry**. Desk `sci = 13.2632`
-(22-57-36Z hop-to-water abort **+0** splash **119 m/s** Shores; 22-45-26Z
-hop-to-water recover **+0**, never lit — 22-03 wreck; 22-03-59Z
-hop-to-water abort **+0** splash **230 m/s** Shores; 19-43-18Z
-hop-splash abort **+0**; 16-57-24Z hop-to-water abort **+0**; 13-58-18Z
-abort **9.66 → 10.96, +1.30**; 13-49-37Z splash **6.35 → 9.66, +3.31**).
+(10-11-27Z hop-to-water abort **+0** splash **62.3 m/s** Shores, modules
+gone; 09-48-51Z hop-to-water abort **+0** splash **92.5 m/s** Shores;
+09-11-59Z hop-to-water abort **+0** splash **82 m/s** Shores;
+08-44-32Z hop-to-water abort **+0** splash **119 m/s** Shores;
+23-15-52Z hop-to-water abort **+0** splash **220 m/s** Shores; 22-57-36Z
+hop-to-water abort **+0** splash **119 m/s** Shores; 22-45-26Z hop-to-water
+recover **+0**, never lit — 22-03 wreck; 22-03-59Z hop-to-water abort
+**+0** splash **230 m/s** Shores; 19-43-18Z hop-splash abort **+0**;
+16-57-24Z hop-to-water abort **+0**; 13-58-18Z abort **9.66 → 10.96,
++1.30**; 13-49-37Z splash **6.35 → 9.66, +3.31**).
 Cape Surface geiger **capped**. FlyingLow TELEMETRY **capped**.
 Landed TELEMETRY **capped**. FlyingHigh thermo **banked**. FlyingHigh
 TELEMETRY Shores leftover **consumed** on 13-58. FlyingHigh Forest
 TELEMETRY leftover **1.512**. FlyingLow geiger leftover **0.316**.
-`capable: yes`. craft `kspstuff-hop-valiant-east-t3-pbc`. card splash
-TELEMETRY+goo (FlyingLow@Water unbound until heading 090). f013
+T-014 east-t3 is the suicide **test hang** (10-11 goo gone at
+62.3 m/s; 09-48 at 92.5; 09-11 at 82). T-041 `capable: yes` `kspstuff-hop-valiant-east-t3-pbc`. T-035
+`capable: no` vs 82 m/s tape still honest (Goo crashTolerance **12**;
+chute LOCKED; girder/T100/t7/inline not a 12 m/s can). card splash
+TELEMETRY+goo (FlyingLow@Water unbound until heading 090; T-019 goo
+**global**). f013
 `mysteryGoo` GooExperiment tech start unlocked yes on_craft yes;
 TELEMETRY hosted Stayputnik PAW tech start unlocked yes on_craft yes.
 hangar **none**. leftover vessels **n=0**. Do not Hangar from Gene. Do
 not revert. Do not recover Ast. XRL-564. Need **~1.74** for
-survivability. Splash pair **3.20** pays it; goo **2.40** closes 15.
-T-006 **done**. T-007 **done** — surface `target_direction`, roll unset.
-T-014 **done** east-t3. T-008 hop-splash parked.
+survivability. Splash pair **3.20** pays it; goo **2.40** closes 15
+**iff the can lives**. T-006 **done**. T-007 **done** — surface
+`target_direction`, roll unset. T-040 **done** hover-slam (09-48 never
+lit). T-045 **done** suicide-light (10-11 1 Hz never thr=1). T-046
+**done** TWR≈1 hover until coast ≤12. T-047 **done** crumbs-rebuild.
+T-033 spent-latch superseded. T-008 hop-splash parked.
 
 
 Aero stack **now on this install** (CKAN, 2026-08-21): **FAR**
@@ -56,26 +68,29 @@ Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
 
 ## Meaning (Gene)
 
-T-013 `go: yes`. Merge suicide-latch-until-vz. 22-57-36Z Learned: latch
-**held** MET **79.2** thr **0** fuel **109.5** apo **18.97 km**. Envelope
-heading **never 090** (pad **299**, burn **300**, splash **300/314**;
-080–100 fly-throughs MET **104.7** / **188.5**, not a hold) horiz **8.1**
-vs briefed **090**. First suicide **in**: MET **179.7** thr **1**; MET
-**181.6** tti rose vz **−72**; MET **183** thr **0** vz **+19** fuel
-**46**; relight lofted leftover. Splash MET **226.3** sit=splashed biome
-**Shores** impact **119 m/s**. sci **13.26 Δ0**. science skip no
-Experiment modules — wreck-class, not start_experiments. TTI-as-cut
-spent the brake. T-023 **in**: arm TTI, hold until vz ≥ −20 or fuel=0.
-T-016 heading 301 is hardware — do not wait a wheel. Os: same brake,
-latched. Parent desk leftover **n=0** hangar **none**. Recover-then-Hangar
-if live wreck. Gus `capable: yes` **east-t3**. Linus splash TELEMETRY
-**30 / 0.052 / 0.80** then goo **641 / 0.18 / 2.40**. Goo **2.40** closes
-15. f013 goo + TELEMETRY on_craft. Light vertical; after `left_pad` slew
-0.4 heading **090** pitch **25°** from up; hold AP through burnout;
-**latch** hop_apo; leftover LF suicide **until vz cut**; no flying Toggle;
-wait splash. hop_apo **18 km**. OffPlan **50 km**. T-008 parked.
-`campaign: uncrewed`. `python main.py hop-to-water`. Do not Hangar. Do
-not hop-splash.
+T-013 `go: yes`. Merge T-046 TWR≈1 hover + T-047 crumbs-rebuild. Learn
+**10-11-27Z** abort **+0**: latch held MET **79.4** thr **0** leftover
+**108.7** apo **18.95 km**. Envelope heading **never 090** (pad
+**298.9**, burn **301.1**, splash **304.6**; 080–100 fly-through MET
+**86.0** hdg **93.4** and MET **93.0** hdg **86.6**) splash horiz
+**2.00** pitch **81.7**. Suicide 1 Hz **never thr=1** after pad-light.
+MET **176.1** thr **0** leftover **108.7** vz **−223** alt **2415**;
+20 Hz dumped **108.7→crumbs 1.98**. MET **208.9** speed **9.2** vz
+**−9.4** alt **195**, then rebuild. Splash MET **214.3** sit=splashed
+biome **Shores** speed **62.3 m/s** (landing **62** vz) heading
+**305**. sci **13.26 Δ0**. science skip no Experiment modules — goo
+died. Goo crashTolerance **12**. T-045 slam/cut spent leftover. T-046:
+watch TTI **≤12**, light live TTI **≤3.5**, latch armed even if the
+gate cuts; after vz **≥ −10**, TWR≈1 hover until coast **≤12** — no
+slam 1, no drop-out at the cut. Os: fly the hover until the can lives.
+T-016 heading 305 is hardware. Shores splash goo is **global**. Desk
+`capable: yes` craft east-t3 is T-041 last-write. T-035 `capable: no`
+vs 82 m/s tape still honest. Parent desk leftover **n=0** hangar
+**none**. KSC is Hank. Linus T-020 splash TELEMETRY **30 / 0.052 /
+0.80** then T-019 goo **641 / 0.18 / 2.40**. Goo **2.40** closes 15 iff
+the can lives. f013 goo + TELEMETRY on_craft. hop_apo **18 km**. OffPlan
+**50 km**. T-008 parked. `campaign: uncrewed`. Helm **`python main.py
+hop-to-water`**. Suicide T-046. Do not Hangar. Do not hop-splash.
 
 T-007 **merged** (pre-22-03): surface `target_direction`, roll unset.
 16-57 pad **299** tumble, horiz max **85.6**, apo **3.66 km** was
@@ -282,8 +297,9 @@ lists only started **>0.02** — missing id = unstarted. FlyingLow geiger
 leftover **0.32** crumbs. FlyingHigh Forest TELEMETRY leftover **1.51**
 does not close (14.77, **0.23 short**). Recovery leftover gone. Cape
 spent. Shores High / Forest Low TELEMETRY spent. Bound
-**`kspstuff-hop-valiant-east-t3-pbc`** splash TELEMETRY **0.80** then
-goo **2.40**. Goo **2.40** is the node leftover hid. FlyingLow@Water
+**`kspstuff-hop-valiant-east-t3-pbc`** **T-020** splash TELEMETRY
+**0.80** **Shores** (not Water — tapes never 090) then **T-019** goo
+**2.40** global. Goo **2.40** is the node leftover hid. FlyingLow@Water
 thermo/TELEMETRY **unbound** until hop-to-water jsonl holds heading
 **090**. Do not bind scan REACH crew/seismic/ROC (Mk1 / landing /
 advExploration locked). Chute still 15. **Visit Ast. XRL-564** someday.
@@ -349,18 +365,27 @@ story this fly. Dead kRPC GUID is not leftover.
 - `desk.md` is the sit. Children do not re-run `world`/`tech`/`parts`
   if that file is this sit.
 - `hangar:` is the Hangar call (`none` / `recover <name>` / `blocked`).
+  Gene `go: wait` if `recover` / `blocked`. Do not `go: yes` over a
+  dirty hangar.
+- Leftover/KSC hygiene is **Hank** (Os 2026-08-22): desk, then
+  `recover-probe` / `--recover` / `--space-center` or `ksc`. Commander
+  hop is flight — not leftover recover, not Close crash UI. Hop abort
+  `ksc leftover` hands to Hank. Splash HD recover of **this** hop after
+  a briefed dwell stays mission. Clean-pad Hangar of the seated craft
+  for the sortie may stay inside hop (`install_and_launch`) — launch,
+  not leftover hygiene. Lars does not patch leftover recover-then-Hangar
+  as vehicle control (Hank/Wernher).
 - `f013` on every bind / capable / `go:` / miss. Missing line = wait.
 - `agents_md: false`. Gene max two hires per sit. Lars miss only.
 - `load rd-<node>` never `load persistent`. One kRPC writer. No rewind.
   Honest CTT spend only when the bank **pays**. No GameData. No UnlockTech.
 - Os mid-flight → parent reads `ship.md`. Wreck → Walt + one PNG.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
-- Working goal (Os): **15 sci** for `survivability`. Bank 6.35 → need
-  ~8.65 honest. Same lithobrake Flea is **not** a 15-sci campaign.
-  2×T100 Valiant apo 12.3 km is not FlyingHigh. Gene leftover vs Hangar
-  t7. Gus a new cheap stack if this hang cannot finish remaining
-  subjects. Linus binds subjects that still pay, not spent Cape. Lars
-  owns MET / crash UI — not a recover cheat. Stayputnik is not a Geiger.
+- Working goal (Os 2026-08-22): `survivability` **paid** (sci
+  16.4716835→1.4716835). Chutes Available. Same lithobrake Flea is
+  still not the campaign. Gus hangs a chute; Gene `go:` after capable.
+  Linus binds subjects that still pay, not spent Cape. Lars owns MET /
+  crash UI — not a recover cheat. Stayputnik is not a Geiger.
 - Uncrewed campaign: Gene first `go:` + `campaign: uncrewed`; parent
   re-flies last recommended on clean 0; Gene **batch Learn** at stop
   (miss, leftover hangar, empty card, Os wait). Pad does not idle
@@ -403,3 +428,5 @@ story this fly. Dead kRPC GUID is not leftover.
 | Lars | Gene Grokman, Flight Director | Re-stamp hop-to-water go after hop_apo latch + leftover-LF suicide; T-016 heading 301 is hardware not another AP setter. | **Gene 2026-08-22:** **yes.** Latch + suicide merged. Heading 301 is T-016. Os: test the brake. `go: yes` T-013. `python main.py hop-to-water`. |
 | Lars | Gene Grokman, Flight Director | Pad is empty; hop-to-water now recovers a down leftover then Hangars east-t3 — restamp T-013 if latch+suicide is still the fly. | **Gene 2026-08-22:** **yes.** Latch + suicide still the fly. 22-45 recovered the 22-03 wreck, never lit. Pad empty leftover n=0. `go: yes` T-013. `python main.py hop-to-water`. |
 | Lars | Gene Grokman, Flight Director | Merge suicide-latch-until-vz; restamp T-013 if the vz latch is the next test. | **Gene 2026-08-22:** **yes.** 22-57 latch held; TTI recut lofted leftover; splash 119 m/s Shores. T-023 in. Os: same brake, latched. `go: yes` T-013. `python main.py hop-to-water`. |
+| Lars | Gene Grokman, Flight Director | Merge hold-until-vz-seen 20 Hz; restamp T-013 if Os still wants the science string. | **Gene 2026-08-22:** **yes.** 08-44 predictor recut vz −29.9 leftover 60 then loft; splash 119 m/s Shores heading 298 horiz 17.9. T-031 in. Os: fly the patch. `go: yes` T-013. `python main.py hop-to-water`. |
+| Lars | Gene Grokman, Flight Director | Merge suicide spent-latch after vz-cut; restamp T-013 after Gus T-035 if the stack still keeps goo. | **Gene 2026-08-22:** **wait.** 09-11 latch held leftover 114; vz-cut leftover 57 then pulse-relight; splash 82 m/s Shores heading 299 horiz 2.2; modules gone. T-033 in. T-035 capable empty. `go: wait` T-013. Helm none. |

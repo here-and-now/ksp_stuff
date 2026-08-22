@@ -587,6 +587,12 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   `landed` and `recoverable` stays false. Space Center / Close
   (`go_space_center`) leaves the modal. Do not Revert. Telem
   `wreck=false` until MET-still + q=0 + alt≤250 m.
+- **2026-08-22** — Flight Results overlay follows `GameScene` (R&D and
+  tracking still show it). No OCR, no UI click. Named
+  `SpaceCenter.save("leftover-ksc")` + `load` of that sfs drops the
+  GUI (not persistent, not revert). Load may open Ast. XRL-564 —
+  `python main.py ksc`, never recover the rock. Hank
+  `recover-probe --space-center` runs `dismiss_flight_results`.
 - **2026-08-21** — FAR + RealChute + RealHeat on `KSP-rss`. No FAR
   kRPC service in 0.6 client. `dynamic_pressure` is still stock
   `flight`. RealChuteModule replaced ModuleParachute on stock chutes

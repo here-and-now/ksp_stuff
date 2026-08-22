@@ -42,13 +42,13 @@ communication failure.
 |---|---|---|---|
 | **Os** | Founder | Goal ratification, talk-by-name | Click crash UI, fly |
 | **Mortimer Grokman** | CEO / Administrator | Slate *objective*, org RSI, CTT spend, CHARTER/PROTOCOL mutation | Day-to-day dispatch, fly, Hangar, `.py` |
-| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, time, parallel ground vs flight | `go:` (Gene), `.craft` (Gus), science bind (Linus), control.* |
+| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, leftover/KSC hygiene (`recover-probe` / `ksc`), time, parallel ground vs flight | `go:` (Gene), mission CLI, Hangar, `.craft` (Gus), science bind (Linus), control.*, `.py` on a fly turn |
 | **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty | PROTOCOL, ticket routing, stick while lock live |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
 | **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol | Vehicle *control* loops, `.craft` |
-| **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown*: pad/hop/splash/control, recover, blocks.md phases | World-interface architecture, org, Hangar from Gene |
-| **Seated Commander** | Pilot | Exact CLI on a fly ticket; one kRPC writer | `.py`, `.craft`; `note-tech` is tape — miss opens `type=control\|recover` |
+| **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown*: pad/hop/splash/control, **this-hop** splash HD recover, blocks.md phases | Leftover recover-then-Hangar (Hank/Wernher), world-interface, org, Hangar from Gene |
+| **Seated Commander** | Pilot | Exact CLI on a fly ticket; one kRPC writer | leftover recover / Close crash UI; `.py`, `.craft`; `note-tech` is tape — miss opens `type=control` |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
 
@@ -151,7 +151,8 @@ fallback**. `ops fly` is occupancy only (do not retarget AGENTS).
 **Systems ticket:** Wernher, world-interface (desk leftover, hangar
 scene, telem reference frame, kRPC connect).
 
-**Recover ticket:** leftover sit, recoverable, wreck vs living.
+**Recover ticket:** leftover sit, recoverable, wreck vs living. Desk
+**hank**. CLI is Hank `recover-probe` / `ksc`, not Commander hop.
 
 **CTT ticket:** node, cost, parents, sci — Mortimer.
 
@@ -170,7 +171,8 @@ Enforced in `tickets.py`, not job-card prose:
 - Linus may last-write science payload.
 - Lars may close `type=control` with `lesson`.
 - Wernher may close `type=systems`.
-- Commander may open `type=control|recover` via `python main.py tickets open` (replaces `note-tech` as the bus; a shim can still append the log).
+- Commander may open `type=control` via `python main.py tickets open` (replaces `note-tech` as the bus; a shim can still append the log). Hop abort leftover files to Hank, not a Commander recover CLI.
+- Hank may close `type=recover` after leftover/KSC CLI.
 - Mortimer may close `type=org|ctt`.
 - Nobody else stamps `go`.
 
@@ -218,13 +220,18 @@ if lock live:
     never Commander, never Gene
     return
 
-# lock free — pad occupancy first
-if leftover recoverable in Flight (desk hangar recover / live probe):
-    open/boost recover ticket S1
-    hire Commander recover CLI or recover-probe --recover
+# lock free — leftover hygiene before pad occupancy
+if leftover (desk hangar recover/blocked, live probe, crash UI):
+    open/boost recover ticket S1 desk=hank
+    Hank runs (not Commander):
+      recover-probe                    # signal only
+      recover-probe --recover          # recoverable leftover
+      recover-probe --space-center     # crash UI / total wreck
+      ksc                              # same
+    # pad occupancy after leftover is clean
     return
 
-if fly ticket T with go=yes, blockers empty, f013 ok, phase in catalog:
+if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in catalog:
     hire Commander with T.cli
     if other desks have ready tickets on other files:
         also hire those (parallel, they must not Hangar)
@@ -250,8 +257,8 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 
 | Condition | Hire | Tickets in packet |
 |---|---|---|
-| Lock free, fly ready | Commander | that fly ticket |
-| Lock free, leftover live | Commander or recover-probe | recover ticket |
+| Lock free, leftover live / crash UI | **Hank** | recover ticket; CLI `recover-probe` / `ksc` |
+| Lock free, fly ready, hangar none | Commander | that fly ticket |
 | Fly needs `go` | Gene | that fly ticket only |
 | Tree unlocked, no crafts | Gus | all open vehicle tickets for that node |
 | Unstarted REACH / leftover science | Linus | all open science tickets |
@@ -326,13 +333,21 @@ Empty `_Gene fills this.` is a kernel check: campaign stop cannot
 
 ---
 
-## 6. Flight walls (unchanged)
+## 6. Flight walls
 
 One kRPC writer. Depth 1. Never revert / quickload / rewind UT.
-Os does not click crash UI. Commander does not edit `.py`/`.craft`.
-Gus does not Hangar. Linus does not talk to the stick. Missing Gene
-`go` on a fly ticket = wait. Parent/Hank does not patch `.py` on a
-fly turn — opens a control or systems ticket.
+Os does not click crash UI. Commander does not recover leftover or
+Close the crash dialog — hop abort `ksc leftover` is a handoff to
+Hank. Hank `recover-probe` / `ksc` only when lock **free**. Clean-pad
+Hangar of the seated craft for the sortie may stay inside hop
+(`install_and_launch`) — launch, not leftover hygiene. Splash HD
+recover of **this** hop after a briefed dwell stays mission.
+Commander does not edit `.py`/`.craft`. Gus does not Hangar. Linus
+does not talk to the stick. Missing Gene `go` on a fly ticket =
+wait. Gene `go: wait` if hangar is `recover` / `blocked`. Parent/Hank
+does not patch `.py` on a fly turn — opens a control or systems
+ticket. Leftover recover-then-Hangar in hop.py is Wernher (T-029),
+not Lars vehicle control.
 
 ---
 

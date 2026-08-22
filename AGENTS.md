@@ -34,9 +34,12 @@ One `Session` per **process**. System Python has no `krpc`.
 Do not ask the user to click Recover / Cancel / Launch anyway, or the
 crash dialog. Os will not dismiss it. Never revert to launch, quickload,
 return to VAB, or set the clock back — the crash UI is not a time
-machine. Recover the leftover or Hangar the next honest stack.
-`hangar.launch` must `go_space_center`, crew an *available* kerbal (or
-`create_kerbal`), and watchdog-abort a hung pre-flight itself.
+machine. **Hank** owns leftover/KSC (`python main.py recover-probe`
+`--recover` or `--space-center` / `python main.py ksc`). Hop aborts
+`ksc leftover` instead of recover-then-Hangar. Clean-pad Hangar of the
+seated craft stays inside hop (launch). `hangar.launch` must
+`go_space_center`, crew an *available* kerbal (or `create_kerbal`), and
+watchdog-abort a hung pre-flight itself.
 
 ---
 

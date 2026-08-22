@@ -543,6 +543,93 @@ def list_tickets(
     return out
 
 
+_FLY_DEAD = frozenset({"done", "wont", "blocked"})
+_FLY_PREF = ("verify", "in_progress", "assigned", "ready")
+_FLY_PAYLOAD = frozenset({"cli", "campaign", "phase", "science_ids", "recommended"})
+
+
+def fly_fields(t: dict[str, Any] | None) -> dict[str, Any]:
+    """go / cli / campaign / phase / science_ids. go is t.go or payload.go."""
+    empty: dict[str, Any] = {
+        "go": "",
+        "cli": "",
+        "campaign": "",
+        "phase": "",
+        "science_ids": (),
+    }
+    if not t:
+        return empty
+    pl = t.get("payload") or {}
+    if not isinstance(pl, dict):
+        pl = {}
+    go = str(t.get("go") or pl.get("go") or "").strip()
+    cli = str(pl.get("cli") or pl.get("recommended") or t.get("cli") or "").strip()
+    campaign = str(pl.get("campaign") or t.get("campaign") or "").strip()
+    phase = str(pl.get("phase") or t.get("phase") or "").strip()
+    raw = pl.get("science_ids") or ()
+    if isinstance(raw, str):
+        ids = tuple(p.strip() for p in raw.split(",") if p.strip())
+    else:
+        ids = tuple(str(x) for x in raw if x)
+    return {
+        "go": go,
+        "cli": cli,
+        "campaign": campaign,
+        "phase": phase,
+        "science_ids": ids,
+    }
+
+
+def seated_fly_ticket() -> dict[str, Any] | None:
+    """Open type=fly, not done/wont/blocked. Prefer go=yes in active statuses."""
+    if not HEAD.is_file():
+        return None
+    try:
+        tickets = load_head().get("tickets") or {}
+    except Exception:
+        return None
+    rows = [
+        t
+        for t in tickets.values()
+        if t.get("type") == "fly" and t.get("status") not in _FLY_DEAD
+    ]
+    if not rows:
+        return None
+
+    def _rank(t: dict[str, Any]) -> tuple[int, int, str]:
+        go_yes = 0 if fly_fields(t).get("go") == "yes" else 1
+        st = t.get("status") or ""
+        try:
+            pref = _FLY_PREF.index(st)
+        except ValueError:
+            pref = len(_FLY_PREF)
+        return (go_yes, pref, str(t.get("id") or ""))
+
+    rows.sort(key=_rank)
+    return rows[0]
+
+
+def patch_fly_payload(tid: str, fields: dict[str, Any], *, who: str) -> dict[str, Any]:
+    """Merge payload.cli / campaign / phase / science_ids. Keeps top-level go."""
+    cur = show_ticket(tid)
+    payload = dict(cur.get("payload") or {})
+    top: dict[str, Any] = {}
+    for k, v in fields.items():
+        if k == "go":
+            top["go"] = v
+            continue
+        key = k[8:] if k.startswith("payload.") else k
+        if key in _FLY_PAYLOAD:
+            if key == "science_ids" and isinstance(v, str):
+                payload[key] = [p.strip() for p in v.split(",") if p.strip()]
+            else:
+                payload[key] = v
+        else:
+            top[k] = v
+    top["payload"] = payload
+    return patch_ticket(tid, top, who=who)
+
+
 def science_ids_for(*, situation: str = "", craft: str = "") -> tuple[str, ...]:
     """Bound experiment ids from science tickets. Empty → caller falls back to card."""
     want = situation.lower().replace(" ", "").replace("_", "")
@@ -577,7 +664,7 @@ def science_ids_for(*, situation: str = "", craft: str = "") -> tuple[str, ...]:
 
 
 def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, Any]:
-    """Link a telem jsonl onto a ticket. Landing summary goes on payload (skim)."""
+    """Link a telem jsonl onto a ticket. Merge payload; do not blank top-level go."""
     p = str(path)
     cur = show_ticket(tid)
     evs = list(cur.get("evidence") or [])
@@ -897,7 +984,12 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
             print(t["id"], "evidence", len(t.get("evidence") or []))
             return 0
         if args.act == "stamp":
-            t = patch_ticket(args.id, {args.field: args.value}, who=args.who)
+            if args.field in _FLY_PAYLOAD or str(args.field).startswith("payload."):
+                t = patch_fly_payload(
+                    args.id, {args.field: args.value}, who=args.who
+                )
+            else:
+                t = patch_ticket(args.id, {args.field: args.value}, who=args.who)
             print(t["id"], args.field, args.value)
             return 0
         if args.act == "packet":

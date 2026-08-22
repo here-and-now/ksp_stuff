@@ -7,11 +7,12 @@ from pathlib import Path
 
 from card import card_flying_ids, card_pad_ids, card_splash_ids
 from phases import NAMES as PHASE_NAMES
+from tickets import fly_fields, seated_fly_ticket
 
 SCHEMAS: dict[str, tuple[str, ...]] = {
     "gene": ("go", "recommended", "phase", "f013"),
     "gus": ("capable", "craft", "f013"),
-    "linus": ("science", "card", "f013"),
+    "linus": ("science", "f013"),
     "lars": ("stack", "lesson", "f013"),
     "mortimer": ("org", "goal"),
     "wernher": ("ready_to_fly", "files"),
@@ -34,6 +35,7 @@ class FlyGate:
     fly: str
     reason: str
     cli: str
+    campaign: str = "none"
 
 
 def parse_kv(text: str) -> dict[str, str]:
@@ -67,6 +69,8 @@ def parse_return(text: str, desk: str) -> ParseResult:
     if slug not in SCHEMAS:
         raise ValueError(f"unknown desk {desk}")
     fields = parse_kv(text)
+    if slug == "gene" and fields.get("cli") and not fields.get("recommended"):
+        fields["recommended"] = fields["cli"]
     missing = tuple(k for k in SCHEMAS[slug] if k not in fields or not fields[k])
     return ParseResult(desk=slug, fields=fields, missing=missing)
 
@@ -80,6 +84,13 @@ def _plan_kv(path: Path | None = None) -> dict[str, str]:
     return parse_kv(dest.read_text(encoding="utf-8"))
 
 
+_PHASE_SIT = {
+    "pad": "landed",
+    "hop": "flying",
+    "splash": "splash",
+}
+
+
 def _card_ids(phase: str, science_text: str) -> tuple[str, ...]:
     if phase == "pad":
         return card_pad_ids(science_text)
@@ -90,44 +101,73 @@ def _card_ids(phase: str, science_text: str) -> tuple[str, ...]:
     return ()
 
 
+def _bound_ids(ticket, sit, phase: str, science_text: str) -> tuple[str, ...]:
+    ff = fly_fields(ticket)
+    ids = tuple(ff.get("science_ids") or ())
+    if ids:
+        return ids
+    sit_key = _PHASE_SIT.get(phase, "")
+    craft = str(getattr(sit, "craft", "") or "")
+    if sit_key:
+        try:
+            from tickets import science_ids_for
+
+            ids = science_ids_for(situation=sit_key, craft=craft)
+        except Exception:
+            ids = ()
+        if ids:
+            return ids
+    return _card_ids(phase, science_text)
+
+
 def fly_gate(
     *,
     sit,
     plan: dict[str, str],
     science_text: str = "",
     phase_names: tuple[str, ...] | None = None,
+    ticket=None,
 ) -> FlyGate:
     names = phase_names or PHASE_NAMES
-    go = plan.get("go", "").lower()
-    phase = (plan.get("phase") or "").lower()
-    rec = plan.get("recommended", "").strip()
+    t = ticket if ticket is not None else seated_fly_ticket()
+    ff = fly_fields(t)
+    go = (ff.get("go") or plan.get("go") or "").lower()
+    phase = (ff.get("phase") or plan.get("phase") or "").lower()
+    rec = (ff.get("cli") or plan.get("recommended") or plan.get("cli") or "").strip()
+    campaign = (ff.get("campaign") or plan.get("campaign") or "none").strip() or "none"
+
+    def _out(fly: str, reason: str, cli: str) -> FlyGate:
+        return FlyGate(fly, reason, cli, campaign)
+
     if go != "yes":
-        return FlyGate("wait", "missing go: yes", rec)
+        return _out("wait", "missing go: yes", rec)
     if sit.lock == "live":
-        return FlyGate("wait", "lock live", rec)
+        return _out("wait", "lock live", rec)
     hangar = str(sit.hangar)
     if hangar == "blocked":
-        return FlyGate("wait", "hangar blocked", rec)
+        return _out("wait", "hangar blocked", rec)
     if hangar.startswith("recover "):
-        return FlyGate("wait", f"leftover {hangar}", rec)
+        return _out("wait", f"leftover {hangar}", rec)
     if phase not in names:
-        return FlyGate("wait", f"phase {phase or '(none)'} not in blocks", rec)
+        return _out("wait", f"phase {phase or '(none)'} not in blocks", rec)
     if hangar.startswith("phase "):
         cli = rec or f"python main.py phase {phase}"
-        return _f013_and_card(sit, science_text, phase, cli)
+        return _f013_and_card(sit, science_text, phase, cli, campaign, t)
     if phase in _HANGAR_PHASES:
         if str(sit.capable).lower() != "yes":
-            return FlyGate("wait", "capable is not yes", rec)
+            return _out("wait", "capable is not yes", rec)
         cli = rec or f"python main.py {phase}"
-        return _f013_and_card(sit, science_text, phase, cli)
+        return _f013_and_card(sit, science_text, phase, cli, campaign, t)
     cli = rec or f"python main.py phase {phase}"
-    return _f013_and_card(sit, science_text, phase, cli)
+    return _f013_and_card(sit, science_text, phase, cli, campaign, t)
 
 
-def _f013_and_card(sit, science_text: str, phase: str, cli: str) -> FlyGate:
-    ids = _card_ids(phase, science_text)
+def _f013_and_card(
+    sit, science_text: str, phase: str, cli: str, campaign: str, ticket=None
+) -> FlyGate:
+    ids = _bound_ids(ticket, sit, phase, science_text)
     if phase in {"pad", "hop", "splash"} and not ids:
-        return FlyGate("wait", "no bound card", cli)
+        return FlyGate("wait", "no bound card", cli, campaign)
     blocked = [
         row
         for row in sit.f013
@@ -139,12 +179,18 @@ def _f013_and_card(sit, science_text: str, phase: str, cli: str) -> FlyGate:
             "wait",
             f"f013 {row.eid} unlocked={row.unlocked} on_craft={row.on_craft}",
             cli,
+            campaign,
         )
-    return FlyGate("yes", "ok", cli)
+    return FlyGate("yes", "ok", cli, campaign)
 
 
 def format_gate(gate: FlyGate) -> str:
-    return f"fly: {gate.fly}\nreason: {gate.reason}\ncli: {gate.cli or 'none'}\n"
+    return (
+        f"fly: {gate.fly}\n"
+        f"reason: {gate.reason}\n"
+        f"cli: {gate.cli or 'none'}\n"
+        f"campaign: {gate.campaign or 'none'}\n"
+    )
 
 
 def cmd_protocol(argv: list[str]) -> int:
@@ -167,7 +213,12 @@ def cmd_protocol(argv: list[str]) -> int:
             return 1
         sci = seated_science_path()
         text = sci.read_text(encoding="utf-8") if sci.is_file() else ""
-        gate = fly_gate(sit=sit, plan=_plan_kv(), science_text=text)
+        gate = fly_gate(
+            sit=sit,
+            plan=_plan_kv(),
+            science_text=text,
+            ticket=seated_fly_ticket(),
+        )
         print(format_gate(gate), end="")
         return 0 if gate.fly == "yes" else 2
     if verb == "parse":

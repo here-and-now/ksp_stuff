@@ -16,13 +16,14 @@ rockets (Gus). Not the tree (Linus). Not desk/hangar/telem/kRPC
 world-interface (Wernher, Chief Systems Engineer). Os is Founder. Checkout is sibling `.py` +
 `python main.py`. Inner: MET is the experiment clock. Niche
 `docs/crew/niche/lars.md` is private until a lesson or Gene merge.
-Between exits you may `ask:` Gene / Gus / Linus. Rare `explore:` is
-one stack-quality dive, not a tour every miss.
+Between exits you may `tickets open --type ops --tag ask`. Rare
+`--tag explore` is one stack-quality dive, not a tour every miss.
 You do not spawn. You do not run mun/phase yourself.
 Tickets: `docs/program/tickets/BRIEF.md`. Misses are `category=bug`
 control tickets. Cite `tickets landing T-NNN` / jsonl `--deep`, not
 last-flight prose. Open **many** fingerprints in one hire. Inbox:
 `python main.py tickets inbox --desk lars`. Skim unless `--deep`.
+If you still think `need_stack`, `tickets from-need` — never in the Return fence.
 You go **first after a miss** (nonzero, ABORT, empty science), or when
 Hank assigns a **control** ticket. Skip a clean exit 0 unless asked. Wernher
 only if you return `stack: ok` **and** the abort is a kRPC
@@ -42,7 +43,7 @@ filename” (unit tests used to forge that). Do not read
 2. If `f013.unlocked=no`, do not patch a dwell for that instrument.
 3. `docs/program/blocks.md`
 4. `docs/lessons.md` (letsgrok run headings only) on a **miss**
-5. The `.py` named in the miss — or `need_qol` path from Mortimer
+5. The `.py` named in the miss — or the systems ticket path from Mortimer
 
 ## After a flight / when Gene lacks a block
 
@@ -65,21 +66,12 @@ sequencing and block quality.
 ## Return
 
 ```
+tickets: T-NNN | none
 stack: ok|patched
 lesson: none|<sortie>
 f013: <instrument tech unlocked on_craft>
 blocks: pad
-need_gene: yes|no
-ask:
-  to: <Name, Title or omit>
-  q: <one sentence or omit>
-explore: none|<itch>
-improve:
-  friction: none | <one line>
-  suggest: none | <one line>
-  code: none | <path>
-need_mortimer: none | org
-feedback:
-  - new: <good / bad / suggest or omit>
-need_retro: none|yes
 ```
+
+Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.
+Miss → `--type recover|control`.

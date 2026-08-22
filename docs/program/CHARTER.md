@@ -35,7 +35,7 @@ Environment memory is **query tools**, not this file:
 
 ```bash
 python main.py desk                    # writes docs/program/desk.md (lock, hangar, f013, sci, stack)
-python main.py protocol fly            # fly: yes|wait from plan.md + desk (no kRPC)
+python main.py protocol fly            # fly ticket + desk; plan.md fallback (no kRPC)
 python main.py sit-card                # seated sit map for the Commander
 python main.py world
 python main.py tech
@@ -64,7 +64,7 @@ Meaning, horizon, story: `docs/program/world-model.md` (Gene chairs
 flight layers). **Practice** (pitfalls, house changes, QOL) is
 **Mortimer**. Spawn prompts do not inject niche notebooks.
 
-Improve queue: `docs/program/improve/`. Job cards: `.grok/agents/*.md`
+Improve archive: `docs/program/improve/`. Job cards: `.grok/agents/*.md`
 (`agents_md: false` — children do not receive the parent switchboard).
 
 ## How it runs
@@ -82,7 +82,7 @@ Planning is a **conference on files**. Flying is Gene → Commander.
 | **Linus Grokman** | Director of Research | science tickets, bind | Commander radio, Hangar |
 | **Lars Grokman** | Vehicle Engineering | `pad.py`, `science.py`, `blocks.md` | craft, tech tree, fly |
 | **Wernher Grokman** | Avionics | kRPC 0.6 traps | craft, sequencing |
-| **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; `.py` except via `need_qol` → Lars |
+| **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; leftover `need_qol` → Wernher (`type=systems`) |
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
 | **Verena Grokman** | Communications | `README.md`, `docs/press/` | stick, Hangar, uplink, `.py` |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
@@ -91,10 +91,11 @@ Linus briefs **Gene** (what / when / which part). Gene copies that into
 the pilot briefing. Linus has **no** `uplink` / `loop` / `note` to the
 Commander. Between exits he may talk to Gene / Gus / Lars on ground.
 
-Gene last-writes the **plan** and chairs flight layers of
+Gene last-writes **briefing prose + seated plan.md render** (fly ticket
+holds `go` / `cli` / `campaign`) and chairs flight layers of
 **`docs/program/world-model.md`** (facts / meaning / horizon / story +
 open questions). Mortimer last-writes **Practice**. Gus last-writes
-the **`.craft`**. Linus last-writes **science.md**. Verena last-writes
+the **`.craft`**. Linus last-writes science **dump**. Verena last-writes
 the story layer. Disagreement → Gene `go: wait`.
 
 Parent packet `read:` is **`docs/program/desk.md`** + ≤2 role paths.
@@ -105,10 +106,11 @@ capable / `go:` / Lars miss → wait.
 **Conference (parent, depth 1, different files):** Linus opportunities →
 Gene draft (`go: wait`) → Gus `capable:` → Linus binds experiments to
 that craft → Gene briefing + `go:`. Do not spawn them on one file.
-Do not spawn Gus/Linus while `flight.lock` is live. Ground desks may
-leave `ask:` for each other; parent files it on the world model; the
-next spawn answers. Rare `explore:` is a field itch (new rocket, stack
-dive, subject map) — not every Learn. Commander, Hangar, and kRPC walls
+Do not spawn Gus/Linus while `flight.lock` is live. Ground desks
+`tickets open --type ops --tag ask` (desk = addressee); parent does
+**not** file leftover `ask:` onto the world-model table as the bus.
+Rare `--tag explore` is a field itch (new rocket, stack dive, subject
+map) — not every Learn. Commander, Hangar, and kRPC walls
 stay. Ask Os almost never (`need_os` for CHARTER creed / roster seats).
 Mortimer mutates PROTOCOL and job cards on an org hire without Os
 unless a title is added or removed.
@@ -127,9 +129,10 @@ Gene (between exits) and the seated Commander may take **one** KSP
 screenshot when those logs cannot explain the scene, then reason from
 the PNG. Press stills stay Verena.
 
-Process suggestions: `docs/program/feedback.md`. Anyone already spawned
-may `feedback:`. Retro is not automatic. Gene chairs ops; Mortimer chairs
-goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
+Gym `docs/program/feedback.md` (`F-NNN`) is archive. Anyone already
+spawned `tickets open --type ops --tag feedback` (or `type=rsi` if
+repeating house friction). Retro is not automatic. Gene chairs flight;
+Mortimer chairs goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
 
 **Radio (flight):**
 

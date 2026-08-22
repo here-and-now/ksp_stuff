@@ -354,17 +354,19 @@ class TestCardIds(unittest.TestCase):
 
     def test_fixture_card_is_flying_not_splash_goo(self):
         path = Path("tests/fixtures/cards/hop-flying.md")
-        with patch("missions.seated_science_path", return_value=path):
-            ids = hop_science_ids()
+        with patch("tickets.science_ids_for", return_value=()):
+            with patch("missions.seated_science_path", return_value=path):
+                ids = hop_science_ids()
         self.assertIn("temperatureScan", ids)
         self.assertNotIn("mysteryGoo", ids)
         self.assertNotIn("geigerCounter", ids)
 
     def test_empty_card_aborts(self):
         empty = Path("tests/fixtures/cards/empty.md")
-        with patch("missions.seated_science_path", return_value=empty):
-            with self.assertRaises(MissionAbort) as ctx:
-                hop_science_ids()
+        with patch("tickets.science_ids_for", return_value=()):
+            with patch("missions.seated_science_path", return_value=empty):
+                with self.assertRaises(MissionAbort) as ctx:
+                    hop_science_ids()
         self.assertIn(NO_BOUND_CARD, str(ctx.exception))
 
 
@@ -3162,10 +3164,11 @@ class TestHopSplash(unittest.TestCase):
             ("kerbalism_TELEMETRY", "mysteryGoo"),
         )
         path = Path("docs/missions/jebediah/science.md")
-        with patch("missions.seated_science_path", return_value=path):
-            self.assertEqual(
-                hop_splash_science(),
-                ("kerbalism_TELEMETRY", "mysteryGoo"),
-            )
+        with patch("tickets.science_ids_for", return_value=()):
+            with patch("missions.seated_science_path", return_value=path):
+                self.assertEqual(
+                    hop_splash_science(),
+                    ("kerbalism_TELEMETRY", "mysteryGoo"),
+                )
         self.assertTrue(hop_craft_path(SPLASH_CRAFT).is_file())
         self.assertTrue(water_can_steer(SPLASH_CRAFT))

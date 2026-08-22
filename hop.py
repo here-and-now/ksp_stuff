@@ -137,7 +137,19 @@ def _nap_dt(requested: float | None, snap: object) -> float:
 
 
 def hop_wants_flying_high() -> bool:
-    """Bound flying card names FlyingHigh. Missing card is FlyingLow."""
+    """Open science tickets with FlyingHigh, else seated card. Missing is FlyingLow."""
+    try:
+        from tickets import list_tickets
+
+        for t in list_tickets(open_only=True):
+            if t.get("type") != "science" and t.get("category") != "science_opportunity":
+                continue
+            pl = t.get("payload") or {}
+            sit = str(pl.get("situation") or "").lower().replace(" ", "").replace("_", "")
+            if "flyinghigh" in sit:
+                return True
+    except Exception:
+        pass
     try:
         from missions import seated_science_path
 

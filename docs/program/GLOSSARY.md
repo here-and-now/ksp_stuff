@@ -14,22 +14,22 @@ titles. Drop RAF/spy/radio-compact.
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |
 | **go: / wait** | MCC. Keep. |
-| **campaign:** | Gene on seated `plan.md`. `uncrewed` = parent re-flies last recommended on clean 0 without Gene; batch Learn at stop. `none` = Learn each hop. |
+| **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene; batch Learn at stop. `none` = Learn each hop. Plan.md is a render. |
 | **CAPCOM** | NASA loop. Walt. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
-| **F-001** | Feedback tickets, not lessons. Keep unless Os hates letter-ids. |
-| **need_stack** | Internal flag. Speech: “Gene needs Lars.” |
+| **F-001** | Gym archive (`docs/program/feedback.md`). Live friction is `type=ops --tag feedback` or `type=rsi`. |
+| **need_stack** | Leftover return shim (`tickets from-need` → `type=control` Lars). Desks open tickets, not this token. |
 | **world model** | `docs/program/world-model.md`. Gene chairs flight layers. Mortimer chairs **Practice**. |
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
-| **improve:** | RSI suggestion. Parent files `I-NNN`. Mortimer on friction trip. |
-| **ask:** | Ground question for another desk. Parent files it; one reply wave if it blocks `go:`. |
-| **note-tech.md** | Commander → Lars/Gus/Wernher. `python main.py note-tech`. Loop, not the plan. |
+| **improve:** | Leftover. Open `type=ops --tag feedback` or `type=rsi`. `I-NNN` is archive. |
+| **ask:** | Leftover. Open `type=ops --tag ask` (desk = addressee). P1 if it blocks `go`. |
+| **explore:** | Leftover. Open `type=ops --tag explore` P3. Rare field itch. |
+| **note-tech.md** | Tape, not the bus. Commander may still append; miss opens `type=control\|recover`. |
 | **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
 | **KSP-RO** | Parked Express RO tree. Do not seat. Live gym is `~/Games/KSP-rss` / letsgrok. |
 | **science-scan** | Linus. GameData Situation + save leftovers vs REACH. kRPC has no subject list. |
 | **sit-card** | `python main.py sit-card` — seated sit map for the Commander. |
-| **explore:** | Rare field itch (new rocket, stack dive, subject map). Not every Learn. |
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |
 | **tech-unlock** | Catalog CLI (kRPC). 0.6 has no purchase RPC — aborts. Paid node: Mortimer edits the save then `python main.py load rd-<node>`. **Never** `load persistent` (F-014 / I-010). |
 | **Kerman** | **Retired house name.** We are **Grokman**. Stock KSP roster may still say Kerman; Hangar aliases it. |

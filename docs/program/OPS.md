@@ -1,8 +1,11 @@
 # Operations — Hank Grokman, COO
 
 This is the house **operations kernel**. It is not a retrofit of
-`I-NNN` / `F-NNN` / `ask:` / `need_*` / dual `plan.md`. Those files
-are legacy. The board is the source of truth.
+`I-NNN` / `F-NNN` / leftover `ask:` / `need_*`. Those are archive and
+shims. The board is the source of truth. Seated `plan.md` is a
+**render** of the fly ticket — not a second live plan, and not a
+delete. `python main.py protocol fly` reads `head.json` **with
+plan+card fallback**.
 
 **Read first:** `docs/program/org-session-audit.md` (full 447 lines).
 That audit is as-is. This file is the construction.
@@ -39,13 +42,13 @@ communication failure.
 |---|---|---|---|
 | **Os** | Founder | Goal ratification, talk-by-name | Click crash UI, fly |
 | **Mortimer Grokman** | CEO / Administrator | Slate *objective*, org RSI, CTT spend, CHARTER/PROTOCOL mutation | Day-to-day dispatch, fly, Hangar, `.py` |
-| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, time, parallel ground vs flight | `go:` (Gene), `.craft` (Gus), cards (Linus), control.* |
+| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, time, parallel ground vs flight | `go:` (Gene), `.craft` (Gus), science bind (Linus), control.* |
 | **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty | PROTOCOL, ticket routing, stick while lock live |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
 | **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol | Vehicle *control* loops, `.craft` |
 | **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown*: pad/hop/splash/control, recover, blocks.md phases | World-interface architecture, org, Hangar from Gene |
-| **Seated Commander** | Pilot | Exact CLI on a fly ticket; one kRPC writer | `.py`, `.craft`, tickets except `open` via note-tech |
+| **Seated Commander** | Pilot | Exact CLI on a fly ticket; one kRPC writer | `.py`, `.craft`; `note-tech` is tape — miss opens `type=control\|recover` |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
 
@@ -65,9 +68,9 @@ Three RSI clocks, all **tickets**:
 
 1. **Org (Mortimer).** Trip: same ops-class failure 3 times, or Os
    org, or Hank files `type=org` P0. Mutates PROTOCOL / job cards.
-2. **Ops (Hank).** Every dispatch writes `docs/program/ops-log.jsonl`
-   (who hired, wait_s, lock, sci_delta). Pad-idle vs fly-time is a
-   metric, not a vibe. Recurring fingerprint → auto `type=rsi`.
+2. **Ops (Hank).** Pad-idle vs fly-time is a metric, not a vibe.
+   Recurring fingerprint → auto `type=rsi`. (No `ops-log.jsonl` in
+   this slice.)
 3. **Software (Wernher CSE).** Architecture of how we *see* the world
    (desk, leftover, crash UI, telem frame). Vehicle control patches
    stay Lars. XOR: one of them patches `.py` per miss.
@@ -95,7 +98,6 @@ python main.py tickets open --type science --title "…" --severity S2 --priorit
 python main.py tickets list [--status ready] [--desk gus] [--open]
 python main.py tickets show T-014
 python main.py tickets assign T-014 --desk gus
-python main.py tickets block T-014 --on T-012
 python main.py tickets evidence T-014 --path docs/missions/jebediah/logs/….jsonl
 python main.py tickets stamp T-014 --field go --value yes   # Gene only, enforced in code
 python main.py tickets close T-014 --why …
@@ -138,9 +140,11 @@ hire** when a node unlocks.
 
 **Fly ticket payload:** `cli`, `phase`, `science_ids[]`, `vehicle` (T-id),
 `science` (T-ids), `go` (`yes`|`wait`|empty), `campaign` (`uncrewed`|`none`),
-`leftover_policy`. Gene stamps `go` **on this ticket only**. There is
-no second `plan.md`. `python main.py ops fly` reads the fly ticket +
-desk + lock.
+`leftover_policy`. Gene stamps `go` **on this ticket only**. Seated
+`plan.md` is a **render** of the fly ticket (Gene may still write
+briefing prose; `hop_apo` / `expect_*` stay on the plan).
+`python main.py protocol fly` reads `head.json` **with plan+card
+fallback**. `ops fly` is occupancy only (do not retarget AGENTS).
 
 **Control ticket:** Lars, named `.py`, lesson heading, miss `live_run`.
 
@@ -302,18 +306,17 @@ tickets/head.json ← source of truth
 jsonl envelope   ← evidence on fly/control tickets (heading, horiz, pitch, aoa, biome)
 last-flight.md   ← abort/handoff only (I-020)
 lessons.md       ← VSE/CSE dated physics/API
-ops-log.jsonl    ← Hank metrics
 ship.md          ← radio, Walt
 ```
 
-**One sit object:** the fly ticket + desk snapshot. Delete the dual
-plan. Seated `plan.md` becomes a **render** of the fly ticket (Gene
-may still write briefing prose there). `protocol fly` / `ops fly`
-read `head.json`, not two markdown files.
+**One sit object:** the fly ticket + desk snapshot. Seated `plan.md`
+is a **render** of the fly ticket (not a second source; do not delete
+it). `python main.py protocol fly` reads `head.json` with plan+card
+fallback so a missing fly ticket does not brick.
 
 **Commander packet `read:`:** skim from
-`python main.py tickets packet T-NNN` (desk, briefing, card — **no
-jsonl**). Deep dive: `python main.py tickets packet T-NNN --deep`
+`python main.py tickets packet T-NNN` (desk, briefing, science dump —
+**no jsonl**). Deep dive: `python main.py tickets packet T-NNN --deep`
 (jsonl, last-flight, craft, reviews). Hank chooses `--deep` when
 `reasoning=high`. Never xhigh. Mortimer always high.
 
@@ -342,7 +345,7 @@ fly turn — opens a control or systems ticket.
 5. Gus title Vehicle Engineering Lead; Gene Launch/Flight Director.
 6. Mortimer stays CEO; CHARTER/PROTOCOL rewritten around the bus.
 7. Seed board from open I-/F- items as *import*, then stop using them live.
-8. `ops fly` replaces LLM-parsed go on two plan files.
+8. `protocol fly` prefers the fly ticket; plan+card remain fallback.
 9. Fingerprint counter + auto RSI tickets.
 
 Do not Hangar or fly as part of this construction.

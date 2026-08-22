@@ -9,6 +9,7 @@ from typing import Any
 from tickets import (
     DESKS,
     batch_reasoning,
+    fly_fields,
     list_tickets,
     load_head,
     packet_cmd,
@@ -64,12 +65,7 @@ def next_actions(
         if t.get("type") == "fly"
         and t.get("status") not in {"done", "wont", "blocked"}
     ]
-    fly_ready = [
-        t
-        for t in fly_tickets
-        if (t.get("payload") or {}).get("go") == "yes"
-        or t.get("go") == "yes"
-    ]
+    fly_ready = [t for t in fly_tickets if fly_fields(t).get("go") == "yes"]
     recover = [
         t
         for t in list_tickets(open_only=True)
@@ -147,7 +143,7 @@ def next_actions(
 
     if fly_ready:
         t = fly_ready[0]
-        cli = (t.get("payload") or {}).get("cli") or t.get("cli") or ""
+        cli = fly_fields(t).get("cli") or ""
         _hire("jebediah", [t], "lock free, go yes — pad occupancy", cli=cli)
         for desk_name in ("gus", "linus", "wernher", "lars"):
             batch = [
@@ -170,12 +166,7 @@ def next_actions(
             "hire": hires,
         }
 
-    needing_go = [
-        t
-        for t in fly_tickets
-        if (t.get("payload") or {}).get("go") in (None, "", "wait")
-        and t.get("go") not in {"yes"}
-    ]
+    needing_go = [t for t in fly_tickets if fly_fields(t).get("go") != "yes"]
     if needing_go:
         t = needing_go[0]
         _hire("gene", [t], "fly ticket needs go stamp")
@@ -267,12 +258,24 @@ def fly_gate(
     from tickets import show_ticket
 
     t = show_ticket(fid)
-    cli = (t.get("payload") or {}).get("cli") or t.get("cli") or "none"
-    return {"fly": "yes", "reason": "ok", "cli": cli}
+    ff = fly_fields(t)
+    return {
+        "fly": "yes",
+        "reason": "ok",
+        "cli": ff.get("cli") or "none",
+        "campaign": ff.get("campaign") or "none",
+    }
 
 
 def format_fly(g: dict[str, str]) -> str:
-    return f"fly: {g['fly']}\nreason: {g['reason']}\ncli: {g['cli']}\n"
+    lines = [
+        f"fly: {g['fly']}",
+        f"reason: {g['reason']}",
+        f"cli: {g['cli']}",
+    ]
+    if g.get("campaign"):
+        lines.append(f"campaign: {g['campaign']}")
+    return "\n".join(lines) + "\n"
 
 
 def cmd_ops(argv: list[str] | None = None) -> int:

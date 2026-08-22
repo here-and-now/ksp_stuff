@@ -60,6 +60,51 @@ class TestTickets(unittest.TestCase):
         self.assertEqual(t3["status"], "done")
         self.assertEqual(tickets.list_tickets(), [])
 
+    def test_fly_fields_go_either_or(self):
+        t = {
+            "go": "yes",
+            "payload": {"go": "", "cli": "python main.py hop", "recommended": "other"},
+        }
+        ff = tickets.fly_fields(t)
+        self.assertEqual(ff["go"], "yes")
+        self.assertEqual(ff["cli"], "python main.py hop")
+        t2 = {"payload": {"go": "yes", "recommended": "python main.py pad"}}
+        self.assertEqual(tickets.fly_fields(t2)["go"], "yes")
+        self.assertEqual(tickets.fly_fields(t2)["cli"], "python main.py pad")
+        self.assertEqual(tickets.fly_fields(None)["go"], "")
+
+    def test_seated_fly_ticket_missing_head(self):
+        self.assertIsNone(tickets.seated_fly_ticket())
+
+    def test_seated_fly_ticket_prefers_go_yes(self):
+        tickets.open_ticket(
+            type="fly", title="wait hop", reporter="Hank", desk="gene"
+        )
+        t2 = tickets.open_ticket(
+            type="fly", title="go hop", reporter="Hank", desk="gene"
+        )
+        tickets.patch_ticket(
+            t2["id"], {"go": "yes", "status": "ready"}, who="gene"
+        )
+        got = tickets.seated_fly_ticket()
+        self.assertIsNotNone(got)
+        self.assertEqual(got["id"], t2["id"])
+
+    def test_patch_fly_payload_keeps_go(self):
+        t = tickets.open_ticket(
+            type="fly", title="hop", reporter="Hank", desk="gene"
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes"}, who="gene")
+        tickets.patch_fly_payload(
+            t["id"],
+            {"cli": "python main.py hop", "campaign": "uncrewed"},
+            who="hank",
+        )
+        cur = tickets.show_ticket(t["id"])
+        self.assertEqual(cur["go"], "yes")
+        self.assertEqual(cur["payload"]["cli"], "python main.py hop")
+        self.assertEqual(cur["payload"]["campaign"], "uncrewed")
+
     def test_only_gene_stamps_go(self):
         tickets.open_ticket(
             type="fly",
@@ -410,6 +455,29 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertNotIn("hard-splash.jsonl", skim)
         self.assertIn("hard-splash.jsonl", deep)
         self.assertIn("catastrophic", tickets.format_inbox("gene"))
+
+    def test_attach_run_preserves_top_level_go(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-to-water",
+            reporter="Hank",
+            desk="gene",
+            payload={"cli": "python main.py hop-to-water", "go": ""},
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes"}, who="gene")
+        path = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "telem"
+            / "hard-splash.jsonl"
+        )
+        tickets.attach_run(t["id"], path, who="hank")
+        cur = tickets.show_ticket(t["id"])
+        self.assertEqual(cur["go"], "yes")
+        self.assertEqual(
+            (cur.get("payload") or {}).get("cli"),
+            "python main.py hop-to-water",
+        )
 
     def test_cmd_inbox_and_landing(self):
         from contextlib import redirect_stdout

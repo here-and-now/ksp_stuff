@@ -587,24 +587,33 @@ class TestPadCardIds(unittest.TestCase):
 
     def test_empty_card_aborts(self):
         self.assertEqual(card_pad_ids(""), ())
-        with patch("missions.seated_science_path") as path:
-            path.return_value = Path("/no/such/science.md")
-            with self.assertRaises(MissionAbort) as ctx:
-                pad_science_ids()
-            self.assertIn(NO_BOUND_CARD, str(ctx.exception))
-        empty = Path("tests/fixtures/cards/empty.md")
-        with patch("missions.seated_science_path", return_value=empty):
-            with self.assertRaises(MissionAbort) as ctx:
-                pad_science_ids()
-            self.assertIn(NO_BOUND_CARD, str(ctx.exception))
+        with patch("tickets.science_ids_for", return_value=()):
+            with patch("missions.seated_science_path") as path:
+                path.return_value = Path("/no/such/science.md")
+                with self.assertRaises(MissionAbort) as ctx:
+                    pad_science_ids()
+                self.assertIn(NO_BOUND_CARD, str(ctx.exception))
+            empty = Path("tests/fixtures/cards/empty.md")
+            with patch("missions.seated_science_path", return_value=empty):
+                with self.assertRaises(MissionAbort) as ctx:
+                    pad_science_ids()
+                self.assertIn(NO_BOUND_CARD, str(ctx.exception))
 
     def test_fixture_card_is_geiger_not_f005(self):
         path = Path("tests/fixtures/cards/pad-geiger.md")
-        with patch("missions.seated_science_path", return_value=path):
-            ids = pad_science_ids()
+        with patch("tickets.science_ids_for", return_value=()):
+            with patch("missions.seated_science_path", return_value=path):
+                ids = pad_science_ids()
         self.assertEqual(ids, ("geigerCounter",))
         self.assertNotIn("mysteryGoo", ids)
         self.assertNotIn("temperatureScan", ids)
+
+    def test_science_tickets_skip_markdown(self):
+        path = Path("tests/fixtures/cards/pad-geiger.md")
+        with patch("tickets.science_ids_for", return_value=("temperatureScan",)):
+            with patch("missions.seated_science_path", return_value=path):
+                ids = pad_science_ids()
+        self.assertEqual(ids, ("temperatureScan",))
 
     def test_run_on_vessel_reads_seated_card(self):
         """Default science_ids is the seated pad card, not PAD_EXPERIMENTS."""

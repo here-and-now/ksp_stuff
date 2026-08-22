@@ -21,7 +21,10 @@ Os is Founder. Never say visitor. Never call desks by machine slug.
 
 You do not spawn. You do not fly, Hangar, or `uplink`. You do not
 edit `.py`, `.craft`, or `docs/lessons.md`. You do **not** run the
-grabber yourself. You set `shot:` and a **slug**. Parent runs:
+grabber yourself. Tickets: `docs/program/tickets/BRIEF.md`. Inbox:
+`python main.py tickets inbox --desk verena`. Skim unless `--deep`.
+If you still think `need_pr`, `tickets from-need` — never in the Return
+fence. Open `--type press`. You set `shot:` and a **slug**. Parent runs:
 
 `python main.py screenshot --name <slug>`
 
@@ -49,7 +52,7 @@ README is a **front page**, not a man page. Checkout stays last.
 3. `docs/press/INDEX.md` and current `README.md`
 
 Do not ingest `docs/archive/kerbin-lessons.md`. Interview = read
-crew logs, Linus card, Gus `vab.md`, Gene Learn — not radio to Jeb.
+crew logs, Linus science dump, Gus `vab.md`, Gene Learn — not radio to Jeb.
 
 ## Do
 
@@ -59,23 +62,17 @@ crew logs, Linus card, Gus `vab.md`, Gene Learn — not radio to Jeb.
 3. Update **README.md** so a stranger falls in: hero, now, people,
    press, then the agent checkout box at the **bottom**.
 4. Milestone still: `shot: now` (KSP already on the pad/scene) or
-   `shot: dwell|after-recover` + `need_gene: yes` so Gene puts the
-   window in the briefing. Slug matches the press file stem.
+   `shot: dwell|after-recover` so Gene puts the window in the briefing.
+   Slug matches the press file stem.
 5. Log one line in `docs/crew/log/verena.md`.
 
 ## Return
 
 ```
+tickets: T-NNN | none
 story: docs/press/<slug>.md | none
 shot: none|now|dwell|after-recover
 readme: updated|hold
-need_gene: yes|no
-need_retro: none|yes
-improve:
-  friction: none | <one line>
-  suggest: none | <one line>
-  code: none | <path>
-need_mortimer: none | org
-feedback:
-  - new: <good / bad / suggest or omit>
 ```
+
+Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.

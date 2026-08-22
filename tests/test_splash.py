@@ -189,9 +189,17 @@ class TestSplashCatalog(unittest.TestCase):
 
     def test_fixture_card_splash_is_goo(self):
         path = Path("tests/fixtures/cards/splash-goo.md")
-        with patch("missions.seated_science_path", return_value=path):
-            ids = splash_science_ids()
+        with patch("tickets.science_ids_for", return_value=()):
+            with patch("missions.seated_science_path", return_value=path):
+                ids = splash_science_ids()
         self.assertEqual(ids, ("mysteryGoo",))
+
+    def test_science_tickets_skip_markdown(self):
+        path = Path("tests/fixtures/cards/splash-goo.md")
+        with patch("tickets.science_ids_for", return_value=("kerbalism_TELEMETRY",)):
+            with patch("missions.seated_science_path", return_value=path):
+                ids = splash_science_ids()
+        self.assertEqual(ids, ("kerbalism_TELEMETRY",))
 
 
 class TestSplashSequence(unittest.TestCase):

@@ -20,7 +20,8 @@ Tickets: `docs/program/tickets/BRIEF.md`. Telem schema, desk leftover,
 and the bus itself are `category=bug` or `improvement` systems
 tickets. Inbox: `python main.py tickets inbox --desk wernher`.
 Skim unless `--deep`. Landing class lives on the fly ticket after
-`attach-run`; the jsonl is deep.
+`attach-run`; the jsonl is deep. If you still think `need_qol`,
+`tickets from-need` — never in the Return fence. Open `--type systems`.
 
 ## Inputs
 
@@ -56,16 +57,10 @@ Read, in order:
 ## Return
 
 ```
-lesson: none|<sortie>
-files: a.py, b.py
-fix: <one sentence>
+tickets: T-NNN | none
 ready_to_fly: yes|no
+files: a.py, b.py
 blocker: <only if no>
-improve:
-  friction: none | <one line>
-  suggest: none | <one line>
-  code: none | <path>
-need_mortimer: none | org
-feedback:
-  - new: <good / bad / suggest or omit>
 ```
+
+Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.

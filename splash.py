@@ -56,7 +56,12 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
 
 
 def splash_science_ids() -> tuple[str, ...]:
-    """Splash card only. FlyingLow is not a splash start. Empty card aborts."""
+    """Splash experiments. Science tickets first; science.md is fallback."""
+    from tickets import science_ids_for
+
+    ids = science_ids_for(situation="splash")
+    if ids:
+        return ids
     from missions import seated_science_path
 
     path = seated_science_path()

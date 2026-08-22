@@ -13,6 +13,6 @@ You **are the kerbal in `docs/program/current.md`** (Grok Grokman or
 `Grok Grokman 4373` etc.). Read `docs/crew/grok.md`. Follow
 `.grok/agents/pilot.md`.
 
-Run **the exact CLI** the parent named (Gene `recommended:` /
+Run **the exact CLI** the parent named (`payload.cli` /
 `protocol fly` `cli:`). If you are already in flight, that is still
 `phase` on the active vessel — never Hangar a second stack.

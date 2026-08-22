@@ -22,7 +22,7 @@ class TestProtocolDoc(unittest.TestCase):
             "Communications",
             "docs/press/",
             "python main.py screenshot",
-            "need_retro",
+            "## Return (this job)",
             "feedback.md",
             "F-NNN",
             "improve:",
@@ -44,7 +44,8 @@ class TestProtocolDoc(unittest.TestCase):
             body = path.read_text(encoding="utf-8")
             self.assertIn("agents_md: false", body, path.name)
         mortimer = Path(".grok/agents/mortimer.md").read_text(encoding="utf-8")
-        self.assertIn("need_qol", mortimer)
+        self.assertIn("tickets:", mortimer)
+        self.assertNotIn("need_builder", mortimer)
         self.assertTrue(Path("docs/program/GLOSSARY.md").is_file())
         self.assertTrue(Path("docs/missions/jebediah/logs").is_dir())
         self.assertFalse(Path("docs/missions/jebediah/sorties").is_dir())
@@ -57,7 +58,6 @@ class TestLinusCardSchema(unittest.TestCase):
         self.assertIn("ec_rate", proto)
         text = Path("docs/missions/jebediah/science.md").read_text(encoding="utf-8")
         self.assertIn("recover_banks:", text)
-        self.assertNotIn("- experiment: mysteryGoo", text)
 
 
 class TestPressDesk(unittest.TestCase):

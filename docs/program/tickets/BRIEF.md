@@ -9,15 +9,18 @@ python main.py tickets packet T-NNN            # skim (no jsonl)
 python main.py tickets packet T-NNN --deep     # jsonl / PNG / craft
 python main.py tickets open --type science --category science_opportunity \
   --title "…" --severity S3 --priority P1 --desk linus --tag splash --tag goo
+python main.py tickets stamp T-NNN --field go --value yes --who gene
 python main.py tickets tag T-NNN --add hard-splash
 python main.py tickets attach-run T-NNN --path docs/missions/jebediah/logs/<run>.jsonl
 python main.py tickets landing T-NNN           # one-line impact class
+python main.py tickets from-need --need need_stack --title "…"
 ```
 
 **Categories:** `craft` `science_opportunity` `bug` `improvement`
 `flight` `recover` `org` `control` `systems` `press` `ops`.
 
 **Tags:** free lowercase (`hard-splash`, `heading-090`, `east-t3`).
+`ops --tag ask|feedback|explore`.
 
 One hire may open **many** tickets (Linus: leftover subjects; Gus:
 alts; Lars: control fingerprints). Skim unless reasoning is **high**.
@@ -26,4 +29,8 @@ class is a skim line on the fly ticket after `attach-run`.
 
 Bound science is `payload.experiment_id` + `situation` on a science
 ticket. Vehicle `capable` is a stamp on a craft ticket. Gene `go` is
-a stamp on a fly ticket.
+a stamp on a fly ticket. Commander `cli` is fly `payload.cli` (not
+`recommended:`). `campaign:` is fly `payload.campaign`
+(`uncrewed`/`none`). Ask / itch / friction: `tickets open --type ops
+--tag ask|explore|feedback`. Leftover `need_*` → `from-need` (shim).
+Never in a Return fence.

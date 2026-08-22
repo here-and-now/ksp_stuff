@@ -34,10 +34,13 @@ prompt.
 Agents open tickets instead of `need_*` or cards. Spawn brief:
 `docs/program/tickets/BRIEF.md`. `tickets inbox --desk <slug>`. Skim
 packet unless reasoning=high (`--deep`). Categories: craft,
-science_opportunity, bug, improvement. Tags free. Landing class is a
-skim line after `tickets attach-run`. If a desk still returns
-`need_stack` / `need_builder` / `need_science`, run
+science_opportunity, bug, improvement. Tags free. `ops --tag
+ask|feedback|explore`. Landing class is a skim line after
+`tickets attach-run`. Fly sit is ticket `go`/`cli`/`campaign` (plan
+fallback). If a desk still returns `need_stack` / `need_builder` /
+`need_science`, run
 `python main.py tickets from-need --need need_stack --title "…"`.
+Do not put `need_*` in the Return fence.
 
 Return:
 

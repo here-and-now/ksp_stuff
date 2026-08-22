@@ -61,11 +61,16 @@ def _say(msg: str, on_log: Callable[[str], None] | None) -> None:
 
 
 def pad_science_ids() -> tuple[str, ...]:
-    """Seated pad card. FlyingLow / splash are not a pad start.
+    """Pad experiments. Science tickets first; science.md is fallback.
 
     Empty or missing card aborts. A bound geiger card is not F-005
     goo+thermo.
     """
+    from tickets import science_ids_for
+
+    ids = science_ids_for(situation="landed")
+    if ids:
+        return ids
     from missions import seated_science_path
 
     path = seated_science_path()

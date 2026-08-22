@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from card import card_experiments
+from tickets import science_ids_for
 from missions import (
     hangar_craft_name,
     seated_craft_path,
@@ -262,7 +263,10 @@ def build_sit(world: World | None = None) -> DeskSit:
         craft = vab.get("craft", "") or "(none)"
     sci_path = seated_science_path()
     card_text = sci_path.read_text(encoding="utf-8") if sci_path.is_file() else ""
-    eids = tuple(card_experiments(card_text))
+    craft_key = craft if craft not in {"", "(none)"} else ""
+    eids = science_ids_for(craft=craft_key)
+    if not eids:
+        eids = tuple(card_experiments(card_text))
     last = {"command": "", "exit": "", "abort": ""}
     if LAST_FLIGHT.is_file():
         last = parse_last_flight(LAST_FLIGHT.read_text(encoding="utf-8"))

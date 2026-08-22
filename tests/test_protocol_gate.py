@@ -6,6 +6,8 @@ import unittest
 from pathlib import Path
 
 from desk import DeskSit, F013
+from unittest.mock import patch
+
 from protocol import FlyGate, fly_gate, format_gate, parse_return
 from phases import NAMES
 
@@ -70,8 +72,49 @@ class TestParseReturn(unittest.TestCase):
         self.assertEqual(result.missing, ())
         self.assertEqual(result.fields["go"], "yes")
 
+    def test_gene_cli_aliases_recommended(self):
+        text = (
+            "go: yes\n"
+            "cli: python main.py hop\n"
+            "phase: hop\n"
+            "f013: temperatureScan unlocked=yes on_craft=yes\n"
+        )
+        result = parse_return(text, "gene")
+        self.assertEqual(result.missing, ())
+        self.assertEqual(result.fields["recommended"], "python main.py hop")
+
+    def test_gene_without_need_keys_ok(self):
+        text = (
+            "go: wait\n"
+            "cli: none\n"
+            "phase: hop\n"
+            "f013: none\n"
+        )
+        result = parse_return(text, "gene")
+        self.assertEqual(result.missing, ())
+        self.assertNotIn("need_stack", result.fields)
+
+    def test_linus_without_card_ok(self):
+        result = parse_return(
+            "science: tickets\nf013: temperatureScan start yes yes\n",
+            "linus",
+        )
+        self.assertEqual(result.missing, ())
+
+    def test_linus_missing_science_or_f013(self):
+        self.assertIn("science", parse_return("f013: x\n", "linus").missing)
+        self.assertIn("f013", parse_return("science: tickets\n", "linus").missing)
+
 
 class TestFlyGate(unittest.TestCase):
+    def setUp(self):
+        self._ticket = patch("protocol.seated_fly_ticket", return_value=None)
+        self._ticket.start()
+        self.addCleanup(self._ticket.stop)
+        self._ids = patch("tickets.science_ids_for", return_value=())
+        self._ids.start()
+        self.addCleanup(self._ids.stop)
+
     def test_missing_go_is_wait(self):
         gate = fly_gate(sit=_sit(), plan={"phase": "hop"}, science_text=_FLYING)
         self.assertEqual(gate.fly, "wait")
@@ -144,6 +187,65 @@ class TestFlyGate(unittest.TestCase):
         )
         self.assertEqual(gate.fly, "yes")
         self.assertEqual(gate.cli, "python main.py phase hop")
+
+    def test_ticket_wins_over_plan(self):
+        ticket = {
+            "go": "yes",
+            "type": "fly",
+            "status": "ready",
+            "payload": {
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+            },
+        }
+        gate = fly_gate(
+            sit=_sit(),
+            plan={
+                "go": "wait",
+                "phase": "pad",
+                "recommended": "python main.py pad",
+            },
+            science_text=_FLYING,
+            ticket=ticket,
+        )
+        self.assertEqual(gate.fly, "yes")
+        self.assertEqual(gate.cli, "python main.py hop")
+        self.assertEqual(gate.campaign, "uncrewed")
+        text = format_gate(gate)
+        self.assertIn("campaign: uncrewed", text)
+
+    def test_no_ticket_falls_back_to_plan(self):
+        gate = fly_gate(
+            sit=_sit(),
+            plan={
+                "go": "yes",
+                "phase": "hop",
+                "recommended": "python main.py hop",
+                "campaign": "none",
+            },
+            science_text=_FLYING,
+            ticket=None,
+        )
+        self.assertEqual(gate.fly, "yes")
+        self.assertEqual(gate.cli, "python main.py hop")
+
+    def test_ticket_science_ids_skip_card(self):
+        ticket = {
+            "go": "yes",
+            "payload": {
+                "cli": "python main.py hop",
+                "phase": "hop",
+                "science_ids": ("temperatureScan",),
+            },
+        }
+        gate = fly_gate(
+            sit=_sit(),
+            plan={"go": "wait", "recommended": "python main.py pad"},
+            science_text="# no experiments\n",
+            ticket=ticket,
+        )
+        self.assertEqual(gate.fly, "yes")
 
     def test_names_match_blocks(self):
         blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")

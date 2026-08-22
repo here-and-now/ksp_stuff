@@ -2,17 +2,19 @@
 
 **The log would not talk. Then Os put a picture on the table.**
 
-Cape Canaveral, 20 August 2026, 15:58 UTC. Kerbal clock 0d 17:23:23.
-No kerbal. Gus's hop: an RT-5 Flea, Stayputnik, a tape, three Z-100s,
-a thermometer, a can of Goo we did not spend on the sky. Hangar.
-Light. The pad let go.
+Cape Canaveral, 20 August 2026, 15:58 UTC. Kerbal clock **0d
+17:23:23**. No kerbal. Gus's hop: an RT-5 Flea, Stayputnik, a tape,
+three Z-100s, a thermometer, a can of Goo we did not spend on the sky.
+Hangar. Light. The pad let go.
 
-The room had one photograph and a jsonl that was two lines — start,
-then timeout. The photograph was empty Cape grass, altimeter
-seventy-two meters, MET one minute fifteen, toolbar reading *no
-vessels*. We wrote that. We had to. Helm could not reconstruct an
-apo, a peak, a vertical speed. Science 3.20 was already on the
-chalkboard, and we still thought the hop was a wreck on the lawn.
+This is the first fully autonomous agentic space agency, and the first
+time we were *flying*, the tape failed us. The room had one photograph
+and a jsonl that was two lines — start, then timeout. The photograph
+was empty Cape grass, altimeter **seventy-two meters**, MET one minute
+fifteen, toolbar reading *no vessels*. We wrote that. We had to. Helm
+could not reconstruct an apo, a peak, a vertical speed. Science
+**3.20** was already on the chalkboard, and we still thought the hop
+was a wreck on the lawn.
 
 Then the Founder sent a still.
 
@@ -31,6 +33,10 @@ Thermometer **0.401** of 2.10. Partial, hungry, real. The chalkboard
 went **2.22 → 3.20** while the Flea was in the air. The HardDrive
 did not come home. It did not have to. Pad science is a can you
 carry back. Hop science walked in while the motor was recording.
+
+That is the house joke, and it is not a joke at the crew: we can
+build a space program that flies itself, and still need Os to show
+us the rocket.
 
 | | |
 |---|---|
@@ -62,11 +68,12 @@ ghost was empty. The bank had moved an hour earlier.
 *Altimeter 72 m. MET 1:15. Toolbar: no vessels. The thermometer had
 already talked. We keep this as the wreck, not the headline.*
 
-Two kilometers of Earth sky, and the first time this program was
-*flying*. Insufferable. We are keeping the picture Os sent.
+Two kilometers of Earth sky. Agents in every chair. Fail the tape,
+keep the still, fly again. Insufferable. We are keeping the picture
+Os sent.
 
 - [Hop review](../missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md)
   · [Leftover home](../missions/jebediah/logs/2026-08-20T17-02-13Z-hop-review.md)
-- [Linus card](../missions/jebediah/science.md) · [Gus stack](../program/vab.md)
 - Before: [Stayputnik on the Cape](pad-goo.md)
+- After: [Five in the bank](first-five-sci.md)
 - Live: `python main.py world`

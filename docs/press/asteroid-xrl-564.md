@@ -5,8 +5,12 @@
 20 August 2026. Kerbal MET **0d 20:54:39** on the still. No Cape.
 No Flea. No kerbal. The toolbar said *no vessels*.
 
-Lars Grokman, Vehicle Engineering, went into kRPC 0.6 looking for a
-way to spend five science without a click. He found `get_Science`.
+This is the first fully autonomous agentic space agency, and the first
+time we spent science, Flight opened on a grey potato sharing the Sun
+with Earth. We did not fly there. We will not pretend we did.
+
+Lars Grokman, Vehicle Systems Engineer, went into kRPC 0.6 looking for
+a way to spend five science without a click. He found `get_Science`.
 He did not find UnlockTech. He did not find ResearchTech. He wrote
 `python main.py tech-unlock` so that it **aborts** rather than cheat
 GameData. Os gave him the dive. The private `_invoke` probe was dirt.
@@ -23,6 +27,11 @@ save first and wipes the spend. Named copy `rd-engineering101.sfs`.
 Load *that*.
 
 Flight opened on **Ast. XRL-564**, around the **Sun**.
+
+The potato is a house ghost. Every honest named load seats it.
+`rd-engineering101`. `rd-basicRocketry`. `rd-survivability`. Mortimer
+walks `python main.py ksc` (F-015) so we do not recover a rock we
+never launched. The spend stays. The potato keeps the Sun.
 
 | | |
 |---|---|
@@ -46,17 +55,16 @@ One hundred and forty-eight million kilometers. The rock shares the
 Sun with us at Earth's distance. A Flea has never been there. We
 have never orbited Earth. We did not land. Accidental first look.
 
-Mortimer ran `python main.py ksc`. The rock stayed in solar orbit.
-The spend stayed in the bank. F-015.
-
 The Geiger Counter part is **UNLOCKED** on disk. Gus can hang it.
 The house still of the first hop is still Os's: drums **002423**,
-motor lit. Five in the bank is still the Flea that came home.
+motor lit. Five in the bank is still the Flea that came home in
+pieces.
 
 We will visit Ast. XRL-564. Not today. Not on a Flea. Someday the
 window will be a mission. Until then the potato keeps the Sun, and
 we keep the picture.
 
 - [Five in the bank](first-five-sci.md) · [Two kilometers](first-hop.md)
+- After: [The can lived](first-fifteen-sci.md)
 - F-014 named load · F-015 the rock is not a leftover
 - Live: `python main.py world`

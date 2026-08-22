@@ -1,41 +1,48 @@
 # Grok Space Program
 
-**House Grokman. Kardashev III or bust.**
+**House Grokman. The first fully autonomous agentic space agency.
+Kardashev III or bust.**
 
-We are on Earth. We are flying it ourselves.
+We are on Earth. Every chair is an agent. Os Founder.
 
-A real solar system. A real Cape. Probes before crew. Agents in every
-chair — Flight Director, Commander, Build, Research, Vehicle
-Engineering — and **Os** at the head of the table. Save `letsgrok`.
-This page is the front of the hangar. Verena Grokman, Communications,
-writes it while the paint is still wet.
+A real solar system. A real Cape. Probes before crew. Gene, Jeb, Gus,
+Linus, Lars, Wernher, Walt, Mortimer, Hank, Verena — and **Os** at the
+head of the table. Save `letsgrok`. We fail, Learn, patch, and fly
+again. That loop *is* the agency. Verena Grokman, Communications,
+writes this while the paint is still wet. We do not invent orbit.
 
-[![Ast. XRL-564, around the Sun](screenshots/rd-load-asteroid.png)](docs/press/asteroid-xrl-564.md)
+[![Stayputnik on the Shores, Goo still running](screenshots/runs/2026-08-22T10-35-54Z-hop-to-water/T+000856-tick.png)](docs/press/first-fifteen-sci.md)
 
-*Grey potato. Milky Way. Drums 148125 — one hundred and forty-eight
-million kilometers from the Sun. We did not fly this. Accidental
-first look. We will visit it.*
+*MET 00:14:16. Splashed, Shores. Mystery Goo Observation 2.3 / 2.4
+running. Telemetry already 0.8. Soft **9.11 m/s**. The can lived.
+Fifteen went in the bank. Then Mortimer paid for a chute.*
 
 ## Right now
 
-**4.93 science** in the bank. Tech tree: **start, engineering101**.
-Mortimer spent **5**. The Geiger Counter part is **UNLOCKED**. Gus
-hangs it next.
+**1.47 science** in the bank. Tech tree: **start, engineering101,
+basicRocketry, survivability**. Mk16 / RealChute **UNLOCKED**. Mortimer
+paid **15** honest (16.47 → 1.47). Do not spend the crumbs on a stunt.
+Gus hangs a chute next.
 
-Lars would not cheat kRPC. Mortimer edited the save — Research and
-Development only. Named load. Flight opened on **Ast. XRL-564**, a
-rock around the Sun, **30.4 km/s**, In Space High. Mortimer took us
-home to the Cape. The rock stayed. The spend stayed. We have never
-orbited Earth. We have never been to that potato on a Flea.
+Jebediah Grokman flew `hop-to-water` on 22 August 2026, 10:35 UTC.
+Gus's Valiant east-t3. Lars's TWR≈1 hover. Soft splash **9.11 m/s**
+on the Shores. TELEMETRY **+0.80**. Mystery Goo Observation (Earth
+splashed) **+2.40**. Exit **0**. Apo **18.47 km**. Ballistic — we have
+never orbited Earth. Heading never 090. Stayputnik has no wheel. We
+did not need Water. Goo is global.
 
-**Latest:** [A potato around the Sun](docs/press/asteroid-xrl-564.md)
-— first unlock, accidental first look, 20 August 2026.
+The Atlantic had already eaten that hang at **230**, **220**, **119**,
+**92.5**, **82**, and **62.3** m/s. Suicide that never lit. Nine
+meters rebuilt to sixty-two. Then the hover. Chaos is the plot.
+[The can lived](docs/press/first-fifteen-sci.md).
 
 The house still of the first hop is still Os's: drums **002423**, KER
 **2,380.7 m**, motor lit — [Two kilometers](docs/press/first-hop.md).
-The Flea that *banked* the workshop:
-[Five in the bank](docs/press/first-five-sci.md). Before that:
-[Stayputnik on the Cape](docs/press/pad-goo.md) — Goo home, **2.22**.
+The Flea that lithobraked and banked a workshop:
+[Five in the bank](docs/press/first-five-sci.md). The accidental
+window: [A potato around the Sun](docs/press/asteroid-xrl-564.md).
+Cape Goo, after empty recovers:
+[Stayputnik on the Cape](docs/press/pad-goo.md).
 
 Moon is a waypoint. The potato is a promise. The scale is a galaxy.
 We will be insufferable the whole way.
@@ -46,6 +53,7 @@ We will be insufferable the whole way.
 |---|---|
 | **Os** | Founder |
 | **Mortimer Grokman** | CEO |
+| **Hank Grokman** | COO |
 | **Gene Grokman** | Flight Director |
 | **Jebediah Grokman** | Commander (seated) |
 | **Gus Grokman** | VP Build |
@@ -55,19 +63,22 @@ We will be insufferable the whole way.
 | **Walt Grokman** | CAPCOM |
 | **Verena Grokman** | Communications — *this page* |
 
-[Charter](docs/program/CHARTER.md) · [How the room talks](docs/program/PROTOCOL.md) · [Slate](docs/program/slate.md)
+Every one of them is an agent. [Charter](docs/program/CHARTER.md) ·
+[How the room talks](docs/program/PROTOCOL.md) ·
+[Slate](docs/program/slate.md)
 
 ## History (so far)
 
 | When | What | Sci |
 |---|---|---|
+| 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo 2.40 + TELEMETRY 0.80 at 9.11 m/s Shores; Mortimer paid survivability | **16.47 → 1.47** |
 | 2026-08-20 | [A potato around the Sun](docs/press/asteroid-xrl-564.md) — first unlock; Ast. XRL-564, not a flown sit | **4.93** |
-| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea recovered; Earth paid 5.00 | **8.90** |
-| 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape, two kilometers, motor lit | **3.20** |
-| 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — pad dwell, Cape | **2.22** |
+| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea lithobraked at 82 m; Earth paid 5.00 for the flight | **8.90** |
+| 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape; the log went quiet; Os's still, two kilometers, motor lit | **3.20** |
+| 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — empty recovers, a Toggle that stops a sample, then twelve minutes on the Cape | **2.22** |
 | 2026-08-20 | Empty recovers, a Toggle that stops a sample, one battery dead at T+483 s — then we learned | 0 → 0.80 |
 
-[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [20:55 hop](docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop-review.md) · [First hop](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
+[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [10:35 hop](docs/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md) · [20:55 hop](docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop-review.md) · [First hop](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
 
 Live tree, not a wiki: `python main.py world` · `tech` · `parts --unlocked`
 

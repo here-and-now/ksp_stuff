@@ -111,7 +111,8 @@ class TestUnknownPhase(unittest.TestCase):
         from phases import NAMES
 
         self.assertEqual(
-            NAMES, ("pad", "hop", "splash", "hop-to-water", "tech-unlock")
+            NAMES,
+            ("pad", "hop", "splash", "hop-to-water", "hop-splash", "tech-unlock"),
         )
 
     def test_need_stack_message(self):

@@ -106,6 +106,17 @@ WATER_PITCH_DEG = WATER_PITCH_UP - WATER_PITCH_FROM_UP
 WATER_PITCH_SLEW_DPS = 10.0
 WATER_SLEW_THROTTLE = 0.4
 WATER_HEADING_DEG = 90.0
+# 22-03-59Z: hop_apo cut then recut 0.4 when apo fell (MET 81.8 thr 0,
+# MET 84 thr 0.4; MET 136 dumped leftover 43.9 LF). Splash 230 m/s.
+# hop-splash 18-15-08Z same class: thr 1 at apo<80 km (~37 km).
+# Latch the cut. Leftover LF is a suicide burn near Water, not apo-1.
+# 22-57-36Z: first suicide MET 179.7 alt 1.95 km thr 1, then TTI 19
+# cut (MET 181 vz −72), relights lofted leftover (vz +19 / +40), splash
+# 119 m/s. TTI arms; vz cut ends the burn. TTI rising is not a recut.
+WATER_BRAKE_TTI_S = 20.0
+WATER_BRAKE_ALT_MAX_M = 8_000.0
+WATER_BRAKE_SPEED_M = 40.0
+WATER_BRAKE_VZ_CUT = -20.0
 WATER_CRAFT = "kspstuff-hop-valiant-east-pbc"
 
 
@@ -518,6 +529,14 @@ def _snap_speed(snap: object) -> float:
     return speed if math.isfinite(speed) else float("nan")
 
 
+def _snap_v_vert(snap: object) -> float:
+    try:
+        vz = float(getattr(snap, "v_vert", float("nan")))
+    except (TypeError, ValueError):
+        return float("nan")
+    return vz if math.isfinite(vz) else float("nan")
+
+
 def _experiment_count(vessel: object | None) -> int:
     """Kerbalism Experiment modules still on the stack. 0 = science wreck."""
     if vessel is None:
@@ -545,7 +564,9 @@ def leftover_wreck_before_light(snap: object, vessel: object | None) -> bool:
     and q=0 / not moving is the 14-52-25Z crash UI — do not start
     science. Living ballistic (speed/q) with empty tanks is not this.
     hop-splash ``sit=splashed`` leftover is not this (18-03-12Z starts
-    the splash card).
+    the splash card). hop-to-water matching leftover already down
+    recovers then Hangars (22-45-26Z) — do not treat that recover as
+    the sortie.
     """
     sit = str(getattr(snap, "situation", "") or "").lower()
     if not sit or sit == "?":
@@ -575,6 +596,86 @@ def _fmt(val: float | None, digits: int) -> str:
     if not math.isfinite(num):
         return "?"
     return f"{num:.{digits}f}"
+
+
+def _vessel_fuel(vessel: object | None) -> float:
+    """LF/SF on the live vessel. Tests use ``resources.fuel``."""
+    if vessel is None:
+        return float("nan")
+    res = getattr(vessel, "resources", None)
+    if res is None:
+        return float("nan")
+    raw = getattr(res, "fuel", None)
+    if raw is not None:
+        try:
+            fuel = float(raw)
+        except (TypeError, ValueError):
+            fuel = float("nan")
+        else:
+            if math.isfinite(fuel):
+                return fuel
+    total = 0.0
+    found = False
+    for name in ("LiquidFuel", "SolidFuel", "Oxidizer"):
+        try:
+            amt = float(res.amount(name))  # type: ignore[union-attr]
+        except Exception:
+            continue
+        if math.isfinite(amt):
+            total += amt
+            found = True
+    return total if found else float("nan")
+
+
+def leftover_should_hangar_new(vessel: object | None) -> bool:
+    """Matching leftover is last loft's wreck. Recover then Hangar.
+
+    22-45-26Z sit=splashed MET 212 fuel=0 recoverable recovered and
+    exited 0 — never Hangar, never latch+suicide. hop-splash 18-03
+    still starts splash on living Water leftover. Unrecoverable
+    flying wreck is crash UI (14-52-25Z) — do not Hangar over it.
+    """
+    if vessel is None or not _recoverable(vessel):
+        return False
+    sit = _vessel_sit(vessel)
+    if sit in _GROUND:
+        return True
+    if _experiment_count(vessel) == 0:
+        return True
+    fuel = _vessel_fuel(vessel)
+    dry = math.isfinite(fuel) and fuel <= 0.0
+    if sit in _PAD_SIT or sit in _LIGHT_SIT or sit in _AIR:
+        return dry
+    return False
+
+
+def _recover_wreck_then_clear(
+    session: object,
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+) -> None:
+    """Recover matching wreck leftover. Caller Hangars seated craft."""
+    sit = _vessel_sit(vessel)
+    rec = "yes" if _recoverable(vessel) else "no"
+    n_exp = _experiment_count(vessel)
+    _ensure_flight(session, vessel, on_log)
+    _say(
+        f"hop leftover wreck sit={sit} recoverable={rec} "
+        f"experiments={n_exp} — recover, Hangar new",
+        on_log,
+    )
+    if _recoverable(vessel):
+        try:
+            getattr(vessel, "recover")()
+            _say("recovered leftover wreck", on_log)
+            mission_event("recover")
+        except Exception as exc:
+            _say(f"leftover wreck recover failed: {exc}", on_log)
+        _wait_vessel_gone(session, vessel, on_log)
+    try:
+        go_space_center(session, reload_save=True)
+    except Exception:
+        pass
 
 
 def _vessel_sit(vessel: object | None) -> str:
@@ -1024,17 +1125,115 @@ def _release_steer(vessel: object) -> None:
         pass
 
 
-def _hold_or_cut(vessel: object, snap: object, hop_apo: float) -> None:
-    """Throttle 0 at hop_apo. An SRB ignores this — do not OffPlan the coast."""
+def _suicide_now(snap: object) -> bool:
+    """Arm leftover-LF brake. TTI / alt cap start the burn, not the cut."""
+    fuel = _snap_fuel(snap)
+    if not math.isfinite(fuel) or fuel <= 0.0:
+        return False
+    alt = _snap_alt(snap)
+    speed = _snap_speed(snap)
+    if not math.isfinite(alt) or not math.isfinite(speed):
+        return False
+    if alt <= 0.0 or alt > WATER_BRAKE_ALT_MAX_M:
+        return False
+    if speed <= WATER_BRAKE_SPEED_M:
+        return False
+    vz = _snap_v_vert(snap)
+    if math.isfinite(vz) and vz >= -WATER_BRAKE_SPEED_M:
+        return False
+    tti = alt / max(speed, 1.0)
+    return tti <= WATER_BRAKE_TTI_S
+
+
+def _suicide_hold(snap: object) -> bool:
+    """Stay on leftover-LF brake. TTI rising is not a cut (22-57-36Z)."""
+    fuel = _snap_fuel(snap)
+    if not math.isfinite(fuel) or fuel <= 0.0:
+        return False
+    alt = _snap_alt(snap)
+    if not math.isfinite(alt) or alt <= 0.0:
+        return False
+    vz = _snap_v_vert(snap)
+    if math.isfinite(vz):
+        return vz < WATER_BRAKE_VZ_CUT
+    speed = _snap_speed(snap)
+    if not math.isfinite(speed):
+        return False
+    return speed > WATER_BRAKE_SPEED_M
+
+
+def _steer_brake(vessel: object) -> None:
+    """Surface zenith so leftover LF kills vertical speed. Gimbal only."""
+    try:
+        vessel.control.sas = False
+    except Exception:
+        pass
+    ap = getattr(vessel, "auto_pilot", None)
+    if ap is None:
+        return
+    try:
+        frame = getattr(vessel, "surface_reference_frame", None)
+        if frame is not None and hasattr(ap, "reference_frame"):
+            ap.reference_frame = frame
+        ap.target_pitch = WATER_PITCH_UP
+        if hasattr(ap, "target_direction"):
+            try:
+                ap.target_direction = east_direction(WATER_PITCH_UP)
+            except Exception:
+                pass
+        try:
+            ap.target_roll = float("nan")
+        except Exception:
+            pass
+        ap.engaged = True
+        if hasattr(ap, "engage"):
+            try:
+                ap.engage()
+            except Exception:
+                ap.engaged = True
+    except Exception:
+        pass
+
+
+def _hold_or_cut(
+    vessel: object,
+    snap: object,
+    hop_apo: float,
+    *,
+    cut: bool,
+    hold: float = 1.0,
+    brake: bool = False,
+    braking: bool = False,
+) -> tuple[bool, bool]:
+    """Throttle 0 at hop_apo and stay cut. Recut on apo fall is T-011.
+
+    An SRB ignores the cut — do not OffPlan the coast. ``hold`` is 1
+    except hop-to-water slew (0.4). After latch, leftover LF is a
+    suicide burn iff ``brake`` (wait water/splash) — not 0.4/1.0 into
+    the drink at apo-1 (22-03-59Z, 18-15-08Z). Once armed, stay at 1
+    until vz is killed — TTI rising is not a recut (22-57-36Z).
+    """
     try:
         control = vessel.control
         apo = float(getattr(snap, "apo", float("nan")))
-        if math.isfinite(apo) and apo >= hop_apo:
+        fuel = _snap_fuel(snap)
+        if not cut and math.isfinite(apo) and apo >= hop_apo:
+            cut = True
+        if not cut and math.isfinite(fuel) and fuel <= 0.0:
+            cut = True
+        if brake and cut and (braking or _suicide_now(snap)):
+            if _suicide_hold(snap):
+                control.throttle = 1.0
+                return cut, True
+            control.throttle = 0.0
+            return cut, False
+        if cut:
             control.throttle = 0.0
         else:
-            control.throttle = 1.0
+            control.throttle = hold
     except Exception:
         pass
+    return cut, False
 
 
 def _active(session: object, vessel: object) -> object | None:
@@ -1081,14 +1280,21 @@ def run_on_vessel(
     with surface ``target_direction`` heading 90 — do **not**
     ``target_roll=0`` near vertical (16-57-24Z heading stayed pad
     299 and tumbled; never 090). **Hold AP through burnout** (do
-    not disengage at fuel=0 — 15-26-18Z weathervaned HDG 304), do
-    not recover on first flying recoverable, abort landed only
-    after ``left_pad`` (pad sit=landed is hop-off, same as
-    ``_down(flown)``), splash dwell after ``sit=splashed``.
+    not disengage at fuel=0 — 15-26-18Z weathervaned HDG 304).
+    **Latch** hop_apo — do not recut 0.4 when apo falls (22-03-59Z
+    MET 84 / 136 leftover dump, splash 230 m/s). Leftover LF is a
+    suicide burn near Water: arm on TTI, **hold until vz cut**, do
+    not recut because TTI rose (22-57-36Z splash 119 m/s). Do not
+    recover on first flying
+    recoverable, abort landed only after ``left_pad`` (pad
+    sit=landed is hop-off, same as ``_down(flown)``), splash dwell
+    after ``sit=splashed``.
 
     ``wait_splash``: light **vertical**, **no** east slew (16-57-24Z
     heading never 090), **no** flying Toggle, ``hop_apo`` 80 km is a
-    real cut, wait ``sit=splashed``, then splash dwell.
+    real cut **and stays cut** (18-15-08Z thr 1 at apo<80 km),
+    leftover LF suicide near Water (latch until vz cut), wait
+    ``sit=splashed``, then splash dwell.
     """
     from phases import OffPlan, check_expect
 
@@ -1122,8 +1328,12 @@ def run_on_vessel(
     said_pitch = False
     said_hold = False
     said_slew = False
+    said_brake = False
+    apo_cut = False
+    braking = False
     water_splashed = False
     water_pitch = WATER_PITCH_UP
+    loft_hold = WATER_SLEW_THROTTLE if wait_water else 1.0
     splash_names = splash_ids if splash_ids is not None else ()
     _say(f"hop apo={hop_apo:.0f}", on_log)
     if wait_splash:
@@ -1162,7 +1372,7 @@ def run_on_vessel(
             pulses += 1
             sit_live = str(getattr(snap, "situation", "") or "").lower()
             leftover_splash = (
-                wait_down
+                wait_splash
                 and sit_live in {"splashed"}
                 and _experiment_count(vessel) > 0
             )
@@ -1305,24 +1515,35 @@ def run_on_vessel(
                     mission_event("light", snap)
 
             if left_pad and not down:
-                if wait_water:
-                    try:
-                        apo = float(getattr(snap, "apo", float("nan")))
-                        if math.isfinite(apo) and apo >= hop_apo:
-                            vessel.control.throttle = 0.0
-                        else:
-                            vessel.control.throttle = WATER_SLEW_THROTTLE
-                    except Exception:
-                        pass
-                else:
-                    _hold_or_cut(vessel, snap, hop_apo)
+                apo_cut, braking = _hold_or_cut(
+                    vessel,
+                    snap,
+                    hop_apo,
+                    cut=apo_cut,
+                    hold=loft_hold,
+                    brake=wait_down,
+                    braking=braking,
+                )
 
-            if wait_water and lit and not down and left_pad:
+            leftover_lf = _snap_fuel(snap)
+            aim_up = (
+                wait_down
+                and apo_cut
+                and math.isfinite(leftover_lf)
+                and leftover_lf > 0.0
+            )
+            if (braking or aim_up) and lit and not down and left_pad:
+                _steer_brake(vessel)
+                if braking and not said_brake:
+                    label = "hop-splash" if wait_splash else "hop-to-water"
+                    _say(f"{label} suicide leftover LF", on_log)
+                    said_brake = True
+            elif wait_water and lit and not down and left_pad:
                 water_pitch, slewing = _slew_east_pitch(
                     water_pitch, _nap_dt(pulse, snap)
                 )
                 _steer_east(vessel, pitch=water_pitch)
-                if slewing:
+                if slewing and not apo_cut:
                     try:
                         vessel.control.throttle = WATER_SLEW_THROTTLE
                     except Exception:
@@ -1617,10 +1838,12 @@ def run_hop_to_water(
     set target_roll=0 (16-57-24Z pad 299 tumble, never 090). Do not
     slam AP 65 at light (16-11-58Z TWR 5 sheared east-bare).
     Flea still refuses (no Hangar). Unmatched leftover recovers first.
-    Matching leftover enters Flight. Gate live sit/fuel/recoverable
-    before light — disk PRELAUNCH is a lie (14-52-25Z wreck flying
-    MET 13.8 fuel=0). Do not recover on first flying recoverable.
-    Pad sit=landed after light is hop-off — abort landed only after
+    Matching leftover already down (splashed/landed dry) recovers,
+    then Hangar (22-45-26Z — do not exit recovered). Matching living
+    leftover enters Flight. Gate live sit/fuel/recoverable before
+    light — disk PRELAUNCH is a lie (14-52-25Z wreck flying MET 13.8
+    fuel=0). Do not recover on first flying recoverable. Pad
+    sit=landed after light is hop-off — abort landed only after
     left_pad (Shores).
     """
     from session import SessionError
@@ -1637,6 +1860,9 @@ def run_hop_to_water(
     if leftover is not None:
         _recover_unmatched_leftover(session, leftover, on_log)
     vessel = _find_hop_vessel(session)
+    if vessel is not None and leftover_should_hangar_new(vessel):
+        _recover_wreck_then_clear(session, vessel, on_log)
+        vessel = None
     if vessel is None or _is_pad_motor(vessel):
         install_and_launch(session)
         try:
@@ -1682,7 +1908,8 @@ def run_hop_splash(
 ) -> str:
     """Valiant t7: Hangar seated craft, light vertical, wait splash dwell.
 
-    No east slew. No flying Toggle. hop_apo 80 km is a real cut.
+    No east slew. No flying Toggle. hop_apo 80 km is a real cut
+    (stays cut; leftover LF suicide near Water, latch until vz cut).
     Flea refuses (no Hangar). Unmatched leftover (east-fin PRELAUNCH
     ghost) recovers without lighting, then Hangar. Matching leftover
     enters Flight. Gate live sit/fuel/recoverable before light.
@@ -1705,25 +1932,7 @@ def run_hop_splash(
         n_exp = _experiment_count(leftover)
         wreck = n_exp == 0 or sit in {"pre_launch", "prelaunch"}
         if wreck:
-            _ensure_flight(session, leftover, on_log)
-            rec = "yes" if _recoverable(leftover) else "no"
-            _say(
-                f"hop leftover wreck sit={sit} recoverable={rec} "
-                f"experiments={n_exp} — recover, Hangar new",
-                on_log,
-            )
-            if _recoverable(leftover):
-                try:
-                    getattr(leftover, "recover")()
-                    _say("recovered leftover wreck", on_log)
-                    mission_event("recover")
-                except Exception as exc:
-                    _say(f"leftover wreck recover failed: {exc}", on_log)
-                _wait_vessel_gone(session, leftover, on_log)
-            try:
-                go_space_center(session, reload_save=True)
-            except Exception:
-                pass
+            _recover_wreck_then_clear(session, leftover, on_log)
             leftover = None
     vessel = leftover
     if vessel is None or _is_pad_motor(vessel):

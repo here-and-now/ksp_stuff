@@ -166,6 +166,10 @@ in the scene that has a vessel. A leftover still listed in tracking while
 raise `Procedure not available in game scene 'SpaceCenter'`. Set
 `active_vessel` (and `GameScene.flight` if the scene did not move) and wait
 for `flight` — do not Hangar a second stack on that pad.
+`space_center.vessels` is the live Tracking pool. `persistent.sfs`
+FLIGHTSTATE can still list `type=Debris` `sit=FLYING` that Tracking is
+empty of. Desk leftover is disk *ships* only; hop leftover is the kRPC
+pool. Debris is not leftover.
 
 `KRPC.GameScene` setter is **async** (plugin 0.6 XML): setting returns
 immediately; poll until it reports the requested scene. `GameScene.flight`
@@ -277,7 +281,9 @@ True). Set `control.sas=False` yourself anyway. `error` / `pitch_error` /
 **AP hold (live):** `engaged=True`, `target_pitch=0`, `target_heading=90`,
 `target_roll=0`. `error` streamed at 10 Hz: 73° → 2.6° in 2.25 s.
 `ap.wait()` then returned in 0.35 s at `error≈1°`. Disengage → `error`
-raises again.
+raises again. Near vertical, heading/roll are ill-defined — hop-to-water
+points with surface `target_direction` and leaves `target_roll` NaN
+(unset damps roll rate; `target_roll=0` tumbled Stayputnik 16-57-24Z).
 
 **Pause (plugin 0.6):** `conn.krpc.paused` is the KRPC service flag.
 `space_center.paused` may also exist. Flight Results / `launch_vessel`
@@ -587,6 +593,10 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   (MM cache). Unlocked chute search is empty (survivability 15).
   RealHeat retunes shock/convection; not a heatshield part. hop.py
   still forbids parachute in the craft. First FAR hop is unflown.
+- **2026-08-21** — Save `FLYING` Debris is not Tracking leftover.
+  `space_center.vessels` empty while `persistent.sfs` still lists
+  Debris: desk hangar `none`. Hangar `refuse` is exact craft basename,
+  not a `geiger-pbc` substring.
 
 ## FAR / RealChute / RealHeat (disk 2026-08-21)
 

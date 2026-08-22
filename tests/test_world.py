@@ -56,6 +56,20 @@ class TestSaveParsers(unittest.TestCase):
         self.assertEqual(ships[0].sit, "PRELAUNCH")
         self.assertTrue(ships[0].landed)
 
+    def test_vessels_skip_flying_debris(self):
+        text = (
+            "FLIGHTSTATE\n{\n"
+            "VESSEL\n{\nname = kspstuff-hop-flea-pbc Debris\ntype = Debris\n"
+            "sit = FLYING\nlanded = False\n}\n"
+            "VESSEL\n{\nname = kspstuff-hop-flea-pbc\ntype = Probe\n"
+            "sit = PRELAUNCH\nlanded = True\n}\n"
+            "}\n"
+        )
+        ships = parse_vessels(text)
+        self.assertEqual(len(ships), 1)
+        self.assertEqual(ships[0].name, "kspstuff-hop-flea-pbc")
+        self.assertEqual(ships[0].sit, "PRELAUNCH")
+
 
 class TestNames(unittest.TestCase):
     def test_round_trip(self):

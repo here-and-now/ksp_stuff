@@ -177,3 +177,26 @@ Jebediah: copy, fresh Hangar east-bare, pitch 25 east through burnout, wait spla
 Jebediah: copy, empty KSC, Hangar east-bare, pitch 25 east through burnout, wait splash, file Water shorts
 Gene: 16-11-58Z shear: unmatched east-bare recover then Hangar east-one. Light vertical; slew after left_pad at 0.4. go: yes hop-to-water.
 Jebediah: copy, leftover east-bare recover no light, Hangar east-one, light vertical, slew 65 HDG 090 after left_pad at 0.4, wait splash 2HOT 138s TELEMETRY 30s
+Jebediah: copy, east-one leftover PRELAUNCH light if wet, hop-to-water slew east throttle 0.4 through burnout, wait splash 2HOT 138s
+Jebediah: copy, east-fin Hangar, light vertical, slew east throttle 0.4 after left_pad, wait splash, heading must hold ~090, recover until gone
+Jebediah: copy, recover east-fin ghost dark, Hangar t7-splash, hop-splash vertical 80 km, wait splashed TELEMETRY then goo
+Jebediah: copy, hop-splash t7 24xZ-100 vertical, splash TELEMETRY then goo even EC=0, recover HD
+Jebediah: copy, hop-splash, Hangar t7 24xZ-100 vertical loft, wait Water splash, TELEMETRY then goo, recover HD
+Jebediah: copy, hop-splash: leftover wreck recover then Hangar t7-splash 24xZ-100, vertical loft, Water splash, TELEMETRY then goo, recover HD. MET must move. Bank 10.96.
+Jebediah: copy, leftover ghost recover then Hangar t7-splash, vertical loft, splash TELEMETRY Stayputnik then goo
+Jebediah: copy, leftover recover Hangar t7-splash, hop-splash vertical loft, TELEMETRY then goo HD
+Jebediah: copy, hop-splash leftover wreck recover Hangar, vertical loft, TELEMETRY airborne then splash dwell goo recover HD
+Jebediah: copy, leftover PRELAUNCH ghost recover then Hangar t7-splash, vertical, TELEMETRY only after splash, goo after, recover HD
+Jebediah: copy, leftover recover Hangar t7-splash, vertical, TELEMETRY after splash not airborne, goo after, recover HD
+Jebediah: copy, leftover recover Hangar t7-splash, vertical, TELEMETRY after splash, goo 641, recover HD
+Jebediah: copy, leftover LANDED recover Hangar new t7, vertical loft, wait splash then TELEMETRY Stayputnik then goo, recover HD, sci>15
+Gene: recover
+script: acked recover
+Jebediah: copy, hop-splash Hangar t7 vertical loft TELEMETRY then goo splash recover HD Os until sci>15
+Jebediah: copy, hop-splash t7 vertical, wait splash, TELEMETRY then goo at splash not airborne, recover HD
+Jebediah: copy, Hangar t7 vertical, wait splash, TELEMETRY Stayputnik 30s then goo GooExperiment 641s, recover HD
+Jebediah: copy, T-010 recover leftover, no Hangar
+Jebediah: copy, T-013 hop-to-water east-t3
+Jebediah: copy, fresh Hangar, east-t3 hop-to-water, hop_apo latch, leftover-LF suicide, splash TELEMETRY then goo
+Jebediah: copy, fresh Hangar east-t3, hop-to-water, light vertical, slew 090/25 after left_pad thr 0.4, latch hop_apo, leftover-LF suicide, splash TELEMETRY 30s Stayputnik then goo 641s GooExperiment
+Jebediah: copy, T-013 hop-to-water east-t3, suicide latch until vz, TELEMETRY then goo

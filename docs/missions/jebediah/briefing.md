@@ -1,65 +1,65 @@
 # Briefing — Gene → jebediah
 
-Earth. PBC. Water sit. go: yes. campaign: uncrewed.
+Earth. PBC. East Water sit. go: **yes**. campaign: **uncrewed**. T-013.
+T-007 **done**. T-015 hop_apo latch **held** (22-57). T-023 leftover-LF
+suicide **vz latch in**, **untested**. T-016 heading **301** is hardware
+— do **not** wait a wheel. T-008 hop-splash **parked**. Do **not**
+hop-splash. Os: same brake, latched.
 
-sci **10.96** (+0). Tree start + e101 + basicRocketry. Need **~4.04**
-for survivability 15. leftover **unmatched** `kspstuff-hop-valiant-east-bare-pbc`
-(desk `hangar: phase … sit=PRELAUNCH`; last live was landed Shores 71 m
-EC=0 crash UI) vs seated **`kspstuff-hop-valiant-east-one-pbc`**. hop
-recovers leftover **without lighting**, then Hangars **east-one**. Do
-**not** light east-bare. Do **not** light the finned hang. Disk
-PRELAUNCH is a lie. Dry wreck: recover if yes, else Close, **no Toggle**.
-Do **not** revert / VAB / rewind UT. Os will not click. Do not Hangar
-from Gene. Gus `capable: yes` **`kspstuff-hop-valiant-east-one-pbc`**
-(Stayputnik stack-only, radials on **upper FL-T100**, 2× FL-T100 +
-Valiant **Boattail**, gimbal **7.5°**, **no fins**, no geiger part, no
-stack decoupler). Not east-bare. Not east-pbc. Not t7. Not Flea. No
-chute. Do not pad. Do not transmit. Never rails. Never WarpTo. Never
-revert.
+sci **13.26** (22-57 **Δ0**). Tree start + e101 + basicRocketry. Need
+**~1.74** for survivability 15. Linus: splash goo **2.40** closes 15.
+Pair **3.20** overshoots. hangar **none**. leftover **n=0** disk. Pad
+empty. Next CLI recover-then-Hangars east-t3 if a 22-57 wreck is still
+live. Do **not** Hangar from Gene. Do **not** revert / VAB / rewind UT.
 
-f013: `temperatureScan` instrument **sensorThermometer** (2HOT
-Thermometer), tech **start**, unlocked **yes**, on_craft **yes**, host
-none. `kerbalism_TELEMETRY` hosted PAW on **probeCoreSphere_v2**,
-on_craft **yes** (no Science-category part). Geiger
-`kerbalism-geigercounter` is **not** on this stack. Never
-Stayputnik-as-Geiger.
+Gus `capable: yes` **`kspstuff-hop-valiant-east-t3-pbc`**. Stayputnik
+stack-only, Engineer7500 + 16-S + 2HOT + Goo, **20×Z-100** (~2050 EC),
+**3×FL-T100** + LV-T15 **Boattail**, **3× basicFin on lowest T100**.
+Tape **1.0**. No chute. No RW (stability LOCKED). FAR on. TWR ~1.1 at
+throttle **0.4**. Not t7-splash. Not 2×T100 east-fin/bare/one. Not Flea.
+Do not pad. Do not transmit. Never rails. Never WarpTo.
 
-Linus (bound FlyingLow@Water shorts on **east-one** — **not** spent
-Shores FlyingHigh):
-- `temperatureScan` FlyingLow@Water, part `sensorThermometer`,
-  **duration_s 138 / ec_rate 0.002**. est **2.10** if finished.
-- `kerbalism_TELEMETRY` FlyingLow@Water, part `probeCoreSphere_v2`,
-  **duration_s 30 / ec_rate 0.052**. est **1.40** if finished.
-- Pair **3.50** — **0.54 short** of ~4.04. Splash TELEMETRY **0.80**
-  is the close if the core lives (same `experiment_id`, not a second
-  dashed bind). Tape **1.0**. Do **not** co-run geiger.
-- Skip leftover FlyingLow geiger **0.32**. Skip goo **641 s**. Skip
-  FlyingHigh@Water (2×T100 does not loft ≥50 km). Cape Surface geiger
-  **capped**. FlyingHigh Shores shorts **spent**.
+f013: `mysteryGoo` instrument **Mystery Goo Containment Unit**
+(`GooExperiment`), tech **start**, unlocked **yes**, on_craft **yes**,
+host none. `kerbalism_TELEMETRY` instrument **Stayputnik PAW** (no
+Science part), part `probeCoreSphere_v2`, tech **start**, unlocked
+**yes**, on_craft **yes**, host `probeCoreSphere_v2`. Never
+Stayputnik-as-Geiger. Geiger part not on hang.
 
-Helm: `python main.py hop-to-water`. Unmatched leftover — recover, do
-not light, then Hangar seated. Light **vertical**. After **left_pad**,
-slew **10°/s** to `target_pitch=65` heading **90** (east) at throttle
-**0.4**. **Do not slam 65 at light** (16-11-58Z TWR 5 sheared east-bare,
-apo 5.3 km, no decoupler). **Hold AP through burnout** (`engaged=True`).
-Do not disengage at fuel=0. Release when down. Stayputnik has no torque
-after cutoff. Start the flying card once airborne. **Do not recover**
-while flying. Wait **splashed**, then splash dwell + HD recover. Pad
-`sit=landed` after light is hop-off — keep burning; abort landed only
-after **left_pad**. Landed Shores after airborne is abort `not splashed`.
-Flea still **refused**. Do not light east-bare or the finned hang.
+Linus (bound **Splash** on east-t3 — FlyingLow@Water **unbound** until
+jsonl heading **090**):
+- `kerbalism_TELEMETRY` SrfSplashed, part `probeCoreSphere_v2`,
+  **duration_s 30 / ec_rate 0.052**. est **0.80**. Sequential **first**.
+  Do **not** start TELEMETRY airborne (19-43 T+1 was the miss).
+- `mysteryGoo` SrfSplashed, part `GooExperiment`, **duration_s 641 /
+  ec_rate 0.18**. est **2.40**. After TELEMETRY. **This is 15.**
+- Skip leftover FlyingLow geiger **0.32**. Skip FlyingHigh Forest
+  TELEMETRY leftover **1.51**. Skip spent Cape / Shores High. Do not
+  transmit. Do not co-run geiger.
 
-hop_apo **18 km** (FlyingLow clamp). **Not 80 km** — 13-08-57Z same
-motor apo **12.3 km**; 15-50-45Z apo **10.3 km**; 16-11-58Z apo **5.3 km**
-was a dump, not a loft. OffPlan apo > **50 km**. Ballistic peri is
-negative — not OFFPLAN. Do not brief Space.
+Helm: **`python main.py hop-to-water`**. Light **vertical**. After
+`left_pad`, slew pitch **25°** from up, heading **090**, throttle
+**0.4**. Hold AP through burnout. **Latch** hop_apo — stay cut. Do
+**not** recut 0.4 when apo falls (22-57 MET **79.2** thr **0** fuel
+**109.5** held). Leftover LF is **suicide** near Water: **arm on TTI**
+(≤20 s, alt ≤8 km), **hold throttle 1 until vz ≥ −20 or fuel=0**. TTI
+rising is **not** a recut. After hop_apo, point **zenith** while leftover
+LF remains. **No** flying Toggle. Wait **splashed**. Then TELEMETRY 30 s,
+then goo 641 s, recover HD. Dwell **may run at EC=0**. Landed after
+left_pad is Shores — abort not splashed. 22-57 jsonl: heading **never
+090** (pad **299**, burn **300**, splash **300/314**; 080–100 fly-throughs
+not a hold) horiz **8.1** vs briefed **090**. Suicide MET **179.7** thr
+**1**; TTI recut MET **183** vz **+19** after vz **−72**; relight lofted
+leftover; splash **119 m/s** Shores. T-016 hardware. This hop tests the
+**vz latch**.
 
-Crash UI: frozen MET + (flying **or landed**) + recoverable=no is
-Catastrophic Failure. One log line (sit/recoverable/met/alt/q).
-`recover()` only if recoverable. Else Space Center / Close (not revert)
-until the window is KSC (`can_revert` false). Do **not** unpause-spam.
-Living recover: wait sit=landed **or splashed**, then `recover()` when
-recoverable=yes **before** dismiss.
+hop_apo **18 km** (FlyingLow clamp). OffPlan **50 km**. Do not copy t7
+**80 km** — that OffPlans a short loft. 2×T100 apo **12.3 km** vertical;
+east tapes apo **3.66–12.1 km**. 3×T100 is this hang, not t7 88 km.
+
+Crash UI: frozen MET + flying + recoverable=no. One log line.
+`recover()` only if recoverable. Else Tracking / Close until KSC
+(`can_revert` false). Do **not** unpause-spam.
 
 Ast. XRL-564 is horizon. Do not recover the rock.
 

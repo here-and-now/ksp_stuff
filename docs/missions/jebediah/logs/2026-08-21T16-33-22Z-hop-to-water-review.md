@@ -91,5 +91,4 @@ last:
 
 ## Learn
 
-_Gene fills this. What worked, what failed, what to change in
-the library vs this pilot's style. One short paragraph._
+Matching leftover **east-one** lit (wet PRELAUNCH). jsonl **body-frame live**. Throttle **0.4 held** through slew+burnout. Heading **never 090**: 299→67→309→127→304 tumble; horiz max **75**; apo **4.55 km**; burnout MET~63 fuel=0; lithobrake Shores MET 97.52 alt 60 flying recoverable=no EC=0 q=0; impact hdg 299 horiz 26; never splash. sci **+0**. Stayputnik has no wheel; 7.5° gimbal does not fly the east program. Envelope vs expect: Earth, apo under 50 km, ballistic peri. Library: heading/horiz now honest. Craft: **east-fin** (3× basicFin on the lower T100, not the engine). Do **not** light leftover east-one.

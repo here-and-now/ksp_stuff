@@ -91,5 +91,4 @@ last:
 
 ## Learn
 
-_Gene fills this. What worked, what failed, what to change in
-the library vs this pilot's style. One short paragraph._
+Recover unmatched leftover then Hangar **east-one** worked (parts=8). Lit. jsonl **speed still 0** (body-frame not yet). Throttle 0.4 then **1.0** MET~6. apo **1.84 km**, dump MET 42, Shores flying 71 m recoverable=no, never splash. sci **+0**. Envelope vs expect: apo under 50 km, ballistic peri, Earth. Close/unpause fingerprint. Do not re-light this wreck. Next hang is **east-fin**, not another east-one.

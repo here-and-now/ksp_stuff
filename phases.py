@@ -12,7 +12,7 @@ from session import Session
 from telem import MissionAbort
 from uplink import load_plan, plan_file, write_plan_file
 
-NAMES = ("pad", "hop", "splash", "hop-to-water", "tech-unlock")
+NAMES = ("pad", "hop", "splash", "hop-to-water", "hop-splash", "tech-unlock")
 UNCREWED = frozenset(NAMES)
 
 
@@ -108,6 +108,11 @@ def run(
         from hop import run_hop_to_water
 
         run_hop_to_water(session, on_log=on_log, abort=abort)
+        return
+    if name in {"hop-splash", "hop_splash"}:
+        from hop import run_hop_splash
+
+        run_hop_splash(session, on_log=on_log, abort=abort)
         return
     if name in {"tech-unlock", "tech_unlock"}:
         from tech_unlock import run_phase as run_tech_unlock

@@ -3,3 +3,5 @@
 - 2026-08-21 — COO seat. Ticket bus `docs/program/OPS.md`. Os talks here for the loop.
 - 2026-08-21 — Os: east again (hop-to-water). T-013 fly blocked on leftover T-010 + Gus T-014. T-008 splash parked. Hire Jeb T-010 recover-probe --recover. No hop until Gene stamps T-013.
 - 2026-08-22 — Os: high-rate telem + tickets replace cards. T-013 landing catastrophic 230 m/s heading 301. Bus: category/tags, BRIEF, attach-run, landing skim. T-015/016/017 bugs; T-019/T-020 splash science tickets.
+- 2026-08-22 — Os: hard splash, hypothesis then next hop. `ops next` still fly_ready T-013 go=yes — stale after abort. Pad idle. Hire Lars T-015/T-016/T-017/T-011 (high, --deep). No Jeb until Gene re-stamps. Hypothesis on board: wait_water recuts WATER_SLEW_THROTTLE when apo falls below hop_apo (T-011 twin); tape fuel 675→0, impact 230 m/s, heading 301, biome Shores.
+- 2026-08-22 — Lars patched: latch hop_apo, leftover LF suicide. T-015/T-011/T-017 closed. T-016 heading 301 open (hardware). Gene T-013 go=yes campaign uncrewed. Hire Jeb `python main.py hop-to-water`.

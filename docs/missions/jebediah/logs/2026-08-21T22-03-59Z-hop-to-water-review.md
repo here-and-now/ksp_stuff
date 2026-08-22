@@ -83,5 +83,15 @@ last:
 
 ## Learn
 
-_Gene fills this. What worked, what failed, what to change in
-the library vs this pilot's style. One short paragraph._
+Hangar east-t3. Exit 2, sci **13.26 Δ0**. kind=state: pad heading **299**
+pitch 90; burn hold heading **~301** pitch **~65** throttle **0.4**;
+apo max **19.06 km**; MET **79.7** thr **0** apo 18.4 km fuel **104**;
+MET **81.8** heading **75.3** (090 fly-through, not a hold); MET **84**
+thr **0.4** recut; MET **136** leftover **43.9** LF dumped; last flying
+MET **211.4** alt **226 m** speed **233** horiz **41** heading **301**;
+splash MET **212.2** sit=splashed biome **Shores** impact **230 m/s**
+fuel=0 EC=0. `science skip (no Experiment modules)`. ABORT wanted
+mysteryGoo. Recut when apo fell below hop_apo spent the brake. Lars
+latched hop_apo; leftover LF is suicide (TTI ≤12 s, alt ≤8 km, speed
+>40, throttle 1 zenith). Heading **301** is T-016 Stayputnik no wheel —
+not another AP setter. Os: test the suicide. Do not wait a wheel.

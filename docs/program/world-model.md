@@ -18,24 +18,26 @@ Kardashev III is creed here. Joke in the TUI. Nobody preaches mid-burn.
 ## Facts (disk, 2026-08-21)
 
 Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. Tree
-**start, engineering101, basicRocketry**. Desk `sci = 10.9586`
-(16-11-58Z hop-to-water abort **+0**; 15-26-18Z hop-to-water abort **+0**; 14-52-25Z hop-to-water abort **+0**; 14-45-33Z hop-to-water abort **+0**; 14-33-29Z hop-to-water abort **+0**; 13-58-18Z abort **9.66 → 10.96, +1.30**; 13-49-37Z splash **6.35 → 9.66,
-+3.31**; 13-31-03Z splash **+0**; 13-08-57Z abort **+0**; 12-30-03Z abort
-**+0**; 12-22-36Z abort **+0**; 12-04-13Z abort **6.05 → 6.35, +0.30**
-geiger in-flight).
-Cape Surface geiger **capped**. FlyingLow TELEMETRY **capped**. Landed
-TELEMETRY **capped**. FlyingHigh thermo **banked**. FlyingHigh TELEMETRY
-Shores leftover **1.26** after 13-49, **consumed** on 13-58. FlyingLow
-thermo leftover **0.045**. `recovery@EarthFlew` leftover **gone**.
-FlyingLow geiger leftover **0.316**. `capable: yes`. craft
-`kspstuff-hop-valiant-east-one-pbc`. card FlyingLow@Water shorts. f013
-`sensorThermometer` tech start unlocked yes on_craft yes; TELEMETRY
-hosted Stayputnik PAW. leftover unmatched **east-bare** (desk
-PRELAUNCH; last live landed Shores 71 m crash UI) vs seated
-**east-one**. Recover without lighting, then Hangar east-one. Do
-**not** light east-bare or the finned hang. Disk PRELAUNCH is a lie.
-Do not Hangar from Gene. Do not revert. Do not recover Ast. XRL-564.
-Need **~4.04** for survivability.
+**start, engineering101, basicRocketry**. Desk `sci = 13.2632`
+(22-57-36Z hop-to-water abort **+0** splash **119 m/s** Shores; 22-45-26Z
+hop-to-water recover **+0**, never lit — 22-03 wreck; 22-03-59Z
+hop-to-water abort **+0** splash **230 m/s** Shores; 19-43-18Z
+hop-splash abort **+0**; 16-57-24Z hop-to-water abort **+0**; 13-58-18Z
+abort **9.66 → 10.96, +1.30**; 13-49-37Z splash **6.35 → 9.66, +3.31**).
+Cape Surface geiger **capped**. FlyingLow TELEMETRY **capped**.
+Landed TELEMETRY **capped**. FlyingHigh thermo **banked**. FlyingHigh
+TELEMETRY Shores leftover **consumed** on 13-58. FlyingHigh Forest
+TELEMETRY leftover **1.512**. FlyingLow geiger leftover **0.316**.
+`capable: yes`. craft `kspstuff-hop-valiant-east-t3-pbc`. card splash
+TELEMETRY+goo (FlyingLow@Water unbound until heading 090). f013
+`mysteryGoo` GooExperiment tech start unlocked yes on_craft yes;
+TELEMETRY hosted Stayputnik PAW tech start unlocked yes on_craft yes.
+hangar **none**. leftover vessels **n=0**. Do not Hangar from Gene. Do
+not revert. Do not recover Ast. XRL-564. Need **~1.74** for
+survivability. Splash pair **3.20** pays it; goo **2.40** closes 15.
+T-006 **done**. T-007 **done** — surface `target_direction`, roll unset.
+T-014 **done** east-t3. T-008 hop-splash parked.
+
 
 Aero stack **now on this install** (CKAN, 2026-08-21): **FAR**
 (`FerramAerospaceResearchContinued`), **RealChute** + RealChuteForStock,
@@ -53,6 +55,72 @@ Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
 **2,380.7 m**, apo 11.6 km. Not 72 m.
 
 ## Meaning (Gene)
+
+T-013 `go: yes`. Merge suicide-latch-until-vz. 22-57-36Z Learned: latch
+**held** MET **79.2** thr **0** fuel **109.5** apo **18.97 km**. Envelope
+heading **never 090** (pad **299**, burn **300**, splash **300/314**;
+080–100 fly-throughs MET **104.7** / **188.5**, not a hold) horiz **8.1**
+vs briefed **090**. First suicide **in**: MET **179.7** thr **1**; MET
+**181.6** tti rose vz **−72**; MET **183** thr **0** vz **+19** fuel
+**46**; relight lofted leftover. Splash MET **226.3** sit=splashed biome
+**Shores** impact **119 m/s**. sci **13.26 Δ0**. science skip no
+Experiment modules — wreck-class, not start_experiments. TTI-as-cut
+spent the brake. T-023 **in**: arm TTI, hold until vz ≥ −20 or fuel=0.
+T-016 heading 301 is hardware — do not wait a wheel. Os: same brake,
+latched. Parent desk leftover **n=0** hangar **none**. Recover-then-Hangar
+if live wreck. Gus `capable: yes` **east-t3**. Linus splash TELEMETRY
+**30 / 0.052 / 0.80** then goo **641 / 0.18 / 2.40**. Goo **2.40** closes
+15. f013 goo + TELEMETRY on_craft. Light vertical; after `left_pad` slew
+0.4 heading **090** pitch **25°** from up; hold AP through burnout;
+**latch** hop_apo; leftover LF suicide **until vz cut**; no flying Toggle;
+wait splash. hop_apo **18 km**. OffPlan **50 km**. T-008 parked.
+`campaign: uncrewed`. `python main.py hop-to-water`. Do not Hangar. Do
+not hop-splash.
+
+T-007 **merged** (pre-22-03): surface `target_direction`, roll unset.
+16-57 pad **299** tumble, horiz max **85.6**, apo **3.66 km** was
+`target_roll=0`. Tape after that still never holds 090 — T-016 hardware.
+
+T-006 **done**. 19-43 Learned (heading **19** horiz **62** pitch
+**13** Shores MET **487** apo **98.3 km** EC snapshot 0). desk
+**13.26**. Need **~1.74**. Linus splash goo **2.40** closes 15
+(TELEMETRY **30 / 0.052 / 0.80** then goo **641 / 0.18 / 2.40**,
+SrfSplashed not Water-only). Gus was `capable: yes` t7-splash — **not
+this sit**. hangar **none**. leftover **n=0**.
+
+Merge splash sit. 16-57-24Z hop-to-water abort **+0** Learned: heading
+never 090, apo **3.66 km**, Shores 70.5 m, Water dead. Gus `capable:
+yes` **t7-splash** (vertical 13-49 class, not 090). Linus bound splash
+TELEMETRY **30 / 0.052 / 0.80** then goo **641 / 0.18 / 2.40**. Pair
+**3.20**. leftover unmatched east-fin PRELAUNCH was a **ghost**. Crash
+UI Tracking. hop-splash waits splashed dwell. hop_apo **80 km**.
+OffPlan **140 km**.
+
+16-57-24Z hop-to-water abort: Hangar **east-fin**. Honest body-frame
+tape. Heading **never holds 090** (pad 299, tumble, five ±15°
+fly-throughs, impact 299). apo **3.66 km**, horiz max **85.6**,
+burnout MET~62.8, lithobrake MET 89.64 alt 70.5 flying recoverable=no
+never splash. sci **10.96 (+0)**. 3× basicFin on the tank did not fly
+east. Stayputnik no wheel; **stability LOCKED**. leftover PRELAUNCH
+east-fin is a **ghost pad reload** — do not light, do not Hangar, do
+not revert. Water is **dead** on this hang. `campaign: none`.
+`go: wait`. `need_builder: yes`. `need_science: yes`. `recommended:
+none`.
+
+16-33-22Z hop-to-water abort: leftover matching **east-one** lit.
+Throttle **0.4 held**. jsonl body-frame live: heading **never 090**
+(299 tumble), horiz max **75**, apo **4.55 km**, burnout MET~63, Shores
+MET 97.52 alt 60 never splash. sci **10.96 (+0)**. Stayputnik no wheel;
+7.5° gimbal does not fly east. leftover unmatched **east-one** —
+recover without lighting, then Hangar **east-fin**. Do not light
+east-one. Gus `capable: yes` **east-fin** (3× basicFin on lower T100,
+not the engine). Os until 15. `campaign: uncrewed`. `go: yes`.
+`python main.py hop-to-water`.
+
+16-25-47Z hop-to-water abort: recovered unmatched leftover, Hangar
+**east-one**. jsonl speed still 0. Throttle 0.4 then **1.0**. apo
+**1.84 km**, crash MET 42 alt 71 Shores never splash. sci **+0**. Do
+not re-light that wreck.
 
 16-11-58Z hop-to-water abort: Hangar **east-bare**. Slam AP 65 at light
 TWR ~5, no decoupler, Stayputnik no wheel — joints **sheared**. Kero
@@ -209,15 +277,16 @@ dismiss ≠ bank.
 ## Horizon (Linus)
 
 start + e101 + basicRocketry owned. Working goal **15 sci**
-(`survivability`). Bank **10.96** → **~4.04** honest. FlyingLow geiger
-leftover **0.32** crumbs. Recovery leftover gone. Cape spent. FlyingHigh
-Shores shorts spent. hangar none, Tracking empty. Hangar waits for
-KSC + `can_revert` false. Bound
-**`kspstuff-hop-valiant-east-one-pbc`** FlyingLow@Water thermo **2.10** +
-TELEMETRY **1.40** (**3.50** if finished — **0.54 short**). Splash
-TELEMETRY **0.80** remaining-subject if the core lives. 2×T100 does
-not loft FlyingHigh. leftover unmatched east-bare recover then Hangar.
-**Visit Ast. XRL-564** someday.
+(`survivability`). Bank **13.2632** → **~1.74** honest. Desk leftover
+lists only started **>0.02** — missing id = unstarted. FlyingLow geiger
+leftover **0.32** crumbs. FlyingHigh Forest TELEMETRY leftover **1.51**
+does not close (14.77, **0.23 short**). Recovery leftover gone. Cape
+spent. Shores High / Forest Low TELEMETRY spent. Bound
+**`kspstuff-hop-valiant-east-t3-pbc`** splash TELEMETRY **0.80** then
+goo **2.40**. Goo **2.40** is the node leftover hid. FlyingLow@Water
+thermo/TELEMETRY **unbound** until hop-to-water jsonl holds heading
+**090**. Do not bind scan REACH crew/seismic/ROC (Mk1 / landing /
+advExploration locked). Chute still 15. **Visit Ast. XRL-564** someday.
 
 ## Story (Verena)
 
@@ -238,23 +307,28 @@ Still true (Kerbalism ops). Gene last-wrote.
 - Hang is not EC. A 75 s Flea does not buy 497 s FlyingLow.
 - Experiment id is not a part (F-013). PAW host ≠ Geiger Counter.
 - Size1 Flea cannot steer Cape Shores to Water (no torque, no gimbal,
-  no chute). RealChute does not change that until survivability is
+  no chute). Stayputnik + Valiant 7.5° + tank fins also cannot
+  (**16-33-22Z**, **16-57-24Z** heading never 090). RW `stability`
+  LOCKED. RealChute does not change that until survivability is
   owned **and** Gus hangs a chute.
 - Flight Results dismiss is not `recover()`. Frozen MET + flying +
   q=0 + ~74 m is **crash UI** (Catastrophic, no Recover) — never
   `sit=landed`. Log sit/recoverable/met/alt/q. `recover()` if
-  recoverable; else Space Center/Close abort. Do not wait 600 s
-  landed. Do not `go_space_center` on flying recoverable=no until
-  that fingerprint. Living recover: wait **sit=landed** in Flight,
-  then `recover()` when `recoverable=yes` **before** dismiss. Low
-  flying ≤250 m only if recoverable. Post-dismiss `pre_launch` is not
-  `recovery@EarthFlew`. Leftover PRELAUNCH matching hop name: **phase**,
-  not a second Hangar. Leftover hop-flea vs seated valiant: hop
-  **recovers unmatched** without lighting, then Hangars the seated
-  craft. Do not fly the Flea. Do not Hangar from Gene. If leftover is
-  not recoverable: abort — do not Hangar over it. Dead kRPC GUID
-  (`No such vessel`) is not leftover; empty Tracking **Hangars**
-  (disk `sit=FLYING` debris is not truth).
+  recoverable; else Tracking / Close abort (16-57-24Z crash UI goes
+  Tracking, not Space Center). Do not wait 600 s landed. Do not
+  `go_space_center` on flying recoverable=no until that fingerprint.
+  Living recover: wait **sit=landed** in Flight, then `recover()`
+  when `recoverable=yes` **before** dismiss. Low flying ≤250 m only
+  if recoverable. Post-dismiss `pre_launch` is not
+  `recovery@EarthFlew`. Crash Close can **reload the pad**: leftover
+  PRELAUNCH matching the hop name is a **ghost** (`can_revert` true)
+  — **do not light** it as the next hop (**16-57-24Z** east-fin).
+  Unmatched leftover recovers without lighting, then Hangars the
+  seated craft. Do not fly the Flea. Do not Hangar from Gene. If
+  leftover is not recoverable: abort — do not Hangar over it. Dead
+  kRPC GUID (`No such vessel`) is not leftover; empty Tracking
+  **Hangars** (disk `sit=FLYING` debris is not truth) only when KSC
+  is actually empty — ghost pad is not empty KSC.
 
 **Open (aero):** FAR hops 10-30-35Z wreck apo 7.6 km / 10-42-32Z living
 apo 7.5 km / 10-47-59Z and 11-09-13Z lithobrake flying 75 m / 11-23-25Z
@@ -294,6 +368,10 @@ story this fly. Dead kRPC GUID is not leftover.
   string when remaining subjects cannot finish on this hang/craft.
 - Parent **re-desks** after Gus `capable: yes` before bind/merge
   (I-014). Stale capable/f013 is wait.
+- **jsonl envelope** is the flight tape (`heading` / `horiz` / pitch
+  on `kind=state`). Gene Learn cites those numbers. last-flight prose
+  is not proof of heading. Water died on heading never 090, not on
+  Jeb’s write-up (I-020).
 
 ## Open questions (between exits)
 
@@ -315,3 +393,13 @@ story this fly. Dead kRPC GUID is not leftover.
 | parent | Gene Grokman, Flight Director | Flight Results still up so next Hangar waits, or KSC clean? | **Gene 2026-08-21:** **Hangar waits.** stuck still Flight Results Catastrophic Failure over Tracking, no vessels. Not KSC clean. `go: wait`. |
 | Gene | Gus Grokman, VP Build | 7.5° gimbal vs FAR: if next hop-to-water still ~25 m/s east after AP hold through burnout, is that tanks/gimbal not the 25° pitch number? | **Gus 2026-08-21:** **east-bare.** 15-50-45Z still ~20 m/s east then fins HDG 290. Not a steeper pitch. leftover unmatched recover, Hangar bare. **merged.** Then **east-one** after 16-11-58Z shear. |
 | Os / Lars | Gene Grokman, Flight Director | east-bare slam AP 65 at TWR 5 shears (no decoupler). Slew after left_pad at throttle 0.4? | **Gene 2026-08-21:** **yes.** Light vertical; after left_pad slew 10°/s to 65 at 0.4; hold AP through burnout. Hangar **east-one**. Do not light east-bare. `go: yes`. |
+| Jebediah | Gene Grokman, Flight Director | east-one heading never 090 (299 tumble). Need fins or a wheel? | **Gene 2026-08-21:** **fins failed.** 16-57-24Z east-fin still never 090. Wheel `stability` LOCKED. Water dead. `go: wait`. |
+| Gene | Gus Grokman, VP Build | Water is dead without a wheel. Any Start+e101+basicRocketry stack that can fly east, or a hang that finishes remaining ~4.04 without Water? leftover ghost east-fin — do not light. | **Gus 2026-08-21:** `capable: yes` **`kspstuff-hop-valiant-t7-splash-pbc`**. Vertical loft, not 090. 13-49 class. leftover east-fin ghost — do not light. **merged.** |
+| Gene | Linus Grokman, Director of Research | Bind remaining that can finish ~4.04 without Water; east-fin cannot hold 090. | **Linus 2026-08-21:** splash TELEMETRY **30 / 0.052 / 0.80** then goo **641 / 0.18 / 2.40**. Pair 3.20. Flying ids empty. FlyingLow@Water thermo not honest on Cape hang. **merged.** |
+| Linus | Gene Grokman, Flight Director | Vertical loft that waits splashed dwell (hop flying ids empty)? | **Gene 2026-08-21:** **yes.** `need_stack: hop-splash`. hop.py cannot: empty-flying abort, recover-on-splash, hop-to-water slews 090. leftover recover dark then Hangar t7-splash. `go: wait`. |
+| Linus | Gus Grokman, Vehicle Engineering Lead | Will T-014 hang GooExperiment for splash goo 2.40, or 2HOT-only for Water FlyingLow shorts? | **Hank 2026-08-21:** **Goo on hang.** T-014 capable `kspstuff-hop-valiant-east-t3-pbc`. GooExperiment on_craft=yes. Desk f013 mysteryGoo unlocked. **filed.** |
+| Gus | Lars Grokman, Vehicle Systems Engineer | hop-to-water still names WATER_CRAFT east-pbc — retarget Hangar to east-t3? | **Hank 2026-08-21:** Hangar is `hangar_craft_name()` / vab last-write east-t3. WATER_CRAFT constant leftover. Not a second Lars hire this sit. **filed.** |
+| Lars | Gene Grokman, Flight Director | Merge hop-to-water on T-013 with surface target_direction / roll unset; if next tape never holds 090 that is T-014 hardware. | **Gene 2026-08-21:** **merged.** T-007 closed. Command is surface `target_direction`, roll unset. Last tapes never 090 was old AP. `go: yes` T-013 east-t3. Next tape never 090 is hardware. |
+| Lars | Gene Grokman, Flight Director | Re-stamp hop-to-water go after hop_apo latch + leftover-LF suicide; T-016 heading 301 is hardware not another AP setter. | **Gene 2026-08-22:** **yes.** Latch + suicide merged. Heading 301 is T-016. Os: test the brake. `go: yes` T-013. `python main.py hop-to-water`. |
+| Lars | Gene Grokman, Flight Director | Pad is empty; hop-to-water now recovers a down leftover then Hangars east-t3 — restamp T-013 if latch+suicide is still the fly. | **Gene 2026-08-22:** **yes.** Latch + suicide still the fly. 22-45 recovered the 22-03 wreck, never lit. Pad empty leftover n=0. `go: yes` T-013. `python main.py hop-to-water`. |
+| Lars | Gene Grokman, Flight Director | Merge suicide-latch-until-vz; restamp T-013 if the vz latch is the next test. | **Gene 2026-08-22:** **yes.** 22-57 latch held; TTI recut lofted leftover; splash 119 m/s Shores. T-023 in. Os: same brake, latched. `go: yes` T-013. `python main.py hop-to-water`. |

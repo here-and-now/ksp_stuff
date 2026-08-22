@@ -51,6 +51,20 @@ class SaveVessel:
     landed: bool
 
 
+_SKIP_VESSEL_TYPES = frozenset({"spaceobject", "flag", "eva", "debris"})
+_DEBRIS_NAME_SUFFIX = " debris"
+
+
+def is_disk_ship(vessel: SaveVessel) -> bool:
+    """Living leftover on disk. Debris/EVA/asteroids are not ships (I-017)."""
+    if (vessel.type or "").lower() in _SKIP_VESSEL_TYPES:
+        return False
+    name = (vessel.name or "").strip()
+    if not name:
+        return False
+    return not name.lower().endswith(_DEBRIS_NAME_SUFFIX)
+
+
 @dataclass(slots=True)
 class Research:
     science: float | None = None
@@ -321,7 +335,7 @@ def _sf(raw: str | None, default: float) -> float:
 
 
 def parse_vessels(text: str) -> list[SaveVessel]:
-    """FLIGHTSTATE vessels. Skip RSS asteroids (type SpaceObject). F-006."""
+    """FLIGHTSTATE vessels. Skip asteroids, EVA, flags, Debris (F-006, I-017)."""
     idx = text.find("FLIGHTSTATE")
     chunk = text[idx:] if idx >= 0 else text
     out: list[SaveVessel] = []
@@ -345,18 +359,15 @@ def parse_vessels(text: str) -> list[SaveVessel]:
             if depth <= 0:
                 in_v = False
                 typ = current.get("type", "")
-                if typ.lower() not in {"spaceobject", "flag", "eva"}:
-                    name = current.get("name", "")
-                    if name:
-                        out.append(
-                            SaveVessel(
-                                name=name,
-                                sit=current.get("sit", "?"),
-                                type=typ or "?",
-                                landed=current.get("landed", "").lower()
-                                in {"true", "1"},
-                            )
-                        )
+                name = current.get("name", "")
+                row = SaveVessel(
+                    name=name,
+                    sit=current.get("sit", "?"),
+                    type=typ or "?",
+                    landed=current.get("landed", "").lower() in {"true", "1"},
+                )
+                if is_disk_ship(row):
+                    out.append(row)
                 current = {}
             continue
         if depth == 1 and "=" in s:

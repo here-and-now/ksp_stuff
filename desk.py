@@ -21,6 +21,7 @@ from world import (
     craft_part_names,
     format_stack,
     instrument_parts,
+    is_disk_ship,
     load_world,
 )
 
@@ -108,8 +109,12 @@ def hangar_call(
     lock: str,
     seated_craft: str = "",
 ) -> tuple[str, str]:
-    """Hangar vs recover from the save. Disk cannot see crash UI."""
-    ships = vessels
+    """Hangar vs recover from disk *ships*. Debris is not leftover (I-017).
+
+    Disk cannot see crash UI or empty Tracking. FLYING Debris in
+    ``persistent.sfs`` is not a hangar job — live leftover is kRPC.
+    """
+    ships = tuple(v for v in vessels if is_disk_ship(v))
     active = ships[0].name if ships else "none"
     if lock == "live":
         return "blocked", active
@@ -269,8 +274,9 @@ def build_sit(world: World | None = None) -> DeskSit:
         else []
     )
     lock = lock_state()
+    ships = tuple(v for v in world.vessels if is_disk_ship(v))
     hangar, active = hangar_call(
-        vessels=world.vessels,
+        vessels=ships,
         lock=lock,
         seated_craft=craft if craft not in {"", "(none)"} else "",
     )
@@ -296,7 +302,7 @@ def build_sit(world: World | None = None) -> DeskSit:
         note_tech=_last_note_tech(),
         f013=f013,
         stack=tuple(names),
-        vessels=tuple(v.name for v in world.vessels[:12]),
+        vessels=tuple(v.name for v in ships[:12]),
         leftover_science=rows,
         stack_dump=(
             format_stack(world, names, label=f"seated {seated_id()}").rstrip()
@@ -351,7 +357,7 @@ def format_sit(sit: DeskSit) -> str:
     if sit.vessels:
         lines.extend(f"  {name}" for name in sit.vessels)
     else:
-        lines.append("  (none — KSC empty of ships; asteroids omitted)")
+        lines.append("  (none — KSC empty of ships; asteroids/debris omitted)")
     lines.append("# leftover science (cap − sci). Missing id = unstarted.")
     if sit.leftover_science:
         lines.extend(f"  {row}" for row in sit.leftover_science)

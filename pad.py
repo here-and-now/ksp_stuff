@@ -266,8 +266,9 @@ def dwell_for_card(
     Does not Toggle. Science clock is rem / running / UT, not vessel MET.
     Unpause then pad physics-warp (rails 0) before the loop. Freeze
     retries unpause. Recording (run=1 or rem dropping) does not abort
-    because MET is 0. Empty HD after a timeout with nothing recording
-    still aborts. Always 1× physics on the way out.
+    because MET is 0. Splash EC=0 (19-43-18Z snapshot lie) does not
+    abort — return so TELEMETRY/goo can start. Empty HD after a timeout
+    with nothing recording still aborts. Always 1× physics on the way out.
     """
     clock = now if now is not None else time.monotonic
     nap = sleep if sleep is not None else time.sleep
@@ -353,6 +354,14 @@ def dwell_for_card(
                         card_complete(vessel, science_ids, saw_running)
                         if _ec_has_science(vessel, science_ids, saw_running, pulses):
                             _say("science dwell ec=0 with data", on_log)
+                            events.emit("science_dwell", result="ec")
+                            return "ec"
+                        if recording:
+                            continue
+                        # 19-43-18Z: 24×Z-100 still 2401 EC at 68 m flying;
+                        # first splashed sample is 0. Dwell must not abort.
+                        if "splashed" in sit.lower():
+                            _say("science dwell ec=0 splash", on_log)
                             events.emit("science_dwell", result="ec")
                             return "ec"
                         call("abort_pad", ctx)

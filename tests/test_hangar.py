@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from hangar import Hangar, go_space_center, ksc_ready
+from hangar import Hangar, go_space_center, install_signed, ksc_ready, name_is_refused
 from session import SessionError
 
 
@@ -185,6 +186,73 @@ class TestHangarLaunchGate(unittest.TestCase):
                             )
         launch.assert_called_once()
         self.assertEqual(session.space_center.reverts, 0)
+
+
+_REFUSE = ("kspstuff-pad-pbc", "kspstuff-geiger-pbc")
+
+
+class _FakeHangar:
+    def __init__(self, root: Path):
+        self.root = root
+        self.calls: list[str] = []
+
+    def ships(self, facility: str = "VAB") -> Path:
+        path = self.root / facility
+        path.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def launch(self, session, name, *, recover=True, uncrewed=False, **_kwargs):
+        self.calls.append(name)
+        session.active_vessel = type("V", (), {"name": name})()
+
+
+class TestHangarRefuse(unittest.TestCase):
+    def test_refuse_is_exact_basename_not_substring(self):
+        self.assertEqual(
+            name_is_refused("kspstuff-geiger-pbc", _REFUSE),
+            "kspstuff-geiger-pbc",
+        )
+        self.assertEqual(
+            name_is_refused("kspstuff-pad-pbc", _REFUSE),
+            "kspstuff-pad-pbc",
+        )
+        self.assertIsNone(name_is_refused("kspstuff-hop-flea-geiger-pbc", _REFUSE))
+        self.assertIsNone(name_is_refused("kspstuff-hop-geiger-pbc-plus", _REFUSE))
+        self.assertIsNone(name_is_refused("kspstuff-hop-flea-pbc", _REFUSE))
+
+    def test_install_signed_allows_hop_name_containing_geiger_pbc(self):
+        session = _Session()
+        session.active_vessel = None
+        with tempfile.TemporaryDirectory() as raw:
+            fake = _FakeHangar(Path(raw))
+            src = Path(raw) / "src.craft"
+            src.write_text("ship", encoding="utf-8")
+            name = "kspstuff-hop-flea-geiger-pbc"
+            out = install_signed(
+                session, name, hangar=fake, refuse=_REFUSE, src=src
+            )
+            self.assertEqual(out, name)
+            self.assertEqual(fake.calls, [name])
+            dest = fake.ships("VAB") / f"{name}.craft"
+            self.assertTrue(dest.is_file())
+
+    def test_install_signed_refuses_exact_geiger_pbc(self):
+        session = _Session()
+        with tempfile.TemporaryDirectory() as raw:
+            fake = _FakeHangar(Path(raw))
+            src = Path(raw) / "src.craft"
+            src.write_text("ship", encoding="utf-8")
+            with self.assertRaises(SessionError) as ctx:
+                install_signed(
+                    session,
+                    "kspstuff-geiger-pbc",
+                    hangar=fake,
+                    refuse=_REFUSE,
+                    src=src,
+                )
+        self.assertIn("refused", str(ctx.exception))
+        self.assertIn("kspstuff-geiger-pbc", str(ctx.exception))
+        self.assertEqual(fake.calls, [])
 
 
 if __name__ == "__main__":

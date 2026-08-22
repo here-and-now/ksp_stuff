@@ -366,6 +366,27 @@ def wait_vessel_ready(
     raise SessionError(f"timed out waiting for vessel ready ({last})")
 
 
+def craft_basename(name: str) -> str:
+    """Craft token for Hangar refuse: lowercased, no ``@…``, no `` Debris``."""
+    low = (name or "").strip().lower()
+    if "@" in low:
+        low = low.split("@", 1)[0]
+    if low.endswith(" debris"):
+        low = low[: -len(" debris")].rstrip()
+    return low
+
+
+def name_is_refused(name: str, refuse: tuple[str, ...]) -> str | None:
+    """Exact basename match against ``refuse``. Not a substring (I-013)."""
+    token = craft_basename(name)
+    if not token:
+        return None
+    for tag in refuse:
+        if craft_basename(tag) == token:
+            return tag
+    return None
+
+
 def install_signed(
     session: Any,
     name: str,
@@ -378,15 +399,15 @@ def install_signed(
 ) -> str:
     """Byte-copy ``crafts/<name>.craft`` into the save VAB and launch.
 
-    Pad and hop both call this. ``refuse`` substrings abort (hop: pad/geiger).
+    Pad and hop both call this. ``refuse`` is exact craft basename
+    (hop: ``kspstuff-pad-pbc`` / ``kspstuff-geiger-pbc``), not a substring.
     """
     token = (name or "").strip()
     if not token:
         raise SessionError("install_signed: empty craft name")
-    low = token.lower()
-    for tag in refuse:
-        if tag.lower() in low:
-            raise SessionError(f"Hangar refused {token} ({tag})")
+    hit = name_is_refused(token, refuse)
+    if hit is not None:
+        raise SessionError(f"Hangar refused {token} ({hit})")
     path = src or (REPO_CRAFTS / f"{token}.craft")
     if not path.is_file():
         raise SessionError(f"missing craft {path}")

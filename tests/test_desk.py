@@ -123,6 +123,39 @@ class TestDesk(unittest.TestCase):
         self.assertEqual(hangar, "blocked")
         self.assertEqual(active, "pad")
 
+    def test_hangar_ignores_flying_debris(self):
+        """Disk FLYING Debris is not leftover. Empty Tracking Hangars (I-017)."""
+        ships = (
+            SaveVessel(
+                name="kspstuff-hop-flea-pbc Debris",
+                sit="FLYING",
+                type="Debris",
+                landed=False,
+            ),
+        )
+        hangar, active = hangar_call(vessels=ships, lock="free")
+        self.assertEqual(hangar, "none")
+        self.assertEqual(active, "none")
+
+    def test_hangar_ship_not_debris_when_both_in_save(self):
+        ships = (
+            SaveVessel(
+                name="kspstuff-hop-flea-pbc Debris",
+                sit="FLYING",
+                type="Debris",
+                landed=False,
+            ),
+            SaveVessel(
+                name="kspstuff-hop-flea-pbc",
+                sit="PRELAUNCH",
+                type="Ship",
+                landed=True,
+            ),
+        )
+        hangar, active = hangar_call(vessels=ships, lock="free")
+        self.assertEqual(hangar, "phase kspstuff-hop-flea-pbc sit=PRELAUNCH")
+        self.assertEqual(active, "kspstuff-hop-flea-pbc")
+
     def test_f013_paw_is_not_unlocked_hardware(self):
         from tests.test_world import FIXTURE
         from world import load_world

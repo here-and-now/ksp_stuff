@@ -227,6 +227,27 @@ class TestKerbalismStart(unittest.TestCase):
         self.assertEqual(ran, ["temperatureScan"])
         self.assertTrue(mod.triggered)
 
+    def test_splash_paw_without_experiment_module(self):
+        """18-15-08Z: Kerbalism Experiment gone; Stayputnik TELEMETRY + goo PAW."""
+        tel = _Mod("ModuleCommand", "", events=["Toggle"])
+        tel.fields = {"status": "Ready"}
+        goo = _Mod("ModuleScienceExperiment", "", events=["Start Experiment"])
+        goo.fields = {"status": "Ready"}
+        ant = _Mod("ModuleDeployableAntenna", "", events=["Toggle"])
+        ant.fields = {}
+        stay = _Part("probeCoreSphere_v2", [tel])
+        goo_p = _Part("GooExperiment", [goo])
+        ant_p = _Part("SurfAntenna", [ant])
+        vessel = _Vessel([tel, goo, ant])
+        vessel.parts = _Parts([stay, goo_p, ant_p])
+        ran = start_experiments(
+            vessel, names=("kerbalism_TELEMETRY", "mysteryGoo")
+        )
+        self.assertEqual(ran, ["kerbalism_TELEMETRY", "mysteryGoo"])
+        self.assertEqual(tel.triggered, ["Toggle"])
+        self.assertEqual(goo.triggered, ["Start Experiment"])
+        self.assertEqual(ant.triggered, [])
+
     def test_infers_eid_from_part_when_fields_are_paw(self):
         mod = _Mod("Experiment", "")
         mod.fields = {"status": "Ready", "broken": False}

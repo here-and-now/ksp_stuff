@@ -195,6 +195,43 @@ class TestSplashCatalog(unittest.TestCase):
 
 
 class TestSplashSequence(unittest.TestCase):
+    def test_ec_zero_splashed_starts_telemetry_before_abort(self):
+        """17-46-04Z: EC=0 on splash wait must not kill an unstarted card."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([tel], sit="splashed", recoverable=False, ec=0.0)
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+
+        def nap(dt):
+            if tel.triggered:
+                tel.fields["status"] = "Done"
+                tel.fields["Has Data"] = True
+            if goo.triggered:
+                goo.fields["status"] = "Done"
+                goo.fields["Has Data"] = True
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("kerbalism_TELEMETRY", "mysteryGoo"),
+            now=now,
+            sleep=nap,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(goo.triggered, ["Start Experiment"])
+        self.assertTrue(vessel.recovered)
+
     def test_already_splashed_starts_goo_and_recovers(self):
         mod = _Mod("Experiment", "mysteryGoo")
         vessel = _Vessel([mod], sit="splashed", recoverable=False)
@@ -275,6 +312,70 @@ class TestSplashSequence(unittest.TestCase):
         self.assertIn("not splashed", str(ctx.exception))
         self.assertFalse(vessel.recovered)
         self.assertEqual(mod.triggered, [])
+
+    def test_telemetry_then_goo(self):
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([tel], sit="splashed", recoverable=False)
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+        order: list[str] = []
+
+        def nap(dt):
+            if tel.triggered and "tel" not in order:
+                order.append("tel")
+                self.assertFalse(goo.triggered)
+                tel.fields["status"] = "Done"
+                tel.fields["Has Data"] = True
+            elif goo.triggered:
+                if "goo" not in order:
+                    order.append("goo")
+                goo.fields["status"] = "Done"
+                goo.fields["Has Data"] = True
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("kerbalism_TELEMETRY", "mysteryGoo"),
+            now=now,
+            sleep=nap,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(order, ["tel", "goo"])
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(goo.triggered, ["Start Experiment"])
+        self.assertTrue(vessel.recovered)
+
+    def test_ec_zero_science_none_does_not_abort(self):
+        """19-43-18Z: wait science none at splash EC=0 must not ABORT ec=0."""
+        vessel = _Vessel([], sit="splashed", recoverable=True, ec=0.0)
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", []),
+                _Part("GooExperiment", []),
+            ]
+        )
+        now, sleep, _t = _fast_clock()
+        result = run_on_vessel(
+            _Session(vessel),
+            vessel,
+            science_ids=("kerbalism_TELEMETRY",),
+            now=now,
+            sleep=sleep,
+            timeout=30.0,
+            pulse=1.0,
+        )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
 
     def test_no_vessel_does_not_hangar(self):
         session = _Session(None)  # type: ignore[arg-type]

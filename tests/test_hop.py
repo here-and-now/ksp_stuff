@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import tempfile
 import time
 import unittest
@@ -17,6 +18,10 @@ from hop import (
     HOP_SPLASH_ABORT,
     HOP_TO_WATER_ABORT,
     SPLASH_CRAFT,
+    WATER_BRAKE_ALT_MAX_M,
+    WATER_BRAKE_SPEED_M,
+    WATER_BRAKE_TTI_S,
+    WATER_BRAKE_VZ_CUT,
     WATER_CRAFT,
     WATER_HEADING_DEG,
     WATER_PITCH_DEG,
@@ -24,6 +29,11 @@ from hop import (
     WATER_PITCH_SLEW_DPS,
     WATER_PITCH_UP,
     WATER_SLEW_THROTTLE,
+    _hold_or_cut,
+    _steer_east,
+    _suicide_hold,
+    _suicide_now,
+    east_direction,
     hop_craft_name,
     hop_craft_path,
     hop_offplan_apo,
@@ -104,6 +114,7 @@ class _Autopilot:
         self.target_pitch = 0.0
         self.target_heading = 0.0
         self.target_roll = 0.0
+        self.target_direction = (0.0, 0.0, 0.0)
 
     def engage(self):
         self.engaged = True
@@ -2169,6 +2180,12 @@ class TestHopToWater(unittest.TestCase):
         self.assertIn("after left_pad", blocks)
         self.assertIn("0.4", blocks)
         self.assertIn("16-11-58Z", blocks)
+        self.assertIn("16-57-24Z", blocks)
+        self.assertIn("target_direction", blocks)
+        self.assertIn("22-03-59Z", blocks)
+        self.assertIn("22-45-26Z", blocks)
+        self.assertIn("22-57-36Z", blocks)
+        self.assertIn("suicide", blocks.lower())
 
     def test_pitch_east_waits_splash(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -2228,6 +2245,10 @@ class TestHopToWater(unittest.TestCase):
         self.assertFalse(any(flying_recovered))
         self.assertEqual(vessel.auto_pilot.target_pitch, WATER_PITCH_DEG)
         self.assertEqual(vessel.auto_pilot.target_heading, WATER_HEADING_DEG)
+        self.assertTrue(math.isnan(vessel.auto_pilot.target_roll))
+        self.assertEqual(
+            vessel.auto_pilot.target_direction, east_direction(WATER_PITCH_DEG)
+        )
         self.assertFalse(vessel.auto_pilot.engaged)
         self.assertEqual(tel.triggered, ["Start Experiment"])
         self.assertEqual(goo.triggered, ["Start Experiment"])
@@ -2374,7 +2395,292 @@ class TestHopToWater(unittest.TestCase):
         self.assertGreater(air_pitch[0], WATER_PITCH_DEG)
         self.assertTrue(any(abs(th - WATER_SLEW_THROTTLE) < 1e-6 for th in air_throt))
         self.assertEqual(vessel.auto_pilot.target_pitch, WATER_PITCH_DEG)
+        self.assertTrue(math.isnan(vessel.auto_pilot.target_roll))
         self.assertTrue(any("slew" in line and "after pad" in line for line in logs))
+
+    def test_east_direction_is_up_then_east(self):
+        up = east_direction(WATER_PITCH_UP)
+        self.assertAlmostEqual(up[0], 1.0, places=6)
+        self.assertAlmostEqual(up[1], 0.0, places=6)
+        self.assertAlmostEqual(up[2], 0.0, places=6)
+        east = east_direction(0.0)
+        self.assertAlmostEqual(east[0], 0.0, places=6)
+        self.assertAlmostEqual(east[1], 0.0, places=6)
+        self.assertAlmostEqual(east[2], 1.0, places=6)
+        d = east_direction(WATER_PITCH_DEG)
+        self.assertAlmostEqual(d[1], 0.0, places=6)
+        self.assertGreater(d[2], 0.0)
+        n = math.sqrt(d[0] ** 2 + d[1] ** 2 + d[2] ** 2)
+        self.assertAlmostEqual(n, 1.0, places=6)
+
+    def test_steer_east_does_not_command_roll_zero(self):
+        """16-57-24Z: target_roll=0 near vertical tumbled heading off 090."""
+        vessel = _Vessel([])
+        _steer_east(vessel, pitch=WATER_PITCH_UP)
+        self.assertEqual(vessel.auto_pilot.target_pitch, WATER_PITCH_UP)
+        self.assertEqual(vessel.auto_pilot.target_heading, WATER_HEADING_DEG)
+        self.assertTrue(math.isnan(vessel.auto_pilot.target_roll))
+        self.assertEqual(
+            vessel.auto_pilot.target_direction, east_direction(WATER_PITCH_UP)
+        )
+        self.assertTrue(vessel.auto_pilot.engaged)
+        _steer_east(vessel, pitch=WATER_PITCH_DEG)
+        self.assertTrue(math.isnan(vessel.auto_pilot.target_roll))
+        self.assertEqual(
+            vessel.auto_pilot.target_direction, east_direction(WATER_PITCH_DEG)
+        )
+
+    def test_suicide_now_is_low_and_fast_not_apo_fall(self):
+        high = type(
+            "S",
+            (),
+            {"fuel": 40.0, "alt": 15_000.0, "speed": 215.0},
+        )()
+        self.assertFalse(_suicide_now(high))
+        early = type(
+            "S",
+            (),
+            {"fuel": 200.0, "alt": 37_000.0, "speed": 846.0},
+        )()
+        self.assertFalse(_suicide_now(early))
+        self.assertGreater(37_000.0, WATER_BRAKE_ALT_MAX_M)
+        low = type(
+            "S",
+            (),
+            {"fuel": 40.0, "alt": 2_000.0, "speed": 220.0},
+        )()
+        self.assertTrue(_suicide_now(low))
+        slow = type(
+            "S",
+            (),
+            {"fuel": 40.0, "alt": 2_000.0, "speed": WATER_BRAKE_SPEED_M},
+        )()
+        self.assertFalse(_suicide_now(slow))
+        lofting = type(
+            "S",
+            (),
+            {
+                "fuel": 46.0,
+                "alt": 1_640.0,
+                "speed": 43.3,
+                "v_vert": 19.0,
+            },
+        )()
+        self.assertFalse(_suicide_now(lofting))
+        dry = type("S", (), {"fuel": 0.0, "alt": 2_000.0, "speed": 220.0})()
+        self.assertFalse(_suicide_now(dry))
+
+    def test_suicide_hold_ignores_tti_until_vz_cut(self):
+        """22-57-36Z: MET 181 tti 19 vz −72 must stay on; vz +19 cuts."""
+        mid = type(
+            "S",
+            (),
+            {
+                "fuel": 72.6,
+                "alt": 3_000.0,
+                "speed": 88.0,
+                "v_vert": -72.3,
+            },
+        )()
+        self.assertGreater(3_000.0 / 88.0, WATER_BRAKE_TTI_S)
+        self.assertTrue(_suicide_hold(mid))
+        self.assertFalse(_suicide_now(mid))
+        up = type(
+            "S",
+            (),
+            {
+                "fuel": 46.4,
+                "alt": 1_642.0,
+                "speed": 43.3,
+                "v_vert": 19.5,
+            },
+        )()
+        self.assertFalse(_suicide_hold(up))
+        self.assertGreater(WATER_BRAKE_VZ_CUT, -72.3)
+
+    def test_hold_or_cut_latches_and_suicides(self):
+        """22-03-59Z / T-011: do not recut 0.4 when apo falls; leftover LF later."""
+        vessel = _Vessel([])
+        loft = type(
+            "S",
+            (),
+            {"apo": 19_000.0, "fuel": 100.0, "alt": 15_000.0, "speed": 200.0},
+        )()
+        cut, braking = _hold_or_cut(
+            vessel, loft, 18_000.0, cut=False, hold=WATER_SLEW_THROTTLE, brake=True
+        )
+        self.assertTrue(cut)
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        fall = type(
+            "S",
+            (),
+            {"apo": 17_000.0, "fuel": 100.0, "alt": 15_000.0, "speed": 215.0},
+        )()
+        cut, braking = _hold_or_cut(
+            vessel, fall, 18_000.0, cut=cut, hold=WATER_SLEW_THROTTLE, brake=True
+        )
+        self.assertTrue(cut)
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        near = type(
+            "S",
+            (),
+            {"apo": 2_500.0, "fuel": 40.0, "alt": 2_000.0, "speed": 220.0},
+        )()
+        cut, braking = _hold_or_cut(
+            vessel, near, 18_000.0, cut=cut, hold=WATER_SLEW_THROTTLE, brake=True
+        )
+        self.assertTrue(cut)
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        hop, hop_brake = _hold_or_cut(
+            vessel, near, 18_000.0, cut=True, hold=1.0, brake=False
+        )
+        self.assertTrue(hop)
+        self.assertFalse(hop_brake)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_hold_or_cut_suicide_holds_when_tti_rises(self):
+        """22-57-36Z: do not cut leftover LF because TTI rose after the first pulse."""
+        vessel = _Vessel([])
+        start = type(
+            "S",
+            (),
+            {
+                "apo": 3_828.0,
+                "fuel": 104.7,
+                "alt": 1_954.0,
+                "speed": 200.8,
+                "v_vert": -184.3,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            start,
+            18_000.0,
+            cut=True,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        risen = type(
+            "S",
+            (),
+            {
+                "apo": 2_024.0,
+                "fuel": 72.6,
+                "alt": 3_000.0,
+                "speed": 88.0,
+                "v_vert": -72.3,
+            },
+        )()
+        self.assertGreater(3_000.0 / 88.0, WATER_BRAKE_TTI_S)
+        cut, braking = _hold_or_cut(
+            vessel,
+            risen,
+            18_000.0,
+            cut=cut,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=braking,
+        )
+        self.assertTrue(cut)
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        lofted = type(
+            "S",
+            (),
+            {
+                "apo": 1_665.0,
+                "fuel": 46.4,
+                "alt": 1_642.0,
+                "speed": 43.3,
+                "v_vert": 19.5,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            lofted,
+            18_000.0,
+            cut=cut,
+            hold=WATER_SLEW_THROTTLE,
+            brake=True,
+            braking=braking,
+        )
+        self.assertTrue(cut)
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_wait_water_does_not_recut_then_suicides(self):
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        goo = _Mod("Experiment", "mysteryGoo")
+        vessel = _Vessel([tel, goo], recoverable=False)
+        vessel.name = WATER_CRAFT
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        coast_throt: list[float] = []
+        seen_brake = []
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 15_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 19_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel.control.throttle = WATER_SLEW_THROTTLE
+                vessel.resources.fuel = 50.0
+            elif vessel.situation == "flying":
+                if vessel.orbit.apoapsis_altitude >= 18_000.0:
+                    self.assertEqual(vessel.control.throttle, 0.0)
+                    vessel.orbit.apoapsis_altitude = 12_000.0
+                    vessel._alt = 12_000.0
+                    vessel._speed = 80.0
+                elif vessel._alt > 3_000.0:
+                    coast_throt.append(vessel.control.throttle)
+                    vessel._alt = 2_000.0
+                    vessel._speed = 220.0
+                    vessel.resources.fuel = 40.0
+                    vessel.orbit.apoapsis_altitude = 2_500.0
+                elif vessel.control.throttle >= 0.99:
+                    seen_brake.append(True)
+                    vessel.resources.fuel = 0.0
+                    vessel.situation = "splashed"
+                    vessel._alt = 0.0
+                    vessel._speed = 0.0
+            elif vessel.situation == "splashed" and goo.triggered:
+                goo.fields["status"] = "Done"
+                goo.fields["Has Data"] = True
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("phases._kv", return_value={"hop_apo": "18000"}):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("kerbalism_TELEMETRY",),
+                splash_ids=("mysteryGoo",),
+                wait_water=True,
+                on_log=logs.append,
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(coast_throt)
+        self.assertTrue(all(th == 0.0 for th in coast_throt))
+        self.assertTrue(seen_brake)
+        self.assertTrue(any("suicide leftover LF" in line for line in logs))
+        self.assertEqual(vessel.auto_pilot.target_pitch, WATER_PITCH_UP)
 
     def test_landed_aborts_not_splashed(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -2596,6 +2902,55 @@ class TestHopToWater(unittest.TestCase):
         self.assertFalse(any("do not light" in line for line in logs))
         self.assertTrue(any(line.startswith("science ") for line in logs))
 
+    def test_hop_to_water_splashed_leftover_recovers_then_hangars(self):
+        """22-45-26Z: matching sit=splashed fuel=0 recoverable — recover, Hangar, loft."""
+        leftover = _Vessel([], sit="splashed", ec=0.0, recoverable=True)
+        leftover.name = WATER_CRAFT
+        leftover.met = 212.2
+        leftover.resources.fuel = 0.0
+        leftover.parts = _Parts([])
+        fresh = _Vessel([], sit="pre_launch", recoverable=False)
+        fresh.name = WATER_CRAFT
+        fresh.resources.fuel = 5.0
+        session = _Session(leftover)
+        logs: list[str] = []
+
+        def hangar_launch(sess, **_kw):
+            sess.active_vessel = fresh
+            sess.space_center.vessels = [fresh]
+
+        with patch("hop.hop_craft_name", return_value=WATER_CRAFT):
+            with patch("hop.hop_match_name", return_value=WATER_CRAFT):
+                with patch(
+                    "hop.hop_to_water_science",
+                    return_value=(("kerbalism_TELEMETRY",), ("mysteryGoo",)),
+                ):
+                    with patch(
+                        "hop.install_and_launch", side_effect=hangar_launch
+                    ) as hangar:
+                        with patch(
+                            "hop.wait_vessel_ready", return_value="hangar ready"
+                        ):
+                            with patch("hop.go_space_center"):
+                                with patch("hop._wait_vessel_gone"):
+                                    with patch(
+                                        "hop.run_on_vessel",
+                                        return_value="recovered",
+                                    ) as run:
+                                        result = run_hop_to_water(
+                                            session, on_log=logs.append
+                                        )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(leftover.recovered)
+        self.assertEqual(leftover.control.staged, 0)
+        hangar.assert_called_once()
+        run.assert_called_once()
+        self.assertIs(run.call_args.args[1], fresh)
+        self.assertTrue(
+            any("recover, Hangar new" in line for line in logs)
+        )
+        self.assertTrue(any("sit=splashed" in line for line in logs))
+
     def test_hop_to_water_leftover_wreck_does_not_hangar(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
         vessel = _Vessel([tel], sit="flying", ec=9.3, recoverable=False)
@@ -2714,6 +3069,9 @@ class TestHopSplash(unittest.TestCase):
         self.assertIn("east slew", blocks)
         self.assertIn("80 km", blocks)
         self.assertIn("east-fin PRELAUNCH", blocks)
+        self.assertIn("stay cut", blocks)
+        self.assertIn("suicide", blocks.lower())
+        self.assertIn("22-57-36Z", blocks)
 
     def test_vertical_no_east_no_flying_toggle(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")

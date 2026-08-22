@@ -10,8 +10,9 @@ subjects toward 15 sci, without a chute we do not have. Rare: a new
 shape from a constraint, not from Gene's last sentence.
 
 Open:
-- Lithobrake Flea will not buy 15. t7 pencil is the ≥50 km hang, not 8.65.
+- Splash is the hang without a chute. t7 already fell in Water (13-49) with no 090; 24×Z-100 still died at splash dwell if loft is 500 s.
+- Signed **east-t3** (3×T100, fins on lowest tank, 20×Z-100, TWR>1 at 0.4). 2×T100 east is dead as a 090 hang. Wheel still stability.
 - TD-12 (e101) two-stage Hammer/Valiant — hop only lights once. Next shape, not this sit.
-- Bare east-bare Heaviest+rigid dumped at max-q. east-one: core Heaviest only, radials on the tank. Wheel still stability.
+- Bare east-bare Heaviest+rigid dumped at max-q. east-one tumbled (no fins, no RW). east-fin: 3× basicFin on lower T100 but 2×T100 TWR 5. Wheel still stability.
 
 `.craft` is conference. This page is the itch.

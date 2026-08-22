@@ -1,5 +1,11 @@
 # Lars Grokman — log
 
+- 2026-08-21 — 22-57-36Z hop-to-water: hop_apo latch held (MET 79.2 thr 0 fuel 109.5). Suicide MET 179.7 then TTI-rise cut / relights lofted leftover; splash 119 m/s Shores. Latch leftover-LF until vz cut. T-023 closed. T-022 duplicate (modules gone = wreck). T-016 heading left open. Do not Hangar this hire.
+- 2026-08-21 — 22-45-26Z hop-to-water: matching east-t3 sit=splashed MET 212 fuel=0 recoverable recovered and exited 0 (desk n=0 vs live kRPC). Recover then Hangar seated craft. T-021 closed. T-016 heading left open. Do not Hangar this hire.
+- 2026-08-21 — 22-03-59Z hop-to-water: T-011 recut confirmed (MET 81.8 thr 0, MET 84/136 thr 0.4 leftover dump; hop-splash twin thr 1 at apo<80 km). Latch hop_apo; leftover LF suicide near Water. T-015/T-011/T-017 closed. T-016 heading 301 after T-007 is Stayputnik no wheel — leave open. Do not Hangar.
+- 2026-08-21 — 16-57-24Z hop-to-water: heading never 090 was `target_roll=0` near vertical (pad 299 tumble), not a missing 090 command. Point surface target_direction, roll unset. T-007 closed. Do not Hangar.
+- 2026-08-21 — 19-43-18Z hop-splash: splash dwell EC=0 is not abort (2401 EC at 68 m, snapshot 0 on Water). No flying TELEMETRY Toggle. T-006 closed. Do not Hangar.
+- 2026-08-21 — hop-splash: Hangar t7-splash vertical, no east slew, no flying Toggle, hop_apo 80 km, wait splashed then TELEMETRY/goo dwell. leftover east-fin PRELAUNCH recover dark. Flea refused.
 - 2026-08-21 — 16-11-58Z hop-to-water: east-bare apo 5.3 km — do not slam AP 65 at light TWR 5 (no decoupler, joints shear). Slew east after pad at throttle 0.4. Do not Hangar.
 - 2026-08-21 — 15-26-18Z hop-to-water: hold AP east through burnout (do not release at fuel=0). 25° was commanded, not flown (~20 m/s east). leftover PRELAUNCH east-pbc — do not Hangar.
 - 2026-08-20 — Os: inner MET-clock hunger, niche private, ground ask. 19-26 unpause in; confirm on next Hangar.

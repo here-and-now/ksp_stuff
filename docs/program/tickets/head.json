@@ -1,5 +1,6 @@
 {
   "fingerprints": {
+    "23-15-52Z hop-to-water: hop_apo latch MET 79.1 thr 0 apo 18.7 km fuel 111.1; suicide MET 171 thr 1 vz -194 held through vz -65 (no TTI recut at -72); still thr 1 at vz +24.5 fuel 47; recut MET 176.5 vz +140 leftover 16.6; relight MET 208.9 vz -126 fuel 11.5; splash MET 225 sit=splashed heading 303.7 horiz 24.3 speed 221 landing catastrophic 220 m/s biome Shores EC 0 science skip no Experiment modules wanted mysteryGoo": 1,
     "catastrophic-splash": 1,
     "desk-leftover-vs-krpc": 1,
     "east-valiant-water": 1,
@@ -11,10 +12,12 @@
     "hop-to-water-east": 1,
     "leftover-hides-unstarted": 1,
     "leftover-prelaunch-ghost": 2,
+    "science skip (no Experiment modules) ABORT no science (wanted mysteryGoo) after splash MET 226.3 EC=0": 1,
     "science-skip-no-modules": 1,
     "splash-goo-15": 1,
     "splash-telemetry": 1,
     "stack": 1,
+    "suicide leftover LF MET 179.7 then splash catastrophic impact 124 m/s heading 300 biome Shores": 1,
     "telem-hz": 1,
     "unstarted-splash-telemetry": 1
   },
@@ -306,6 +309,7 @@
     "T-011": {
       "assignee": "",
       "blockers": [],
+      "close_why": "Latch hop_apo in hop.py _hold_or_cut; recut on apo fall confirmed 22-03-59Z hop-to-water (MET 81.8 thr 0, MET 84/136 thr 0.4) and hop-splash 18-15-08Z/19-43-18Z/21-14-09Z thr 1 at apo<80 km.",
       "created": "2026-08-21T21:39:08Z",
       "desk": "lars",
       "evidence": [],
@@ -318,10 +322,10 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "title": "hop-splash relights when apo falls below hop_apo on descent",
       "type": "control",
-      "updated": "2026-08-21T21:39:08Z"
+      "updated": "2026-08-21T22:41:07Z"
     },
     "T-012": {
       "assignee": "",
@@ -350,7 +354,9 @@
       "created": "2026-08-21T21:46:32Z",
       "desk": "gene",
       "evidence": [
-        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
+        "docs/missions/jebediah/logs/2026-08-21T22-57-36Z-hop-to-water.jsonl",
+        "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl"
       ],
       "fingerprint": "hop-to-water-east",
       "go": "yes",
@@ -361,24 +367,24 @@
         "craft": "kspstuff-hop-valiant-east-t3-pbc",
         "go": "",
         "landing": {
-          "alt_before": 225.987,
+          "alt_before": 314.302,
           "biome": "Shores",
-          "dt_s": 0.78,
-          "heading": 301.232,
-          "horiz": 40.705,
-          "hz_median": 0.46,
-          "impact_ms": 229.919,
+          "dt_s": 1.2,
+          "heading": 303.571,
+          "horiz": 19.389,
+          "hz_median": 0.57,
+          "impact_ms": 213.281,
           "landing": "catastrophic",
-          "met": 212.2,
-          "path": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
-          "run": "2026-08-21T22-03-59Z-hop-to-water.jsonl",
-          "samples": 99,
+          "met": 225.0,
+          "path": "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl",
+          "run": "2026-08-21T23-15-52Z-hop-to-water.jsonl",
+          "samples": 127,
           "sit": "splashed",
-          "speed": 233.494,
-          "v_vert": null
+          "speed": 213.904,
+          "v_vert": -213.281
         },
         "phase": "hop-to-water",
-        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl"
       },
       "priority": "P0",
       "reporter": "Hank Grokman, COO",
@@ -389,11 +395,12 @@
       "status": "verify",
       "tags": [
         "catastrophic",
-        "landing"
+        "landing",
+        "hard-splash"
       ],
       "title": "hop-to-water east slew toward Water splash",
       "type": "fly",
-      "updated": "2026-08-21T22:25:50Z"
+      "updated": "2026-08-21T23:21:33Z"
     },
     "T-014": {
       "assignee": "gus",
@@ -431,6 +438,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "22-03-59Z catastrophic splash 230 m/s was apo recut dumping leftover LF then empty ballistic. Latch cut; leftover LF suicide near Water (TTI 12s, alt<=8 km), not 0.4 into the drink.",
       "created": "2026-08-21T22:25:50Z",
       "desk": "lars",
       "evidence": [
@@ -464,7 +472,7 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "hard-splash",
         "east-t3",
@@ -473,7 +481,7 @@
       ],
       "title": "east-t3 catastrophic splash 230 m/s (no chute)",
       "type": "control",
-      "updated": "2026-08-21T22:25:50Z"
+      "updated": "2026-08-21T22:41:07Z"
     },
     "T-016": {
       "assignee": "",
@@ -482,29 +490,30 @@
       "created": "2026-08-21T22:25:50Z",
       "desk": "lars",
       "evidence": [
-        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+        "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
+        "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl"
       ],
       "fingerprint": "heading-never-090",
       "id": "T-016",
       "payload": {
         "landing": {
-          "alt_before": 225.987,
+          "alt_before": 314.302,
           "biome": "Shores",
-          "dt_s": 0.78,
-          "heading": 301.232,
-          "horiz": 40.705,
-          "hz_median": 0.46,
-          "impact_ms": 229.919,
+          "dt_s": 1.2,
+          "heading": 303.571,
+          "horiz": 19.389,
+          "hz_median": 0.57,
+          "impact_ms": 213.281,
           "landing": "catastrophic",
-          "met": 212.2,
-          "path": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl",
-          "run": "2026-08-21T22-03-59Z-hop-to-water.jsonl",
-          "samples": 99,
+          "met": 225.0,
+          "path": "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl",
+          "run": "2026-08-21T23-15-52Z-hop-to-water.jsonl",
+          "samples": 127,
           "sit": "splashed",
-          "speed": 233.494,
-          "v_vert": null
+          "speed": 213.904,
+          "v_vert": -213.281
         },
-        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-03-59Z-hop-to-water.jsonl"
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl"
       },
       "priority": "P0",
       "reporter": "Jebediah Grokman, Commander",
@@ -521,12 +530,13 @@
       ],
       "title": "east-t3 heading 301 not 090 after target_direction patch",
       "type": "control",
-      "updated": "2026-08-21T22:25:50Z"
+      "updated": "2026-08-21T23:21:33Z"
     },
     "T-017": {
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "science skip no Experiment modules is the 230 m/s hard splash (same cause T-015). PAW Toggle already in science.py; control is leftover-LF suicide so the stack lives to Toggle.",
       "created": "2026-08-21T22:25:50Z",
       "desk": "lars",
       "evidence": [
@@ -560,7 +570,7 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "science-skip",
         "catastrophic",
@@ -568,7 +578,7 @@
       ],
       "title": "hard splash dropped Experiment modules before goo Toggle",
       "type": "control",
-      "updated": "2026-08-21T22:25:50Z"
+      "updated": "2026-08-21T22:41:07Z"
     },
     "T-018": {
       "assignee": "",
@@ -675,7 +685,183 @@
       "title": "splash TELEMETRY 0.80 sequential first",
       "type": "science",
       "updated": "2026-08-21T22:26:06Z"
+    },
+    "T-021": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "close_why": "22-45-26Z matching east-t3 sit=splashed MET 212 fuel=0 recoverable recovered and exited 0. hop-to-water now recovers that leftover then Hangars the seated craft (latch+suicide loft). hop-splash 18-03 splash-on-leftover unchanged. 14-52 unrecoverable flying wreck still abort.",
+      "created": "2026-08-21T22:46:04Z",
+      "desk": "lars",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T22-45-26Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "",
+      "id": "T-021",
+      "payload": {
+        "landing": {
+          "alt_before": null,
+          "biome": "Shores",
+          "dt_s": null,
+          "heading": null,
+          "horiz": null,
+          "hz_median": null,
+          "impact_ms": null,
+          "landing": "catastrophic",
+          "met": 212.2,
+          "path": "docs/missions/jebediah/logs/2026-08-21T22-45-26Z-hop-to-water.jsonl",
+          "run": "2026-08-21T22-45-26Z-hop-to-water.jsonl",
+          "samples": 1,
+          "sit": "splashed",
+          "speed": null,
+          "v_vert": null
+        },
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-45-26Z-hop-to-water.jsonl"
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "leftover",
+        "east-t3",
+        "hop-to-water",
+        "catastrophic",
+        "landing"
+      ],
+      "title": "hop-to-water recovered 22-03 leftover (desk n=0) instead of Hangar latch+suicide",
+      "type": "control",
+      "updated": "2026-08-21T22:53:52Z"
+    },
+    "T-022": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "close_why": "science skip no Experiment modules is the 119 m/s hard splash (same class T-017). Duplicate of T-023; PAW Toggle already in science.py.",
+      "created": "2026-08-21T23:03:41Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "science skip (no Experiment modules) ABORT no science (wanted mysteryGoo) after splash MET 226.3 EC=0",
+      "id": "T-022",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "jebediah",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "east-t3",
+        "splash",
+        "goo"
+      ],
+      "title": "splash science skip no Experiment modules wanted mysteryGoo",
+      "type": "control",
+      "updated": "2026-08-21T23:11:29Z"
+    },
+    "T-023": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "close_why": "22-57-36Z leftover-LF suicide cut when TTI rose (MET 181 tti 19 vz -72) then relights lofted leftover; latch until vz cut. hop.py.",
+      "created": "2026-08-21T23:03:41Z",
+      "desk": "lars",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T22-57-36Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "suicide leftover LF MET 179.7 then splash catastrophic impact 124 m/s heading 300 biome Shores",
+      "id": "T-023",
+      "payload": {
+        "landing": {
+          "alt_before": 96.89,
+          "biome": "Shores",
+          "dt_s": 0.58,
+          "heading": 313.759,
+          "horiz": 8.142,
+          "hz_median": 0.55,
+          "impact_ms": 118.65,
+          "landing": "catastrophic",
+          "met": 226.34,
+          "path": "docs/missions/jebediah/logs/2026-08-21T22-57-36Z-hop-to-water.jsonl",
+          "run": "2026-08-21T22-57-36Z-hop-to-water.jsonl",
+          "samples": 126,
+          "sit": "splashed",
+          "speed": 118.616,
+          "v_vert": -118.65
+        },
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T22-57-36Z-hop-to-water.jsonl"
+      },
+      "priority": "P1",
+      "reporter": "jebediah",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "east-t3",
+        "suicide",
+        "hard-splash",
+        "catastrophic",
+        "landing"
+      ],
+      "title": "leftover-LF suicide still catastrophic 124 m/s Shores",
+      "type": "control",
+      "updated": "2026-08-21T23:11:29Z"
+    },
+    "T-024": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-21T23:21:33Z",
+      "desk": "lars",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl"
+      ],
+      "fingerprint": "23-15-52Z hop-to-water: hop_apo latch MET 79.1 thr 0 apo 18.7 km fuel 111.1; suicide MET 171 thr 1 vz -194 held through vz -65 (no TTI recut at -72); still thr 1 at vz +24.5 fuel 47; recut MET 176.5 vz +140 leftover 16.6; relight MET 208.9 vz -126 fuel 11.5; splash MET 225 sit=splashed heading 303.7 horiz 24.3 speed 221 landing catastrophic 220 m/s biome Shores EC 0 science skip no Experiment modules wanted mysteryGoo",
+      "id": "T-024",
+      "payload": {
+        "landing": {
+          "alt_before": 314.302,
+          "biome": "Shores",
+          "dt_s": 1.2,
+          "heading": 303.571,
+          "horiz": 19.389,
+          "hz_median": 0.57,
+          "impact_ms": 213.281,
+          "landing": "catastrophic",
+          "met": 225.0,
+          "path": "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl",
+          "run": "2026-08-21T23-15-52Z-hop-to-water.jsonl",
+          "samples": 127,
+          "sit": "splashed",
+          "speed": 213.904,
+          "v_vert": -213.281
+        },
+        "telem_run": "docs/missions/jebediah/logs/2026-08-21T23-15-52Z-hop-to-water.jsonl"
+      },
+      "priority": "P1",
+      "reporter": "Jebediah",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "suicide-vz-latch",
+        "east-t3",
+        "hard-splash",
+        "catastrophic",
+        "landing"
+      ],
+      "title": "suicide vz latch overburns past -20 then recuts leftover and relights",
+      "type": "control",
+      "updated": "2026-08-21T23:21:40Z"
     }
   },
-  "updated": "2026-08-21T22:26:06Z"
+  "updated": "2026-08-21T23:21:40Z"
 }

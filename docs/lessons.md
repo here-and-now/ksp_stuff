@@ -21,6 +21,114 @@ python main.py pad
 
 ---
 
+## 2026-08-21T22-57-36Z-hop-to-water — suicide latches until vz cut
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T22-57-36Z-hop-to-water`). Hangar east-t3 after leftover
+  recover. F-013 mysteryGoo GooExperiment start unlocked on_craft;
+  TELEMETRY Stayputnik host. Chutes LOCKED. Bank 13.26 unchanged.
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`. Latch
+  hop_apo **held**: MET **79.2** thr **0** apo 18.97 km fuel **109.5**.
+  Suicide MET **179.7** thr **1** alt 1.95 km speed 201 tti 9.7 pitch
+  **61**. MET **181.6** thr 1 pitch **89** speed 88 tti **19** vz **−72**
+  fuel 73; MET **183** thr **0** fuel 46 vz **+19**. Relight MET **198.7**
+  then loft vz **+40**; crumbs MET 219 thr 1 fuel 0.68. Splash MET
+  **226.3** sit=splashed biome Shores impact **119 m/s** heading **314**
+  horiz **8.1** fuel=0 EC=0. `science skip (no Experiment modules)`.
+  Landing T-013 / T-023 catastrophic. Heading **300** is T-016.
+- **Cause:** `_suicide_now` used TTI to **cut** as well as arm. First
+  burn killed ~110 m/s; TTI rose above 12 and the loop cut while still
+  descending, then relit after TTI fell — leftover LF lofted (vz +19 /
+  +40) instead of staying on until vz was dead. Experiment modules gone
+  is the same 119 m/s wreck (T-022 = T-017 class).
+- **Fix:** Arm on TTI (≤20 s, alt ≤8 km). Latch throttle 1 until vz
+  ≥ −20 or fuel=0. TTI rising is not a recut. After hop_apo, point
+  zenith while leftover LF remains. Do not patch start_experiments.
+  Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-21T22-45-26Z-hop-to-water — recover leftover then Hangar
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T22-45-26Z-hop-to-water`). Seated east-t3. F-013 mysteryGoo
+  GooExperiment start unlocked on_craft; TELEMETRY Stayputnik host.
+  Desk leftover n=0 was disk; live kRPC leftover sit=splashed MET 212.2
+  fuel=0 recoverable=yes (the 22-03-59Z wreck). Bank 13.26 unchanged.
+  Do not Hangar this hire.
+- **Symptom:** exit 0 `recovered`. CLI `hop leftover sit=splashed
+  fuel=0.0 recoverable=yes met=212.20 — do not light` then
+  `recovered`. kind=state heading **300** horiz **41.6** pitch **77.6**
+  biome Shores landing catastrophic impact **230 m/s**. Never lit.
+  Latch + leftover-LF suicide untested. No new loft.
+- **Cause:** matching leftover entered Flight (correct). Dry splashed
+  wreck recovered in `run_on_vessel` and **returned** recovered. hop.py
+  did not Hangar the seated craft after that recover. hop-splash 18-03
+  starts splash on living Water leftover; this wreck had no loft left.
+- **Fix:** hop-to-water matching leftover already down (splashed/landed
+  dry, recoverable) recovers, then Hangar seated craft. Unrecoverable
+  flying wreck still abort (14-52-25Z). hop-splash splash-on-leftover
+  unchanged. Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-21T22-03-59Z-hop-to-water — hop_apo cut latches; leftover LF is suicide
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T22-03-59Z-hop-to-water`; hop-splash twin 18-15-08Z /
+  19-43-18Z / 21-14-09Z). Hangar east-t3. F-013 mysteryGoo
+  GooExperiment start unlocked on_craft; TELEMETRY Stayputnik host.
+  Bank 13.26 unchanged. Do not Hangar.
+- **Symptom:** exit 2 `ABORT no science (wanted mysteryGoo)`.
+  kind=state: pad heading **299** pitch 90; burn hold heading **~301**
+  pitch **~65** throttle **0.4**; apo max **19.06 km** MET 77.5 thr
+  0.4; MET **79.7** thr **0** apo 18.37 km fuel 104.5; MET **81.8**
+  thr 0 apo 17.62 km heading **75.3** (090 fly-through); MET **84**
+  thr **0.4** relight; MET **136.7** apo 17.16 km thr **0.4** dumped
+  leftover **43.9** LF; last flying MET 211.4 alt **226 m** speed
+  **233** horiz **41** heading **301**; splash MET **212.2** sit=splashed
+  biome Shores impact **230 m/s** fuel=0 EC=0. `science skip (no
+  Experiment modules)`. Landing T-013 catastrophic.
+- **Cause:** wait_water set throttle 0.4 whenever apo < hop_apo
+  (hop-splash `_hold_or_cut` throttle 1 — same class T-011). First
+  cutoff was real; apo fell on the coast and the loop relit into
+  descent. Empty-tank 18 km ballistic is still ~230 m/s; the recut
+  spent the leftover that could have braked.
+- **Fix:** Latch hop_apo (and fuel=0): stay cut. Do not recut 0.4/1.0
+  because apo fell. wait_water / wait_splash leftover LF is a suicide
+  burn (TTI ≤12 s, alt ≤8 km, speed >40, throttle 1 zenith). Heading
+  **301** after T-007 target_direction is Stayputnik no wheel (T-016),
+  not this setter. Modules: `hop.py`, `blocks.md`.
+
+## 2026-08-21T16-57-24Z-hop-to-water — heading 090 is target_direction not roll 0
+
+- **When:** 2026-08-21 letsgrok `python main.py hop-to-water`
+  (`2026-08-21T16-57-24Z-hop-to-water`; 16-33-22Z same class). Hangar
+  east-fin. F-013 mysteryGoo GooExperiment start unlocked on_craft;
+  TELEMETRY Stayputnik host. Bank 13.26 unchanged. Do not Hangar.
+- **Symptom:** exit 2 `ABORT not recoverable`. Light vertical, slew
+  0.4 after left_pad, pitch 25° east and hold through burnout all
+  logged. kind=state heading **never holds 090**: pad **299**, MET 4
+  throttle 0.4 heading **299** horiz 4.6, then tumble 144/273/301…,
+  five ±15° fly-throughs, burnout MET~62.8 fuel=0 heading **99** then
+  **322**, lithobrake MET **89.64** alt 70.5 heading **299** horiz
+  **14.5** flying recoverable=no q=0. apo max **3.66 km**, horiz max
+  **85.6**. Never splashed. sci **+0**.
+- **Cause:** `_steer_east` set `target_pitch` + `target_heading=90` +
+  `target_roll=0` while still near vertical. kRPC: heading/roll are
+  ill-defined at pitch 90; `target_roll=0` with default up (zenith)
+  commands a roll Stayputnik cannot provide (no wheel, stability
+  LOCKED). Gimbal is pitch/yaw. The 090 command was issued; the
+  vehicle tumbled instead of tilting east.
+- **Fix:** After left_pad, point east with surface
+  `target_direction` (x=up y=north z=east) while slewing pitch 90→65.
+  Leave `target_roll` unset (NaN) so AP damps roll rate. Still do not
+  slam 65 at light. Still hold through burnout. Modules: `hop.py`,
+  `blocks.md`.
+
+## 2026-08-21T19-43-18Z-hop-splash — splash dwell at EC=0 is not abort
+
+- **When:** hop-splash Hangar t7-splash vertical. jsonl heading 18.6 horiz 62.4 pitch 13.0 aoa 0 biome **Shores**. apo max 98.3 km. MET 487 sit=splashed. EC 2401 at 68 m flying, then 0 on first splashed sample. TELEMETRY started airborne T+1. sci +0.
+- **Symptom:** `science keep kerbalism_TELEMETRY` then `wait science none` `gate ec=0` `ABORT ec=0`. Goo never Toggle. Briefing said dwell may start EC=0.
+- **Cause:** dwell_for_card aborted EC=0 when nothing was recording. Splash wait already skipped that gate (17-46-04Z); dwell did not. 24×Z-100 were not empty — the splashed resource snapshot is 0. Airborne TELEMETRY Toggle spent the FlyingLow sample and the Start PAW before Water.
+- **Fix:** splash dwell returns on EC=0 instead of abort (so TELEMETRY/goo can start). hop-splash does not Toggle while flying. Modules: `pad.py`, `hop.py`.
+
 ## 2026-08-21T18-15-08Z-hop-splash — splash TELEMETRY/goo without Experiment modules
 
 - **When:** hop-splash Hangar t7-splash worked. Vertical loft, splash MET 475 sit=splashed biome **Forest** (not Water). jsonl heading 228 horiz 62 pitch 13 aoa 0. EC=0 fuel=0. leftover wreck recover+Hangar first. sci +0.

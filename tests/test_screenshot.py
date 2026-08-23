@@ -85,6 +85,15 @@ class TestParse(TestCase):
         raw = json.dumps(
             [
                 {"class": "Grok", "title": "Grok", "at": [0, 0], "size": [100, 100]},
+                {
+                    "class": "firefox",
+                    "title": "Kerbal Space Program - Wikipedia",
+                    "at": [0, 0],
+                    "size": [1920, 1080],
+                    "visible": True,
+                    "mapped": True,
+                    "stableId": "firefox-ksp-title",
+                },
                 _client(),
             ]
         )
@@ -237,6 +246,41 @@ class TestCapture(TestCase):
             path, method, _win = capture(out=dest, run=run, rss=None, force=True)
             self.assertEqual(method, "x11-import")
             self.assertEqual(png_size(path), (945, 1030))
+
+    def test_buffer_fail_never_copies_output(self):
+        called: list[str] = []
+
+        def run(argv, **_kw):
+            called.append(" ".join(argv[:3]))
+            if argv[:3] == ["hyprctl", "-j", "clients"]:
+                return _cp(
+                    json.dumps(
+                        [_client(visible=True, size=[1920, 1080], stableId="dead")]
+                    )
+                )
+            if argv[0] == "grim":
+                if "-g" in argv:
+                    self.fail("grim -g must never run")
+                return _cp(returncode=1, stderr="no toplevel")
+            if argv[0] == "magick":
+                return _cp(returncode=1, stderr="no window")
+            if argv[:2] == ["xprop", "-root"]:
+                return _cp("_NET_CLIENT_LIST(WINDOW): window id # 0x1\n")
+            if argv[:2] == ["xprop", "-id"]:
+                return _cp(
+                    'WM_CLASS(STRING) = "firefox", "firefox"\n'
+                    'WM_NAME(STRING) = "Kerbal Space Program"\n'
+                    "_NET_WM_PID(CARDINAL) = 99\n"
+                )
+            if argv[0] == "hyprctl" and argv[1] in {"repl", "eval"}:
+                self.fail("must not focus or grow when buffer capture fails")
+            return _cp(returncode=1)
+
+        with TemporaryDirectory() as tmp:
+            with self.assertRaises(ScreenshotError) as ctx:
+                capture(out=Path(tmp) / "x.png", run=run, rss=None, force=True)
+            self.assertIn("Refusing grim -g", str(ctx.exception))
+            self.assertFalse(any("-g" in c for c in called))
 
     def test_no_window(self):
         def run(argv, **_kw):

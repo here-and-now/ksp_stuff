@@ -1,9 +1,9 @@
-"""Capture the KSP window. No kRPC. Does not steal focus on the happy path.
+"""Capture the KSP window buffer. No kRPC. Never an output-region shot.
 
-``grim -g`` of the Hyprland layout box is not a window shot. When KSP is on
-another workspace, covered, or resized, ``at``/``size`` still exist and
-``visible`` is false — grim copies whatever is on the output (TUI, Firefox).
-Use ``grim -T <stableId>`` (foreign toplevel buffer) first.
+``grim -g`` copies compositor pixels (TUI, Firefox, the other tile). Capture
+is only ``grim -T <stableId>`` (foreign toplevel) or ``magick import -window``
+on the X11 id of that same ``WM_CLASS``. Fail closed if both miss. Do not
+focus, do not switch workspace.
 """
 
 from __future__ import annotations
@@ -81,6 +81,7 @@ POSES: dict[str, dict[str, object]] = {
     },
 }
 KSP_CLASSES = frozenset({"KSP.x86_64", "KSP.x86", "KSP"})
+_WM_CLASS = re.compile(r'WM_CLASS\(STRING\)\s*=\s*"([^"]*)"\s*,\s*"([^"]*)"')
 MIN_PX = 64
 
 Run = Callable[..., subprocess.CompletedProcess]
@@ -174,7 +175,7 @@ def parse_hypr_clients(raw: str) -> list[KspWindow]:
             continue
         cls = str(c.get("class") or "")
         title = str(c.get("title") or "")
-        if cls not in KSP_CLASSES and "Kerbal Space Program" not in title:
+        if cls not in KSP_CLASSES:
             continue
         at = c.get("at") or [0, 0]
         size = c.get("size") or [0, 0]
@@ -388,6 +389,16 @@ def _focus_addr(run: Run, addr: str) -> bool:
     return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
 
 
+def _x11_ksp_class(text: str) -> str | None:
+    m = _WM_CLASS.search(text)
+    if m is None:
+        return None
+    for token in (m.group(1), m.group(2)):
+        if token in KSP_CLASSES:
+            return token
+    return None
+
+
 def _x11_scan(run: Run) -> list[KspWindow]:
     found: list[KspWindow] = []
     for display in _displays():
@@ -402,13 +413,15 @@ def _x11_scan(run: Run) -> list[KspWindow]:
                 env=env,
             )
             text = (info.stdout if info is not None else "") or ""
-            if "KSP.x86_64" not in text and "Kerbal Space Program" not in text:
+            cls = _x11_ksp_class(text)
+            if cls is None:
                 continue
             pid_m = re.search(r"_NET_WM_PID\(CARDINAL\)\s*=\s*(\d+)", text)
+            name_m = re.search(r'WM_NAME\(STRING\)\s*=\s*"([^"]*)"', text)
             found.append(
                 KspWindow(
-                    class_name="KSP.x86_64",
-                    title="Kerbal Space Program",
+                    class_name=cls,
+                    title=name_m.group(1) if name_m else "",
                     stable_id="",
                     address=wid,
                     pid=int(pid_m.group(1)) if pid_m else 0,
@@ -449,7 +462,7 @@ def _x11_window_id(run: Run, display: str, pid: int | None) -> str | None:
     if root is None or root.returncode != 0:
         return None
     ids = re.findall(r"0x[0-9a-fA-F]+", root.stdout or "")
-    class_hit: str | None = None
+    class_hits: list[str] = []
     for wid in ids:
         info = _try_run(
             run,
@@ -457,22 +470,25 @@ def _x11_window_id(run: Run, display: str, pid: int | None) -> str | None:
             env=env,
         )
         text = (info.stdout if info is not None else "") or ""
-        if "KSP.x86_64" not in text and "Kerbal Space Program" not in text:
+        if _x11_ksp_class(text) is None:
             continue
         if pid and re.search(rf"_NET_WM_PID\(CARDINAL\)\s*=\s*{pid}\b", text):
             return wid
-        if class_hit is None:
-            class_hit = wid
-    return class_hit
+        class_hits.append(wid)
+    if pid:
+        return None
+    if len(class_hits) == 1:
+        return class_hits[0]
+    return None
 
 
 def _x11_import(run: Run, window: KspWindow, dest: Path) -> bool:
+    """X11 pixmap of this KSP window. Not a Hyprland address, not the output."""
     if not window.xwayland:
         return False
     dest.parent.mkdir(parents=True, exist_ok=True)
     for display in _displays():
-        wid = window.address if window.address.startswith("0x") and not window.stable_id else None
-        wid = wid or _x11_window_id(run, display, window.pid or None)
+        wid = _x11_window_id(run, display, window.pid or None)
         if not wid:
             continue
         env = {**os.environ, "DISPLAY": display}
@@ -482,63 +498,6 @@ def _x11_import(run: Run, window: KspWindow, dest: Path) -> bool:
         if dest.exists() and dest.name not in PRESERVE:
             dest.unlink()
     return False
-
-
-def _hypr_focus(run: Run, selector: str) -> bool:
-    lua = (
-        f'local w=hl.get_window("{selector}"); '
-        "if w==nil then return \"missing\" end; "
-        "hl.dsp.focus(w); return \"ok\""
-    )
-    r = _try_run(run, ["hyprctl", "repl", lua])
-    return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
-
-
-def _grim_geometry(run: Run, window: KspWindow, dest: Path) -> bool:
-    x, y = window.at
-    w, h = window.size
-    if w < MIN_PX or h < MIN_PX:
-        return False
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    r = _try_run(run, ["grim", "-g", f"{x},{y} {w}x{h}", str(dest)])
-    if r is None or r.returncode != 0 or not _ok_png(dest):
-        if dest.exists() and dest.name not in PRESERVE:
-            dest.unlink()
-        return False
-    return True
-
-
-def _focus_then_grim(run: Run, window: KspWindow, dest: Path) -> bool:
-    """Last resort. Only copies output pixels if the window is actually shown."""
-    prev = ""
-    active = _try_run(run, ["hyprctl", "-j", "activewindow"])
-    if active is not None and active.returncode == 0 and active.stdout:
-        try:
-            prev = str(json.loads(active.stdout).get("address") or "")
-        except json.JSONDecodeError:
-            prev = ""
-    selector = (
-        f"class:{window.class_name}" if window.class_name else f"address:{window.address}"
-    )
-    _hypr_focus(run, selector)
-    shown: KspWindow | None = None
-    deadline = time.monotonic() + 2.0
-    while time.monotonic() < deadline:
-        try:
-            cur = choose_window(_hypr_windows(run), None)
-        except ScreenshotError:
-            time.sleep(0.05)
-            continue
-        if cur.visible and cur.mapped:
-            shown = cur
-            break
-        time.sleep(0.05)
-    ok = False
-    if shown is not None:
-        ok = _grim_geometry(run, shown, dest)
-    if prev and prev != window.address:
-        _hypr_focus(run, f"address:{prev}")
-    return ok
 
 
 def _resize_relative(run: Run, window: KspWindow, dx: int, dy: int) -> bool:
@@ -807,19 +766,15 @@ def _capture_body(
             mon=mon,
         )
         return dest, method, window
-    if _grim_toplevel(run, window, dest):
-        return dest, "grim-toplevel", window
-    if _x11_import(run, window, dest):
-        return dest, "x11-import", window
-    if window.visible and _grim_geometry(run, window, dest):
-        return dest, "grim-geometry", window
-    if _focus_then_grim(run, window, dest):
-        return dest, "grim-focus", window
+    how = _take_buffer(run, window, dest)
+    if how:
+        return dest, how, window
     raise ScreenshotError(
-        "KSP window found but capture failed "
+        "KSP window found but window-buffer capture failed "
         f"(visible={window.visible} xwayland={window.xwayland} "
         f"stableId={window.stable_id or '-'}). "
-        "Need grim -T (Hyprland stableId) or magick import on the X11 id."
+        "Need grim -T (Hyprland stableId) or magick import on the X11 id. "
+        "Refusing grim -g (output pixels)."
     )
 
 
@@ -1079,7 +1034,17 @@ def mission_event(
     space_center: object | None = None,
     session: object | None = None,
 ) -> Path | None:
-    """Named beat. ``beauty=True`` hides HUD (F2) and may pose the camera."""
+    """Named beat. ``beauty=True`` hides HUD (F2) and may pose the camera.
+
+    Grim is wall-clock. Pin physics 1× first or MET races during the shot.
+    """
+    if session is not None:
+        try:
+            from hangar import run_physics
+
+            run_physics(session)
+        except Exception:
+            pass
     try:
         return mission_shots().event(
             name,

@@ -83,16 +83,18 @@ python main.py screenshot --name <stem>   # screenshots/<stem>.png
 python main.py screenshot --full          # monitor-size shot, then restore tile
 ```
 
-`screenshot.py` finds `class=KSP.x86_64` (title fallback), prefers the
-RSS pid if two copies run, then:
+`screenshot.py` finds `class=KSP.x86_64` only (no title match — a
+Firefox tab named Kerbal is not KSP), prefers the RSS pid if two
+copies run, then **window buffers only**:
 
 1. `grim -T <hyprland stableId>` — foreign toplevel buffer. Works
    occluded / inactive workspace / XWayland. Does **not** focus or
    switch workspace.
-2. `magick import -window` on the X11 id (`WM_CLASS=KSP.x86_64` via
-   `xprop`, `DISPLAY=:1` on this Hyprland).
-3. Last resort: Hyprland 0.56 `hl.dsp.focus` + wait until `visible`,
-   then `grim -g` **only if shown**, restore previous window.
+2. `magick import -window` on the X11 id (`WM_CLASS` in
+   `KSP.x86_64` / `KSP.x86` / `KSP`, pid match when known).
+
+No `grim -g`. No focus-then-geometry. If both buffers miss, fail
+closed — do not copy the output.
 
 `grim -T` does **not** need focus, the active workspace, or the same
 monitor as the TUI. `--full` only grows a *small* tile. If KSP is
@@ -567,7 +569,8 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 - **2026-08-20** — Hyprland screenshot: `grim -g` of KSP `at`/`size`
   captured the covering Grok TUI while `visible=false`. Live capture is
   `grim -T <stableId>` (`python main.py screenshot`). X11
-  `magick import -window` also works on this XWayland client.
+  `magick import -window` also works on this XWayland client. No
+  geometry / focus fallback — fail closed (2026-08-23).
 - **2026-08-20** — kRPC `Module` from `parts.modules_with_name` is a new
   proxy vs `part.modules`; `id()` does not dedupe. Kerbalism `Toggle` starts
   and stops. `start_experiments` keys on (part name, experiment_id) (L-043).

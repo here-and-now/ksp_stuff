@@ -68,6 +68,10 @@ def _md_image_targets(path: Path) -> list[str]:
         raw = m.group(1).strip().split()[0]
         if raw:
             out.append(raw)
+    for m in re.finditer(r'<img\s[^>]*src="([^"]+)"', text, flags=re.I):
+        raw = m.group(1).strip()
+        if raw:
+            out.append(raw)
     return out
 
 
@@ -89,11 +93,17 @@ class TestPressDesk(unittest.TestCase):
         heads = re.findall(r"^## .+", text, flags=re.M)
         self.assertTrue(heads)
         self.assertEqual(heads[-1], "## Agent checkout")
+        what = text.index("## What this is")
         hist = text.index("## History (so far)")
+        world = text.index("## The world")
         checkout = text.index("## Agent checkout")
+        self.assertLess(what, hist)
+        self.assertLess(hist, world)
         self.assertGreater(checkout, hist)
         self.assertIn("python main.py world", text[checkout:])
         self.assertIn("python main.py tech", text[checkout:])
+        self.assertIn("```mermaid", text)
+        self.assertNotIn("readme-banner", text)
 
     def test_press_images_resolve(self):
         files = [Path("README.md"), *sorted(Path("docs/press").glob("*.md"))]

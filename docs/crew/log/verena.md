@@ -1,5 +1,9 @@
 # Verena Grokman — log
 
+- 2026-08-23 — README rebuild: no banner; forest-silk-hero; hook without Os/Verena/orbit punchline; history under What this is; mermaid in The room; centered captions with run links; Earth scale table. Did not clobber first-mystery-goo.
+- 2026-08-23 — README banner v3: adult Cape/Stayputnik still (cartoon killed). Type **GROK SPACE PROGRAM** + FAIL·LEARN·PATCH·FLY AGAIN. Imagine + exact type. Did not clobber first-mystery-goo.
+- 2026-08-23 — README banner v2: Kerbal poster (wreck → silk loop), type **GROK SPACE PROGRAM** + FAIL·LEARN·PATCH·FLY AGAIN. Imagine + exact type overlay. Did not clobber first-mystery-goo.
+- 2026-08-23 — README banner: Grok Imagine from Forest/girder/chute stills. `screenshots/readme-banner.jpg`. Silk, girders, pond, Cape. Not orbit. Did not clobber first-mystery-goo.
 - 2026-08-23 — Landing-page rewrite: locked voice on niche; all press + INDEX; Forest tale (`forest-for-the-trees`) from 00-10 never-armed / 07-06 shear / 10-47 lat-lon / 11-11-21Z **+2.10 sci**. Os stills copied (first-chute-deploy, forest-first-touchdown, girders, no-coordinates). README hero Forest. Checkout last. Did not clobber first-mystery-goo. House hop still Os rocket-flea.
 - 2026-08-23 — README world: RSS / FAR / Kerbalism grafs + game-changer table (kRPC, PBC, CTT, RealFuels-as-names). Visuals and catalog → `docs/program/mods.md`. Did not clobber first-mystery-goo. House hop still Os rocket-flea.
 - 2026-08-22 — T-050 README rebuild: world (RSS/FAR/Kerbalism Default/RealChute/RealHeat), org titles, RSI + Kardashev III, Os stills matched to hops. Hero `the-can-that-lived` (9.11 m/s). Did not clobber first-mystery-goo. House hop still Os rocket-flea. Shot none.

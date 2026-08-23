@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500" role="img" aria-label="House Grokman loop">
+  <rect width="900" height="500" rx="14" fill="#1b1f2a"/>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 1 L10 5 L0 9 z" fill="#c5c0b4"/>
+    </marker>
+  </defs>
+
+  <g fill="none" stroke="#c5c0b4" stroke-width="1.6" marker-end="url(#ah)">
+    <path d="M450 68 V98"/>
+    <path d="M540 42 H680"/>
+    <path d="M345 124 H125 V208"/>
+    <path d="M400 150 H335 V208"/>
+    <path d="M555 124 H700 V208"/>
+    <path d="M210 236 H250"/>
+    <path d="M420 236 H610"/>
+    <path d="M700 264 V288 H450 V310"/>
+    <path d="M365 350 H265 V414"/>
+    <path d="M535 350 H635 V414"/>
+  </g>
+
+  <g font-family="ui-sans-serif, system-ui, sans-serif" text-anchor="middle">
+    <rect x="360" y="16" width="180" height="52" rx="8" fill="#252b38" stroke="#c9a227" stroke-width="1.5"/>
+    <text x="450" y="37" fill="#f4ebd0" font-size="15" font-weight="700">Mortimer</text>
+    <text x="450" y="54" fill="#c5c0b4" font-size="11">goal · CTT · RSI</text>
+
+    <rect x="680" y="16" width="170" height="52" rx="8" fill="#252b38" stroke="#6e8b74" stroke-width="1.5"/>
+    <text x="765" y="37" fill="#f4ebd0" font-size="15" font-weight="700">Verena</text>
+    <text x="765" y="54" fill="#c5c0b4" font-size="11">this page</text>
+
+    <rect x="345" y="98" width="210" height="52" rx="8" fill="#252b38" stroke="#c9a227" stroke-width="1.5"/>
+    <text x="450" y="119" fill="#f4ebd0" font-size="15" font-weight="700">Hank</text>
+    <text x="450" y="136" fill="#c5c0b4" font-size="11">tickets · who is hired</text>
+
+    <rect x="40" y="208" width="170" height="56" rx="8" fill="#252b38" stroke="#6e8b74" stroke-width="1.5"/>
+    <text x="125" y="231" fill="#f4ebd0" font-size="15" font-weight="700">Gus</text>
+    <text x="125" y="248" fill="#c5c0b4" font-size="11">.craft · capable</text>
+
+    <rect x="250" y="208" width="170" height="56" rx="8" fill="#252b38" stroke="#6e8b74" stroke-width="1.5"/>
+    <text x="335" y="231" fill="#f4ebd0" font-size="15" font-weight="700">Linus</text>
+    <text x="335" y="248" fill="#c5c0b4" font-size="11">science · bind</text>
+
+    <rect x="610" y="208" width="180" height="56" rx="8" fill="#252b38" stroke="#c9a227" stroke-width="1.5"/>
+    <text x="700" y="231" fill="#f4ebd0" font-size="15" font-weight="700">Gene</text>
+    <text x="700" y="248" fill="#c5c0b4" font-size="11">stamps go</text>
+
+    <rect x="365" y="310" width="170" height="56" rx="8" fill="#252b38" stroke="#c9a227" stroke-width="1.5"/>
+    <text x="450" y="333" fill="#f4ebd0" font-size="15" font-weight="700">Jeb</text>
+    <text x="450" y="350" fill="#c5c0b4" font-size="11">flies the cli</text>
+
+    <rect x="190" y="414" width="150" height="52" rx="8" fill="#252b38" stroke="#6e8b74" stroke-width="1.5"/>
+    <text x="265" y="435" fill="#f4ebd0" font-size="15" font-weight="700">Lars</text>
+    <text x="265" y="452" fill="#c5c0b4" font-size="11">how it flies</text>
+
+    <rect x="560" y="414" width="150" height="52" rx="8" fill="#252b38" stroke="#6e8b74" stroke-width="1.5"/>
+    <text x="635" y="435" fill="#f4ebd0" font-size="15" font-weight="700">Wernher</text>
+    <text x="635" y="452" fill="#c5c0b4" font-size="11">how we see</text>
+  </g>
+
+  <g fill="#e8c36a" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" text-anchor="middle">
+    <text x="125" y="196">hires</text>
+    <text x="335" y="196">hires</text>
+    <text x="640" y="196">hires</text>
+    <text x="230" y="272">capable</text>
+    <text x="515" y="272">bind</text>
+    <text x="590" y="280">go</text>
+    <text x="290" y="346">miss</text>
+    <text x="610" y="346">kRPC trap</text>
+  </g>
+</svg>

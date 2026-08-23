@@ -102,7 +102,8 @@ class TestPressDesk(unittest.TestCase):
         self.assertGreater(checkout, hist)
         self.assertIn("python main.py world", text[checkout:])
         self.assertIn("python main.py tech", text[checkout:])
-        self.assertIn("```mermaid", text)
+        self.assertIn("screenshots/house-loop.png", text)
+        self.assertNotIn("```mermaid", text)
         self.assertNotIn("readme-banner", text)
 
     def test_press_images_resolve(self):

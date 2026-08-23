@@ -146,30 +146,10 @@ Not RO. `~/Games/KSP-RO` is parked.
 
 Every chair is an **agent**. Call them by name and title.
 
-```mermaid
-flowchart TB
-  Hank["Hank COO — tickets, who is hired"]
-  Gene["Gene — stamps go"]
-  Jeb["Jeb — flies the cli"]
-  Gus["Gus — crafts"]
-  Linus["Linus — science"]
-  Lars["Lars — how it flies"]
-  Wernher["Wernher — how we see"]
-  Mortimer["Mortimer CEO — goal, CTT"]
-  Verena["Verena — this page"]
-  Hank -->|"hires"| Gene
-  Hank -->|"hires"| Gus
-  Hank -->|"hires"| Linus
-  Gus -->|"capable"| Linus
-  Linus -->|"bind"| Gene
-  Gene -->|"go"| Jeb
-  Jeb -->|"tape"| Hank
-  Jeb -->|"miss"| Lars
-  Jeb -->|"kRPC trap"| Wernher
-  Lars -->|"patch, fly again"| Jeb
-  Mortimer --- Hank
-  Verena --- Hank
-```
+<p align="center">
+  <img src="screenshots/house-loop.png" alt="House loop: Hank hires, Gene stamps go, Jeb flies, miss to Lars or Wernher">
+</p>
+<p align="center"><em>Tickets in. go: or the pad sits. One writer on the stick. Miss, patch, fly again.</em></p>
 
 Tickets in, `ops next` out. Gene stamps `go:` or the pad sits.
 Jebediah is the only writer on the stick. Miss: Lars patches the

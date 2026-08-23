@@ -41,8 +41,28 @@ docs/program/desk.md
 docs/program/helm-card.json
 docs/program/sit-card.json
 
-# Cadence stills. Press heroes (first-mystery-goo, rocket-flea, …) stay tracked.
-screenshots/runs/
-screenshots/stuck-*.png
-screenshots/ksp-*.png
-screenshots/hop-wait-recover.png
+# Screenshots: ignore the dump. Only press/README heroes are tracked.
+# New Verena still: `git add -f screenshots/<slug>.png` then add a
+# `!screenshots/<slug>.png` line here.
+screenshots/*
+!screenshots/asteroid-xrl-564.png
+!screenshots/chute-over-ksc-no-coordinates.png
+!screenshots/earth-limb.png
+!screenshots/far-glide.png
+!screenshots/first-chute-deploy.png
+!screenshots/first-five-recover.png
+!screenshots/first-hop.png
+!screenshots/first-mystery-goo.png
+!screenshots/flea-after-geiger.png
+!screenshots/flea-sunset.png
+!screenshots/fly-towards-forest.png
+!screenshots/forest-first-touchdown.png
+!screenshots/forest-silk-hero.jpg
+!screenshots/girders-on-everything.png
+!screenshots/house-loop.png
+!screenshots/house-loop.svg
+!screenshots/rocket-flea.png
+!screenshots/science-above-15.png
+!screenshots/success-splashdown.png
+!screenshots/suicide-plume.png
+!screenshots/the-can-that-lived.png

@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-23 — T-312 closed: hop.py helpers name sit (lofted/burning/landed/splashed), not a stamp. `_pad_boosting` gates recover. Docs are the rule. Do not Hangar.
 - 2026-08-23 — T-311 closed: 18-34-22Z hop-down MET 1.8 throttle 0 fuel 1054 alt 101. hop.py `_burning` / coast-phys wait for real loft; do not hop-down a full tank at pad alt. Do not Hangar.
 - 2026-08-23 — T-309 closed: 18-10-57Z splash skipped T-288. hop.py matches live sit to land-or-splash leftover (not first-seq SrfLanded); airborne goo does not skip ground start. Do not Hangar.
 - 2026-08-23 — T-308 closed: hop coast factory 3× physics after burnout until chute (rails 0, never WarpTo). 1× burn/chute/recover/shear. Uplink `phys-warp 2|3|4` / `no_warp` persists on desk. Do not Hangar.

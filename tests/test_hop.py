@@ -57,6 +57,7 @@ from hop import (
     _burning,
     _hold_or_cut,
     _lofted,
+    _pad_boosting,
     _steer_east,
     _want_coast_phys,
     _steer_inland,
@@ -541,6 +542,45 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertTrue(_burning(vessel, snap, lofted=True))
         dry = self._snap(fuel=0.0, alt=101.0)
         self.assertFalse(_burning(vessel, dry, lofted=False))
+
+    def test_pad_boosting_is_lit_not_lofted(self):
+        """Pad sit: still burning, not lofted — not recover, not coast."""
+        self.assertTrue(
+            _pad_boosting(
+                lit=True,
+                left_pad=True,
+                lofted=False,
+                down=False,
+                burning=True,
+            )
+        )
+        self.assertFalse(
+            _pad_boosting(
+                lit=True,
+                left_pad=True,
+                lofted=True,
+                down=False,
+                burning=True,
+            )
+        )
+        self.assertFalse(
+            _pad_boosting(
+                lit=True,
+                left_pad=True,
+                lofted=False,
+                down=True,
+                burning=True,
+            )
+        )
+        self.assertFalse(
+            _pad_boosting(
+                lit=True,
+                left_pad=True,
+                lofted=False,
+                down=False,
+                burning=False,
+            )
+        )
 
     def test_factory_coast_sets_3x_rails_0(self):
         sc = self._sc()

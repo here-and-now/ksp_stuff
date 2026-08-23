@@ -1,70 +1,32 @@
-"""Sounding block.
+"""Sounding block: shared helpers + parked hop-to-water / hop-splash.
+
+Factory inland (``python main.py hop``) lives in hop_factory. Coast
+physics 2–4× lives in physics_warp. Sit/biome Toggle lives in science.
+
+Helpers name sit: lofted, burning, landed, splashed, recoverable.
+Burnout is fuel gone, or throttle 0 after loft well above the pad.
+A 0-tick on the pad with a full tank is still burning — do not hop-down
+that pad boost. Hold AP through burnout; do not rewrite fuel=0.
 
 Hangar the seated / VAB ``.craft`` uncrewed (Hammer sit:
 ``kspstuff-hop-hammer-pbc``; not pad/geiger). Light, start the
 Kerbalism **bound** flying card once airborne (FlyingLow) or at alt ≥50 km
-(FlyingHigh — not T+1 FlyingLow crumbs; one Toggle, not a second at
-the lid). Unbound leftover FlyingHigh tickets are not a 50 km lid.
-After ``left_pad``, yaw **10°** off zenith heading **270**, then point
-**25°** inland (Cape Shores is capped; 08-29-36Z heading 299 horiz 0
-never left it; 7.5° stayed Shores; **16-47-21Z** slam 65 held pitch
-and flew pad **297**). Not hop-to-water **090**. Hold AP through
-burnout (``set_direction_and_up`` north; engage once off zenith, not
-at 90; do not rewrite the same vector — 09-59-28Z MET20 297/66 then
-burn 336/39). If the hold flips past the horizon or yaws east while
-**burning** (10-17-18Z 38/−10; 10-33-44Z 353/26), re-point and write
-``target_direction`` — do not skip on ``engaged``; do not re-engage;
-do not rewrite the cutoff dump (16-47-21Z envelope 15/16 at fuel=0).
-Dwell through the ballistic (coast physics 2–4× only after **real**
-burnout: fuel gone, or throttle 0 after loft well above the pad —
-**18-34-22Z** a 0-tick at 101 m with a full tank is not cutoff; do
-not hop-down that pad boost). Recover the HD when
-landed/splashed/wreck-recoverable — or when EC=0 and the HD already
-has data. Leftover with HardDrive files or no Experiment modules
-recovers without a second start — only if this process did **not**
-light. A hop this process lit starts the flying card only when the bound
-sit/biome can pay (sample rem=0 or SrfLanded bound does not Toggle
-T+1 FlyingLow — 17-23-34Z). Down starts bound SrfLanded **or**
-SrfSplashed leftover that matches **live** sit (18-10-57Z splash
-skipped T-288 because first-seq SrfLanded pinned TELEMETRY). Airborne
-goo does not skip that ground start. Stop running slots before recover so
-leftover rem banks. One Toggle per id; thermo on 2HOT, not Stayputnik.
-Idle TELEMETRY remaining=0 is not leftover HD. A leftover already in
-tracking while the scene is SpaceCenter is switched into Flight — do
-not Hangar a second stack. Unmatched leftover (PRELAUNCH Flea vs
-seated Valiant) and matching wreck leftover abort ``ksc leftover``
-(Hank ``recover-probe`` / ``ksc``) — do not ``recover()`` or
-``go_space_center`` here. Empty pad still Hangars. Leftover is the live kRPC pool, not save
-FLYING debris. Disk PRELAUNCH is a lie — gate live sit/fuel/
-recoverable before light (14-52-25Z flying MET 13.8 fuel=0). A dead
-kRPC GUID (``No such vessel``) is not leftover — scan tracking; empty
-Tracking Hangars. ``… Debris`` is not a hop leftover. Ballistic peri
-is negative. Mk16 / RealChute: ``arm_chutes`` once airborne, then
-``deploy_chutes`` on the descent below 2 km (vz < 0; not extra-stage;
-not at apo — 08-54-41Z 13 km dumped inland horiz; 09-59-28Z 5 km
-still dumped to Shores). kRPC armed is not
-a canopy — 06-53-50Z stayed armed to 154 m/s. No chute on the hang:
-wait wreck-recoverable.
-FAR q after burnout that sheds tank/engine (07-06-08Z mass
-1283→270, broken=null) is ``hop shear`` hold+abort — do not dwell to
-crash UI. ``parts_n``/mass 0 after loft is kRPC death, not shear
-(07-21-05Z). If still ``recoverable``, recover; else abort ``ksc leftover``
-(Hank ``recover-probe --space-center``) — do not spin
-``hop recover sit=flying recoverable=no`` + ``gate ec=0`` then
-``go_space_center`` (07-50-48Z Flight Results overlay is not leftover-clean).
-MET-still + q=0 while flying is down now (lithobrake / crash UI) —
-do not wait the wreck-dialog wall. Low flying (≤250 m) calls
-``vessel.recover()`` only when ``recoverable`` — last living hop
-banked at ~199 m. Frozen MET + flying + q=0 + low alt is Catastrophic
-Flight Results: log sit/recoverable/met/alt/q, ``recover()`` if
-``recoverable``, else abort ``ksc leftover`` (not Space Center — that
-respawns the pad / lies leftover). Frozen MET + ``sit=landed`` + ``recoverable=no``
-is the same dialog (13-58-18Z Vessel is destroyed, no Recover):
-do not unpause-spam ``recover()``. Living land is
-``recoverable=yes``. Dismiss is not a living recover; post-dismiss
-``pre_launch`` recoverable is not recovery@EarthFlew. 1 Hz recover
-line names sit + recoverable. Splash goo is not a hop start. Do not
-light a pad geiger.
+(FlyingHigh — one Toggle). After ``left_pad``, yaw **10°** off zenith
+heading **270**, then **25°** inland. Point ``set_direction_and_up``
+north up; engage once off zenith; re-point if flipped while burning;
+write ``target_direction``. Recover when landed/splashed/wreck-recoverable
+— or EC=0 with HD data. Unmatched leftover aborts ``ksc leftover``.
+Empty pad still Hangars. Disk PRELAUNCH is a lie — gate live sit/fuel/
+recoverable before light.
+
+Parked ``hop-to-water``: slew 25° east after pad at throttle 0.4; latch
+``hop_apo``; leftover LF is a suicide burn near Water (watch TTI ≤12,
+light at 3.5, kill until vz ≥ −10, hover TWR≈1 until coast ≤ Goo 12).
+Parked ``hop-splash``: vertical, no east slew, ``hop_apo`` stays cut,
+wait ``sit=splashed``. Mk16: ``arm_chutes`` airborne, ``deploy_chutes``
+on descent below 2 km (vz < 0). FAR mass/parts drop beyond propellant
+is shear. parts/mass 0 after loft is kRPC death. Frozen MET + flying
+q=0 is crash UI.
 """
 
 from __future__ import annotations
@@ -120,24 +82,19 @@ FLYING_HIGH_M = 140_000.0
 _HOP_PREFIX = "kspstuff-hop-"
 DEFAULT_HOP_S = 600.0
 _AIRBORNE_M = 250.0
-# RealChute Mk16 auto-deploy did not fire while kRPC said armed
-# (06-53-50Z 206 m / 154 m/s). Force Deploy on descent below 2 km.
-# 08-54-41Z apo_cut / any vz<0 opened at 13 km (horiz 16→0, Shores).
-# 09-59-28Z 5 km still dumped horiz (apex 69 → last 0, Shores).
-# 07-21-05Z 10 km→412 m: 2 km still fires.
+# Mk16: arm airborne, Deploy on descent below 2 km (vz < 0). Not at apo.
+# kRPC armed is not a canopy.
 CHUTE_DEPLOY_ALT_M = 2_000.0
 _CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
 # kRPC physics_warp_factor: 0=1×, 1=2×, 2=3×, 3=4×. Never rails. Never WarpTo.
 HOP_COAST_PHYS_RATE = COAST_RATE
-# 07-06-08Z: mass 1283→270 at burnout (pitch −58, q 16 kPa), broken=null.
-# Fuel drain was ~2.3 kg/unit; 40% mass with no matching fuel is tank/engine.
+# Structure gone, not propellant: mass drop ≥40% well beyond fuel burned.
 SHEAR_MASS_FRAC = 0.40
 SHEAR_MASS_SLACK_KG = 80.0
 SHEAR_FUEL_KG = 2.5
 _PULSE_S = 1.0
 # Splash still counts pulses. Hop recover uses wall seconds (20 Hz
-# near-ground Close in 0.25 s — 23-35-40Z flying 72.6 m q=0 before
-# sit=landed; 23-14-23Z landed recovered).
+# near-ground Close can land in a fraction of a cruise pulse).
 _STILL_N = 5
 _STILL_S = 5.0
 _UNPAUSE_SETTLE_S = 2.0
@@ -148,89 +105,31 @@ _PAD_SIT = frozenset({"pre_launch", "prelaunch"})
 _LIGHT_SIT = frozenset({"pre_launch", "prelaunch", "landed"})
 _ABORT_UPLINK = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
 _UPLINK_SKIP = frozenset({"science", "stage"})
-# Valiant gimbal (MM 7.5°) is authority, not the hop angle.
-# 7.5° from vertical stayed Shores (14-33-29Z apo 12.1 km).
-# 25° is the path. Do not slam target_pitch=65 at light: east-bare
-# 16-11-58Z apo 5.3 km, joints shear, no decoupler, TWR 5, Stayputnik
-# has no wheel. Slew after left_pad at WATER_SLEW_THROTTLE. Hold AP
-# through burnout; Stayputnik has no torque after cutoff.
-# 16-57-24Z: target_pitch/heading + target_roll=0 near vertical is
-# ill-defined (kRPC); heading stayed pad 299 and tumbled. Point with
-# set_direction_and_up (surface dir, north up). 09-28-59Z: re-engage
-# every pulse restarts 0.6 soft-start; target_direction still Eulers
-# vs zenith up (Jeb 209/3, apex 298/86). Engage once. 09-44-59Z:
-# 10 °/s on telem.pulse_s (0.05 s while throttled) engaged at ~90;
-# heading undefined; burnout 340/43 then weathercock pad 299.
-# 10-17-18Z: skip-if-engaged left the 65/270 hold; AP yanked
-# burnout 38/−10 (east, past horizon). 10-33-44Z: 90° heading
-# gate missed 353/26 (83° from 270); set_direction_and_up while
-# engaged did not write target_direction. Re-point if pitch
-# drops or heading yaws off 270 **while burning**; write
-# target_direction. 16-47-21Z: slam 65 held pitch, heading 297
-# (pad, 27° — 45° gate skips rewrite). Envelope burn 15/16 is
-# first fuel=0 sample, not the hold. Yaw 10° off zenith first.
+# After left_pad: yaw 10° off zenith heading 270, then 25° inland.
+# Do not slam 65 at light. Point set_direction_and_up (north up).
+# Engage once off zenith. Re-point if flipped while burning; write
+# target_direction. Do not rewrite fuel=0. Not hop-to-water 090.
+# Hop-to-water slews 25° east after pad at throttle 0.4.
 WATER_PITCH_FROM_UP = 25.0
 WATER_PITCH_UP = 90.0
 WATER_PITCH_DEG = WATER_PITCH_UP - WATER_PITCH_FROM_UP
 WATER_PITCH_SLEW_DPS = 10.0
 WATER_SLEW_THROTTLE = 0.4
 WATER_HEADING_DEG = 90.0
-# 08-29-36Z: pad heading 299 horiz 0.01 pitch 90, last horiz 0,
-# biomes=[Shores]. T-068 Forest FlyingLow unpaid. 7.5° from vertical
-# stayed Shores (14-33-29Z). 25° is the path. 090 is Water. 18-15-08Z
-# Forest tape was heading 228 on a 90 km splash miss — hop FlyingLow
-# points west (270) inland, not pad 299 along the cape. Slew after
-# left_pad; do not slam 65 at light. Stiff survived q~37 kPa vertical
-# — keep throttle 1 (0.4 is hop-to-water TWR 5 shear).
 INLAND_HEADING_DEG = 270.0
 INLAND_PITCH_FROM_UP = WATER_PITCH_FROM_UP
 INLAND_PITCH_DEG = WATER_PITCH_UP - INLAND_PITCH_FROM_UP
-# 16-47-21Z: command 65/270 at left_pad engaged from zenith; pitch
-# held 65, heading stayed pad 297 (fins lock by MET 25 q~32 kPa).
-# 10° off zenith defines heading at low q; 7.5° as *path* stayed
-# Shores (14-33-29Z). Then the 25° path. MET 6 still low-q.
 INLAND_YAW_FROM_UP = 10.0
 INLAND_YAW_PITCH_DEG = WATER_PITCH_UP - INLAND_YAW_FROM_UP
 INLAND_HEADING_CAPTURE_DEG = 20.0
 INLAND_YAW_MET_S = 6.0
-# Surface frame x=up y=north z=east. North is off the 270/090 flight
-# path, so roll stays defined through the vertical (kRPC 0.6).
+# Surface frame x=up y=north z=east. North is off the 270/090 path,
+# so roll stays defined through the vertical (kRPC 0.6).
 SURFACE_NORTH = (0.0, 1.0, 0.0)
-# 22-03-59Z: hop_apo cut then recut 0.4 when apo fell (MET 81.8 thr 0,
-# MET 84 thr 0.4; MET 136 dumped leftover 43.9 LF). Splash 230 m/s.
-# hop-splash 18-15-08Z same class: thr 1 at apo<80 km (~37 km).
-# Latch the cut. Leftover LF is a suicide burn near Water, not apo-1.
-# 22-57-36Z: TTI-rise recut at vz −72 then leftover loft. TTI arms;
-# vz cut ends the burn. TTI rising is not a recut.
-# 23-15-52Z: armed tti 18; MET 173 vz −65 still thr 1, MET 174 vz +24
-# (jsonl hz 0.57). Relight crumbs lofted. Arm TTI ≤12. Hold until vz
-# ≥ −20 is *seen* (do not predict-cut).
-# 08-44-32Z: predictor recut MET 178 thr 0 vz −29.9 leftover 60.6,
-# then relight MET 187 lofted to vz +85; splash 119 m/s Shores,
-# Experiment modules gone. Telem.read ~1.5 s; 20 Hz gate while armed.
-# 09-11-59Z: seen-vz recut MET 179.2 vz −19.3 leftover 57, then
-# TTI≤12 pulse-relight to crumbs; splash 82 m/s Shores, modules gone.
-# Hold cut after vz ≥ −20. Crumbs (fuel ≤2) are not a relight.
-# Leftover after a vz-cut is spent — not a second slam — **only if**
-# vacuum coast impact is already ≤ GooExperiment crashTolerance 12
-# (09-11 recut alt 1766 vz −19 coasts ~186 m/s; 08-44 recut vz −30
-# leftover 60 lofted, splash 119). TTI-wait pulses are the slam;
-# leftover 57 is hover-slam (relight when vz drops below the cut,
-# do not wait TTI≤12). Chutes LOCKED. Do not loft past the cut.
-# 09-48-51Z: hop_apo latch MET 79.2 leftover 110.1. Suicide 1 Hz
-# never thr=1 (20 Hz gate between Telem.read). Recut leftover 50.4
-# vz −7.7 then TTI≤12 pulses to crumbs; splash 92.5 m/s Shores.
-# Gate returned False before suicide_armed latched, so hover never
-# ran. TTI≤12 at 2.4 km dumped ~60 LF. Arm/watch at TTI≤12; first
-# throttle 1 at live TTI ≤ ~3.5 (Valiant ~5 s to kill 220 m/s).
-# 10-11-27Z: hop_apo MET 79.4 leftover 108.7. MET 176.1 thr 0
-# leftover 108.7 vz −223 alt 2415; 20 Hz gate MET 176→209 dumped
-# 108.7→crumbs 1.98 (jsonl never thr=1). MET 208.9 thr 0 fuel 1.98
-# speed 9.2 vz −9.4 alt 195, then rebuild splash 62.3 m/s Shores.
-# vz-cut at −10 while coast > Goo 12 is a rebuild, not spent. After
-# the kill, leftover TWR>>1: throttle 1 dumps crumbs / lofts. Hover
-# at TWR≈1 until coast ≤12. Latch armed on first braking even if
-# the gate cuts. Keep Hank ksc leftover abort.
+# Latch hop_apo. Leftover LF is a suicide burn near Water, not apo-1 recut.
+# Watch TTI ≤12; first throttle 1 at live TTI ≤ ~3.5. Kill until vz ≥ −10
+# is seen. Hover TWR≈1 until coast ≤ Goo 12. TTI rising is not recut.
+# Crumbs (fuel ≤2) are not a relight. spent only if coast impact ≤12.
 GOO_CRASH_MS = 12.0
 WATER_BRAKE_G = 9.81
 WATER_BRAKE_TTI_S = 12.0
@@ -260,8 +159,7 @@ def _nap_dt(
 ) -> float:
     """``pulse=None`` (production) follows telem.pulse_s; tests pass 1.0.
 
-    Suicide TTI rises as speed dies (23-15-52Z alt 3.4 km tti 53) — do
-    not fall back to cruise while leftover LF is still on.
+    Braking stays 20 Hz while leftover LF is still on.
     """
     if requested is not None:
         return requested
@@ -502,7 +400,7 @@ def _snap_biome(snap: object, vessel: object | None) -> str:
 
 
 def _live_sit(vessel: object, snap: object) -> str:
-    """kRPC vessel sit wins over tape/snap (18-10-57Z recover splashed, tape landed)."""
+    """kRPC vessel sit wins over snap (land vs splash)."""
     sit = _vessel_sit(vessel)
     if sit not in {"", "?"}:
         return sit
@@ -851,12 +749,10 @@ def stack_sheared(
     prev_parts: int | None,
     parts_n: int | None,
 ) -> str | None:
-    """Structure gone, not propellant. 07-06-08Z 1283→270 at burnout.
+    """Structure gone, not propellant.
 
     ``parts_n`` drop wins. Mass drop ≥40% of previous and well beyond
-    fuel burned is the tank/engine FAR shear (broken stays null).
-    07-21-05Z stiff kept 36 parts through apex; parts 36→0 / mass 0 at
-    412 m is kRPC vessel-death at impact, not boost shear.
+    fuel burned is tank/engine shear. parts/mass 0 is kRPC death, not shear.
     """
     if parts_n is not None and parts_n <= 0:
         return None
@@ -889,7 +785,7 @@ def stack_sheared(
 
 
 def _vessel_gone(snap: object, vessel: object | None) -> bool:
-    """kRPC death at impact: parts/mass 0 (07-21-05Z, 07-50-48Z). Not shear."""
+    """kRPC death at impact: parts/mass 0. Not shear."""
     n = _parts_n(vessel)
     if n is not None and n <= 0:
         return True
@@ -963,13 +859,9 @@ def _experiment_count(vessel: object | None) -> int:
 def leftover_wreck_before_light(snap: object, vessel: object | None) -> bool:
     """Refuse light on a leftover wreck. Disk PRELAUNCH is not this gate.
 
-    Pad leftover may light only with fuel. Flying leftover with fuel=0
-    and q=0 / not moving is the 14-52-25Z crash UI — do not start
-    science. Living ballistic (speed/q) with empty tanks is not this.
-    hop-splash ``sit=splashed`` leftover is not this (18-03-12Z starts
-    the splash card). hop-to-water matching leftover already down
-    recovers then Hangars (22-45-26Z) — do not treat that recover as
-    the sortie.
+    Pad leftover may light only with fuel. Dry flying q=0 / still is
+    crash UI — do not start science. Living ballistic empty tanks is
+    not this. ``sit=splashed`` leftover may start the splash card.
     """
     sit = str(getattr(snap, "situation", "") or "").lower()
     if not sit or sit == "?":
@@ -1033,10 +925,8 @@ def _vessel_fuel(vessel: object | None) -> float:
 def leftover_should_hangar_new(vessel: object | None) -> bool:
     """Matching leftover is last loft's wreck. Abort ksc leftover.
 
-    22-45-26Z sit=splashed MET 212 fuel=0 recoverable recovered and
-    Hangared inside hop — that is Hank's recover-probe now. hop-splash
-    18-03 still starts splash on living Water leftover. Unrecoverable
-    flying wreck is crash UI (14-52-25Z) — do not Hangar over it.
+    Living Water leftover is not Hangar-new. Unrecoverable flying wreck
+    is crash UI — do not Hangar over it.
     """
     if vessel is None or not _recoverable(vessel):
         return False
@@ -1142,7 +1032,7 @@ def _keep_hd(
     """Recover leftover HD: files on the drive, or Experiment modules gone.
 
     Not for a hop this process just lit — empty modules after light is a
-    wreck, not leftover skip (22-33-17Z wait recoverable).
+    wreck, not leftover skip.
     """
     if _hd_ready(vessel, ids, started):
         return True
@@ -1293,7 +1183,7 @@ def _snap_alt(snap: object) -> float:
 
 
 def _low_flying(snap: object) -> bool:
-    """Near-ground flying — last living hop recovered ~199 m, still Flight."""
+    """Near-ground flying — recover in Flight when recoverable."""
     sit = str(getattr(snap, "situation", "") or "")
     if sit not in _AIR:
         return False
@@ -1302,7 +1192,7 @@ def _low_flying(snap: object) -> bool:
 
 
 def _lofted(snap: object) -> bool:
-    """Alt well above the pad. sit=flying at 101 m is still pad boost."""
+    """Alt well above the pad. sit=flying at pad alt is still pad boost."""
     alt = _snap_alt(snap)
     return math.isfinite(alt) and alt > _AIRBORNE_M
 
@@ -1312,8 +1202,7 @@ def _crash_ui(
 ) -> bool:
     """Catastrophic Flight Results: MET frozen, no Recover button.
 
-    Flying q=0 low (12-04-13Z) or landed/splashed recoverable=no
-    (13-58-18Z Vessel is destroyed).
+    Flying q=0 low, or landed/splashed recoverable=no.
     """
     if not frozen:
         return False
@@ -1373,11 +1262,10 @@ def _leave_crash_ui(
 ) -> None:
     """Leave Catastrophic Flight Results.
 
-    Total wreck: do not go_space_center (07-50-48Z overlay is not KSC).
+    Total wreck: do not go_space_center (overlay is not leftover-clean).
     Caller aborts ``ksc leftover``. Never revert_to_launch.
     """
     if total_wreck:
-        # 07-50-48Z: Space Center over Flight Results is not leftover-clean.
         _say("hop crash ui total wreck — ksc leftover (not space_center)", on_log)
         return
     try:
@@ -1461,9 +1349,8 @@ def _light(vessel: object, on_log: Callable[[str], None] | None) -> None:
 def _burning(vessel: object, snap: object, *, lofted: bool = False) -> bool:
     """Throttle on with fuel. A 0-tick after light is not cutoff.
 
-    Real burnout is fuel gone, or throttle 0 after a real loft
-    (18-34-22Z MET 1.8 throttle 0 fuel 1054 alt 101). Stayputnik
-    cannot steer after cutoff.
+    Real burnout is fuel gone, or throttle 0 after a real loft.
+    Stayputnik cannot steer after cutoff.
     """
     try:
         fuel = float(getattr(snap, "fuel", float("nan")))
@@ -1478,6 +1365,18 @@ def _burning(vessel: object, snap: object, *, lofted: bool = False) -> bool:
     if throttle > 0.05:
         return True
     return not lofted
+
+
+def _pad_boosting(
+    *,
+    lit: bool,
+    left_pad: bool,
+    lofted: bool,
+    down: bool,
+    burning: bool,
+) -> bool:
+    """Lit, left pad, still burning, not lofted — not recover, not coast."""
+    return bool(lit and left_pad and not lofted and not down and burning)
 
 
 def _want_coast_phys(
@@ -1529,7 +1428,7 @@ def _apply_hop_physics(
 def _slew_pitch(cmd: float, dt: float, target: float) -> tuple[float, bool]:
     """Step target_pitch from vertical toward ``target``.
 
-    True while still slewing. 16-11-58Z slammed 65 at TWR 5.
+    True while still slewing. Do not slam 65 at light.
     """
     step = WATER_PITCH_SLEW_DPS * (dt if dt > 0.0 else _PULSE_S)
     nxt = cmd - step
@@ -1574,11 +1473,8 @@ def inland_direction(pitch_deg: float) -> tuple[float, float, float]:
 def _point_surface(ap: object, direction: tuple[float, float, float], *, why: str) -> None:
     """Nose along ``direction``, north up — defined through vertical.
 
-    ``target_direction`` is pitch/heading vs default zenith up (09-16-24Z
-    / 09-28-59Z logged the vector, flew pad). ``target_roll=0`` vs zenith
-    tumbled 16-57-24Z. kRPC 0.6 ``set_direction_and_up`` is the hold.
-    10-33-44Z: returning after ``set_direction_and_up`` skipped the
-    ``target_direction`` write, so T-162 re-point never stuck.
+    Write ``target_direction`` then ``set_direction_and_up``. Do not set
+    ``target_roll=0`` vs zenith (heading undefined near vertical).
     """
     if hasattr(ap, "target_direction"):
         ap.target_direction = direction
@@ -1598,7 +1494,7 @@ def _point_surface(ap: object, direction: tuple[float, float, float], *, why: st
 
 
 def _pitch_has_heading(pitch: float) -> bool:
-    """Heading exists 10° off zenith. 09-44-59Z engaged at ~90, burn 340."""
+    """Heading exists 10° off zenith. Do not engage at ~90."""
     try:
         p = float(pitch)
     except (TypeError, ValueError):
@@ -1619,7 +1515,7 @@ def _inland_cmd_pitch(
     flown_heading: float,
     met: float,
 ) -> tuple[float, bool]:
-    """80/270 yaw kick, then 65/270. 16-47-21Z slam 65 flew pad 297."""
+    """Yaw 10° off zenith until heading captured, then 25° inland."""
     if yawed:
         return INLAND_PITCH_DEG, True
     captured = (
@@ -1644,13 +1540,10 @@ def _hold_flipped(
     *,
     burning: bool = True,
 ) -> bool:
-    """True when the 65/270 hold is not on the vessel.
+    """True when the commanded hold is not on the vessel.
 
-    10-17-18Z: past horizon / east of north (38/−10).
-    10-33-44Z: 353/26 is 83° from 270 — 90° gate never fired.
-    09-59-28Z: 297/66 (~27°) is pad weathercock; do not rewrite.
-    16-47-21Z: cutoff 15/16 is fuel=0, not a missed hold — do not
-    rewrite after burnout (T-161 20 Hz yaw).
+    Pitch past horizon, or heading error >45° while burning. After
+    burnout, heading weathercock is not a rewrite.
     """
     if math.isfinite(flown_pitch):
         p = float(flown_pitch)
@@ -1689,18 +1582,9 @@ def _steer_heading(
 ) -> None:
     """Point surface heading. Caller slews pitch; hold through burnout.
 
-    Do not set target_pitch/heading near vertical — 16-57-24Z heading
-    never 090; 09-16-24Z logged inland 270 then apex 297 pitch 87
-    horiz 22 (pad 299). Do not write ``engaged=True`` every pulse
-    (09-28-59Z: 0.6 Engage restarts PID / 0.5 s fade; Jeb 209/3 at
-    cutoff, tape apex 298/86). Do not engage near zenith
-    (09-44-59Z MET 19 300/89, burnout 340/43). Hold is
-    ``set_direction_and_up``. Do not rewrite the same vector every
-    pulse (09-59-28Z MET20 297/66 horiz 99, burnout 336/39). Do not
-    treat ``engaged`` as the latch — 10-17-18Z kept 65/270 on AP
-    and flew 38/−10. 10-33-44Z 353/26 never tripped 90°. Re-point
-    if flipped while burning and write ``target_direction``; do not
-    re-engage; do not rewrite the cutoff dump (16-47-21Z 15/16).
+    ``set_direction_and_up`` north up. Engage once off zenith. Latch
+    the vector; re-point if flipped while burning; write
+    ``target_direction``. Do not re-engage. Do not rewrite fuel=0.
     """
     try:
         vessel.control.sas = False
@@ -1792,9 +1676,7 @@ def _release_steer(vessel: object) -> None:
 def _coast_impact_ms(snap: object) -> float:
     """Vacuum splash speed from this alt/vz. Drag only helps.
 
-    GooExperiment crashTolerance is 12. 09-11 recut 1766 m vz −19.3
-    coasts ~186 m/s; 08-44 recut 1682 m vz −30 leftover loft splash
-    119. Horiz is Stayputnik (no wheel) — this is v_vert impact.
+    GooExperiment crashTolerance is 12. This is v_vert impact.
     """
     alt = _snap_alt(snap)
     vz = _snap_v_vert(snap)
@@ -1866,7 +1748,7 @@ def _brake_accel(vessel: object | None) -> float:
 
 
 def _hover_throttle(vessel: object | None) -> float:
-    """TWR≈1 after the kill. Throttle 1 at leftover TWR dumps crumbs (10-11)."""
+    """TWR≈1 after the kill. Throttle 1 at leftover TWR dumps crumbs."""
     a = _brake_accel(vessel)
     if math.isfinite(a) and a > WATER_BRAKE_G * 1.05:
         return min(1.0, max(0.08, WATER_BRAKE_G / a))
@@ -1874,10 +1756,9 @@ def _hover_throttle(vessel: object | None) -> float:
 
 
 def _suicide_light(snap: object, vessel: object | None = None) -> bool:
-    """First throttle 1: live TTI ≤ ~3.5, not the TTI≤12 watch (09-48).
+    """First throttle 1: live TTI ≤ ~3.5, not the TTI≤12 watch.
 
-    When mass/thrust is bound, light at burn-distance + pad so the
-    kill does not end 195 m up dry (10-11 TTI 3.5 leftover crumbs).
+    When mass/thrust is bound, light at burn-distance + pad.
     """
     tti = _suicide_tti(snap)
     if not math.isfinite(tti):
@@ -1922,10 +1803,8 @@ def _suicide_now(
     """Arm leftover-LF watch. TTI / alt cap enter the gate, not throttle 1.
 
     ``spent`` is leftover after a vz-cut whose coast is already ≤12
-    (or crumbs). 09-11 leftover 57 at 1766 m vz −19 is not spent.
-    ``hover`` is after the first arm: stay on until coast ≤12 — do not
-    wait TTI≤12 (09-48 leftover 50) and do not drop out at vz ≥ −10
-    (10-11 crumbs at 195 m vz −9 then splash 62). First throttle 1 is
+    (or crumbs). ``hover`` stays on until coast ≤12 — do not wait
+    TTI≤12 and do not drop out at vz ≥ −10. First throttle 1 is
     ``_suicide_light``.
     """
     if spent:
@@ -1958,11 +1837,8 @@ def _suicide_hold(
 ) -> bool:
     """Kill band: vz still faster than −10. TTI rising is not a cut.
 
-    Do **not** predict-cut (08-44-32Z recut at vz −29.9 leftover 60,
-    then loft). ``prev_vz`` / ``dt`` are ignored — 20 Hz gate. After
-    vz ≥ −10 leftover is spent only if coast ≤12; else TWR≈1 hover
-    (10-11-27Z crumbs at 195 m vz −9 rebuilt to 62). Throttle 1 is
-    the kill; hold is not the spent latch.
+    Do not predict-cut. ``prev_vz`` / ``dt`` are ignored — 20 Hz gate.
+    After vz ≥ −10 leftover is spent only if coast ≤12; else TWR≈1 hover.
     """
     del prev_vz, dt
     fuel = _snap_fuel(snap)
@@ -1987,7 +1863,7 @@ def _suicide_throttle(
     lit: bool = False,
     hover: bool = False,
 ) -> float:
-    """0 / TWR≈1 / 1. Do not dump leftover at vz-cut (10-11 108→crumbs)."""
+    """0 / TWR≈1 / 1. Do not dump leftover at vz-cut."""
     if not _suicide_need(snap):
         return 0.0
     armed = lit or hover or _suicide_light(snap, vessel)
@@ -2074,15 +1950,12 @@ def _suicide_gate(
     budget_s: float = WATER_BRAKE_GATE_S,
     hover: bool = False,
 ) -> bool:
-    """20 Hz leftover-LF. Telem.read is ~1.5 s (08-44-32Z) — 1 Hz never
-    saw 09-48 / 10-11 thr=1 because this loop sits between samples.
+    """20 Hz leftover-LF. Telem.read is ~1.5 s — 1 Hz never saw throttle 1.
 
     Watch at TTI≤12; throttle 1 only at live TTI ≤ 3.5 or TWR burn
-    distance (10-11). After vz ≥ −10, TWR≈1 hover until coast ≤ Goo
-    12 — do not cut (rebuild 9→62) and do not slam 1 (crumbs/loft).
-    Live vz ~0 while the snap is still sinking means the stream is
-    not bound — do not false-cut. Returns whether the brake is still
-    on.
+    distance. After vz ≥ −10, TWR≈1 hover until coast ≤ Goo 12 — do
+    not cut and do not slam 1. Live vz ~0 while the snap is still
+    sinking means the stream is not bound — do not false-cut.
     """
     dt = 1.0 / WATER_BRAKE_HZ
     t_end = now() + budget_s
@@ -2190,20 +2063,16 @@ def _hold_or_cut(
     spent: bool = False,
     hover: bool = False,
 ) -> tuple[bool, bool]:
-    """Throttle 0 at hop_apo and stay cut. Recut on apo fall is T-011.
+    """Throttle 0 at hop_apo and stay cut.
 
     An SRB ignores the cut — do not OffPlan the coast. ``hold`` is 1
     except hop-to-water slew (0.4). After latch, leftover LF is a
-    suicide burn iff ``brake`` (wait water/splash) — not 0.4/1.0 into
-    the drink at apo-1 (22-03-59Z, 18-15-08Z). Once armed, watch until
-    live TTI ≤ 3.5 then kill at 1; after vz ≥ −10 hover TWR≈1 until
-    coast ≤12 (10-11-27Z dump 108→crumbs then 9→62). TTI rising is
-    not a recut (22-57-36Z). Do not dump leftover at TTI≤12 / 2.4 km
-    (09-48-51Z leftover 50 then 92 m/s). Do not predict-cut at vz −30
-    (08-44-32Z leftover 60 loft). Crumb relight (fuel ≤2) is not a
-    second slam. ``spent`` holds that cut only when coast impact ≤ Goo
-    12. ``hover`` keeps leftover until coast ≤12 — not a TTI wait
-    and not a vz −10 drop-out.
+    suicide burn iff ``brake`` (wait water/splash). Once armed, watch
+    until live TTI ≤ 3.5 then kill at 1; after vz ≥ −10 hover TWR≈1
+    until coast ≤12. TTI rising is not a recut. Crumb relight
+    (fuel ≤2) is not a second slam. ``spent`` holds that cut only
+    when coast impact ≤ Goo 12. ``hover`` keeps leftover until coast
+    ≤12 — not a TTI wait and not a vz −10 drop-out.
     """
     try:
         control = vessel.control
@@ -2265,66 +2134,27 @@ def run_on_vessel(
 ) -> str:
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars.
 
-    Leftover (did not light) with drive files or no Experiment modules
-    skips a fresh start. A hop this process lit always starts the card
-    — FlyingLow once airborne, FlyingHigh only at alt ≥50 km (do not
-    Toggle FlyingLow then again at the lid). MET-still + q=0 flying is
-    down now. Low flying (≤250 m) calls recover() only when recoverable
-    after a real loft — not a full tank at 101 m.
-    Frozen MET + flying + q=0 + low alt is crash UI: recover() if
-    recoverable, else abort ksc leftover (do not go_space_center).
-    Frozen landed recoverable=no is the same: do not unpause-spam.
-    parts/mass 0 rec=no is total wreck now — not recover+ec=0 spin.
-    Living land is recoverable=yes. Post-dismiss pre_launch is not the HD.
     Factory inland pulse lives in hop_factory (no water/splash flags).
-    Matching leftover: live sit/fuel/recoverable before light — disk
-    PRELAUNCH is a lie. Dry wreck leftover does not start the card.
-    Default hop: light vertical, then yaw **10°** off zenith heading
-    270 and point **25°** inland after ``left_pad`` (08-29-36Z heading
-    299 horiz 0 stayed Shores; 7.5° stayed Shores; 09-16-24Z logged
-    270 flew 297/87; 09-44-59Z 10 °/s on 0.05 s dt engaged at zenith,
-    burnout 340; 09-59-28Z MET20 297/66 then burnout 336 — do not
-    rewrite the same vector; 10-17-18Z ``engaged`` latch flew 38/−10
-    — re-point if flipped while burning; 10-33-44Z 353/26 missed the
-    90° gate — write ``target_direction``; 16-47-21Z slam 65 held
-    pitch, flew pad 297, envelope cutoff 15/16 — yaw kick first,
-    do not rewrite fuel=0).
-    Do **not** glue 090. Hold AP with ``set_direction_and_up`` (surface
-    dir, north up) through burnout. Engage once at 65/270. Not Eulers.
+    This loop is parked hop-to-water / hop-splash only.
 
-    ``wait_water``: light vertical, then **slew** 25° east after
-    ``left_pad`` at ``WATER_SLEW_THROTTLE`` (16-11-58Z slam
-    ``target_pitch=65`` at TWR 5 sheared the bare stack). Point
-    with ``set_direction_and_up`` heading 90 north-up — do **not**
-    ``target_roll=0`` vs zenith (16-57-24Z heading stayed pad
-    299 and tumbled; never 090). **Hold AP through burnout** (do
-    not disengage at fuel=0 — 15-26-18Z weathervaned HDG 304).
-    **Latch** hop_apo — do not recut 0.4 when apo falls (22-03-59Z
-    MET 84 / 136 leftover dump, splash 230 m/s). Leftover LF is a
-    suicide burn near Water: **watch** TTI ≤12, **light** at live TTI
-    ≤ 3.5 (or TWR burn-distance), **kill until vz ≥ −10**, then
-    **TWR≈1 hover until coast ≤12** (Goo crashTolerance 12; 20 Hz
-    gate — 08-44-32Z predict-cut at −30 leftover loft; 09-48-51Z
-    TTI≤12 dump leftover 50 then 92 m/s; **10-11-27Z** MET 176→209
-    dump 108→crumbs then vz −9.4 at 195 m rebuilt 62). TTI rising is
-    not a recut (22-57-36Z). Crumb leftover is not a relight. Latch
-    suicide **armed** on first braking even if the gate cuts (09-48
-    hover never lit). Leftover after the vz-cut is spent **only if**
-    coast impact ≤12 — else hover, do not TTI≤12 pulse and do not
-    drop throttle at vz ≥ −10 (09-11 leftover 57 splash 82; 09-48
-    leftover 50 splash 92; 10-11 crumbs splash 62).
-    Do not
-    recover on first flying
-    recoverable, abort landed only after ``left_pad`` (pad
-    sit=landed is hop-off, same as ``_down(flown)``), splash dwell
-    after ``sit=splashed``.
+    Leftover (did not light) with drive files or no Experiment modules
+    skips a fresh start. A hop this process lit starts the flying card
+    when the bound sit can pay — FlyingLow once airborne, FlyingHigh
+    only at alt ≥50 km. MET-still + q=0 flying is down now. Low flying
+    (≤250 m) recover() only when recoverable after a real loft — not a
+    full tank at pad alt. Frozen MET + flying + q=0 + low alt is crash
+    UI. parts/mass 0 rec=no is total wreck — abort ksc leftover.
+    Matching leftover: live sit/fuel/recoverable before light.
 
-    ``wait_splash``: light **vertical**, **no** east slew (16-57-24Z
-    heading never 090), **no** flying Toggle, ``hop_apo`` 80 km is a
-    real cut **and stays cut** (18-15-08Z thr 1 at apo<80 km),
-    leftover LF suicide near Water (watch TTI ≤12, light at 3.5, kill
-    then TWR≈1 hover until coast ≤12 — 10-11), wait
-    ``sit=splashed``, then splash dwell.
+    ``wait_water``: slew 25° east after ``left_pad`` at
+    ``WATER_SLEW_THROTTLE``; latch hop_apo; leftover LF suicide near
+    Water (watch TTI ≤12, light at 3.5, kill until vz ≥ −10, hover
+    until coast ≤12). Do not recover on first flying recoverable;
+    abort landed only after ``left_pad``; splash dwell after
+    ``sit=splashed``.
+
+    ``wait_splash``: vertical, no east slew, no flying Toggle;
+    ``hop_apo`` stays cut; same suicide; wait ``sit=splashed``.
     """
     if not wait_water and not wait_splash:
         from hop_factory import run_factory_vessel
@@ -2553,7 +2383,7 @@ def run_on_vessel(
             for reason in gates(snap):
                 if reason == "empty tanks" or reason.startswith("atmosphere"):
                     continue
-                # Telem flags 36→0 at impact as shear (07-21-05Z). Hop
+                # Telem flags parts/mass 0 at impact as shear. Hop
                 # stack_sheared decides; empty vessel is crash UI / gone.
                 if reason == "shear":
                     continue
@@ -2941,9 +2771,13 @@ def run_on_vessel(
 
             # First recoverable after flight — situation may stay flying.
             # hop-to-water / hop-splash must not recover here (kills splash dwell).
-            # 18-34-22Z: do not hop-down a full tank at 101 m (pad boost).
-            pad_boost = (
-                did_light and left_pad and not lofted and not down and burning_now
+            # Do not hop-down a full tank at pad alt (still burning, not lofted).
+            pad_boost = _pad_boosting(
+                lit=did_light,
+                left_pad=left_pad,
+                lofted=lofted,
+                down=down,
+                burning=burning_now,
             )
             if waiting_lid or wait_down or hold_card:
                 pass
@@ -3001,8 +2835,12 @@ def run_on_vessel(
                 call("abort_pad", ctx)
                 raise MissionAbort("no science (FlyingHigh lid)")
 
-            pad_boost = (
-                did_light and left_pad and not lofted and not down and burning_now
+            pad_boost = _pad_boosting(
+                lit=did_light,
+                left_pad=left_pad,
+                lofted=lofted,
+                down=down,
+                burning=burning_now,
             )
             if waiting_lid or wait_down or hold_card:
                 pass
@@ -3048,7 +2886,7 @@ def run_on_vessel(
                         nap(_nap_dt(pulse, snap, braking=braking))
                         continue
                     # Already unpaused, still no Recover — total wreck.
-                    # Do not go_space_center (07-50-48Z overlay is not KSC).
+                    # Do not go_space_center (overlay is not leftover-clean).
                     _leave_crash_ui(session, on_log, total_wreck=True)
                     abort_ksc_leftover(vessel, on_log, why="total wreck")
                 elif sit_v in _AIR:
@@ -3197,16 +3035,14 @@ def run_hop_to_water(
 ) -> str:
     """Valiant: Hangar seated craft, slew 25° east after pad, wait splash.
 
-    After left_pad, point set_direction_and_up heading 90 north-up; do not
-    set target_roll=0 (16-57-24Z pad 299 tumble, never 090). Do not
-    slam AP 65 at light (16-11-58Z TWR 5 sheared east-bare).
-    Flea still refuses (no Hangar). Unmatched leftover and matching
-    wreck leftover abort ``ksc leftover`` (Hank recover-probe). Matching
-    living leftover enters Flight. Gate live sit/fuel/recoverable before
-    light — disk PRELAUNCH is a lie (14-52-25Z wreck flying MET 13.8
-    fuel=0). Do not recover on first flying recoverable. Pad
-    sit=landed after light is hop-off — abort landed only after
-    left_pad (Shores). Empty pad Hangars seated craft.
+    After left_pad, point set_direction_and_up heading 90 north-up; do
+    not set target_roll=0. Do not slam AP 65 at light. Flea still
+    refuses (no Hangar). Unmatched leftover and matching wreck leftover
+    abort ``ksc leftover``. Matching living leftover enters Flight.
+    Gate live sit/fuel/recoverable before light — disk PRELAUNCH is a
+    lie. Do not recover on first flying recoverable. Pad sit=landed
+    after light is hop-off — abort landed only after left_pad. Empty
+    pad Hangars seated craft.
     """
     from session import SessionError
 

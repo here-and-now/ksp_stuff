@@ -463,8 +463,12 @@ def run_factory_vessel(
 
             hold_card = H._hold_ground_card(vessel, started, ids, snap)
 
-            pad_boost = (
-                did_light and left_pad and not lofted and not down and burning_now
+            pad_boost = H._pad_boosting(
+                lit=did_light,
+                left_pad=left_pad,
+                lofted=lofted,
+                down=down,
+                burning=burning_now,
             )
             if waiting_lid or hold_card:
                 pass
@@ -521,8 +525,12 @@ def run_factory_vessel(
                 call("abort_pad", ctx)
                 raise MissionAbort("no science (FlyingHigh lid)")
 
-            pad_boost = (
-                did_light and left_pad and not lofted and not down and burning_now
+            pad_boost = H._pad_boosting(
+                lit=did_light,
+                left_pad=left_pad,
+                lofted=lofted,
+                down=down,
+                burning=burning_now,
             )
             if waiting_lid or hold_card:
                 pass

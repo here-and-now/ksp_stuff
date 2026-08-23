@@ -21,6 +21,20 @@ python main.py pad
 
 ---
 
+## T-312 — hop helpers name sit, not a stamp
+
+- **When:** Os 2026-08-23: hop.py hub reasonably good. T-312. f013 2HOT
+  start unlocked=yes on_craft=yes. Do not Hangar. Disk only.
+- **Symptom:** hop.py module docstring and helper docs were a scrapbook
+  of stamps. Pad-boost recover skip was an inline boolean in both pulses.
+- **Cause:** A stamp was the law. Forest today / Grasslands tomorrow
+  needs sit-named helpers, not a ticket if.
+- **Fix:** Helpers name lofted / burning / landed / splashed.
+  `_pad_boosting` is lit, not lofted, still burning — not recover, not
+  coast. Docstrings are the rule. Tests keep the stamps. Factory inland
+  stays hop_factory; parked water/splash stay hop.py.
+- **Modules:** `hop.py`.
+
 ## 2026-08-23T18-34-22Z-hop — false burnout coast 3× then hop-down
 
 - **When:** 2026-08-23 letsgrok `python main.py hop`

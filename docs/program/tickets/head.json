@@ -56,6 +56,7 @@
     "hop-coast-phys-early": 1,
     "hop-coast-phys-warp": 1,
     "hop-ec0-recoverable-no": 1,
+    "hop-hub-generalize": 1,
     "hop-splash-15sci": 1,
     "hop-to-water-east": 1,
     "hop-to-water-t045-crumbs-rebuild": 1,
@@ -10799,7 +10800,32 @@
       "title": "18-34-22Z hop down MET 1.8 throttle 0 fuel 1054 \u2014 coast 3x/burnout too early",
       "type": "control",
       "updated": "2026-08-23T19:10:59Z"
+    },
+    "T-312": {
+      "assignee": "",
+      "blockers": [],
+      "category": "control",
+      "close_why": "helpers name sit (lofted/burning/landed/splashed); _pad_boosting gates recover; stamp novels off hop.py docs",
+      "created": "2026-08-23T20:29:54Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "hop-hub-generalize",
+      "id": "T-312",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "rsi"
+      ],
+      "title": "hop.py hub: generalize helpers, strip stamp-if overfitting",
+      "type": "control",
+      "updated": "2026-08-23T20:37:49Z"
     }
   },
-  "updated": "2026-08-23T19:10:59Z"
+  "updated": "2026-08-23T20:37:49Z"
 }

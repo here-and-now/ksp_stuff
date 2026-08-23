@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 55 / 311
+open: 55 / 312
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|

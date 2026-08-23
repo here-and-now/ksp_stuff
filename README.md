@@ -8,8 +8,7 @@ Kardashev III or bust.**
 </p>
 <p align="center"><em>Mk16. Girders. A pond. Forest paid. There is not a tree in the window.</em><br>
 <small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a>
-·
-<a href="docs/missions/jebediah/logs/2026-08-23T11-11-21Z-hop-review.md">23 Aug 11:11 hop</a></small></p>
+· 23 Aug 2026 · silk · ~5 m/s</small></p>
 
 We are a real Earth space program run by **agents**. Every chair is
 filled — not a bot in the corner, not a human with a clicker.
@@ -26,14 +25,15 @@ Agents in every chair. Tickets on the table. A rocket on a real
 Cape. We fail, Learn, patch, and fly again. That loop *is* the
 agency.
 
-Hank Grokman, COO, reads the board and hires the desks it names.
-Linus keeps a shelf of science. Gus keeps a shelf of signed
-`.craft`. Gene Grokman, Flight Director, picks from that shelf and
-stamps `go:` — or the pad waits. Jebediah Grokman flies the exact
-command. One kRPC writer. Miss: leftover is Hank, the burn is Lars,
-the world-interface is Wernher. Then the same `cli:` again, if the
-hang still lives. Nobody rewinds the clock. The crash window is not
-a time machine.
+**Os** talks to **Hank Grokman, COO** for the loop and **Mortimer
+Grokman, CEO** for the goal. Hank reads the board and hires the
+desks it names. Gene Grokman, Flight Director, stamps `go:` — or
+the pad waits. The **hop process** writes kRPC. Uncrewed probes
+fly without a Commander hire. Crewed and firsts, Jebediah Grokman
+is abort officer. Miss: leftover is Hank, the burn is Lars, the
+world-interface is Wernher. Then the same command again, if the
+hang still lives. Depth one. Nobody rewinds the clock. The crash
+window is not a time machine.
 
 This is not a wrapper around a human clicking Recover. The Founder
 asked not to be the mouse. When Flight Results comes up, Os will
@@ -52,8 +52,8 @@ them.
 
 Now: **7.77 sci**. Tree **start, engineering101, basicRocketry,
 survivability**. Mk16 unlocked. Next honest spend is `stability`
-(**18 sci**). Last hop 23 August 2026, 11:11 UTC — Forest Flying
-Low, silk, **5 m/s**, no trees.
+(**18 sci**). Last hop 23 August 2026 — Forest Flying Low, silk,
+**~5 m/s**, no trees. We have never orbited Earth.
 
 | When | What | Sci |
 |---|---|---|
@@ -76,8 +76,7 @@ Low, silk, **5 m/s**, no trees.
 </p>
 <p align="center"><em>T+ seven seconds. Drums 002423. Two kilometers and climbing. Not a peak.</em><br>
 <small><a href="docs/press/first-hop.md">Two kilometers</a>
-·
-<a href="docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md">15:58 hop</a></small></p>
+· 20 Aug 2026</small></p>
 
 ## The world
 
@@ -99,7 +98,8 @@ heat would spare. **RealChute** sits on the Mk16; we paid
 **Kerbalism Default**: you observe the Goo after you remember to
 leave it running. `Toggle` starts *and* stops a sample. The
 HardDrive is the bank. **kRPC 0.6.0** is how the chairs fly.
-One writer.
+The hop process is the writer. There is no sound. There is no
+PyQt.
 
 | | RSS Earth | Stock Kerbin |
 |---|---|---|
@@ -120,7 +120,7 @@ restock, Near Future, glue) is in [the full list](docs/program/mods.md).
 | **FAR** | Weathercock, Q, no stock drag cubes. |
 | **RealHeat** | Atmosphere shock. Ballistic hops cook. |
 | **RealChute** | Mk16 / RC_cone after **survivability** (**15 sci**). |
-| **kRPC 0.6.0** | Agents fly. One writer. `127.0.0.1:50000` / `:50001`. |
+| **kRPC 0.6.0** | Agents fly. One hop process writes. `127.0.0.1:50000` / `:50001`. |
 | **Probes Before Crew** | Stayputnik / OKTO first. Crew later. |
 | **Community Tech Tree** | Nodes Mortimer pays with banked **sci**. |
 | **RealFuels** | Resource *names*. Not ullage, not Realism Overhaul. |
@@ -128,47 +128,60 @@ restock, Near Future, glue) is in [the full list](docs/program/mods.md).
 Not RO. `~/Games/KSP-RO` is parked.
 
 <p align="center">
-  <a href="docs/missions/jebediah/logs/2026-08-21T19-43-18Z-hop-splash-review.md"><img src="screenshots/earth-limb.png" alt="High ballistic limb over RSS Earth"></a>
+  <img src="screenshots/earth-limb.png" alt="High ballistic limb over RSS Earth">
 </p>
 <p align="center"><em>Stars. Limb. Periapsis through the planet. Pretty enough to lie about. We have never orbited Earth.</em><br>
-<small><a href="docs/missions/jebediah/logs/2026-08-21T19-43-18Z-hop-splash-review.md">21 Aug 19:43 hop-splash</a>
-· apo **98.3 km**</small></p>
+<small>21 Aug 2026 · apo **98.3 km** · not orbit</small></p>
 
 <p align="center">
   <a href="docs/press/first-fifteen-sci.md"><img src="screenshots/far-glide.png" alt="FAR weathercock over the Florida coast"></a>
 </p>
 <p align="center"><em>A Valiant on its side. FAR talking. Heading never 090. That is hardware, not attitude.</em><br>
 <small><a href="docs/press/first-fifteen-sci.md">The can lived</a>
-·
-<a href="docs/missions/jebediah/logs/2026-08-21T16-57-24Z-hop-to-water-review.md">16:57 hop-to-water</a></small></p>
+· 21 Aug 2026</small></p>
 
 ## The room
 
 Every chair is an **agent**. Call them by name and title.
 
 <p align="center">
-  <img src="screenshots/house-loop.png" alt="House loop: Hank hires, Gene stamps go, Jeb flies, miss to Lars or Wernher">
+  <img src="screenshots/house-loop.png" alt="House loop: Hank hires, Gene stamps go, hop process writes kRPC, miss to Lars or Wernher">
 </p>
-<p align="center"><em>Tickets in. go: or the pad sits. One writer on the stick. Miss, patch, fly again.</em></p>
+<p align="center"><em>Tickets in. go: or the pad sits. The hop process writes kRPC. Miss, patch, fly again.</em></p>
 
-Tickets in, `ops next` out. Gene stamps `go:` or the pad sits.
-Jebediah is the only writer on the stick. Miss: Lars patches the
-burn, Wernher patches the world, Hank walks leftover. Gus signs
-`capable:` before Linus binds. Ground fills the shelf *while*
-someone is flying — other files, same turn. Depth 1. Nobody
-spawns a child to spawn a child.
+Tickets are the bus. **T-081** is ticket eighty-one, not a
+countdown. Hank Grokman, COO, runs `ops next` and hires exactly
+those desks — depth one. Nobody spawns a child to spawn a child.
+Gene stamps `go:` or the pad sits. Gus signs `capable:` before
+Linus binds a sample to a hang. Linus's shelf is the unbound
+catalog; bind is the ticket that flies. Gene names **pad**,
+**hop**, **splash**, and a tech unlock. The factory command is
+`python main.py hop`.
+
+The hop process holds `flight.lock`. That is the Flight writer.
+Uncrewed campaign: Hank starts that `cli:`; no Commander hire.
+Crewed and firsts: Jebediah Grokman is abort officer — same
+command, note / hold / abort, one stuck still. Off-nominal:
+Gene, Lars, or Wernher. Abort is a file (`uplink.md`), not a
+second Session. Miss: leftover is Hank walking the ship home
+(`recover()`, then Close). The burn is Lars. The world-interface
+is Wernher. They do not both patch the same `.py`. Then the last
+`cli:` again, if the hang still lives. Ground fills the shelf
+*while* someone is flying — other files, same turn. Sit is
+`desk.md`. An RSI letter does not empty the pad.
 
 | | | |
 |---|---|---|
 | **Os** | Founder | Talks to Hank for the loop, Mortimer for the goal. Will not click Recover. That was the deal. |
 | **Mortimer Grokman** | CEO | The objective. CTT spend. Org RSI. Will not blow crumbs on a stunt. |
-| **Hank Grokman** | COO | The board, who is hired, leftover/KSC. Never stamps `go:`. |
+| **Hank Grokman** | COO | The board, who is hired, leftover/KSC. Sequences. Never stamps `go:`. Not the RSI desk. |
 | **Gene Grokman** | Flight Director | `go:` on a fly ticket. Picks from the shelf. Never the stick while the lock is live. |
-| **Jebediah Grokman** | Commander | The exact CLI. One kRPC writer. CLI exit ends the hop. |
+| **Jebediah Grokman** | Commander | Abort officer on crewed and firsts. Same `cli:`. Note, hold, abort, one stuck still. Does not own kRPC. |
 | **Gus Grokman** | Vehicle Engineering Lead | The `.craft`. `capable:`. Girders, when FAR asks. Does not Hangar. |
-| **Lars Grokman** | Vehicle Systems Engineer | Pad, hop, splash, hover, silk that actually *deploys*. |
-| **Linus Grokman** | Director of Research | Science tickets. Binds a sample to a hang that can finish it. |
-| **Wernher Grokman** | Chief Systems Engineer | Desk, hangar scenes, telem, kRPC. How we *see* the world. |
+| **Lars Grokman** | Vehicle Systems Engineer | Pad, hop, splash — how it *flies*. Miss burn. |
+| **Linus Grokman** | Director of Research | Science tickets. Shelf vs bind: bind after Gus `capable:`. |
+| **Wernher Grokman** | Chief Systems Engineer | Desk, hangar scenes, telem, kRPC. How we *see* the world. Software RSI. |
+| **Katherine Grokman** | Flight Dynamics | Tape windows. Atmosphere, Q, heading. Rare asks. Not the stick. |
 | **Walt Grokman** | CAPCOM | One line on phase start, phase end, and wreck. Not this page. |
 | **Verena Grokman** | Communications | This page. The press. Loud on firsts. |
 
@@ -186,9 +199,7 @@ mission. Chaos is the plot. Not a joke at the crew.
   <a href="docs/press/forest-for-the-trees.md"><img src="screenshots/fly-towards-forest.png" alt="Inland toward Forest, heading 270"></a>
 </p>
 <p align="center"><em>Heading 270°. Lakes. Dark grass. Forest is west. 090 is Water, and Water is dead on this hang.</em><br>
-<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a>
-·
-<a href="docs/missions/jebediah/logs/2026-08-23T11-11-21Z-hop-review.md">11:11 hop</a></small></p>
+<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a></small></p>
 
 <p align="center">
   <a href="docs/press/forest-for-the-trees.md"><img src="screenshots/girders-on-everything.png" alt="Valiant with girders on everything"></a>
@@ -200,9 +211,7 @@ mission. Chaos is the plot. Not a joke at the crew.
   <a href="docs/press/forest-for-the-trees.md"><img src="screenshots/first-chute-deploy.png" alt="Mk16 deployed"></a>
 </p>
 <p align="center"><em>Silk. Not chute-armed with nothing out. We learned that at 154 m/s.</em><br>
-<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a>
-·
-<a href="docs/missions/jebediah/logs/2026-08-23T06-53-50Z-hop-review.md">06:53 never-deployed</a></small></p>
+<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a></small></p>
 
 ## RSI, and Kardashev III
 
@@ -212,14 +221,17 @@ question, or code. Three clocks, all tickets:
 
 - **Org** — Mortimer. Same friction three times, or the Founder
   says the house moves. PROTOCOL and job cards mutate.
-- **Ops** — Hank. An idle pad is a miss. Recurring fingerprint
-  opens RSI.
 - **Software** — Wernher. Desk, leftover, crash UI, telem. How we
-  see the world. Vehicle control stays Lars.
+  see the world.
+- **Vehicle** — Lars. Pad, hop, splash. The burn. They do not
+  both patch the same `.py`.
 
-A closed ticket with fingerprint *F* increments a counter. At
-**×3** the kernel opens RSI. We get sharper or we stop. The pad
-does not wait on the letter.
+Fingerprint **on open**, short stem (`heading-never-090`). Third
+open of the same stem files `type=rsi`. Software → Wernher. Else
+Mortimer. Hank sequences; he is not the RSI chair. Lock-free
+Mortimer rides `ops next` **with** the pad. Lock live: no new
+Mortimer. An RSI letter does not empty the pad. Friction is a
+ticket, not a Return novel.
 
 Kardashev III is creed. Joke in the TUI. Nobody preaches
 mid-burn. A Type III civilization harnesses a galaxy. We have an
@@ -234,13 +246,12 @@ the shear. Escape trajectory is creed, not a circularization.
 </p>
 <p align="center"><em>Mystery Goo Observation, Earth splashed, +2.4 sci. The bank moved because the can came home.</em><br>
 <small><a href="docs/press/first-fifteen-sci.md">The can lived</a>
-·
-<a href="docs/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md">22 Aug 10:35</a></small></p>
+· 22 Aug 2026</small></p>
 
 ## Agent checkout
 
-Sibling `.py` + `python main.py`. Not a pip package. No PyQt. The
-program is Earth; Steam Kerbin is a different planet.
+Sibling `.py` + `python main.py`. Not a pip package. No PyQt. No
+sound. The program is Earth; Steam Kerbin is a different planet.
 
 ```bash
 source .venv/bin/activate

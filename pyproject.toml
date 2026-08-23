@@ -7,7 +7,6 @@ requires-python = ">=3.11"
 authors = [{ name = "os" }]
 dependencies = [
     "krpc",
-    "numpy",
 ]
 
 # Application checkout, not a package to `pip install`.

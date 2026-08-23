@@ -5,11 +5,13 @@ and client **0.6.0**. FAR / RealChute / RealHeat are **physics mods**,
 not kRPC services. Traps stay in [`docs/agent-notes.md`](../agent-notes.md).
 **Do not write GameData.**
 
-One **writer** per process: `Session.connect` on `127.0.0.1:50000` (RPC)
-and `:50001` (stream). The Commander owns throttle, AP, stage. Disk
-queries (`python main.py world|tech|parts`) never open a client. `status`
-and `python main.py science` (career line) **do** — they are a second
-Session. While `flight.lock` is live, do not run them.
+One **Flight writer**: the `hop`/`pad` pid (`flight.lock`). That process
+owns throttle, AP, stage. Not “Jeb the kerbal.” Uncrewed: parent starts
+`cli:`; Commander hire is `none`. Crewed/firsts: abort officer starts
+the same `cli:` and may uplink. Disk queries (`python main.py
+world|tech|parts`) never open a client. `status` and `python main.py
+science` (career line) **do** — they are a second Session. While
+`flight.lock` is live, do not run them.
 
 There is **no Kerbalism kRPC service**. There is **no FAR kRPC** in
 this client. Science is `MODULE Experiment` via `part.modules`. Bundled

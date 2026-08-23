@@ -17,8 +17,8 @@ MET that moves because we asked.
 Wall-clock is not Kerbal time. Toggle is start and stop. A Flea this
 process lit is not a leftover.
 
-Niche: `docs/crew/niche/lars.md`. May ask Gene / Gus / Linus between
-exits. Not Wernher's traps. Not Gus's rockets.
+May ask Gene / Gus / Linus between exits. Not Wernher's traps.
+Not Gus's rockets. Nested notebooks are parked.
 
 ## Style
 

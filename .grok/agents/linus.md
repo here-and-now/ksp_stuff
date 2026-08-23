@@ -60,5 +60,6 @@ tickets: T-NNN | none
 f013: <instrument tech unlocked on_craft>
 ```
 
-Do not emit `need_*` or `card:`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.
-Paid node: `--type ctt`. Vehicle: `--type vehicle`.
+Do not emit `need_*` or `card:`. Catalog leftovers stay tagged `unbound`.
+This-hop bind is `bound`. Body: `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
+Do not tell another desk in this Return. Paid node: `--type ctt`. Vehicle: `--type vehicle`.

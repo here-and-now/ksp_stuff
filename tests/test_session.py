@@ -38,6 +38,12 @@ class TestServiceNames(unittest.TestCase):
         self.assertEqual(_krpc_service_names(Boom()), ())
 
 
+class TestNoStockMunRequires(unittest.TestCase):
+    def test_session_does_not_require_mechjeb_or_remotetech(self):
+        self.assertFalse(hasattr(Session, "require_mechjeb"))
+        self.assertFalse(hasattr(Session, "require_remotetech"))
+
+
 class TestCloseTimeout(unittest.TestCase):
     def test_close_does_not_block_on_hung_conn(self):
         session = Session()

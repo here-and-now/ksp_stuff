@@ -7,32 +7,8 @@ shims. The board is the source of truth. Seated `plan.md` is a
 delete. `python main.py protocol fly` reads `head.json` **with
 plan+card fallback**.
 
-**Read first:** `docs/program/org-session-audit.md` (full 447 lines).
-That audit is as-is. This file is the construction.
-
----
-
-## 0. What the audit actually showed (full report)
-
-Depth-1 star: unnamed parent sequences every hire. Gene 83 sessions /
-86 log lines in two days (36 `go: yes` / 38 `go: wait`). Jeb 67 CLI
-(23×0, 37×2). Lars 37. Linus 33. Gus 24. Mortimer 10. After **18-15**
-Gene, Lars, and `lessons.md` **stop**; Jeb `note-tech` runs to 19:51;
-**14** reviews stay `_Gene fills this.`; hop-splash keeps Gene’s last
-`go: yes` as a campaign. Dual plans: seated `go: yes` hop-splash vs
-shim `go: wait` `need_stack: hop-splash`. Board sci **10.96** after
-13-58; live desk later **13.26**; `science.md` still prints 10.96.
-
-Spawn tax ~**2 min/hire**. Clean 9 s pad still hired Lars (F-002).
-Miss loop Gene→Lars→Gene is ~**6 min of models**. CTT spends 6–7
-child layers. hop-to-water **13/13 +0** (heading never 090).
-hop-splash **11/11 +0** on that board (`ec=0`, science skip, leftover
-ghost). Pad idle while Learn/merge (I-016). `need_mortimer` /
-`need_pr` / `need_gene` / `need_qol` **never appear in crew logs**.
-Parent log **MISSING**. Walt has no agent card. Bill/Bob never hired.
-
-The bus is **prose the parent LLM interprets**. That is the
-communication failure.
+**Read first:** `python main.py tickets list` and this file.
+Parked org novels are not dispatch.
 
 ---
 
@@ -48,9 +24,10 @@ communication failure.
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
 | **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol | Vehicle *control* loops, `.craft` |
 | **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown*: pad/hop/splash/control, **this-hop** splash HD recover, blocks.md phases | Leftover recover-then-Hangar (Hank/Wernher), world-interface, org, Hangar from Gene |
-| **Seated Commander** | Pilot | Exact CLI on a fly ticket until **exit**; one kRPC writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review / jsonl / attach-run / landing; miss tickets **after** process exit |
+| **Seated Commander** | Abort officer | Starts `cli:` when `commander: jebediah`; `note` / hold / abort / one stuck PNG. Hop **pid** is the writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review; uncrewed start (parent does) |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
+| **Katherine Grokman** | Flight Dynamics | Tape windows, atmosphere / FAR / attitude; rare asks | kRPC, Hangar, `hop.py`, jsonl novels, every-turn pad occupancy |
 
 **Os talks to Hank** (this session, default). Os talks to Mortimer
 when the *objective* or the *house constitution* changes.
@@ -75,11 +52,13 @@ Three RSI clocks, all **tickets**:
    (desk, leftover, crash UI, telem frame). Vehicle control patches
    stay Lars. XOR: one of them patches `.py` per miss.
 
-A closed ticket with fingerprint `F` increments `tickets/fingerprints.json`.
+Each **open** with fingerprint `F` increments `tickets/fingerprints.json`.
 At count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` →
-desk **wernher**; else Hank. Hank still routes org/ops RSI. That is
-the imperative: the loop *must* open the ticket; no LLM “we should
-maybe improve.”
+desk **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only
+the CLI). Long abort-string fingerprints do not count. `ops next`
+prints `rsi:` and hires Mortimer lock-free; lock live skips org.
+That is the imperative: the loop *must* open the ticket; no LLM “we
+should maybe improve.”
 
 ---
 
@@ -172,7 +151,7 @@ Enforced in `tickets.py`, not job-card prose:
 - Linus may last-write science payload.
 - Lars may close `type=control` with `lesson`.
 - Wernher may close `type=systems`.
-- Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open` / `from-need`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
+- Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open --type control`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
 - Hank may close `type=recover` after leftover/KSC CLI.
 - Mortimer may close `type=org|ctt`.
 - Nobody else stamps `go`.
@@ -248,7 +227,9 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
 # explain. Then leftover (above) or fly_ready (below).
 
 if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in catalog:
-    hire Commander with T.cli
+    hop pid is the writer (flight.lock)
+    if campaign uncrewed: parent starts T.cli (commander: none)
+    else: hire abort officer with T.cli (commander: jebediah)
     if other desks have ready tickets on other files:
         also hire those (parallel, they must not Hangar)
     return
@@ -290,7 +271,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 | Open `type=systems` / unused kRPC / leftover overlay / telem frame | **Wernher** (standing; not miss-only) | systems tickets (also lock-live and `needing_go`) |
 | CTT payable | Mortimer | ctt ticket |
 | First sci/orbit/unlock | Verena | press ticket |
-| Fingerprint count ≥ 3 | kernel opens rsi (`software` → Wernher, else Hank) | rsi ticket |
+| Fingerprint count ≥ 3 | kernel opens rsi (`software` → Wernher, else Mortimer) | rsi ticket |
 | Os talks org/objective | Mortimer | org ticket |
 | Os talks ops | Hank (this process) | — |
 
@@ -357,9 +338,9 @@ fallback so a missing fly ticket does not brick.
 `python main.py tickets packet T-NNN` (desk + BRIEF + this ticket +
 landing envelope — **no BOARD.md**, **no jsonl rows**). `--deep` is
 opt-in (PNG, craft, last-flight, `tape: python main.py telem …`).
-Hank does **not** auto-`--deep`. Never xhigh. Desk floors (Os
-2026-08-23): Jeb/Lars **low**, Wernher **medium**, Mortimer **medium**,
-Gene/Gus/Linus **medium**. Hank is the TUI session. Fresh spawn vs
+Hank does **not** auto-`--deep`. Never xhigh. **low** is Walt and S4
+hygiene (one-liners). **high** is Mortimer, rsi/org/ctt, and S1.
+Everyone else **medium**. Hank is the TUI session. Fresh spawn vs
 `resume_from`: Commander and new tickets are fresh; resume only an
 unfinished patch on the same file.
 

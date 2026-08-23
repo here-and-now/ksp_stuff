@@ -36,3 +36,5 @@
 {"stamp": "2026-08-23T10-47-12Z", "command": "hop", "flight": "jebediah", "path": "docs/missions/jebediah/logs/2026-08-23T10-47-12Z-hop.jsonl", "samples": 34, "landing": "soft", "impact_ms": 5.352, "heading": 299.001, "sit": "flying"}
 {"stamp": "2026-08-23T11-11-21Z", "command": "hop", "flight": "jebediah", "path": "docs/missions/jebediah/logs/2026-08-23T11-11-21Z-hop.jsonl", "samples": 34, "landing": "soft", "impact_ms": 5.385, "heading": 299.46, "sit": "flying"}
 {"stamp": "2026-08-23T11-19-14Z", "command": "hop", "flight": "jebediah", "path": "docs/missions/jebediah/logs/2026-08-23T11-19-14Z-hop.jsonl", "samples": 38, "landing": "soft", "impact_ms": 5.394, "heading": 298.513, "sit": "flying"}
+{"stamp": "2026-08-23T16-37-14Z", "command": "hop", "flight": "jebediah", "path": "docs/missions/jebediah/logs/2026-08-23T16-37-14Z-hop.jsonl", "samples": 34, "landing": "soft", "impact_ms": 5.375, "heading": 299.111, "sit": "flying"}
+{"stamp": "2026-08-23T16-47-21Z", "command": "hop", "flight": "jebediah", "path": "docs/missions/jebediah/logs/2026-08-23T16-47-21Z-hop.jsonl", "samples": 34, "landing": "soft", "impact_ms": 5.382, "heading": 298.699, "sit": "flying"}

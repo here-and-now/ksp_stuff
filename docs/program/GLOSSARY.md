@@ -7,9 +7,9 @@ titles. Drop RAF/spy/radio-compact.
 |---|---|
 | **sortie** | **Retired.** RAF/USAF. We say **run** (one `python main.py pad`). Folder `logs/`. |
 | **1235Z** | **Retired** as speech. Earth UTC with seconds: `2026-08-20T12-35-42Z`. |
-| **dossier** | Intel-ish. Folder is a **mission** (`docs/missions/jebediah/`). |
+| **mission** | Seated folder `docs/missions/jebediah/`. Not “dossier.” |
 | **handoff** | Shift-change. File is `last-flight.md`. |
-| **Commander** | Seated writer process (`phase` / `pad`). Speech is name + title. |
+| **Commander** | Abort officer on crewed/firsts (`commander: jebediah`). The hop/pad **pid** is the Flight writer. Uncrewed: parent starts `cli:`. |
 | **uplink** | RF to a spacecraft. File is a stick note. Keep until it hurts. |
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |
@@ -20,18 +20,19 @@ titles. Drop RAF/spy/radio-compact.
 | **leftover / KSC** | Space Center wreck or unmatched vessel. **Hank** walk home: `recover()` + Close (`recover-probe --recover` if recoverable). Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |
 | **leftover-ksc** | **Retired.** Named save/load of the overlay looked like a reload / return to pre-launch. Os disabled reverting flights. Overlay dismiss is `recover()` + Close. Never that load. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
-| **F-001** | Gym archive (`docs/program/feedback.md`). Live friction is `type=ops --tag feedback` or `type=rsi`. |
-| **need_stack** | Leftover return shim (`tickets from-need` → `type=control` Lars). Desks open tickets, not this token. |
+| **F-014 / I-012** | Gym ids live only inside a ticket **title**. Speech is the twin **T-id** (F-014 → T-184). |
+| **need_*** | Do not emit. Open `--type control|vehicle|science|…`. Parent may still shim a leftover token. |
 | **world model** | `docs/program/world-model.md`. Gene chairs flight layers. Mortimer chairs **Practice**. |
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
-| **improve:** | Leftover. Open `type=ops --tag feedback` or `type=rsi`. `I-NNN` is archive. |
+| **improve:** | Leftover. Open `type=ops --tag feedback` or `type=rsi`. `I-NNN` twins are tickets. |
 | **ask:** | Leftover. Open `type=ops --tag ask` (desk = addressee). P1 if it blocks `go`. |
 | **explore:** | Leftover. Open `type=ops --tag explore` P3. Rare field itch. |
 | **note-tech.md** | Tape, not the bus. Commander may still append; miss opens `type=control\|recover`. |
 | **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
 | **KSP-RO** | Parked Express RO tree. Do not seat. Live gym is `~/Games/KSP-rss` / letsgrok. |
 | **science-scan** | Linus. GameData Situation + save leftovers vs REACH. kRPC has no subject list. |
-| **sit-card** | `python main.py sit-card` — seated sit map for the Commander. |
+| **Flight Dynamics** | Katherine. Tape windows (`telem --window`), not jsonl in the prompt. Relays by ticket. Not Linus bind, not Lars burns, not Wernher schema. |
+| **sit-card** | **Retired.** Sit is `python main.py desk` / `desk.md`. |
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |
 | **tech-unlock** | Catalog CLI (kRPC). 0.6 has no purchase RPC — aborts. Paid node: Mortimer edits the save then `python main.py load rd-<node>`. **Never** `load persistent` (F-014 / I-010). |
 | **Kerman** | **Retired house name.** We are **Grokman**. Stock KSP roster may still say Kerman; Hangar aliases it. |

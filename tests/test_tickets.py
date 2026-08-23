@@ -138,13 +138,20 @@ class TestTickets(unittest.TestCase):
                 reporter="Jebediah",
                 fingerprint="ec=0-after-loft",
             )
-        rsi = tickets.maybe_open_rsi("ec=0-after-loft")
-        self.assertIsNotNone(rsi)
-        self.assertEqual(rsi["type"], "rsi")
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(len(rsi_rows), 1)
+        rsi = rsi_rows[0]
         self.assertEqual(rsi["priority"], "P1")
-        self.assertEqual(rsi["desk"], "hank")
-        again = tickets.maybe_open_rsi("ec=0-after-loft")
-        self.assertIsNone(again)
+        self.assertEqual(rsi["desk"], "mortimer")
+        tickets.open_ticket(
+            type="control",
+            title="ec=0 splash again",
+            reporter="Jebediah",
+            fingerprint="ec=0-after-loft",
+        )
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(len(rsi_rows), 1)
+        self.assertIsNone(tickets.maybe_open_rsi("ec=0-after-loft"))
 
     def test_rsi_software_desk_wernher(self):
         for i in range(3):
@@ -155,10 +162,24 @@ class TestTickets(unittest.TestCase):
                 fingerprint="desk-leftover-vs-krpc",
                 rsi_loop="software",
             )
-        rsi = tickets.maybe_open_rsi("desk-leftover-vs-krpc")
-        self.assertIsNotNone(rsi)
-        self.assertEqual(rsi["desk"], "wernher")
-        self.assertEqual(rsi["rsi_loop"], "software")
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(len(rsi_rows), 1)
+        self.assertEqual(rsi_rows[0]["desk"], "wernher")
+        self.assertEqual(rsi_rows[0]["rsi_loop"], "software")
+
+    def test_rsi_long_abort_fingerprint_ignored(self):
+        novel = "suicide leftover LF MET 179.7 then splash catastrophic impact 124 m/s " * 2
+        self.assertGreater(len(novel), 80)
+        for i in range(3):
+            tickets.open_ticket(
+                type="control",
+                title=f"splash novel {i}",
+                reporter="Jebediah",
+                fingerprint=novel,
+            )
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(rsi_rows, [])
+        self.assertEqual(tickets.normalize_fingerprint(novel), "")
 
     def test_batch_ids(self):
         tickets.open_ticket(type="vehicle", title="a", reporter="Gus")
@@ -201,6 +222,150 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(act["hire"][0]["cli"], "python main.py hop-splash")
         desks = [h["desk"] for h in act["hire"]]
         self.assertIn("gus", desks)
+        text = ops.format_next(act)
+        self.assertIn("rsi:", text)
+        self.assertIn("writer: hop-pid", text)
+        self.assertIn("commander: jebediah", text)
+
+    def test_uncrewed_parent_starts_hop_no_commander_hire(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            severity="S2",
+            priority="P0",
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        tickets.patch_ticket(
+            t["id"],
+            {
+                "payload": {
+                    "go": "yes",
+                    "cli": "python main.py hop",
+                    "campaign": "uncrewed",
+                }
+            },
+            who="hank",
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertEqual(act["hire"][0]["desk"], "hank")
+        self.assertEqual(act["hire"][0]["cli"], "python main.py hop")
+        self.assertEqual(act.get("commander"), "none")
+        self.assertEqual(act.get("writer"), "hop-pid")
+        self.assertNotIn("jebediah", [h["desk"] for h in act["hire"]])
+        text = ops.format_next(act)
+        self.assertIn("commander: none", text)
+        self.assertIn("writer: hop-pid", text)
+        self.assertEqual(tickets.commander_for(campaign="uncrewed"), "none")
+        self.assertEqual(tickets.commander_for(campaign="none"), "jebediah")
+        self.assertIn("katherine", tickets.DESKS)
+
+    def test_fly_ready_hires_katherine_only_with_inbox(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={"go": "yes", "cli": "python main.py hop", "campaign": "uncrewed"},
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertNotIn("katherine", [h["desk"] for h in act["hire"]])
+        tickets.open_ticket(
+            type="ops",
+            title="Flight Dynamics: burnout vs FAR",
+            reporter="Mortimer",
+            desk="katherine",
+            tags=["dynamics"],
+        )
+        act2 = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertIn("katherine", [h["desk"] for h in act2["hire"]])
+
+    def test_fly_ready_hires_mortimer_on_rsi(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+            severity="S2",
+            priority="P0",
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        tickets.patch_ticket(
+            t["id"],
+            {"payload": {"go": "yes", "cli": "python main.py hop-splash"}},
+            who="hank",
+        )
+        rsi = tickets.open_ticket(
+            type="rsi",
+            title="RSI heading-never-090 x3",
+            reporter="Hank",
+            desk="mortimer",
+            fingerprint="heading-never-090",
+            rsi_loop="ops",
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        desks = [h["desk"] for h in act["hire"]]
+        self.assertEqual(desks[0], "jebediah")
+        self.assertIn("mortimer", desks)
+        mort = next(h for h in act["hire"] if h["desk"] == "mortimer")
+        self.assertIn(rsi["id"], mort["tickets"])
+        text = ops.format_next(act)
+        self.assertIn("rsi: " + rsi["id"], text)
+        live = ops.next_actions(desk={"hangar": "none"}, locked=True)
+        self.assertNotIn("mortimer", [h["desk"] for h in live["hire"]])
+        self.assertNotIn("jebediah", [h["desk"] for h in live["hire"]])
+
+    def test_unbound_science_not_in_linus_hire_or_bind(self):
+        tickets.open_ticket(
+            type="science",
+            title="FlyingLow@Water thermo",
+            reporter="Linus",
+            tags=["unbound"],
+            payload={"experiment_id": "temperatureScan", "situation": "FlyingLow"},
+        )
+        tickets.open_ticket(
+            type="science",
+            title="Grasslands FlyingLow thermo",
+            reporter="Linus",
+            tags=["bound"],
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "FlyingLow",
+                "bound": "yes",
+            },
+        )
+        self.assertEqual(
+            tickets.science_ids_for(situation="flying"),
+            ("temperatureScan",),
+        )
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={"cli": "python main.py hop"},
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        linus = next(h for h in act["hire"] if h["desk"] == "linus")
+        titles = [tickets.show_ticket(i)["title"] for i in linus["tickets"]]
+        self.assertTrue(any("Grasslands" in x for x in titles))
+        self.assertFalse(any("Water" in x for x in titles))
+
+    def test_inbox_includes_ask_payload_to(self):
+        tickets.open_ticket(
+            type="ops",
+            title="need a stiffer hang",
+            reporter="Linus",
+            desk="linus",
+            tags=["ask"],
+            payload={"to": "gus"},
+        )
+        rows = tickets.inbox_for("gus")
+        self.assertEqual([r["title"] for r in rows], ["need a stiffer hang"])
+        self.assertTrue(tickets.inbox_for("linus"))
 
     def test_lock_live_no_commander(self):
         tickets.open_ticket(type="science", title="backlog", reporter="Linus")
@@ -426,7 +591,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn(tickets.reasoning_for(t), tickets.REASONING)
         self.assertNotEqual(tickets.reasoning_for(t), "xhigh")
         t["desk"] = "mortimer"
-        self.assertEqual(tickets.reasoning_for(t), "medium")
+        self.assertEqual(tickets.reasoning_for(t), "high")
         s1 = tickets.open_ticket(
             type="recover",
             title="wreck",
@@ -435,10 +600,11 @@ class TestPacketAndReasoning(unittest.TestCase):
             priority="P0",
             desk="jebediah",
         )
-        self.assertEqual(tickets.reasoning_for(s1), "low")
-        self.assertEqual(tickets.reasoning_for(s1, "mortimer"), "medium")
-        self.assertEqual(tickets.reasoning_for(s1, "wernher"), "medium")
-        self.assertEqual(tickets.reasoning_for(s1, "lars"), "low")
+        self.assertEqual(tickets.reasoning_for(s1), "high")
+        self.assertEqual(tickets.reasoning_for(s1, "mortimer"), "high")
+        self.assertEqual(tickets.reasoning_for(s1, "wernher"), "high")
+        self.assertEqual(tickets.reasoning_for(s1, "lars"), "high")
+        self.assertEqual(tickets.reasoning_for(s1, "walt"), "low")
         gene = tickets.open_ticket(
             type="fly",
             title="hop",
@@ -449,7 +615,24 @@ class TestPacketAndReasoning(unittest.TestCase):
         )
         self.assertEqual(tickets.reasoning_for(gene), "medium")
         gene["severity"] = "S1"
-        self.assertEqual(tickets.reasoning_for(gene), "medium")
+        self.assertEqual(tickets.reasoning_for(gene), "high")
+        lars = tickets.open_ticket(
+            type="control",
+            title="heading",
+            reporter="Hank",
+            desk="lars",
+            severity="S2",
+            priority="P0",
+        )
+        self.assertEqual(tickets.reasoning_for(lars), "medium")
+        rsi = tickets.open_ticket(
+            type="rsi",
+            title="RSI stem",
+            reporter="Hank",
+            desk="mortimer",
+            fingerprint="heading-never-090",
+        )
+        self.assertEqual(tickets.reasoning_for(rsi), "high")
 
     def test_skim_omits_jsonl_deep_includes_it(self):
         t = tickets.open_ticket(
@@ -681,6 +864,216 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertNotIn('"kind": "state"', skim)
         self.assertNotIn("kind=state", skim)
         self.assertIn("catastrophic", tickets.format_inbox("gene"))
+        self.assertIn("S2 P0", tickets.format_list(tickets.list_tickets()))
+        self.assertNotIn("S2P0", tickets.format_list(tickets.list_tickets()))
+        self.assertIn("S2 P0", tickets.format_packet("T-001", deep=False))
+        self.assertNotIn("S2P0", tickets.format_packet("T-001", deep=False))
+
+
+class TestHouseDump(unittest.TestCase):
+    def setUp(self):
+        self.paths = _tmp_board()
+        self.patches = [
+            patch.object(tickets, k, v) for k, v in self.paths.items()
+        ]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in self.patches:
+            p.stop()
+
+    def test_science_dump_catalog_vs_bound(self):
+        from house_dump import format_science_dump, format_seated_science, render_plan
+
+        unbound = tickets.open_ticket(
+            type="science",
+            title="FlyingLow@Water thermo",
+            reporter="Linus",
+            tags=["unbound"],
+            payload={"experiment_id": "temperatureScan", "situation": "FlyingLow@Water"},
+        )
+        bound = tickets.open_ticket(
+            type="science",
+            title="Grasslands FlyingLow thermo",
+            reporter="Linus",
+            tags=["bound"],
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "FlyingLow",
+                "biome": "Grasslands",
+                "bound": "yes",
+                "recover_banks": "yes",
+            },
+        )
+        desk = {"sci": "7.7748", "craft": "proc-stiff", "unlocked": "start", "leftover": "0"}
+        text = format_science_dump(desk=desk)
+        work, shelf = text.split("## Catalog", 1)
+        self.assertIn(bound["id"], work)
+        self.assertNotIn(unbound["id"], work)
+        self.assertIn(unbound["id"], shelf)
+        self.assertNotIn("east-t3", text.lower())
+        seated = format_seated_science(desk=desk)
+        self.assertIn("recover_banks: yes", seated)
+        self.assertNotIn("east-t3", seated.lower())
+        tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={"go": "yes", "cli": "python main.py hop", "campaign": "uncrewed", "phase": "hop"},
+        )
+        tickets.patch_ticket("T-003", {"go": "yes"}, who="gene")
+        tmp = Path(tempfile.mkdtemp()) / "plan.md"
+        tmp.write_text(
+            "phase: hop\ngo: wait\nrecommended: python main.py hop-to-water\nhop_apo: 18000\n",
+            encoding="utf-8",
+        )
+        out = render_plan(tmp)
+        self.assertNotIn("recommended:", out)
+        self.assertIn("cli: python main.py hop", out)
+        self.assertIn("hop_apo: 18000", out)
+
+
+class TestMigrateSecondBus(unittest.TestCase):
+    def setUp(self):
+        self.paths = _tmp_board()
+        self.patches = [
+            patch.object(tickets, k, v) for k, v in self.paths.items()
+        ]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in self.patches:
+            p.stop()
+
+    def test_idempotent_and_no_i013_duplicate(self):
+        first = tickets.seed_legacy()
+        self.assertTrue(first)
+        titles = [t["title"] for t in tickets.load_head()["tickets"].values()]
+        self.assertEqual(sum(1 for t in titles if "I-013" in t), 1)
+        self.assertEqual(sum(1 for t in titles if "I-017" in t), 1)
+        self.assertTrue(any("I-012" in t for t in titles))
+        self.assertTrue(any("F-014" in t for t in titles))
+        self.assertTrue(any("F-007" in t for t in titles))
+        again = tickets.seed_legacy()
+        self.assertEqual(again, [])
+        titles2 = [t["title"] for t in tickets.load_head()["tickets"].values()]
+        self.assertEqual(sum(1 for t in titles2 if "I-013" in t), 1)
+        self.assertEqual(sum(1 for t in titles2 if "I-012" in t), 1)
+        self.assertEqual(tickets.TYPES, (
+            "fly",
+            "science",
+            "vehicle",
+            "control",
+            "systems",
+            "org",
+            "rsi",
+            "ctt",
+            "recover",
+            "press",
+            "ops",
+        ))
+
+    def test_skim_omits_parked_dispatch(self):
+        from docs_inventory import FORBIDDEN_DISPATCH, packet_read_paths, skim_mentions_forbidden
+
+        t = tickets.open_ticket(
+            type="systems",
+            title="F-014 load persistent autosaves RAM first",
+            reporter="Mortimer",
+            desk="wernher",
+        )
+        skim = tickets.format_packet(t["id"], deep=False)
+        for path in packet_read_paths(skim):
+            self.assertEqual(skim_mentions_forbidden(path), [])
+        for needle in FORBIDDEN_DISPATCH:
+            self.assertNotIn(needle, skim)
+
+
+class TestLiveDocsInventory(unittest.TestCase):
+    """Drive the real docs/ tree and live board — not a mocked inventory."""
+
+    def test_every_docs_file_one_class(self):
+        from docs_inventory import DOC_CLASSES, classified_map
+
+        mapping = classified_map()
+        self.assertGreater(len(mapping), 100)
+        for rel, cls in mapping.items():
+            self.assertIn(cls, DOC_CLASSES, rel)
+        self.assertEqual(mapping["docs/program/CHARTER.md"], "live_kernel")
+        self.assertEqual(mapping["docs/program/PROTOCOL.md"], "live_kernel")
+        self.assertEqual(mapping["docs/program/OPS.md"], "live_kernel")
+        self.assertEqual(mapping["docs/program/tickets/BRIEF.md"], "live_kernel")
+        self.assertEqual(mapping["docs/missions/jebediah/plan.md"], "live_kernel")
+        self.assertEqual(mapping["docs/missions/jebediah/science.md"], "live_kernel")
+        self.assertEqual(mapping["docs/program/tickets/board.jsonl"], "live_kernel")
+        leftover = [r for r, c in mapping.items() if c == "leftover_migrated"]
+        self.assertTrue(any("I-012.md" in r for r in leftover))
+        self.assertTrue(any("F-014.md" in r for r in leftover))
+        parked = [r for r, c in mapping.items() if c == "parked_archive"]
+        self.assertTrue(any(r.startswith("docs/archive/") for r in parked))
+        self.assertFalse(Path("docs/program/improve/README.md").is_file())
+        self.assertFalse(Path("docs/crew/niche/gene.md").is_file())
+
+    def test_twins_on_live_board(self):
+        from docs_inventory import if_tokens, lesson_headings, twin_title_hits
+
+        head = tickets.load_head()
+        titles = [t.get("title") or "" for t in (head.get("tickets") or {}).values()]
+        for token in if_tokens():
+            self.assertGreaterEqual(
+                twin_title_hits(titles, token),
+                1,
+                f"missing twin for {token}",
+            )
+            if token in {"I-013", "I-017", "I-018", "I-019"}:
+                self.assertEqual(twin_title_hits(titles, token), 1, token)
+        for heading in lesson_headings():
+            self.assertGreaterEqual(
+                twin_title_hits(titles, heading),
+                1,
+                f"missing lesson twin: {heading[:60]}",
+            )
+
+    def test_spawn_read_omits_parked_dispatch(self):
+        from docs_inventory import FORBIDDEN_DISPATCH, packet_read_paths, skim_mentions_forbidden
+
+        for path in (
+            Path("AGENTS.md"),
+            Path("docs/program/tickets/BRIEF.md"),
+        ):
+            text = path.read_text(encoding="utf-8")
+            for needle in FORBIDDEN_DISPATCH:
+                self.assertNotIn(needle, text, path.as_posix())
+        rows = tickets.list_tickets()
+        twin = next(
+            (t for t in rows if "F-014" in (t.get("title") or "")),
+            rows[0] if rows else None,
+        )
+        self.assertIsNotNone(twin)
+        skim = tickets.format_packet(twin["id"], deep=False)
+        self.assertEqual(skim_mentions_forbidden(skim), [])
+        for p in packet_read_paths(skim):
+            self.assertEqual(skim_mentions_forbidden(p), [])
+            self.assertFalse(p.startswith("docs/archive/"))
+            self.assertFalse(p.startswith("docs/crew/niche/"))
+            self.assertFalse(p.startswith("docs/program/improve/"))
+
+
+class TestPacketAttachAndInbox(unittest.TestCase):
+    def setUp(self):
+        self.paths = _tmp_board()
+        self.patches = [
+            patch.object(tickets, k, v) for k, v in self.paths.items()
+        ]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in self.patches:
+            p.stop()
 
     def test_attach_run_preserves_top_level_go(self):
         t = tickets.open_ticket(

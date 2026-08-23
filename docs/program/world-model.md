@@ -6,65 +6,23 @@ Gene Grokman, Flight Director chairs **flight** layers. Mortimer chairs
 | Layer | Owner | Source of truth |
 |---|---|---|
 | **Facts** | disk | `docs/program/desk.md` / `python main.py world` |
-| **Meaning** | Gene | Learn on the named review |
+| **Meaning** | Gene | Learn from `tickets landing` envelope |
 | **Horizon** | Linus | remaining subjects, what a node buys |
 | **Story** | Verena | `docs/press/`, README — never invent orbit |
 | **Practice** | Mortimer | pitfalls, house, QOL |
+| **Dynamics** | Katherine | `telem --window` / landing envelope — atmosphere, Q, FAR, burnout |
 
 Kardashev III is creed here. Joke in the TUI. Nobody preaches mid-burn.
 
 ---
 
-## Facts (disk, 2026-08-21)
+## Facts
 
-Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. Tree
-**start, engineering101, basicRocketry**. Desk `sci = 13.2632`
-(10-11-27Z hop-to-water abort **+0** splash **62.3 m/s** Shores, modules
-gone; 09-48-51Z hop-to-water abort **+0** splash **92.5 m/s** Shores;
-09-11-59Z hop-to-water abort **+0** splash **82 m/s** Shores;
-08-44-32Z hop-to-water abort **+0** splash **119 m/s** Shores;
-23-15-52Z hop-to-water abort **+0** splash **220 m/s** Shores; 22-57-36Z
-hop-to-water abort **+0** splash **119 m/s** Shores; 22-45-26Z hop-to-water
-recover **+0**, never lit — 22-03 wreck; 22-03-59Z hop-to-water abort
-**+0** splash **230 m/s** Shores; 19-43-18Z hop-splash abort **+0**;
-16-57-24Z hop-to-water abort **+0**; 13-58-18Z abort **9.66 → 10.96,
-+1.30**; 13-49-37Z splash **6.35 → 9.66, +3.31**).
-Cape Surface geiger **capped**. FlyingLow TELEMETRY **capped**.
-Landed TELEMETRY **capped**. FlyingHigh thermo **banked**. FlyingHigh
-TELEMETRY Shores leftover **consumed** on 13-58. FlyingHigh Forest
-TELEMETRY leftover **1.512**. FlyingLow geiger leftover **0.316**.
-T-014 east-t3 is the suicide **test hang** (10-11 goo gone at
-62.3 m/s; 09-48 at 92.5; 09-11 at 82). T-041 `capable: yes` `kspstuff-hop-valiant-east-t3-pbc`. T-035
-`capable: no` vs 82 m/s tape still honest (Goo crashTolerance **12**;
-chute LOCKED; girder/T100/t7/inline not a 12 m/s can). card splash
-TELEMETRY+goo (FlyingLow@Water unbound until heading 090; T-019 goo
-**global**). f013
-`mysteryGoo` GooExperiment tech start unlocked yes on_craft yes;
-TELEMETRY hosted Stayputnik PAW tech start unlocked yes on_craft yes.
-hangar **none**. leftover vessels **n=0**. Do not Hangar from Gene. Do
-not revert. Do not recover Ast. XRL-564. Need **~1.74** for
-survivability. Splash pair **3.20** pays it; goo **2.40** closes 15
-**iff the can lives**. T-006 **done**. T-007 **done** — surface
-`target_direction`, roll unset. T-040 **done** hover-slam (09-48 never
-lit). T-045 **done** suicide-light (10-11 1 Hz never thr=1). T-046
-**done** TWR≈1 hover until coast ≤12. T-047 **done** crumbs-rebuild.
-T-033 spent-latch superseded. T-008 hop-splash parked.
-
-
-Aero stack **now on this install** (CKAN, 2026-08-21): **FAR**
-(`FerramAerospaceResearchContinued`), **RealChute** + RealChuteForStock,
-**RealHeat**. Kerbalism **Profile = default**. Not Realism Overhaul.
-`KSP-RO` exists on disk and is **not seated**.
-
-Chutes in the catalog (`parachuteSingle`, `RC_cone`, …) are
-**survivability (15 sci)** — still **LOCKED**. Unlocked search for
-chute is empty. RealChuteModule is on those parts in the MM cache.
-FARAeroPartModule is on them too. Hop crafts still have **no chute**
-(Stayputnik + SRB). RealHeat is atmosphere shock/convection, not a
-heatshield part.
-
-Os still `screenshots/rocket-flea.png`: T+7 s, drums **002423**, KER
-**2,380.7 m**, apo 11.6 km. Not 72 m.
+Facts are **`docs/program/desk.md`** and `python main.py world` this sit.
+Do not treat this page as the bank, tree, leftover, or last hop.
+Save `letsgrok` on **`~/Games/KSP-rss`**. `SCIENCE_SANDBOX`. FAR,
+RealChute, RealHeat are on this install. `KSP-RO` is not seated.
+Chute parts follow desk/`python main.py tech` — not this page.
 
 ## Meaning (Gene)
 

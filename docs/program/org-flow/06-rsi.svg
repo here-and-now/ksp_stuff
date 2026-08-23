@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="920"
+     viewBox="0 0 1280 920">
+  <rect width="100%" height="100%" fill="#10161c"/>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6d7b88"/></marker>
+    <marker id="arrh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5b8def"/></marker>
+  </defs>
+  <text x="40" y="36" fill="#e8eef4" font-size="22" font-weight="700"
+        font-family="DejaVu Sans, sans-serif">6. Feedback · ask · RSI</text>
+  <text x="40" y="58" fill="#9aa7b5" font-size="14" font-family="DejaVu Sans, sans-serif">Friction is a ticket with a short fingerprint, not a paragraph in Return.</text>
+  <rect x="500.0" y="80.0" width="280.0" height="60.0" rx="8" fill="#1c2833" stroke="#e8eef4" stroke-width="1.6"/>
+  <text x="640.0" y="106.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Anyone stumbles</text>
+  <text x="640.0" y="122.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">thin tape · heading · leftover · dual file</text>
+  <rect x="500.0" y="180.0" width="280.0" height="70.0" rx="8" fill="#1c2833" stroke="#5b8def" stroke-width="2"/>
+  <text x="640.0" y="203.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">tickets open</text>
+  <text x="640.0" y="219.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">--fingerprint short-stem</text>
+  <text x="640.0" y="235.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">NOT a 400-char abort novel</text>
+  <line x1="640.0" y1="140.0" x2="640.0" y2="180.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <rect x="40.0" y="320.0" width="250.0" height="90.0" rx="8" fill="#1c2833" stroke="#d4784a" stroke-width="1.6"/>
+  <text x="165.0" y="345.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">ask another desk</text>
+  <text x="165.0" y="361.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">type=ops  tag=ask</text>
+  <text x="165.0" y="377.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">payload.to = addressee</text>
+  <text x="165.0" y="393.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">shows in their inbox</text>
+  <rect x="330.0" y="320.0" width="230.0" height="90.0" rx="8" fill="#1c2833" stroke="#8fa3c8" stroke-width="1.6"/>
+  <text x="445.0" y="353.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">kRPC / desk / tape</text>
+  <text x="445.0" y="369.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">type=systems</text>
+  <text x="445.0" y="385.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">desk Wernher</text>
+  <rect x="600.0" y="320.0" width="250.0" height="90.0" rx="8" fill="#1c2833" stroke="#c47ad4" stroke-width="1.6"/>
+  <text x="725.0" y="353.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">house friction</text>
+  <text x="725.0" y="369.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">type=ops  tag=feedback</text>
+  <text x="725.0" y="385.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">short stem</text>
+  <rect x="900.0" y="320.0" width="250.0" height="90.0" rx="8" fill="#1c2833" stroke="#e07a5f" stroke-width="1.6"/>
+  <text x="1025.0" y="353.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">this miss</text>
+  <text x="1025.0" y="369.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">type=control</text>
+  <text x="1025.0" y="385.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">desk Lars</text>
+  <line x1="600.0" y1="250.0" x2="165.0" y2="320.0" stroke="#d4784a" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="630.0" y1="250.0" x2="445.0" y2="320.0" stroke="#8fa3c8" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="650.0" y1="250.0" x2="725.0" y2="320.0" stroke="#c47ad4" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="680.0" y1="250.0" x2="1025.0" y2="320.0" stroke="#e07a5f" stroke-width="1.7" marker-end="url(#arr)"/>
+  <polygon points="640,450.0 780.0,500 640,550.0 500.0,500" fill="#1c2833" stroke="#d4b44a" stroke-width="1.8"/>
+  <text x="640.0" y="494.0" text-anchor="middle" fill="#e8eef4" font-size="12" font-family="DejaVu Sans, sans-serif" font-weight="600">same stem opened</text>
+  <text x="640.0" y="508.0" text-anchor="middle" fill="#e8eef4" font-size="12" font-family="DejaVu Sans, sans-serif" font-weight="600">≥ 3 times?</text>
+  <line x1="445.0" y1="410.0" x2="640.0" y2="450.0" stroke="#6d7b88" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="725.0" y1="410.0" x2="640.0" y2="450.0" stroke="#6d7b88" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="1025.0" y1="410.0" x2="880.0" y2="500.0" stroke="#6d7b88" stroke-width="1.7" marker-end="url(#arr)"/>
+  <rect x="40.0" y="560.0" width="280.0" height="80.0" rx="8" fill="#1c2833" stroke="#8b96a3" stroke-width="1.6"/>
+  <text x="180.0" y="588.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">stay tickets</text>
+  <text x="180.0" y="604.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">pad still flies</text>
+  <text x="180.0" y="620.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">no Mortimer letter required</text>
+  <line x1="500.0" y1="500.0" x2="320.0" y2="600.0" stroke="#6d7b88" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="410.0" y="544.0" text-anchor="middle" fill="#9aa7b5" font-size="11" font-family="DejaVu Sans, sans-serif">no</text>
+  <rect x="520.0" y="640.0" width="240.0" height="70.0" rx="8" fill="#1c2833" stroke="#c47ad4" stroke-width="2"/>
+  <text x="640.0" y="663.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">kernel opens type=rsi</text>
+  <text x="640.0" y="679.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">open_ticket() itself trips</text>
+  <text x="640.0" y="695.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">(not only the CLI)</text>
+  <line x1="640.0" y1="550.0" x2="640.0" y2="640.0" stroke="#c47ad4" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="640.0" y="589.0" text-anchor="middle" fill="#9aa7b5" font-size="11" font-family="DejaVu Sans, sans-serif">yes · no open rsi yet</text>
+  <rect x="200.0" y="780.0" width="280.0" height="80.0" rx="8" fill="#1c2833" stroke="#8fa3c8" stroke-width="1.6"/>
+  <text x="340.0" y="808.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">rsi_loop = software</text>
+  <text x="340.0" y="824.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">desk Wernher · kernel patch</text>
+  <text x="340.0" y="840.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">close_why = house change</text>
+  <rect x="800.0" y="780.0" width="320.0" height="80.0" rx="8" fill="#1c2833" stroke="#c47ad4" stroke-width="1.6"/>
+  <text x="960.0" y="808.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">else ops / org</text>
+  <text x="960.0" y="824.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">desk Mortimer · PROTOCOL / job cards / Practice</text>
+  <text x="960.0" y="840.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">org: patched | hold   lock-free hire</text>
+  <line x1="640.0" y1="710.0" x2="340.0" y2="780.0" stroke="#8fa3c8" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="640.0" y1="710.0" x2="960.0" y2="780.0" stroke="#c47ad4" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="40.0" y="890.0" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, sans-serif">Lock live: no new Mortimer. Lock free: Mortimer rides ops next WITH Jeb. Return fence is stamps only. Closing rsi without close_why means Practice never moved.</text>
+</svg>

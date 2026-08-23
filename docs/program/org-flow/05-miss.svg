@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="780"
+     viewBox="0 0 1100 780">
+  <rect width="100%" height="100%" fill="#10161c"/>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6d7b88"/></marker>
+    <marker id="arrh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5b8def"/></marker>
+  </defs>
+  <text x="40" y="36" fill="#e8eef4" font-size="22" font-weight="700"
+        font-family="DejaVu Sans, sans-serif">5. Miss / patch  —  vehicle RSI</text>
+  <text x="40" y="58" fill="#9aa7b5" font-size="14" font-family="DejaVu Sans, sans-serif">This clock already works. Gene is not a merge bus.</text>
+  <rect x="400.0" y="80.0" width="280.0" height="56.0" rx="8" fill="#1c2833" stroke="#3d9b6a" stroke-width="1.6"/>
+  <text x="540.0" y="104.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Commander CLI exit</text>
+  <text x="540.0" y="120.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">last-flight.md written</text>
+  <rect x="400.0" y="170.0" width="280.0" height="56.0" rx="8" fill="#1c2833" stroke="#5b8def" stroke-width="1.6"/>
+  <text x="540.0" y="202.0" text-anchor="middle" fill="#e8eef4" font-size="14" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Hank leftover first</text>
+  <polygon points="540,260.0 670.0,310 540,360.0 410.0,310" fill="#1c2833" stroke="#d4b44a" stroke-width="1.8"/>
+  <text x="540.0" y="304.0" text-anchor="middle" fill="#e8eef4" font-size="12" font-family="DejaVu Sans, sans-serif" font-weight="600">nonzero / ABORT /</text>
+  <text x="540.0" y="318.0" text-anchor="middle" fill="#e8eef4" font-size="12" font-family="DejaVu Sans, sans-serif" font-weight="600">empty sci / unchanged?</text>
+  <line x1="540.0" y1="136.0" x2="540.0" y2="170.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <line x1="540.0" y1="226.0" x2="540.0" y2="260.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <rect x="40.0" y="460.0" width="300.0" height="88.0" rx="8" fill="#1c2833" stroke="#3d9b6a" stroke-width="1.6"/>
+  <text x="190.0" y="492.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Clean uncrewed</text>
+  <text x="190.0" y="508.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">go still yes → re-hire Jeb last cli</text>
+  <text x="190.0" y="524.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">NO Gene · NO debrief</text>
+  <rect x="720.0" y="460.0" width="320.0" height="88.0" rx="8" fill="#1c2833" stroke="#e07a5f" stroke-width="1.6"/>
+  <text x="880.0" y="492.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">open type=control</text>
+  <text x="880.0" y="508.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">short fingerprint stem</text>
+  <text x="880.0" y="524.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">hire Lars → patch .py + lessons.md</text>
+  <line x1="410.0" y1="310.0" x2="340.0" y2="460.0" stroke="#3d9b6a" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="375.0" y="379.0" text-anchor="middle" fill="#9aa7b5" font-size="11" font-family="DejaVu Sans, sans-serif">no</text>
+  <line x1="670.0" y1="310.0" x2="720.0" y2="470.0" stroke="#e07a5f" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="695.0" y="384.0" text-anchor="middle" fill="#9aa7b5" font-size="11" font-family="DejaVu Sans, sans-serif">yes</text>
+  <polygon points="880,580.0 980.0,620 880,660.0 780.0,620" fill="#1c2833" stroke="#d4b44a" stroke-width="1.8"/>
+  <text x="880.0" y="614.0" text-anchor="middle" fill="#e8eef4" font-size="12" font-family="DejaVu Sans, sans-serif" font-weight="600">stack ok AND</text>
+  <text x="880.0" y="628.0" text-anchor="middle" fill="#e8eef4" font-size="12" font-family="DejaVu Sans, sans-serif" font-weight="600">kRPC trap?</text>
+  <rect x="40.0" y="640.0" width="280.0" height="80.0" rx="8" fill="#1c2833" stroke="#8fa3c8" stroke-width="1.6"/>
+  <text x="180.0" y="676.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Wernher XOR</text>
+  <text x="180.0" y="692.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">same .py · systems/kRPC</text>
+  <rect x="360.0" y="640.0" width="280.0" height="80.0" rx="8" fill="#1c2833" stroke="#d4784a" stroke-width="1.6"/>
+  <text x="500.0" y="668.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Hang died?</text>
+  <text x="500.0" y="684.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">next capable craft · Gene only</text>
+  <text x="500.0" y="700.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">if that fly ticket has no go</text>
+  <line x1="880.0" y1="548.0" x2="880.0" y2="580.0" stroke="#e07a5f" stroke-width="1.7" marker-end="url(#arr)"/>
+  <line x1="780.0" y1="620.0" x2="320.0" y2="680.0" stroke="#8fa3c8" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="550.0" y="644.0" text-anchor="middle" fill="#9aa7b5" font-size="11" font-family="DejaVu Sans, sans-serif">yes</text>
+  <line x1="880.0" y1="548.0" x2="500.0" y2="640.0" stroke="#d4784a" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="40.0" y="750.0" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, sans-serif">Lars does not wait for Gene to consider. Uncrewed miss of a living hang re-flies last cli through protocol fly.</text>
+</svg>

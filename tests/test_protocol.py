@@ -24,7 +24,6 @@ class TestProtocolDoc(unittest.TestCase):
             "docs/press/",
             "python main.py screenshot",
             "## Return (this job)",
-            "feedback.md",
             "F-NNN",
             "improve:",
             "desk.md",
@@ -39,8 +38,11 @@ class TestProtocolDoc(unittest.TestCase):
         self.assertIn("docs/program/PROTOCOL.md", text)
         self.assertIn("Os is the founder", text)
         self.assertIn("Recursive self-improvement", text)
-        self.assertTrue(Path("docs/program/improve/README.md").is_file())
+        self.assertTrue(
+            Path("docs/archive/2026-08-23-md-cutover/program/improve/README.md").is_file()
+        )
         self.assertTrue(Path("docs/archive/letsgrok-2026-08-21/improve/I-001.md").is_file())
+        self.assertFalse(Path("docs/program/improve/README.md").is_file())
         for path in Path(".grok/agents").glob("*.md"):
             body = path.read_text(encoding="utf-8")
             self.assertIn("agents_md: false", body, path.name)
@@ -82,6 +84,10 @@ class TestPressDesk(unittest.TestCase):
         self.assertTrue(Path("docs/press/INDEX.md").is_file())
         self.assertTrue(Path("docs/press/pad-goo.md").is_file())
         self.assertTrue(Path("docs/press/forest-for-the-trees.md").is_file())
+        self.assertTrue(Path("docs/crew/katherine.md").is_file())
+        self.assertTrue(Path(".grok/agents/katherine.md").is_file())
+        self.assertIn("katherine", Path("tickets.py").read_text(encoding="utf-8"))
+        self.assertFalse(Path("docs/crew/otto.md").is_file())
 
     def test_readme_portrait(self):
         text = Path("README.md").read_text(encoding="utf-8")
@@ -89,6 +95,7 @@ class TestPressDesk(unittest.TestCase):
         self.assertIn("letsgrok", text)
         self.assertIn("Os", text)
         self.assertIn("Verena", text)
+        self.assertIn("Katherine", text)
         self.assertIn("python main.py world", text)
         heads = re.findall(r"^## .+", text, flags=re.M)
         self.assertTrue(heads)
@@ -159,15 +166,23 @@ class TestPressDesk(unittest.TestCase):
 
 class TestFeedbackBoard(unittest.TestCase):
     def test_index_and_items(self):
-        index = Path("docs/program/feedback.md").read_text(encoding="utf-8")
+        parked = Path("docs/archive/2026-08-23-md-cutover/program")
+        index = (parked / "feedback.md").read_text(encoding="utf-8")
         for n in ("F-001", "F-002", "F-003", "F-004", "F-005"):
             self.assertIn(n, index)
-            body = Path(f"docs/program/feedback/{n}.md").read_text(encoding="utf-8")
+            body = (parked / "feedback" / f"{n}.md").read_text(encoding="utf-8")
             self.assertRegex(body, r"status: (open|accepted|discussed|wont)")
-        self.assertIn("status: accepted", Path("docs/program/feedback/F-005.md").read_text())
+        self.assertIn(
+            "status: accepted",
+            (parked / "feedback" / "F-005.md").read_text(encoding="utf-8"),
+        )
         self.assertIn("ec_rate", Path("docs/missions/jebediah/science.md").read_text())
+        self.assertFalse(Path("docs/program/feedback.md").is_file())
 
     def test_notes_per_desk(self):
+        notes = Path(
+            "docs/archive/2026-08-23-md-cutover/program/feedback/notes"
+        )
         for slug in (
             "gene",
             "gus",
@@ -177,7 +192,7 @@ class TestFeedbackBoard(unittest.TestCase):
             "verena",
             "mortimer",
         ):
-            self.assertTrue(Path(f"docs/program/feedback/notes/{slug}.md").is_file())
+            self.assertTrue((notes / f"{slug}.md").is_file())
 
     def test_lessons_use_run_headings(self):
         text = Path("docs/lessons.md").read_text(encoding="utf-8")

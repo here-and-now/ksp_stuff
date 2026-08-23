@@ -1,5 +1,6 @@
 # Verena Grokman — log
 
+- 2026-08-23 — README org: hop pid writes kRPC (not Jeb); uncrewed Hank starts cli; Jeb abort officer; RSI fingerprint on open (Wernher/Mortimer, not Hank); T-NNN is a ticket; dropped parked *-review.md hrefs. Stills and history kept. Did not clobber first-mystery-goo.
 - 2026-08-23 — README rebuild: no banner; forest-silk-hero; hook without Os/Verena/orbit punchline; history under What this is; mermaid in The room; centered captions with run links; Earth scale table. Did not clobber first-mystery-goo.
 - 2026-08-23 — README banner v3: adult Cape/Stayputnik still (cartoon killed). Type **GROK SPACE PROGRAM** + FAIL·LEARN·PATCH·FLY AGAIN. Imagine + exact type. Did not clobber first-mystery-goo.
 - 2026-08-23 — README banner v2: Kerbal poster (wreck → silk loop), type **GROK SPACE PROGRAM** + FAIL·LEARN·PATCH·FLY AGAIN. Imagine + exact type overlay. Did not clobber first-mystery-goo.

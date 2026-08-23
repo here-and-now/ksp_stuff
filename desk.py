@@ -37,7 +37,6 @@ LOCK = Path("docs/program/flight.lock")
 NOTE_TECH = Path("docs/program/note-tech.md")
 _LEGACY_NOTE_TECH = Path("docs/program/helm-tech.md")
 DESK_MD = Path("docs/program/desk.md")
-SIT_CARD = Path("docs/program/sit-card.json")
 
 
 @dataclass(frozen=True, slots=True)
@@ -219,15 +218,29 @@ def probe_rd_science() -> float | None:
 
 
 def latest_review() -> Path | None:
+    """Live seated ``*-review.md`` only. Parked archive novels are not the sit."""
     logs = seated_logs_dir()
     if not logs.is_dir():
         return None
-    files = sorted(
-        logs.glob("*-review.md"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
-    )
-    return files[0] if files else None
+    files = [
+        p
+        for p in logs.glob("*-review.md")
+        if p.is_file() and "/archive/" not in p.as_posix().replace("\\", "/")
+    ]
+    if not files:
+        return None
+    files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+    return files[0]
+
+
+def review_field() -> str:
+    """Desk ``review:`` line. Live review.md, else last-flight, else none."""
+    path = latest_review()
+    if path is not None:
+        return path.as_posix()
+    if LAST_FLIGHT.is_file():
+        return LAST_FLIGHT.as_posix()
+    return "none"
 
 
 def f013_for(world: World, eid: str, stack: list[str]) -> F013:
@@ -382,7 +395,7 @@ def build_sit(world: World | None = None) -> DeskSit:
     last = {"command": "", "exit": "", "abort": ""}
     if LAST_FLIGHT.is_file():
         last = parse_last_flight(LAST_FLIGHT.read_text(encoding="utf-8"))
-    review = latest_review()
+    review = review_field()
     craft_md = seated_craft_path()
     names = (
         craft_part_names(craft_md.read_text(encoding="utf-8"))
@@ -422,7 +435,7 @@ def build_sit(world: World | None = None) -> DeskSit:
         last_command=last["command"],
         last_exit=last["exit"],
         last_abort=last["abort"],
-        review=review.as_posix() if review else "none",
+        review=review,
         note_tech=_last_note_tech(),
         f013=f013,
         stack=tuple(names),
@@ -516,47 +529,3 @@ def format_desk(world: World | None = None) -> str:
     text = format_sit(sit)
     write_desk_md(text)
     return text
-
-
-def sit_card(world: World | None = None) -> dict:
-    """Bound-card slots for the Commander. Same F013 as desk."""
-    import json
-
-    world = world or load_world()
-    sit = build_sit(world)
-    slots = []
-    do_not: list[str] = []
-    for row in sit.f013:
-        if not row.eid:
-            continue
-        cfg = world.catalog.experiments.get(row.eid)
-        hang = None
-        if cfg and cfg.size_mb and cfg.data_rate and cfg.data_rate > 0:
-            hang = round(cfg.size_mb / cfg.data_rate, 1)
-        slots.append(
-            {
-                "eid": row.eid,
-                "part": row.instrument,
-                "hang_s": hang,
-                "on_craft": row.on_craft == "yes",
-                "unlocked": row.unlocked == "yes",
-                "host": row.host,
-            }
-        )
-        if row.unlocked == "no" or row.on_craft != "yes":
-            do_not.append(
-                f"{row.eid} instrument={row.instrument} "
-                f"unlocked={row.unlocked} on_craft={row.on_craft} host={row.host}"
-            )
-    if not sit.card:
-        do_not.append("empty card — do not pad a fallback")
-    card = {
-        "craft": sit.craft,
-        "hangar": sit.hangar,
-        "slots": slots,
-        "do_not_toggle": do_not,
-        "wait": "run=1 or UT+=hang_s — rem=0 is not a file (file=recording)",
-    }
-    SIT_CARD.parent.mkdir(parents=True, exist_ok=True)
-    SIT_CARD.write_text(json.dumps(card, indent=2) + "\n", encoding="utf-8")
-    return card

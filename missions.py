@@ -153,7 +153,9 @@ def list_ids() -> list[str]:
         return []
     out: list[str] = []
     for path in sorted(ROOT.iterdir()):
-        if path.is_dir() and (path / "mission.md").is_file():
+        if path.is_dir() and (
+            (path / "plan.md").is_file() or (path / "mission.md").is_file()
+        ):
             out.append(path.name)
     return out
 
@@ -218,7 +220,7 @@ def seat(who: str) -> str:
     else:
         fid = flight_slug(text)
     meta = mission_meta(fid)
-    if not meta:
+    if not meta and not seated_plan_path(fid).is_file():
         raise FileNotFoundError(f"no mission dossier {fid}")
     if meta.get("status", "").lower() in _LOST:
         raise RuntimeError(f"cannot seat {fid} — status {meta.get('status')}")
@@ -262,24 +264,30 @@ def write_index() -> Path:
         "# Missions\n",
         "\n",
         "One Commander. Seat with `python main.py seat <id>`.\n",
+        "Dossier render is `plan.md`; science dump is `science.md`; tape is `logs/*.jsonl`.\n",
         "\n",
-        "| Id | Pilot | Status | Body | Peri | Apo | Next |\n",
-        "|---|---|---|---|---|---|---|\n",
+        "| Id | Pilot | Status | Next |\n",
+        "|---|---|---|---|\n",
     ]
     seated = seated_id()
+    cur = current_kv()
     for fid in list_ids():
-        m = mission_meta(fid)
+        m = dict(mission_meta(fid))
+        if fid == seated:
+            m.setdefault("pilot", cur.get("pilot") or seated_pilot())
+            m.setdefault("status", "available")
+        plan = seated_plan_path(fid)
+        next_tok = m.get("next") or ""
+        if not next_tok and plan.is_file():
+            next_tok = _parse_kv(plan).get("phase") or _parse_kv(plan).get("next") or "plan.md"
         mark = " ← seated" if fid == seated else ""
         rows.append(
-            "| `{id}`{mark} | {pilot} | {status} | {body} | {peri} | {apo} | {next} |\n".format(
+            "| `{id}`{mark} | {pilot} | {status} | {next} |\n".format(
                 id=fid,
                 mark=mark,
                 pilot=m.get("pilot", ""),
                 status=m.get("status", ""),
-                body=m.get("body", ""),
-                peri=m.get("peri", ""),
-                apo=m.get("apo", ""),
-                next=m.get("next", ""),
+                next=next_tok,
             )
         )
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -78,6 +78,7 @@ DESKS = (
     "jebediah",
     "verena",
     "walt",
+    "katherine",
 )
 GO_STAMP_DESK = "gene"
 STAMP_RULES = {
@@ -95,7 +96,7 @@ DEFAULT_ROUTE = {
     "control": "lars",
     "systems": "wernher",
     "org": "mortimer",
-    "rsi": "hank",
+    "rsi": "mortimer",
     "ctt": "mortimer",
     "recover": "jebediah",
     "press": "verena",
@@ -103,19 +104,11 @@ DEFAULT_ROUTE = {
 }
 
 # Spawn thinking budget. Never xhigh.
-# Os 2026-08-23 Sunday token tax: desk floors, not severity inflation.
+# Token tax lifted (Os): low only for speech-only; high for org/RSI/S1.
 REASONING = ("low", "medium", "high")
 DESK_REASONING = {
-    "jebediah": "low",
-    "lars": "low",
     "walt": "low",
-    "wernher": "medium",
-    "mortimer": "medium",
-    "hank": "medium",
-    "gene": "medium",
-    "gus": "medium",
-    "linus": "medium",
-    "verena": "medium",
+    "mortimer": "high",
 }
 NEED_MAP = {
     "need_stack": ("control", "lars"),
@@ -150,6 +143,30 @@ def _norm_tags(tags: Any) -> list[str]:
             seen.add(t)
             out.append(t)
     return out
+
+
+_FP_STEM_MAX = 48
+_FP_ABORT = 80
+_LAST_RSI_ID = ""
+
+
+def normalize_fingerprint(fp: str) -> str:
+    """Short stem for RSI. Abort novels (>80 chars) do not count toward ×3."""
+    raw = str(fp or "").strip()
+    if not raw or len(raw) > _FP_ABORT:
+        return ""
+    return _norm_tag(raw)[:_FP_STEM_MAX]
+
+
+def science_is_catalog(t: dict[str, Any]) -> bool:
+    """Leftover biome shelf — not this-hop bind / not Linus ops-next work."""
+    if t.get("type") != "science" and t.get("category") != "science_opportunity":
+        return False
+    tags = set(t.get("tags") or [])
+    if "unbound" in tags:
+        return True
+    bound = str((t.get("payload") or {}).get("bound") or "").strip().lower()
+    return bound in {"no", "false", "0"}
 
 
 def _norm_category(category: str | None, typ: str) -> str:
@@ -219,11 +236,20 @@ def _next_id(tickets: dict[str, Any]) -> str:
 
 
 def reasoning_for(ticket: dict[str, Any], desk: str | None = None) -> str:
-    """Hank spawn thinking budget. Never xhigh. Desk floor (Os 2026-08-23)."""
+    """Hank spawn thinking budget. Never xhigh.
+
+    Walt is speech (low). Mortimer is org (high). Else: rsi/org/ctt or
+    S1 → high; S4 hygiene → low; everything else medium.
+    """
     d = (desk or ticket.get("desk") or "").lower()
     if d in DESK_REASONING:
         return DESK_REASONING[d]
-    s = ticket.get("severity") or "S3"
+    typ = str(ticket.get("type") or "")
+    if typ in {"rsi", "org", "ctt"}:
+        return "high"
+    s = str(ticket.get("severity") or "S3")
+    if s == "S1":
+        return "high"
     if s == "S4":
         return "low"
     return "medium"
@@ -233,14 +259,14 @@ def batch_reasoning(rows: list[dict[str, Any]], desk: str) -> str:
     if desk in DESK_REASONING:
         return DESK_REASONING[desk]
     order = {"low": 0, "medium": 1, "high": 2}
-    lvl = "low"
+    lvl = "medium"
     for t in rows:
         r = reasoning_for(t, desk)
         if r not in order:
             r = "medium"
         if order[r] > order[lvl]:
             lvl = r
-    return lvl
+    return lvl if rows else "medium"
 
 
 def infer_links(t: dict[str, Any]) -> dict[str, Any]:
@@ -260,6 +286,10 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
 
     def add(bucket: list[dict[str, str]], kind: str, path: str, why: str) -> None:
         if not path or path in seen:
+            return
+        from docs_inventory import skim_mentions_forbidden
+
+        if skim_mentions_forbidden(str(path)):
             return
         seen.add(path)
         bucket.append({"kind": kind, "path": path, "why": why})
@@ -292,12 +322,6 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
         add(deep, "last-flight", "docs/last-flight.md", "abort")
         live = payload.get("live_run") or ""
         if live:
-            add(
-                deep,
-                "review",
-                f"docs/missions/jebediah/logs/{live}-review.md",
-                "review",
-            )
             add_tape(f"docs/missions/jebediah/logs/{live}.jsonl")
     elif typ == "systems":
         add(deep, "agent-notes", "docs/agent-notes.md", "kRPC")
@@ -357,7 +381,7 @@ def format_packet(tid: str, *, deep: bool = False) -> str:
     lvl = reasoning_for(t)
     lines = [
         f"ticket: {t['id']}",
-        f"type: {t.get('type')} {t.get('severity')}{t.get('priority')} "
+        f"type: {t.get('type')} {t.get('severity') or 'S3'} {t.get('priority') or 'P2'} "
         f"{t.get('status')} desk={t.get('desk')}",
         f"category: {t.get('category') or TYPE_CATEGORY.get(t.get('type') or '', 'ops')}",
         f"title: {t.get('title')}",
@@ -517,8 +541,19 @@ def open_ticket(
     }
     if ticket["desk"] not in DESKS:
         raise TicketError(f"bad desk {ticket['desk']}")
+    ticket["fingerprint"] = normalize_fingerprint(fingerprint)
     _append({"op": "open", "at": now, "ticket": ticket})
     _rebuild()
+    global _LAST_RSI_ID
+    _LAST_RSI_ID = ""
+    if ticket["type"] != "rsi" and ticket["fingerprint"]:
+        loop = str(ticket.get("rsi_loop") or "")
+        rsi = maybe_open_rsi(
+            ticket["fingerprint"],
+            rsi_loop=None if loop in {"", "none"} else loop,
+        )
+        if rsi:
+            _LAST_RSI_ID = rsi["id"]
     return ticket
 
 
@@ -620,6 +655,16 @@ def fly_fields(t: dict[str, Any] | None) -> dict[str, Any]:
     }
 
 
+def commander_for(*, campaign: str = "none", fly: str = "yes") -> str:
+    """Who is the abort officer. Uncrewed: none — hop pid is the writer."""
+    if fly != "yes":
+        return "none"
+    camp = (campaign or "none").strip().lower() or "none"
+    if camp == "uncrewed":
+        return "none"
+    return "jebediah"
+
+
 def needs_learn(t: dict[str, Any] | None) -> bool:
     """Empty Learn on a stopped campaign (not uncrewed hops)."""
     ff = fly_fields(t)
@@ -694,6 +739,8 @@ def science_ids_for(*, situation: str = "", craft: str = "") -> tuple[str, ...]:
         pl = t.get("payload") or {}
         eid = str(pl.get("experiment_id") or pl.get("eid") or "").strip()
         if not eid:
+            continue
+        if science_is_catalog(t):
             continue
         if craft_l:
             got = str(pl.get("craft") or "").strip().lower()
@@ -776,7 +823,21 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
 
 
 def inbox_for(desk: str) -> list[dict[str, Any]]:
-    return list_tickets(desk=desk, open_only=True)
+    """Own desk plus ``ops --tag ask`` addressed with ``payload.to``."""
+    want = (desk or "").strip().lower()
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for t in list_tickets(open_only=True):
+        pl = t.get("payload") or {}
+        to = str(pl.get("to") or "").strip().lower()
+        if t.get("desk") != want and to != want:
+            continue
+        if t["id"] in seen:
+            continue
+        seen.add(t["id"])
+        out.append(t)
+    out.sort(key=lambda t: (t.get("severity", "S4"), t.get("priority", "P3"), t["id"]))
+    return out
 
 
 def format_inbox(desk: str) -> str:
@@ -788,7 +849,7 @@ def format_inbox(desk: str) -> str:
         cat = t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")
         tags = ",".join(t.get("tags") or []) or "-"
         lines.append(
-            f"{t['id']} {cat} {t.get('severity')}{t.get('priority')} "
+            f"{t['id']} {cat} {t.get('severity') or 'S3'} {t.get('priority') or 'P2'} "
             f"{t.get('status')} tags={tags} {t.get('title')}"
         )
     return "\n".join(lines) + "\n"
@@ -819,6 +880,7 @@ def maybe_open_rsi(
     rsi_loop: str | None = None,
 ) -> dict[str, Any] | None:
     """At 3 hits, open an RSI ticket if none open for this fingerprint."""
+    fp = normalize_fingerprint(fp)
     if not fp:
         return None
     n = fingerprint_count(fp)
@@ -836,7 +898,7 @@ def maybe_open_rsi(
                 loop = got
                 if got == "software":
                     break
-    desk = "wernher" if loop == "software" else "hank"
+    desk = "wernher" if loop == "software" else "mortimer"
     return open_ticket(
         type="rsi",
         title=f"RSI {fp} ×{n}",
@@ -861,7 +923,7 @@ def format_list(rows: list[dict[str, Any]]) -> str:
         if tags:
             extra += f" [{tags}]"
         lines.append(
-            f"{t['id']} {t.get('type')} {t.get('severity')}{t.get('priority')} "
+            f"{t['id']} {t.get('type')} {t.get('severity') or 'S3'} {t.get('priority') or 'P2'} "
             f"{t.get('status')} desk={t.get('desk')}{extra} {t.get('title')}"
         )
     return "\n".join(lines) + "\n"
@@ -948,7 +1010,7 @@ SEED = (
 
 
 def seed_legacy(*, who: str = "hank") -> list[str]:
-    """Idempotent: skip titles already on the board."""
+    """Idempotent: skip titles already on the board. Also I/F/lesson twins."""
     existing = {
         t.get("title") for t in (load_head().get("tickets") or {}).values()
     }
@@ -960,9 +1022,82 @@ def seed_legacy(*, who: str = "hank") -> list[str]:
         payload = kw.pop("payload", None)
         t = open_ticket(**kw, payload=payload)
         opened.append(t["id"])
+        existing.add(spec["title"])
         fp = spec.get("fingerprint") or ""
         if fp:
             maybe_open_rsi(fp)
+    opened.extend(migrate_second_bus(who=who))
+    return opened
+
+
+def _title_has_token(titles: list[str], token: str) -> bool:
+    """I/F ids match a title prefix so 'if F-005 not capped' is not a twin."""
+    from docs_inventory import twin_title_hits
+
+    return twin_title_hits(titles, token) > 0
+
+
+def migrate_second_bus(*, who: str = "hank") -> list[str]:
+    """I-012..I-020, F-001..F-015, lessons.md ``##`` twins. Idempotent on title token."""
+    from docs_inventory import IF_TWINS, lesson_headings
+
+    titles = [t.get("title") or "" for t in (load_head().get("tickets") or {}).values()]
+    opened: list[str] = []
+    for spec in IF_TWINS:
+        token = spec["token"]
+        title = spec["title"]
+        if _title_has_token(titles, token) or title in titles:
+            continue
+        t = open_ticket(
+            type=spec["type"],
+            title=title,
+            reporter=spec["reporter"],
+            severity=spec["severity"],
+            priority=spec["priority"],
+            desk=spec["desk"],
+            fingerprint=f"legacy-{token.lower()}",
+            rsi_loop="ops",
+            tags=["legacy-twin", token.lower()],
+        )
+        status = spec.get("status") or "inbox"
+        fields: dict[str, Any] = {}
+        if status != "inbox":
+            fields["status"] = status
+        why = spec.get("why") or ""
+        if why:
+            fields["close_why"] = why
+            fields["summary"] = why
+        if fields:
+            t = patch_ticket(t["id"], fields, who=who)
+        titles.append(t["title"])
+        opened.append(t["id"])
+    for heading in lesson_headings():
+        if not heading:
+            continue
+        if _title_has_token(titles, heading):
+            continue
+        t = open_ticket(
+            type="control",
+            title=heading,
+            reporter="Lars Grokman, Vehicle Systems Engineer",
+            severity="S3",
+            priority="P1",
+            desk="lars",
+            fingerprint="",
+            rsi_loop="none",
+            tags=["legacy-twin", "lesson"],
+        )
+        patch_ticket(
+            t["id"],
+            {
+                "status": "done",
+                "close_why": "patched history; lessons.md is forensics",
+                "summary": "patched history; lessons.md is forensics",
+            },
+            who=who,
+        )
+        titles.append(heading)
+        opened.append(t["id"])
     return opened
 
 
@@ -1028,6 +1163,7 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     ar.add_argument("--who", default="hank")
     sub.add_parser("board")
     sub.add_parser("seed")
+    sub.add_parser("dump", help="Rewrite science/slate/plan/briefing dumps from tickets")
     args = p.parse_args(argv)
     try:
         if args.act == "open":
@@ -1043,10 +1179,9 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
                 category=args.category or None,
                 tags=list(args.tag or []),
             )
-            rsi = maybe_open_rsi(args.fingerprint)
             print(t["id"], t["desk"], t["status"])
-            if rsi:
-                print("rsi", rsi["id"])
+            if _LAST_RSI_ID:
+                print("rsi", _LAST_RSI_ID)
             return 0
         if args.act == "list":
             rows = list_tickets(
@@ -1140,6 +1275,12 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
         if args.act == "seed":
             ids = seed_legacy()
             print("seeded", ",".join(ids) if ids else "none")
+            return 0
+        if args.act == "dump":
+            from house_dump import render_all
+
+            paths = render_all()
+            print("dump", ",".join(paths))
             return 0
     except TicketError as exc:
         print(str(exc), file=__import__("sys").stderr)

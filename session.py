@@ -170,22 +170,6 @@ class Session:
         if self.conn is None or self.space_center is None:
             raise SessionError("Not connected to kRPC.")
 
-    def require_mechjeb(self) -> Any:
-        self.require_connected()
-        if self.mech_jeb is None:
-            raise SessionError(
-                "MechJeb kRPC service is missing. Install MechJeb2 and KRPC.MechJeb."
-            )
-        return self.mech_jeb
-
-    def require_remotetech(self) -> Any:
-        self.require_connected()
-        if self.remote_tech is None:
-            raise SessionError(
-                "RemoteTech kRPC service is missing. For RP-1 use CommNet/RealAntennas."
-            )
-        return self.remote_tech
-
     @property
     def active_vessel(self) -> Any:
         self.require_connected()
@@ -239,6 +223,8 @@ class Session:
 
         # RemoteTech.dll ships *inside* GameData/kRPC: getattr is a stub, not
         # "the mod is installed". ``status.services`` is the protobuf inventory.
+        # MechJeb / RemoteTech **require** helpers were 2022 stock-Mun; letsgrok
+        # does not install them. Probe flags only — do not raise if missing.
         self.mech_jeb = grab("mech_jeb")
         self.remote_tech = grab("remote_tech")
 

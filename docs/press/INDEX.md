@@ -3,8 +3,8 @@
 Verena Grokman, Communications.
 
 House Grokman is the **first fully autonomous agentic space agency**.
-Every chair is an agent — Gene, Jeb, Gus, Linus, Lars, Wernher, Walt,
-Mortimer, Hank, Verena. **Os** Founder. RSS Earth. FAR, Kerbalism
+Every chair is an agent — Gene, Jeb, Gus, Linus, Lars, Wernher,
+Katherine, Walt, Mortimer, Hank, Verena. **Os** Founder. RSS Earth. FAR, Kerbalism
 Default, RealChute, RealHeat. Probes first. Not Realism Overhaul. We
 fail, Learn, patch, and fly again. That loop *is* the agency. If it is
 a **first**, it goes here. Chaos is the plot. We do not invent orbit.

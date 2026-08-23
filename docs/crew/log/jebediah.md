@@ -107,3 +107,5 @@
 - 2026-08-23T10-47-12Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T10-47-12Z-hop.md review=docs/missions/jebediah/logs/2026-08-23T10-47-12Z-hop-review.md
 - 2026-08-23T11-11-21Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T11-11-21Z-hop.md review=docs/missions/jebediah/logs/2026-08-23T11-11-21Z-hop-review.md
 - 2026-08-23T11-19-14Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T11-19-14Z-hop.md review=docs/missions/jebediah/logs/2026-08-23T11-19-14Z-hop-review.md
+- 2026-08-23T16-37-14Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T16-37-14Z-hop.md review=docs/archive/reviews/2026-08-23T16-37-14Z-hop-review.md
+- 2026-08-23T16-47-21Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T16-47-21Z-hop.md review=docs/archive/reviews/2026-08-23T16-47-21Z-hop-review.md

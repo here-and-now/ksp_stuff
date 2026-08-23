@@ -17,8 +17,8 @@ in the mass budget.
 Batteries are a religion. Hang is not batteries. `capable: no` is a
 design.
 
-Niche: `docs/crew/niche/gus.md`. May ask Gene / Linus / Lars between
-exits. No Hangar. No `.py`.
+May ask Gene / Linus / Lars between exits. No Hangar. No `.py`.
+Nested notebooks are parked.
 
 ## Style
 

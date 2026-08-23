@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="520"
+     viewBox="0 0 1280 520">
+  <rect width="100%" height="100%" fill="#10161c"/>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6d7b88"/></marker>
+    <marker id="arrh" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#5b8def"/></marker>
+  </defs>
+  <text x="40" y="36" fill="#e8eef4" font-size="22" font-weight="700"
+        font-family="DejaVu Sans, sans-serif">3. One hop — objects, not novels</text>
+  <text x="40" y="58" fill="#9aa7b5" font-size="14" font-family="DejaVu Sans, sans-serif">Sit = desk.md · Work = ticket · Meaning = tickets landing · CLI exit ends the hop</text>
+  <rect x="40.0" y="140.0" width="180.0" height="90.0" rx="8" fill="#1c2833" stroke="#5b8def" stroke-width="1.6"/>
+  <text x="130.0" y="181.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Hank</text>
+  <text x="130.0" y="197.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">python main.py desk</text>
+  <rect x="250.0" y="140.0" width="200.0" height="90.0" rx="8" fill="#1c2833" stroke="#5b8def" stroke-width="1.6"/>
+  <text x="350.0" y="181.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">board.jsonl</text>
+  <text x="350.0" y="197.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">ops next / protocol fly</text>
+  <rect x="480.0" y="140.0" width="200.0" height="90.0" rx="8" fill="#1c2833" stroke="#d4b44a" stroke-width="1.6"/>
+  <text x="580.0" y="173.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Gene (if needed)</text>
+  <text x="580.0" y="189.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">stamp go / cli / campaign</text>
+  <text x="580.0" y="205.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">render plan.md</text>
+  <rect x="710.0" y="140.0" width="240.0" height="90.0" rx="8" fill="#1c2833" stroke="#3d9b6a" stroke-width="1.6"/>
+  <text x="830.0" y="173.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Jeb packet</text>
+  <text x="830.0" y="189.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">desk + packet T-081 + BRIEF</text>
+  <text x="830.0" y="205.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">exact cli</text>
+  <rect x="980.0" y="140.0" width="250.0" height="90.0" rx="8" fill="#1c2833" stroke="#8b96a3" stroke-width="1.6"/>
+  <text x="1105.0" y="181.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">last-flight.md</text>
+  <text x="1105.0" y="197.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">exit · abort · last lines</text>
+  <line x1="220.0" y1="185.0" x2="250.0" y2="185.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <line x1="450.0" y1="185.0" x2="480.0" y2="185.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <line x1="680.0" y1="185.0" x2="710.0" y2="185.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <line x1="950.0" y1="185.0" x2="980.0" y2="185.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <rect x="250.0" y="320.0" width="280.0" height="90.0" rx="8" fill="#1c2833" stroke="#5b8def" stroke-width="1.6"/>
+  <text x="390.0" y="353.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Hank tape</text>
+  <text x="390.0" y="369.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">desk · leftover</text>
+  <text x="390.0" y="385.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">attach-run + landing on T-081</text>
+  <rect x="580.0" y="320.0" width="280.0" height="90.0" rx="8" fill="#1c2833" stroke="#8fa3c8" stroke-width="1.6"/>
+  <text x="720.0" y="353.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Mid-hop radio</text>
+  <text x="720.0" y="369.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">ship.md · uplink.md · note</text>
+  <text x="720.0" y="385.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">Hank reads ship, not jsonl</text>
+  <rect x="910.0" y="320.0" width="280.0" height="90.0" rx="8" fill="#1c2833" stroke="#d4b44a" stroke-width="1.6"/>
+  <text x="1050.0" y="353.0" text-anchor="middle" fill="#e8eef4" font-size="13" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="700">Landing wins</text>
+  <text x="1050.0" y="369.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">envelope: heading/horiz/pitch</text>
+  <text x="1050.0" y="385.0" text-anchor="middle" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, Liberation Sans, sans-serif" font-weight="400">biome/downrange — not learn prose</text>
+  <line x1="1105.0" y1="230.0" x2="390.0" y2="320.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <line x1="530.0" y1="365.0" x2="580.0" y2="365.0" stroke="#5b8def" stroke-width="1.7" marker-end="url(#arrh)"/>
+  <line x1="860.0" y1="365.0" x2="910.0" y2="365.0" stroke="#d4b44a" stroke-width="1.7" marker-end="url(#arr)"/>
+  <text x="40.0" y="460.0" fill="#9aa7b5" font-size="12" font-family="DejaVu Sans, sans-serif">Jeb does not debrief. Gene is not hired after a clean uncrewed 0. learn is a Gene stamp; the envelope on the packet is source of truth.</text>
+</svg>

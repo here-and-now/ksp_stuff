@@ -9,11 +9,13 @@ from typing import Any
 from tickets import (
     DESKS,
     batch_reasoning,
+    commander_for,
     fly_fields,
     list_tickets,
     load_head,
     needs_learn,
     packet_cmd,
+    science_is_catalog,
     show_ticket,
 )
 
@@ -86,6 +88,33 @@ def leftover_cli(desk: dict[str, str]) -> str:
     if hangar.startswith("recover "):
         return "python main.py recover-probe --space-center"
     return "python main.py recover-probe --recover"
+
+
+def _ready_status(t: dict[str, Any]) -> bool:
+    return t.get("status") in {"inbox", "triage", "ready", "assigned"}
+
+
+def _org_rsi_tickets() -> list[dict[str, Any]]:
+    return [
+        t
+        for t in list_tickets(open_only=True)
+        if t.get("type") in {"rsi", "org", "ctt"} and _ready_status(t)
+    ]
+
+
+def _desk_ground(desk_name: str) -> list[dict[str, Any]]:
+    rows = []
+    for t in list_tickets(open_only=True):
+        if t.get("desk") != desk_name:
+            continue
+        if t.get("type") in {"fly", "recover"}:
+            continue
+        if not _ready_status(t):
+            continue
+        if science_is_catalog(t):
+            continue
+        rows.append(t)
+    return rows
 
 
 def leftover_sit(desk: dict[str, str]) -> bool:
@@ -179,14 +208,8 @@ def next_actions(
         }
 
     if live:
-        for desk_name in ("gus", "linus", "wernher", "lars", "verena"):
-            batch = [
-                t
-                for t in list_tickets(open_only=True)
-                if t.get("desk") == desk_name
-                and t.get("status") in {"inbox", "triage", "ready", "assigned"}
-                and t.get("type") not in {"fly", "recover"}
-            ]
+        for desk_name in ("gus", "linus", "wernher", "lars", "verena", "katherine"):
+            batch = _desk_ground(desk_name)
             if batch:
                 _hire(desk_name, batch, "lock live — ground only, batched")
         return {
@@ -210,26 +233,41 @@ def next_actions(
 
     if fly_ready:
         t = fly_ready[0]
-        cli = fly_fields(t).get("cli") or ""
-        _hire("jebediah", [t], "lock free, go yes — pad occupancy", cli=cli)
-        for desk_name in ("gus", "linus", "wernher", "lars"):
-            batch = [
-                x
-                for x in list_tickets(open_only=True)
-                if x.get("desk") == desk_name
-                and x.get("type") not in {"fly", "recover"}
-                and x.get("status") in {"inbox", "triage", "ready", "assigned"}
-            ]
+        ff = fly_fields(t)
+        cli = ff.get("cli") or ""
+        camp = ff.get("campaign") or "none"
+        who = commander_for(campaign=camp)
+        if who == "none":
+            _hire(
+                "hank",
+                [t],
+                "uncrewed — parent starts hop; hop pid is the writer",
+                cli=cli,
+            )
+        else:
+            _hire(
+                "jebediah",
+                [t],
+                "crewed/firsts — abort officer starts hop; hop pid is the writer",
+                cli=cli,
+            )
+        org = _org_rsi_tickets()
+        if org:
+            _hire("mortimer", org, "rsi/org/ctt — lock free, pad still flies")
+        for desk_name in ("gus", "linus", "wernher", "lars", "katherine"):
+            batch = _desk_ground(desk_name)
             if batch:
                 _hire(
                     desk_name,
                     batch,
-                    "parallel ground while Commander flies (will be lock live)",
+                    "parallel ground while hop pid holds the stick",
                 )
         return {
             "lock": "free",
             "pad": "idle",
             "fly_ready": t["id"],
+            "commander": who,
+            "writer": "hop-pid",
             "hire": hires,
         }
 
@@ -252,7 +290,7 @@ def next_actions(
             ]
 
         veh = _typed("vehicle")
-        sci = _typed("science")
+        sci = [x for x in _typed("science") if not science_is_catalog(x)]
         ctrl = _typed("control")
         seen = {x["id"] for x in veh + sci + ctrl}
         sys_rows = [
@@ -260,7 +298,7 @@ def next_actions(
             for x in list_tickets(open_only=True)
             if x["id"] not in seen
             and x.get("status") in ready
-            and x.get("type") not in {"fly", "recover"}
+            and x.get("type") not in {"fly", "recover", "rsi", "org", "ctt"}
             and (x.get("type") == "systems" or x.get("desk") == "wernher")
         ]
         if veh:
@@ -271,6 +309,9 @@ def next_actions(
             _hire("lars", ctrl, "batch control tickets (miss/fingerprint)")
         if sys_rows:
             _hire("wernher", sys_rows, "batch systems tickets")
+        org = _org_rsi_tickets()
+        if org:
+            _hire("mortimer", org, "rsi/org/ctt — lock free")
         return {
             "lock": "free",
             "pad": "idle",
@@ -281,12 +322,12 @@ def next_actions(
     for desk_name in DESKS:
         if desk_name in {"jebediah", "gene", "hank", "walt"}:
             continue
-        batch = [
-            t
-            for t in list_tickets(open_only=True)
-            if t.get("desk") == desk_name
-            and t.get("status") in {"inbox", "triage", "ready", "assigned"}
-        ]
+        batch = _desk_ground(desk_name)
+        if desk_name == "mortimer":
+            seen = {x["id"] for x in batch}
+            for row in _org_rsi_tickets():
+                if row["id"] not in seen:
+                    batch.append(row)
         if batch:
             _hire(desk_name, batch, "ground queue")
     if not hires:
@@ -304,7 +345,15 @@ def format_next(actions: dict[str, Any]) -> str:
         f"lock: {actions.get('lock')}",
         f"pad: {actions.get('pad')}",
         f"fly_ready: {actions.get('fly_ready') or 'none'}",
+        f"writer: {actions.get('writer') or 'none'}",
+        f"commander: {actions.get('commander') or 'none'}",
     ]
+    rsi_ids = [
+        t["id"]
+        for t in list_tickets(open_only=True)
+        if t.get("type") in {"rsi", "org", "ctt"}
+    ]
+    lines.append("rsi: " + (",".join(rsi_ids) if rsi_ids else "none"))
     if actions.get("ksc"):
         lines.append(f"ksc: {actions['ksc']}")
     if actions.get("call"):
@@ -340,11 +389,14 @@ def fly_gate(
 
     t = show_ticket(fid)
     ff = fly_fields(t)
+    camp = ff.get("campaign") or "none"
     return {
         "fly": "yes",
         "reason": "ok",
         "cli": ff.get("cli") or "none",
-        "campaign": ff.get("campaign") or "none",
+        "campaign": camp,
+        "commander": commander_for(campaign=camp),
+        "writer": "hop-pid",
     }
 
 
@@ -356,6 +408,10 @@ def format_fly(g: dict[str, str]) -> str:
     ]
     if g.get("campaign"):
         lines.append(f"campaign: {g['campaign']}")
+    if g.get("writer"):
+        lines.append(f"writer: {g['writer']}")
+    if g.get("commander") is not None:
+        lines.append(f"commander: {g['commander']}")
     return "\n".join(lines) + "\n"
 
 

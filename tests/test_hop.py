@@ -314,8 +314,8 @@ class TestHopCatalog(unittest.TestCase):
 
         self.assertIn("hop", NAMES)
         self.assertIn("splash", NAMES)
-        self.assertIn("hop-to-water", NAMES)
-        self.assertIn("hop-splash", NAMES)
+        self.assertNotIn("hop-to-water", NAMES)
+        self.assertNotIn("hop-splash", NAMES)
         self.assertEqual(HOP_EXPERIMENTS, ("kerbalism_TELEMETRY", "temperatureScan"))
         self.assertEqual(CRAFT, "kspstuff-hop-flea-pbc")
         self.assertTrue(hop_craft_path("kspstuff-hop-flea-pbc").is_file())
@@ -2988,10 +2988,11 @@ class TestHopToWater(unittest.TestCase):
 
     def test_cmd_phase_skips_seat_and_aborts_flea(self):
         from main import cmd_phase
+        from telem import MissionAbort
 
         session = _Session(_Vessel([]))
-        args = argparse.Namespace(name="hop-to-water", timeout=0.0)
-        with patch("hop.hop_craft_name", return_value=CRAFT):
+        args = argparse.Namespace(name="hop", timeout=0.0)
+        with patch("hop.run_hop", side_effect=MissionAbort("flea refused")):
             with patch("missions.assert_seated") as seated:
                 code = cmd_phase(session, args)
         seated.assert_not_called()
@@ -3013,10 +3014,9 @@ class TestHopToWater(unittest.TestCase):
         self.assertIn("set_direction_and_up", blocks)
         self.assertIn("22-03-59Z", blocks)
         self.assertIn("22-45-26Z", blocks)
-        self.assertIn("22-57-36Z", blocks)
-        self.assertIn("23-15-52Z", blocks)
         self.assertIn("10-11-27Z", blocks)
         self.assertIn("suicide", blocks.lower())
+        self.assertIn("Retired campaign notes", blocks)
 
     def test_pitch_east_waits_splash(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -4753,10 +4753,11 @@ class TestHopSplash(unittest.TestCase):
 
     def test_cmd_phase_skips_seat_and_aborts_flea(self):
         from main import cmd_phase
+        from telem import MissionAbort
 
         session = _Session(_Vessel([]))
-        args = argparse.Namespace(name="hop-splash", timeout=0.0)
-        with patch("hop.hop_craft_name", return_value=CRAFT):
+        args = argparse.Namespace(name="hop", timeout=0.0)
+        with patch("hop.run_hop", side_effect=MissionAbort("flea refused")):
             with patch("missions.assert_seated") as seated:
                 code = cmd_phase(session, args)
         seated.assert_not_called()
@@ -4793,7 +4794,7 @@ class TestHopSplash(unittest.TestCase):
         self.assertIn("east-fin PRELAUNCH", blocks)
         self.assertIn("stay cut", blocks)
         self.assertIn("suicide", blocks.lower())
-        self.assertIn("22-57-36Z", blocks)
+        self.assertIn("Retired campaign notes", blocks)
 
     def test_vertical_no_east_no_flying_toggle(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")

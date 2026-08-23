@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 from desk import (
     DeskSit,
@@ -11,9 +12,11 @@ from desk import (
     card_experiments,
     format_sit,
     hangar_call,
+    latest_review,
     parse_last_flight,
     pick_banked_science,
     prior_sci,
+    review_field,
     sci_delta,
 )
 from ops import leftover_cli, leftover_sit
@@ -91,6 +94,26 @@ class TestDesk(unittest.TestCase):
         self.assertNotIn("open science at this tree", text)
         self.assertNotIn("mysteryGoo", text)
         self.assertNotIn("Cape", text)
+
+    def test_format_sit_review_not_parked_or_missing(self):
+        path = latest_review()
+        if path is not None:
+            posix = path.as_posix().replace("\\", "/")
+            self.assertNotIn("/archive/", posix)
+            self.assertFalse(posix.startswith("docs/archive/"))
+            self.assertTrue(path.is_file())
+        field = review_field()
+        text = format_sit(_sit(review=field))
+        line = next(row for row in text.splitlines() if row.startswith("review:"))
+        val = line.split(":", 1)[1].strip()
+        self.assertNotIn("/archive/", val.replace("\\", "/"))
+        self.assertFalse(val.startswith("docs/archive/"))
+        if val.endswith("-review.md"):
+            dest = Path(val)
+            self.assertTrue(dest.is_file(), val)
+            self.assertNotIn("/archive/", dest.as_posix().replace("\\", "/"))
+        elif val not in {"none", ""}:
+            self.assertTrue(Path(val).is_file(), val)
 
     def test_prior_sci_from_desk_md(self):
         self.assertAlmostEqual(prior_sci("lock: free\nsci: 2.4272\nsci_delta: x\n"), 2.4272)

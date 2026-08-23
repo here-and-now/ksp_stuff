@@ -7,7 +7,7 @@ from pathlib import Path
 
 from card import card_flying_ids, card_pad_ids, card_splash_ids
 from phases import NAMES as PHASE_NAMES
-from tickets import fly_fields, seated_fly_ticket
+from tickets import commander_for, fly_fields, seated_fly_ticket
 
 SCHEMAS: dict[str, tuple[str, ...]] = {
     "gene": ("go", "recommended", "phase", "f013"),
@@ -17,6 +17,7 @@ SCHEMAS: dict[str, tuple[str, ...]] = {
     "mortimer": ("org", "goal"),
     "wernher": ("ready_to_fly", "files"),
     "verena": ("story", "shot"),
+    "katherine": ("model", "ask", "tickets"),
     "pilot": ("result", "exit", "handoff"),
 }
 
@@ -36,6 +37,8 @@ class FlyGate:
     reason: str
     cli: str
     campaign: str = "none"
+    commander: str = "none"
+    writer: str = "hop-pid"
 
 
 def parse_kv(text: str) -> dict[str, str]:
@@ -132,7 +135,14 @@ def fly_gate(
     campaign = (ff.get("campaign") or plan.get("campaign") or "none").strip() or "none"
 
     def _out(fly: str, reason: str, cli: str) -> FlyGate:
-        return FlyGate(fly, reason, cli, campaign)
+        return FlyGate(
+            fly,
+            reason,
+            cli,
+            campaign,
+            commander_for(campaign=campaign, fly=fly),
+            "hop-pid",
+        )
 
     if go != "yes":
         return _out("wait", "missing go: yes", rec)
@@ -173,7 +183,14 @@ def _f013_and_card(
 ) -> FlyGate:
     ids = _bound_ids(ticket, sit, phase, science_text)
     if phase in {"pad", "hop", "splash"} and not ids:
-        return FlyGate("wait", "no bound card", cli, campaign)
+        return FlyGate(
+            "wait",
+            "no bound card",
+            cli,
+            campaign,
+            commander_for(campaign=campaign, fly="wait"),
+            "hop-pid",
+        )
     blocked = [
         row
         for row in sit.f013
@@ -186,8 +203,17 @@ def _f013_and_card(
             f"f013 {row.eid} unlocked={row.unlocked} on_craft={row.on_craft}",
             cli,
             campaign,
+            commander_for(campaign=campaign, fly="wait"),
+            "hop-pid",
         )
-    return FlyGate("yes", "ok", cli, campaign)
+    return FlyGate(
+        "yes",
+        "ok",
+        cli,
+        campaign,
+        commander_for(campaign=campaign, fly="yes"),
+        "hop-pid",
+    )
 
 
 def format_gate(gate: FlyGate) -> str:
@@ -196,6 +222,8 @@ def format_gate(gate: FlyGate) -> str:
         f"reason: {gate.reason}\n"
         f"cli: {gate.cli or 'none'}\n"
         f"campaign: {gate.campaign or 'none'}\n"
+        f"writer: {gate.writer or 'hop-pid'}\n"
+        f"commander: {gate.commander or 'none'}\n"
     )
 
 

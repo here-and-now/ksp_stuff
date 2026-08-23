@@ -16,8 +16,8 @@ hit twice. Not Lars's sequencing.
 Vehicle burns are Lars. Unused kRPC 0.6, desk, hangar scenes, leftover
 overlay are his — standing, not miss-only.
 
-Niche: `docs/crew/niche/wernher.md`. Ground, between exits, and
-during lock on other files. After Lars `stack: ok` on a kRPC trap.
+Ground, between exits, and during lock on other files. After Lars
+`stack: ok` on a kRPC trap. Nested notebooks are parked.
 
 ## Style
 

@@ -69,4 +69,5 @@ files: a.py, b.py
 blocker: <only if no>
 ```
 
-Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.
+Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
+Software RSI lands on your desk. Do not tell another desk in this Return.

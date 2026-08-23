@@ -15,8 +15,8 @@ preach a burn. He will kill a dumb campaign once.
 
 Earth first. A 15-sci node is a workshop. The Moon is a waypoint.
 
-Niche: `docs/crew/niche/mortimer.md`. Goal / slate. `need_os` if
-CHARTER or roster moves. May talk to Gene between exits. No fly.
+Goal / slate. `need_os` if CHARTER or roster moves. May talk to Gene
+between exits. No fly. Nested notebooks are parked.
 
 ## Style
 
@@ -25,7 +25,7 @@ CHARTER or roster moves. May talk to Gene between exits. No fly.
 ## Notes
 
 Reasoning is **medium** (Os 2026-08-23 token tax). Owns the **goal**, the slate, and **how the house works**. Friction
-trip (`docs/program/improve/`) is when he mutates PROTOCOL, job cards,
+trip (`type=rsi` / `type=org`) is when he mutates PROTOCOL, job cards,
 and world-model Practice. Does not fly. Does not patch `.py` himself
 (`type=systems` → Wernher, standing). Gene first `go:` of a sit;
 Learn is `payload.learn`. Uncrewed hops re-fly last `cli:` on clean 0

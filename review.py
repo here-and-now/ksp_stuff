@@ -172,7 +172,13 @@ def write_review(
     earth = str(start.get("earth_utc") or "")
     kut = str(start.get("kerbal_ut") or "")
     kmet = str(start.get("kerbal_met") or "")
-    out = jsonl.with_name(jsonl.stem + "-review.md")
+    rel = jsonl.as_posix().replace("\\", "/")
+    if "/docs/missions/" in f"/{rel}" or rel.startswith("docs/missions/"):
+        dest_dir = Path("docs") / "archive" / "reviews"
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        out = dest_dir / f"{jsonl.stem}-review.md"
+    else:
+        out = jsonl.with_name(jsonl.stem + "-review.md")
     lines = [
         f"# Review {jsonl.stem}",
         "",

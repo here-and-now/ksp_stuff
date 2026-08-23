@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-23 — Hired **Katherine Grokman, Flight Dynamics**. Tape windows, not jsonl. Relays by ticket. Off default pad occupancy unless inbox. Not Linus, not Lars, not Wernher schema.
 - 2026-08-23 — Sunday token tax: desk reasoning floors (Jeb/Lars low, Wernher/Mortimer medium, Gene/Gus/Linus medium, Hank=TUI). Never xhigh. Fresh spawn vs resume_from in PROTOCOL. Packet skim; no auto --deep.
 - 2026-08-23 — T-143: leftover-ksc load retired. Walk home recover()+Close. Os disabled reverting. PROTOCOL/OPS/CHARTER/Practice/Hank/GLOSSARY. Code stays T-142.
 - 2026-08-23 — T-114: working goal is next tech node `stability` 18; do not rest until banked. CHARTER/slate/Practice aligned. Crumbs 1.47 unspent. Creed untouched.

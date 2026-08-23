@@ -66,4 +66,5 @@ tickets: T-NNN | none
 blocker: <only if no>
 ```
 
-Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.
+Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
+Do not tell another desk in this Return.

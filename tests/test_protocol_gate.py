@@ -221,8 +221,12 @@ class TestFlyGate(unittest.TestCase):
         self.assertEqual(gate.fly, "yes")
         self.assertEqual(gate.cli, "python main.py hop")
         self.assertEqual(gate.campaign, "uncrewed")
+        self.assertEqual(gate.commander, "none")
+        self.assertEqual(gate.writer, "hop-pid")
         text = format_gate(gate)
         self.assertIn("campaign: uncrewed", text)
+        self.assertIn("commander: none", text)
+        self.assertIn("writer: hop-pid", text)
 
     def test_no_ticket_falls_back_to_plan(self):
         gate = fly_gate(
@@ -238,6 +242,7 @@ class TestFlyGate(unittest.TestCase):
         )
         self.assertEqual(gate.fly, "yes")
         self.assertEqual(gate.cli, "python main.py hop")
+        self.assertEqual(gate.commander, "jebediah")
 
     def test_ticket_science_ids_skip_card(self):
         ticket = {

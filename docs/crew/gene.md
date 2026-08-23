@@ -19,7 +19,7 @@ The log can lie. The still and the **jsonl envelope** (`heading` /
 exit, not heading. 72 m was a leftover, not a hop. Chairs **flight**
 layers of the world model. Practice is Mortimer.
 
-Niche: `docs/crew/niche/gene.md` (private until he merges).
+Itch is `tickets open --type ops --tag explore`. Nested notebooks are parked.
 
 ## Style
 

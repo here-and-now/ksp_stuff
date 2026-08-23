@@ -56,7 +56,8 @@ this hang → next alt on disk, or `campaign: none` and open
 vehicle/science tickets. Missing block → `--type control`. Missing rocket
 → `--type vehicle`. Science bind → `--type science` (`experiment_id`).
 Firsts → `--type press`. Paid node → `--type ctt`. Friction → `--type ops
---tag feedback`. `payload.cli` is the exact Commander CLI.
+--tag feedback --fingerprint <stem>`. `payload.cli` is the exact Commander CLI.
+Do not tell another desk in Return prose. **Landing wins `learn`.**
 
 ## Learn
 

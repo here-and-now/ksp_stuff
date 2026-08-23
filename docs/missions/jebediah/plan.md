@@ -1,5 +1,4 @@
 # Gene's plan. `python main.py phase` runs `phase:`.
-# Render of T-081. Ticket is the source (go/cli/campaign/phase/science_ids).
 mun_pe: 25000
 suicide_start: 25000
 parking_apo: 250000
@@ -14,7 +13,6 @@ expect_apo_max: 50000
 craft: kspstuff-hop-valiant-proc-stiff-pbc
 hop_apo: 18000
 go: yes
+cli: python main.py hop
 campaign: uncrewed
-recommended: python main.py hop
 science_ids: temperatureScan,kerbalism_TELEMETRY,mysteryGoo
-emergencies: hold, cut, no_warp, stage, recover, science, abort_pad

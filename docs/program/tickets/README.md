@@ -11,8 +11,7 @@ Eleven types: `fly` `science` `vehicle` `control` `systems` `org`
 `rsi` `ctt` `recover` `press` `ops`. Ask / itch / friction:
 `--type ops --tag ask|feedback|explore`. Paid node: `--type ctt`.
 Press: `--type press`. Desks `tickets open --type …`. Do not emit
-`need_*` / `card:` / `recommended:` / `ask:` as return keys. Parent
-may still `tickets from-need` leftover tokens (shim only).
+`need_*` / `card:` / `recommended:` / `ask:` as return keys.
 
 ```
 python main.py tickets list
@@ -27,7 +26,6 @@ python main.py tickets attach-run T-013 --path docs/missions/jebediah/logs/<run>
 python main.py tickets landing T-013
 python main.py telem docs/missions/jebediah/logs/<run>.jsonl
 python main.py telem docs/missions/jebediah/logs/<run>.jsonl --window impact
-python main.py tickets from-need --need need_stack --title "hop-splash"
 python main.py ops next
 python main.py protocol fly
 ```
@@ -35,8 +33,8 @@ python main.py protocol fly
 Skim packet: desk + this ticket + BRIEF + landing envelope (pad/last
 heading, apo, hz). No BOARD.md. Jsonl stays on disk — query `telem` /
 `tickets landing`. `--deep` is PNG / craft / last-flight / tape CLI,
-not rows. Desk floors (Os 2026-08-23): Jeb/Lars low, Wernher/Mortimer
-medium, Gene medium. `ops next` prints `reasoning=` and
+not rows. Reasoning: **low** Walt/S4; **high** Mortimer/rsi/org/S1;
+else **medium**. `ops next` prints `reasoning=` and
 the packet command (skim; no auto `--deep`). Never xhigh.
 
 Categories replace cards: `craft`, `science_opportunity`, `bug`,

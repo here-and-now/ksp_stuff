@@ -1,6 +1,8 @@
-"""One flight segment per process. Gene plans between phases.
+"""One flight segment per process. Gene names only ``NAMES``.
 
-Unknown names abort — Lars writes the block when Gene need_stack.
+Unknown names abort — Lars writes the block. Factory hop is ``hop``.
+``hop-to-water`` / ``hop-splash`` are retired Gene names; loops stay in
+``hop.py`` and the matching ``python main.py`` commands.
 """
 
 from __future__ import annotations
@@ -12,7 +14,7 @@ from session import Session
 from telem import MissionAbort
 from uplink import load_plan, plan_file, write_plan_file
 
-NAMES = ("pad", "hop", "splash", "hop-to-water", "hop-splash", "tech-unlock")
+NAMES = ("pad", "hop", "splash", "tech-unlock")
 UNCREWED = frozenset(NAMES)
 
 
@@ -86,7 +88,7 @@ def run(
     name = name.lower().strip()
     if name not in NAMES:
         raise MissionAbort(
-            f"unknown phase {name} — not in blocks.md; Gene need_stack"
+            f"unknown phase {name} — not in blocks.md; Lars writes the block"
         )
     load_plan()
     if name == "pad":
@@ -103,16 +105,6 @@ def run(
         from splash import run_phase as run_splash_phase
 
         run_splash_phase(session, on_log=on_log, abort=abort)
-        return
-    if name in {"hop-to-water", "hop_water"}:
-        from hop import run_hop_to_water
-
-        run_hop_to_water(session, on_log=on_log, abort=abort)
-        return
-    if name in {"hop-splash", "hop_splash"}:
-        from hop import run_hop_splash
-
-        run_hop_splash(session, on_log=on_log, abort=abort)
         return
     if name in {"tech-unlock", "tech_unlock"}:
         from tech_unlock import run_phase as run_tech_unlock

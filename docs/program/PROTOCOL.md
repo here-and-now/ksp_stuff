@@ -204,6 +204,7 @@ the gate — missing `go: yes` is wait.
 | Wernher systems + ground on other files | never the live writer’s `.py` |
 | Parent **re-desk** after Gus `capable: yes` (I-014) | Linus bind / Gene `go` on stale capable/f013 |
 | Disk `python main.py world` anytime | never a second writer |
+| Disk `python main.py science-scan` / `comms` (MM last write) | never Kerbalism tweak cfg as gospel |
 | Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab |
 | Parent `python main.py screenshot --name <slug>` | Verena `shot: now` (or Gene `shot:` at dwell / after-recover). No kRPC. |
 | Gene / Commander `python main.py screenshot --name stuck-<stem>` | logs first; one still; read the PNG. No kRPC. |

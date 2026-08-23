@@ -30,7 +30,8 @@ titles. Drop RAF/spy/radio-compact.
 | **note-tech.md** | Tape, not the bus. Commander may still append; miss opens `type=control\|recover`. |
 | **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
 | **KSP-RO** | Parked Express RO tree. Do not seat. Live gym is `~/Games/KSP-rss` / letsgrok. |
-| **science-scan** | Linus. GameData Situation + save leftovers vs REACH. kRPC has no subject list. |
+| **science-scan** | Linus. Live MM experiment defs + leftovers vs REACH. Samples recover; files credit while recording. |
+| **comms** | Gus/Linus. Live RA antennas + probe HD from ConfigCache. |
 | **Flight Dynamics** | Katherine. Tape windows (`telem --window`), not jsonl in the prompt. Relays by ticket. Not Linus bind, not Lars burns, not Wernher schema. |
 | **sit-card** | **Retired.** Sit is `python main.py desk` / `desk.md`. |
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |

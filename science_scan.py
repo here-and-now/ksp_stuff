@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from world import World, instrument_parts
 
-# RSS Kerbin-scale body multipliers used on Earth subjects we already banked.
+# RSS Earth ScienceValues (Earth.cfg). LEO is InSpaceLow only; high is GEO.
 _SIT_SCALE = {
     "surface": 0.3,
     "srf": 0.3,
@@ -16,15 +16,19 @@ _SIT_SCALE = {
     "splash": 0.4,
     "flyinglow": 0.7,
     "flyinghigh": 0.9,
-    "space": 1.3,
+    "inspacelow": 1.0,
+    "inspacehigh": 1.5,
+    "space": 1.0,
 }
 
 _REACH = {
     "surface": "pad Shores (Cape); other biomes no site",
     "flyinglow": "hop FlyingLow <50 km — hang-limited",
     "flyinghigh": "50 km lid / OffPlan",
-    "space": "not in reach",
-    "splash": "splash refused (no Water leftover)",
+    "space": "LEO / not this hop",
+    "inspacelow": "LEO — not this hop",
+    "inspacehigh": "GEO 35786 km — not this hop",
+    "splash": "splash leftover Water only",
 }
 
 
@@ -38,7 +42,11 @@ def _sit_key(tag: str) -> str:
         return "flyinglow"
     if "flyinghigh" in t or "flying_high" in t:
         return "flyinghigh"
-    if "space" in t or "inspace" in t:
+    if "inspacehigh" in t or "spacehigh" in t:
+        return "inspacehigh"
+    if "inspacelow" in t or "spacelow" in t:
+        return "inspacelow"
+    if "space" in t:
         return "space"
     return t.split("@", 1)[0]
 
@@ -53,6 +61,57 @@ def unlocked_experiment_ids(world: World) -> set[str]:
     return out
 
 
+def format_live_defs(world: World) -> str:
+    """Post-MM experiment table. House patch last-writes baro/Jr/atmo."""
+    lines = [
+        "# live experiment defs (ModuleManager.ConfigCache last write)",
+        "# GameData/zzzzkspstuffScience after Kerbalism. Do not read StockExperiments.cfg.",
+        "# sample = recover the can (no radio). file = credits while recording onto HD.",
+        "# id  kind  cap  size_Mb  duration_s  ec_rate  slots  situations",
+    ]
+    for eid, cfg in sorted(world.catalog.experiments.items()):
+        dur = f"{cfg.duration_s:.0f}" if cfg.duration_s else "-"
+        cap = f"{cfg.science_cap:.3g}" if cfg.science_cap is not None else "-"
+        size = f"{cfg.size_mb:.3g}" if cfg.size_mb is not None else "-"
+        ec = f"{cfg.ec_rate:.4g}" if cfg.ec_rate is not None else "-"
+        slots = f"{cfg.sample_amount:g}" if cfg.sample_amount else "-"
+        sits = ",".join(cfg.situations) if cfg.situations else "-"
+        lines.append(
+            f"{eid:28} {cfg.kind:6} cap={cap:6} size={size:8} t={dur:6} "
+            f"ec={ec:8} slots={slots:4} {sits}"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def format_comms(world: World) -> str:
+    """Live RA antennas + command-module HD from MM cache. Gus / Linus disk sit."""
+    lines = [
+        "# live RA + probe HD (ModuleManager.ConfigCache). No kRPC.",
+        "# TL2 (survivability) MaxDataRate=64 bps on every ModuleRealAntenna.",
+        "# 16-S omni L gain=2. Dishes start basicScience (HG-5 0.5m). Goo/Jr are samples.",
+        "# part  tech  title  gain  diam_m  band  HD_Mb  samples",
+    ]
+    owned = set(world.research.unlocked)
+    rows: list[tuple[str, object]] = []
+    for part in world.catalog.parts.values():
+        if "ModuleRealAntenna" not in part.modules and part.data_capacity is None:
+            continue
+        rows.append((part.name, part))
+    for _name, part in sorted(rows, key=lambda r: ((r[1].tech or "zzz"), r[0])):
+        lock = "UNLOCKED" if (not part.tech or part.tech in owned) else "LOCKED"
+        gain = f"{part.antenna_gain:g}" if part.antenna_gain is not None else "-"
+        diam = f"{part.antenna_diameter:g}" if part.antenna_diameter is not None else "-"
+        band = part.antenna_band or "-"
+        hd = f"{part.data_capacity:g}" if part.data_capacity is not None else "-"
+        sm = f"{part.sample_capacity:g}" if part.sample_capacity is not None else "-"
+        title = (part.title or part.name)[:36]
+        lines.append(
+            f"{part.name:36} {part.tech or '-':22} {lock:8} "
+            f"gain={gain:6} D={diam:6} {band:4} HD={hd:6} samp={sm:4}  {title}"
+        )
+    return "\n".join(lines) + "\n"
+
+
 def format_science_scan(world: World) -> str:
     owned_ids = unlocked_experiment_ids(world)
     by_id: dict[str, list] = {}
@@ -61,10 +120,14 @@ def format_science_scan(world: World) -> str:
         by_id.setdefault(eid, []).append(sub)
 
     lines = [
-        "# open science at this tree (GameData Situation + save leftovers)",
+        "# open science at this tree (live MM defs + save leftovers)",
         "# kRPC has get_Science only — no subject list. Disk is the scan.",
+        "# python main.py science-scan   # this table",
+        "# python main.py comms          # RA + HD",
         f"# unlocked experiments n={len(owned_ids)}",
     ]
+    lines.extend(format_live_defs(world).splitlines())
+    lines.append("# leftover / reach")
     opens = 0
     for eid in sorted(owned_ids):
         cfg = world.catalog.experiments.get(eid)
@@ -93,6 +156,8 @@ def format_science_scan(world: World) -> str:
                 )
                 or (key == "flyinglow" and "FlyingLow" in s.id)
                 or (key == "flyinghigh" and "FlyingHigh" in s.id)
+                or (key == "inspacelow" and "InSpaceLow" in s.id)
+                or (key == "inspacehigh" and "InSpaceHigh" in s.id)
                 or (key == "space" and "InSpace" in s.id)
                 or (key == "splash" and "Splash" in s.id)
             ]
@@ -104,11 +169,11 @@ def format_science_scan(world: World) -> str:
                 opens += 1
             elif full:
                 status = f"unstarted ~{full:.2f}"
-                if key not in {"space", "splash"}:
+                if key not in {"space", "splash", "inspacelow", "inspacehigh"}:
                     opens += 1
             else:
                 status = "unstarted"
-                if key not in {"space", "splash"}:
+                if key not in {"space", "splash", "inspacelow", "inspacehigh"}:
                     opens += 1
             locked_inst = bool(inst and inst[0].tech not in owned_nodes)
             in_reach = key in {"surface", "flyinglow"} and not locked_inst

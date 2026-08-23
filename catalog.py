@@ -73,11 +73,16 @@ class PartDef:
     resources: tuple[str, ...] = ()
     experiments: tuple[str, ...] = ()
     procedural: bool = False
+    data_capacity: float | None = None
+    sample_capacity: float | None = None
+    antenna_gain: float | None = None
+    antenna_diameter: float | None = None
+    antenna_band: str = ""
 
 
 @dataclass(slots=True)
 class ExperimentCfg:
-    """Kerbalism MODULE Experiment + ScienceDefs size (MB)."""
+    """Live MM-cache experiment (post kspstuffScience). Not tweak-file gospel."""
 
     id: str
     data_rate: float | None = None
@@ -85,7 +90,24 @@ class ExperimentCfg:
     ec_rate: float | None = None
     size_mb: float | None = None
     science_cap: float | None = None
+    base_value: float | None = None
     situations: tuple[str, ...] = ()
+    sample_mass: float | None = None
+    sample_collecting: bool = False
+
+    @property
+    def kind(self) -> str:
+        if (self.sample_amount and self.sample_amount > 0) or (
+            self.sample_mass and self.sample_mass > 0
+        ) or self.sample_collecting:
+            return "sample"
+        return "file"
+
+    @property
+    def duration_s(self) -> float | None:
+        if self.data_rate and self.data_rate > 0 and self.size_mb:
+            return self.size_mb / self.data_rate
+        return None
 
 
 def merge_experiment_cfg(
@@ -97,7 +119,10 @@ def merge_experiment_cfg(
     ec_rate: float | None = None,
     size_mb: float | None = None,
     science_cap: float | None = None,
+    base_value: float | None = None,
     situations: tuple[str, ...] | None = None,
+    sample_mass: float | None = None,
+    sample_collecting: bool | None = None,
 ) -> None:
     token = (eid or "").strip()
     if not token:
@@ -111,7 +136,10 @@ def merge_experiment_cfg(
             ec_rate=ec_rate,
             size_mb=size_mb,
             science_cap=science_cap,
+            base_value=base_value,
             situations=situations or (),
+            sample_mass=sample_mass,
+            sample_collecting=bool(sample_collecting),
         )
         return
     if data_rate is not None and data_rate > 0:
@@ -123,12 +151,17 @@ def merge_experiment_cfg(
     if ec_rate is not None and ec_rate > 0:
         if cur.ec_rate is None or ec_rate < cur.ec_rate:
             cur.ec_rate = ec_rate
+    # Last write wins for defs (kspstuffScience after Kerbalism).
     if size_mb is not None:
-        if cur.size_mb is None or size_mb > cur.size_mb:
-            cur.size_mb = size_mb
+        cur.size_mb = size_mb
     if science_cap is not None:
-        if cur.science_cap is None or science_cap > cur.science_cap:
-            cur.science_cap = science_cap
+        cur.science_cap = science_cap
+    if base_value is not None:
+        cur.base_value = base_value
+    if sample_mass is not None:
+        cur.sample_mass = sample_mass
+    if sample_collecting:
+        cur.sample_collecting = True
     if situations:
         cur.situations = tuple(dict.fromkeys([*cur.situations, *situations]))
 
@@ -204,6 +237,11 @@ def _part_from_fields(
     experiments: list[str],
     cfg_path: str,
     author: str,
+    data_capacity: float | None = None,
+    sample_capacity: float | None = None,
+    antenna_gain: float | None = None,
+    antenna_diameter: float | None = None,
+    antenna_band: str = "",
 ) -> PartDef:
     mods = tuple(modules)
     return PartDef(
@@ -219,6 +257,11 @@ def _part_from_fields(
         resources=tuple(resources),
         experiments=tuple(experiments),
         procedural="ProceduralPart" in mods,
+        data_capacity=data_capacity,
+        sample_capacity=sample_capacity,
+        antenna_gain=antenna_gain,
+        antenna_diameter=antenna_diameter,
+        antenna_band=antenna_band,
     )
 
 
@@ -243,16 +286,29 @@ def scan_config_cache(path: str | Path) -> Catalog:
     module_name = ""
     module_eid = ""
     url = ""
+    hd_eid = ""
+    hd_data: float | None = None
+    hd_samples: float | None = None
+    ra_gain: float | None = None
+    ra_diam: float | None = None
+    ra_band = ""
+    part_hd_data: float | None = None
+    part_hd_samples: float | None = None
+    part_ra_gain: float | None = None
+    part_ra_diam: float | None = None
+    part_ra_band = ""
     exp_id = ""
     exp_base: float | None = None
     exp_scale: float | None = None
     exp_cap: float | None = None
+    exp_mass: float | None = None
     exp_sits: list[str] = []
     exp_depth = 0
 
     def _commit() -> None:
         nonlocal name, title, tech, category, mass, author, nodes
         nonlocal modules, resources, experiments, url
+        nonlocal part_hd_data, part_hd_samples, part_ra_gain, part_ra_diam, part_ra_band
         if name:
             cat.parts[name] = _part_from_fields(
                 name=name,
@@ -266,12 +322,19 @@ def scan_config_cache(path: str | Path) -> Catalog:
                 experiments=list(experiments),
                 cfg_path=url or str(cache),
                 author=author,
+                data_capacity=part_hd_data,
+                sample_capacity=part_hd_samples,
+                antenna_gain=part_ra_gain,
+                antenna_diameter=part_ra_diam,
+                antenna_band=part_ra_band,
             )
 
     def _reset() -> None:
         nonlocal name, title, tech, category, mass, author, nodes
         nonlocal modules, resources, experiments, module_name, module_eid
         nonlocal kind, kind_depth
+        nonlocal hd_eid, hd_data, hd_samples, ra_gain, ra_diam, ra_band
+        nonlocal part_hd_data, part_hd_samples, part_ra_gain, part_ra_diam, part_ra_band
         name = title = tech = category = mass = author = ""
         nodes = {}
         modules = []
@@ -279,16 +342,22 @@ def scan_config_cache(path: str | Path) -> Catalog:
         experiments = []
         module_name = ""
         module_eid = ""
+        hd_eid = ""
+        hd_data = hd_samples = ra_gain = ra_diam = None
+        ra_band = ""
+        part_hd_data = part_hd_samples = part_ra_gain = part_ra_diam = None
+        part_ra_band = ""
         kind = ""
         kind_depth = 0
 
     def _reset_expdef() -> None:
         nonlocal exp_id, exp_base, exp_scale, exp_depth
-        nonlocal exp_cap, exp_sits
+        nonlocal exp_cap, exp_sits, exp_mass
         exp_id = ""
         exp_base = None
         exp_scale = None
         exp_cap = None
+        exp_mass = None
         exp_sits = []
         exp_depth = 0
 
@@ -303,7 +372,9 @@ def scan_config_cache(path: str | Path) -> Catalog:
             exp_id,
             size_mb=size,
             science_cap=exp_cap,
+            base_value=exp_base,
             situations=tuple(exp_sits),
+            sample_mass=exp_mass,
         )
 
     with cache.open(encoding="utf-8", errors="replace") as fh:
@@ -340,15 +411,18 @@ def scan_config_cache(path: str | Path) -> Catalog:
                 if key == "Situation":
                     exp_sits.append(value)
                     continue
+                if key == "SampleMass":
+                    exp_mass = _cfg_float(value)
+                    continue
                 if exp_depth != 1:
                     continue
                 if key == "id" and not exp_id:
                     exp_id = value
-                elif key == "baseValue" and exp_base is None:
+                elif key == "baseValue":
                     exp_base = _cfg_float(value)
-                elif key == "scienceCap" and exp_cap is None:
+                elif key == "scienceCap":
                     exp_cap = _cfg_float(value)
-                elif key == "dataScale" and exp_scale is None:
+                elif key == "dataScale":
                     exp_scale = _cfg_float(value)
                 continue
             if s == "{":
@@ -356,9 +430,24 @@ def scan_config_cache(path: str | Path) -> Catalog:
                 continue
             if s == "}":
                 if kind and depth == kind_depth:
+                    if module_name == "HardDrive" and not hd_eid:
+                        if hd_data is not None:
+                            part_hd_data = hd_data
+                        if hd_samples is not None:
+                            part_hd_samples = hd_samples
+                    if module_name == "ModuleRealAntenna":
+                        if ra_gain is not None:
+                            part_ra_gain = ra_gain
+                        if ra_diam is not None:
+                            part_ra_diam = ra_diam
+                        if ra_band:
+                            part_ra_band = ra_band
                     kind = ""
                     module_name = ""
                     module_eid = ""
+                    hd_eid = ""
+                    hd_data = hd_samples = ra_gain = ra_diam = None
+                    ra_band = ""
                 depth -= 1
                 if depth <= 0:
                     _commit()
@@ -370,6 +459,9 @@ def scan_config_cache(path: str | Path) -> Catalog:
                 kind_depth = depth + 1
                 module_name = ""
                 module_eid = ""
+                hd_eid = ""
+                hd_data = hd_samples = ra_gain = ra_diam = None
+                ra_band = ""
                 continue
             if "=" not in s:
                 continue
@@ -418,6 +510,27 @@ def scan_config_cache(path: str | Path) -> Catalog:
                     merge_experiment_cfg(
                         cat.experiments, module_eid, ec_rate=_cfg_float(value)
                     )
+                elif module_eid and key == "sample_collecting" and value.lower() in {
+                    "true",
+                    "1",
+                }:
+                    merge_experiment_cfg(
+                        cat.experiments, module_eid, sample_collecting=True
+                    )
+                elif module_name == "HardDrive":
+                    if key in ("experiment_id", "experimentID") and value:
+                        hd_eid = value
+                    elif key == "dataCapacity":
+                        hd_data = _cfg_float(value)
+                    elif key == "sampleCapacity":
+                        hd_samples = _cfg_float(value)
+                elif module_name == "ModuleRealAntenna":
+                    if key == "referenceGain":
+                        ra_gain = _cfg_float(value)
+                    elif key == "antennaDiameter":
+                        ra_diam = _cfg_float(value)
+                    elif key == "RFBand":
+                        ra_band = value
             elif kind == "RESOURCE" and depth == kind_depth:
                 if key == "name" and value and value not in resources:
                     resources.append(value)

@@ -90,6 +90,7 @@ def format_science_dump(*, desk: dict[str, str] | None = None) -> str:
         "",
         "```bash",
         "python main.py science-scan",
+        "python main.py comms",
         "python main.py tickets list --type science",
         "```",
         "",

@@ -23,3 +23,8 @@ class TestFixtureScan(unittest.TestCase):
         text = format_science_scan(world)
         self.assertIn("# open science", text)
         self.assertIn("unlocked experiments", text)
+        self.assertIn("live experiment defs", text)
+
+    def test_sit_key_space_split(self):
+        self.assertEqual(_sit_key("InSpaceLow"), "inspacelow")
+        self.assertEqual(_sit_key("InSpaceHigh@Biomes"), "inspacehigh")

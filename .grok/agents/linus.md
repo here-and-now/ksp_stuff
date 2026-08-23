@@ -23,12 +23,23 @@ python main.py tickets packet T-NNN
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
-`docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Do not run `world`
-/ `tech` / `parts` / `science-scan` if desk is this sit. Desk
-leftover-science + `f013` + `bind:` is the sit. Open **many**
+`docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Desk leftover-science
++ `f013` + `bind:` is pad sit. **Live experiment table** (MM last write,
+including `zzzzkspstuffScience`):
+
+```bash
+python main.py science-scan
+python main.py comms
+```
+
+Do not read `KerbalismConfig/.../StockExperiments.cfg` as gospel. Caps
+there are pre-house-patch. `science-scan` is ConfigCache: `kind=sample`
+(recover the can, no radio) vs `file` (credits while recording onto HD).
+`est` = `cap` × Earth sit scale (landed 0.3, FL 0.7, LEO 1.0). Open **many**
 `category=science_opportunity` tickets (`experiment_id`, `situation`,
-`duration_s`, `ec_rate`). If you still think `need_science`,
-`tickets from-need` — never in the Return fence.
+`duration_s`, `ec_rate`, `est` from the scan). If you still think
+`need_science`, `tickets from-need` — never in the Return fence. Do not
+re-run `world` / `tech` / `parts` when desk already has tree/craft.
 
 PBC Stayputnik era. Kerbalism: name `experiment_id`s. `f013` host is not
 an instrument — Stayputnik PAW is not a Geiger. Heading biome (Water/east):

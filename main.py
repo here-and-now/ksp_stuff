@@ -687,7 +687,11 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser("science", help="Print Linus board; career snapshot if connected")
     sub.add_parser(
         "science-scan",
-        help="Open science at this tree (GameData Situation + save leftovers, no kRPC)",
+        help="Live MM experiment defs + leftovers (no kRPC). Linus catalog.",
+    )
+    sub.add_parser(
+        "comms",
+        help="Live RA antennas + probe HD from MM cache (no kRPC). Gus/Linus.",
     )
     sub.add_parser("world", help="KSP root, save, tree, science (no kRPC)")
     sub.add_parser(
@@ -904,7 +908,7 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc), file=sys.stderr)
             return 1
         return 0
-    if args.cmd in {"world", "tech", "parts"}:
+    if args.cmd in {"world", "tech", "parts", "comms"}:
         from world import (
             WorldError,
             craft_part_names,
@@ -926,6 +930,11 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.cmd == "tech":
             print(format_tech(world, args.node), end="")
+            return 0
+        if args.cmd == "comms":
+            from science_scan import format_comms
+
+            print(format_comms(world), end="")
             return 0
         if args.cmd == "parts" and (args.stack or args.craft):
             if args.craft:

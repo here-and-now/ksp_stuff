@@ -297,3 +297,13 @@ class TestLiveRss(unittest.TestCase):
         assert goo is not None
         # GooExperiment 0.18, not Large_Crewed_Lab 0.9 (last-wins was wrong).
         self.assertAlmostEqual(goo.ec_rate or 0.0, 0.18, places=2)
+        self.assertEqual(goo.kind, "sample")
+        baro = cat.experiments.get("barometerScan")
+        if baro is not None and baro.science_cap is not None:
+            self.assertAlmostEqual(baro.science_cap, 3.0)
+        jr = cat.experiments.get("mobileMaterialsLab")
+        if jr is not None and jr.science_cap is not None:
+            self.assertAlmostEqual(jr.science_cap, 6.0)
+        surf = cat.get("SurfAntenna")
+        if surf is not None:
+            self.assertEqual(surf.antenna_band, "L")

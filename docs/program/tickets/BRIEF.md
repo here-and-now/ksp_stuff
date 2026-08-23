@@ -8,6 +8,8 @@ tell another desk in prose — `ops --tag ask` and `payload.to`. Landing
 wins `learn`. `ops --tag feedback` is the friction door (×3 → rsi).
 
 ```
+python main.py science-scan                      # Linus: live MM caps (not tweak cfg)
+python main.py comms                             # Gus: RA + HD
 python main.py tickets inbox --desk <you>
 python main.py tickets packet T-NNN            # skim (envelope; no jsonl)
 python main.py tickets packet T-NNN --deep     # tape CLI / PNG / craft

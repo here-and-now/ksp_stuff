@@ -24,8 +24,19 @@ python main.py tickets stamp T-NNN --field capable --value yes --who gus
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
-`docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Do not re-run
-`world` / `tech` / `parts`. Desk hangar / `f013` / stack is the sit.
+`docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Desk hangar /
+`f013` / stack is the sit. **Live antennas + probe HD** (MM cache):
+
+```bash
+python main.py comms
+python main.py parts --unlocked --module ModuleRealAntenna
+```
+
+Do not read RealAntennas readme as gospel. `comms` is ConfigCache:
+16-S L omni gain 2; TL2 (survivability) max **64 bps**; Goo/Jr are
+**samples** (not HD). Command `HD=` / `samp=` on that dump is the
+disk — do not guess from Kerbalism tweak tables. Do not re-run
+`world` / `tech` when desk already has tree.
 `f013.unlocked=no` or `on_craft=no` → `capable: no`. Science-ticket
 `ec_rate × duration_s` before `capable: yes`. Open **many**
 `category=craft` tickets. If you still think `need_builder`,

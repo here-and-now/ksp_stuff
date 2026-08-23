@@ -671,7 +671,7 @@ def main(argv: list[str] | None = None) -> int:
     nt.add_argument("desk", help="Lars|Gus|Wernher|Gene")
     nt.add_argument("text", nargs="+")
     rev = sub.add_parser("review", help="Roll up a flight jsonl (no kRPC)")
-    rev.add_argument("log", nargs="?", default=None, help="docs/flights/<stamp>-mun.jsonl")
+    rev.add_argument("log", nargs="?", default=None, help="docs/missions/jebediah/logs/<stamp>-hop.jsonl")
     sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
     sub.add_parser("radio", help="Gene inbox: ship.md + uplink + loop (no kRPC)")
     sub.add_parser(
@@ -680,7 +680,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     brief_p = sub.add_parser("brief", help="Gene → seated mission briefing + loop")
     brief_p.add_argument("text", nargs="+")
-    seat_p = sub.add_parser("seat", help="Point current.md at a mission dossier")
+    seat_p = sub.add_parser("seat", help="Point current.md at a mission folder")
     seat_p.add_argument("who", help="flight id or roster string")
     sub.add_parser("missions", help="Print docs/missions/INDEX.md (no kRPC)")
     sub.add_parser("vab", help="Print VAB board + seated craft.md (no kRPC)")
@@ -693,10 +693,6 @@ def main(argv: list[str] | None = None) -> int:
     sub.add_parser(
         "desk",
         help="One disk snapshot for Gene/Linus/Gus/Lars packets (no kRPC)",
-    )
-    sub.add_parser(
-        "sit-card",
-        help="Write docs/program/sit-card.json for the seated sit (no kRPC)",
     )
     tech_p = sub.add_parser("tech", help="Disk tech tree + save unlocks (no kRPC)")
     tech_p.add_argument("node", nargs="?", default=None, help="RDNode id (start, basicRocketry, …)")
@@ -753,6 +749,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Compositor-fullscreen for the shot, then restore the tile",
     )
+    shot_p.add_argument(
+        "--beauty",
+        action="store_true",
+        help="Hide stock HUD (F2) for a press still, then toggle back",
+    )
     args = parser.parse_args(argv)
 
     if args.cmd == "screenshot":
@@ -763,6 +764,7 @@ def main(argv: list[str] | None = None) -> int:
             force=bool(args.force),
             name=args.name,
             full=bool(args.full),
+            beauty=bool(getattr(args, "beauty", False)),
         )
     if args.cmd == "uplink":
         from uplink import write
@@ -901,17 +903,6 @@ def main(argv: list[str] | None = None) -> int:
         except WorldError as exc:
             print(str(exc), file=sys.stderr)
             return 1
-        return 0
-    if args.cmd == "sit-card":
-        from desk import sit_card
-        from world import WorldError
-
-        try:
-            card = sit_card()
-        except WorldError as exc:
-            print(str(exc), file=sys.stderr)
-            return 1
-        print(json.dumps(card, indent=2))
         return 0
     if args.cmd in {"world", "tech", "parts"}:
         from world import (

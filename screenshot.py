@@ -31,8 +31,54 @@ PRESERVE = frozenset(
     {"first-mystery-goo.png", "first-hop.png", "rocket-flea.png"}
 )
 RUNS_DIR = SHOT_DIR / "runs"
-MISSION_INTERVAL_S = 60.0
+MISSION_INTERVAL_S = 10.0
+TICK_KEEP = 3
 _SLUG = re.compile(r"[^a-z0-9-]+")
+# Hyprland send_shortcut F2 → KSP TOGGLE_UI. Works in flight; KSC is a no-op.
+# Do not focus the window (that yanks Unity onto the portrait monitor).
+_TOGGLE_UI_LUA = (
+    'return hl.dispatch(hl.dsp.send_shortcut('
+    '{ mods = "", key = "F2", window = "class:^(KSP\\\\.x86_64)$" }))'
+)
+# Relative camera recipes for press stills. Applied on the hop Session only.
+POSES: dict[str, dict[str, object]] = {
+    "pad-plume": {
+        "mode": "free",
+        "pitch": 12.0,
+        "distance": 28.0,
+        "heading_delta": 35.0,
+    },
+    "ascent": {
+        "mode": "free",
+        "pitch": 8.0,
+        "distance": 45.0,
+        "heading_delta": 25.0,
+    },
+    "chute-silk": {
+        "mode": "free",
+        "pitch": 10.0,
+        "distance": 32.0,
+        "heading_delta": -20.0,
+    },
+    "splash": {
+        "mode": "free",
+        "pitch": 8.0,
+        "distance": 22.0,
+        "heading_delta": 40.0,
+    },
+    "science": {
+        "mode": "free",
+        "pitch": 15.0,
+        "distance": 30.0,
+        "heading_delta": 50.0,
+    },
+    "recover": {
+        "mode": "free",
+        "pitch": 18.0,
+        "distance": 35.0,
+        "heading_delta": 30.0,
+    },
+}
 KSP_CLASSES = frozenset({"KSP.x86_64", "KSP.x86", "KSP"})
 MIN_PX = 64
 
@@ -198,6 +244,89 @@ def choose_window(windows: list[KspWindow], rss: Path | None = None) -> KspWindo
         key=lambda w: (not w.mapped, not w.visible, -(w.size[0] * w.size[1])),
     )
     return pool[0]
+
+
+def toggle_ui(run: Run | None = None) -> bool:
+    """KSP TOGGLE_UI (F2) via Hyprland. Toggle. Never raises."""
+    fn = run or _run
+    r = _try_run(fn, ["hyprctl", "eval", _TOGGLE_UI_LUA])
+    return r is not None and r.returncode == 0 and "ok" in (r.stdout or "")
+
+
+def trim_tick_shots(folder: Path, *, keep: int = TICK_KEEP) -> None:
+    """Drop old ``*-tick.png`` in a run folder. Event stills stay."""
+    if keep < 0 or not folder.is_dir():
+        return
+    ticks = sorted(
+        (p for p in folder.glob("*-tick.png") if p.is_file()),
+        key=lambda p: p.name,
+    )
+    for p in ticks[: max(0, len(ticks) - keep)]:
+        try:
+            p.unlink()
+        except OSError:
+            log.debug("trim tick %s", p, exc_info=True)
+
+
+def apply_pose(
+    space_center: object | None,
+    name: str | None,
+    *,
+    hold_s: float = 0.2,
+    nap: Callable[[float], None] = time.sleep,
+) -> Callable[[], None]:
+    """Hold a camera recipe, return restore(). No-op if Flight camera missing."""
+
+    def _noop() -> None:
+        return None
+
+    spec = POSES.get(str(name or ""))
+    if space_center is None or spec is None:
+        return _noop
+    try:
+        cam = space_center.camera  # type: ignore[attr-defined]
+        modes = space_center.CameraMode  # type: ignore[attr-defined]
+    except Exception:
+        log.debug("pose: camera not in this scene", exc_info=True)
+        return _noop
+    try:
+        orig_mode = cam.mode
+        orig_p = float(cam.pitch)
+        orig_h = float(cam.heading)
+        orig_d = float(cam.distance)
+        orig_fov = float(cam.fo_v)
+    except Exception:
+        log.debug("pose: read failed", exc_info=True)
+        return _noop
+    mode = getattr(modes, str(spec.get("mode") or "free"), orig_mode)
+    want_p = float(spec.get("pitch", orig_p))
+    want_d = float(spec.get("distance", orig_d))
+    if "heading" in spec:
+        want_h = float(spec["heading"])
+    else:
+        want_h = orig_h + float(spec.get("heading_delta") or 0.0)
+    steps = max(1, int(hold_s / 0.04))
+    try:
+        for _ in range(steps):
+            cam.mode = mode
+            cam.pitch = want_p
+            cam.heading = want_h
+            cam.distance = want_d
+            nap(0.04)
+    except Exception:
+        log.debug("pose hold failed name=%s", name, exc_info=True)
+
+    def restore() -> None:
+        try:
+            cam.mode = orig_mode
+            cam.pitch = orig_p
+            cam.heading = orig_h
+            cam.distance = orig_d
+            cam.fo_v = orig_fov
+        except Exception:
+            log.debug("pose restore failed", exc_info=True)
+
+    return restore
 
 
 def _try_run(run: Run, argv: list[str], **kw) -> subprocess.CompletedProcess[str] | None:
@@ -607,9 +736,49 @@ def capture(
     settle: float = 0.8,
     grow_timeout: float = 3.0,
     restore_timeout: float = 2.0,
+    beauty: bool = False,
+    pose: str | None = None,
+    space_center: object | None = None,
 ) -> tuple[Path, str, KspWindow]:
     run = run or _run
     dest = resolve_dest(out, name=name, force=force, now=now)
+    restore_cam: Callable[[], None] | None = None
+    hid = False
+    if beauty:
+        restore_cam = apply_pose(space_center, pose)
+        hid = toggle_ui(run)
+        if hid:
+            time.sleep(0.2)
+        # FlightCamera fights; pulse the recipe again after F2, then grim.
+        if pose and space_center is not None:
+            apply_pose(space_center, pose, hold_s=0.12)
+    try:
+        return _capture_body(
+            dest,
+            run=run,
+            rss=rss,
+            full=full,
+            settle=settle,
+            grow_timeout=grow_timeout,
+            restore_timeout=restore_timeout,
+        )
+    finally:
+        if hid:
+            toggle_ui(run)
+        if restore_cam is not None:
+            restore_cam()
+
+
+def _capture_body(
+    dest: Path,
+    *,
+    run: Run,
+    rss: Path | None | bool,
+    full: bool,
+    settle: float,
+    grow_timeout: float,
+    restore_timeout: float,
+) -> tuple[Path, str, KspWindow]:
     windows = _hypr_windows(run)
     if not windows:
         windows = _x11_scan(run)
@@ -696,7 +865,7 @@ def mission_dest(
 
 
 class ShotCadence:
-    """Quiet stills: ~1 min, plus sit/stage/light/wreck. Never reads the PNG."""
+    """Tape stills: ~10 s ticks (trimmed) plus sit/stage/light/wreck. Never reads."""
 
     def __init__(
         self,
@@ -718,7 +887,16 @@ class ShotCadence:
         self._ec0 = False
         self._started = False
 
-    def observe(self, snap: object, *, event: str | None = None) -> Path | None:
+    def observe(
+        self,
+        snap: object,
+        *,
+        event: str | None = None,
+        beauty: bool = False,
+        pose: str | None = None,
+        space_center: object | None = None,
+        session: object | None = None,
+    ) -> Path | None:
         reasons: list[str] = []
         if event:
             reasons.append(_slug(event))
@@ -776,12 +954,45 @@ class ShotCadence:
             and len(reasons) == 1
         ):
             return None
-        return self._grab(reasons[0], snap)
+        sc = space_center
+        if sc is None and session is not None:
+            sc = getattr(session, "space_center", None)
+        return self._grab(
+            reasons[0],
+            snap,
+            beauty=beauty,
+            pose=pose,
+            space_center=sc,
+        )
 
-    def event(self, name: str, snap: object | None = None) -> Path | None:
-        return self.observe(snap or object(), event=name)
+    def event(
+        self,
+        name: str,
+        snap: object | None = None,
+        *,
+        beauty: bool = False,
+        pose: str | None = None,
+        space_center: object | None = None,
+        session: object | None = None,
+    ) -> Path | None:
+        return self.observe(
+            snap or object(),
+            event=name,
+            beauty=beauty,
+            pose=pose,
+            space_center=space_center,
+            session=session,
+        )
 
-    def _grab(self, slug: str, snap: object) -> Path | None:
+    def _grab(
+        self,
+        slug: str,
+        snap: object,
+        *,
+        beauty: bool = False,
+        pose: str | None = None,
+        space_center: object | None = None,
+    ) -> Path | None:
         from flightlog import live_records
 
         if self.grab is None and not live_records():
@@ -797,10 +1008,19 @@ class ShotCadence:
             if self.grab is not None:
                 self.grab(dest)
             else:
-                capture(out=dest, force=False, full=False)
+                capture(
+                    out=dest,
+                    force=False,
+                    full=False,
+                    beauty=beauty,
+                    pose=pose,
+                    space_center=space_center,
+                )
         except Exception:
             log.debug("mission shot failed slug=%s", slug, exc_info=True)
             return None
+        if slug == "tick":
+            trim_tick_shots(dest.parent)
         self._last = self.clock()
         log.info("shot %s", dest)
         return dest
@@ -823,7 +1043,7 @@ def mission_shots() -> ShotCadence:
 
 
 def mission_observe(snap: object, *, event: str | None = None) -> Path | None:
-    """Flight cadence. Capture only — do not read the PNG."""
+    """Tape cadence (HUD on). Capture only — do not read the PNG."""
     try:
         return mission_shots().observe(snap, event=event)
     except Exception:
@@ -831,9 +1051,25 @@ def mission_observe(snap: object, *, event: str | None = None) -> Path | None:
         return None
 
 
-def mission_event(name: str, snap: object | None = None) -> Path | None:
+def mission_event(
+    name: str,
+    snap: object | None = None,
+    *,
+    beauty: bool = False,
+    pose: str | None = None,
+    space_center: object | None = None,
+    session: object | None = None,
+) -> Path | None:
+    """Named beat. ``beauty=True`` hides HUD (F2) and may pose the camera."""
     try:
-        return mission_shots().event(name, snap)
+        return mission_shots().event(
+            name,
+            snap,
+            beauty=beauty,
+            pose=pose,
+            space_center=space_center,
+            session=session,
+        )
     except Exception:
         log.debug("mission_event failed", exc_info=True)
         return None
@@ -845,9 +1081,12 @@ def cmd_screenshot(
     force: bool = False,
     name: str | None = None,
     full: bool = False,
+    beauty: bool = False,
 ) -> int:
     try:
-        path, method, window = capture(out=out, force=force, name=name, full=full)
+        path, method, window = capture(
+            out=out, force=force, name=name, full=full, beauty=beauty
+        )
     except ScreenshotError as exc:
         print(str(exc), file=sys.stderr)
         return 1

@@ -1060,13 +1060,13 @@ def _try_recover(
     sit = _vessel_sit(vessel)
     if vessel is None or sit in _PAD_SIT or not _recoverable(vessel):
         return None
+    mission_event("recover", beauty=True, pose="recover")
     try:
         getattr(vessel, "recover")()
     except Exception as exc:
         log.debug("hop recover() sit=%s: %s", sit, exc)
         return None
     _say(f"recovered sit={sit} recoverable=yes", on_log)
-    mission_event("recover")
     return "recovered"
 
 
@@ -1081,13 +1081,13 @@ def _force_recover(
         return None
     if not _recoverable(vessel):
         return None
+    mission_event("recover", beauty=True, pose="recover")
     try:
         getattr(vessel, "recover")()
     except Exception as exc:
         log.debug("hop recover() sit=%s: %s", sit, exc)
         return None
     _say(f"recovered sit={sit} recoverable=yes", on_log)
-    mission_event("recover")
     return "recovered"
 
 
@@ -2179,7 +2179,13 @@ def run_on_vessel(
                 if not left_pad:
                     _say("hop airborne", on_log)
                     log_events.emit("hop", result="airborne")
-                    mission_event("airborne", snap)
+                    mission_event(
+                        "airborne",
+                        snap,
+                        beauty=True,
+                        pose="ascent",
+                        session=session,
+                    )
                 left_pad = True
             down = _down(snap, flown=left_pad) or litho
             sit_now = str(getattr(snap, "situation", "") or "").lower()
@@ -2330,7 +2336,13 @@ def run_on_vessel(
                     lit = True
                     did_light = True
                     log_events.emit("hop", result="light")
-                    mission_event("light", snap)
+                    mission_event(
+                        "light",
+                        snap,
+                        beauty=True,
+                        pose="pad-plume",
+                        session=session,
+                    )
 
             if left_pad and not down:
                 vz_now = _snap_v_vert(snap)
@@ -2490,6 +2502,13 @@ def run_on_vessel(
                             if not said_deploy and st not in {"", "none"}:
                                 _say(f"hop chute {st}", on_log)
                                 said_deploy = True
+                                mission_event(
+                                    "chute",
+                                    snap,
+                                    beauty=True,
+                                    pose="chute-silk",
+                                    session=session,
+                                )
 
             if left_pad and not down and not science_attempted and not wait_splash:
                 if (not did_light) and _keep_hd(
@@ -2498,7 +2517,13 @@ def run_on_vessel(
                     science_attempted = True
                     _say("science keep HD", on_log)
                     log_events.emit("science", result="keep")
-                    mission_event("science", snap)
+                    mission_event(
+                        "science",
+                        snap,
+                        beauty=True,
+                        pose="science",
+                        session=session,
+                    )
                     waiting_hd = True
                 elif _science_ready(snap):
                     science_attempted = True
@@ -2506,7 +2531,13 @@ def run_on_vessel(
                     if started:
                         _say("science " + ",".join(started), on_log)
                         log_events.emit("science", ids=list(started))
-                        mission_event("science", snap)
+                        mission_event(
+                            "science",
+                            snap,
+                            beauty=True,
+                            pose="science",
+                            session=session,
+                        )
                         _say("science dwell", on_log)
                         log_events.emit("science_dwell", phase="start")
                     elif ids:

@@ -172,7 +172,13 @@ def run_on_vessel(
             if splashed:
                 _say("splash down", on_log)
                 log_events.emit("splash", result="down")
-                mission_event("splash", snap)
+                mission_event(
+                    "splash",
+                    snap,
+                    beauty=True,
+                    pose="splash",
+                    session=session,
+                )
                 break
 
             met = _vessel_met(vessel)
@@ -205,7 +211,12 @@ def run_on_vessel(
         if started:
             _say("science " + ",".join(started), on_log)
             log_events.emit("science", ids=list(started))
-            mission_event("science")
+            mission_event(
+                "science",
+                beauty=True,
+                pose="science",
+                session=session,
+            )
             dwell_for_card(
                 session,
                 vessel,

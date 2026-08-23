@@ -116,12 +116,15 @@ Press stills: Verena `shot:` → parent `--name <slug>`. Ops: Gene
 `--name stuck-<stem>` when last-flight / jsonl cannot explain the
 scene, then read the PNG. grim is not kRPC.
 
-Flight cadence (no kRPC, do **not** read unless stuck): pad/hop
-`Telem.read` grabs `screenshots/runs/<stamp>-<command>/T+MMMMMM-<event>.png`
-about every 60 s and on sit/stage/light/wreck/first EC=0, plus named
-events (science, recover, airborne). Failures are debug-only — never
-abort the fly. Never overwrite press heroes (`first-mystery-goo`,
-`first-hop`, `rocket-flea`). Verena may pick from that folder.
+Flight cadence (grim; beauty may F2 + pose on the hop Session — do
+**not** read unless stuck): pad/hop writes
+`screenshots/runs/<stamp>-<command>/T+MMMMMM-<event>.png`. Tape ~10 s
+ticks (keep last 3) plus sit/stage/wreck/EC=0, HUD on. Press beats
+(`light`, `airborne`, `science`, `chute`, `splash`, `recover`) hide
+HUD then restore. Failures are debug-only — never abort the fly. Never
+overwrite press heroes (`first-mystery-goo`, `first-hop`,
+`rocket-flea`). Verena picks from that folder after the hop; she does
+not grim while `phase` is live.
 
 ### World desk (disk, no kRPC)
 

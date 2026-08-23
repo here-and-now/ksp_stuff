@@ -617,8 +617,8 @@ def recover_or_abort(vessel: object) -> str:
     except Exception:
         ok = False
     if ok:
+        mission_event("recover", beauty=True, pose="recover")
         getattr(vessel, "recover")()
-        mission_event("recover")
         return "recovered"
     raise MissionAbort("not recoverable")
 
@@ -651,7 +651,12 @@ def run_on_vessel(
     if started:
         _say("science " + ",".join(started), on_log)
         log_events.emit("science", ids=list(started))
-        mission_event("science")
+        mission_event(
+            "science",
+            beauty=True,
+            pose="science",
+            session=session,
+        )
         dwell_for_card(
             session,
             vessel,

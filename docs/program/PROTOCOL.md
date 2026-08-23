@@ -22,7 +22,8 @@ exit **ends** the hop — Commander does not review.
 | Os | named desk | talk by name | — | voice only — **no spawn** |
 | Hank | desks | `ops next` | ticket ids | ticket patches |
 | Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
-| Hank | Commander | `ops next` fly_ready | fly ticket + exact `cli` | `result:` `exit:` `handoff:` |
+| Hank | hop pid | `fly: yes` | exact `cli` (parent starts it when `commander: none`) | last-flight; lock on that pid |
+| Hank | Commander | `commander: jebediah` (crewed / firsts / `campaign: none`) | fly ticket + exact `cli`; abort officer | `result:` `exit:` `handoff:` |
 | Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load | pad clean |
 | Hank | tape | Commander CLI returned | `desk`, leftover, `attach-run`, `landing` | `ops next` — no Jeb debrief |
 | Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
@@ -32,7 +33,7 @@ exit **ends** the hop — Commander does not review.
 | Hank | Wernher, Chief Systems Engineer | systems / kRPC world | ticket | systems close |
 | Commander | ticket bus | miss **during hop** (still connected) | `tickets open --type control` | Hank after exit |
 | Hank | ticket bus | miss after process exit | open control from last-flight abort | Lars if needed — **no Jeb debrief** |
-| Commander | Hank | campaign clean 0 CLI exit | last-flight only | Hank tape then re-hire Commander — **no Gene** |
+| Commander / hop pid | Hank | campaign clean 0 CLI exit | last-flight only | Hank tape then uncrewed re-run `cli:` — **no Gene, no Jeb** |
 | Anyone | ticket bus | friction | `tickets open` | Hank routes |
 | Hank | Mortimer | `type=ctt` / `org` / rsi×3 | ticket | RD spend / PROTOCOL mutation |
 | Hank | Verena, Communications | `type=press` firsts | ticket | `story:` `shot:` |
@@ -83,7 +84,7 @@ tickets (`payload.to` = addressee on `ask`):
 ```
 python main.py tickets open --type ops --tag ask --title "…" --desk <addressee>
 python main.py tickets open --type ops --tag explore --priority P3 --title "…"
-python main.py tickets open --type ops --tag feedback --title "…"
+python main.py tickets open --type ops --tag feedback --title "…" --fingerprint <stem>
 python main.py tickets open --type rsi --title "…"
 python main.py tickets open --type ctt --title "…"
 python main.py tickets open --type press --title "…"
@@ -94,6 +95,11 @@ python main.py tickets open --type press --title "…"
 `need_os` is **not a ticket** (CHARTER creed / roster — Os). Leftover
 `need_*` in a return is a Hank shim (`tickets from-need`). Desks open
 with `--type` as above. Do not emit those leftover keys.
+**Fingerprint** is a short stem (`heading-never-090`), never an abort
+novel. Third hit opens `type=rsi` (software → Wernher, else Mortimer).
+Do not tell another desk in Return prose — open `ops --tag ask`
+(`payload.to` / `--desk` = addressee). **Landing envelope wins** over
+fly `payload.learn`.
 
 **Tree + hardware (F-013):** experiment_id is not a part. Every bind /
 capable / `go:` / Lars science-miss packet must say **tree node** and
@@ -228,7 +234,7 @@ is a skim block on the fly ticket after `tickets attach-run`. Commander
 **copied verbatim** (F-004) from `python main.py protocol fly` — not
 Gene `recommended:`, not seated `plan.md`. Lars first command is inbox
 skim, not a named jsonl. Parent copies **f013**
-from desk. Do not send `docs/archive/kerbin-lessons.md`. Children do
+from desk. Do not send parked campaign notes. Children do
 not re-run `world`/`tech`/`parts` if desk is this sit.
 
 **Hire freshness (token tax):** a child that `resume_from`s keeps the
@@ -328,6 +334,9 @@ only. Idle on open science tickets, not `need_science`.
 
 **Verena** — `tickets:` `story:` `shot:` `readme:`.
 
+**Katherine** — `tickets:` `model:` `ask:`. Disk tape only. Ask is a ticket
+id, not prose.
+
 **Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`.
 
 **Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). After Commander CLI: `desk`, `attach-run`, `landing`, leftover, then `ops next`. Leftover `need_*` in a child return → `tickets from-need` (shim). Desks must not emit those keys. Do not hire the Commander to explain the hop.
@@ -347,14 +356,15 @@ payload. Verena last-writes `README.md` (portrait) and `docs/press/`
 (story layer). The Commander takes `uplink.md`. `loop.md` is talk, not
 stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
 
-Milestone stills (no kRPC). Press: Verena `shot:` → parent grab. **Stuck:** Gene (between exits) or the seated Commander **during the hop** may grab **one** still when logs cannot explain the scene. Read the PNG. Not a postmortem after CLI exit. Not a heartbeat. Not press.
+Milestone stills. Press: Verena picks from `screenshots/runs/` after the hop (beauty beats already hid HUD). Parent `--name` / `--beauty` between exits. **Stuck:** Gene (between exits) or the seated Commander **during the hop** may grab **one** HUD-on still when logs cannot explain the scene. Read the PNG. Not a postmortem after CLI exit. Not a heartbeat. Not press.
 
-Flight cadence (capture only — do not read): `screenshots/runs/<stamp>-<command>/` about every 60 s of a live `pad`/`hop`, plus sit/stage/light/science/recover/wreck. Library for Verena or a stuck debug. Never clobber press heroes.
+Flight cadence (capture only — do not read): `screenshots/runs/<stamp>-<command>/`. Tape: ~10 s ticks (old ticks trimmed to 3) plus sit/stage/wreck — HUD on. Press: named beats (`light`, `airborne`, `science`, `chute`, `splash`, `recover`) hide HUD (F2) and pose the camera, then restore. Verena picks from that folder after the hop. Never grim during a live `phase`. Never clobber press heroes.
 
 ```bash
 python main.py screenshot --name <slug>         # screenshots/<slug>.png
 python main.py screenshot --name stuck-<stem>   # Gene / Commander, stuck only
 python main.py screenshot --full                # monitor-size, then restore tile
+python main.py screenshot --beauty              # F2 hide HUD for a press still (flight)
 ```
 
 Refuses `screenshots/first-mystery-goo.png` unless `--force`. `--full` only if the still is unreadable.
@@ -371,8 +381,8 @@ Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` 
 
 ## Feedback
 
-Gym record remains `docs/program/feedback.md` (`F-NNN`) as archive.
-`docs/program/improve/` is archive. Flight bugs stay in
+Gym `F-NNN` / `I-NNN` twins live on the ticket board. Nested gym MD is
+parked — not dispatch. Flight bugs stay in
 `docs/lessons.md` as **run — title** headings (the filename stem, not letter-codes).
 
 Leftover `improve:` / `feedback:` → parent `tickets open --type ops --tag feedback`

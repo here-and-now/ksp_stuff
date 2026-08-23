@@ -12,10 +12,12 @@ from tempfile import TemporaryDirectory
 from unittest import TestCase
 
 from screenshot import (
+    MISSION_INTERVAL_S,
     PRESERVE,
     ScreenshotError,
     ShotCadence,
     already_monitor_size,
+    apply_pose,
     capture,
     choose_window,
     mission_dest,
@@ -23,6 +25,7 @@ from screenshot import (
     parse_hypr_monitors,
     png_size,
     resolve_dest,
+    trim_tick_shots,
 )
 
 
@@ -383,7 +386,7 @@ class TestShotCadence(TestCase):
         cad = ShotCadence(interval_s=60.0, grab=grab, clock=clock, min_gap_s=0.0)
         first = cad.observe(_Snap(sit="pre_launch", met=0))
         self.assertIsNotNone(first)
-        self.assertTrue(written[0].endswith("-start.png"))
+        self.assertIn("-start", written[0])
         self.assertIsNone(cad.observe(_Snap(sit="pre_launch", met=1)))
         air = cad.observe(_Snap(sit="flying", met=2, thrust=50.0))
         self.assertIsNotNone(air)
@@ -404,3 +407,116 @@ class TestShotCadence(TestCase):
         self.assertEqual(dest.name, "T+000007-airborne.png")
         self.assertEqual(dest.parent.name, "2026-08-20T15-58-12Z-hop")
         self.assertEqual(dest.parent.parent.name, "runs")
+
+    def test_default_interval_is_ten(self):
+        self.assertEqual(MISSION_INTERVAL_S, 10.0)
+        self.assertEqual(ShotCadence().interval_s, 10.0)
+
+    def test_trims_old_ticks_keeps_events(self):
+        with TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            for i in range(5):
+                (folder / f"T+{i:06d}-tick.png").write_bytes(b"x")
+            (folder / "T+000002-light.png").write_bytes(b"keep")
+            trim_tick_shots(folder, keep=3)
+            ticks = sorted(p.name for p in folder.glob("*-tick.png"))
+            self.assertEqual(
+                ticks,
+                ["T+000002-tick.png", "T+000003-tick.png", "T+000004-tick.png"],
+            )
+            self.assertEqual((folder / "T+000002-light.png").read_bytes(), b"keep")
+
+    def test_cadence_trims_ticks_live(self):
+        folders: list[Path] = []
+        t = {"now": 0.0}
+
+        def clock():
+            return t["now"]
+
+        def grab(dest: Path) -> None:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(b"png")
+            folders.append(dest.parent)
+
+        cad = ShotCadence(interval_s=10.0, grab=grab, clock=clock, min_gap_s=0.0)
+        cad.observe(_Snap(sit="pre_launch", met=0))
+        for i in range(1, 6):
+            t["now"] = float(i * 10)
+            cad.observe(_Snap(sit="pre_launch", met=i * 10))
+        folder = folders[-1]
+        on_disk = sorted(p.name for p in folder.glob("*-tick.png"))
+        self.assertEqual(len(on_disk), 3)
+
+
+class _Cam:
+    mode = "automatic"
+    pitch = 11.0
+    heading = 17.0
+    distance = 30.0
+    fo_v = 60.0
+
+
+class _CM:
+    free = "free"
+    automatic = "automatic"
+
+
+class _SC:
+    CameraMode = _CM
+
+    def __init__(self) -> None:
+        self.camera = _Cam()
+
+
+class TestPoseAndBeauty(TestCase):
+    def test_apply_pose_holds_and_restores(self):
+        sc = _SC()
+        naps: list[float] = []
+        restore = apply_pose(sc, "pad-plume", hold_s=0.08, nap=naps.append)
+        self.assertEqual(sc.camera.mode, "free")
+        self.assertAlmostEqual(sc.camera.pitch, 12.0)
+        self.assertAlmostEqual(sc.camera.heading, 52.0)
+        self.assertAlmostEqual(sc.camera.distance, 28.0)
+        restore()
+        self.assertEqual(sc.camera.mode, "automatic")
+        self.assertAlmostEqual(sc.camera.pitch, 11.0)
+        self.assertAlmostEqual(sc.camera.heading, 17.0)
+        self.assertAlmostEqual(sc.camera.distance, 30.0)
+
+    def test_apply_pose_unknown_is_noop(self):
+        sc = _SC()
+        restore = apply_pose(sc, "nope", nap=lambda _s: None)
+        restore()
+        self.assertEqual(sc.camera.pitch, 11.0)
+
+    def test_beauty_toggles_f2_around_grim(self):
+        evals: list[str] = []
+        grim_at: list[int] = []
+
+        def run(argv, **_kw):
+            if argv[:3] == ["hyprctl", "-j", "clients"]:
+                return _cp(
+                    json.dumps(
+                        [_client(visible=True, size=[1920, 1080], stableId="18000063")]
+                    )
+                )
+            if len(argv) >= 2 and argv[0] == "hyprctl" and argv[1] == "eval":
+                evals.append(argv[2])
+                self.assertIn("F2", argv[2])
+                self.assertNotIn("focus", argv[2])
+                return _cp("ok\n")
+            if argv[0] == "grim" and "-T" in argv:
+                grim_at.append(len(evals))
+                Path(argv[-1]).write_bytes(_png(1920, 1080))
+                return _cp()
+            return _cp(returncode=1, stderr="unexpected " + " ".join(argv))
+
+        with TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "shot.png"
+            _path, method, _win = capture(
+                out=dest, run=run, rss=None, force=True, beauty=True
+            )
+            self.assertEqual(method, "grim-toplevel")
+            self.assertEqual(len(evals), 2)
+            self.assertEqual(evals[0], evals[1])
+            self.assertEqual(grim_at, [1])

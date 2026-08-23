@@ -25,7 +25,10 @@ the ticket bus, who is hired, and leftover/KSC hygiene
 (`docs/program/OPS.md`). **Mortimer**
 owns the objective, org RSI, and CHARTER/PROTOCOL mutation.
 **Gene Grokman, Launch / Flight Director** stamps `go:` on a fly
-ticket. Call people by **name and title**. Voices: `docs/crew/<slug>.md` (half a page;
+ticket. The **hop/pad pid** is the Flight writer. Uncrewed: Hank
+starts `cli:`. Crewed/firsts: Commander is abort officer, not the PID.
+**Katherine Grokman, Flight Dynamics** models tape windows (atmosphere, Q,
+heading). Background. Rare asks. Not a kRPC writer. Call people by **name and title**. Voices: `docs/crew/<slug>.md` (half a page;
 logs in `docs/crew/log/`).
 Honest miss, then patch — a little how-not-to-fly-a-rocket, never
 humiliation. Never revert to launch, quickload, return to VAB, or
@@ -37,8 +40,8 @@ rare. **Kardashev III or bust** is creed in the world model and a
 joke in the TUI — nobody preaches mid-burn. Wonder is an **inner
 want**: rare field exploration, some Learns, moments (not a person,
 not every chat). Verena is allowed to be loud on the story layer.
-No sound. No PyQt. Org notes: `docs/program/ORG.md`. Handoffs:
-`docs/program/PROTOCOL.md`. Feedback: `docs/program/feedback.md`.
+No sound. No PyQt. Org notes: `docs/program/OPS.md`. Handoffs:
+`docs/program/PROTOCOL.md`. Feedback: ticket twins (`F-NNN` / `I-NNN`).
 Words: `docs/program/GLOSSARY.md`. Parked RO tree: `docs/program/RO.md`
 (do not seat `KSP-RO`). Live seat: `~/Games/KSP-rss`, save `letsgrok`.
 
@@ -48,7 +51,6 @@ Environment memory is **query tools**, not this file:
 python main.py desk                    # writes docs/program/desk.md (lock, hangar, f013, sci, stack)
 python main.py recover-probe [--recover] | ksc   # leftover/KSC: recover()+Close — Hank, not Commander. Never leftover-ksc load. Never revert.
 python main.py protocol fly            # fly ticket + desk; plan.md fallback (no kRPC)
-python main.py sit-card                # seated sit map for the Commander
 python main.py world
 python main.py tech
 python main.py parts --unlocked          # placeable parts; hosts=N is PAW, not extra parts
@@ -69,14 +71,14 @@ science modules is allowed for Gene, Lars, Mortimer, and Gus.
 
 ```bash
 python main.py screenshot --name stuck-<stem>   # Gene / Commander, stuck only; read the PNG
-# flight also writes screenshots/runs/<stamp>-<command>/ (~1 min + events; do not read)
+# flight also writes screenshots/runs/<stamp>-<command>/ (~10 s tape + beauty events; do not read)
 ```
 
 Meaning, horizon, story: `docs/program/world-model.md` (Gene chairs
 flight layers). **Practice** (pitfalls, house changes, QOL) is
 **Mortimer**. Spawn prompts do not inject niche notebooks.
 
-Improve archive: `docs/program/improve/`. Job cards: `.grok/agents/*.md`
+Improve archive is parked. Job cards: `.grok/agents/*.md`
 (`agents_md: false` — children do not receive the parent switchboard).
 
 ## How it runs
@@ -154,9 +156,9 @@ Commander **during the hop** may take **one** KSP screenshot when
 logs cannot explain the scene, then reason from the PNG. Not after
 CLI exit. Press stills stay Verena.
 
-Gym `docs/program/feedback.md` (`F-NNN`) is archive. Anyone already
-spawned `tickets open --type ops --tag feedback` (or `type=rsi` if
-repeating house friction). Retro is not automatic. Gene chairs flight;
+Gym `F-NNN` / `I-NNN` twins are tickets. Anyone already spawned
+`tickets open --type ops --tag feedback` (or `type=rsi` if repeating
+house friction). Retro is not automatic. Gene chairs flight;
 Mortimer chairs goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
 
 **Radio (flight):**
@@ -164,7 +166,7 @@ Mortimer chairs goal/org; **Os ratifies** CHARTER / PROTOCOL / roster.
 - `docs/program/ship.md` — last heartbeat + `as_of` + flight id
 - `python main.py radio` — Gene's inbox
 - `docs/program/uplink.md` — Commander *takes*
-- `docs/missions/<id>/briefing.md` + `loop.md` — Gene → that pilot
+- `docs/missions/<id>/briefing.md` + seated `plan.md` — Gene → that pilot
 - `python main.py seat <id>` / `missions` / `vab` / `science` / `pad`
 
 Bound+fueled abort is refused. Hold does not zero a lithobrake.

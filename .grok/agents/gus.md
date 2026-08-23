@@ -51,6 +51,8 @@ T-089 stock `trussPiece1x` + 3×FL-T100 is not the next pattern. Still
 PBC. Still `f013`. Thin tape / 9 columns: open `--type systems` and
 cite it on `capable:` like `f013` — do not shrug. Hang science
 side-by-side (2HOT + Goo + TELEMETRY host) when the sit allows.
+Sign for a biome/sit **this hang can hit** — Forest loft is not
+Grasslands; splash hang is not SrfLanded; FlyingHigh waits ≥50 km.
 Stumble → ticket. Not another lithobrake Flea. Not
 Stayputnik-as-Geiger. Write or pick a `.craft`. Update
 `docs/program/vab.md` **after** the stamp. One log line

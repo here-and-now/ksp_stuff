@@ -1,6 +1,6 @@
 ship = kspstuff-hop-valiant-geiger-cone-pbc
 version = 1.12.5
-description = PBC Forest-landed geiger hop. OKTO+RC_cone 0.625m (mustGoDown)+kerbalism-geigercounter (the part)+Goo+2HOT+20xZ-100+2x proceduralTankRealFuels 1.25x0.65 Cylinder 800 L + Valiant. Not Mk16. Not Stayputnik PAW. Not a Flea. Chute istg=0 engine istg=1.
+description = PBC Forest-landed geiger hop T-156. OKTO+RC_cone 0.625m Nylon 50m / pre 2.5m minIsPressure false minDeployment 2500 deployAlt 700 mustGoDown (empty PARACHUTE was inherit 0.04 atm / 0.8 m)+kerbalism-geigercounter (the part, e101)+Goo+2HOT+20xZ-100+2x proceduralTankRealFuels 1.25x0.65 Cylinder 800 L + Valiant Boattail. Engine Heaviest/rigid (T+38). Not Mk16. Not Stayputnik PAW. Not a Flea. Chute istg=0 engine istg=1. Not seated (proc-stiff T-165).
 type = VAB
 size = 2,14,2
 steamPublishedFileId = 0
@@ -22,7 +22,7 @@ PART
 	mir = 1,1,1
 	symMethod = Radial
 	autostrutMode = Heaviest
-	rigidAttachment = False
+	rigidAttachment = True
 	istg = -1
 	resPri = 0
 	dstg = 0
@@ -104,6 +104,22 @@ PART
 		cutSpeed = 0.5
 		spareChutes = 5
 		stagingEnabled = True
+		PARACHUTE
+		{
+			material = Nylon
+			capName = cone
+			parachuteName = RC_triple_canopy
+			preDeploymentAnimation = RC_triple_chute_semi_deploy
+			deploymentAnimation = RC_triple_chute_full_deploy
+			preDeployedDiameter = 2.5
+			deployedDiameter = 50
+			minIsPressure = false
+			minDeployment = 2500
+			deploymentAlt = 700
+			cutAlt = -1
+			preDeploymentSpeed = 2
+			deploymentSpeed = 6
+		}
 	}
 	MODULE
 	{
@@ -1211,8 +1227,8 @@ PART
 	attRot0 = 0.0,0.0,0.0,1.0
 	mir = 1,1,1
 	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
+	autostrutMode = Heaviest
+	rigidAttachment = True
 	istg = 1
 	resPri = 0
 	dstg = 0

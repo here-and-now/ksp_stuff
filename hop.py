@@ -5,22 +5,31 @@ Hangar the seated / VAB ``.craft`` uncrewed (Hammer sit:
 Kerbalism **bound** flying card once airborne (FlyingLow) or at alt ≥50 km
 (FlyingHigh — not T+1 FlyingLow crumbs; one Toggle, not a second at
 the lid). Unbound leftover FlyingHigh tickets are not a 50 km lid.
-After ``left_pad``, point **25°** from vertical heading **270** inland
-(Cape Shores is capped; 08-29-36Z heading 299 horiz 0 never left it;
-7.5° stayed Shores). Not hop-to-water **090**. Hold AP through burnout
-(``set_direction_and_up`` north; engage once at 65/270, not zenith;
-do not rewrite the same vector — 09-59-28Z MET20 297/66 then burn
-336/39). If the hold flips past the horizon, drops pitch, or yaws
-east of west (10-17-18Z burn 38/−10; 10-33-44Z 353/26), re-point
-65/270 and write ``target_direction`` — do not skip on ``engaged``
-alone; do not re-engage.
-Dwell through the ballistic, recover the HD when
+After ``left_pad``, yaw **10°** off zenith heading **270**, then point
+**25°** inland (Cape Shores is capped; 08-29-36Z heading 299 horiz 0
+never left it; 7.5° stayed Shores; **16-47-21Z** slam 65 held pitch
+and flew pad **297**). Not hop-to-water **090**. Hold AP through
+burnout (``set_direction_and_up`` north; engage once off zenith, not
+at 90; do not rewrite the same vector — 09-59-28Z MET20 297/66 then
+burn 336/39). If the hold flips past the horizon or yaws east while
+**burning** (10-17-18Z 38/−10; 10-33-44Z 353/26), re-point and write
+``target_direction`` — do not skip on ``engaged``; do not re-engage;
+do not rewrite the cutoff dump (16-47-21Z envelope 15/16 at fuel=0).
+Dwell through the ballistic (coast physics 2–4× only after **real**
+burnout: fuel gone, or throttle 0 after loft well above the pad —
+**18-34-22Z** a 0-tick at 101 m with a full tank is not cutoff; do
+not hop-down that pad boost). Recover the HD when
 landed/splashed/wreck-recoverable — or when EC=0 and the HD already
 has data. Leftover with HardDrive files or no Experiment modules
 recovers without a second start — only if this process did **not**
-light. A hop this process lit always starts the flying card (one
-Toggle per id; thermo on 2HOT, not Stayputnik). Idle TELEMETRY
-remaining=0 is not leftover HD. A leftover already in
+light. A hop this process lit starts the flying card only when the bound
+sit/biome can pay (sample rem=0 or SrfLanded bound does not Toggle
+T+1 FlyingLow — 17-23-34Z). Down starts bound SrfLanded **or**
+SrfSplashed leftover that matches **live** sit (18-10-57Z splash
+skipped T-288 because first-seq SrfLanded pinned TELEMETRY). Airborne
+goo does not skip that ground start. Stop running slots before recover so
+leftover rem banks. One Toggle per id; thermo on 2HOT, not Stayputnik.
+Idle TELEMETRY remaining=0 is not leftover HD. A leftover already in
 tracking while the scene is SpaceCenter is switched into Flight — do
 not Hangar a second stack. Unmatched leftover (PRELAUNCH Flea vs
 seated Valiant) and matching wreck leftover abort ``ksc leftover``
@@ -77,15 +86,21 @@ from hangar import (
     wait_vessel_ready,
 )
 from pad import arm_chutes, deploy_chutes, recover_or_abort
+from physics_warp import COAST_RATE, apply_coast, set_factor as _physics_factor
 from science import (
     card_has_data,
+    card_slots,
+    ground_card_done,
     hd_has_data,
     iter_science_modules,
+    paying_eids,
+    sit_matches,
     start_experiments,
+    stop_experiments,
 )
 from screenshot import mission_event
 from telem import EventLog, MissionAbort, Telem, gates, pulse_s as telem_pulse_s
-from uplink import take
+from uplink import phys_warp_rate, take
 
 log = logging.getLogger("kspstuff")
 
@@ -112,6 +127,8 @@ _AIRBORNE_M = 250.0
 # 07-21-05Z 10 km→412 m: 2 km still fires.
 CHUTE_DEPLOY_ALT_M = 2_000.0
 _CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
+# kRPC physics_warp_factor: 0=1×, 1=2×, 2=3×, 3=4×. Never rails. Never WarpTo.
+HOP_COAST_PHYS_RATE = COAST_RATE
 # 07-06-08Z: mass 1283→270 at burnout (pitch −58, q 16 kPa), broken=null.
 # Fuel drain was ~2.3 kg/unit; 40% mass with no matching fuel is tank/engine.
 SHEAR_MASS_FRAC = 0.40
@@ -148,7 +165,10 @@ _UPLINK_SKIP = frozenset({"science", "stage"})
 # burnout 38/−10 (east, past horizon). 10-33-44Z: 90° heading
 # gate missed 353/26 (83° from 270); set_direction_and_up while
 # engaged did not write target_direction. Re-point if pitch
-# drops or heading yaws off 270; write target_direction.
+# drops or heading yaws off 270 **while burning**; write
+# target_direction. 16-47-21Z: slam 65 held pitch, heading 297
+# (pad, 27° — 45° gate skips rewrite). Envelope burn 15/16 is
+# first fuel=0 sample, not the hold. Yaw 10° off zenith first.
 WATER_PITCH_FROM_UP = 25.0
 WATER_PITCH_UP = 90.0
 WATER_PITCH_DEG = WATER_PITCH_UP - WATER_PITCH_FROM_UP
@@ -165,6 +185,14 @@ WATER_HEADING_DEG = 90.0
 INLAND_HEADING_DEG = 270.0
 INLAND_PITCH_FROM_UP = WATER_PITCH_FROM_UP
 INLAND_PITCH_DEG = WATER_PITCH_UP - INLAND_PITCH_FROM_UP
+# 16-47-21Z: command 65/270 at left_pad engaged from zenith; pitch
+# held 65, heading stayed pad 297 (fins lock by MET 25 q~32 kPa).
+# 10° off zenith defines heading at low q; 7.5° as *path* stayed
+# Shores (14-33-29Z). Then the 25° path. MET 6 still low-q.
+INLAND_YAW_FROM_UP = 10.0
+INLAND_YAW_PITCH_DEG = WATER_PITCH_UP - INLAND_YAW_FROM_UP
+INLAND_HEADING_CAPTURE_DEG = 20.0
+INLAND_YAW_MET_S = 6.0
 # Surface frame x=up y=north z=east. North is off the 270/090 flight
 # path, so roll stays defined through the vertical (kRPC 0.6).
 SURFACE_NORTH = (0.0, 1.0, 0.0)
@@ -394,6 +422,114 @@ def hop_science_ids() -> tuple[str, ...]:
     if not ids:
         raise MissionAbort(NO_BOUND_CARD)
     return ids
+
+
+def hop_landed_science_ids() -> tuple[str, ...]:
+    """Bound SrfLanded / SrfSplashed leftover. Empty is not a miss — flying card may still pay."""
+    from tickets import science_ids_for, union_science_ids
+
+    try:
+        return union_science_ids(
+            science_ids_for(situation="landed"),
+            science_ids_for(situation="splash"),
+        )
+    except Exception:
+        return ()
+
+
+def bound_science_need(
+    live_sit: str = "",
+    live_biome: str = "",
+) -> dict[str, tuple[str, str]]:
+    """eid → (situation, biome) from bound science tickets.
+
+    Prefer the bound ticket that can pay live sit (land vs splash).
+    First seq is a reject sentinel when live sit is empty or no ticket
+    matches (airborne skip still cannot-pay a SrfLanded pin).
+    """
+    out: dict[str, tuple[str, str]] = {}
+    rows: list[tuple[int, str, str, str]] = []
+    try:
+        from tickets import list_tickets, science_is_catalog
+
+        for raw in list_tickets(open_only=True):
+            if not isinstance(raw, dict):
+                continue
+            if raw.get("type") != "science" and raw.get("category") != "science_opportunity":
+                continue
+            if science_is_catalog(raw):
+                continue
+            pl = raw.get("payload") or {}
+            if not isinstance(pl, dict):
+                continue
+            eid = str(pl.get("experiment_id") or pl.get("eid") or "").strip()
+            if not eid:
+                continue
+            sit = str(pl.get("situation") or "").strip()
+            biome = str(pl.get("biome") or "").strip()
+            if not biome and "@" in sit:
+                biome = sit.split("@", 1)[1].strip()
+            try:
+                seq = int(pl.get("seq", 100))
+            except (TypeError, ValueError):
+                seq = 100
+            rows.append((seq, eid, sit, biome))
+    except Exception:
+        return out
+    rows.sort()
+    first: dict[str, tuple[str, str]] = {}
+    match: dict[str, tuple[str, str]] = {}
+    for _seq, eid, sit, biome in rows:
+        if eid not in first:
+            first[eid] = (sit, biome)
+        if eid in match:
+            continue
+        if (live_sit or live_biome) and sit_matches(
+            live_sit, live_biome, sit, biome
+        ):
+            match[eid] = (sit, biome)
+    first.update(match)
+    return first
+
+
+def _snap_biome(snap: object, vessel: object | None) -> str:
+    bio = str(getattr(snap, "biome", "") or "")
+    if bio:
+        return bio
+    if vessel is None:
+        return ""
+    return str(getattr(vessel, "biome", "") or "")
+
+
+def _live_sit(vessel: object, snap: object) -> str:
+    """kRPC vessel sit wins over tape/snap (18-10-57Z recover splashed, tape landed)."""
+    sit = _vessel_sit(vessel)
+    if sit not in {"", "?"}:
+        return sit
+    return str(getattr(snap, "situation", "") or "")
+
+
+def _start_paying(
+    vessel: object,
+    names: tuple[str, ...] | list[str],
+    snap: object,
+    on_log: Callable[[str], None] | None,
+    need: dict[str, tuple[str, str]],
+) -> list[str]:
+    """Start only slots that can pay this sit/biome. Empty = skip, not abort."""
+    sit = _live_sit(vessel, snap)
+    biome = _snap_biome(snap, vessel)
+    paying = paying_eids(vessel, names, sit=sit, biome=biome, need=need)
+    if not paying:
+        return []
+    return start_experiments(
+        vessel,
+        names=paying,
+        on_log=on_log,
+        sit=sit,
+        biome=biome,
+        need=need,
+    )
 
 
 def water_can_steer(name: str | None = None) -> bool:
@@ -1032,6 +1168,29 @@ def _recover_hd(
     return result
 
 
+def _hold_ground_card(
+    vessel: object,
+    started: list[str],
+    ids: tuple[str, ...],
+    snap: object,
+    *,
+    wait_splash: bool = False,
+) -> bool:
+    """Living landed dwell: leftover rem still recording. Wreck recovers now."""
+    if wait_splash or not started:
+        return False
+    if bool(getattr(snap, "wreck", False)):
+        return False
+    sit = str(getattr(snap, "situation", "") or "").lower()
+    if sit not in {"landed", "splashed"}:
+        return False
+    names = tuple(started) if started else ids
+    try:
+        return not ground_card_done(vessel, names)
+    except Exception:
+        return False
+
+
 def _vessel_met(vessel: object | None) -> float | None:
     """MET seconds, NaN if the vessel is dead, None if the stub has no met."""
     if vessel is None:
@@ -1060,6 +1219,10 @@ def _try_recover(
     sit = _vessel_sit(vessel)
     if vessel is None or sit in _PAD_SIT or not _recoverable(vessel):
         return None
+    try:
+        stop_experiments(vessel, on_log=on_log)
+    except Exception:
+        log.debug("science stop before recover failed", exc_info=True)
     mission_event("recover", beauty=True, pose="recover")
     try:
         getattr(vessel, "recover")()
@@ -1081,6 +1244,10 @@ def _force_recover(
         return None
     if not _recoverable(vessel):
         return None
+    try:
+        stop_experiments(vessel, on_log=on_log)
+    except Exception:
+        log.debug("science stop before recover failed", exc_info=True)
     mission_event("recover", beauty=True, pose="recover")
     try:
         getattr(vessel, "recover")()
@@ -1132,6 +1299,12 @@ def _low_flying(snap: object) -> bool:
         return False
     alt = _snap_alt(snap)
     return math.isfinite(alt) and alt <= _AIRBORNE_M
+
+
+def _lofted(snap: object) -> bool:
+    """Alt well above the pad. sit=flying at 101 m is still pad boost."""
+    alt = _snap_alt(snap)
+    return math.isfinite(alt) and alt > _AIRBORNE_M
 
 
 def _crash_ui(
@@ -1285,8 +1458,13 @@ def _light(vessel: object, on_log: Callable[[str], None] | None) -> None:
     _say("hop light", on_log)
 
 
-def _burning(vessel: object, snap: object) -> bool:
-    """Throttle on with fuel. Cutoff is coast — Stayputnik cannot steer."""
+def _burning(vessel: object, snap: object, *, lofted: bool = False) -> bool:
+    """Throttle on with fuel. A 0-tick after light is not cutoff.
+
+    Real burnout is fuel gone, or throttle 0 after a real loft
+    (18-34-22Z MET 1.8 throttle 0 fuel 1054 alt 101). Stayputnik
+    cannot steer after cutoff.
+    """
     try:
         fuel = float(getattr(snap, "fuel", float("nan")))
     except (TypeError, ValueError):
@@ -1296,8 +1474,56 @@ def _burning(vessel: object, snap: object) -> bool:
     try:
         throttle = float(getattr(vessel.control, "throttle", 0.0) or 0.0)
     except Exception:
+        throttle = 0.0
+    if throttle > 0.05:
+        return True
+    return not lofted
+
+
+def _want_coast_phys(
+    snap: object,
+    *,
+    left_pad: bool,
+    down: bool,
+    chute_open: bool,
+    burning: bool,
+) -> bool:
+    """After real burnout, flying, waiting chute. 1× burn/pad/chute/recover."""
+    if not left_pad or down or chute_open or burning:
         return False
-    return throttle > 0.05
+    if not _lofted(snap):
+        return False
+    vz = _snap_v_vert(snap)
+    try:
+        alt = float(getattr(snap, "alt", float("nan")))
+    except (TypeError, ValueError):
+        alt = float("nan")
+    if (
+        math.isfinite(vz)
+        and vz < 0.0
+        and math.isfinite(alt)
+        and 0.0 < alt <= CHUTE_DEPLOY_ALT_M
+    ):
+        return False
+    return True
+
+
+def _apply_hop_physics(
+    session: object,
+    *,
+    coast: bool,
+    on_log: Callable[[str], None] | None = None,
+    last: list[str] | None = None,
+) -> int:
+    """Physics warp only. Rails 0. Never WarpTo. Returns kRPC factor."""
+    return apply_coast(
+        session,
+        coast=coast,
+        on_log=on_log,
+        last=last,
+        default_rate=HOP_COAST_PHYS_RATE,
+        uplink_rate=phys_warp_rate(),
+    )
 
 
 def _slew_pitch(cmd: float, dt: float, target: float) -> tuple[float, bool]:
@@ -1372,8 +1598,12 @@ def _point_surface(ap: object, direction: tuple[float, float, float], *, why: st
 
 
 def _pitch_has_heading(pitch: float) -> bool:
-    """Heading exists 25° off vertical. 09-44-59Z engaged at ~90, burn 340."""
-    return float(pitch) <= INLAND_PITCH_DEG + 1e-9
+    """Heading exists 10° off zenith. 09-44-59Z engaged at ~90, burn 340."""
+    try:
+        p = float(pitch)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(p) and p <= INLAND_YAW_PITCH_DEG + 1e-9
 
 
 def _heading_err_deg(flown: float, want: float) -> float:
@@ -1382,24 +1612,58 @@ def _heading_err_deg(flown: float, want: float) -> float:
     return abs((float(flown) - float(want) + 180.0) % 360.0 - 180.0)
 
 
+def _inland_cmd_pitch(
+    yawed: bool,
+    yaw_n: int,
+    flown_pitch: float,
+    flown_heading: float,
+    met: float,
+) -> tuple[float, bool]:
+    """80/270 yaw kick, then 65/270. 16-47-21Z slam 65 flew pad 297."""
+    if yawed:
+        return INLAND_PITCH_DEG, True
+    captured = (
+        math.isfinite(flown_heading)
+        and _heading_err_deg(flown_heading, INLAND_HEADING_DEG)
+        <= INLAND_HEADING_CAPTURE_DEG
+        and math.isfinite(flown_pitch)
+        and float(flown_pitch) <= INLAND_YAW_PITCH_DEG + 5.0
+    )
+    timed_out = math.isfinite(met) and float(met) >= INLAND_YAW_MET_S
+    unseen = not math.isfinite(flown_heading) and int(yaw_n) >= 2
+    if captured or timed_out or unseen:
+        return INLAND_PITCH_DEG, True
+    return INLAND_YAW_PITCH_DEG, False
+
+
 def _hold_flipped(
     flown_pitch: float,
     flown_heading: float,
     want_heading: float,
     want_pitch: float = INLAND_PITCH_DEG,
+    *,
+    burning: bool = True,
 ) -> bool:
     """True when the 65/270 hold is not on the vessel.
 
     10-17-18Z: past horizon / east of north (38/−10).
     10-33-44Z: 353/26 is 83° from 270 — 90° gate never fired.
     09-59-28Z: 297/66 (~27°) is pad weathercock; do not rewrite.
+    16-47-21Z: cutoff 15/16 is fuel=0, not a missed hold — do not
+    rewrite after burnout (T-161 20 Hz yaw).
     """
     if math.isfinite(flown_pitch):
         p = float(flown_pitch)
         if p < 0.0:
             return True
-        if math.isfinite(want_pitch) and p < float(want_pitch) - 20.0:
+        if (
+            burning
+            and math.isfinite(want_pitch)
+            and p < float(want_pitch) - 20.0
+        ):
             return True
+    if not burning:
+        return False
     return _heading_err_deg(flown_heading, want_heading) > 45.0
 
 
@@ -1421,6 +1685,7 @@ def _steer_heading(
     why: str,
     flown_pitch: float = float("nan"),
     flown_heading: float = float("nan"),
+    burning: bool = True,
 ) -> None:
     """Point surface heading. Caller slews pitch; hold through burnout.
 
@@ -1434,7 +1699,8 @@ def _steer_heading(
     pulse (09-59-28Z MET20 297/66 horiz 99, burnout 336/39). Do not
     treat ``engaged`` as the latch — 10-17-18Z kept 65/270 on AP
     and flew 38/−10. 10-33-44Z 353/26 never tripped 90°. Re-point
-    if flipped and write ``target_direction``; do not re-engage.
+    if flipped while burning and write ``target_direction``; do not
+    re-engage; do not rewrite the cutoff dump (16-47-21Z 15/16).
     """
     try:
         vessel.control.sas = False
@@ -1449,7 +1715,13 @@ def _steer_heading(
         direction = surface_direction(cmd, want_hdg)
         key = id(ap)
         same = _STEER_HELD.get(key) == direction
-        flipped = _hold_flipped(flown_pitch, flown_heading, want_hdg, cmd)
+        flipped = _hold_flipped(
+            flown_pitch,
+            flown_heading,
+            want_hdg,
+            cmd,
+            burning=burning,
+        )
         if getattr(ap, "engaged", False) and same and not flipped:
             return
         frame = getattr(vessel, "surface_reference_frame", None)
@@ -1470,6 +1742,7 @@ def _steer_east(
     *,
     flown_pitch: float = float("nan"),
     flown_heading: float = float("nan"),
+    burning: bool = True,
 ) -> None:
     """Point east (heading 90). Caller slews pitch; hold through burnout."""
     _steer_heading(
@@ -1479,6 +1752,7 @@ def _steer_east(
         why="east pitch",
         flown_pitch=flown_pitch,
         flown_heading=flown_heading,
+        burning=burning,
     )
 
 
@@ -1488,6 +1762,7 @@ def _steer_inland(
     *,
     flown_pitch: float = float("nan"),
     flown_heading: float = float("nan"),
+    burning: bool = True,
 ) -> None:
     """Point west (heading 270). Caller slews pitch; hold through burnout."""
     _steer_heading(
@@ -1497,6 +1772,7 @@ def _steer_inland(
         why="inland pitch",
         flown_pitch=flown_pitch,
         flown_heading=flown_heading,
+        burning=burning,
     )
 
 
@@ -1993,22 +2269,26 @@ def run_on_vessel(
     skips a fresh start. A hop this process lit always starts the card
     — FlyingLow once airborne, FlyingHigh only at alt ≥50 km (do not
     Toggle FlyingLow then again at the lid). MET-still + q=0 flying is
-    down now. Low flying (≤250 m) calls recover() only when recoverable.
+    down now. Low flying (≤250 m) calls recover() only when recoverable
+    after a real loft — not a full tank at 101 m.
     Frozen MET + flying + q=0 + low alt is crash UI: recover() if
     recoverable, else abort ksc leftover (do not go_space_center).
     Frozen landed recoverable=no is the same: do not unpause-spam.
     parts/mass 0 rec=no is total wreck now — not recover+ec=0 spin.
     Living land is recoverable=yes. Post-dismiss pre_launch is not the HD.
+    Factory inland pulse lives in hop_factory (no water/splash flags).
     Matching leftover: live sit/fuel/recoverable before light — disk
     PRELAUNCH is a lie. Dry wreck leftover does not start the card.
-    Default hop: light vertical, then point **25°** inland heading 270
-    after ``left_pad`` (08-29-36Z heading 299 horiz 0 stayed Shores;
-    7.5° stayed Shores; 09-16-24Z logged 270 flew 297/87;
-    09-44-59Z 10 °/s on 0.05 s dt engaged at zenith, burnout 340;
-    09-59-28Z MET20 297/66 then burnout 336 — do not rewrite the
-    same vector; 10-17-18Z ``engaged`` latch flew 38/−10 — re-point
-    if flipped; 10-33-44Z 353/26 missed the 90° gate — write
-    ``target_direction``).
+    Default hop: light vertical, then yaw **10°** off zenith heading
+    270 and point **25°** inland after ``left_pad`` (08-29-36Z heading
+    299 horiz 0 stayed Shores; 7.5° stayed Shores; 09-16-24Z logged
+    270 flew 297/87; 09-44-59Z 10 °/s on 0.05 s dt engaged at zenith,
+    burnout 340; 09-59-28Z MET20 297/66 then burnout 336 — do not
+    rewrite the same vector; 10-17-18Z ``engaged`` latch flew 38/−10
+    — re-point if flipped while burning; 10-33-44Z 353/26 missed the
+    90° gate — write ``target_direction``; 16-47-21Z slam 65 held
+    pitch, flew pad 297, envelope cutoff 15/16 — yaw kick first,
+    do not rewrite fuel=0).
     Do **not** glue 090. Hold AP with ``set_direction_and_up`` (surface
     dir, north up) through burnout. Engage once at 65/270. Not Eulers.
 
@@ -2046,6 +2326,21 @@ def run_on_vessel(
     then TWR≈1 hover until coast ≤12 — 10-11), wait
     ``sit=splashed``, then splash dwell.
     """
+    if not wait_water and not wait_splash:
+        from hop_factory import run_factory_vessel
+
+        return run_factory_vessel(
+            session,
+            vessel,
+            events=events,
+            on_log=on_log,
+            science_ids=science_ids,
+            abort=abort,
+            now=now,
+            sleep=sleep,
+            timeout=timeout,
+            pulse=pulse,
+        )
     from phases import OffPlan, check_expect
 
     wait_down = wait_water or wait_splash
@@ -2089,11 +2384,15 @@ def run_on_vessel(
     water_splashed = False
     water_pitch = WATER_PITCH_UP
     inland_pitch = WATER_PITCH_UP
+    inland_yawed = False
+    inland_yaw_n = 0
     loft_hold = WATER_SLEW_THROTTLE if wait_water else 1.0
     splash_names = splash_ids if splash_ids is not None else ()
     chute_armed = False
     chute_open = False
     said_deploy = False
+    said_coast = [""]
+    lofted = False
     prev_stack_mass = float("nan")
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
@@ -2111,7 +2410,8 @@ def run_on_vessel(
         )
     else:
         _say(
-            f"hop slew pitch {INLAND_PITCH_FROM_UP:g}° inland heading "
+            f"hop slew yaw {INLAND_YAW_FROM_UP:g}° then pitch "
+            f"{INLAND_PITCH_FROM_UP:g}° inland heading "
             f"{INLAND_HEADING_DEG:g} after pad, hold through burnout",
             on_log,
         )
@@ -2187,6 +2487,8 @@ def run_on_vessel(
                         session=session,
                     )
                 left_pad = True
+            if _lofted(snap):
+                lofted = True
             down = _down(snap, flown=left_pad) or litho
             sit_now = str(getattr(snap, "situation", "") or "").lower()
             splashed = sit_now in {"splashed"}
@@ -2403,6 +2705,7 @@ def run_on_vessel(
                     prev_brake_met = met_now
 
             leftover_lf = _snap_fuel(snap)
+            burning_now = _burning(vessel, snap, lofted=lofted)
             aim_up = (
                 wait_down
                 and apo_cut
@@ -2443,32 +2746,47 @@ def run_on_vessel(
                         on_log,
                     )
                     said_pitch = True
-                if not _burning(vessel, snap) and not said_hold:
+                if not burning_now and not said_hold:
                     _say("hop-to-water hold east through burnout", on_log)
                     said_hold = True
             elif not wait_down and lit and not down and left_pad:
-                inland_pitch = INLAND_PITCH_DEG
+                flown_p = _snap_pitch(snap)
+                flown_h = _snap_heading(snap)
+                try:
+                    met_slew = float(getattr(snap, "met", float("nan")))
+                except (TypeError, ValueError):
+                    met_slew = float("nan")
+                if not inland_yawed:
+                    inland_yaw_n += 1
+                inland_pitch, inland_yawed = _inland_cmd_pitch(
+                    inland_yawed,
+                    inland_yaw_n,
+                    flown_p,
+                    flown_h,
+                    met_slew,
+                )
                 _steer_inland(
                     vessel,
                     pitch=inland_pitch,
-                    flown_pitch=_snap_pitch(snap),
-                    flown_heading=_snap_heading(snap),
+                    flown_pitch=flown_p,
+                    flown_heading=flown_h,
+                    burning=burning_now,
                 )
                 if not said_slew:
                     _say(
-                        "hop slew pitch inland after pad "
+                        "hop slew yaw inland after pad "
                         f"heading={INLAND_HEADING_DEG:g}",
                         on_log,
                     )
                     said_slew = True
-                if not said_pitch:
+                if inland_yawed and not said_pitch:
                     _say(
                         f"hop pitch {INLAND_PITCH_FROM_UP:g}° inland "
                         f"heading={INLAND_HEADING_DEG:g}",
                         on_log,
                     )
                     said_pitch = True
-                if not _burning(vessel, snap) and not said_hold:
+                if not burning_now and not said_hold:
                     _say("hop hold inland through burnout", on_log)
                     said_hold = True
 
@@ -2484,7 +2802,7 @@ def run_on_vessel(
                             chute_open = True
                         else:
                             _say(f"hop chute {st}", on_log)
-                    if not chute_open and not _burning(vessel, snap):
+                    if not chute_open and not burning_now:
                         vz_ch = _snap_v_vert(snap)
                         try:
                             alt_ch = float(getattr(snap, "alt", float("nan")))
@@ -2510,6 +2828,19 @@ def run_on_vessel(
                                     session=session,
                                 )
 
+            _apply_hop_physics(
+                session,
+                coast=_want_coast_phys(
+                    snap,
+                    left_pad=left_pad,
+                    down=down,
+                    chute_open=chute_open,
+                    burning=burning_now,
+                ),
+                on_log=on_log,
+                last=said_coast,
+            )
+
             if left_pad and not down and not science_attempted and not wait_splash:
                 if (not did_light) and _keep_hd(
                     vessel, ids, started, left_pad=True
@@ -2526,9 +2857,13 @@ def run_on_vessel(
                     )
                     waiting_hd = True
                 elif _science_ready(snap):
-                    science_attempted = True
-                    started = start_experiments(vessel, names=ids, on_log=on_log)
+                    need = bound_science_need(
+                        live_sit=_live_sit(vessel, snap),
+                        live_biome=_snap_biome(snap, vessel),
+                    )
+                    started = _start_paying(vessel, ids, snap, on_log, need)
                     if started:
+                        science_attempted = True
                         _say("science " + ",".join(started), on_log)
                         log_events.emit("science", ids=list(started))
                         mission_event(
@@ -2540,9 +2875,12 @@ def run_on_vessel(
                         )
                         _say("science dwell", on_log)
                         log_events.emit("science_dwell", phase="start")
-                    elif ids:
+                    elif ids and not card_slots(vessel, ids):
+                        science_attempted = True
                         call("abort_pad", ctx)
                         raise MissionAbort("no science (wanted " + ",".join(ids) + ")")
+                    elif ids:
+                        _say("science skip (situation cannot pay)", on_log)
                 elif hop_wants_flying_high() and not said_lid:
                     _say("science wait FlyingHigh", on_log)
                     said_lid = True
@@ -2570,9 +2908,46 @@ def run_on_vessel(
                 and not down
             )
 
+            if left_pad and down and not wait_splash and not waiting_hd:
+                need = bound_science_need(
+                    live_sit=_live_sit(vessel, snap),
+                    live_biome=_snap_biome(snap, vessel),
+                )
+                landed_ids = hop_landed_science_ids()
+                pending = tuple(eid for eid in landed_ids if eid not in started)
+                more = (
+                    _start_paying(vessel, pending, snap, on_log, need)
+                    if pending
+                    else []
+                )
+                if more:
+                    started.extend(more)
+                    science_attempted = True
+                    _say("science " + ",".join(more), on_log)
+                    log_events.emit("science", ids=list(more))
+                    mission_event(
+                        "science",
+                        snap,
+                        beauty=True,
+                        pose="science",
+                        session=session,
+                    )
+                    _say("science dwell", on_log)
+                    log_events.emit("science_dwell", phase="start")
+
+            hold_card = _hold_ground_card(
+                vessel, started, ids, snap, wait_splash=wait_splash
+            )
+
             # First recoverable after flight — situation may stay flying.
             # hop-to-water / hop-splash must not recover here (kills splash dwell).
-            if waiting_lid or wait_down:
+            # 18-34-22Z: do not hop-down a full tank at 101 m (pad boost).
+            pad_boost = (
+                did_light and left_pad and not lofted and not down and burning_now
+            )
+            if waiting_lid or wait_down or hold_card:
+                pass
+            elif pad_boost:
                 pass
             elif left_pad and _recoverable(vessel):
                 if not said_down:
@@ -2626,7 +3001,12 @@ def run_on_vessel(
                 call("abort_pad", ctx)
                 raise MissionAbort("no science (FlyingHigh lid)")
 
-            if waiting_lid or wait_down:
+            pad_boost = (
+                did_light and left_pad and not lofted and not down and burning_now
+            )
+            if waiting_lid or wait_down or hold_card:
+                pass
+            elif pad_boost:
                 pass
             elif left_pad and (down or _low_flying(snap)):
                 got = _force_recover(vessel, on_log)
@@ -2703,10 +3083,7 @@ def run_on_vessel(
             fast_brake = braking or hover_hz
             if pulses > 1 and elapsed >= budget:
                 if wait_down and not splashed:
-                    if left_pad and landed_dry:
-                        raise MissionAbort("not splashed")
-                    nap(_nap_dt(pulse, snap, braking=fast_brake))
-                    continue
+                    raise MissionAbort("not splashed")
                 if left_pad:
                     got = _recover_hd(vessel, on_log)
                     if got is not None:

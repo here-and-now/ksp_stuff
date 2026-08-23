@@ -658,7 +658,7 @@ def main(argv: list[str] | None = None) -> int:
     up = sub.add_parser("uplink", help="Gene → Commander (no kRPC)")
     up.add_argument(
         "verb",
-        help="hold|cut|no_warp|stage|recover|science|abort_pad|freeze|abort|set|…",
+        help="hold|cut|no_warp|phys-warp|warp|stage|recover|science|abort_pad|freeze|abort|set|…",
     )
     up.add_argument("rest", nargs="*", help="reason or `mun_pe 25000`")
     note_p = sub.add_parser("note", help="Append a line to docs/program/loop.md")

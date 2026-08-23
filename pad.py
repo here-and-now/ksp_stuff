@@ -29,8 +29,10 @@ from science import (
     hd_has_data,
     pad_dwell_s,
     start_experiments,
+    stop_experiments,
 )
 from screenshot import mission_event
+from physics_warp import PAD_RATE, rails_zero, set_factor
 from telem import EventLog, MissionAbort, Telem, gates
 from uplink import take
 
@@ -46,8 +48,8 @@ _STILL_UT = 0.2
 _PAD_SIT = frozenset(
     {"pre_launch", "prelaunch", "landed", "srf_landed", "srflanded"}
 )
-# kRPC physics_warp_factor: 0=1×, 1=2×, 2=3×, 3=4×. Never rails.
-_PAD_PHYS_FACTOR = 2
+# kRPC factor: PAD_RATE 3× → factor 2. Never rails. Never WarpTo.
+_PAD_PHYS_FACTOR = PAD_RATE - 1
 _PAD_PHYS_MAX = 3
 _DWELL_ABORT = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
 # Hop-era radio. Toggle starts *and* stops; the pad SRB is not a hop.
@@ -187,25 +189,12 @@ def _read_ut(session: object) -> float:
 
 
 def _rails_zero(session: object) -> None:
-    sc = _sc(session)
-    if sc is None:
-        return
-    try:
-        sc.rails_warp_factor = 0
-    except Exception:
-        pass
+    rails_zero(session)
 
 
 def _physics_factor(session: object, n: int) -> None:
     """Physics warp only. 0 is 1×. Never rails. Never WarpTo."""
-    _rails_zero(session)
-    sc = _sc(session)
-    if sc is None:
-        return
-    try:
-        sc.physics_warp_factor = int(n)
-    except Exception:
-        pass
+    set_factor(session, n)
 
 
 def _sit_ok_for_warp(vessel: object, snap: object | None = None) -> bool:
@@ -611,7 +600,11 @@ def deploy_chutes(vessel: object, on_log: Callable[[str], None] | None = None) -
 
 
 def recover_or_abort(vessel: object) -> str:
-    """Recover the HD if KSP will allow it; otherwise honest abort."""
+    """Stop running experiments, then recover the HD if KSP will allow it."""
+    try:
+        stop_experiments(vessel)
+    except Exception:
+        log.debug("science stop before recover failed", exc_info=True)
     try:
         ok = bool(getattr(vessel, "recoverable", False))
     except Exception:

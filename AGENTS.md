@@ -78,7 +78,7 @@ Do not `read_file` the growing jsonl. Nominal hop: no Gene, no 15 s
 narration. Off-nominal (wreck flags, lithobrake, empty tanks + flying,
 heading stuck, EC=0 before dwell, crash UI): `python main.py uplink
 abort|hold` if wreck-class; spawn **Gene** if plan/`go` must change;
-spawn **Lars** if hop.py; spawn **Wernher** if kRPC/telem/desk.
+spawn **Lars** if hop_factory/physics_warp/control; spawn **Wernher** if kRPC/telem/desk.
 Issue-clear → that desk. Gene does not take the stick. Os “how’s it
 going?” on a **nominal** hop → read `ship.md`, speak as Walt — no hire.
 Off-nominal → hire, then Walt. `ship.md` is radio, not chat.
@@ -94,7 +94,7 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Vehicle Engineering Lead** | `gus` | Gus Grokman | `.craft` (many vehicle tickets / hire), `capable:` | Hangar, fly, `.py` |
 | **Director of Research** | `linus` | Linus Grokman | Science tickets (many / hire), bind when capable | Commander radio, Hangar, `.craft` |
 | **Chief Systems Engineer** | `wernher` | Wernher Grokman | World/software architecture: desk, hangar scenes, telem, kRPC, ops kernel | Vehicle *control* loops, `.craft` |
-| **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control: pad/hop/splash, recover, `blocks.md` | World-interface architecture, Hangar |
+| **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control: `hop_factory.py` inland, `physics_warp.py`, pad/splash; recover; `blocks.md` | World-interface architecture, Hangar, stamp-`if`s in the pulse |
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI; watch telem; note/hold/abort if unusual; one stuck PNG **during hop** | `.py`, `.craft`, after-flight review, 15 s narration |
 | **Communications** | `verena` | Verena Grokman | Press tickets | Commander, Hangar, uplink, `.py` |
 | **Flight Dynamics** | `katherine` (else `general-purpose` + `.grok/agents/katherine.md`) | Katherine Grokman | Tape windows, atmosphere/FAR/attitude models; rare asks to Lars/Gus/Linus/Gene | kRPC, Hangar, `hop.py`, jsonl in prompt, every-turn pad occupancy |
@@ -226,7 +226,10 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   OFFPLAN**, **2 ABORT**, **1 SESSION**): Hank leftover first
   (`recover()` + Close; never leftover-ksc load). Open `type=control`
   from last-flight if the Commander did not (after-exit). Spawn **Lars**
-  on the named control file. Spawn Wernher **iff** Lars said
+  on the named control file (`hop_factory.py` factory inland,
+  `physics_warp.py` coast/pad warp, `hop.py` only parked water/splash,
+  `pad.py` pad dwell, `science.py` sit-match). Packet `read:` third
+  path is that file — not `hop.py` for a factory miss. Spawn Wernher **iff** Lars said
   `stack: ok` **and** the abort is a kRPC trap, **or** open
   `type=systems` (Wernher without a miss — kRPC explore is standing).
   **Do not hire Gene to consider the miss.** If leftover clean and
@@ -236,10 +239,13 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   ticket has no `go:`. No alt → Gus while leftover cleans. Lithobrake
   freeze keeps throttle 1.
 - Open `type=control` (or leftover `need_stack`) → spawn **Lars**
-  immediately. Do not auto-Gene after. Never a heredoc. Every Lars
-  science-miss packet names **tree** and whether the sit’s Science
-  instrument is unlocked (F-013). Do not send him to patch a Geiger
-  dwell at Start.
+  immediately. Do not auto-Gene after. Never a heredoc. Packet
+  `read:` ≤3: desk + BRIEF + **the named `.py`** (`hop_factory.py` /
+  `physics_warp.py` / `pad.py` / `science.py` / parked `hop.py`).
+  Every Lars science-miss packet names **tree** and whether the sit’s
+  Science instrument is unlocked (F-013). Do not send him to patch a
+  Geiger dwell at Start. Do not send him `hop.py` for an inland-slew
+  or coast-warp miss.
 - Fly next only if `protocol fly` prints `fly: yes` **and** `phase:`
   is in `blocks.md` (uncrewed campaign continue counts; no new Gene
   `go:` between hops).

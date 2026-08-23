@@ -14,10 +14,12 @@ leaves a sharper sit object, a pitfall, a question, or code. Prose
 that stays true becomes a desk field, a test, or a job-card wall.
 **Stumble → ticket** (`type=systems` / `ops --tag feedback` / the
 owning desk) — not a log shrug. Thin tape, a 9-column space program,
-a thermo-only hop when TELEMETRY/goo can share, an idle pad: first-class.
-**Idle pad is a sin** at this stage. Stop the batch only leftover /
-crash UI / f013 fail / live control `.py` / Os wait. An RSI letter
-does not empty the pad.
+a thermo-only hop when TELEMETRY/goo can share, an idle pad, a
+living recover that cannot pay, a Grasslands bind on Forest tape:
+first-class. **Idle pad is a sin** at this stage. A living recover
+that cannot pay is also a waste. Bind last-envelope biome/sit; warp
+the coast. Stop the batch only leftover / crash UI / f013 fail /
+live control `.py` / Os wait. An RSI letter does not empty the pad.
 
 **Os is the founder**, not a god. Os talks to **Hank Grokman, COO**
 for the loop, **Mortimer Grokman, CEO** for the goal. **Hank** owns
@@ -94,7 +96,7 @@ Planning is a **conference on files**. Flying is Gene → Commander.
 | **Gene Grokman** | Launch / Flight Director | `go:` on a fly ticket, briefing | routing, stick |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` (batch), `capable:` | Hangar, uplink, `.py` |
 | **Linus Grokman** | Director of Research | science tickets, bind | Commander radio, Hangar |
-| **Lars Grokman** | Vehicle Systems Engineer | `pad.py`, `hop.py`, `splash.py`, `blocks.md` | craft, tech tree, fly, leftover overlay |
+| **Lars Grokman** | Vehicle Systems Engineer | `hop_factory.py`, `physics_warp.py`, `pad.py`, `splash.py`, `blocks.md` | craft, tech tree, fly, leftover overlay |
 | **Wernher Grokman** | Chief Systems Engineer | kRPC / desk / hangar / leftover overlay / telem / ops kernel (standing) | craft, vehicle control |
 | **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; leftover `need_qol` → Wernher (`type=systems`) |
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
@@ -149,9 +151,10 @@ after a miss. Lars (Vehicle Systems Engineer) after a **miss** only
 (nonzero, ABORT, empty science) on the **live** control file; the pad
 waits that file, not a conference. Wernher is **standing** on
 `type=systems` (kRPC / desk / leftover overlay) — not miss-only.
-Clean uncrewed 0 → Commander re-fly last `cli:`. Uncrewed miss →
-Hank leftover (seconds), Lars if the live `.py` broke, then re-fly
-or the next already-signed hang. Gene (between exits) and the seated
+Clean uncrewed 0 → Commander re-fly last `cli:` **if that bind can
+still pay**. Uncrewed miss → Hank leftover (seconds), Lars if the
+live `.py` broke, Linus if sci unchanged on a living recover (rebind
+envelope), then re-fly or the next already-signed hang. Gene (between exits) and the seated
 Commander **during the hop** may take **one** KSP screenshot when
 logs cannot explain the scene, then reason from the PNG. Not after
 CLI exit. Press stills stay Verena.

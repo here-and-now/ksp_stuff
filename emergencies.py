@@ -81,17 +81,9 @@ def _lithobrake(vessel: Any) -> bool:
 
 
 def _drop_warp(session: Any) -> None:
-    sc = getattr(session, "space_center", None)
-    if sc is None:
-        return
-    try:
-        sc.rails_warp_factor = 0
-    except Exception:
-        pass
-    try:
-        sc.physics_warp_factor = 0
-    except Exception:
-        pass
+    from physics_warp import set_factor
+
+    set_factor(session, 0)
 
 
 def hold(ctx: Ctx) -> str:
@@ -135,6 +127,13 @@ def cut(ctx: Ctx) -> str:
 
 def no_warp(ctx: Ctx) -> str:
     _drop_warp(ctx.session)
+    try:
+        from uplink import desk
+
+        desk.skip_warp = True
+        desk.phys_warp = 1
+    except Exception:
+        pass
     _emit(ctx, "call", name="no_warp")
     return "no_warp"
 
@@ -157,6 +156,12 @@ def recover(ctx: Ctx) -> str:
         return "recover"
     try:
         if bool(getattr(vessel, "recoverable", False)):
+            try:
+                from science import stop_experiments
+
+                stop_experiments(vessel)
+            except Exception:
+                log.debug("science stop before recover failed", exc_info=True)
             vessel.recover()
             _emit(ctx, "call", name="recover", ok=1)
             return "recovered"

@@ -1,3 +1,4 @@
 # Katherine Grokman — log
 
+- 2026-08-23 — T-283 verify: factory hops agree pad 299, Q 32–33 kPa, powered/apex 297/65, Forest ~17 km west, chute 5 m/s. Burnout heading (15/350/201/355) lies — weathercock after cutoff, not 270. Ask Lars T-285. Inland 270 is T-164. Thin tape T-284.
 - 2026-08-23 — Hired. Flight Dynamics (was a placeholder chair). Tape windows, not jsonl. Background; not pad occupancy.

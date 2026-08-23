@@ -60,22 +60,33 @@ class TestSeatAndPlan(unittest.TestCase):
         self.assertFalse(is_lost("jebediah"))
 
     def test_save_plan_keeps_envelope(self):
+        import tempfile
+        from unittest.mock import patch
+
+        tmp = Path(tempfile.mkdtemp()) / "plan.md"
+        tmp.write_text(
+            "phase: hop\nnext: wait\ngo: wait\nmun_pe: 25000\n",
+            encoding="utf-8",
+        )
         load_plan()
         old = desk.plan["mun_pe"]
-        phase = desk.plan.get("phase", "")
         desk.plan["mun_pe"] = old
-        save_plan()
-        text = seated_plan_path().read_text(encoding="utf-8")
-        if phase:
-            self.assertIn(f"phase: {phase}", text)
+        with patch("missions.seated_plan_path", return_value=tmp):
+            with patch("uplink.plan_file", return_value=tmp):
+                save_plan()
+        text = tmp.read_text(encoding="utf-8")
+        self.assertIn("phase: hop", text)
         self.assertIn("next: wait", text)
         self.assertIn("go: wait", text)
 
     def test_pad_unsigned_raises(self):
+        from unittest.mock import patch
+
         from session import SessionError
 
-        with self.assertRaises(SessionError) as ctx:
-            pad_craft_name()
+        with patch("missions.vab_kv", return_value={"capable": "no"}):
+            with self.assertRaises(SessionError) as ctx:
+                pad_craft_name()
         self.assertIn("capable", str(ctx.exception))
 
     def test_seat_missing_refused(self):

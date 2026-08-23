@@ -33,24 +33,29 @@ leftover-science + `f013` + `bind:` is the sit. Open **many**
 PBC Stayputnik era. Kerbalism: name `experiment_id`s. `f013` host is not
 an instrument — Stayputnik PAW is not a Geiger. Heading biome (Water/east):
 cite packet `--deep` / review envelope; tape never 090 → do not bind Water.
-**15 sci is spent.** Keep a **shelf** of remaining subjects (biomes,
-situations, durations, honest f013) — not one bind that “closes 15.”
-Cape Shores is capped. Forest / Grasslands / Tropics / Savanna
-FlyingLow still pay. Water waits heading 090. Inventory stays live
-during lock. Next honest node `stability` 18.
+**This-hop bind** is last-envelope biome/sit. Tape never leaves Forest
+→ do not bind Grasslands. Hang splashes → do not bind SrfLanded (and
+the reverse). FlyingHigh Forest waits ≥50 km. Do not gather a subject
+this stack cannot reach. **15 sci is spent.** Keep a **shelf** of
+remaining subjects (biomes, situations, durations, honest f013) —
+unbound catalog, not one bind that “closes 15.” Cape Shores is
+capped. Forest / Grasslands / Tropics / Savanna FlyingLow still pay
+**when the envelope shows them**. Water waits heading 090. Inventory
+stays live during lock. Next honest node `stability` 18.
 
 ## Bind (after Gus `capable: yes`)
 
 Patch science-ticket payload: `experiment_id`, `part`, **instrument**
 (Science part + tech + unlocked), `duration_s`, `ec_rate`,
 `recover_banks`. LOCKED or not on craft → do not bind; open `--type
-vehicle` or skip. Working goal **15 is spent** — bind what still pays.
+vehicle` or skip. Working goal **15 is spent** — bind what still pays **on this hang**.
 **Side-by-side:** every honest instrument that can share a hop
 (thermo + TELEMETRY + goo if not capped / F-013 / tape). Not one
-thermo forever. Thin tape / 9-column skim: `--type systems` (or
-`ops --tag feedback`) — cite it like `f013`. Stumble → ticket. Do
-not rewrite `science.md` as the bind. One log line
-`docs/crew/log/linus.md`. Do not idle the pad.
+thermo forever. After sci unchanged, rebind from the envelope — a
+living recover that cannot pay is waste. Thin tape / 9-column skim:
+`--type systems` (or `ops --tag feedback`) — cite it like `f013`.
+Stumble → ticket. Do not rewrite `science.md` as the bind. One log
+line `docs/crew/log/linus.md`. Do not idle the pad.
 
 ## Return
 

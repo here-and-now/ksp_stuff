@@ -28,6 +28,10 @@ python main.py tickets attach-run T-NNN --path docs/missions/jebediah/logs/<run>
 
 **Tags:** free lowercase (`hard-splash`, `heading-090`, `east-t3`).
 `ops --tag ask|feedback|explore`. At most tag `learn` — no new TYPE.
+Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q`.
+Lars packet `read:` third path is the **named file** (`hop_factory.py`
+inland, `physics_warp.py` warp, `pad.py` pad, `science.py` sit-match).
+Not `hop.py` for a factory miss.
 
 Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
 Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.

@@ -46,6 +46,11 @@ class TestLiveRecords(unittest.TestCase):
     def test_false_under_unittest(self):
         self.assertFalse(live_records())
 
+    def test_false_under_pytest_env(self):
+        if not os.environ.get("PYTEST_CURRENT_TEST"):
+            self.skipTest("pytest runner")
+        self.assertFalse(live_records())
+
     def test_env_off(self):
         old = os.environ.get("KSPSTUFF_HANDOFF")
         try:
@@ -202,6 +207,63 @@ class TestRecordEnvelope(unittest.TestCase):
         self.assertIn("landing", kinds)
         self.assertIn("end", kinds)
         self.assertGreater(kinds.index("landing"), kinds.index("state"))
+
+    def test_close_synthesizes_landed_on_silk_flying(self):
+        import flightlog
+        from telem import Snapshot
+
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        old = (
+            flightlog._path,
+            flightlog._t0,
+            flightlog._count,
+            flightlog._last_write,
+            flightlog._last_flags,
+            flightlog._last_state,
+            flightlog._wrote_landing,
+        )
+        flightlog._path = tmp
+        flightlog._t0 = time.monotonic()
+        flightlog._count = 0
+        flightlog._last_write = 0.0
+        flightlog._last_flags = None
+        flightlog._last_state = None
+        flightlog._wrote_landing = False
+        try:
+            flightlog.record(
+                Snapshot(
+                    situation="flying",
+                    alt=62.0,
+                    v_vert=-5.0,
+                    speed=5.0,
+                    horiz=0.01,
+                    heading=299.0,
+                    pitch=90.0,
+                    biome="Forest",
+                    chute="deployed",
+                    recoverable=False,
+                ),
+                tag="flight",
+                force=True,
+            )
+            flightlog._emit_landing_if_missing()
+        finally:
+            (
+                flightlog._path,
+                flightlog._t0,
+                flightlog._count,
+                flightlog._last_write,
+                flightlog._last_flags,
+                flightlog._last_state,
+                flightlog._wrote_landing,
+            ) = old
+        landing = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip() and json.loads(line).get("kind") == "landing"
+        ]
+        self.assertEqual(landing[0]["sit"], "landed")
+        self.assertEqual(landing[0]["landing"], "soft")
 
 
 _SNAPSHOT_BLOB = (

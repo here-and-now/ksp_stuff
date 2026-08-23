@@ -1,5 +1,9 @@
 # Wernher Grokman — log
 
+- 2026-08-23 — T-305: 16-47-21Z envelope burn was cutoff 15/16 (throttle=0). Powered hold 297/65 hz 20. Burn window stops at last throttle>0.05; min-pitch among those. 09-28 209/3 still throttled. No hop.py.
+
+- 2026-08-23 — T-284: 16-47-21Z 26 samples / 380 s (hz 0.07). Fast path no parts.all; expensive sci/broken stay off; grim ticks skip after slow grab; Tape silk recover sit=landed rec=yes. No hop.py.
+
 - 2026-08-23 — T-166: ship.md + landing envelope lat/lon/downrange km/biome. Stream Flight.latitude/longitude; haversine from Cape. jsonl already had biome. No hop.py.
 
 - 2026-08-23 — T-159: 09-28-59Z envelope hid burnout 209/3 (apex was peak alt 297/86). burn: window + skip slow walks after expensive Telem.read; 20 Hz while throttled. No hop.py.

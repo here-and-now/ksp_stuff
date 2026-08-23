@@ -599,6 +599,66 @@ class TestTapeEyes(unittest.TestCase):
         self.assertAlmostEqual(env["sci_bank"], 5.6718)
         self.assertIn("bank=5.67", text)
 
+    def test_silk_recover_envelope_sit_landed(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+                "alt": 84.0,
+                "recoverable": True,
+                "chute": "stowed",
+            },
+            {
+                "kind": "state",
+                "t": 400.0,
+                "met": 380.0,
+                "situation": "flying",
+                "heading": 299.0,
+                "horiz": 0.01,
+                "pitch": 90.0,
+                "alt": 62.0,
+                "v_vert": -5.0,
+                "recoverable": False,
+                "chute": "deployed",
+                "biome": "Forest",
+                "wreck": False,
+            },
+            {
+                "kind": "landing",
+                "t": 401.0,
+                "met": 380.0,
+                "landing": "soft",
+                "sit": "flying",
+                "impact_ms": 5.0,
+                "biome": "Forest",
+            },
+            {"kind": "end", "t": 401.1},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        self.assertEqual(env["sit"], "landed")
+        self.assertTrue(env["recoverable"])
+        self.assertEqual(env["landing"], "soft")
+        self.assertIn("sit=landed", format_envelope(env))
+        self.assertIn("rec=yes", format_envelope(env))
+
+    def test_hz_median_prefers_met(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {"kind": "state", "t": 0.0, "met": 0.0, "situation": "flying", "alt": 100.0},
+            {"kind": "state", "t": 10.0, "met": 1.0, "situation": "flying", "alt": 200.0},
+            {"kind": "state", "t": 20.0, "met": 2.0, "situation": "flying", "alt": 300.0},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        self.assertAlmostEqual(env["hz_median"], 1.0)
+
 
 class _Field:
     def __init__(self, name, value):
@@ -794,6 +854,97 @@ class TestDescentTape(unittest.TestCase):
         self.assertAlmostEqual(env["burnout"]["pitch"], 3.0)
         self.assertIn("burn:", format_envelope(env))
 
+    def test_burnout_skips_cutoff_dump(self):
+        """16-47-21Z: cutoff 15/16 is throttle=0; powered hold is 297/65."""
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "pitch": 90.0,
+                "horiz": 0.0,
+                "alt": 85.0,
+                "throttle": 0.0,
+                "fuel": 1080.0,
+            },
+            {
+                "kind": "state",
+                "t": 60.0,
+                "met": 24.8,
+                "situation": "flying",
+                "heading": 297.0,
+                "pitch": 65.0,
+                "horiz": 97.0,
+                "alt": 3955.0,
+                "throttle": 1.0,
+                "fuel": 657.0,
+                "v_vert": 270.0,
+            },
+            {
+                "kind": "state",
+                "t": 94.0,
+                "met": 58.4,
+                "situation": "flying",
+                "heading": 297.0,
+                "pitch": 65.0,
+                "horiz": 282.0,
+                "alt": 15624.0,
+                "throttle": 1.0,
+                "fuel": 83.0,
+                "v_vert": 512.0,
+            },
+            {
+                "kind": "state",
+                "t": 113.0,
+                "met": 74.0,
+                "situation": "flying",
+                "heading": 15.0,
+                "pitch": 16.0,
+                "horiz": 167.0,
+                "alt": 22538.0,
+                "throttle": 0.0,
+                "fuel": 0.1,
+                "v_vert": 240.0,
+            },
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        burn = env.get("burnout") or {}
+        self.assertAlmostEqual(burn.get("heading"), 297.0)
+        self.assertAlmostEqual(burn.get("pitch"), 65.0)
+        self.assertGreater(burn.get("throttle") or 0.0, 0.05)
+        burn_line = next(
+            line for line in format_envelope(env).splitlines() if line.startswith("burn:")
+        )
+        self.assertIn("heading=297", burn_line)
+        self.assertIn("pitch=65", burn_line)
+        self.assertNotIn("heading=15", burn_line)
+        rows_w = Tape(tmp).window("burnout")["rows"]
+        self.assertTrue(rows_w)
+        self.assertTrue(all((r.get("throttle") or 0) > 0.05 for r in rows_w))
+
+    def test_1647_envelope_burn_is_powered_hold(self):
+        """Live 16-47-21Z tape: hold 297/65, not cutoff 15/16."""
+        path = Path("docs/missions/jebediah/logs/2026-08-23T16-47-21Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        burn = env.get("burnout") or {}
+        self.assertAlmostEqual(burn.get("heading") or 0.0, 297.0, delta=3)
+        self.assertAlmostEqual(burn.get("pitch") or 0.0, 65.0, delta=3)
+        self.assertGreater(burn.get("throttle") or 0.0, 0.05)
+        text = format_envelope(env)
+        burn_line = next(line for line in text.splitlines() if line.startswith("burn:"))
+        self.assertIn("heading=297", burn_line)
+        self.assertNotIn("heading=15", burn_line)
+        self.assertLessEqual(len(text), 900)
+        rows = Tape(path).window("burnout")["rows"]
+        self.assertTrue(rows)
+        self.assertTrue(all((r.get("throttle") or 0) > 0.05 for r in rows))
+
     def test_expensive_read_skips_slow_part_walks(self):
         class _Part:
             def __init__(self):
@@ -817,6 +968,39 @@ class TestDescentTape(unittest.TestCase):
             telem._slow_at = time.monotonic() - 10.0
             telem.read()
             self.assertEqual(part.mod_hits, hits)
+            # Cheap pulse after an expensive walk must not re-arm (16-47-21Z).
+            telem._last_read_s = 0.1
+            telem._slow_at = time.monotonic() - 10.0
+            telem._slow_cost_s = 5.0
+            telem.read()
+            self.assertEqual(part.mod_hits, hits)
+
+    def test_fast_path_skips_parts_all(self):
+        class _Parts:
+            def __init__(self, part):
+                self._part = part
+                self.hits = 0
+                self.parachutes = []
+                self.root = part
+
+            @property
+            def all(self):
+                self.hits += 1
+                return [self._part]
+
+        part = type("Part", (), {"name": "okto", "modules": []})()
+        parts = _Parts(part)
+        vessel = _Vessel(alt=12_000.0, sit="flying", speed=200.0)
+        vessel.parts = parts
+        with Telem(_Session(vessel)) as telem:
+            telem.read()
+            n = parts.hits
+            self.assertGreater(n, 0)
+            telem._last_read_s = 0.1
+            telem._slow_at = time.monotonic() - 10.0
+            telem._slow_cost_s = 5.0
+            telem.read()
+            self.assertEqual(parts.hits, n)
 
     def test_bind_same_vessel_id_keeps_streams(self):
         a = _Vessel(alt=400.0, sit="flying", speed=20.0)

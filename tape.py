@@ -2,11 +2,12 @@
 
 The run tape stays on disk. Packet skim is :func:`format_envelope`.
 Windows return a handful of compact rows (pad, first airborne, apex by
-peak **alt**, **burnout** attitude (min pitch while throttled through
-first cutoff), descent ladder, last airborne / impact, kind=event).
+peak **alt**, **burnout** attitude (min pitch while throttled; not the
+cutoff dump), descent ladder, last airborne / impact, kind=event).
 Apex is not max apo (07-21-05Z max apo at 10.8 km hid 14 km→412 m).
 Apex is also not burnout (09-28-59Z peak alt 297/86 hid MET 49 heading
-209 pitch 3). ``python main.py telem <jsonl>`` is the CLI.
+209 pitch 3). Cutoff dump is not the hold (16-47-21Z 15/16 at throttle=0
+hid powered 297/65). ``python main.py telem <jsonl>`` is the CLI.
 """
 
 from __future__ import annotations
@@ -142,7 +143,11 @@ def _throttled(row: dict[str, Any]) -> bool:
 
 
 def _burn_rows(states: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Flying from first throttle through first cutoff (inclusive)."""
+    """Flying from first throttle through last powered sample.
+
+    First fuel=0 / throttle=0 is the cutoff dump, not the hold
+    (16-47-21Z envelope 15/16 hid 297/65).
+    """
     out: list[dict[str, Any]] = []
     seen_thr = False
     for row in states:
@@ -155,7 +160,6 @@ def _burn_rows(states: list[dict[str, Any]]) -> list[dict[str, Any]]:
             out.append(row)
             continue
         if seen_thr:
-            out.append(row)
             break
     if out:
         return out
@@ -171,13 +175,15 @@ def _burn_rows(states: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _burnout_row(states: list[dict[str, Any]]) -> dict[str, Any] | None:
-    """Most off-vertical sample through burnout — not peak alt (09-28-59Z)."""
+    """Most off-vertical powered sample — not cutoff dump (16-47-21Z)."""
     rows = _burn_rows(states)
-    if not rows:
+    powered = [r for r in rows if _throttled(r)]
+    pick = powered or rows
+    if not pick:
         return None
-    best = rows[-1]
+    best = pick[-1]
     best_def = float("-inf")
-    for row in rows:
+    for row in pick:
         pitch = _finite(row.get("pitch"))
         if not math.isfinite(pitch):
             continue
@@ -219,20 +225,58 @@ def _subsample(rows: list[dict[str, Any]], n: int) -> list[dict[str, Any]]:
 
 
 def _hz_median(states: list[dict[str, Any]]) -> float | None:
+    """Observed sample rate. Prefer MET (1 Hz class tape); wall ``t`` fallback."""
     dts: list[float] = []
-    prev_t: float | None = None
+    prev: float | None = None
     for row in states:
-        tf = _finite(row.get("t"))
+        tf = _finite(row.get("met"))
         if not math.isfinite(tf):
             continue
-        if prev_t is not None and tf > prev_t:
-            dts.append(tf - prev_t)
-        prev_t = tf
+        if prev is not None and tf > prev:
+            dts.append(tf - prev)
+        prev = tf
+    if not dts:
+        prev = None
+        for row in states:
+            tf = _finite(row.get("t"))
+            if not math.isfinite(tf):
+                continue
+            if prev is not None and tf > prev:
+                dts.append(tf - prev)
+            prev = tf
     if not dts:
         return None
     dts.sort()
     med = dts[len(dts) // 2]
     return round(1.0 / med, 2) if med > 0 else None
+
+
+def _recovered_silk(
+    last: dict[str, Any] | None,
+    landing_row: dict[str, Any] | None,
+) -> str:
+    """Last state stayed flying after a living recover (16-47-21Z / T-081)."""
+    src = last or {}
+    if _sit(src) not in _AIR:
+        return ""
+    if src.get("wreck"):
+        return ""
+    landing = str((landing_row or {}).get("landing") or src.get("landing") or "")
+    if landing not in {"soft", "firm"}:
+        return ""
+    chute = str(src.get("chute") or "").lower()
+    horiz = _finite(src.get("horiz"))
+    alt = _finite(src.get("alt"))
+    silk = chute in {"deployed", "semi_deployed", "semideployed"}
+    still = (math.isfinite(horiz) and horiz < 2.0) and (
+        math.isfinite(alt) and 0.0 <= alt < 120.0
+    )
+    if not (silk or still):
+        return ""
+    bio = str(src.get("biome") or (landing_row or {}).get("biome") or "").lower()
+    if "water" in bio:
+        return "splashed"
+    return "landed"
 
 
 def _kin(row: dict[str, Any] | None) -> dict[str, Any]:
@@ -386,8 +430,10 @@ class Tape:
                 break
         if not shear:
             shear = any(bool(r.get("shear")) for r in states)
+        silk = _recovered_silk(last, landing_row)
         sit = (
             hit.get("situation")
+            or silk
             or (landing_row or {}).get("sit")
             or (last or {}).get("situation")
             or ""
@@ -443,7 +489,11 @@ class Tape:
             "ec": _round((last or {}).get("ec")),
             "stage": (last or {}).get("stage"),
             "broken": broken,
-            "recoverable": (last or {}).get("recoverable"),
+            "recoverable": (
+                True
+                if silk
+                else (hit.get("recoverable") if hit else (last or {}).get("recoverable"))
+            ),
             "chute": (last or {}).get("chute") or "",
             "sci_run": (last or {}).get("sci_run"),
             "sci_rem": _round((last or {}).get("sci_rem")),

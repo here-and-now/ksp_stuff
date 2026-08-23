@@ -74,6 +74,9 @@ _VERBS = tuple(
             "skip-warp",
             "no-warp-pe",
             "warp-pe",
+            "phys-warp",
+            "phys_warp",
+            "warp",
             "set",
         )
         + EMERGENCY_NAMES
@@ -130,6 +133,7 @@ class Desk:
     skip_warp: bool = False
     no_warp_pe: bool = False
     capture: bool = False
+    phys_warp: int | None = None
     plan: dict[str, float] = field(default_factory=lambda: dict(_PLAN_DEFAULTS))
 
 
@@ -304,6 +308,7 @@ def clear(*, reason: str = "new flight") -> Command | None:
     desk.skip_warp = False
     desk.no_warp_pe = False
     desk.capture = False
+    desk.phys_warp = None
     _ack_file(f"cleared {cmd.raw}" if cmd is not None else None)
     if cmd is None:
         return None
@@ -335,6 +340,16 @@ def _apply(cmd: Command) -> None:
     elif cmd.verb == "capture":
         desk.capture = True
         desk.no_warp_pe = True
+    elif cmd.verb in ("no_warp", "no-warp"):
+        desk.skip_warp = True
+        desk.phys_warp = 1
+    elif cmd.verb in ("phys-warp", "phys_warp", "warp"):
+        rate = _parse_phys_warp(cmd.arg)
+        if rate is None:
+            log.warning("uplink phys-warp needs 1-4, got %r", cmd.arg)
+            return
+        desk.phys_warp = rate
+        desk.skip_warp = False
     elif cmd.verb == "set":
         m = re.match(r"([a-z_]+)\s+([0-9.+-eE]+)$", cmd.arg.strip(), re.I)
         if not m:
@@ -394,6 +409,26 @@ def skip_warp() -> bool:
 
 def no_warp_pe() -> bool:
     return desk.no_warp_pe or desk.hold
+
+
+def _parse_phys_warp(arg: str) -> int | None:
+    token = (arg or "").strip().split(None, 1)
+    if not token:
+        return None
+    try:
+        n = int(float(token[0]))
+    except ValueError:
+        return None
+    if n < 1 or n > 4:
+        return None
+    return n
+
+
+def phys_warp_rate() -> int | None:
+    """Uplink override. None = factory. 1–4 = ×. hold/skip_warp → 1."""
+    if desk.hold or desk.skip_warp:
+        return 1
+    return desk.phys_warp
 
 
 def want_capture() -> bool:

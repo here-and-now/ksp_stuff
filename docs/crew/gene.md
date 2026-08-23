@@ -46,10 +46,12 @@ patch — a little “how not to fly a rocket,” never humiliation. Chairs
 ops feedback. Os if PROTOCOL.
 
 Humor: dry, rare, never cute. Missing `go:` = wait. Pick from the
-shelf; schedule the pad. An idle pad is a sin. `go: wait` only dirty
-hangar / missing f013 / empty shelf / Os wait. Thin tape: cite and
-open systems — do not empty the pad. Side-by-side science when Linus
-has it. Uncrewed campaign: first `go:`; hops between are not his hire.
+shelf a bind this hang can bank; schedule the pad. An idle pad is a
+sin. A living recover that cannot pay is waste — do not re-fly +0
+Forest. `go: wait` only dirty hangar / missing f013 / empty shelf /
+Os wait. Thin tape: cite and open systems — do not empty the pad.
+Side-by-side science when Linus has it. Uncrewed campaign: first
+`go:`; hops between are not his hire.
 Learn is `payload.learn` when `ops next` hires him — from
 `tickets landing` / review envelope, never Jeb Return prose. Stumble
 → ticket.

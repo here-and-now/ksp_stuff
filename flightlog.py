@@ -72,11 +72,13 @@ _wrote_landing: bool = False
 
 
 def live_records() -> bool:
-    """False under unittest so fixtures do not clobber last-flight / logs."""
+    """False under pytest/unittest so fixtures do not clobber last-flight / logs."""
     flag = os.environ.get("KSPSTUFF_HANDOFF", "").lower()
     if flag in {"0", "off", "no"}:
         return False
-    if "unittest" in sys.modules:
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return False
+    if "pytest" in sys.modules or "unittest" in sys.modules:
         return False
     return True
 
@@ -563,6 +565,16 @@ def _emit_landing_if_missing() -> None:
     if not landing:
         return
     sit = str(_last_state.get("situation") or "")
+    wreck = bool(_last_state.get("wreck"))
+    sit_l = sit.lower().replace("-", "_")
+    # Living recover often never writes a landed state (16-47-21Z).
+    if (
+        not wreck
+        and sit_l in {"flying", "sub_orbital", "suborbital"}
+        and landing in {"soft", "firm"}
+    ):
+        bio = str(_last_state.get("biome") or "").lower()
+        sit = "splashed" if "water" in bio else "landed"
     event(
         "landing",
         format_landing(

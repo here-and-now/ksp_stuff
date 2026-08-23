@@ -21,6 +21,127 @@ python main.py pad
 
 ---
 
+## 2026-08-23T18-34-22Z-hop — false burnout coast 3× then hop-down
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T18-34-22Z-hop`). First hop after T-308 coast 3×.
+  Stiff-pbc. f013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+  Live hop pid already loaded — next hop takes this.
+- **Symptom:** MET 1.8 throttle 0 fuel 1054 alt 101 apo 114. `hop hold
+  inland through burnout` then hop-down on the pad (downrange 0.45 km).
+  chute stowed. sci +0. Exit 0.
+- **Cause:** `_burning` is throttle>0.05. A 0-tick after light looks like
+  cutoff; `_want_coast_phys` then 3×; recoverable over the pad hops down.
+- **Fix:** Real burnout is fuel gone, or throttle 0 after loft well above
+  pad. 1× while burning / pad boost. Do not hop-down a full tank at 101 m.
+  Rails 0. Uplink `phys-warp` still works.
+- **Modules:** `hop.py`.
+
+## 2026-08-23T18-10-57Z-hop — splash leftover skipped SrfLanded seq1
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T18-10-57Z-hop`). Stiff-pbc living recover Forest
+  17.7 km sit=splashed (tape sit=landed). f013 2HOT start
+  unlocked=yes on_craft=yes. Do not Hangar. Live hop pid already
+  loaded — next hop takes this.
+- **Symptom:** Goo airborne, recover HD, sci 8.7721 +0. Bound T-288
+  Forest SrfSplashed TELEMETRY leftover 0.16 never started. T-077
+  SrfLanded thermo and T-287 SrfLanded TELEMETRY also unstarted.
+- **Cause:** `hop_landed_science_ids()` only listed SrfLanded.
+  `bound_science_need` first-seq pinned TELEMETRY to T-287
+  SrfLanded so splash cannot-pay. Airborne goo set `started` and
+  skipped the ground start.
+- **Fix:** Union land+splash leftover ids. Match live sit to the
+  bound ticket that can pay (splash → T-288, land → T-287), not
+  first seq. Down still starts that leftover after airborne goo.
+- **Modules:** `hop.py`.
+
+## 2026-08-23T18-19-00Z-hop — hop coast physics 2–4× after burnout
+
+- **When:** Os 2026-08-23: factory hops sit ~300 s at 1× after
+  `hop hold inland through burnout` until chute. T-308. f013 2HOT
+  start unlocked=yes on_craft=yes. Do not Hangar. Live hop pid
+  already loaded — next hop takes this.
+- **Symptom:** Pad physics-warps 2–4× on landed/prelaunch. Hop
+  coast never set `physics_warp_factor`. `no_warp` dropped once
+  and did not persist. No uplink to raise physics warp.
+- **Cause:** Coast loop left rails/physics at hangar 1×. Desk had
+  `skip_warp` but hop did not drive a coast factor from it.
+- **Fix:** After burnout, while flying and waiting chute, factory
+  3× physics (`physics_warp_factor` 2), rails 0, never WarpTo.
+  1× while burning, on chute deploy, recover, shear/wreck/hold.
+  Uplink `phys-warp 2|3|4` / `warp 2|3|4` persists on `uplink.desk`
+  (like skip_warp). `no_warp` keeps 1× until a new phys-warp.
+  Modules: `hop.py`, `uplink.py`, `emergencies.py`.
+
+## 2026-08-23T17-23-34Z-hop — recover rem=0 did not bank leftover
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T17-23-34Z-hop`; 17-32-20Z same). Stiff-pbc living
+  recover 5 m/s Forest. f013 2HOT start unlocked=yes on_craft=yes.
+  Do not Hangar.
+- **Symptom:** `sci_run=1 rem=0` entire hop, `sci_bank` 8.0492 +0.
+  leftover `temperatureScan@EarthSrfLandedForest` 0.742→0.690 not in
+  R&D. Bound was SrfLanded (T-077); hop Toggled FlyingLow T+1.
+- **Cause:** fly `science_ids` union started thermo/TELEMETRY/goo
+  airborne. Forest FlyingLow remaining=0 cannot pay. Recover ran
+  while the slot was still recording, so leftover rem never flushed
+  to the HD.
+- **Fix:** Do not start a slot whose sit/biome cannot pay (sample
+  rem=0, or bound SrfLanded/FlyingLow@Grasslands vs live Forest).
+  Start SrfLanded after touchdown. Stop running experiments before
+  `vessel.recover()`.
+- **Modules:** `science.py`, `hop.py`, `pad.py`.
+
+## 2026-08-23T16-47-21Z-hop — T-305 envelope burn is cutoff dump
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T16-47-21Z-hop`). Stiff-pbc living recover 5 m/s Forest.
+  f013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** envelope `burn: heading=15 pitch=16` MET 74 n=5. Powered
+  hold heading **297** pitch **65** (MET 25–58, hz 20).
+- **Cause:** `_burnout_row` took min pitch through first cutoff
+  inclusive. Cutoff dump is throttle=0 (no torque). 09-28-59Z 209/3 was
+  still throttled.
+- **Fix:** burn window ends at last powered sample; envelope min-pitch
+  among throttled rows. No hop.py.
+- **Modules:** `tape.py`.
+
+## 2026-08-23T16-47-21Z-hop — T-284 thin tape 0.07 Hz
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T16-47-21Z-hop`). Stiff-pbc living recover 5 m/s Forest.
+  f013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** 26 state rows / 380 s MET, `hz_median` 0.07. Requested
+  `hz` 5–20. Last state `sit=flying recoverable=no` while last-flight
+  `recovered sit=landed recoverable=yes`. Descent gaps ~14 s wall.
+- **Cause:** Slow `parts.all` + `field_list` sci/broken walk (~13 s)
+  re-armed after every cheap pulse, and/or a 10 s grim tick inside
+  `Telem.read` made every pulse miss the shot interval. Fast path still
+  called `parts_count` (`parts.all`) every row. Close synthesized
+  `kind=landing` with `sit=flying`.
+- **Fix:** Cache parts/root on the fast path; skip sci/broken after an
+  expensive walk except landed/splashed; grim ticks skip after a slow
+  grab; envelope silk recover as `sit=landed rec=yes`. No hop.py.
+- **Modules:** `telem.py`, `screenshot.py`, `tape.py`, `flightlog.py`.
+
+## 2026-08-23T16-47-21Z-hop — T-164 slam 65 held pad 297
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T16-47-21Z-hop`; T-164 fingerprint
+  `2026-08-23T10-47-12Z-hop`). Stiff-pbc living recover 5 m/s Forest
+  16.8 km. f013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. Powered hold heading **297** pitch **65** (MET
+  25–58). Envelope burn heading 15 pitch 16 horiz 167 MET 74 is the
+  first fuel=0 sample, not the hold. 10-47-12Z same 297/65 then
+  Shores +0. Ground track west; nose never 270.
+- **Cause:** command 65/270 at left_pad engages from zenith; pitch
+  over is pad 299, then FAR fins lock 297 (27° — 45° gate skips
+  rewrite). Re-point at cutoff pitch dump rewrites and yaws (T-161).
+- **Fix:** yaw 10° off zenith heading 270 at low q, then the 25°
+  path. Re-point only while burning (or pitch < 0). Do not rewrite
+  fuel=0. Modules: `hop.py`.
+
 ## 2026-08-23T10-47-12Z-hop — T-166 ship radio had no where
 
 - **When:** 2026-08-23 letsgrok hops (`2026-08-23T10-47-12Z-hop` and

@@ -10,7 +10,11 @@ remaining, else cfg ``data_rate`` × ScienceDefs size, capped by remaining
 EC / ``ec_rate``). Hop FlyingLow starts the **bound** flying card once airborne; FlyingHigh
 Toggles only at alt ≥50 km (not T+1 FlyingLow; not a second Toggle
 at the lid). Unbound leftover FlyingHigh tickets are not a lid.
-Splash goo is not a hop start. Recovers when
+Do not start an experiment whose situation cannot pay (sample remaining=0,
+or bound sit/biome ≠ live sit/biome — 17-23-34Z SrfLanded bound Toggled
+FlyingLow rem=0). Splash goo is not a hop start. Stop running slots
+before ``vessel.recover()`` so leftover rem Kerbalism already recorded
+lands in R&D (17-23-34Z Forest leftover 0.742→0.690, bank +0). Recovers when
 landed/splashed/wreck-recoverable, or when EC=0 and the HD already
 has data — it does not wait the pad catalog wall. One Toggle per experiment_id; 2HOT owns ``temperatureScan``,
 not Stayputnik (a second Toggle stops Kerbalism). A leftover with files
@@ -58,6 +62,16 @@ _START_EVENTS = (
 )
 _KERBALISM_MODULES = frozenset({"Experiment", "ModuleScienceExperiment"})
 _KERBALISM_MODULE_ALIASES = frozenset({"moduleksmexperiment", "kerbalismexperiment"})
+# Duration experiments sit at remaining=0 before a fresh start. Sample rem=0
+# cannot pay this sit. TELEMETRY still needs a sit/biome match.
+_DURATION_EIDS = frozenset(
+    {
+        "kerbalism_TELEMETRY",
+        "kerbalism_LITE",
+        "kerbalism_MITE",
+        "kerbalism_SITE",
+    }
+)
 _DRIVE_MODULES = frozenset({"HardDrive", "harddrive"})
 _EMPTY_DRIVE = frozenset(
     {
@@ -593,6 +607,61 @@ def _trigger_module(module: Any) -> bool:
     return False
 
 
+def _trigger_stop(module: Any) -> bool:
+    """Fire Stop/Pause. Never Toggle (Toggle starts a stopped slot)."""
+    try:
+        event_list = list(_attr(module, "event_list") or [])
+    except Exception:
+        event_list = []
+    ranked: list[tuple[int, Any]] = []
+    for ev in event_list:
+        gui = str(_attr(ev, "gui_name", "") or "")
+        ident = str(_attr(ev, "name", "") or "")
+        blob = f"{gui} {ident}".lower()
+        if "toggle" in blob:
+            continue
+        rank = 0 if "stop" in blob else 1 if "pause" in blob else 99
+        if rank >= 99:
+            continue
+        ranked.append((rank, ev))
+    ranked.sort(key=lambda item: item[0])
+    for _rank, ev in ranked:
+        if _attr(ev, "active") is False:
+            continue
+        trig = _attr(ev, "trigger")
+        if callable(trig):
+            try:
+                trig()
+                return True
+            except Exception:
+                pass
+    try:
+        names = list(_attr(module, "events") or [])
+    except Exception:
+        names = []
+    for ev_name in names:
+        low = str(ev_name).lower()
+        if "toggle" in low:
+            continue
+        if "stop" not in low and "pause" not in low:
+            continue
+        trigger = _attr(module, "trigger_event")
+        if callable(trigger):
+            try:
+                trigger(ev_name)
+                return True
+            except Exception:
+                continue
+        by_id = _attr(module, "trigger_event_by_id")
+        if callable(by_id):
+            try:
+                by_id(ev_name)
+                return True
+            except Exception:
+                continue
+    return False
+
+
 def _infer_eid(part: Any, module: Any) -> str:
     eid = module_field(module, *_EID_KEYS)
     if eid is not None and str(eid).strip():
@@ -660,11 +729,72 @@ def iter_science_modules(vessel: Any) -> list[tuple[Any, Any, str]]:
     return [slots[k] for k in order]
 
 
+def _norm_sit(text: str) -> str:
+    return (text or "").strip().lower().replace(" ", "").replace("_", "")
+
+
+def sit_matches(
+    live_sit: str,
+    live_biome: str,
+    need_sit: str,
+    need_biome: str,
+) -> bool:
+    """Bound sit/biome vs live vessel. Empty need is not a gate."""
+    need = _norm_sit(need_sit)
+    live = _norm_sit(live_sit)
+    bio_need = (need_biome or "").strip().lower()
+    if not bio_need and "@" in (need_sit or ""):
+        bio_need = need_sit.split("@", 1)[1].strip().lower()
+    bio_live = (live_biome or "").strip().lower()
+    if (
+        bio_need
+        and bio_live
+        and bio_need not in bio_live
+        and bio_live not in bio_need
+    ):
+        return False
+    if not need:
+        return True
+    if "flyinghigh" in need or need.startswith("flying"):
+        return "flying" in live
+    if "splash" in need:
+        return "splash" in live
+    if "landed" in need or "srfland" in need:
+        return "landed" in live
+    return True
+
+
+def remaining_pays(module: Any, eid: str) -> bool:
+    """Sample remaining=0 cannot pay. Duration idle rem=0 still might."""
+    rem = _remaining_value(module)
+    if rem is None or rem > 0.0:
+        return True
+    return str(eid or "").strip() in _DURATION_EIDS
+
+
+def experiment_can_pay(
+    module: Any,
+    eid: str,
+    *,
+    sit: str = "",
+    biome: str = "",
+    need_sit: str = "",
+    need_biome: str = "",
+) -> bool:
+    """True if starting this slot can credit leftover / remaining."""
+    if not remaining_pays(module, eid):
+        return False
+    return sit_matches(sit, biome, need_sit, need_biome)
+
+
 def start_experiments(
     vessel: Any,
     *,
     names: Iterable[str] | None = None,
     on_log: Callable[[str], None] | None = None,
+    sit: str | None = None,
+    biome: str | None = None,
+    need: dict[str, tuple[str, str]] | None = None,
 ) -> list[str]:
     """Start Kerbalism ``Experiment`` modules via events.
 
@@ -684,6 +814,13 @@ def start_experiments(
                 want_list.append(token)
         want = set(want_list)
     done: list[str] = []
+    live_sit = (
+        sit if sit is not None else str(_attr(vessel, "situation", "") or "")
+    ).strip()
+    live_biome = (
+        biome if biome is not None else str(_attr(vessel, "biome", "") or "")
+    ).strip()
+    need_map = need or {}
 
     def _say(msg: str) -> None:
         log.info(msg)
@@ -739,6 +876,17 @@ def start_experiments(
         if _already_running(module):
             _say(f"science keep {label} running")
             done.append(str(label))
+            continue
+        need_sit, need_biome = need_map.get(eid, ("", ""))
+        if not experiment_can_pay(
+            module,
+            eid,
+            sit=live_sit,
+            biome=live_biome,
+            need_sit=need_sit,
+            need_biome=need_biome,
+        ):
+            _say(f"science skip {label} (situation cannot pay)")
             continue
         if _trigger_module(module):
             _say(f"science start {label}")
@@ -825,6 +973,86 @@ def _best_slots(
         if rank < prev[0]:
             best[eid] = (rank, part, module, eid)
     return [(best[e][1], best[e][2], e) for e in order]
+
+
+def paying_eids(
+    vessel: Any,
+    names: Iterable[str] | None,
+    *,
+    sit: str = "",
+    biome: str = "",
+    need: dict[str, tuple[str, str]] | None = None,
+) -> list[str]:
+    """In-card ids that can start and pay in this sit/biome."""
+    want = [str(n).strip() for n in (names or ()) if n]
+    if not want:
+        return []
+    live_sit = sit or str(_attr(vessel, "situation", "") or "")
+    live_biome = biome or str(_attr(vessel, "biome", "") or "")
+    need_map = need or {}
+    ok: set[str] = set()
+    for _part, module, eid in _best_slots(vessel, want):
+        need_sit, need_biome = need_map.get(eid, ("", ""))
+        if experiment_can_pay(
+            module,
+            eid,
+            sit=live_sit,
+            biome=live_biome,
+            need_sit=need_sit,
+            need_biome=need_biome,
+        ):
+            ok.add(eid)
+    return [eid for eid in want if eid in ok]
+
+
+def card_slots(vessel: Any, names: Iterable[str] | None) -> bool:
+    """True if any named Experiment slot exists (paying or not)."""
+    return bool(_best_slots(vessel, names))
+
+
+def ground_card_done(vessel: Any, names: Iterable[str]) -> bool:
+    """Landed dwell finished: samples spent or duration stopped.
+
+    TELEMETRY remaining=0 while running is still recording. Sample rem=0
+    running is spent — stop and recover.
+    """
+    slots = _best_slots(vessel, names)
+    if not slots:
+        return True
+    for _part, module, eid in slots:
+        if status_running(module):
+            if str(eid).strip() in _DURATION_EIDS:
+                return False
+            rem = _remaining_value(module)
+            if rem is not None and rem > 0.0:
+                return False
+            continue
+        if not experiment_done(module):
+            return False
+    return True
+
+
+def stop_experiments(
+    vessel: Any,
+    *,
+    names: Iterable[str] | None = None,
+    on_log: Callable[[str], None] | None = None,
+) -> list[str]:
+    """Stop running slots so HD files flush before ``vessel.recover()``."""
+    done: list[str] = []
+
+    def _say(msg: str) -> None:
+        log.info(msg)
+        if on_log:
+            on_log(msg)
+
+    for _part, module, eid in _best_slots(vessel, names):
+        if not _already_running(module):
+            continue
+        if _trigger_stop(module):
+            _say(f"science stop {eid}")
+            done.append(str(eid))
+    return done
 
 
 def card_run_rem(

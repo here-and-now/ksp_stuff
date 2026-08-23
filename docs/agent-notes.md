@@ -661,8 +661,13 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   `VesselType`. Skim `stack: mass=pad→last parts=n shear=` and
   `descent: peak→last n= gap=`. Tape apex is peak **alt**, not max apo.
   Bind streams by `Vessel.id`, not Python `is`. `reliability_broken` /
-  sci/debris refresh at 1 s; do not getattr `Module.fields` when
-  `field_list` already listed (OKTO duplicate gui; 07-21-05Z ~13 s/pulse).
+  sci/debris/`parts.all` are the slow walk — once, then again at
+  landed/splashed. Do not re-arm every cheap pulse (16-47-21Z 0.07 Hz
+  / 26 samples / 380 s). Do not getattr `Module.fields` when
+  `field_list` already listed (OKTO duplicate gui; ~13 s/pulse).
+  grim 10 s ticks skip after a grab ≥0.8 s; `Telem.read` does not grim
+  inside the timed pulse. Silk recover with last `sit=flying` still
+  envelopes `sit=landed rec=yes`.
   kRPC 0.6 still unused: `Flight.mach` / `static_pressure` /
   `terminal_velocity` / `atmosphere_density`, `Vessel.delta_v` /
   `burn_time` / torque tensors, `CrewCount`. RealChute is

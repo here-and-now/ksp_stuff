@@ -12,11 +12,14 @@ always ~0. Surface kinematics use the body's ``reference_frame``.
 Cadence is adaptive: cruise ~5 Hz, ~20 Hz below 8 km, while throttled,
 or time-to-impact < 8 s so slew-through-burnout and a hard splash are
 tape, not three rows 15 s apart. ``read`` must stay cheap (cache part
-walks) or requested Hz is a lie — 07-21-05Z / 09-28-59Z wrote ~0.08 Hz
-because a slow pulse (>1 s) re-armed the 1 s sci/broken/debris walk.
-Skip those walks after an expensive read. Each state row may carry
-requested ``hz``. Agents query ``tape.Tape`` / ``python main.py telem``;
-packet skim is the envelope. Jsonl stays on disk.
+walks, never ``parts.all`` on the fast path, never grim inside the
+timed pulse) or requested Hz is a lie — 16-47-21Z wrote 0.07 Hz
+(26 samples / 380 s) because an expensive sci/broken walk *or* a 10 s
+grim tick made every pulse >10 s, which re-armed both. Skip those
+walks after an expensive read; skip tape ticks if grim was slow.
+Each state row may carry requested ``hz``. Agents query ``tape.Tape``
+/ ``python main.py telem``; packet skim is the envelope. Jsonl stays
+on disk.
 """
 
 from __future__ import annotations
@@ -682,6 +685,7 @@ class Telem:
         self._shear_emitted: bool = False
         self._vessel_key: tuple[Any, ...] | None = None
         self._slow_at: float = 0.0
+        self._slow_cost_s: float = 0.0
         self._last_read_s: float = 0.0
         self._slow_sci: tuple[bool | None, float | None] = (None, None)
         self._slow_bank: float | None = None
@@ -694,7 +698,7 @@ class Telem:
         self._pad_ll: tuple[float, float] | None = None
         self._body_r: float = float("nan")
 
-    def close(self) -> None:
+    def _drop_streams(self) -> None:
         for stream in self._streams.values():
             try:
                 stream.remove()
@@ -707,10 +711,14 @@ class Telem:
         self._body = None
         self._vessel = None
         self._vessel_key = None
+
+    def close(self) -> None:
+        self._drop_streams()
         self._met_was = None
         self._prev_v_vert = None
         self._prev_met_g = None
         self._slow_at = 0.0
+        self._slow_cost_s = 0.0
         self._last_read_s = 0.0
         self._slow_chute = ""
         self._slow_parts = None
@@ -728,9 +736,15 @@ class Telem:
         if key == self._vessel_key and self._streams:
             self._vessel = vessel
             return
-        self.close()
+        # Rebind must not reset cadence — close() zeroes _last_read_s
+        # and re-arms the 13 s sci/broken walk (16-47-21Z 0.07 Hz).
+        old = self._vessel_key
+        self._drop_streams()
         self._vessel = vessel
         self._vessel_key = key
+        if old != key:
+            self._slow_at = 0.0
+            self._slow_cost_s = 0.0
         if vessel is None:
             return
         self._flight = vessel.flight()
@@ -799,10 +813,15 @@ class Telem:
 
     def read(self) -> Snapshot:
         t0 = time.monotonic()
+        snap: Snapshot | None = None
         try:
-            return self._read_body()
+            snap = self._read_body()
+            return snap
         finally:
             self._last_read_s = time.monotonic() - t0
+            # grim ticks must not live inside the timed pulse (16-47-21Z).
+            if snap is not None and self._last_read_s < CHEAP_READ_S:
+                _maybe_shot(snap)
 
     def _read_body(self) -> Snapshot:
         try:
@@ -813,7 +832,6 @@ class Telem:
             snap = Snapshot(scene=self.scene, vessel=None)
             self.events.emit("snapshot", **snap.as_dict())
             _record_run(self.session, snap)
-            _maybe_shot(snap)
             return snap
         self._bind(vessel)
         body = self._body
@@ -826,9 +844,18 @@ class Telem:
         sit = _enum_name(getattr(vessel, "situation", None))
         now_m = time.monotonic()
         cheap_enough = 0.0 < self._last_read_s < CHEAP_READ_S
+        down_edge = sit in _DOWN and not self._landed
+        # An expensive sci/broken walk re-armed every cheap pulse (T-147
+        # skip lasted one row). After a slow walk costs ≥ CHEAP_READ_S,
+        # stay on streams until sit goes landed/splashed.
         slow = (
             self._slow_at <= 0.0
-            or (cheap_enough and now_m - self._slow_at >= SLOW_RPC_S)
+            or down_edge
+            or (
+                cheap_enough
+                and self._slow_cost_s < CHEAP_READ_S
+                and now_m - self._slow_at >= SLOW_RPC_S
+            )
         )
         resources: dict[str, float] = dict(self._slow_resources)
         fuel_names = _FUELS if slow else _FAST_FUELS
@@ -923,16 +950,20 @@ class Telem:
             )
         chute = chute_state(vessel, deep=slow)
         mass = self._stream("vessel.mass", getattr(vessel, "mass", float("nan")))
-        parts_n = parts_count(vessel)
-        root = root_part_name(vessel)
+        mass_drop = (
+            self._prev_mass is not None
+            and math.isfinite(mass)
+            and self._prev_mass > 80.0
+            and mass < self._prev_mass * 0.50
+        )
         if slow:
+            t_slow = time.monotonic()
+            parts_n = parts_count(vessel)
+            root = root_part_name(vessel)
             self._slow_chute = chute
             self._slow_parts = parts_n
             self._slow_root = root
             self._slow_resources = dict(resources)
-        elif chute in {"", "none"} and self._slow_chute:
-            chute = self._slow_chute
-        if slow:
             sci_run, sci_rem = science_run_rem(vessel)
             self._slow_sci = (sci_run, sci_rem)
             try:
@@ -946,8 +977,19 @@ class Telem:
             except Exception:
                 self._slow_broken = None
             self._slow_debris = debris_count(self.session)
-            self._slow_at = now_m
+            self._slow_at = time.monotonic()
+            self._slow_cost_s = self._slow_at - t_slow
         else:
+            if mass_drop:
+                parts_n = parts_count(vessel)
+                root = root_part_name(vessel)
+                self._slow_parts = parts_n
+                self._slow_root = root
+            else:
+                parts_n = self._slow_parts
+                root = self._slow_root
+            if chute in {"", "none"} and self._slow_chute:
+                chute = self._slow_chute
             sci_run, sci_rem = self._slow_sci
         sci_bank = self._slow_bank
         debris_n = self._slow_debris
@@ -1094,7 +1136,6 @@ class Telem:
         _record_run(
             self.session, snap, rec_edge=rec_edge, shear_edge=shear_edge
         )
-        _maybe_shot(snap)
         return snap
 
 

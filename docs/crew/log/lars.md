@@ -1,5 +1,10 @@
 # Lars Grokman — log
 
+- 2026-08-23 — T-311 closed: 18-34-22Z hop-down MET 1.8 throttle 0 fuel 1054 alt 101. hop.py `_burning` / coast-phys wait for real loft; do not hop-down a full tank at pad alt. Do not Hangar.
+- 2026-08-23 — T-309 closed: 18-10-57Z splash skipped T-288. hop.py matches live sit to land-or-splash leftover (not first-seq SrfLanded); airborne goo does not skip ground start. Do not Hangar.
+- 2026-08-23 — T-308 closed: hop coast factory 3× physics after burnout until chute (rails 0, never WarpTo). 1× burn/chute/recover/shear. Uplink `phys-warp 2|3|4` / `no_warp` persists on desk. Do not Hangar.
+- 2026-08-23 — T-306: 17-23-34Z recover rem=0 bank +0. science.py skips unpaid sit/biome (sample rem=0; SrfLanded not T+1 FlyingLow); stop before recover so leftover rem banks. hop starts landed leftover after touchdown. Do not Hangar.
+- 2026-08-23 — T-164 closed: 16-47-21Z slam 65 held pitch, flew pad 297; envelope cutoff 15/16. hop.py yaws 10° off zenith heading 270 then 25° inland; does not rewrite fuel=0. Do not Hangar.
 - 2026-08-23 — T-163 closed: 10-33-44Z T-162 re-point missed (burn 353/26, later 56/−19, Shores +0). hop.py writes `target_direction` then `set_direction_and_up`; re-points if pitch drops or heading error >45°. Do not re-engage. Do not Hangar.
 - 2026-08-23 — T-162 closed: 10-17-18Z T-161 engaged-latch burnout 38/−10 (east, past horizon, Shores +0). hop.py latches the 65/270 vector; re-points if flipped; does not re-engage. Do not Hangar.
 - 2026-08-23 — T-160 closed: 09-44-59Z engage-once at zenith (MET 19 300/89, burn 340/43, last 299 Shores +0). hop.py commands 65/270 after pad then engage once. Do not Hangar.

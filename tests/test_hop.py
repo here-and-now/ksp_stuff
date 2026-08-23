@@ -14,6 +14,7 @@ from unittest.mock import patch
 from hop import (
     CHUTE_DEPLOY_ALT_M,
     CRAFT,
+    HOP_COAST_PHYS_RATE,
     FLYING_HIGH_M,
     FLYING_LOW_M,
     GOO_CRASH_MS,
@@ -41,14 +42,23 @@ from hop import (
     WATER_PITCH_SLEW_DPS,
     WATER_PITCH_UP,
     WATER_SLEW_THROTTLE,
+    INLAND_HEADING_CAPTURE_DEG,
     INLAND_HEADING_DEG,
     INLAND_PITCH_DEG,
     INLAND_PITCH_FROM_UP,
+    INLAND_YAW_FROM_UP,
+    INLAND_YAW_MET_S,
+    INLAND_YAW_PITCH_DEG,
     SURFACE_NORTH,
+    _inland_cmd_pitch,
     _coast_impact_ms,
     _coast_ok,
+    _apply_hop_physics,
+    _burning,
     _hold_or_cut,
+    _lofted,
     _steer_east,
+    _want_coast_phys,
     _steer_inland,
     inland_direction,
     surface_direction,
@@ -59,6 +69,8 @@ from hop import (
     _suicide_tti,
     east_direction,
     bound_card_is_flying_high,
+    bound_science_need,
+    hop_landed_science_ids,
     _met_still,
     hop_craft_name,
     hop_craft_path,
@@ -98,6 +110,47 @@ def _fast_clock():
         t[0] += dt if dt else 0.01
 
     return now, sleep, t
+
+
+def _isolate_live_tickets(test: unittest.TestCase) -> None:
+    """Sequence stubs must not inherit the seated land/splash leftover board."""
+    patcher = patch("tickets.list_tickets", return_value=())
+    patcher.start()
+    test.addCleanup(patcher.stop)
+
+
+_LAND_OR_SPLASH = (
+    {
+        "id": "T-077",
+        "type": "science",
+        "payload": {
+            "experiment_id": "temperatureScan",
+            "situation": "SrfLanded@Forest",
+            "biome": "Forest",
+            "seq": 1,
+        },
+    },
+    {
+        "id": "T-287",
+        "type": "science",
+        "payload": {
+            "experiment_id": "kerbalism_TELEMETRY",
+            "situation": "SrfLanded@Forest",
+            "biome": "Forest",
+            "seq": 2,
+        },
+    },
+    {
+        "id": "T-288",
+        "type": "science",
+        "payload": {
+            "experiment_id": "kerbalism_TELEMETRY",
+            "situation": "SrfSplashed@Forest",
+            "biome": "Forest",
+            "seq": 3,
+        },
+    },
+)
 
 
 class _Mod:
@@ -387,6 +440,290 @@ class TestHopCatalog(unittest.TestCase):
                 self.assertEqual(hop_target_apo(), 18_000.0)
 
 
+class TestHopCoastPhysics(unittest.TestCase):
+    def setUp(self):
+        from uplink import desk
+
+        self._desk = desk
+        self._prev = (desk.hold, desk.skip_warp, desk.phys_warp)
+        desk.hold = False
+        desk.skip_warp = False
+        desk.phys_warp = None
+
+    def tearDown(self):
+        desk = self._desk
+        desk.hold, desk.skip_warp, desk.phys_warp = self._prev
+
+    def _sc(self, rails=0, phys=0):
+        return type(
+            "SC",
+            (),
+            {"rails_warp_factor": rails, "physics_warp_factor": phys},
+        )()
+
+    def _sess(self, sc):
+        return type("S", (), {"space_center": sc})()
+
+    def _snap(self, **kw):
+        return type("Snap", (), kw)()
+
+    def test_factory_rate_is_3x(self):
+        self.assertEqual(HOP_COAST_PHYS_RATE, 3)
+
+    def test_want_coast_after_burnout(self):
+        snap = self._snap(v_vert=40.0, alt=12_000.0)
+        self.assertTrue(
+            _want_coast_phys(
+                snap,
+                left_pad=True,
+                down=False,
+                chute_open=False,
+                burning=False,
+            )
+        )
+
+    def test_1x_while_burning_chute_down_deploy(self):
+        snap = self._snap(v_vert=40.0, alt=12_000.0)
+        self.assertFalse(
+            _want_coast_phys(
+                snap, left_pad=False, down=False, chute_open=False, burning=False
+            )
+        )
+        self.assertFalse(
+            _want_coast_phys(
+                snap, left_pad=True, down=True, chute_open=False, burning=False
+            )
+        )
+        self.assertFalse(
+            _want_coast_phys(
+                snap, left_pad=True, down=False, chute_open=True, burning=False
+            )
+        )
+        self.assertFalse(
+            _want_coast_phys(
+                snap, left_pad=True, down=False, chute_open=False, burning=True
+            )
+        )
+        deploy = self._snap(v_vert=-80.0, alt=1_500.0)
+        self.assertFalse(
+            _want_coast_phys(
+                deploy,
+                left_pad=True,
+                down=False,
+                chute_open=False,
+                burning=False,
+            )
+        )
+
+    def test_want_coast_not_before_loft(self):
+        """18-34-22Z: alt 101 m is pad boost, not coast 3×."""
+        pad = self._snap(v_vert=14.0, alt=101.0, fuel=1054.0)
+        self.assertFalse(_lofted(pad))
+        self.assertFalse(
+            _want_coast_phys(
+                pad,
+                left_pad=True,
+                down=False,
+                chute_open=False,
+                burning=False,
+            )
+        )
+        self.assertTrue(_lofted(self._snap(v_vert=40.0, alt=12_000.0)))
+
+    def test_throttle_zero_on_pad_is_still_burning(self):
+        """Throttle 0 with fuel at 101 m is not burnout."""
+        vessel = _Vessel([])
+        vessel.control.throttle = 0.0
+        snap = self._snap(fuel=1054.0, alt=101.0)
+        self.assertTrue(_burning(vessel, snap, lofted=False))
+        self.assertFalse(_burning(vessel, snap, lofted=True))
+        vessel.control.throttle = 1.0
+        self.assertTrue(_burning(vessel, snap, lofted=True))
+        dry = self._snap(fuel=0.0, alt=101.0)
+        self.assertFalse(_burning(vessel, dry, lofted=False))
+
+    def test_factory_coast_sets_3x_rails_0(self):
+        sc = self._sc()
+        logs: list[str] = []
+        last = [""]
+        n = _apply_hop_physics(
+            self._sess(sc), coast=True, on_log=logs.append, last=last
+        )
+        self.assertEqual(n, 2)
+        self.assertEqual(sc.physics_warp_factor, 2)
+        self.assertEqual(sc.rails_warp_factor, 0)
+        self.assertEqual(last[0], "3x")
+        self.assertTrue(any("hop coast physics 3x rails=0" in x for x in logs))
+        n2 = _apply_hop_physics(
+            self._sess(sc), coast=True, on_log=logs.append, last=last
+        )
+        self.assertEqual(n2, 2)
+        self.assertEqual(logs.count("hop coast physics 3x rails=0"), 1)
+
+    def test_not_coast_is_1x_silent_at_start(self):
+        sc = self._sc(phys=2)
+        logs: list[str] = []
+        last = [""]
+        n = _apply_hop_physics(
+            self._sess(sc), coast=False, on_log=logs.append, last=last
+        )
+        self.assertEqual(n, 0)
+        self.assertEqual(sc.physics_warp_factor, 0)
+        self.assertEqual(sc.rails_warp_factor, 0)
+        self.assertFalse(any("hop physics 1x" in x for x in logs))
+
+    def test_drop_to_1x_logs_once(self):
+        sc = self._sc()
+        logs: list[str] = []
+        last = [""]
+        _apply_hop_physics(
+            self._sess(sc), coast=True, on_log=logs.append, last=last
+        )
+        n = _apply_hop_physics(
+            self._sess(sc), coast=False, on_log=logs.append, last=last
+        )
+        self.assertEqual(n, 0)
+        self.assertEqual(sc.physics_warp_factor, 0)
+        self.assertTrue(any("hop physics 1x" in x for x in logs))
+
+    def test_no_warp_persists_1x(self):
+        from uplink import Command, _apply, phys_warp_rate
+
+        _apply(Command(verb="no_warp", arg="", raw="no_warp"))
+        self.assertEqual(phys_warp_rate(), 1)
+        self.assertEqual(self._desk.phys_warp, 1)
+        self.assertTrue(self._desk.skip_warp)
+        sc = self._sc(phys=2)
+        n = _apply_hop_physics(self._sess(sc), coast=True, last=[""])
+        self.assertEqual(n, 0)
+        self.assertEqual(sc.physics_warp_factor, 0)
+
+    def test_phys_warp_4_and_warp_2(self):
+        from uplink import Command, _apply, phys_warp_rate
+
+        _apply(Command(verb="phys-warp", arg="4", raw="phys-warp 4"))
+        self.assertEqual(phys_warp_rate(), 4)
+        self.assertFalse(self._desk.skip_warp)
+        sc = self._sc()
+        n = _apply_hop_physics(self._sess(sc), coast=True, last=[""])
+        self.assertEqual(n, 3)
+        self.assertEqual(sc.physics_warp_factor, 3)
+        self.assertEqual(sc.rails_warp_factor, 0)
+        _apply(Command(verb="warp", arg="2", raw="warp 2"))
+        self.assertEqual(phys_warp_rate(), 2)
+        n = _apply_hop_physics(self._sess(sc), coast=True, last=[""])
+        self.assertEqual(n, 1)
+        self.assertEqual(sc.physics_warp_factor, 1)
+
+    def test_hold_forces_1x(self):
+        from uplink import phys_warp_rate
+
+        self._desk.phys_warp = 4
+        self._desk.hold = True
+        self.assertEqual(phys_warp_rate(), 1)
+        sc = self._sc(phys=3)
+        n = _apply_hop_physics(self._sess(sc), coast=True, last=[""])
+        self.assertEqual(n, 0)
+        self.assertEqual(sc.physics_warp_factor, 0)
+
+    def test_no_warp_callable_latches_desk(self):
+        from emergencies import Ctx, no_warp
+
+        sc = self._sc(rails=2, phys=3)
+        sess = self._sess(sc)
+        no_warp(Ctx(session=sess))
+        self.assertEqual(sc.physics_warp_factor, 0)
+        self.assertEqual(sc.rails_warp_factor, 0)
+        self.assertTrue(self._desk.skip_warp)
+        self.assertEqual(self._desk.phys_warp, 1)
+
+    def test_source_never_warpto(self):
+        for path in ("hop.py", "hop_factory.py", "physics_warp.py", "pad.py"):
+            text = Path(path).read_text(encoding="utf-8")
+            self.assertNotIn("WarpTo(", text, path)
+            self.assertNotIn("warp_to(", text, path)
+        warp = Path("physics_warp.py").read_text(encoding="utf-8")
+        self.assertIn("rails_warp_factor = 0", warp)
+        self.assertNotIn("rails_warp_factor = 1", warp)
+        self.assertIn("_physics_factor", Path("hop.py").read_text(encoding="utf-8"))
+        self.assertIn("phys_warp_rate", Path("hop.py").read_text(encoding="utf-8"))
+        blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
+        self.assertIn("phys-warp", blocks)
+        self.assertIn("no_warp", blocks)
+        self.assertIn("rails 0", blocks)
+
+    def test_factory_pulse_module_is_inland_only(self):
+        text = Path("hop_factory.py").read_text(encoding="utf-8")
+        self.assertNotIn("wait_water", text)
+        self.assertNotIn("wait_splash", text)
+        self.assertLess(text.count("\n") + 1, 1000)
+
+    def test_run_on_vessel_coasts_3x_then_1x(self):
+        thermo = _Mod("Experiment", "temperatureScan")
+        chute = _Mod(
+            "RealChuteModule",
+            "",
+            events=["Arm parachute", "Deploy chute", "Cut main chute"],
+        )
+        vessel = _Vessel([thermo], recoverable=False)
+        vessel.parts = _Parts(
+            [
+                _Part("sensorThermometer", [thermo]),
+                _Part("parachuteSingle", [chute]),
+            ]
+        )
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        sess = _Session(vessel)
+        coast_factors: list[int] = []
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 12_000.0
+                vessel._speed = 80.0
+                vessel._vz = 40.0
+                vessel.control.throttle = 0.0
+                vessel.resources.fuel = 0.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying":
+                coast_factors.append(sess.space_center.physics_warp_factor)
+                if t[0] >= 3.0:
+                    vessel.situation = "landed"
+                    vessel._alt = 80.0
+                    vessel._speed = 5.0
+                    vessel._vz = 0.0
+                    vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("hop.hop_wants_flying_high", return_value=False):
+            result = run_on_vessel(
+                sess,
+                vessel,
+                science_ids=("temperatureScan",),
+                on_log=logs.append,
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(coast_factors)
+        self.assertIn(2, coast_factors)
+        self.assertEqual(sess.space_center.rails_warp_factor, 0)
+        self.assertEqual(sess.space_center.physics_warp_factor, 0)
+        self.assertTrue(any("hop coast physics 3x rails=0" in x for x in logs))
+        self.assertNotIn("Deploy chute", chute.triggered)
+
+    def test_uplink_verbs(self):
+        from uplink import _VERBS
+
+        self.assertIn("phys-warp", _VERBS)
+        self.assertIn("warp", _VERBS)
+        self.assertIn("no_warp", _VERBS)
+
+
 class TestCardIds(unittest.TestCase):
     def test_parse(self):
         text = (
@@ -579,12 +916,47 @@ class TestStackShear(unittest.TestCase):
         self.assertFalse(_vessel_gone(snap, vessel))
 
 
+class TestLandOrSplashNeed(unittest.TestCase):
+    def test_live_sit_picks_splash_not_first_seq(self):
+        with patch("tickets.list_tickets", return_value=_LAND_OR_SPLASH):
+            splash = bound_science_need(live_sit="splashed", live_biome="Forest")
+            land = bound_science_need(live_sit="landed", live_biome="Forest")
+            flying = bound_science_need(live_sit="flying", live_biome="Forest")
+        self.assertEqual(
+            splash["kerbalism_TELEMETRY"], ("SrfSplashed@Forest", "Forest")
+        )
+        self.assertEqual(
+            splash["temperatureScan"], ("SrfLanded@Forest", "Forest")
+        )
+        self.assertEqual(
+            land["kerbalism_TELEMETRY"], ("SrfLanded@Forest", "Forest")
+        )
+        self.assertEqual(
+            flying["kerbalism_TELEMETRY"], ("SrfLanded@Forest", "Forest")
+        )
+
+    def test_ground_ids_union_land_and_splash(self):
+        def fake_ids(*, situation="", craft=""):
+            if situation == "landed":
+                return ("temperatureScan", "kerbalism_TELEMETRY")
+            if situation == "splash":
+                return ("kerbalism_TELEMETRY",)
+            return ()
+
+        with patch("tickets.science_ids_for", side_effect=fake_ids):
+            self.assertEqual(
+                hop_landed_science_ids(),
+                ("temperatureScan", "kerbalism_TELEMETRY"),
+            )
+
+
 class TestHopSequence(unittest.TestCase):
     def setUp(self):
         # Live seated card may be FlyingHigh; sequence stubs fly at 2 km.
         self._fh = patch("hop.hop_wants_flying_high", return_value=False)
         self._fh.start()
         self.addCleanup(self._fh.stop)
+        _isolate_live_tickets(self)
 
     def test_light_science_after_airborne_then_recover(self):
         mod = _Mod("Experiment", "mysteryGoo")
@@ -997,16 +1369,17 @@ class TestHopSequence(unittest.TestCase):
                 vessel.recoverable = True
             t[0] += dt if dt else 0.01
 
-        result = run_on_vessel(
-            _Session(vessel),
-            vessel,
-            science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
-            on_log=logs.append,
-            now=now,
-            sleep=nap,
-            timeout=30.0,
-            pulse=1.0,
-        )
+        with patch("hop.bound_science_need", return_value={}):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("kerbalism_TELEMETRY", "temperatureScan"),
+                on_log=logs.append,
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
         self.assertEqual(result, "recovered")
         self.assertTrue(vessel.recovered)
         self.assertEqual(vessel.control.staged, 1)
@@ -1412,6 +1785,222 @@ class TestHopSequence(unittest.TestCase):
         self.assertIn("no science", str(ctx.exception))
         self.assertFalse(vessel.recovered)
         self.assertEqual(mod.triggered, [])
+
+    def test_unpaid_remaining_skips_then_recovers(self):
+        """17-23-34Z rem=0 FlyingLow cannot pay — do not Toggle, recover HD."""
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 0
+        vessel = _Vessel([thermo], recoverable=False)
+        vessel.parts = _Parts([_Part("sensorThermometer", [thermo])])
+        now, sleep, t = _fast_clock()
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying":
+                vessel.situation = "landed"
+                vessel._alt = 80.0
+                vessel._speed = 0.0
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("hop.bound_science_need", return_value={}):
+            with patch("hop.hop_landed_science_ids", return_value=()):
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("temperatureScan",),
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(thermo.triggered, [])
+
+    def test_srflanded_starts_after_touchdown(self):
+        """Bound SrfLanded must not Toggle airborne; start when landed."""
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 114
+        vessel = _Vessel([thermo], recoverable=False)
+        vessel.parts = _Parts([_Part("sensorThermometer", [thermo])])
+        vessel.biome = "Forest"
+        now, sleep, t = _fast_clock()
+        sits: list[str] = []
+
+        def trigger_event(name):
+            sits.append(vessel.situation)
+            thermo.triggered.append(name)
+            thermo.fields["status"] = "Running"
+
+        thermo.trigger_event = trigger_event
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying":
+                vessel.situation = "landed"
+                vessel._alt = 80.0
+                vessel._speed = 0.0
+                vessel.recoverable = True
+            elif vessel.situation == "landed" and thermo.triggered:
+                thermo.fields["remaining"] = 0
+                thermo.fields["status"] = "Done"
+            t[0] += dt if dt else 0.01
+
+        need = {"temperatureScan": ("SrfLanded@Forest", "Forest")}
+        with patch("hop.bound_science_need", return_value=need):
+            with patch(
+                "hop.hop_landed_science_ids", return_value=("temperatureScan",)
+            ):
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("temperatureScan",),
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(thermo.triggered, ["Start Experiment"])
+        self.assertEqual(sits, ["landed"])
+
+    def test_srfsplashed_starts_splash_telem_not_landed_seq(self):
+        """18-10-57Z splash leftover T-288, not first-seq SrfLanded T-287."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 83
+        vessel = _Vessel([tel], recoverable=False)
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreOcto.v2", [tel]),
+                _Part("sensorThermometer", [thermo]),
+            ]
+        )
+        vessel.biome = "Forest"
+        now, sleep, t = _fast_clock()
+        sits: list[str] = []
+
+        def trigger_event(name):
+            sits.append(vessel.situation)
+            tel.triggered.append(name)
+            tel.fields["status"] = "Running"
+
+        tel.trigger_event = trigger_event
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying":
+                vessel.situation = "splashed"
+                vessel._alt = 6.0
+                vessel._speed = 5.0
+                vessel.recoverable = True
+            elif vessel.situation == "splashed" and tel.triggered:
+                tel.fields["remaining"] = 0
+                tel.fields["status"] = "Done"
+            t[0] += dt if dt else 0.01
+
+        with patch("tickets.list_tickets", return_value=_LAND_OR_SPLASH):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("temperatureScan", "kerbalism_TELEMETRY"),
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(sits, ["splashed"])
+        self.assertEqual(thermo.triggered, [])
+
+    def test_airborne_goo_still_starts_splash_leftover(self):
+        """Goo airborne must not skip splash leftover (18-10-57Z / T-307 gate)."""
+        goo = _Mod("Experiment", "mysteryGoo")
+        goo.fields["remaining"] = 114
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 83
+        vessel = _Vessel([goo], recoverable=False)
+        vessel.parts = _Parts(
+            [
+                _Part("GooExperiment", [goo]),
+                _Part("probeCoreOcto.v2", [tel]),
+                _Part("sensorThermometer", [thermo]),
+            ]
+        )
+        vessel.biome = "Forest"
+        now, sleep, t = _fast_clock()
+        sits: list[str] = []
+
+        def trigger_tel(name):
+            sits.append(vessel.situation)
+            tel.triggered.append(name)
+            tel.fields["status"] = "Running"
+
+        tel.trigger_event = trigger_tel
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying":
+                vessel.situation = "splashed"
+                vessel._alt = 6.0
+                vessel._speed = 5.0
+                vessel.recoverable = True
+            elif vessel.situation == "splashed":
+                if goo.triggered:
+                    goo.fields["remaining"] = 0
+                    goo.fields["status"] = "Done"
+                if tel.triggered:
+                    tel.fields["remaining"] = 0
+                    tel.fields["status"] = "Done"
+            t[0] += dt if dt else 0.01
+
+        with patch("tickets.list_tickets", return_value=_LAND_OR_SPLASH):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=(
+                    "temperatureScan",
+                    "kerbalism_TELEMETRY",
+                    "mysteryGoo",
+                ),
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(goo.triggered, ["Start Experiment"])
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(sits, ["splashed"])
+        self.assertEqual(thermo.triggered, [])
 
     def test_leftover_no_modules_recovers(self):
         """Dead leftover: Experiment gone. Recover HD. Do not light."""
@@ -1867,6 +2456,98 @@ class TestHopSequence(unittest.TestCase):
         self.assertTrue(any("recovered sit=flying" in line for line in logs))
         self.assertNotIn("hop dismissed flight results", logs)
         self.assertLess(t[0], 15.0)
+
+    def test_pad_throttle_zero_does_not_hop_down(self):
+        """18-34-22Z: MET 1.8 throttle 0 fuel 1054 alt 101 recovered on the pad."""
+        thermo = _Mod("Experiment", "temperatureScan")
+        chute = _Mod(
+            "RealChuteModule",
+            "",
+            events=["Arm parachute", "Deploy chute", "Cut main chute"],
+        )
+        vessel = _Vessel([thermo], recoverable=False)
+        vessel.resources.fuel = 1054.0
+        vessel.parts = _Parts(
+            [
+                _Part("sensorThermometer", [thermo]),
+                _Part("parachuteSingle", [chute]),
+            ]
+        )
+        from uplink import desk
+
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        sess = _Session(vessel)
+        pad_phys: list[int] = []
+        prev_desk = (desk.hold, desk.skip_warp, desk.phys_warp)
+        desk.hold = False
+        desk.skip_warp = False
+        desk.phys_warp = None
+
+        def nap(dt):
+            if vessel._alt <= 250.0 and vessel.situation == "flying":
+                pad_phys.append(sess.space_center.physics_warp_factor)
+                self.assertFalse(vessel.recovered)
+                self.assertNotIn("hop down", logs)
+                self.assertNotIn("hop hold inland through burnout", logs)
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 101.0
+                vessel._speed = 14.0
+                vessel._vz = 14.0
+                vessel.control.throttle = 0.0
+                vessel.resources.fuel = 1054.0
+                vessel.orbit.apoapsis_altitude = 114.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel._flight.dynamic_pressure = 160.0
+                vessel.recoverable = True
+                vessel.met = 1.8
+            elif vessel.situation == "flying" and t[0] < 2.5:
+                vessel.control.throttle = 0.0
+                vessel.resources.fuel = 1054.0
+                vessel._alt = 101.0
+                vessel._vz = 14.0
+                vessel._flight.dynamic_pressure = 160.0
+                vessel.recoverable = True
+                vessel.met = 1.8 + t[0]
+            elif vessel.situation == "flying":
+                vessel._alt = 12_000.0
+                vessel._vz = 40.0
+                vessel._speed = 80.0
+                vessel.resources.fuel = 0.0
+                vessel.control.throttle = 0.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel._flight.dynamic_pressure = 1_200.0
+                vessel.met = 20.0 + t[0]
+                vessel.recoverable = False
+                if t[0] >= 4.0:
+                    vessel.situation = "landed"
+                    vessel._alt = 80.0
+                    vessel._vz = 0.0
+                    vessel._speed = 5.0
+                    vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        try:
+            result = run_on_vessel(
+                sess,
+                vessel,
+                science_ids=("temperatureScan",),
+                on_log=logs.append,
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        finally:
+            desk.hold, desk.skip_warp, desk.phys_warp = prev_desk
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertTrue(pad_phys)
+        self.assertTrue(all(p == 0 for p in pad_phys))
+        self.assertTrue(any("hop coast physics 3x rails=0" in x for x in logs))
+        self.assertTrue(any("hop down" in x for x in logs))
+        self.assertTrue(any("hop hold inland through burnout" in x for x in logs))
 
     def test_frozen_wreck_recovers_hop_debris(self):
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
@@ -2692,13 +3373,19 @@ class TestHopInland(unittest.TestCase):
         self._fh = patch("hop.hop_wants_flying_high", return_value=False)
         self._fh.start()
         self.addCleanup(self._fh.stop)
+        _isolate_live_tickets(self)
 
     def test_inland_constants(self):
         self.assertEqual(INLAND_HEADING_DEG, 270.0)
         self.assertEqual(INLAND_PITCH_FROM_UP, 25.0)
         self.assertEqual(INLAND_PITCH_DEG, 65.0)
+        self.assertEqual(INLAND_YAW_FROM_UP, 10.0)
+        self.assertEqual(INLAND_YAW_PITCH_DEG, 80.0)
+        self.assertEqual(INLAND_HEADING_CAPTURE_DEG, 20.0)
+        self.assertEqual(INLAND_YAW_MET_S, 6.0)
         self.assertEqual(CHUTE_DEPLOY_ALT_M, 2_000.0)
         self.assertNotEqual(INLAND_HEADING_DEG, WATER_HEADING_DEG)
+        self.assertGreater(INLAND_YAW_PITCH_DEG, INLAND_PITCH_DEG)
 
     def test_inland_direction_is_up_then_west(self):
         up = inland_direction(WATER_PITCH_UP)
@@ -2732,6 +3419,12 @@ class TestHopInland(unittest.TestCase):
         )
         self.assertFalse(vessel.auto_pilot.engaged)
         self.assertEqual(vessel.auto_pilot.engage_n, 0)
+        _steer_inland(vessel, pitch=INLAND_YAW_PITCH_DEG)
+        self.assertTrue(vessel.auto_pilot.engaged)
+        self.assertEqual(vessel.auto_pilot.engage_n, 1)
+        self.assertEqual(
+            vessel.auto_pilot.held, inland_direction(INLAND_YAW_PITCH_DEG)
+        )
         _steer_inland(vessel, pitch=INLAND_PITCH_DEG)
         self.assertTrue(vessel.auto_pilot.engaged)
         self.assertEqual(vessel.auto_pilot.engage_n, 1)
@@ -2804,6 +3497,58 @@ class TestHopInland(unittest.TestCase):
         self.assertEqual(ap.target_direction, want)
         self.assertEqual(ap.engage_n, 1)
 
+    def test_inland_cmd_pitch_yaw_then_65(self):
+        """16-47-21Z: slam 65 flew pad 297; yaw 80/270 first."""
+        pitch, yawed = _inland_cmd_pitch(False, 1, 90.0, 299.0, 1.8)
+        self.assertEqual(pitch, INLAND_YAW_PITCH_DEG)
+        self.assertFalse(yawed)
+        pitch, yawed = _inland_cmd_pitch(False, 3, 80.0, 275.0, 3.0)
+        self.assertEqual(pitch, INLAND_PITCH_DEG)
+        self.assertTrue(yawed)
+        pitch, yawed = _inland_cmd_pitch(False, 4, 89.0, 297.0, 6.0)
+        self.assertEqual(pitch, INLAND_PITCH_DEG)
+        self.assertTrue(yawed)
+        pitch, yawed = _inland_cmd_pitch(False, 1, float("nan"), float("nan"), float("nan"))
+        self.assertEqual(pitch, INLAND_YAW_PITCH_DEG)
+        self.assertFalse(yawed)
+        pitch, yawed = _inland_cmd_pitch(False, 2, float("nan"), float("nan"), float("nan"))
+        self.assertEqual(pitch, INLAND_PITCH_DEG)
+        self.assertTrue(yawed)
+        pitch, yawed = _inland_cmd_pitch(True, 1, 90.0, 299.0, 1.8)
+        self.assertEqual(pitch, INLAND_PITCH_DEG)
+        self.assertTrue(yawed)
+
+    def test_steer_inland_no_repaint_after_cutoff_pitch_dump(self):
+        """16-47-21Z envelope 15/16 is fuel=0 — do not rewrite."""
+        vessel = _Vessel([])
+        _steer_inland(vessel, pitch=INLAND_PITCH_DEG)
+        n = vessel.auto_pilot.point_n
+        _steer_inland(
+            vessel,
+            pitch=INLAND_PITCH_DEG,
+            flown_pitch=16.0,
+            flown_heading=15.0,
+            burning=False,
+        )
+        self.assertEqual(vessel.auto_pilot.point_n, n)
+        _steer_inland(
+            vessel,
+            pitch=INLAND_PITCH_DEG,
+            flown_pitch=-10.0,
+            flown_heading=38.0,
+            burning=False,
+        )
+        self.assertGreater(vessel.auto_pilot.point_n, n)
+        n2 = vessel.auto_pilot.point_n
+        _steer_inland(
+            vessel,
+            pitch=INLAND_PITCH_DEG,
+            flown_pitch=16.0,
+            flown_heading=15.0,
+            burning=True,
+        )
+        self.assertGreater(vessel.auto_pilot.point_n, n2)
+
     def test_slew_inland_after_pad(self):
         """Do not slam 65 at light; 090 is Water."""
         thermo = _Mod("Experiment", "temperatureScan")
@@ -2855,8 +3600,9 @@ class TestHopInland(unittest.TestCase):
         self.assertTrue(pad_dir)
         self.assertTrue(all(d != inland_direction(INLAND_PITCH_DEG) for d in pad_dir))
         self.assertTrue(air_dir)
-        self.assertEqual(air_dir[0], inland_direction(INLAND_PITCH_DEG))
+        self.assertEqual(air_dir[0], inland_direction(INLAND_YAW_PITCH_DEG))
         self.assertLess(air_dir[0][2], 0.0)
+        self.assertIn(inland_direction(INLAND_PITCH_DEG), air_dir)
         self.assertEqual(
             vessel.auto_pilot.held, inland_direction(INLAND_PITCH_DEG)
         )
@@ -2915,7 +3661,7 @@ class TestHopInland(unittest.TestCase):
         self.assertTrue(dry_engaged)
         self.assertTrue(all(dry_engaged))
         self.assertEqual(vessel.auto_pilot.engage_n, 1)
-        self.assertEqual(vessel.auto_pilot.point_n, 2)
+        self.assertEqual(vessel.auto_pilot.point_n, 4)
         self.assertEqual(
             vessel.auto_pilot.held, inland_direction(INLAND_PITCH_DEG)
         )
@@ -2935,9 +3681,13 @@ class TestHopInland(unittest.TestCase):
         self.assertIn("09-59-28Z", blocks)
         self.assertIn("10-17-18Z", blocks)
         self.assertIn("10-33-44Z", blocks)
+        self.assertIn("16-47-21Z", blocks)
 
 
 class TestHopToWater(unittest.TestCase):
+    def setUp(self):
+        _isolate_live_tickets(self)
+
     def test_flea_refuses_without_hangar(self):
         session = _Session(None)  # type: ignore[arg-type]
         with patch("hop.hop_craft_name", return_value=CRAFT):
@@ -4715,6 +5465,9 @@ class TestWaitVesselGone(unittest.TestCase):
 
 
 class TestHopSplash(unittest.TestCase):
+    def setUp(self):
+        _isolate_live_tickets(self)
+
     def test_flea_refuses_without_hangar(self):
         session = _Session(None)  # type: ignore[arg-type]
         with patch("hop.hop_craft_name", return_value=CRAFT):
@@ -4876,7 +5629,13 @@ class TestHopSplash(unittest.TestCase):
         self.assertFalse(any("east" in line and "slew" in line for line in logs))
 
     def test_splash_card_empty_flying(self):
-        text = Path("docs/missions/jebediah/science.md").read_text(encoding="utf-8")
+        text = (
+            "## Splash\n"
+            "- experiment: kerbalism_TELEMETRY\n"
+            "  situation: SrfSplashed\n"
+            "- experiment: mysteryGoo\n"
+            "  situation: SrfSplashed\n"
+        )
         from card import card_flying_ids, card_splash_ids
 
         self.assertEqual(card_flying_ids(text), ())
@@ -4884,7 +5643,8 @@ class TestHopSplash(unittest.TestCase):
             card_splash_ids(text),
             ("kerbalism_TELEMETRY", "mysteryGoo"),
         )
-        path = Path("docs/missions/jebediah/science.md")
+        path = Path(tempfile.mkdtemp()) / "science.md"
+        path.write_text(text, encoding="utf-8")
         with patch("tickets.science_ids_for", return_value=()):
             with patch("missions.seated_science_path", return_value=path):
                 self.assertEqual(

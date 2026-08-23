@@ -39,14 +39,18 @@ Hangar. Leftover honesty: `go: wait` if hangar is `recover` / `blocked`
 Stamp `go` / `cli` / `campaign` / `phase` / `learn`, **then render** seated
 `plan.md` (`hop_apo` / `expect_*` / `emergencies` live there). The ticket
 is the source. **Pick from the shelf** (Linus opportunities + Gus signed
-crafts). Schedule the pad. Always some actual flight unless leftover /
-crash UI, missing `f013`, no capable craft, empty shelf, or Os wait.
-`go: wait` **only** those. Do not take 15 minutes after a miss to write
-a novel. An RSI letter does **not** empty the pad. Thin tape: cite it
-like `f013` and open `--type systems` — still stamp `go: yes` if leftover
-clean and the hang lives. Bind **side-by-side** science when Linus has
-it; do not fly thermo-only because it is familiar. Stumble → ticket. Uncrewed miss is **not** your hire — leftover is Hank, live
-`.py` is Lars, re-fly last `cli:` if the hang lives, next already-signed
+crafts) a bind **this hang can bank**. Schedule the pad. Always some
+actual flight unless leftover / crash UI, missing `f013`, no capable
+craft, empty shelf, or Os wait. `go: wait` **only** those. Do not take
+15 minutes after a miss to write a novel. An RSI letter does **not**
+empty the pad. Do not re-fly a +0 Forest loft — that living recover
+cannot pay and is waste; restamp from the envelope or the next signed
+alt. Thin tape: cite it like `f013` and open `--type systems` — still
+stamp `go: yes` if leftover clean and the hang lives. Bind
+**side-by-side** science when Linus has it; do not fly thermo-only
+because it is familiar. Stumble → ticket. Uncrewed miss is **not**
+your hire — leftover is Hank, live `.py` is Lars, re-fly last `cli:`
+if the hang lives **and the bind can still pay**, next already-signed
 alt if it died (stamp that fly ticket only if it has no `go:`). Cheap
 probe sit: first `go: yes` includes `campaign: uncrewed`. **Leave
 `go: yes`.** Parent re-flies last `cli:` on clean 0 **and** on a miss of

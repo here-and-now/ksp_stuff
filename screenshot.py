@@ -33,6 +33,7 @@ PRESERVE = frozenset(
 RUNS_DIR = SHOT_DIR / "runs"
 MISSION_INTERVAL_S = 10.0
 TICK_KEEP = 3
+TICK_BUDGET_S = 0.8
 _SLUG = re.compile(r"[^a-z0-9-]+")
 # Hyprland send_shortcut F2 → KSP TOGGLE_UI. Works in flight; KSC is a no-op.
 # Do not focus the window (that yanks Unity onto the portrait monitor).
@@ -865,7 +866,11 @@ def mission_dest(
 
 
 class ShotCadence:
-    """Tape stills: ~10 s ticks (trimmed) plus sit/stage/light/wreck. Never reads."""
+    """Tape stills: ~10 s ticks (trimmed) plus sit/stage/light/wreck. Never reads.
+
+    Ticks skip after a grab ≥ TICK_BUDGET_S so grim cannot starve Telem
+    (16-47-21Z). Sit/stage/wreck stills still fire.
+    """
 
     def __init__(
         self,
@@ -881,6 +886,8 @@ class ShotCadence:
         self.min_gap_s = float(min_gap_s)
         self.t0 = clock()
         self._last = 0.0
+        self._grab_s = 0.0
+        self._ticks = True
         self._sit: str | None = None
         self._stage: int | None = None
         self._thrust_on: bool | None = None
@@ -946,12 +953,17 @@ class ShotCadence:
             reasons.append("tick")
         if not reasons:
             return None
+        tick_only = reasons == ["tick"]
+        # A slow grim tick (KSP off-workspace) made every Telem.read
+        # miss the 10 s interval — 16-47-21Z wrote 0.07 Hz. Sit/stage
+        # /wreck stills still fire.
+        if tick_only and (not self._ticks or self._grab_s >= TICK_BUDGET_S):
+            return None
         if (
             self._last
             and now - self._last < self.min_gap_s
             and event is None
-            and "tick" in reasons
-            and len(reasons) == 1
+            and tick_only
         ):
             return None
         sc = space_center
@@ -1004,6 +1016,7 @@ class ShotCadence:
         dest.parent.mkdir(parents=True, exist_ok=True)
         if dest.exists():
             dest = dest.with_name(f"{dest.stem}-{os.getpid()}.png")
+        t_grab = self.clock()
         try:
             if self.grab is not None:
                 self.grab(dest)
@@ -1018,7 +1031,13 @@ class ShotCadence:
                 )
         except Exception:
             log.debug("mission shot failed slug=%s", slug, exc_info=True)
+            self._grab_s = self.clock() - t_grab
+            if slug == "tick" and self._grab_s >= TICK_BUDGET_S:
+                self._ticks = False
             return None
+        self._grab_s = self.clock() - t_grab
+        if slug == "tick" and self._grab_s >= TICK_BUDGET_S:
+            self._ticks = False
         if slug == "tick":
             trim_tick_shots(dest.parent)
         self._last = self.clock()

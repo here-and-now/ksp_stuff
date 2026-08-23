@@ -352,22 +352,34 @@ story this fly. Dead kRPC GUID is not leftover.
   `ship.md` as Walt. Wreck → Walt + hire.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
 - Working goal (Os 2026-08-23): next tech node `stability` **18**. Do
-  not rest until it is banked. `survivability` **spent** (sci
-  16.4716835→1.4716835). Bank **1.47** crumbs — do not spend on a
-  stunt. Need **~16.53**. Cape Shores is capped. Forest / Grasslands /
-  Tropics / Savanna FlyingLow still pay. Water waits heading 090. Do
+  not rest until it is banked. `survivability` **spent**. Bank
+  **8.7721** — do not spend on a stunt. Need **~9.23**. Cape Shores
+  is capped. Forest / Grasslands / Tropics / Savanna FlyingLow still
+  pay **when the envelope shows them**. Water waits heading 090. Do
   not slam east-t3. Same lithobrake Flea is still not the campaign.
   Stayputnik is not a Geiger. A living recover with sci unchanged is
-  not rest.
+  **waste**, not rest.
 - **Pad occupancy:** Tape is the product. An **idle pad is a sin**.
-  Linus always has a **shelf** of `science_opportunity` and binds
-  **side-by-side** (thermo + TELEMETRY + goo if honest). Gus always
-  has **many** signed `.craft` alts on disk. **Procedural Parts** on
-  that shelf when unlocked. Gene **picks** and stamps `go:` — he does
-  not take 15 min after a miss to write a novel. Ground fills the
-  shelf **during** lock live. Stop the batch only leftover / crash UI
-  / f013 fail / live control `.py` / Os wait. An RSI letter does not
-  empty the pad.
+  A **living recover that cannot pay is also a waste**. Linus always
+  has a **shelf** of `science_opportunity` and **this-hop binds**
+  last-envelope biome/sit **side-by-side** (thermo + TELEMETRY + goo
+  if honest). Gus always has **many** signed `.craft` alts on disk.
+  **Procedural Parts** on that shelf when unlocked. Gene **picks** a
+  bind this hang can bank and stamps `go:` — he does not take 15 min
+  after a miss to write a novel, and he does not re-fly a +0 Forest
+  loft. Ground fills the shelf **during** lock live. Stop the batch
+  only leftover / crash UI / f013 fail / live control `.py` / Os
+  wait. An RSI letter does not empty the pad.
+- **Time is the scarce resource (Os 2026-08-23):** plan / bind / warp
+  so hops pay. **This-hop bind** is last-envelope biome/sit (Forest
+  tape is Forest; Grasslands waits Grasslands; SrfLanded vs splash
+  match the hang; FlyingHigh Forest waits ≥50 km). Shelf stays
+  unbound catalog. Do not gather a subject this stack cannot reach.
+  Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`; never
+  rails / WarpTo). Do not sit 1× waiting a chute. Do not replan
+  15 min. Conference-then-+0 hops are the anti-pattern. After sci
+  unchanged, rebind from the envelope or pick the next signed hang
+  that can bank.
 - **Thin tape / 9 columns** is a first-class problem. Stumble →
   `tickets open --type systems` (or `ops --tag feedback`). Cite it
   like `f013`. Query Tape, never raw jsonl. Do not shrug in a log.
@@ -381,8 +393,10 @@ story this fly. Dead kRPC GUID is not leftover.
   stacked FL-T100 / stock girder hangs (T-089) are not the next
   pattern. Nail the `.craft` MODULE config. Never GameData.
 - Uncrewed campaign: Gene first `go:` + `campaign: uncrewed`; parent
-  re-flies last `cli:` on clean 0 **and** on a miss of a hang that is
-  still capable; **no Gene** between hops. Learn is `payload.learn`.
+  re-flies last `cli:` on clean 0 **if that bind can still pay**, and
+  on a miss of a hang that is still capable; **sci unchanged** on a
+  living recover is Linus envelope rebind, not Lars, not Gene.
+  **no Gene** between hops. Learn is `payload.learn`.
   `ops next` hires Gene for Learn only when campaign is not
   `uncrewed` and learn is empty. Pad does not idle for Learn or
   “consideration” (I-016 amended). After a hop: Hank leftover first.

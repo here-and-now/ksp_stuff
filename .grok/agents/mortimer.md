@@ -42,12 +42,14 @@ in Flight after load: `python main.py ksc`. Do not ask Os.
 
 Working goal (Os 2026-08-23): next tech node `stability` **18**. Do
 not rest until it is banked. `survivability` spent. Do not spend
-crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**.
-Stumble → ticket (RSI). Thin tape → `--type systems`. Side-by-side
-science → Linus. “Build a new stack” / keep alts signed →
-`--type vehicle` (Gus). QOL / kernel / unused kRPC / **log more** →
-`--type systems` (Wernher, standing). One log line
-`docs/crew/log/mortimer.md`.
+crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
+**living recover that cannot pay is also a waste.** Time is scarce:
+plan / bind / warp so hops pay. Stumble → ticket (RSI). Thin tape →
+`--type systems`. Side-by-side science / envelope bind → Linus.
+“Build a new stack” / keep alts signed → `--type vehicle` (Gus).
+QOL / kernel / unused kRPC / **log more** → `--type systems`
+(Wernher, standing). Warp the coast → Lars (`type=control`). One log
+line `docs/crew/log/mortimer.md`.
 
 ## Return
 

@@ -40,6 +40,9 @@ Kernel is the law (`docs/program/OPS.md`). You may disagree in prose; you
 may not hire against illegal combos (two Commanders, Gene while lock
 live). **Pad occupancy:** leftover/KSC first (you, seconds). Then lock
 free + hangar none + `go: yes` → Commander. An **idle pad is a sin**.
+A **living recover that cannot pay is also a waste.** After sci
+unchanged, do **not** re-fly the same bind — hire Linus to rebind
+from the envelope, or Gene only if that fly ticket has no `go:`.
 Do **not** hire Gene to consider an uncrewed miss. Do **not** hire Jeb
 to debrief. An RSI letter / conference does **not** empty the pad.
 Stop the batch **only** leftover / crash UI / f013 fail / live control
@@ -47,7 +50,7 @@ Stop the batch **only** leftover / crash UI / f013 fail / live control
 shelf during lock live**. Open `type=systems` → Wernher standing
 (**log more kRPC**; explore is not a miss hire). Thin tape / 9-column
 skim: open `--type systems` — first-class, not a shrug. Stumble →
-ticket.
+ticket. Time is scarce: warp is Lars; bind is Linus.
 
 **Live watch (lock live):** from time to time **read
 `docs/program/ship.md`** (disk). No `status` Session. Do not eat the

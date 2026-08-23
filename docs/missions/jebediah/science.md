@@ -11,18 +11,26 @@ notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not liv
 ## Flying
 
 - experiment: temperatureScan
-  situation: FlyingLow@Grasslands
+  situation: SrfLanded@Forest
   experiment_id: temperatureScan
   part: sensorThermometer
-  duration_s: 138
+  duration_s: 83
   ec_rate: 0.002
   recover_banks: yes
-  ticket: T-070
+  ticket: T-077
 - experiment: kerbalism_TELEMETRY
-  situation: FlyingLow@Grasslands
+  situation: SrfLanded@Forest
   experiment_id: kerbalism_TELEMETRY
   part: probeCoreOcto_v2
   duration_s: 30
   ec_rate: 0.052
   recover_banks: yes
-  ticket: T-071
+  ticket: T-287
+- experiment: kerbalism_TELEMETRY
+  situation: SrfSplashed@Forest
+  experiment_id: kerbalism_TELEMETRY
+  part: probeCoreOcto_v2
+  duration_s: 6
+  ec_rate: 0.052
+  recover_banks: yes
+  ticket: T-288

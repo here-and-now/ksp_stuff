@@ -112,7 +112,7 @@ class TestUnknownPhase(unittest.TestCase):
 
         self.assertEqual(
             NAMES,
-            ("pad", "hop", "splash", "hop-to-water", "hop-splash", "tech-unlock"),
+            ("pad", "hop", "splash", "tech-unlock"),
         )
 
     def test_need_stack_message(self):
@@ -121,8 +121,8 @@ class TestUnknownPhase(unittest.TestCase):
 
         with self.assertRaises(MissionAbort) as ctx:
             run("mun", None)  # type: ignore[arg-type]
-        self.assertIn("need_stack", str(ctx.exception))
         self.assertIn("blocks.md", str(ctx.exception))
+        self.assertIn("unknown phase mun", str(ctx.exception))
 
 
 class TestPhasePad(unittest.TestCase):

@@ -114,20 +114,29 @@ sequencing a ghost instrument.
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`;
 one kRPC writer; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap) without
-waiting for a miss. Lars owns vehicle control (`hop.py` / `pad.py` /
-`splash.py` / `blocks.md`).
+waiting for a miss. Lars owns vehicle control (`hop_factory.py` factory inland,
+`physics_warp.py` coast/pad warp, `pad.py` / `splash.py` /
+`blocks.md`; `hop.py` is parked water/splash + helpers).
 
 **Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
-is a sin**. Inventory stays full: Linus many `science_opportunity`;
-Gus many signed `.craft` alts (not one hang designed after a wreck).
-Gene **picks from that shelf** and stamps `go:` on a fly ticket.
-Ground fills the shelf **during** flight (lock live, other files).
-Wernher **logs more kRPC** and explores unused 0.6 surfaces **without
-waiting for a miss** (`type=systems` standing). All data is good data
-if stored. A 10–15 min Gene conference, an RSI letter, or “consider
-the 154 m/s” does **not** empty the pad. Stop the batch **only**
-leftover / crash UI, f013 fail, live control `.py` must be patched,
-or Os wait. `go: wait` **only** those.
+is a sin**. A **living recover that cannot pay is also a waste**.
+Inventory stays full: Linus many `science_opportunity`; Gus many
+signed `.craft` alts (not one hang designed after a wreck). Gene
+**picks from that shelf** a bind this hang can bank and stamps `go:`
+on a fly ticket. **This-hop bind** is last-envelope biome/sit
+(Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
+splash match the hang; FlyingHigh waits ≥50 km). Do not gather a
+subject this stack cannot reach. Warp the coast (physics 2–4×;
+uplink `phys-warp` / `no_warp`; never rails / WarpTo). Ground fills
+the shelf **during** flight (lock live, other files). Wernher **logs
+more kRPC** and explores unused 0.6 surfaces **without waiting for a
+miss** (`type=systems` standing). All data is good data if stored.
+A 10–15 min Gene conference, an RSI letter, “consider the 154 m/s”,
+or conference-then-+0 hops does **not** empty the pad — and does
+**not** re-fly the same +0 bind. After sci unchanged: rebind from
+the envelope or the next signed hang that can bank. Stop the batch
+**only** leftover / crash UI, f013 fail, live control `.py` must be
+patched, or Os wait. `go: wait` **only** those.
 
 **Thin tape is first-class:** a 9-column space program is not a log
 shrug. Every desk that stumbles on it opens `--type systems` (or
@@ -148,7 +157,7 @@ periodically runs **`python main.py ship`** (disk envelope from
 flags, lithobrake, empty tanks + still flying, heading never moving,
 EC=0 before dwell, crash UI): **do something** — `uplink abort|hold`
 if wreck-class; spawn **Gene** if the plan/`go` must change
-mid-sortie; spawn **Lars** if hop.py/control; spawn **Wernher** if
+mid-sortie; spawn **Lars** if hop_factory/physics_warp/control; spawn **Wernher** if
 kRPC/telem/desk. Issue-clear → that desk, not a Gene novel.
 **Nominal** hop: no Gene, no 15 s narration, no heartbeat swallow.
 “Do not spawn Gene during the phase” is **repealed for off-nominal
@@ -168,14 +177,17 @@ After a hop: **Hank leftover first.** Walk home: `recover()` the ship
 and **Close** to KSC (`recover-probe --recover` if recoverable). Os
 disabled reverting flights. Never revert. Never leftover-ksc save/load
 (that looked like a reload / return to pre-launch).
-Then: clean 0 → re-fly last `cli:`. Miss (nonzero / ABORT /
-`science (none)` / sci unchanged): spawn **Lars** on the named
-control file. Pad waits only for leftover and for a patch of the
-**live** control `.py` (cannot hop while Lars writes `hop.py`).
-**Do not hire Gene to replan a miss.** If `go:` is still yes and
-the hang still capable: re-fly last `cli:` after leftover. If this
-hang died (aero shear, modules gone): next **already-signed** Gus
-alt — Gene stamps that fly ticket only if it has no `go:` yet.
+Then: clean 0 → re-fly last `cli:` **only if that bind can still
+pay**. Miss (nonzero / ABORT / `science (none)`): spawn **Lars**
+on the named control file. **sci unchanged** on a living recover:
+Linus rebinds last-envelope biome/sit — not Lars unless the live
+`.py` actually broke, not Gene to consider. Pad waits only for
+leftover and for a patch of the **live** control `.py` (cannot hop
+while Lars writes the named control `.py`). **Do not hire Gene to replan a miss.**
+If `go:` is still yes and the hang still capable **and the bind
+still pays**: re-fly last `cli:` after leftover. If this hang died
+(aero shear, modules gone): next **already-signed** Gus alt — Gene
+stamps that fly ticket only if it has no `go:` yet.
 No alt on disk → hire Gus while leftover cleans, not a novel.
 Stop the string only: dirty hangar (`recover` / `blocked`), f013
 fail, Os wait, crewed/firsts Learn, empty shelf (no capable craft
@@ -232,7 +244,10 @@ Packet is skim; `--deep` is opt-in. Landing **envelope**
 is a skim block on the fly ticket after `tickets attach-run`. Commander
 `cli:` is fly `payload.cli`
 **copied verbatim** (F-004) from `python main.py protocol fly` — not
-Gene `recommended:`, not seated `plan.md`. Lars first command is inbox
+Gene `recommended:`, not seated `plan.md`. Lars `read:` third path is
+the **named control file** (`hop_factory.py` inland, `physics_warp.py`
+warp, `pad.py` pad, `science.py` sit-match) — not `hop.py` for a
+factory miss. Lars first command is inbox,
 skim, not a named jsonl. Parent copies **f013**
 from desk. Do not send parked campaign notes. Children do
 not re-run `world`/`tech`/`parts` if desk is this sit.
@@ -253,7 +268,9 @@ disk. `docs/last-flight.md` is abort/exit only — it can look like
 skill while heading never 090. **Hank** `attach-run` + `landing` after
 Commander CLI exit. Gene stamps `payload.learn` from that envelope
 when `ops next` hires him — **never** from Commander Return prose.
-Linus does not bind Water/east if the tape never held heading. Lars
+Linus does not bind Water/east if the tape never held heading; does
+not bind Grasslands if tape never left Forest; does not bind
+SrfLanded if the hang splashed (or splash if it landed). Lars
 does not patch a miss from last-flight alone. Commander Return does
 **not** cite heading. Flight ends at exit.
 

@@ -109,3 +109,12 @@
 - 2026-08-23T11-19-14Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T11-19-14Z-hop.md review=docs/missions/jebediah/logs/2026-08-23T11-19-14Z-hop-review.md
 - 2026-08-23T16-37-14Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T16-37-14Z-hop.md review=docs/archive/reviews/2026-08-23T16-37-14Z-hop-review.md
 - 2026-08-23T16-47-21Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T16-47-21Z-hop.md review=docs/archive/reviews/2026-08-23T16-47-21Z-hop-review.md
+- 2026-08-23T17-23-34Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T17-23-34Z-hop.md review=docs/archive/reviews/2026-08-23T17-23-34Z-hop-review.md
+- 2026-08-23T17-32-20Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T17-32-20Z-hop.md review=docs/archive/reviews/2026-08-23T17-32-20Z-hop-review.md
+- 2026-08-23T17-40-05Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T17-40-05Z-hop.md review=docs/archive/reviews/2026-08-23T17-40-05Z-hop-review.md
+- 2026-08-23T17-47-43Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T17-47-43Z-hop.md review=docs/archive/reviews/2026-08-23T17-47-43Z-hop-review.md
+- 2026-08-23T17-55-30Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T17-55-30Z-hop.md review=docs/archive/reviews/2026-08-23T17-55-30Z-hop-review.md
+- 2026-08-23T18-10-57Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T18-10-57Z-hop.md review=docs/archive/reviews/2026-08-23T18-10-57Z-hop-review.md
+- 2026-08-23T18-19-00Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T18-19-00Z-hop.md review=docs/archive/reviews/2026-08-23T18-19-00Z-hop-review.md
+- 2026-08-23T18-34-22Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T18-34-22Z-hop.md review=docs/archive/reviews/2026-08-23T18-34-22Z-hop-review.md
+- 2026-08-23T19-15-36Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-23T19-15-36Z-ksc.md review=docs/archive/reviews/2026-08-23T19-15-36Z-ksc-review.md

@@ -32,7 +32,8 @@ Owns `science.md` and a **shelf** of science tickets (`experiment_id`,
 (thermo + TELEMETRY + goo if honest) — not one thermo forever. Desk
 `f013` is tree + instrument. Thin tape → `--type systems`. Stayputnik
 PAW is not a Geiger. Cape Shores capped. Forest/Grasslands/Tropics/
-Savanna FlyingLow still pay. Water waits 090. Inventory during lock.
+Savanna FlyingLow still pay **when the envelope shows them**. This-hop
+bind is last-envelope biome/sit. Water waits 090. Inventory during lock.
 Horizon layer of the world model. Does not Hangar. Stumble → ticket.
 
 Os is Founder. Same pad card is not more science (F-005). Humor: none

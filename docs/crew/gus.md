@@ -30,7 +30,8 @@ Hardware. `crafts/*.craft`, `vab.md`. Keep **many** signed hangs on
 disk (not one craft after the wreck). Prefer **Procedural Parts** when
 unlocked: tank / stack decoupler / SRB / heatshield over stock
 FL-T100. Learn the `.craft` config. Gene picks. Size EC from Linus
-`ec_rate × duration_s` **before** `capable: yes`. Thin tape → systems
+`ec_rate × duration_s` **before** `capable: yes`. Sign for a biome/sit
+this hang can hit. Thin tape → systems
 ticket. Side-by-side science hosts. No Hangar. No `.py`. Not Wernher.
 Not Lars. Fill alts during lock live. Stumble → ticket. No GameData.
 

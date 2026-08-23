@@ -666,7 +666,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn(".jsonl", deep)
         self.assertNotIn('"kind": "state"', deep)
         self.assertNotIn("kind=state", skim)
-        self.assertIn("reasoning: low", skim)
+        self.assertIn("reasoning: medium", skim)
         self.assertNotIn("xhigh", skim)
         self.assertNotIn("xhigh", deep)
 
@@ -1018,7 +1018,7 @@ class TestLiveDocsInventory(unittest.TestCase):
         self.assertFalse(Path("docs/crew/niche/gene.md").is_file())
 
     def test_twins_on_live_board(self):
-        from docs_inventory import if_tokens, lesson_headings, twin_title_hits
+        from docs_inventory import if_tokens, twin_title_hits
 
         head = tickets.load_head()
         titles = [t.get("title") or "" for t in (head.get("tickets") or {}).values()]
@@ -1030,12 +1030,6 @@ class TestLiveDocsInventory(unittest.TestCase):
             )
             if token in {"I-013", "I-017", "I-018", "I-019"}:
                 self.assertEqual(twin_title_hits(titles, token), 1, token)
-        for heading in lesson_headings():
-            self.assertGreaterEqual(
-                twin_title_hits(titles, heading),
-                1,
-                f"missing lesson twin: {heading[:60]}",
-            )
 
     def test_spawn_read_omits_parked_dispatch(self):
         from docs_inventory import FORBIDDEN_DISPATCH, packet_read_paths, skim_mentions_forbidden

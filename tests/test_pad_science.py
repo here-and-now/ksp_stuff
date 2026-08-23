@@ -24,11 +24,16 @@ from science import (
     card_complete,
     card_has_data,
     card_wait_line,
+    experiment_can_pay,
     experiment_done,
+    ground_card_done,
     hd_has_data,
     pad_dwell_s,
     pad_ec_rate,
+    paying_eids,
+    sit_matches,
     start_experiments,
+    stop_experiments,
 )
 from telem import EventLog, MissionAbort
 
@@ -451,6 +456,20 @@ class TestRecoverAbort(unittest.TestCase):
             recover_or_abort(v)
         self.assertIn("not recoverable", str(ctx.exception))
 
+    def test_stops_running_before_recover(self):
+        """17-23-34Z rem that Kerbalism ran must flush before recover()."""
+        mod = _Mod(
+            "Experiment",
+            "temperatureScan",
+            events=["Start Experiment", "Stop"],
+            running=True,
+        )
+        vessel = _Vessel([mod], recoverable=True)
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        self.assertEqual(recover_or_abort(vessel), "recovered")
+        self.assertIn("Stop", mod.triggered)
+        self.assertTrue(vessel.recovered)
+
 
 class TestExperimentDone(unittest.TestCase):
     def test_has_data_not_running(self):
@@ -791,11 +810,14 @@ class TestPadOnVessel(unittest.TestCase):
         self.assertEqual(sess.space_center.physics_warp_factor, 0)
 
     def test_pad_source_never_rails_or_warpto(self):
-        text = Path("pad.py").read_text(encoding="utf-8")
-        self.assertNotIn("WarpTo(", text)
-        self.assertNotIn("warp_to(", text)
-        self.assertIn("rails_warp_factor = 0", text)
-        self.assertNotIn("rails_warp_factor = 1", text)
+        pad = Path("pad.py").read_text(encoding="utf-8")
+        warp = Path("physics_warp.py").read_text(encoding="utf-8")
+        for text in (pad, warp):
+            self.assertNotIn("WarpTo(", text)
+            self.assertNotIn("warp_to(", text)
+        self.assertIn("rails_warp_factor = 0", warp)
+        self.assertNotIn("rails_warp_factor = 1", warp)
+        self.assertIn("from physics_warp import", pad)
 
     def test_landed_does_not_stage(self):
         mod = _Mod("Experiment", "mysteryGoo", done=True)
@@ -968,6 +990,127 @@ class TestCardWaitLine(unittest.TestCase):
         line = card_wait_line(vessel, ("geigerCounter",))
         self.assertIn("file=recording", line)
         self.assertIn("run=1", line)
+
+
+class TestSituationCanPay(unittest.TestCase):
+    def test_sample_remaining_zero_skips(self):
+        mod = _Mod("Experiment", "temperatureScan")
+        mod.fields["remaining"] = 0
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        lines: list[str] = []
+        ran = start_experiments(
+            vessel, names=("temperatureScan",), on_log=lines.append
+        )
+        self.assertEqual(ran, [])
+        self.assertEqual(mod.triggered, [])
+        self.assertTrue(any("cannot pay" in x for x in lines))
+
+    def test_duration_remaining_zero_still_starts(self):
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        vessel = _Vessel([tel])
+        vessel.parts = _Parts([_Part("probeCoreOcto.v2", [tel])])
+        ran = start_experiments(vessel, names=("kerbalism_TELEMETRY",))
+        self.assertEqual(ran, ["kerbalism_TELEMETRY"])
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+
+    def test_srflanded_skips_while_flying(self):
+        mod = _Mod("Experiment", "temperatureScan")
+        mod.fields["remaining"] = 114
+        vessel = _Vessel([mod], sit="flying")
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        need = {"temperatureScan": ("SrfLanded@Forest", "Forest")}
+        ran = start_experiments(
+            vessel,
+            names=("temperatureScan",),
+            sit="flying",
+            biome="Forest",
+            need=need,
+        )
+        self.assertEqual(ran, [])
+        self.assertEqual(mod.triggered, [])
+
+    def test_wrong_biome_skips(self):
+        mod = _Mod("Experiment", "temperatureScan")
+        mod.fields["remaining"] = 138
+        vessel = _Vessel([mod], sit="flying")
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        need = {"temperatureScan": ("FlyingLow@Grasslands", "Grasslands")}
+        ran = start_experiments(
+            vessel,
+            names=("temperatureScan",),
+            sit="flying",
+            biome="Forest",
+            need=need,
+        )
+        self.assertEqual(ran, [])
+        self.assertEqual(
+            paying_eids(
+                vessel,
+                ("temperatureScan",),
+                sit="flying",
+                biome="Forest",
+                need=need,
+            ),
+            [],
+        )
+
+    def test_matching_flyinglow_starts(self):
+        mod = _Mod("Experiment", "temperatureScan")
+        mod.fields["remaining"] = 138
+        vessel = _Vessel([mod], sit="flying")
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        need = {"temperatureScan": ("FlyingLow@Grasslands", "Grasslands")}
+        ran = start_experiments(
+            vessel,
+            names=("temperatureScan",),
+            sit="flying",
+            biome="Grasslands",
+            need=need,
+        )
+        self.assertEqual(ran, ["temperatureScan"])
+
+    def test_sit_matches_helpers(self):
+        self.assertTrue(sit_matches("flying", "Forest", "FlyingLow@Forest", "Forest"))
+        self.assertFalse(sit_matches("flying", "Forest", "SrfLanded@Forest", "Forest"))
+        self.assertFalse(
+            sit_matches("flying", "Forest", "FlyingLow@Grasslands", "Grasslands")
+        )
+        self.assertTrue(sit_matches("landed", "Forest", "SrfLanded@Forest", "Forest"))
+        self.assertTrue(sit_matches("splashed", "Forest", "SrfSplashed@Forest", "Forest"))
+        self.assertFalse(
+            sit_matches("splashed", "Forest", "SrfLanded@Forest", "Forest")
+        )
+        self.assertFalse(
+            sit_matches("landed", "Forest", "SrfSplashed@Forest", "Forest")
+        )
+        self.assertTrue(sit_matches("flying", "", "FlyingLow@Grasslands", "Grasslands"))
+
+    def test_stop_does_not_toggle(self):
+        mod = _Mod(
+            "Experiment",
+            "temperatureScan",
+            events=["Toggle", "Stop"],
+            running=True,
+        )
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        self.assertEqual(stop_experiments(vessel), ["temperatureScan"])
+        self.assertEqual(mod.triggered, ["Stop"])
+
+    def test_ground_card_done_sample_spent(self):
+        mod = _Mod("Experiment", "temperatureScan", running=True)
+        mod.fields["remaining"] = 0
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        self.assertTrue(ground_card_done(vessel, ("temperatureScan",)))
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY", running=True)
+        tel.fields["remaining"] = 0
+        tv = _Vessel([tel])
+        tv.parts = _Parts([_Part("probeCoreOcto.v2", [tel])])
+        self.assertFalse(ground_card_done(tv, ("kerbalism_TELEMETRY",)))
+        self.assertTrue(experiment_can_pay(tel, "kerbalism_TELEMETRY"))
 
 
 class _Uplink:

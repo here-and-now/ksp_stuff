@@ -153,7 +153,7 @@ Enforced in `tickets.py`, not job-card prose:
 - Wernher may close `type=systems`.
 - Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open --type control`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
 - Hank may close `type=recover` after leftover/KSC CLI.
-- Mortimer may close `type=org|ctt`.
+- Mortimer may close `type=org|ctt|rsi`.
 - Nobody else stamps `go`.
 
 ### 3.3 Severity × priority (Hank’s grid)
@@ -200,7 +200,7 @@ if lock live:
                     heading dead, EC=0 before dwell, crash UI):
         uplink abort|hold if wreck-class
         hire Gene if plan/go must change (no stick)
-        hire Lars if hop.py / control
+        hire Lars if hop_factory / physics_warp / control
         hire Wernher if kRPC / telem / desk
         issue-clear → that desk, not a Gene novel
     ground_only = tickets ready whose desk ≠ jebediah
@@ -258,7 +258,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 
 | Condition | Hire | Tickets in packet |
 |---|---|---|
-| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars hop.py; Wernher kRPC — **no stick**, no `status` |
+| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars hop_factory/physics_warp; Wernher kRPC — **no stick**, no `status` |
 | Lock live, nominal | ground desks (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time |
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run`, `landing`; control from last-flight if miss |
@@ -284,16 +284,30 @@ not Gene. **Do not hire Gene to consider an uncrewed miss.**
 **Lars is not hired** after clean 0. Campaign re-fly is kernel:
 same fly ticket, lock free, last exit 0, abort none, sci moved or
 science started. After a miss: leftover first, then Lars on the
-**live** control file if it broke; pad waits that file. Hang still
-capable + `go: yes` → Commander last `cli:`. Hang died → next
+**live** control file if it broke; pad waits that file. **sci
+unchanged** on a living recover is Linus (rebind envelope), not
+Lars, not Gene consider. Hang still capable + `go: yes` **and the
+bind still pays** → Commander last `cli:`. Hang died → next
 already-signed alt (Gene only if that fly ticket has no `go:`).
 
 ### 4.3 Time is valued
 
-- One hire, many tickets of the same desk.
-- Tape is the product. An idle pad is a miss. A 10–15 min Gene
-  conference after a test hop is the anti-pattern. A Commander
-  after-flight review is the same waste — CLI exit ends the hop.
+- Wall-clock is scarce. Plan / bind / warp so hops pay. One hire,
+  many tickets of the same desk.
+- Tape is the product. An idle pad is a miss. A **living recover
+  that cannot pay is also a waste.** A 10–15 min Gene conference
+  after a test hop is the anti-pattern. Conference-then-+0 hops
+  are the same waste. A Commander after-flight review is the same
+  waste — CLI exit ends the hop.
+- **This-hop bind** is last-envelope biome/sit. Forest tape is
+  Forest. Grasslands waits Grasslands. SrfLanded vs splash match
+  the hang. FlyingHigh waits ≥50 km. Do not gather a subject this
+  stack cannot reach. After sci unchanged, do not re-fly the same
+  bind — Linus rebinds from the envelope, or Gene picks the next
+  signed hang that can bank.
+- Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`;
+  never rails / WarpTo). Sitting 1× for minutes waiting a chute is
+  a miss.
 - Pad/flight never waits on Gene Learn (I-016): campaign fly ticket
   stays `go: yes` until stop conditions. Uncrewed miss is leftover +
   live-file patch + re-fly, not Learn.

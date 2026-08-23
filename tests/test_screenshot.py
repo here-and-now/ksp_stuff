@@ -447,6 +447,29 @@ class TestShotCadence(TestCase):
         on_disk = sorted(p.name for p in folder.glob("*-tick.png"))
         self.assertEqual(len(on_disk), 3)
 
+    def test_slow_grab_skips_later_ticks(self):
+        written: list[str] = []
+        t = {"now": 0.0}
+
+        def clock():
+            return t["now"]
+
+        def grab(dest: Path) -> None:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(b"png")
+            written.append(dest.name)
+            t["now"] += 2.0
+
+        cad = ShotCadence(interval_s=10.0, grab=grab, clock=clock, min_gap_s=0.0)
+        self.assertIsNotNone(cad.observe(_Snap(sit="flying", met=0)))
+        t["now"] = 12.0
+        self.assertIsNone(cad.observe(_Snap(sit="flying", met=12)))
+        self.assertTrue(any("-start" in n for n in written))
+        self.assertFalse(any(n.endswith("-tick.png") for n in written))
+        wreck = cad.observe(_Snap(sit="flying", met=13, wreck=True))
+        self.assertIsNotNone(wreck)
+        self.assertTrue(written[-1].endswith("-wreck.png"))
+
 
 class _Cam:
     mode = "automatic"

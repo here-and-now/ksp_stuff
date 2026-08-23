@@ -13,6 +13,3 @@ expect_apo_max: 50000
 craft: kspstuff-hop-valiant-proc-stiff-pbc
 hop_apo: 18000
 go: yes
-cli: python main.py hop
-campaign: uncrewed
-science_ids: temperatureScan,kerbalism_TELEMETRY,mysteryGoo

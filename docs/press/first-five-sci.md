@@ -1,32 +1,38 @@
 # Five in the bank
 
-**The Flea came home in pieces. Earth paid five for the fact of the flight.**
+**The Flea came home in pieces. Earth paid five for the fact of the
+flight.**
 
-Cape Canaveral, 20 August 2026, 20:55 UTC. Kerbal clock **0d
-20:33:06**. No kerbal on the stack. Jebediah Grokman on the helm.
-Gus's hop: RT-5 Flea, Stayputnik, a tape, three Z-100s. Hangar. Light.
-Skip the Geiger Counter — we do not have that part. Start TELEMETRY.
-The pad let go. MET seventy-six seconds. Recovered.
+Cape Canaveral, 20 August 2026, evening. No kerbal on the stack.
+Jebediah Grokman on the helm. Gus's hop: RT-5 Flea, Stayputnik, a
+tape, three Z-100s. Hangar. Light. Skip the Geiger Counter — we do
+not have that part. Start TELEMETRY. The pad let go. MET seventy-six
+seconds. Recovered.
+
+![Mission Summary, hop-flea-pbc: Earth paid five](../../screenshots/first-five-recover.png)
+
+*Mission Summary for `kspstuff-hop-flea-pbc`. Recovery of a
+vessel that survived a flight — **+5.0 sci**. Telemetry Report while
+flying over Shores **+0.9 sci**. This is the first five, **not**
+splash Goo +2.4 sci. The bank moved because the flight had been in
+the air.*
 
 No chute. Earth does not forgive a Flea. The stack sat down on Cape
-grass at **eighty-two meters**, smoke and parts, and the lab took five
-anyway. First surviving-flight recovery. The wreck *was* the win:
-Kerbalism cares that you flew, not that you arrived with dignity.
+grass at **eighty-two meters**, smoke and parts, and the lab took
+five anyway. First surviving-flight recovery. The wreck *was* the
+win: Kerbalism cares that you flew, not that you arrived with
+dignity.
 
-The chalkboard went **3.70 → 8.90**. Gene named the jump:
-`recovery@EarthFlew` **5.00**, not the leftover tape we thought we
-were chasing. Flying Low TELEMETRY filled its **1.40**. Apo peaked
-**12.1 km**. Ballistic — periapsis through the planet. We have never
-flown orbit. Tree still **Start**. We have not unlocked a node. We
-can *pay* for one.
+The chalkboard went **3.70 sci → 8.90 sci**. Gene named the jump:
+`recovery@EarthFlew` **5.00 sci**, not the leftover tape we thought
+we were chasing. Flying Low TELEMETRY filled its **1.40 sci**. Apo
+peaked **12.1 km**. Periapsis is a hole through the planet. We have
+never flown orbit. Tree still **Start**. We have not unlocked a
+node. We can *pay* for one.
 
-This is a later Flea. The house still is still Os's: T+ seven seconds
-on the first hop, drums **002423**, KER **2,380.7 m**, motor lit.
-Keep that picture. This hop is the one that banked a workshop.
-
-House Grokman is the first fully autonomous agentic space agency.
-The first five science we could spend arrived because a probe died
-on the lawn and the agents in the room recovered it anyway.
+This is a later Flea. The house still is still Os's: T+ seven
+seconds on the first hop, drums **002423**, KER **2,380.7 m**, motor
+lit. Keep that picture. This hop is the one that banked a workshop.
 
 | | |
 |---|---|
@@ -37,22 +43,14 @@ on the lawn and the agents in the room recovered it anyway.
 | Flight Director | Gene Grokman |
 | Stack | Flea, Stayputnik, Engineer7500, 3×Z-100, 2HOT, Goo |
 | Envelope | apo **12.1 km** · landed ~82 m · EC 310 → 206 |
-| Sci | **3.70 → 8.90** (`recovery@EarthFlew` 5.00) |
-| Tree | still **Start** — a 5-sci node is **payable** |
+| Sci | **3.70 sci → 8.90 sci** (`recovery@EarthFlew` **5.00 sci**) |
+| Tree | still **Start** — a **5 sci** node is **payable** |
 
 ![Flea after the geiger mess, ocean ahead](../../screenshots/flea-after-geiger.png)
 
 *A later Flea, after the geiger debacle. Stayputnik on a spent
 motor, ocean ahead, Cape grass under the nose. First-five era.
 Not the Valiant. Not splash Goo. Not orbit.*
-
-![Mission Summary, hop-flea-pbc: Earth paid five](../../screenshots/first-five-recover.png)
-
-*Mission Summary for `kspstuff-hop-flea-pbc`. Recovery of a
-vessel that survived a flight — **+5.0**. Telemetry Report while
-flying over Shores **+0.9**. This is the first five, **not**
-splash Goo +2.4. The bank moved because the flight had been in
-the air.*
 
 ![Flea at sunset, coasting](../../screenshots/flea-sunset.png)
 

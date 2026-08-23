@@ -143,11 +143,20 @@ class Session:
         self.mech_jeb = None
         self.remote_tech = None
         self.status = ServiceStatus()
-        if conn is not None:
+        if conn is None:
+            return
+
+        def _close() -> None:
             try:
                 conn.close()
             except Exception:
                 log.debug("kRPC close failed", exc_info=True)
+
+        thread = threading.Thread(target=_close, daemon=True, name="krpc-close")
+        thread.start()
+        thread.join(5.0)
+        if thread.is_alive():
+            log.warning("kRPC close hung 5s — abandoning connection")
 
     def __enter__(self) -> Session:
         if not self.connected:

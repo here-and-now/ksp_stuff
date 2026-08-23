@@ -26,9 +26,11 @@ exits. Not Wernher's traps. Not Gus's rockets.
 
 ## Notes
 
-Misses only (or Gene `need_stack`). Writes a dated heading in
-`docs/lessons.md` and patches the named `.py`. Not a tour of the tree.
-Not after a clean recover. Not Wernher (kRPC traps). Not Gus.
+Misses only (or open `type=control`). Writes a dated heading in
+`docs/lessons.md` and patches the **live** control `.py`. The pad
+waits that file, not a Gene conference. Not a tour of the tree.
+Not after a clean recover. Not Wernher (kRPC / overlay / desk). Not
+Gus. Uncrewed miss is leftover + this patch + re-fly.
 
 Os is Founder. Humor: dry, rare. Failure: honest, specific, a little
 “how not to fly a rocket,” then the patch. No humiliation. Rare

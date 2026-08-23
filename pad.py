@@ -410,6 +410,206 @@ def dwell_for_card(
         _pad_physics_1x(session, on_log)
 
 
+_CHUTE_ARM_EVENTS = (
+    "Arm parachute",
+    "Arm parachuteS",
+    "GUIArm",
+)
+_CHUTE_DEPLOY_EVENTS = (
+    "Deploy chute",
+    "Deploy ChuteS",
+    "GUIDeploy",
+)
+_CHUTE_REPACK_EVENTS = (
+    "Repack chuteS",
+    "GUIRepack",
+)
+_CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
+
+
+def _is_chute_mod(name: object) -> bool:
+    n = str(name or "").lower()
+    return n == "realchutemodule" or n.endswith("parachute")
+
+
+def _trigger_chute_events(module: object, want_names: tuple[str, ...]) -> bool:
+    want = {n.lower() for n in want_names}
+    try:
+        elist = list(getattr(module, "event_list", None) or [])
+    except Exception:
+        elist = []
+    for ev in elist:
+        try:
+            gui = str(getattr(ev, "gui_name", "") or "")
+            ident = str(getattr(ev, "name", "") or "")
+        except Exception:
+            continue
+        if gui.lower() not in want and ident.lower() not in want:
+            continue
+        trig = getattr(ev, "trigger", None)
+        if callable(trig):
+            try:
+                trig()
+                return True
+            except Exception:
+                pass
+    try:
+        names = [str(x) for x in (getattr(module, "events", None) or [])]
+    except Exception:
+        names = []
+    trigger = getattr(module, "trigger_event", None)
+    by_id = getattr(module, "trigger_event_by_id", None)
+    for ev_name in names:
+        if ev_name.lower() not in want:
+            continue
+        if callable(trigger):
+            try:
+                trigger(ev_name)
+                return True
+            except Exception:
+                pass
+        if callable(by_id):
+            try:
+                by_id(ev_name)
+                return True
+            except Exception:
+                pass
+    for ev_name in want_names:
+        if callable(trigger):
+            try:
+                trigger(ev_name)
+                return True
+            except Exception:
+                pass
+        if callable(by_id):
+            try:
+                by_id(ev_name)
+                return True
+            except Exception:
+                pass
+    return False
+
+
+def _arm_krpc_chute(ch: object) -> bool:
+    """kRPC Parachute: arm, do not immediate deploy (high-q shred)."""
+    hit = False
+    try:
+        if not bool(getattr(ch, "armed", False)):
+            ch.armed = True
+            hit = True
+        else:
+            hit = True
+    except Exception:
+        pass
+    arm = getattr(ch, "arm", None)
+    if callable(arm):
+        try:
+            arm()
+            hit = True
+        except Exception:
+            pass
+    return hit
+
+
+def _deploy_krpc_chute(ch: object) -> bool:
+    dep = getattr(ch, "deploy", None)
+    if callable(dep):
+        try:
+            dep()
+            return True
+        except Exception:
+            pass
+    try:
+        ch.deployed = True
+        return True
+    except Exception:
+        return False
+
+
+def _each_chute(vessel: object):
+    try:
+        chutes = list(getattr(getattr(vessel, "parts", None), "parachutes", None) or [])
+    except Exception:
+        chutes = []
+    for ch in chutes:
+        yield ("krpc", ch)
+    try:
+        parts = list(getattr(getattr(vessel, "parts", None), "all", None) or [])
+    except Exception:
+        parts = []
+    for part in parts:
+        try:
+            modules = list(getattr(part, "modules", None) or [])
+        except Exception:
+            continue
+        for module in modules:
+            try:
+                mname = str(getattr(module, "name", "") or "")
+            except Exception:
+                continue
+            if not _is_chute_mod(mname):
+                continue
+            yield ("mod", module)
+
+
+def _chute_state_now(vessel: object) -> str:
+    from telem import chute_state
+
+    try:
+        return str(chute_state(vessel) or "none")
+    except Exception:
+        return "none"
+
+
+def arm_chutes(vessel: object, on_log: Callable[[str], None] | None = None) -> str:
+    """Arm Mk16 / RealChute. Do not extra-stage. Do not Deploy here.
+
+    00-10-20Z never armed. 06-53-50Z kRPC armed stayed packed to 154 m/s.
+    """
+    hit = False
+    for kind, obj in _each_chute(vessel):
+        if kind == "krpc":
+            if _arm_krpc_chute(obj):
+                hit = True
+        elif _trigger_chute_events(obj, _CHUTE_ARM_EVENTS):
+            hit = True
+    st = _chute_state_now(vessel)
+    if hit and st in {"none", "stowed", "cut"}:
+        st = "armed"
+    if hit or st not in {"", "none"}:
+        _say(f"chute {st}", on_log)
+    return st
+
+
+def deploy_chutes(vessel: object, on_log: Callable[[str], None] | None = None) -> str:
+    """Force RealChute ``Deploy chute`` on the way down. Do not extra-stage.
+
+    06-53-50Z stayed armed through 206 m / 154 m/s, then none. Repack if
+    cut, Arm, then Deploy. kRPC ``armed=True`` is not a canopy.
+    """
+    st = _chute_state_now(vessel)
+    if st in _CHUTE_OPEN:
+        return st
+    if st == "cut":
+        for kind, obj in _each_chute(vessel):
+            if kind == "mod":
+                _trigger_chute_events(obj, _CHUTE_REPACK_EVENTS)
+    arm_chutes(vessel, on_log=None)
+    hit = False
+    for kind, obj in _each_chute(vessel):
+        if kind == "krpc":
+            if _deploy_krpc_chute(obj):
+                hit = True
+        elif _trigger_chute_events(obj, _CHUTE_DEPLOY_EVENTS):
+            hit = True
+    st = _chute_state_now(vessel)
+    if hit and st not in _CHUTE_OPEN:
+        st = "deployed"
+    if hit or st not in {"", "none"}:
+        _say(f"chute {st}", on_log)
+    return st
+
+
 def recover_or_abort(vessel: object) -> str:
     """Recover the HD if KSP will allow it; otherwise honest abort."""
     try:

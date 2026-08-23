@@ -102,8 +102,21 @@ DEFAULT_ROUTE = {
     "ops": "hank",
 }
 
-# Spawn thinking budget. Never xhigh. Mortimer is always high.
+# Spawn thinking budget. Never xhigh.
+# Os 2026-08-23 Sunday token tax: desk floors, not severity inflation.
 REASONING = ("low", "medium", "high")
+DESK_REASONING = {
+    "jebediah": "low",
+    "lars": "low",
+    "walt": "low",
+    "wernher": "medium",
+    "mortimer": "medium",
+    "hank": "medium",
+    "gene": "medium",
+    "gus": "medium",
+    "linus": "medium",
+    "verena": "medium",
+}
 NEED_MAP = {
     "need_stack": ("control", "lars"),
     "need_builder": ("vehicle", "gus"),
@@ -206,33 +219,19 @@ def _next_id(tickets: dict[str, Any]) -> str:
 
 
 def reasoning_for(ticket: dict[str, Any], desk: str | None = None) -> str:
-    """Hank spawn thinking budget. Never xhigh. Mortimer always high."""
+    """Hank spawn thinking budget. Never xhigh. Desk floor (Os 2026-08-23)."""
     d = (desk or ticket.get("desk") or "").lower()
-    if d == "mortimer":
-        return "high"
+    if d in DESK_REASONING:
+        return DESK_REASONING[d]
     s = ticket.get("severity") or "S3"
-    p = ticket.get("priority") or "P2"
-    typ = ticket.get("type") or ""
-    if d == "jebediah":
-        return "high" if s == "S1" else "medium"
-    if s == "S1" or p == "P0":
-        return "high"
-    if typ in {"org", "rsi"}:
-        return "high"
-    if d == "gene":
-        return "high"
-    if typ in {"systems", "control"} and s in {"S1", "S2"}:
-        return "high"
-    if s == "S4" and p in {"P2", "P3"}:
+    if s == "S4":
         return "low"
-    if s == "S2" or p == "P1":
-        return "high"
     return "medium"
 
 
 def batch_reasoning(rows: list[dict[str, Any]], desk: str) -> str:
-    if desk == "mortimer":
-        return "high"
+    if desk in DESK_REASONING:
+        return DESK_REASONING[desk]
     order = {"low": 0, "medium": 1, "high": 2}
     lvl = "low"
     for t in rows:
@@ -245,10 +244,19 @@ def batch_reasoning(rows: list[dict[str, Any]], desk: str) -> str:
 
 
 def infer_links(t: dict[str, Any]) -> dict[str, Any]:
-    """Skim vs deep paths. Jsonl/PNG/reviews are deep only."""
+    """Skim vs deep paths. Jsonl is tape CLI only — never a read_file."""
     skim: list[dict[str, str]] = []
     deep: list[dict[str, str]] = []
+    tape: list[str] = []
     seen: set[str] = set()
+    seen_tape: set[str] = set()
+
+    def add_tape(path: str) -> None:
+        p = str(path or "")
+        if not p or p in seen_tape:
+            return
+        seen_tape.add(p)
+        tape.append(p)
 
     def add(bucket: list[dict[str, str]], kind: str, path: str, why: str) -> None:
         if not path or path in seen:
@@ -257,7 +265,6 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
         bucket.append({"kind": kind, "path": path, "why": why})
 
     add(skim, "desk", "docs/program/desk.md", "sit")
-    add(skim, "board", "docs/program/tickets/BOARD.md", "board")
     add(skim, "brief", "docs/program/tickets/BRIEF.md", "how")
     payload = t.get("payload") or {}
     typ = t.get("type")
@@ -270,7 +277,7 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
         add(skim, "briefing", "docs/missions/jebediah/briefing.md", "brief")
         telem = payload.get("telem_run") or ""
         if telem:
-            add(deep, "jsonl", str(telem), "telem run")
+            add_tape(str(telem))
         if craft_path:
             add(deep, "craft", craft_path, "stack")
         add(deep, "last-flight", "docs/last-flight.md", "last abort")
@@ -291,12 +298,7 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
                 f"docs/missions/jebediah/logs/{live}-review.md",
                 "review",
             )
-            add(
-                deep,
-                "jsonl",
-                f"docs/missions/jebediah/logs/{live}.jsonl",
-                "envelope",
-            )
+            add_tape(f"docs/missions/jebediah/logs/{live}.jsonl")
     elif typ == "systems":
         add(deep, "agent-notes", "docs/agent-notes.md", "kRPC")
     elif typ == "recover":
@@ -306,7 +308,7 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
     for p in t.get("evidence") or []:
         sp = str(p)
         if sp.endswith(".jsonl"):
-            add(deep, "jsonl", sp, "evidence")
+            add_tape(sp)
         elif sp.endswith(".png"):
             add(deep, "png", sp, "stuck still")
         else:
@@ -320,7 +322,33 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
     for extra in list(t.get("blockers") or []) + list(t.get("related") or []):
         if extra not in related:
             related.append(extra)
-    return {"skim": skim, "deep": deep, "related": related}
+    return {"skim": skim, "deep": deep, "tape": tape, "related": related}
+
+
+def _packet_envelope(t: dict[str, Any]) -> dict[str, Any] | None:
+    """Landing/eyes from disk tape, else stored payload. Never jsonl rows."""
+    payload = t.get("payload") or {}
+    path = payload.get("telem_run") or ""
+    if not path:
+        live = payload.get("live_run") or ""
+        if live:
+            path = f"docs/missions/jebediah/logs/{live}.jsonl"
+    if not path:
+        evs = [e for e in (t.get("evidence") or []) if str(e).endswith(".jsonl")]
+        path = evs[-1] if evs else ""
+    if path:
+        src = Path(path)
+        if src.is_file():
+            try:
+                from tape import envelope
+
+                return envelope(src)
+            except Exception:
+                pass
+    landing = payload.get("landing")
+    if isinstance(landing, dict) and landing:
+        return landing
+    return None
 
 
 def format_packet(tid: str, *, deep: bool = False) -> str:
@@ -335,21 +363,21 @@ def format_packet(tid: str, *, deep: bool = False) -> str:
         f"title: {t.get('title')}",
         f"reasoning: {lvl}",
         f"fingerprint: {t.get('fingerprint') or 'none'}",
+        f"inbox: python main.py tickets inbox --desk {t.get('desk') or 'hank'}",
     ]
     tags = t.get("tags") or []
     if tags:
         lines.append("tags: " + ",".join(tags))
-    landing = (t.get("payload") or {}).get("landing")
-    if isinstance(landing, dict) and landing:
+    env = _packet_envelope(t)
+    if env:
         try:
+            from tape import format_envelope
+
+            lines.append(format_envelope(env))
+        except Exception:
             from telem import format_landing
 
-            lines.append(format_landing(landing))
-        except Exception:
-            lines.append(
-                f"landing: {landing.get('landing')} impact={landing.get('impact_ms')} "
-                f"sit={landing.get('sit')}"
-            )
+            lines.append(format_landing(env))
     if t.get("summary"):
         lines.append(f"summary: {t['summary']}")
     lines.append("read:")
@@ -359,6 +387,10 @@ def format_packet(tid: str, *, deep: bool = False) -> str:
         lines.append("deep:")
         for item in links["deep"]:
             lines.append(f"  - {item['path']}  # {item['why']}")
+        for p in links.get("tape") or []:
+            lines.append(f"  tape: python main.py telem {p}  # query; do not read jsonl")
+        if not links["deep"] and not (links.get("tape") or []):
+            lines.append("  (none)")
     else:
         lines.append(f"deep: python main.py tickets packet {tid} --deep")
     if links["related"]:
@@ -369,6 +401,9 @@ def format_packet(tid: str, *, deep: bool = False) -> str:
     go = t.get("go") or payload.get("go")
     if go:
         lines.append(f"go: {go}")
+    learn = payload.get("learn") or payload.get("learned") or t.get("learn")
+    if learn:
+        lines.append(f"learn: {learn}")
     return "\n".join(lines) + "\n"
 
 
@@ -378,8 +413,8 @@ def packet_cmd(tids: list[str], reasoning: str) -> str:
     tid = str(tids[0])
     if not tid or tid.startswith("("):
         return ""
-    extra = " --deep" if reasoning == "high" else ""
-    return f"python main.py tickets packet {tid}{extra}"
+    _ = reasoning  # skim envelope is enough; --deep is opt-in (PNG/craft)
+    return f"python main.py tickets packet {tid}"
 
 
 def from_need(
@@ -545,17 +580,20 @@ def list_tickets(
 
 _FLY_DEAD = frozenset({"done", "wont", "blocked"})
 _FLY_PREF = ("verify", "in_progress", "assigned", "ready")
-_FLY_PAYLOAD = frozenset({"cli", "campaign", "phase", "science_ids", "recommended"})
+_FLY_PAYLOAD = frozenset(
+    {"cli", "campaign", "phase", "science_ids", "recommended", "learn", "learned"}
+)
 
 
 def fly_fields(t: dict[str, Any] | None) -> dict[str, Any]:
-    """go / cli / campaign / phase / science_ids. go is t.go or payload.go."""
+    """go / cli / campaign / phase / science_ids / learn. go is t.go or payload.go."""
     empty: dict[str, Any] = {
         "go": "",
         "cli": "",
         "campaign": "",
         "phase": "",
         "science_ids": (),
+        "learn": "",
     }
     if not t:
         return empty
@@ -566,6 +604,7 @@ def fly_fields(t: dict[str, Any] | None) -> dict[str, Any]:
     cli = str(pl.get("cli") or pl.get("recommended") or t.get("cli") or "").strip()
     campaign = str(pl.get("campaign") or t.get("campaign") or "").strip()
     phase = str(pl.get("phase") or t.get("phase") or "").strip()
+    learn = str(pl.get("learn") or pl.get("learned") or t.get("learn") or "").strip()
     raw = pl.get("science_ids") or ()
     if isinstance(raw, str):
         ids = tuple(p.strip() for p in raw.split(",") if p.strip())
@@ -577,7 +616,21 @@ def fly_fields(t: dict[str, Any] | None) -> dict[str, Any]:
         "campaign": campaign,
         "phase": phase,
         "science_ids": ids,
+        "learn": learn,
     }
+
+
+def needs_learn(t: dict[str, Any] | None) -> bool:
+    """Empty Learn on a stopped campaign (not uncrewed hops)."""
+    ff = fly_fields(t)
+    if ff.get("learn"):
+        return False
+    camp = (ff.get("campaign") or "none").strip() or "none"
+    return camp != "uncrewed"
+
+
+def stamp_learn(tid: str, text: str, *, who: str = "gene") -> dict[str, Any]:
+    return patch_fly_payload(tid, {"learn": str(text).strip()}, who=who)
 
 
 def seated_fly_ticket() -> dict[str, Any] | None:
@@ -663,6 +716,38 @@ def science_ids_for(*, situation: str = "", craft: str = "") -> tuple[str, ...]:
     return tuple(out)
 
 
+def union_science_ids(*groups: object) -> tuple[str, ...]:
+    """Stable unique concat. Later groups cannot drop earlier ids."""
+    out: list[str] = []
+    for group in groups:
+        if not group:
+            continue
+        if isinstance(group, str):
+            items = [p.strip() for p in group.split(",") if p.strip()]
+        else:
+            try:
+                items = list(group)
+            except TypeError:
+                continue
+        for raw in items:
+            eid = str(raw).strip()
+            if eid and eid not in out:
+                out.append(eid)
+    return tuple(out)
+
+
+def card_science_ids(
+    *,
+    situation: str = "",
+    craft: str = "",
+    ticket: dict[str, Any] | None = None,
+) -> tuple[str, ...]:
+    """Bound science tickets union fly payload.science_ids. Fly cannot hide binds."""
+    bound = science_ids_for(situation=situation, craft=craft)
+    fly = tuple(fly_fields(ticket).get("science_ids") or ())
+    return union_science_ids(bound, fly)
+
+
 def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, Any]:
     """Link a telem jsonl onto a ticket. Merge payload; do not blank top-level go."""
     p = str(path)
@@ -673,9 +758,9 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
     payload = dict(cur.get("payload") or {})
     payload["telem_run"] = p
     try:
-        from telem import landing_from_jsonl
+        from tape import envelope
 
-        payload["landing"] = landing_from_jsonl(Path(p))
+        payload["landing"] = envelope(Path(p))
     except Exception:
         pass
     tags = list(cur.get("tags") or [])
@@ -727,7 +812,12 @@ def fingerprint_count(fp: str) -> int:
     return int(fps.get(fp, 0))
 
 
-def maybe_open_rsi(fp: str, *, reporter: str = "Hank Grokman, COO") -> dict[str, Any] | None:
+def maybe_open_rsi(
+    fp: str,
+    *,
+    reporter: str = "Hank Grokman, COO",
+    rsi_loop: str | None = None,
+) -> dict[str, Any] | None:
     """At 3 hits, open an RSI ticket if none open for this fingerprint."""
     if not fp:
         return None
@@ -737,15 +827,25 @@ def maybe_open_rsi(fp: str, *, reporter: str = "Hank Grokman, COO") -> dict[str,
     for t in list_tickets(open_only=True):
         if t.get("type") == "rsi" and t.get("fingerprint") == fp:
             return None
+    loop = (rsi_loop or "").strip()
+    if not loop:
+        loop = "ops"
+        for t in (load_head().get("tickets") or {}).values():
+            got = str(t.get("rsi_loop") or "")
+            if t.get("fingerprint") == fp and got:
+                loop = got
+                if got == "software":
+                    break
+    desk = "wernher" if loop == "software" else "hank"
     return open_ticket(
         type="rsi",
         title=f"RSI {fp} ×{n}",
         reporter=reporter,
         severity="S2",
         priority="P1",
-        desk="hank",
+        desk=desk,
         fingerprint=fp,
-        rsi_loop="ops",
+        rsi_loop=loop,
         payload={"count": n},
     )
 
@@ -1023,10 +1123,10 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
                     path = evs[-1] if evs else ""
                 if not path:
                     raise TicketError(f"{target} has no telem run")
-            from telem import format_landing, landing_from_jsonl
+            from tape import envelope, format_envelope
 
-            row = landing_from_jsonl(path)
-            print(format_landing(row))
+            row = envelope(path)
+            print(format_envelope(row))
             print(json.dumps(row, indent=2, sort_keys=True))
             return 0
         if args.act == "attach-run":

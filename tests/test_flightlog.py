@@ -8,10 +8,22 @@ import tempfile
 import time
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from datetime import datetime, timezone
 
-from flightlog import earth_stamp, format_kerbal_clock, live_records
+from flightlog import (
+    cmd_ship,
+    earth_stamp,
+    envelope_from_snapshot,
+    format_kerbal_clock,
+    format_ship,
+    live_records,
+    parse_as_of,
+    parse_ship,
+    publish_hangar_radio,
+    ship_stale,
+)
 
 
 class TestStamps(unittest.TestCase):
@@ -133,3 +145,231 @@ class TestRecordEnvelope(unittest.TestCase):
         self.assertIn("ec=0", stats["flag_counts"])
         self.assertIn("met=7.0", stats["first"])
         self.assertIn("fuel=0.0", stats["last"])
+
+    def test_close_synthesizes_landing_when_still_flying(self):
+        import flightlog
+        from telem import Snapshot
+
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        old = (
+            flightlog._path,
+            flightlog._t0,
+            flightlog._count,
+            flightlog._last_write,
+            flightlog._last_flags,
+            flightlog._last_state,
+            flightlog._wrote_landing,
+        )
+        flightlog._path = tmp
+        flightlog._t0 = time.monotonic()
+        flightlog._count = 0
+        flightlog._last_write = 0.0
+        flightlog._last_flags = None
+        flightlog._last_state = None
+        flightlog._wrote_landing = False
+        try:
+            flightlog.record(
+                Snapshot(
+                    situation="flying",
+                    alt=52.0,
+                    v_vert=-154.0,
+                    speed=154.0,
+                    horiz=19.0,
+                    heading=299.0,
+                    pitch=90.0,
+                ),
+                tag="flight",
+                force=True,
+            )
+            flightlog._emit_landing_if_missing()
+            flightlog.event("end", "samples=1")
+        finally:
+            (
+                flightlog._path,
+                flightlog._t0,
+                flightlog._count,
+                flightlog._last_write,
+                flightlog._last_flags,
+                flightlog._last_state,
+                flightlog._wrote_landing,
+            ) = old
+        kinds = [
+            json.loads(line)["kind"]
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        self.assertIn("state", kinds)
+        self.assertIn("landing", kinds)
+        self.assertIn("end", kinds)
+        self.assertGreater(kinds.index("landing"), kinds.index("state"))
+
+
+_SNAPSHOT_BLOB = (
+    "Snapshot(scene='?', vessel='kspstuff-hop-flea-pbc', body='Earth', "
+    "situation='flying', alt=1523.0, peri=-6362500.0, apo=11562.0, ecc=0.99, "
+    "q=0.0, atm_depth=140000.0, in_atmo=True, wreck=False, throttle=1.0, "
+    "thrust=0.0, speed=0.0, horiz=nan, v_vert=nan, g=nan, landing='', "
+    "heading=nan, pitch=nan, aoa=nan, biome='', met=10.0, ec=0.0, fuel=5.0, "
+    "lf=5.0, broken=None, stage=None, hz=20.0, "
+    "resources={'ElectricCharge': 0.0, 'SolidFuel': 5.0}, flags=('ec=0',))\n"
+    "as_of: 2026-08-22T23:46Z\n"
+)
+
+
+class TestShipEnvelope(unittest.TestCase):
+    def test_parses_snapshot_blob_without_resources(self):
+        env = parse_ship(_SNAPSHOT_BLOB)
+        text = format_ship(env)
+        self.assertIn("heading: ?", text)
+        self.assertIn("wreck: no", text)
+        self.assertIn("ec: 0", text)
+        self.assertIn("alt: 1523", text)
+        self.assertIn("as_of: 2026-08-22T23:46Z", text)
+        self.assertIn("sit: flying", text)
+        self.assertIn("flags: ec=0", text)
+        self.assertNotIn("Snapshot(", text)
+        self.assertNotIn("resources", text)
+        self.assertNotIn("ElectricCharge", text)
+        self.assertLess(len(text), 400)
+
+    def test_parses_kv_envelope(self):
+        env = parse_ship(
+            "heading: 299\nwreck: no\nec: 12\nalt: 400\nas_of: 2026-08-23T00:01Z\n"
+        )
+        text = format_ship(env)
+        self.assertIn("heading: 299", text)
+        self.assertIn("wreck: no", text)
+        self.assertIn("ec: 12", text)
+        self.assertIn("alt: 400", text)
+
+    def test_cmd_ship_from_disk(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        path = Path(tempfile.mkdtemp()) / "ship.md"
+        path.write_text(_SNAPSHOT_BLOB, encoding="utf-8")
+        buf = StringIO()
+        with redirect_stdout(buf):
+            rc = cmd_ship(path)
+        self.assertEqual(rc, 0)
+        out = buf.getvalue()
+        self.assertIn("wreck: no", out)
+        self.assertIn("alt: 1523", out)
+        self.assertIn("as_of:", out)
+        self.assertNotIn("Snapshot(", out)
+
+    def test_cmd_ship_missing(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        buf = StringIO()
+        with redirect_stdout(buf):
+            rc = cmd_ship(Path(tempfile.mkdtemp()) / "missing.md")
+        self.assertEqual(rc, 0)
+        self.assertIn("ship: none", buf.getvalue())
+
+    def test_publish_writes_envelope_not_repr(self):
+        import flightlog
+        from telem import Snapshot
+        from unittest.mock import patch
+
+        dest = Path(tempfile.mkdtemp()) / "ship.md"
+        snap = Snapshot(
+            vessel="kspstuff-hop-valiant-chute-stiff-pbc",
+            situation="flying",
+            heading=298.97,
+            wreck=False,
+            ec=80.0,
+            alt=19197.0,
+            mass=1677.0,
+            parts_n=9,
+            root="probeCoreOcto.v2",
+            flags=("atmosphere alt=19197 peri=-1 atm=140000", "shear"),
+        )
+        with (
+            patch.object(flightlog, "live_records", return_value=True),
+            patch.object(flightlog, "SHIP", dest),
+            patch.object(flightlog, "_flight", "jebediah"),
+        ):
+            flightlog._publish_ship(snap, "flight")
+        text = dest.read_text(encoding="utf-8")
+        self.assertIn("heading: 299", text)
+        self.assertIn("wreck: no", text)
+        self.assertIn("ec: 80", text)
+        self.assertIn("alt: 19197", text)
+        self.assertIn("as_of:", text)
+        self.assertIn("flight: jebediah", text)
+        self.assertIn("mass: 1677", text)
+        self.assertIn("parts_n: 9", text)
+        self.assertIn("root: probeCoreOcto.v2", text)
+        self.assertIn("shear", text)
+        self.assertNotIn("Snapshot(", text)
+
+    def test_envelope_from_snapshot_keys(self):
+        from telem import Snapshot
+
+        env = envelope_from_snapshot(
+            Snapshot(heading=90.0, wreck=True, ec=0.0, alt=74.0),
+            as_of="2026-08-23T00:00Z",
+        )
+        self.assertTrue(env["wreck"])
+        self.assertEqual(env["heading"], 90.0)
+        text = format_ship(env)
+        self.assertIn("wreck: yes", text)
+        self.assertIn("heading: 90", text)
+
+    def test_ship_carries_where(self):
+        from telem import Snapshot
+
+        env = envelope_from_snapshot(
+            Snapshot(
+                heading=299.0,
+                wreck=False,
+                ec=80.0,
+                alt=400.0,
+                lat=28.608389,
+                lon=-80.604333,
+                downrange=0.12,
+                biome="Shores",
+            ),
+            as_of="2026-08-23T12:00Z",
+        )
+        text = format_ship(env)
+        self.assertIn("lat: 28.6084", text)
+        self.assertIn("lon: -80.6043", text)
+        self.assertIn("downrange: 0.12", text)
+        self.assertIn("biome: Shores", text)
+
+    def test_ship_stale_when_as_of_predates_lock(self):
+        lock = Path(tempfile.mkdtemp()) / "flight.lock"
+        lock.write_text("pid=1\ncommand=hop\n", encoding="utf-8")
+        env = {"as_of": "2026-08-23T00:13Z"}
+        self.assertTrue(ship_stale(env, lock_path=lock))
+        env2 = {
+            "as_of": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
+        }
+        self.assertFalse(ship_stale(env2, lock_path=lock))
+        self.assertFalse(ship_stale(env, lock_path=lock.parent / "missing.lock"))
+        self.assertEqual(
+            parse_as_of("2026-08-23T00:13Z"),
+            datetime(2026, 8, 23, 0, 13, tzinfo=timezone.utc),
+        )
+
+    def test_publish_hangar_radio_is_ksc_not_last_hop(self):
+        import flightlog
+
+        dest = Path(tempfile.mkdtemp()) / "ship.md"
+        with (
+            patch.object(flightlog, "live_records", return_value=True),
+            patch.object(flightlog, "SHIP", dest),
+            patch.object(flightlog, "_flight", "jebediah"),
+        ):
+            publish_hangar_radio(
+                vessel="kspstuff-hop-valiant-proc-tank-pbc", why="preflight"
+            )
+        text = dest.read_text(encoding="utf-8")
+        self.assertIn("sit: ksc", text)
+        self.assertIn("flags: preflight", text)
+        self.assertIn("as_of:", text)
+        self.assertIn("wreck: no", text)
+        self.assertNotIn("sit: landed", text)

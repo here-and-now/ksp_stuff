@@ -126,7 +126,13 @@ abort the fly. Never overwrite press heroes (`first-mystery-goo`,
 ### World desk (disk, no kRPC)
 
 kRPC 0.6 has no RD-node list and no UnlockTech. `GameScene.research_and_development`
-opens the facility; `SpaceCenter.science` is get-only. Buy CLI:
+opens the facility; `SpaceCenter.science` is get-only **RAM** R&D.
+`vessel.recover()` credits that bank immediately. `persistent.sfs`
+`SCENARIO ResearchAndDevelopment` `sci =` lags until Hangar/scene
+autosave — after-flight desk must not treat the save file as the
+bank. `python main.py desk` prefers live `SpaceCenter.science` (skip
+while `flight.lock` is live) then last-flight `sci:` if it is ahead
+of disk. Buy CLI:
 `python main.py tech-unlock <id>` (aborts if no purchase RPC — do not
 edit GameData or the save). Read GameData + save for the tree:
 
@@ -246,7 +252,13 @@ not in this tree.** Hold `flight` / `orbit`; never `vessel.flight()`
 per pulse. `vessel.flight()` with **no** frame is the vessel origin —
 `speed` is always ~0 (Jeb hop-to-water jsonl). Surface `speed` /
 `horizontal_speed` / `heading` stream from
-`vessel.flight(body.reference_frame)`. Writes stay RPC. `status` is the
+`vessel.flight(body.reference_frame)`. Geographic `latitude` /
+`longitude` (degrees) live on that same `Flight` object — hangar
+`_on_launch_site` already reads `vessel.flight().latitude` /
+`.longitude`. Stream them on the no-frame hold; do not RPC per pulse.
+`vessel.biome` is the RSS biome name (`Shores`, `Forest`, …). Downrange
+km is haversine from `sites` default pad (Cape under RSS) using
+`body.equatorial_radius`. Writes stay RPC. `status` is the
 one-shot Session probe.
 
 UI `TelemetrySample` / pyqtSignal is parked with the rest of the UI.
@@ -281,9 +293,15 @@ True). Set `control.sas=False` yourself anyway. `error` / `pitch_error` /
 **AP hold (live):** `engaged=True`, `target_pitch=0`, `target_heading=90`,
 `target_roll=0`. `error` streamed at 10 Hz: 73° → 2.6° in 2.25 s.
 `ap.wait()` then returned in 0.35 s at `error≈1°`. Disengage → `error`
-raises again. Near vertical, heading/roll are ill-defined — hop-to-water
-points with surface `target_direction` and leaves `target_roll` NaN
-(unset damps roll rate; `target_roll=0` tumbled Stayputnik 16-57-24Z).
+raises again. Setting `engaged=True` while already engaged **restarts**
+the controller (0.5 s `soft_start_time`) — 09-28-59Z inland never held.
+Near vertical, heading/roll vs zenith up are ill-defined. Hop inland and
+hop-to-water: `set_direction_and_up(direction, north, 0)` in surface
+frame; engage once **off vertical** (65/270). 09-44-59Z engaged at ~90
+and yawed 340 at burnout. Do not write `target_pitch`/`target_heading`
+(09-16-24Z logged 270, flew pad 297/87). `target_roll=0` vs default
+zenith up tumbled Stayputnik 16-57-24Z; north up is off the 270/090
+path. `target_direction` still maps to those Eulers.
 
 **Pause (plugin 0.6):** `conn.krpc.paused` is the KRPC service flag.
 `space_center.paused` may also exist. Flight Results / `launch_vessel`
@@ -351,37 +369,45 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   Control** pre-flight dialog; kRPC waits there. Empty command pods are
   not probes. Crew names must be `RosterStatus.available` — assigned or
   missing kerbals still launch empty. `create_kerbal(name, "Pilot", True)`
-  if the roster is busy. `conn.krpc.game_scene = GameScene.space_center`
-  (or deprecated `space_center.load_space_center`) leaves a junk flight /
-  modal without a click. Catastrophic Flight Results pauses physics
-  (`vessel.met` stuck, `recoverable` false, toolbar empty). The scene
-  setter is **not** enough: `game_scene` can already read
-  `space_center` while Flight Results is still up over Tracking
-  (14-52-25Z, empty Tracking, Revert live). Close **once**
-  (scene setter + one `load_space_center`), then poll
-  `can_revert_to_launch()` until false. Do **not** call
-  `load_space_center` every tick — that reloads KSC in a loop
-  (15-26-18Z after crash recover). `tracking_station` is not KSC.
-  `can_revert_to_launch` True is that dialog — **read it, do not call
-  `revert_to_launch`**. It restores the *current* flight’s pad, not a
-  new craft. Never revert, quickload, return to VAB, or rewind UT from
-  the crash dialog. Hangar does not `launch_vessel` until KSC is clean.
-  Honest leftover: recover or Hangar the next stack. Os will not click
-  Recover / Cancel / Launch anyway.
-  `vessel.recover()` from Space Center **returns before** the ship
-  leaves the vessel list (recover-sit: still PRELAUNCH, then gone).
-  Wait until the pool is empty. Do **not** set `GameScene.space_center`
-  from Catastrophic Flight Results — that is the Space Center button
-  and the launch save sits on the pad at MET 0 (recover-pad-again).
-  Crash UI → Tracking Station, never revert_to_launch.
+  if the roster is busy. Close is `conn.krpc.game_scene =
+  GameScene.space_center` (**not** `load_space_center` — that reloads
+  the launch save onto the pad at MET 0). Os disabled Allow reverting
+  flights. Never `revert_to_launch`. Never leftover-ksc save/load
+  (that was a reload). Walk leftover **ships** home: enter Flight,
+  `vessel.recover()`, wait until gone from `vessels`. Asteroids
+  (Ast. XRL-564, `VesselType.spaceobject`) are not ships — do not
+  recover them. Crash / not recoverable: Close with
+  `reload_save=False`. kRPC 0.6 `UI.clear` removes *client* widgets
+  only; `stock_canvas` has no Flight Results buttons (live KSC
+  probe). Overlay bit `can_revert` may stay true after walk-home with
+  reverting off — that is leftover, not Flight Results (07-50 KSC
+  overview, Tracking "no vessels"). `ksc_ready` is scene
+  `space_center`, leftover ships n=0; do not treat leftover
+  `can_revert` as overlay on that sit. `tracking_station` is not KSC.
+  Hangar does not `launch_vessel` until KSC is clean. Os will not click Recover / Cancel / Launch
+  anyway. `vessel.recover()` returns before the ship leaves the list
+  — wait until gone.
 - `launch_vessel(..., recover=True)` from **space_center** and from **flight**
   entered `flight` / `pre_launch` with `active_vessel` set. Internally KSP
   **saves** via `FlightDriver.StartWithNewLaunch` → `GamePersistence.SaveGame`.
   A dirty leftover (killed mid-warp, `freeze`) NREs `FlightState..ctor`
   ("Object reference not set"). `game_scene` already `space_center` is not
-  a clean Game — always re-set the scene. On that NRE call
-  `load_space_center` and retry `recover=False`. Do not wait for a Recover
-  click (L-022).
+  a clean Game — always re-set the scene. On that NRE Close
+  (`game_scene=space_center`, no `load_space_center`) and retry
+  `recover=False`. Do not wait for a Recover click (L-022). The NRE can happen **after** in-game pre-flight PASS
+  (`Go for Launch!`) and **not raise** on the Python client: kRPC
+  `launch_vessel` stays in-flight, the hop Session lock is held, and
+  `go_space_center` on that Session deadlocks. Watchdog abort is a
+  **second** client (connect itself must timeout). After hang, raise —
+  do not retry RPCs on the poisoned Session. `python main.py ship`
+  must not keep the previous hop as live radio (`stale: yes` when
+  `as_of` predates `flight.lock`). After leftover-clean Hangar,
+  `Go for Launch!` + kRPC scene `flight` is a **live pad load**, not a
+  dialog: RSS Kopernicus/Parallax can sit past 25 s. Abort-to-KSC then
+  dumps the vessel and leaves `launch_vessel` in-flight. Run that RPC
+  on a side client; poll `game_scene` on the hop Session; abort only
+  while still `space_center`. `Session.close` must not wait forever
+  for the abandoned RPC.
 - `launch_vessel(..., recover=True)` does **not** clear a leftover
   landed/flying on the pad. Pre-flight raises `Launch site not clear`
   (`WaitForVesselPreFlightChecks`). Recover the occupant with
@@ -506,6 +532,25 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-23** — `Flight.latitude` / `Flight.longitude` are degrees on
+  `vessel.flight()` (no-frame hold). `vessel.biome` is the RSS name.
+  Downrange km is haversine from Cape (`sites.default_pad_ll`) with
+  `body.equatorial_radius`. ship.md + tape `where:` — T-166.
+- **2026-08-23** — AP `set_direction_and_up` while already engaged
+  disturbs the hold (09-59-28Z MET20 297/66, burnout 336/39). Point
+  the same 65/270 vector once. 10-17-18Z skip-if-`engaged` flew
+  38/−10 (east, past horizon): re-point that vector if flipped; do
+  not re-engage. 10-33-44Z 353/26 missed the 90° gate; returning
+  after `set_direction_and_up` skipped `target_direction` — write
+  the vector, then north-up.
+- **2026-08-23** — AP engage at ~90 has no heading (09-44-59Z burnout
+  340/43). Command 25° off vertical, then `engaged=True` once.
+- **2026-08-23** — AP `engaged=True` while already engaged restarts 0.6
+  PID / 0.5 s soft-start. Near vertical use `set_direction_and_up`
+  (north up), not `target_direction` Eulers vs zenith (09-28-59Z).
+- **2026-08-23** — `SpaceCenter.science` is RAM. `recover()` credits it;
+  `persistent.sfs` sci lags until Hangar autosave (08-04-05Z desk +0.0001
+  vs +4.2). Desk `sci:` is bank, not sfs, when kRPC or last-flight has it.
 - **2026-08-20** — kRPC 0.6: `GameScene.research_and_development` opens
   R&D; `get_Science` only. No UnlockTech. `python main.py tech-unlock`.
 - **2026-08-20** — Disk `PluginData/settings.cfg`: `autoStartServers = False`
@@ -588,11 +633,38 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   (`go_space_center`) leaves the modal. Do not Revert. Telem
   `wreck=false` until MET-still + q=0 + alt≤250 m.
 - **2026-08-22** — Flight Results overlay follows `GameScene` (R&D and
-  tracking still show it). No OCR, no UI click. Named
-  `SpaceCenter.save("leftover-ksc")` + `load` of that sfs drops the
-  GUI (not persistent, not revert). Load may open Ast. XRL-564 —
-  `python main.py ksc`, never recover the rock. Hank
-  `recover-probe --space-center` runs `dismiss_flight_results`.
+  tracking still show it). No OCR, no UI click. leftover-ksc save/load
+  **retired** (T-142). Walk home `recover()` + Close.
+- **2026-08-22** — OKTO `ModuleReactionWheel` duplicate PAW gui
+  `Reaction Wheels`: kRPC 0.6 `Module.fields` / `get_field` raise
+  `ValueError Key: Reaction Wheels`. `telem._module_flag` uses
+  `field_list` / `get_field_by_id`; do not getattr `.fields` unguarded.
+- **2026-08-23** — T-142: leftover-ksc RIP. Walk home `recover()` +
+  Close (`reload_save=False`). `load leftover-ksc` refused. Never
+  revert. Never recover Ast. XRL-564. kRPC 0.6 UI still cannot click
+  Flight Results (`stock_canvas` empty; `UI.clear` client-only).
+- **2026-08-23** — T-145: after walk-home, scene `space_center`,
+  leftover ships n=0, Tracking "no vessels", screenshot KSC overview
+  with no Flight Results. `can_revert` / `can_revert_to_launch` stayed
+  true (active vessel UUID dead). That leftover bit is not overlay.
+  `ksc_ready` / `overlay_painted` must not fail that sit.
+- **2026-08-23** — Tape eyes: state rows carry `recoverable`, `chute`,
+  `sci_run`/`sci_rem`, `mass`, `available_thrust`, streamed
+  `flight.g_force`. `kind=landing` also on wreck; `kind=recoverable` on
+  edge; `flightlog.close` synthesizes landing if the hop stayed flying
+  (23-54-24Z start/end only). Packet skim `tape:` / `events:` — not 9
+  columns. `reliability_broken` is Kerbalism module flags, not exploded
+  parts. Shear is `len(parts.all)`, `parts.root`, `vessel.mass`, debris
+  `VesselType`. Skim `stack: mass=pad→last parts=n shear=` and
+  `descent: peak→last n= gap=`. Tape apex is peak **alt**, not max apo.
+  Bind streams by `Vessel.id`, not Python `is`. `reliability_broken` /
+  sci/debris refresh at 1 s; do not getattr `Module.fields` when
+  `field_list` already listed (OKTO duplicate gui; 07-21-05Z ~13 s/pulse).
+  kRPC 0.6 still unused: `Flight.mach` / `static_pressure` /
+  `terminal_velocity` / `atmosphere_density`, `Vessel.delta_v` /
+  `burn_time` / torque tensors, `CrewCount`. RealChute is
+  `parts.parachutes` State else `RealChuteModule` field_list. No FAR
+  service. Do not getattr `Module.fields` unguarded.
 - **2026-08-21** — FAR + RealChute + RealHeat on `KSP-rss`. No FAR
   kRPC service in 0.6 client. `dynamic_pressure` is still stock
   `flight`. RealChuteModule replaced ModuleParachute on stock chutes
@@ -603,6 +675,19 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   `space_center.vessels` empty while `persistent.sfs` still lists
   Debris: desk hangar `none`. Hangar `refuse` is exact craft basename,
   not a `geiger-pbc` substring.
+- **2026-08-23** — `launch_vessel` SaveGame NRE after pre-flight PASS
+  hung the hop Session (T-116 `2026-08-23T06-32-23Z-hop`). Abort
+  client `game_scene=space_center` does not unblock the first RPC.
+  Do not `go_space_center` on that connection. Hangar raises
+  `session poisoned`. `ship.md` hangar sit + `stale: yes`.
+- **2026-08-23** — T-137: after leftover-clean Hangar, pre-flight PASS
+  and kRPC scene **Flight**, the 25 s abort-to-KSC killed the pad load
+  (Kopernicus/Parallax). `launch_vessel` runs on a side client
+  (`kspstuff-launch`); hop Session polls `game_scene`. Abort only
+  while still KSC. `Session.close` times out 5 s.
+- **2026-08-23** — T-139: aero shear is `parts.all` length + `mass`,
+  not `Module` broken. `parts.root`, debris vessel type. Tape
+  synthesizes `shear` from mass jumps on old jsonl.
 
 ## FAR / RealChute / RealHeat (disk 2026-08-21)
 

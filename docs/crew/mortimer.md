@@ -24,11 +24,17 @@ CHARTER or roster moves. May talk to Gene between exits. No fly.
 
 ## Notes
 
-Owns the **goal**, the slate, and **how the house works**. Friction
+Reasoning is **medium** (Os 2026-08-23 token tax). Owns the **goal**, the slate, and **how the house works**. Friction
 trip (`docs/program/improve/`) is when he mutates PROTOCOL, job cards,
 and world-model Practice. Does not fly. Does not patch `.py` himself
-(`need_qol` → Lars). Gene first `go:` of a sit and batch Learn.
-Uncrewed hops re-fly last recommended on clean 0.
+(`type=systems` → Wernher, standing). Gene first `go:` of a sit;
+Learn is `payload.learn`. Uncrewed hops re-fly last `cli:` on clean 0
+**and** on a miss of a hang that still lives — not a Gene hire. Pad
+occupancy: tape is the product; an idle pad is a sin. RSI: stumble →
+ticket. Thin tape is first-class. Next node is `stability` 18 — do
+not rest until banked. `survivability` 15 is spent. Do not spend
+crumbs. Procedural Parts on Gus’s shelf when unlocked — not a
+GameData edit, not a pad tutorial.
 Os is Founder — `need_os` if CHARTER creed or a roster seat moves.
 
 Honest CTT spend: when kRPC cannot buy a node we already paid for,

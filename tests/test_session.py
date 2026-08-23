@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import time
 import unittest
 
-from session import _krpc_service_names
+from session import Session, _krpc_service_names
 
 
 class _Svc:
@@ -35,3 +36,19 @@ class TestServiceNames(unittest.TestCase):
                 raise RuntimeError("no")
 
         self.assertEqual(_krpc_service_names(Boom()), ())
+
+
+class TestCloseTimeout(unittest.TestCase):
+    def test_close_does_not_block_on_hung_conn(self):
+        session = Session()
+
+        class _Hung:
+            def close(self):
+                time.sleep(30)
+
+        session.conn = _Hung()
+        session.space_center = object()
+        t0 = time.monotonic()
+        session.close()
+        self.assertLess(time.monotonic() - t0, 8.0)
+        self.assertIsNone(session.conn)

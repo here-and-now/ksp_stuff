@@ -205,3 +205,22 @@ Jebediah: copy, hop-to-water
 Jebediah: copy, hop-to-water T-040
 Jebediah: copy, hop-to-water T-045
 Jebediah: copy, hop-to-water T-046
+Jebediah: Hangar launch_vessel hung 25s pre-flight (dialog?). Watchdog abort to KSC. Stuck still: KSC pad, no crash UI, kRPC up, 1.5x. ship.md stale MET 168 landed EC=0 — not this hop.
+Jebediah: stuck Hangar: KSC empty no pad no Launch dialog, launch_vessel hung attempt 1
+Jebediah: copy, chute deployed on descent, tanks dry under canopy alt 4km EC 326, science dwell continues
+Jebediah: T-081 MET~79 alt 12.7km fuel 0 pitch 14 heading 249 horiz 9 parts 36 mass 1602 wreck=no chute deployed empty tanks still flying — not vertical
+Jebediah: T-081 EC=0 MET~185 alt 73 crash UI recoverable=no hop unpause then scene space_center — leftover is Hank
+Jebediah: T-081 MET123 alt9.7km fuel0 flying chute-out parts36 wreck-no horiz0.2 pitch89 — hop burnout, watching canopy
+Jebediah: T-151 slew miss after left_pad: heading 299 pitch 89 horiz 0.21 want 270/25off-v. empty tanks flying wreck=no alt 10km
+Jebediah: T-081 slew miss: heading 297 want 270, pitch 88 still near-vertical, horiz 19.86 MET 37 alt 9725 fuel 41
+Jebediah: T-081 after left_pad want heading 270 pitch 65 (25 off vertical); ship heading 299 pitch 90 horiz 0.10 MET 1 — same pad-up as 09-16-24Z, watching through burnout
+Jebediah: T-081 through burnout: fuel 0 MET 49 alt 13km heading 209 pitch 3 horiz 22 — want 270 / 25 off vertical; slew did not hold, still flying wreck=no
+Jebediah: T-158 slew miss: MET 19 heading 300 want 270, pitch 89 still near-vertical, horiz 7.85. AP engage-once not holding 25° inland.
+Jebediah: MET20 after pad: heading 297 want 270, pitch 66 (~65 good), horiz 99 — slew lives, heading still pad-west of 270
+Jebediah: burnout coast MET86 fuel 0: heading 200 pitch -9 horiz 37 — did not hold 270/65 through burnout; chute already out, stack 36 wreck no
+Jebediah: T-161 watch: MET18 heading 297 pitch 66 horiz 85 — not 270 inland, pad-heading stuck, q 36k chute armed apo 7km Shores
+Jebediah: MET93 empty tanks flying alt 8520 chute=cut already (want deploy ≤2km) heading 205 pitch -2 horiz 23 burnout was heading 38 pitch -10 not 65/270
+Jebediah: burnout MET~85 pitch -13 under horizon heading 198 not 270 horiz 37 empty tanks flying — latch should re-point 65/270 no re-engage
+Jebediah: MET~95 descent alt 8370 pitch -27 heading 122 east-of-north horiz 16 empty tanks — no latch re-point 65/270 in log
+Jebediah: T-163 burnout: heading 185 want 270, pitch -20 want ~65, horiz 30.5, fuel 0, parts 36. hold inland logged; no re-point line. slew wrote 270/25 then drifted west and nose-down.
+Jebediah: T+111 empty tanks flying alt 23624 vs hop_apo 18k heading 298 not 270 pitch 64 horiz 109 downrange 15 Forest parts_n 36 mass 1685 no shear

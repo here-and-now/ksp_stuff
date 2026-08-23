@@ -175,6 +175,11 @@ def _site_not_clear(exc: BaseException) -> bool:
     return "launch site not clear" in text or "site not clear" in text
 
 
+def _launch_rpc_hung(exc: BaseException) -> bool:
+    """launch_vessel RPC never returned; the Session connection is poisoned."""
+    return "hung on pre-flight" in _exc_text(exc)
+
+
 _PAD_SITS = frozenset({"pre_launch", "prelaunch", "landed", "splashed", "flying"})
 
 
@@ -422,44 +427,181 @@ def install_signed(
     return token
 
 
-LEFTOVER_SFS = "leftover-ksc"
+OVERLAY_LAST = Path(__file__).resolve().parent / "docs" / "program" / "overlay.last"
+_SKIP_LEFTOVER_TYPES = frozenset(
+    {"spaceobject", "flag", "eva", "debris", "asteroid", "unknown"}
+)
+
+
+def leftover_ship(vessel: Any) -> bool:
+    """Living craft we walk home. Asteroids, debris, EVA, flags are not."""
+    try:
+        name = str(getattr(vessel, "name", "") or "").strip()
+    except Exception:
+        return False
+    if not name:
+        return False
+    low = name.lower()
+    if low.endswith(" debris"):
+        return False
+    if low.startswith("ast.") or "asteroid" in low or "xrl-" in low:
+        return False
+    typ = _status_name(getattr(vessel, "type", None))
+    if typ in _SKIP_LEFTOVER_TYPES:
+        return False
+    return True
+
+
+def leftover_ships(session: Any) -> list[Any]:
+    try:
+        pool = list(getattr(session.space_center, "vessels", []) or [])
+    except Exception:
+        return []
+    out: list[Any] = []
+    for vessel in pool:
+        try:
+            if leftover_ship(vessel):
+                out.append(vessel)
+        except Exception:
+            continue
+    return out
+
+
+def _wait_recovered(session: Any, name: str, *, timeout: float = 20.0) -> bool:
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        names = []
+        for vessel in leftover_ships(session):
+            try:
+                names.append(str(getattr(vessel, "name", "") or ""))
+            except Exception:
+                continue
+        if name not in names:
+            return True
+        time.sleep(0.3)
+    return False
+
+
+def walk_home(session: Session) -> int:
+    """Recover leftover ships, then Close. Never revert. Never leftover-ksc.
+
+    Recoverable: enter Flight, ``vessel.recover()``, wait until gone.
+    Not recoverable: Close with ``reload_save=False`` (no launch-save
+    respawn). Do not recover asteroids.
+    """
+    session.require_connected()
+    n = 0
+    for vessel in leftover_ships(session):
+        name = "?"
+        try:
+            name = str(vessel.name or "?")
+        except Exception:
+            pass
+        rec = False
+        try:
+            rec = bool(vessel.recoverable)
+        except Exception:
+            rec = False
+        if not rec:
+            log.info("leftover %s not recoverable — Close, no save/load", name)
+            continue
+        try:
+            if game_scene(session) != "flight":
+                go_flight(session, vessel)
+            log.info("walk home recover() %s", name)
+            vessel.recover()
+            if _wait_recovered(session, name):
+                n += 1
+            else:
+                log.warning("walk home %s still in vessel list after recover()", name)
+        except Exception as exc:
+            log.warning("walk home recover %s: %s", name, exc)
+    _close_to_ksc(session, reload_save=False)
+    try:
+        session.space_center = session.conn.space_center
+    except Exception:
+        pass
+    return n
+
+
+def overlay_painted(session: Any) -> bool:
+    """Flight Results still up. Reverting may be disabled — can_revert is not enough.
+
+    Space Center + leftover ships n=0 is the overview: leftover
+    ``can_revert`` after walk-home is not an overlay (07-50 screenshot).
+    """
+    scene = game_scene(session).lower().replace(" ", "_")
+    if scene == "space_center" and not leftover_ships(session):
+        return False
+    return _can_revert(session)
 
 
 def go_ksc(session: Any, *, timeout: float = 45.0) -> str:
-    """Leave Flight (asteroid, debris, leftover) for Space Center. Not a load."""
-    go_space_center(session, timeout=timeout)
+    """Walk leftover ships home and Close to KSC. No named save/load.
+
+    Scene-only is not enough: leftover ships block Hangar. Overlay is
+    Close (``game_scene``), not leftover-ksc. Never revert.
+    """
+    walk_home(session)
+    go_space_center(session, timeout=timeout, reload_save=False)
+    dismiss_flight_results(session)
+    ok, why = ksc_ready(session)
+    write_overlay_last(session, ready=ok)
+    if not ok:
+        raise SessionError(
+            f"ksc not ready ({why}). recover-probe --space-center; never revert"
+        )
     return "ksc"
 
 
-def dismiss_flight_results(session: Session) -> str:
-    """Drop Flight Results. kRPC only. No click. No OCR. No revert. No VAB.
+def write_overlay_last(session: Any, *, ready: bool | None = None) -> None:
+    """Disk sit for ops leftover_sit. No click. Never revert."""
+    try:
+        ok, _ = ksc_ready(session) if ready is None else (ready, "")
+        revert = _can_revert(session)
+        painted = overlay_painted(session)
+        n = 0
+        try:
+            n = len(list(getattr(session.space_center, "vessels", []) or []))
+        except Exception:
+            n = 0
+        OVERLAY_LAST.parent.mkdir(parents=True, exist_ok=True)
+        ships = leftover_ships(session)
+        OVERLAY_LAST.write_text(
+            (
+                f"scene: {game_scene(session)}\n"
+                f"ksc_ready: {str(bool(ok)).lower()}\n"
+                f"can_revert: {str(bool(revert)).lower()}\n"
+                f"overlay: {str(bool(painted)).lower()}\n"
+                f"vessels: {n}\n"
+                f"ships: {len(ships)}\n"
+            ),
+            encoding="utf-8",
+        )
+    except Exception:
+        log.debug("overlay.last write failed", exc_info=True)
 
-    Tracking / R&D leave the overlay up (08-22 leftover). Named
-    ``SpaceCenter.save`` of the recovered sit + ``load`` drops the GUI.
-    Not ``load persistent`` (F-014). Not ``revert_to_launch``. Load may
-    resume Flight on an asteroid — ``go_ksc`` after; never recover the
-    rock (I-011).
+
+def dismiss_flight_results(session: Session) -> str:
+    """Close Flight Results. Scene setter only. No leftover-ksc. No revert.
+
+    Live probe (KSC, kRPC 0.6 UI): ``UI.clear`` removes *client* widgets
+    only; ``stock_canvas`` has no Flight Results buttons. There is no
+    kRPC Close click. ``load_space_center`` / named save+load is a reload
+    (Os: voodoo). Crash Close is ``reload_save=False``.
     """
-    go_space_center(session, reload_save=False)
-    if not _can_revert(session):
-        scene = game_scene(session)
-        if scene == "flight":
-            go_ksc(session)
-        return f"scene {game_scene(session)}"
-    sc = getattr(session, "space_center", None)
-    save = getattr(sc, "save", None) if sc is not None else None
-    if not callable(save):
-        raise SessionError("Flight Results overlay: SpaceCenter.save missing")
-    log.info("flight results overlay — save %s then load (not revert)", LEFTOVER_SFS)
-    save(LEFTOVER_SFS)
-    load_save(session, LEFTOVER_SFS)
+    _close_to_ksc(session, reload_save=False)
     try:
         session.space_center = session.conn.space_center
     except Exception:
         pass
     scene = game_scene(session)
-    if scene == "flight" or _can_revert(session):
-        go_space_center(session, reload_save=False)
+    if scene == "flight":
+        _close_to_ksc(session, reload_save=False)
+        try:
+            session.space_center = session.conn.space_center
+        except Exception:
+            pass
     return f"scene {game_scene(session)}"
 
 
@@ -482,6 +624,11 @@ def load_save(session: Any, name: str = "persistent") -> str:
         raise SessionError(
             "load_save: refuse persistent — kRPC autosaves RAM onto "
             "persistent.sfs before load (F-014). Use rd-<node>"
+        )
+    if slug.lower() in {"leftover-ksc", "leftover_ksc"}:
+        raise SessionError(
+            "load_save: refuse leftover-ksc — walk leftover ships home "
+            "and Close (game_scene). Never a named reload to dismiss GUI"
         )
     sc = getattr(session, "space_center", None)
     fn = getattr(sc, "load", None) if sc is not None else None
@@ -608,71 +755,62 @@ def _can_revert(session: Any) -> bool:
     return False
 
 
-def _flight_vessels(session: Any) -> bool:
-    """Any kRPC vessel. Empty KSC after leftover recover is not a flight."""
-    try:
-        vessels = getattr(getattr(session, "space_center", None), "vessels", None)
-        return bool(list(vessels or []))
-    except Exception:
-        return False
-
-
 def ksc_ready(session: Any) -> tuple[bool, str]:
-    """KSC overview with no Flight Results. Empty Tracking is not KSC.
+    """KSC overview, leftover ships gone, overlay not painted.
 
-    ``game_scene`` can already read ``space_center`` while the modal is
-    still up (14-52-25Z). ``can_revert_to_launch`` True is that dialog
-    **when a flight still exists**. After leftover recover the window
-    can already be empty night KSC with a stale can_revert (16-06-15Z /
-    16-12 Hangar timeout). Never revert.
+    Asteroids/debris are not leftover ships. ``can_revert`` on a clean
+    Space Center after walk-home is leftover, not Flight Results. Empty
+    Tracking is not KSC. Never leftover-ksc. Never revert.
     """
     scene = game_scene(session).lower().replace(" ", "_")
     if scene in _TRACKING:
         return False, "tracking (empty Tracking is not KSC)"
     if scene != "space_center":
         return False, f"scene {scene}"
-    if _can_revert(session) and _flight_vessels(session):
-        return False, "flight results (can_revert)"
+    ships = leftover_ships(session)
+    if ships:
+        names = []
+        for vessel in ships[:4]:
+            try:
+                names.append(str(getattr(vessel, "name", "?") or "?"))
+            except Exception:
+                names.append("?")
+        return False, f"leftover ships n={len(ships)} ({', '.join(names)})"
+    if overlay_painted(session):
+        return False, "flight results overlay"
     return True, "ksc"
 
 
-def _close_to_ksc(session: Session, *, reload_save: bool = True) -> None:
-    """Space Center / Close. Never revert, quickload, or return to VAB.
+def _close_to_ksc(session: Session, *, reload_save: bool = False) -> None:
+    """Space Center / Close. Never revert, quickload, leftover-ksc, or VAB.
 
-    ``load_space_center`` reloads the last launch save — after a crash
-    that puts the same stack on the pad at MET 0 (recover-sit). Crash
-    Close uses ``reload_save=False`` (scene setter only).
+    ``load_space_center`` reloads the last launch save and can respawn
+    the stack on the pad at MET 0. Default is scene setter only.
+    ``reload_save=True`` is forbidden on the crash/overlay path.
     """
     krpc = getattr(getattr(session, "conn", None), "krpc", None)
     if krpc is not None:
         try:
             krpc.game_scene = krpc.GameScene.space_center
         except Exception as exc:
-            log.warning("game_scene setter failed (%s); load_space_center", exc)
-    if not reload_save:
+            log.warning("game_scene setter failed (%s)", exc)
+    if reload_save:
+        log.warning("load_space_center refused — Close is scene setter only")
         return
-    sc = getattr(session, "space_center", None)
-    fn = getattr(sc, "load_space_center", None) if sc is not None else None
-    if callable(fn):
-        try:
-            fn()
-        except Exception as exc:
-            log.warning("load_space_center: %s", exc)
 
 
 def go_space_center(
-    session: Session, *, timeout: float = 45.0, reload_save: bool = True
+    session: Session, *, timeout: float = 45.0, reload_save: bool = False
 ) -> None:
-    """Leave flight/editor/Flight Results for the KSC overview. No click.
+    """Leave flight/editor for the KSC overview. Close, no named load.
 
-    Close **once** (scene setter, optional ``load_space_center``), then
-    poll. Repeating ``load_space_center`` every tick reloads KSC in a
-    loop (15-26-18Z). After a crash, ``reload_save=False`` — reloading
-    the launch save respawns the stack on the pad. Never revert.
+    Scene setter once. Never leftover-ksc. Never ``load_space_center``
+    (pad respawn). Never revert. Overlay without leftover ships: Close
+    and poll; kRPC 0.6 UI cannot click Flight Results.
     """
     session.require_connected()
     log.info("scene %s → space_center", game_scene(session))
-    _close_to_ksc(session, reload_save=reload_save)
+    _close_to_ksc(session, reload_save=False)
     deadline = time.monotonic() + timeout
     last = game_scene(session)
     while time.monotonic() < deadline:
@@ -684,25 +822,24 @@ def go_space_center(
         if ok:
             time.sleep(1.0)
             return
+        scene = game_scene(session)
+        if scene == "space_center":
+            if leftover_ships(session):
+                return
+            dismiss_flight_results(session)
+            time.sleep(1.0)
+            return
         time.sleep(0.3)
     raise SessionError(
-        f"timed out waiting for KSC (still {last}; Flight Results not dismissed)"
+        f"timed out waiting for KSC (still {last}; walk leftover ships home)"
     )
 
 
 def _reload_space_center(session: Session, *, timeout: float = 45.0) -> None:
-    """Force a KSC reload after SaveGame NRE. No Recover click (L-022)."""
+    """After SaveGame NRE: Close (scene setter). Not load_space_center."""
     session.require_connected()
-    log.info("reload space_center after SaveGame failure")
-    try:
-        session.space_center.load_space_center()
-    except Exception as exc:
-        log.warning("load_space_center: %s; game_scene setter", exc)
-        try:
-            krpc = session.conn.krpc
-            krpc.game_scene = krpc.GameScene.space_center
-        except Exception:
-            _abort_preflight_hang(session.settings)
+    log.info("Close space_center after SaveGame failure (no load_space_center)")
+    _close_to_ksc(session, reload_save=False)
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         if game_scene(session) == "space_center":
@@ -713,31 +850,47 @@ def _reload_space_center(session: Session, *, timeout: float = 45.0) -> None:
     log.warning("reload space_center still %s", game_scene(session))
 
 
-def _abort_preflight_hang(settings: ConnectionSettings) -> None:
-    """Second kRPC client: hung launch_vessel yields; this one changes scene."""
+def _abort_preflight_hang(
+    settings: ConnectionSettings, timeout: float = 8.0
+) -> None:
+    """Second kRPC client: hung launch_vessel yields; this one changes scene.
+
+    Connect and ``game_scene`` run on a daemon: Unity stuck in
+    ``LaunchConfiguredVessel`` (SaveGame NRE after pre-flight PASS) will
+    not answer. Do not issue more RPCs on the hop Session after that hang —
+    the in-flight ``launch_vessel`` holds the client lock.
+    """
     try:
         import krpc
     except ImportError:
         return
-    conn = None
-    try:
-        conn = krpc.connect(
-            name="kspstuff-abort",
-            address=settings.address,
-            rpc_port=settings.rpc_port,
-            stream_port=settings.stream_port,
-        )
-        conn.krpc.game_scene = conn.krpc.GameScene.space_center
-        log.info("abort client set game_scene=space_center")
-        time.sleep(2.0)
-    except Exception:
-        log.debug("abort client failed", exc_info=True)
-    finally:
-        if conn is not None:
-            try:
-                conn.close()
-            except Exception:
-                pass
+
+    def _run() -> None:
+        conn = None
+        try:
+            conn = krpc.connect(
+                name="kspstuff-abort",
+                address=settings.address,
+                rpc_port=settings.rpc_port,
+                stream_port=settings.stream_port,
+            )
+            conn.krpc.game_scene = conn.krpc.GameScene.space_center
+            log.info("abort client set game_scene=space_center")
+            time.sleep(2.0)
+        except Exception:
+            log.debug("abort client failed", exc_info=True)
+        finally:
+            if conn is not None:
+                try:
+                    conn.close()
+                except Exception:
+                    pass
+
+    thread = threading.Thread(target=_run, daemon=True, name="abort-preflight")
+    thread.start()
+    thread.join(timeout)
+    if thread.is_alive():
+        log.warning("abort client hung %.0fs", timeout)
 
 
 @dataclass(slots=True)
@@ -842,6 +995,7 @@ class Hangar:
         if site is None:
             site = "LaunchPad" if facility.upper() == "VAB" else "Runway"
         try:
+            walk_home(session)
             go_space_center(session)
         except Exception as exc:
             log.warning("go_space_center: %s", exc)
@@ -854,6 +1008,14 @@ class Hangar:
             raise SessionError(
                 f"Hangar waits: {why}. Close until KSC, no revert, no launch_vessel"
             )
+        run_physics(session)
+        try:
+            from flightlog import event, publish_hangar_radio
+
+            publish_hangar_radio(vessel=name, why="preflight")
+            event("hangar", f"launch {name}", site=site)
+        except Exception:
+            log.debug("hangar radio/event failed", exc_info=True)
         # Recover pad leftover before seating crew — assigned kerbals
         # on that stack are not available until it is gone (L-027).
         clear_launch_site(session, site)
@@ -876,6 +1038,10 @@ class Hangar:
             except Exception as exc:
                 last_exc = exc
                 log.warning("launch attempt %s failed: %s", attempt + 1, exc)
+                if _launch_rpc_hung(exc):
+                    raise SessionError(
+                        f"launch_vessel hung on pre-flight (session poisoned): {exc}"
+                    ) from exc
                 if _site_not_clear(exc):
                     clear_launch_site(session, site)
                     use_recover = True
@@ -906,27 +1072,72 @@ class Hangar:
         crew_list: list[str],
         recover: bool,
         timeout: float = 25.0,
+        flight_grace: float = 90.0,
     ) -> None:
+        """launch_vessel on a side client so the hop Session can poll scene.
+
+        A 25 s KSC stall is a pre-flight dialog — abort to space center.
+        Scene already ``flight`` is Kopernicus/Parallax loading the pad;
+        do **not** yank that back to KSC (T-137).
+        """
         box: dict[str, Any] = {"exc": None, "ok": False}
+        settings = session.settings
 
         def _run() -> None:
+            conn = None
             try:
-                session.space_center.launch_vessel(
+                import krpc
+
+                conn = krpc.connect(
+                    name="kspstuff-launch",
+                    address=settings.address,
+                    rpc_port=settings.rpc_port,
+                    stream_port=settings.stream_port,
+                )
+                conn.space_center.launch_vessel(
                     facility, name, site, crew_list, recover
                 )
                 box["ok"] = True
             except Exception as exc:
                 box["exc"] = exc
+            finally:
+                if conn is not None:
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
 
         thread = threading.Thread(target=_run, daemon=True, name="launch_vessel")
         thread.start()
-        thread.join(timeout)
+        deadline = time.monotonic() + timeout
+        saw_flight = False
+        while thread.is_alive() and time.monotonic() < deadline:
+            if game_scene(session) == "flight":
+                saw_flight = True
+                break
+            time.sleep(0.2)
+        if thread.is_alive() and saw_flight:
+            log.info("launch_vessel: scene flight — waiting %.0fs for vessel", flight_grace)
+            try:
+                from flightlog import event
+
+                event("hangar", "scene flight", site=site)
+            except Exception:
+                pass
+            thread.join(flight_grace)
+        if thread.is_alive() and not saw_flight and game_scene(session) != "flight":
+            log.warning("launch_vessel hung %.0fs at KSC — aborting to space center", timeout)
+            try:
+                from flightlog import event
+
+                event("hangar", "abort preflight", site=site)
+            except Exception:
+                pass
+            _abort_preflight_hang(settings)
+            thread.join(2.0)
+            raise SessionError("launch_vessel hung on pre-flight (dialog?)")
         if thread.is_alive():
-            log.warning("launch_vessel hung %.0fs — aborting to space center", timeout)
-            _abort_preflight_hang(session.settings)
-            thread.join(20.0)
-            if thread.is_alive():
-                raise SessionError("launch_vessel hung on pre-flight (dialog?)")
+            raise SessionError("launch_vessel hung after Flight scene")
         if box["exc"] is not None:
             raise box["exc"]
         if not box["ok"]:

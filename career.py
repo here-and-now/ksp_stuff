@@ -41,6 +41,20 @@ RP1_NOTES = (
 )
 
 
+def space_center_science(session: Any | None) -> float | None:
+    """RAM R&D bank. ``persistent.sfs`` lags until Hangar/scene autosave."""
+    if session is None:
+        return None
+    try:
+        sc = getattr(session, "space_center", None)
+        val = getattr(sc, "science", None)
+        if val is None:
+            return None
+        return float(val)
+    except Exception:
+        return None
+
+
 def _enum_name(value: Any) -> str:
     return getattr(value, "name", str(value))
 
@@ -58,10 +72,7 @@ def snapshot_career(session: Session) -> CareerSnapshot:
         funds = float(sc.funds)
     except Exception:
         pass
-    try:
-        science = float(sc.science)
-    except Exception:
-        pass
+    science = space_center_science(session)
     try:
         reputation = float(sc.reputation)
     except Exception:

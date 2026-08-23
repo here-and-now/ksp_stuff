@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import json
+import math
 import tempfile
 import time
 import unittest
 from pathlib import Path
 
 from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold
+from tape import Tape, envelope, format_envelope
 from telem import (
     EventLog,
     Telem,
@@ -20,7 +22,9 @@ from telem import (
     landing_from_jsonl,
     pulse_s,
     read_snapshot,
+    reliability_broken,
     Snapshot,
+    stack_shear,
 )
 import uplink
 
@@ -84,6 +88,9 @@ class _Flight:
         self.pitch = 90.0
         self.angle_of_attack = 0.0
         self.horizontal_speed = speed if horiz is None else horiz
+        self.g_force = 1.0
+        self.latitude = float("nan")
+        self.longitude = float("nan")
 
 
 class _Orbit:
@@ -124,6 +131,8 @@ class _Vessel:
         self.control = _Control()
         self.resources = _Resources({"ElectricCharge": ec, "SolidFuel": fuel})
         self.thrust = 0.0
+        self.available_thrust = 0.0
+        self.mass = 1000.0
         self.met = 0.0
         self.biome = "Shores"
         self._flight = _Flight(alt=alt, speed=speed, heading=90.0, horiz=speed)
@@ -369,9 +378,19 @@ class TestLandingTape(unittest.TestCase):
     def test_pulse_s_bursts_near_surface(self):
         cruise = pulse_s(Snapshot(situation="flying", alt=40_000.0, v_vert=-50.0))
         near = pulse_s(Snapshot(situation="flying", alt=400.0, v_vert=-200.0))
+        chute = pulse_s(Snapshot(situation="flying", alt=5_000.0, v_vert=-110.0))
+        burn = pulse_s(
+            Snapshot(situation="flying", alt=12_000.0, v_vert=400.0, throttle=1.0)
+        )
+        coast = pulse_s(
+            Snapshot(situation="flying", alt=12_000.0, v_vert=50.0, throttle=0.0)
+        )
         self.assertLess(near, cruise)
         self.assertAlmostEqual(near, 0.05)
         self.assertAlmostEqual(cruise, 0.2)
+        self.assertAlmostEqual(chute, 0.05)
+        self.assertAlmostEqual(burn, 0.05)
+        self.assertAlmostEqual(coast, 0.2)
 
     def test_streams_vertical_speed(self):
         vessel = _Vessel(alt=400.0, sit="flying", speed=200.0)
@@ -382,6 +401,10 @@ class TestLandingTape(unittest.TestCase):
         self.assertAlmostEqual(snap.v_vert, -180.0)
         names = [c[2] for c in session.stream_calls]
         self.assertIn("vertical_speed", names)
+        self.assertIn("latitude", names)
+        self.assertIn("longitude", names)
+        self.assertFalse(math.isfinite(snap.lat))
+        self.assertFalse(math.isfinite(snap.downrange))
 
     def test_sit_change_emits_landing_event(self):
         vessel = _Vessel(alt=200.0, sit="flying", speed=233.0)
@@ -408,4 +431,590 @@ class TestLandingTape(unittest.TestCase):
         line = format_landing(row)
         self.assertIn("catastrophic", line)
         self.assertIn("impact=", line)
+        self.assertIn("horiz=", line)
+        self.assertIn("pitch=", line)
+        self.assertNotIn("horiz=?", line)
+        self.assertNotIn("pitch=?", line)
         self.assertNotIn(".jsonl", line.split("impact")[0])
+        self.assertIsNotNone(row.get("horiz"))
+        self.assertIsNotNone(row.get("pitch"))
+        block = format_envelope(row)
+        self.assertIn("landing: catastrophic", block)
+        self.assertIn("eyes:", block)
+        self.assertNotIn("kind=state", block)
+        self.assertNotIn('"kind": "state"', block)
+
+    def test_read_records_requested_hz(self):
+        vessel = _Vessel(alt=40_000.0, sit="flying", speed=200.0)
+        snap = read_snapshot(_Session(vessel))
+        self.assertAlmostEqual(snap.hz, 5.0)
+        near = _Vessel(alt=400.0, sit="flying", speed=200.0)
+        near._flight.vertical_speed = -200.0
+        self.assertAlmostEqual(read_snapshot(_Session(near)).hz, 20.0)
+
+
+class TestTapeEyes(unittest.TestCase):
+    hops = (
+        Path("docs/missions/jebediah/logs/2026-08-22T23-01-19Z-hop.jsonl"),
+        Path("docs/missions/jebediah/logs/2026-08-22T23-14-23Z-hop.jsonl"),
+    )
+
+    def test_hop_envelopes_without_state_rows(self):
+        got = []
+        for path in self.hops:
+            if not path.is_file():
+                self.skipTest(f"missing {path}")
+            env = envelope(path)
+            text = format_envelope(env)
+            self.assertNotIn("kind=state", text)
+            self.assertGreater(env["samples"], 10)
+            self.assertGreater(env["apo_max"], 10_000)
+            self.assertAlmostEqual(env["pad"]["heading"], 299, delta=2)
+            self.assertIn(env["landing"], {"hard", "catastrophic", "firm", "soft"})
+            self.assertLessEqual(len(text), 900)
+            self.assertIn("tape:", text)
+            self.assertIn("q=", text)
+            self.assertIn("ec=", text)
+            self.assertIn("events:", text)
+            self.assertIn("descent:", text)
+            got.append(env)
+        self.assertEqual(got[0]["landing"], "catastrophic")
+        self.assertGreater(got[0]["impact_ms"], 100)
+        self.assertEqual(got[1]["landing"], "hard")
+        self.assertGreater(got[1]["impact_ms"], 50)
+        self.assertLess(got[1]["impact_ms"], 100)
+
+    def test_windows_are_capped(self):
+        path = self.hops[0]
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        tape = Tape(path)
+        impact = tape.window("impact", max_rows=12)
+        self.assertLessEqual(impact["n"], 12)
+        self.assertTrue(impact["rows"])
+        self.assertNotIn("resources", impact["rows"][0])
+        self.assertIn("q", impact["rows"][0])
+        self.assertIn("ec", impact["rows"][0])
+        pad = tape.window("pad")
+        self.assertEqual(pad["n"], 1)
+        self.assertEqual(pad["rows"][0]["situation"], "pre_launch")
+        apex = tape.window("apex")
+        self.assertEqual(apex["n"], 1)
+        self.assertGreater(apex["rows"][0]["apo"], 10_000)
+        descent = tape.window("descent")
+        self.assertGreaterEqual(descent["n"], 1)
+        burn = tape.window("burnout")
+        self.assertEqual(burn["window"], "burnout")
+        air = tape.window("airborne")
+        self.assertGreaterEqual(air["n"], 1)
+        self.assertEqual(air["rows"][0]["situation"], "flying")
+        kinds = tape.events("landing")
+        self.assertEqual(len(kinds), 1)
+        self.assertEqual(kinds[0]["kind"], "landing")
+
+    def test_thin_tape_surfaces_q_ec_stage(self):
+        path = Path("docs/missions/jebediah/logs/2026-08-22T23-54-24Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        text = format_envelope(env)
+        self.assertIn("tape:", text)
+        self.assertIn("q=", text)
+        self.assertNotIn("q=?", text)
+        self.assertIn("ec=", text)
+        self.assertIn("stage=", text)
+        self.assertIn("events: start,end", text)
+        air = Tape(path).window("airborne")
+        self.assertIn("q", air["rows"][0])
+        self.assertGreater(air["rows"][0]["q"], 0)
+
+    def test_wreck_emits_landing_kind(self):
+        vessel = _Vessel(alt=74.0, sit="flying", speed=154.0)
+        vessel.met = 67.62
+        vessel._flight.dynamic_pressure = 0.0
+        vessel._flight.vertical_speed = -154.0
+        events = EventLog()
+        with Telem(_Session(vessel), events=events) as telem:
+            first = telem.read()
+            second = telem.read()
+        self.assertFalse(first.wreck)
+        self.assertTrue(second.wreck)
+        self.assertTrue(second.landing)
+        hits = [e for e in events.events if e.get("event") == "landing"]
+        self.assertEqual(len(hits), 1)
+
+    def test_recoverable_edge_emits(self):
+        vessel = _Vessel(alt=80.0, sit="landed", speed=0.0)
+        vessel.recoverable = False
+        events = EventLog()
+        with Telem(_Session(vessel), events=events) as telem:
+            telem.read()
+            vessel.recoverable = True
+            snap = telem.read()
+        self.assertTrue(snap.recoverable)
+        hits = [e for e in events.events if e.get("event") == "recoverable"]
+        self.assertEqual(len(hits), 1)
+        self.assertTrue(hits[0].get("recoverable"))
+
+    def test_g_force_stream(self):
+        vessel = _Vessel(alt=400.0, sit="flying", speed=200.0)
+        vessel._flight.g_force = 3.2
+        snap = read_snapshot(_Session(vessel))
+        self.assertAlmostEqual(snap.g, 3.2)
+        self.assertEqual(snap.chute, "none")
+        self.assertFalse(snap.sci_run)
+        self.assertIsNone(snap.sci_bank)
+
+    def test_sci_bank_from_handoff_event(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+                "alt": 84.0,
+                "apo": 84.0,
+                "sci_bank": 1.4718,
+            },
+            {
+                "kind": "state",
+                "t": 10.0,
+                "situation": "flying",
+                "heading": 299.0,
+                "horiz": 5.0,
+                "pitch": 80.0,
+                "alt": 400.0,
+                "apo": 12000.0,
+                "sci_bank": 1.4718,
+            },
+            {"kind": "sci_bank", "t": 12.0, "sci": 5.6718, "msg": "sci=5.6718"},
+            {"kind": "end", "t": 13.0},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        text = format_envelope(env)
+        self.assertAlmostEqual(env["sci_bank"], 5.6718)
+        self.assertIn("bank=5.67", text)
+
+
+class _Field:
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+
+class _DupGuiModule:
+    """kRPC Module.fields / get_field throw on duplicate PAW gui names."""
+
+    name = "ModuleReactionWheel"
+
+    def __init__(self, *, broken=False):
+        self.field_list = [_Field("broken", broken)]
+
+    @property
+    def fields(self):
+        raise ValueError("Key: Reaction Wheels")
+
+    def get_field(self, key):
+        raise ValueError("Key: Reaction Wheels")
+
+
+class TestDescentTape(unittest.TestCase):
+    def test_apex_is_peak_alt_not_max_apo(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "alt": 85.0,
+                "apo": 85.0,
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+            },
+            {
+                "kind": "state",
+                "t": 40.0,
+                "met": 39.6,
+                "situation": "flying",
+                "alt": 10874.0,
+                "apo": 21520.0,
+                "v_vert": 453.0,
+                "heading": 297.0,
+                "horiz": 29.0,
+                "pitch": 88.0,
+            },
+            {
+                "kind": "state",
+                "t": 100.0,
+                "met": 65.6,
+                "situation": "flying",
+                "alt": 14086.0,
+                "apo": 21520.0,
+                "v_vert": -36.0,
+                "heading": 297.0,
+                "horiz": 29.0,
+                "pitch": 80.0,
+            },
+            {
+                "kind": "state",
+                "t": 211.0,
+                "met": 182.6,
+                "situation": "flying",
+                "alt": 412.0,
+                "apo": 829.0,
+                "v_vert": -91.0,
+                "heading": 260.0,
+                "horiz": 10.0,
+                "pitch": -3.0,
+            },
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        tape = Tape(tmp)
+        env = tape.envelope()
+        self.assertAlmostEqual(env["alt_max"], 14086.0)
+        self.assertAlmostEqual(env["apex"]["alt"], 14086.0)
+        self.assertGreaterEqual(env["descent_n"], 2)
+        apex = tape.window("apex")
+        self.assertAlmostEqual(apex["rows"][0]["alt"], 14086.0)
+        descent = tape.window("descent")
+        alts = [r["alt"] for r in descent["rows"]]
+        self.assertEqual(alts[0], 14086.0)
+        self.assertEqual(alts[-1], 412.0)
+        impact = tape.window("impact")
+        self.assertGreaterEqual(impact["n"], 1)
+        text = format_envelope(env)
+        self.assertIn("descent:", text)
+        self.assertIn("14086", text)
+        self.assertIn("412", text)
+        self.assertLessEqual(len(text), 900)
+
+    def test_0721_envelope_shows_descent_ladder(self):
+        path = Path("docs/missions/jebediah/logs/2026-08-23T07-21-05Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        self.assertGreater(env["alt_max"], 13_000)
+        self.assertLess(env["apex"]["alt"], 15_000)
+        self.assertGreater(env["apex"]["alt"], 12_000)
+        self.assertGreaterEqual(env["descent_n"], 8)
+        descent = Tape(path).window("descent")
+        alts = [r["alt"] for r in descent["rows"] if r.get("alt") is not None]
+        self.assertGreater(alts[0], 10_000)
+        self.assertLess(alts[-1], 500)
+        text = format_envelope(env)
+        self.assertIn("descent:", text)
+        self.assertNotIn("kind=state", text)
+
+    def test_0928_envelope_shows_burnout_attitude(self):
+        """Apex is peak alt; slew flash is the burn row (Jeb 209/3)."""
+        path = Path("docs/missions/jebediah/logs/2026-08-23T09-28-59Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        burn = env.get("burnout") or {}
+        self.assertAlmostEqual(burn.get("heading") or 0.0, 209.0, delta=2)
+        self.assertAlmostEqual(burn.get("pitch") or 90.0, 3.0, delta=2)
+        self.assertGreaterEqual(env.get("burnout_n") or 0, 3)
+        text = format_envelope(env)
+        self.assertIn("burn:", text)
+        self.assertIn("heading=209", text)
+        self.assertIn("pitch=3", text)
+        self.assertNotIn("kind=state", text)
+        self.assertLessEqual(len(text), 900)
+        rows = Tape(path).window("burnout")["rows"]
+        pitches = [r.get("pitch") for r in rows if r.get("pitch") is not None]
+        self.assertTrue(pitches)
+        self.assertLess(min(abs(p) for p in pitches), 10.0)
+
+    def test_burnout_picks_min_pitch_not_apex(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "pitch": 90.0,
+                "horiz": 0.0,
+                "alt": 85.0,
+                "throttle": 0.0,
+                "fuel": 675.0,
+            },
+            {
+                "kind": "state",
+                "t": 20.0,
+                "met": 1.1,
+                "situation": "flying",
+                "heading": 299.0,
+                "pitch": 90.0,
+                "horiz": 0.1,
+                "alt": 95.0,
+                "throttle": 1.0,
+                "fuel": 650.0,
+                "v_vert": 22.0,
+            },
+            {
+                "kind": "state",
+                "t": 80.0,
+                "met": 49.1,
+                "situation": "flying",
+                "heading": 209.0,
+                "pitch": 3.0,
+                "horiz": 22.0,
+                "alt": 13094.0,
+                "throttle": 1.0,
+                "fuel": 0.0,
+                "v_vert": 10.0,
+            },
+            {
+                "kind": "state",
+                "t": 92.0,
+                "met": 63.5,
+                "situation": "flying",
+                "heading": 297.0,
+                "pitch": 86.0,
+                "horiz": 23.0,
+                "alt": 13806.0,
+                "throttle": 0.0,
+                "fuel": 0.0,
+                "v_vert": -23.0,
+            },
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        self.assertAlmostEqual(env["apex"]["alt"], 13806.0)
+        self.assertAlmostEqual(env["burnout"]["heading"], 209.0)
+        self.assertAlmostEqual(env["burnout"]["pitch"], 3.0)
+        self.assertIn("burn:", format_envelope(env))
+
+    def test_expensive_read_skips_slow_part_walks(self):
+        class _Part:
+            def __init__(self):
+                self.name = "okto"
+                self.mod_hits = 0
+
+            @property
+            def modules(self):
+                self.mod_hits += 1
+                return []
+
+        part = _Part()
+        vessel = _Vessel(alt=12_000.0, sit="flying", speed=200.0)
+        vessel.parts = type("P", (), {"all": [part], "parachutes": [], "root": part})()
+        session = _Session(vessel)
+        with Telem(session) as telem:
+            telem.read()
+            hits = part.mod_hits
+            self.assertGreater(hits, 0)
+            telem._last_read_s = 5.0
+            telem._slow_at = time.monotonic() - 10.0
+            telem.read()
+            self.assertEqual(part.mod_hits, hits)
+
+    def test_bind_same_vessel_id_keeps_streams(self):
+        a = _Vessel(alt=400.0, sit="flying", speed=20.0)
+        a.id = "guid-1"
+        session = _Session(a)
+        with Telem(session) as telem:
+            telem.read()
+            n = len(session.stream_calls)
+            b = _Vessel(alt=500.0, sit="flying", speed=20.0)
+            b.id = "guid-1"
+            b._flight = a._flight
+            b.orbit = a.orbit
+            session.active_vessel = b
+            telem.read()
+            self.assertEqual(len(session.stream_calls), n)
+
+
+class TestReliabilityFields(unittest.TestCase):
+    def test_okto_duplicate_gui_does_not_raise(self):
+        wheel = _DupGuiModule()
+        part = type("Part", (), {"name": "probeCoreOcto_v2", "modules": [wheel]})()
+        vessel = _Vessel(sit="pre_launch")
+        vessel.parts = type("P", (), {"all": [part]})()
+        self.assertIsNone(reliability_broken(vessel))
+        snap = read_snapshot(_Session(vessel))
+        self.assertIsNone(snap.broken)
+
+    def test_broken_via_field_list_when_fields_boom(self):
+        wheel = _DupGuiModule(broken=True)
+        part = type("Part", (), {"name": "probeCoreOcto_v2", "modules": [wheel]})()
+        vessel = _Vessel(sit="pre_launch")
+        vessel.parts = type("P", (), {"all": [part]})()
+        self.assertEqual(
+            reliability_broken(vessel),
+            "probeCoreOcto_v2:ModuleReactionWheel:broken",
+        )
+
+    def test_broken_via_fields_dict(self):
+        mod = type(
+            "Mod",
+            (),
+            {"name": "Experiment", "fields": {"broken": True}},
+        )()
+        part = type("Part", (), {"name": "GooExperiment", "modules": [mod]})()
+        vessel = _Vessel(sit="pre_launch")
+        vessel.parts = type("P", (), {"all": [part]})()
+        self.assertEqual(
+            reliability_broken(vessel),
+            "GooExperiment:Experiment:broken",
+        )
+
+
+class TestStackShear(unittest.TestCase):
+    def test_mass_drop_not_fuel(self):
+        prev = {"mass": 1677.0, "fuel": 356.0, "stage": 1, "parts_n": 9}
+        cur = {"mass": 270.0, "fuel": 123.0, "stage": 1, "parts_n": 3}
+        self.assertTrue(stack_shear(prev, cur))
+
+    def test_staging_is_not_shear(self):
+        prev = {"mass": 2825.0, "fuel": 720.0, "stage": 2, "parts_n": 11}
+        cur = {"mass": 2489.0, "fuel": 700.0, "stage": 1, "parts_n": 9}
+        self.assertFalse(stack_shear(prev, cur))
+
+    def test_burn_is_not_shear(self):
+        prev = {"mass": 1804.0, "fuel": 406.0, "stage": 1, "parts_n": 9}
+        cur = {"mass": 1283.0, "fuel": 178.0, "stage": 1, "parts_n": 9}
+        self.assertFalse(stack_shear(prev, cur))
+
+    def test_parts_drop_is_shear(self):
+        prev = {"mass": 1800.0, "fuel": 400.0, "stage": 1, "parts_n": 9}
+        cur = {"mass": 1700.0, "fuel": 380.0, "stage": 1, "parts_n": 3}
+        self.assertTrue(stack_shear(prev, cur))
+
+    def test_live_read_flags_shear(self):
+        vessel = _Vessel(alt=4000.0, sit="flying", speed=200.0, fuel=400.0)
+        vessel.mass = 1677.0
+        vessel.control.current_stage = 1
+        core = type("Part", (), {"name": "probeCoreOcto.v2", "modules": []})()
+        tank = type("Part", (), {"name": "proceduralTank", "modules": []})()
+        vessel.parts = type("P", (), {"all": [core, tank], "root": core})()
+        events = EventLog()
+        with Telem(_Session(vessel), events=events) as telem:
+            first = telem.read()
+            vessel.mass = 270.0
+            vessel.parts = type("P", (), {"all": [core], "root": core})()
+            second = telem.read()
+        self.assertFalse(first.shear)
+        self.assertEqual(first.parts_n, 2)
+        self.assertTrue(second.shear)
+        self.assertIn("shear", second.flags)
+        self.assertEqual(second.parts_n, 1)
+        self.assertEqual(second.root, "probeCoreOcto.v2")
+        self.assertIsNone(second.broken)
+        hits = [e for e in events.events if e.get("event") == "shear"]
+        self.assertEqual(len(hits), 1)
+
+    def test_envelope_surfaces_shear_on_known_hop(self):
+        path = Path("docs/missions/jebediah/logs/2026-08-23T06-53-50Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        text = format_envelope(env)
+        self.assertTrue(env["shear"])
+        self.assertIn("shear", env["events"])
+        self.assertIn("stack:", text)
+        self.assertIn("shear=yes", text)
+        self.assertIn("mass=", text)
+        self.assertIn("broken=none", text)
+
+
+class TestWhere(unittest.TestCase):
+    def test_downrange_km_cape_north(self):
+        from sites import CAPE, downrange_km
+
+        n = downrange_km(CAPE.latitude + 0.01, CAPE.longitude, CAPE.latitude, CAPE.longitude)
+        self.assertGreater(n, 1.0)
+        self.assertLess(n, 1.3)
+        self.assertAlmostEqual(
+            downrange_km(CAPE.latitude, CAPE.longitude, CAPE.latitude, CAPE.longitude),
+            0.0,
+            places=6,
+        )
+
+    def test_read_lat_lon_downrange_on_pad(self):
+        from sites import CAPE
+
+        vessel = _Vessel(alt=80.0, sit="pre_launch", speed=0.0)
+        vessel.biome = "Shores"
+        vessel._flight.latitude = CAPE.latitude
+        vessel._flight.longitude = CAPE.longitude
+        session = _Session(vessel)
+        with Telem(session) as telem:
+            telem._pad_ll = (CAPE.latitude, CAPE.longitude)
+            snap = telem.read()
+        self.assertAlmostEqual(snap.lat, CAPE.latitude, places=5)
+        self.assertAlmostEqual(snap.lon, CAPE.longitude, places=5)
+        self.assertAlmostEqual(snap.downrange, 0.0, places=2)
+        self.assertEqual(snap.biome, "Shores")
+
+    def test_envelope_where_line(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "pitch": 90.0,
+                "horiz": 0.0,
+                "alt": 85.0,
+                "biome": "Shores",
+                "lat": 28.6084,
+                "lon": -80.6043,
+                "downrange": 0.0,
+            },
+            {
+                "kind": "state",
+                "t": 40.0,
+                "met": 80.0,
+                "situation": "flying",
+                "heading": 270.0,
+                "pitch": 65.0,
+                "horiz": 80.0,
+                "alt": 7000.0,
+                "apo": 9000.0,
+                "biome": "Forest",
+                "lat": 28.70,
+                "lon": -80.70,
+                "downrange": 12.4,
+            },
+            {
+                "kind": "state",
+                "t": 90.0,
+                "met": 140.0,
+                "situation": "landed",
+                "heading": 270.0,
+                "pitch": 5.0,
+                "horiz": 0.0,
+                "alt": 12.0,
+                "biome": "Forest",
+                "lat": 28.71,
+                "lon": -80.71,
+                "downrange": 13.6,
+            },
+            {"kind": "landing", "landing": "soft", "sit": "landed", "biome": "Forest"},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        text = format_envelope(env)
+        self.assertAlmostEqual(env["lat"], 28.71, places=3)
+        self.assertAlmostEqual(env["lon"], -80.71, places=3)
+        self.assertAlmostEqual(env["downrange"], 13.6, places=2)
+        self.assertEqual(env["biome"], "Forest")
+        self.assertIn("Forest", env["biomes"])
+        self.assertIn("Shores", env["biomes"])
+        self.assertIn("where:", text)
+        self.assertIn("lat=28.7100", text)
+        self.assertIn("lon=-80.7100", text)
+        self.assertIn("down=13.60 km", text)
+        self.assertIn("biome=Shores,Forest", text)

@@ -10,6 +10,8 @@ from unittest.mock import patch
 from catalog import Catalog, ExperimentCfg, merge_experiment_cfg
 from pad import (
     TEMPLATE,
+    arm_chutes,
+    deploy_chutes,
     install_and_launch,
     pad_craft_path,
     pad_science_ids,
@@ -1137,6 +1139,81 @@ class TestPadUplink(unittest.TestCase):
         self.assertEqual(result, "recovered")
         self.assertEqual(vessel.control.staged, 1)
         self.assertEqual(mod.triggered, ["Start Experiment"])
+
+
+class _KrpcChute:
+    def __init__(self):
+        self.armed = False
+        self.deployed = False
+        self.state = "stowed"
+
+    def deploy(self):
+        self.deployed = True
+        self.state = "deployed"
+
+
+class TestArmChutes(unittest.TestCase):
+    def test_none_without_chute(self):
+        vessel = _Vessel([])
+        self.assertEqual(arm_chutes(vessel), "none")
+        self.assertEqual(vessel.control.staged, 0)
+
+    def test_realchute_arm_not_stage(self):
+        mod = _Mod(
+            "RealChuteModule",
+            "",
+            events=["Arm parachute", "Deploy chute", "Cut main chute"],
+        )
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("parachuteSingle", [mod])])
+        logs: list[str] = []
+        st = arm_chutes(vessel, logs.append)
+        self.assertEqual(st, "armed")
+        self.assertEqual(mod.triggered, ["Arm parachute"])
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(any("chute" in x for x in logs))
+
+    def test_krpc_parachute_sets_armed(self):
+        ch = _KrpcChute()
+        vessel = _Vessel([])
+        vessel.parts.parachutes = [ch]
+        st = arm_chutes(vessel)
+        self.assertTrue(ch.armed)
+        self.assertEqual(st, "armed")
+        self.assertEqual(vessel.control.staged, 0)
+
+    def test_ignores_experiment_modules(self):
+        mod = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([mod])
+        self.assertEqual(arm_chutes(vessel), "none")
+        self.assertEqual(mod.triggered, [])
+
+    def test_deploy_realchute_not_cut(self):
+        """06-53-50Z kRPC armed never Deploy; 154 m/s packed."""
+        mod = _Mod(
+            "RealChuteModule",
+            "",
+            events=["Arm parachute", "Deploy chute", "Cut main chute"],
+        )
+        vessel = _Vessel([mod])
+        vessel.parts = _Parts([_Part("parachuteSingle", [mod])])
+        st = deploy_chutes(vessel)
+        self.assertEqual(st, "deployed")
+        self.assertEqual(mod.triggered, ["Arm parachute", "Deploy chute"])
+        self.assertEqual(vessel.control.staged, 0)
+
+    def test_skips_procedural_chute_module(self):
+        proc = _Mod(
+            "ProceduralChute",
+            "",
+            events=["Arm parachute", "Deploy chute"],
+        )
+        vessel = _Vessel([proc])
+        vessel.parts = _Parts([_Part("parachuteSingle", [proc])])
+        st = arm_chutes(vessel)
+        self.assertEqual(proc.triggered, [])
+        self.assertNotEqual(st, "armed")
+        self.assertEqual(vessel.control.staged, 0)
 
 
 class TestPadModule(unittest.TestCase):

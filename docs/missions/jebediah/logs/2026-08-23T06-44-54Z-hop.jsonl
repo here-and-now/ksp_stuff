@@ -1,0 +1,2 @@
+{"t": 0.999, "kind": "start", "msg": "command=hop crew=", "earth_utc": "2026-08-23 06:44:54 UTC", "earth_stamp": "2026-08-23T06-44-54Z", "kerbal_ut_s": 237656.913, "kerbal_met_s": 237656.873, "kerbal_ut": "2d 18:00:56 UT", "kerbal_met": "MET 2d 18:00:56"}
+{"t": 8.085, "kind": "hangar", "msg": "launch kspstuff-hop-valiant-proc-tank-pbc", "site": "LaunchPad"}

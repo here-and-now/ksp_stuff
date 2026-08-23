@@ -14,10 +14,11 @@ titles. Drop RAF/spy/radio-compact.
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |
 | **go: / wait** | MCC. Keep. |
-| **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene; batch Learn at stop. `none` = Learn each hop. Plan.md is a render. |
+| **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene. Learn is `payload.learn`. `ops next` hires Gene for Learn only when campaign is not `uncrewed` and learn is empty. `none` = Learn each hop. Plan.md is a render. |
 | **CAPCOM** | NASA loop. Walt. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
-| **leftover / KSC** | Space Center wreck or unmatched vessel. **Hank** `recover-probe` [`--recover`\|`--space-center`] or `ksc`. Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. |
+| **leftover / KSC** | Space Center wreck or unmatched vessel. **Hank** walk home: `recover()` + Close (`recover-probe --recover` if recoverable). Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |
+| **leftover-ksc** | **Retired.** Named save/load of the overlay looked like a reload / return to pre-launch. Os disabled reverting flights. Overlay dismiss is `recover()` + Close. Never that load. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
 | **F-001** | Gym archive (`docs/program/feedback.md`). Live friction is `type=ops --tag feedback` or `type=rsi`. |
 | **need_stack** | Leftover return shim (`tickets from-need` → `type=control` Lars). Desks open tickets, not this token. |

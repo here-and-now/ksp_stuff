@@ -7,9 +7,10 @@ Stayputnik TELEMETRY PAW and GooExperiment still start. ``Module.fields`` is PAW
 ``experiment_id`` is a hidden field (``field_list`` / ``get_field_by_id``
 / ``config``). Pad dwells until HD has the card (status / Has Data /
 remaining, else cfg ``data_rate`` × ScienceDefs size, capped by remaining
-EC / ``ec_rate``). Hop FlyingLow starts the **flying** card once airborne; FlyingHigh
+EC / ``ec_rate``). Hop FlyingLow starts the **bound** flying card once airborne; FlyingHigh
 Toggles only at alt ≥50 km (not T+1 FlyingLow; not a second Toggle
-at the lid). Splash goo is not a hop start. Recovers when
+at the lid). Unbound leftover FlyingHigh tickets are not a lid.
+Splash goo is not a hop start. Recovers when
 landed/splashed/wreck-recoverable, or when EC=0 and the HD already
 has data — it does not wait the pad catalog wall. One Toggle per experiment_id; 2HOT owns ``temperatureScan``,
 not Stayputnik (a second Toggle stops Kerbalism). A leftover with files

@@ -39,12 +39,15 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
     """Live last-flight, jsonl close, and after-flight review under logs/."""
     from datetime import datetime, timezone
 
+    from career import space_center_science
     from crew import append_log, current_pilot
     from flightlog import (
         close as log_close,
+        event as log_event,
         live_records,
         path as log_path,
         stamp as log_stamp,
+        writer_session,
     )
 
     if not live_records():
@@ -52,13 +55,21 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
     from review import write_review
 
     try:
+        sci = space_center_science(writer_session())
+        if sci is not None:
+            try:
+                log_event("sci_bank", f"sci={sci:.4f}", sci=sci)
+            except Exception:
+                log.debug("sci_bank event failed", exc_info=True)
         HANDOFF.parent.mkdir(parents=True, exist_ok=True)
         body = [
             f"command: {command}",
             f"exit: {exit_code}",
             f"abort: {abort or ''}",
-            "last:",
         ]
+        if sci is not None:
+            body.append(f"sci: {sci:.4f}")
+        body.append("last:")
         body.extend(f"  {line}" for line in _LINES)
         body.append("")
         text = "\n".join(body)
@@ -84,6 +95,16 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
                 )
             except Exception:
                 log.debug("review failed", exc_info=True)
+            if command not in {"ksc", "load", "recover-probe"}:
+                try:
+                    from tickets import attach_run, seated_fly_ticket
+
+                    fly = seated_fly_ticket()
+                    fid = str((fly or {}).get("id") or "")
+                    if fid:
+                        attach_run(fid, jsonl, who="wernher")
+                except Exception:
+                    log.debug("attach-run failed", exc_info=True)
         try:
             person = current_pilot()
             note = f"{stamp} {command} exit={exit_code}"
@@ -614,6 +635,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     tk = sub.add_parser("tickets", help="Hank ticket bus (no kRPC)")
     tk.add_argument("rest", nargs=argparse.REMAINDER, help="open|list|show|…")
+    telem_p = sub.add_parser(
+        "telem",
+        help="Jsonl envelope/windows (no kRPC; do not read the tape)",
+    )
+    telem_p.add_argument("path", help="run jsonl")
+    telem_p.add_argument(
+        "--window",
+        default="",
+        help="pad|airborne|apex|descent|impact|events",
+    )
+    telem_p.add_argument("--kind", default="", help="non-state kind (start, landing, end)")
+    telem_p.add_argument("--around-met", type=float, default=None, dest="around_met")
+    telem_p.add_argument("--before", type=float, default=2.0)
     ops_p = sub.add_parser("ops", help="Hank dispatch next (no kRPC)")
     ops_p.add_argument("rest", nargs="*", help="next")
     proto = sub.add_parser(
@@ -640,6 +674,10 @@ def main(argv: list[str] | None = None) -> int:
     rev.add_argument("log", nargs="?", default=None, help="docs/flights/<stamp>-mun.jsonl")
     sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
     sub.add_parser("radio", help="Gene inbox: ship.md + uplink + loop (no kRPC)")
+    sub.add_parser(
+        "ship",
+        help="Live envelope from ship.md (heading/wreck/ec/alt/lat/lon/downrange/biome; no kRPC)",
+    )
     brief_p = sub.add_parser("brief", help="Gene → seated mission briefing + loop")
     brief_p.add_argument("text", nargs="+")
     seat_p = sub.add_parser("seat", help="Point current.md at a mission dossier")
@@ -764,6 +802,10 @@ def main(argv: list[str] | None = None) -> int:
 
         print(radio_text(), end="")
         return 0
+    if args.cmd == "ship":
+        from flightlog import cmd_ship
+
+        return cmd_ship()
     if args.cmd == "plan":
         from missions import seated_plan_path
 
@@ -829,6 +871,19 @@ def main(argv: list[str] | None = None) -> int:
         from tickets import cmd_tickets
 
         return cmd_tickets(list(args.rest))
+    if args.cmd == "telem":
+        from tape import cmd_telem
+
+        argv = [args.path]
+        if args.window:
+            argv.extend(["--window", args.window])
+        if args.kind:
+            argv.extend(["--kind", args.kind])
+        if args.around_met is not None:
+            argv.extend(["--around-met", str(args.around_met)])
+        if args.before != 2.0:
+            argv.extend(["--before", str(args.before)])
+        return cmd_telem(argv)
     if args.cmd == "ops":
         from ops import cmd_ops
 

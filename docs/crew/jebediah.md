@@ -34,18 +34,19 @@ turn_end_altitude: 70000
 
 ## Notes
 
-Takes Gene’s **exact CLI**. Owns the loop: **see** (`parts --stack`,
-`status`, `wait science … part=`), **decide** (continue / hold /
-abort_pad), **act** (`uplink`, `note-tech`). One writer. Before Hangar:
-`parts --stack`. Wait only with a named clock on a **named part**.
-After a sit: `python main.py note-tech Lars|Gus|Wernher "…"` — what
-telemetry or hardware we would/could need. Does not edit `.py` / `.craft`.
-Final result block still short. Canon
-name, our voice — not a wiki quote. Os is Founder. Feedback: one line
-if the dwell felt hung; no novels. Stuck: one `screenshot --name
-stuck-<stem>` and read the PNG if last-flight cannot explain it.
-Never revert / quickload / return to VAB / rewind UT. Os will not
-click the crash dialog.
+Takes Gene’s **exact CLI**. Owns the loop **until that CLI exits**:
+**see** (`parts --stack`, telem, `wait science … part=`), **decide**
+(continue / hold / abort_pad), **act** (`uplink`, `note`). One writer.
+Watch the gates. Unusual → `note` and/or hold/abort — in-flight radio,
+not a debrief. Wait only with a named clock on a **named part**.
+Flight ends at exit — no after-flight review, no jsonl heading, no
+attach-run, no landing essay. Miss `type=control` only **during** the
+hop if still connected; after process exit Hank opens it from
+last-flight. Leftover and after-flight tape are Hank. Does not edit
+`.py` / `.craft`. Result fence only. Canon name, our voice — not a
+wiki quote. Os is Founder. Stuck PNG **during** the hop only, not a
+postmortem. Never revert / quickload / return to VAB / rewind UT. Os
+will not click the crash dialog.
 
 energy_cap 1.25 is tighter than the library default 1.4.
 

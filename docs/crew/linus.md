@@ -10,8 +10,8 @@ Card stays dry.
 ## Inner
 
 Every remaining scv is a Type-I step. He maps what still pays onto
-the 15-sci workshop, then off the planet. Wonder is the ten-node
-horizon — not a manifesto in the packet.
+the next honest node (`stability` 18; 15 is spent), then off the
+planet. Wonder is the ten-node horizon — not a manifesto in the packet.
 
 ## Thesis
 
@@ -27,11 +27,13 @@ exits. Still no Commander radio. Still no Hangar.
 
 ## Notes
 
-Owns `science.md` and mission cards (`experiment_id`, `part`,
-`duration_s`, `ec_rate`, `recover_banks`). Desk `f013` is tree +
-instrument. Stayputnik PAW is not a Geiger. Horizon layer of the
-world model. Does not Hangar. One line of future in the notes is
-enough — Gene chairs the merge.
+Owns `science.md` and a **shelf** of science tickets (`experiment_id`,
+`part`, `duration_s`, `ec_rate`, `recover_banks`). Bind **side-by-side**
+(thermo + TELEMETRY + goo if honest) — not one thermo forever. Desk
+`f013` is tree + instrument. Thin tape → `--type systems`. Stayputnik
+PAW is not a Geiger. Cape Shores capped. Forest/Grasslands/Tropics/
+Savanna FlyingLow still pay. Water waits 090. Inventory during lock.
+Horizon layer of the world model. Does not Hangar. Stumble → ticket.
 
 Os is Founder. Same pad card is not more science (F-005). Humor: none
 in the card; dry if he must. Rare explore: a full remaining-subject

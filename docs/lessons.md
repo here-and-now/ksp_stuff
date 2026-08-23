@@ -21,6 +21,393 @@ python main.py pad
 
 ---
 
+## 2026-08-23T10-47-12Z-hop — T-166 ship radio had no where
+
+- **When:** 2026-08-23 letsgrok hops (`2026-08-23T10-47-12Z-hop` and
+  prior Cape hangs). Stiff-pbc. f013 2HOT start unlocked=yes
+  on_craft=yes. Do not Hangar.
+- **Symptom:** tape `biomes=[Shores]` after the fact. `ship.md` was
+  heading/wreck/ec/alt only. Walt/Hank could not tell Forest vs
+  Shores live. Envelope one biome token, no lat/lon/downrange.
+- **Cause:** Telem streamed heading/pitch/horiz, not
+  `flight.latitude` / `longitude`. Radio omitted biome even though
+  jsonl already had it.
+- **Fix:** stream lat/lon on the no-frame Flight hold; jsonl
+  lat/lon/downrange km (haversine from Cape pad); `ship.md` extra
+  keys; tape `where:` line. No hop.py.
+- **Modules:** `telem.py`, `flightlog.py`, `tape.py`, `sites.py`.
+
+## 2026-08-23T10-33-44Z-hop — T-163 re-point skipped target_direction
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T10-33-44Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. burn heading 353 pitch 26 horiz 83 MET 51.
+  Apex 301/60 horiz 68. MET139 heading 56 pitch −19. Last 299/89
+  horiz 0 biome Shores. sci 5.6718 +0. Jeb 122 under horizon; no
+  65/270 re-point.
+- **Cause:** T-162 re-point waited for pitch < 0 or heading error
+  > 90°. 353 is 83° from 270 (still west of north). `_point_surface`
+  returned after `set_direction_and_up` and never wrote
+  `target_direction`. Forest is 270, not 090.
+- **Fix:** re-point if pitch drops >20° below 65 or heading error
+  > 45° (297/66 still skipped). Write `target_direction` then
+  `set_direction_and_up`. Do not re-engage. Modules: `hop.py`.
+
+## 2026-08-23T10-17-18Z-hop — T-162 inland latch flipped east 38/−10
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T10-17-18Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. burn heading 38 pitch −10 horiz 102 MET 47.
+  Apex 298/63 horiz 73. MET104 84/−45 horiz 13 at 7 km. Last 298/89
+  horiz 0 biome Shores. sci 5.6718 +0.
+- **Cause:** T-161 skipped `set_direction_and_up` whenever AP
+  `engaged`. The 65/270 command latched; the stack flew through the
+  horizon to the east. Forest is 270, not 090.
+- **Fix:** latch the commanded vector, not `engaged`. Re-point 65/270
+  if flown pitch < 0 or heading is the eastern half. Do not re-engage.
+  Modules: `hop.py`.
+
+## 2026-08-23T09-59-28Z-hop — T-161 burnout yaw 336 / 5 km chute dumps horiz
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T09-59-28Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. MET 20 heading 297 pitch 66 horiz 99. burn
+  heading 336 pitch 39 horiz 83 MET 52. Apex 303/57 horiz 69. Last
+  299/89 horiz 0 biome Shores. sci 5.6718 +0. 7 km stayed Cape Shores.
+- **Cause:** 65/270 engaged after pad (pitch held). Rewriting
+  `set_direction_and_up` every pulse (20 Hz while throttled) yawed
+  336 by burnout. Deploy at 5 km still killed remaining horiz.
+- **Fix:** after engage, do not rewrite the 65/270 hold. Deploy ≤2 km
+  down. Modules: `hop.py`.
+
+## 2026-08-23T09-44-59Z-hop — T-160 engage-once at zenith
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T09-44-59Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. MET 19 heading 300 pitch 89. burn heading 340
+  pitch 43 horiz 20 MET 51. Apex 300/88 horiz 20. Last 299/89 biome
+  Shores. sci 5.6718 +0.
+- **Cause:** inland 10 °/s slew used `telem.pulse_s` (0.05 s while
+  throttled) so `_steer_inland` engaged at ~90. Heading 270 is
+  undefined at zenith; AP yawed 340 at burnout then weathercocked
+  pad 299. Not a new craft.
+- **Fix:** after `left_pad`, command 65/270 then engage once. Do not
+  engage near zenith. Hold through burnout. Modules: `hop.py`.
+
+## 2026-08-23T09-28-59Z-hop — envelope hid burnout attitude
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T09-28-59Z-hop`, same hang 09-16-24Z). Living recover
+  5 m/s. f013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** packet `hz_median 0.08` (25 samples / 288 s). Skim
+  apex heading 298 pitch 86 — Jeb `ship.md` MET 49 heading **209**
+  pitch **3** horiz 22 (slew flash). Envelope had no burn row.
+- **Cause:** T-147 apex is peak **alt**; that sample is after cutoff
+  (MET 63 pitch 86). The 209/3 row was on disk. Slow `Telem.read`
+  (>1 s) re-armed the 1 s sci/broken/debris walk every pulse, so
+  requested 5/20 Hz stayed ~0.08 Hz and slew is one point.
+- **Fix:** envelope `burn:` + `--window burnout` (min pitch while
+  throttled through first cutoff). Skip slow part-walks after an
+  expensive read; 20 Hz while throttled. Modules: `telem.py`,
+  `tape.py`. Not hop.py (Lars T-158 gates).
+
+## 2026-08-23T09-28-59Z-hop — T-157 target_direction still unheld
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T09-28-59Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. Events slew heading=270. Apex heading 298
+  pitch 86 horiz 22. Last heading 299 pitch 89 horiz 0 biome Shores.
+  sci 5.6718 +0. Jeb 209/3 through burnout; 0.08 Hz tape missed it.
+- **Cause:** `_steer_heading` wrote `engaged=True` every pulse. kRPC
+  0.6 Engage restarts PID and 0.5 s soft-start, so AP never holds.
+  `target_direction` is still pitch/heading vs default zenith up —
+  ill-defined at pad 90° (same 09-16-24Z Euler trap).
+- **Fix:** `set_direction_and_up` (surface dir, north up). Engage once.
+  Modules: `hop.py`.
+
+## 2026-08-23T09-16-24Z-hop — T-151 slew logged, not held
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T09-16-24Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. T-152 deploy gate already in.
+  Do not Hangar.
+- **Symptom:** exit 0. Events slew heading=270. Apex heading 297
+  pitch 87 horiz 22. Last heading 299 pitch 89 horiz 0 biome Shores.
+  sci 5.6718 +0. Chute held past apex (deploy ~2.8 km).
+- **Cause:** `_steer_heading` set `target_pitch`/`target_heading` (and
+  swallowed `target_direction`). Near vertical those Eulers stay pad
+  299 (16-57-24Z). The 270 line was stdout, not a hold.
+- **Fix:** After `left_pad`, command surface `target_direction` only
+  (roll NaN). Do not write pitch/heading. Hold through burnout.
+  Modules: `hop.py`.
+
+## 2026-08-23T08-54-41Z-hop — chute at apo dumps inland slew
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T08-54-41Z-hop`). Stiff-pbc living recover 5 m/s. f013
+  2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. Events slew heading=270. Apex alt 13609
+  chute=deployed heading 329 pitch 60 horiz 15.8. Last heading 299
+  pitch 89 horiz 0 biome Shores. sci 5.6718 +0.
+- **Cause:** hop.py `deploy_chutes` on `apo_cut` or any vz<0. Canopy
+  at 13 km killed the inland horiz. Craft `deployAlt` is Gus T-153.
+- **Fix:** Arm airborne. Deploy only vz<0 and alt≤5 km. Modules:
+  `hop.py`.
+
+## 2026-08-23T08-29-36Z-hop — vertical hop stays Shores
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T08-29-36Z-hop`). Stiff-pbc living recover 5 m/s.
+  f013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 0. Pad heading 299 horiz 0.01 pitch 90. Last
+  heading 300 horiz 0.01 pitch 89. Tape biomes=[Shores] apo 16.8 km.
+  sci_bank 5.6718 (+0). T-068 Forest FlyingLow unpaid. T-070/T-071
+  Grasslands still bound. Shores FlyingLow thermo+TELEMETRY capped.
+- **Cause:** hop.py lights SAS vertical. Pad 299 is cape heading, not
+  downrange. 7.5° from vertical stayed Shores (14-33-29Z). 090 is
+  Water (hop-to-water). Straight-up cannot pay Forest.
+- **Fix:** after `left_pad`, slew 25° from vertical heading 270 inland
+  (`target_direction`, roll NaN). Do not slam 65 at light. Hold AP
+  through burnout. Throttle 1 (stiff q~37 kPa). hop-to-water 090 and
+  hop-splash vertical stay. Modules: `hop.py`.
+
+## 2026-08-23T08-04-05Z-hop — desk sci was stale sfs after recover
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T08-04-05Z-hop`). Living recover, mysteryGoo FlyingLow
+  finished MET 674 > 641 s (T-112 est 4.20). Do not Hangar. Do not
+  leftover-ksc.
+- **Symptom:** Os saw ~4.2 banked in the game. Hank desk immediately
+  after: `sci 1.4718 (+0.0001)`. Tape `sci_run=1 rem=0` (rem=0 is
+  canister empty/file, not bank). Next hop Hangar flushed
+  `persistent.sfs`; mid-flight desk `5.6718 (+4.2000)`.
+- **Cause:** `world.research.science` is save-file `sci =`. `recover()`
+  credits RAM `SpaceCenter.science`. Autosave waits for Hangar/scene.
+  After-flight sit object was disk-lag.
+- **Fix:** last-flight writes live RD `sci:`; jsonl `kind=sci_bank`.
+  Desk prefers kRPC (lock free) then last-flight when it is ahead of
+  sfs; `sci_src` / `sci_disk (lag)`. Envelope `bank=`. Modules:
+  `desk.py`, `career.py`, `main.py`, `flightlog.py`, `telem.py`,
+  `tape.py`, `recover_probe.py`. Not hop.py.
+
+## 2026-08-23T07-21-05Z-hop — envelope hid descent; Telem.read was 13 s
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T07-21-05Z-hop`). Same hang as 07-50-48Z (hz 2.86 is
+  crash-UI 20 Hz, not a denser loft).
+- **Symptom:** packet `hz_median 0.07` (14 samples / 183 s). Skim apex
+  10.8 km then last 412 m — “no descent tape”. Gus T-147.
+- **Cause:** tape apex was **max apo** (still climbing at MET 39). The
+  jsonl *had* 14 km → 12.9 → … → 1.9 km → 412 m, one row ~14 s.
+  `Telem.read` walked every module `field_list` + unguarded
+  `Module.fields` (OKTO duplicate gui) + science/debris every pulse.
+  Requested 5 Hz was a lie. Hop nap cannot sample what read does not
+  return.
+- **Fix:** apex = peak alt; `descent:` on skim; `--window descent`;
+  impact uses last airborne if 2 s MET is empty. Skip `.fields` after
+  `field_list`; cache sci/broken/debris 1 s; bind streams by
+  `Vessel.id`; 20 Hz below 8 km. Modules: `telem.py`, `tape.py`.
+  Not hop.py (Lars chute/recover).
+
+## 2026-08-23T07-50-48Z-hop — total wreck is ksc leftover, not recover spin
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T07-50-48Z-hop`). Hangar
+  `kspstuff-hop-valiant-chute-stiff-pbc` parts=36 through apex mass
+  1602. Bound TELEMETRY + mysteryGoo + 2HOT. F-013 2HOT start
+  unlocked=yes on_craft=yes. Do not Hangar. Mk16 vs 1.6 t is Gus T-144.
+- **Symptom:** exit 2 `ABORT not recoverable`. Last: sit=flying
+  rec=no chute=none parts=0 mass=0 impact **89 m/s** Shores. Tape:
+  `gate ec=0` + `hop recover sit=flying recoverable=no` many times,
+  then `hop crash ui` alt=73 q=0, `hop crash ui space_center (total
+  wreck)`. Hank leftover-ksc then failed on Flight Results overlay.
+- **Cause:** kRPC death (T-141 not-shear) still waited recoverable.
+  Recover tick + ec=0 spun. `go_space_center` on the overlay lied
+  leftover-clean.
+- **Fix:** `parts_n`/mass 0 rec=no after loft is total wreck: abort
+  `ksc leftover` (`recover-probe --space-center`). Do not recover-tick,
+  do not unpause-spam, do not Space Center. Recover if KSP still
+  offers Recover. Modules: `hop.py`.
+
+## 2026-08-23T00-10-20Z-hop — fly science_ids must not hide bound tickets
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T00-10-20Z-hop`). Hangar chute-pbc. F-013 TELEMETRY hosted
+  OKTO on_craft=yes; mysteryGoo start unlocked=yes on_craft=yes. Do not
+  Hangar.
+- **Symptom:** skip `kerbalism_TELEMETRY` / `mysteryGoo` (not in card);
+  start `temperatureScan` over capped Shores; sci 1.4717 unchanged.
+  T-081 `payload.science_ids=[temperatureScan]` while T-071 TELEMETRY
+  and T-112 goo were the flying card.
+- **Cause:** `protocol._bound_ids` returned fly `science_ids` if set,
+  else `science_ids_for`. A stale fly list hid bound tickets. Hop skip
+  is that card.
+- **Fix:** `card_science_ids` unions bound tickets then fly extras.
+  Fly cannot drop binds. T-081 card stays
+  temperatureScan,kerbalism_TELEMETRY,mysteryGoo. Modules: `tickets.py`,
+  `protocol.py`, `desk.py`, `hop.py` (science card only).
+
+## 2026-08-23T07-21-05Z-hop — impact death is not boost shear
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T07-21-05Z-hop`). Hangar
+  `kspstuff-hop-valiant-chute-stiff-pbc` parts=36. Bound TELEMETRY +
+  mysteryGoo. F-013 2HOT start unlocked=yes on_craft=yes. Do not Hangar
+  (T-142 leftover-ksc is Wernher).
+- **Symptom:** exit 2 `ABORT shear`. Stiff **36 parts through apex**
+  mass 1602 kg. Next sample MET **182.6** alt **412 m** mass **0**
+  parts_n **0** root empty chute=armed vz **−91** landing hard **91 m/s**
+  Shores. hz_median **0.07** (14 samples / 183 s). No descent tape
+  between 10.8 km up and 412 m.
+- **Cause:** `stack_sheared` / telem `parts_n` drop treated kRPC
+  vessel-death at impact as FAR tank shear (07-06-08Z was 1283→270
+  **with remaining parts** at 13 km). Hop aborted before recover.
+  Deploy waited for alt≤5 km + vz<0 — that sample never came. 91 m/s
+  with Mk16 on a 1.6 t stiff hang is late/small canopy (Gus).
+- **Fix:** `parts_n<=0` or `mass<=0` is not shear. Ignore telem gate
+  `shear` (hop decides). `deploy_chutes` on **coast** (cutoff / descent),
+  not only a 5 km sample. Modules: `hop.py`.
+
+## 2026-08-23T07-06-08Z-hop — FAR shear is a gate, not a crash-UI dwell
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T07-06-08Z-hop`). Hangar
+  `kspstuff-hop-valiant-proc-tank-pbc` (OKTO + Mk16 + 2HOT). Bound
+  T-068/T-070 temperatureScan FlyingLow. F-013 2HOT start unlocked=yes
+  on_craft=yes. Do not Hangar. Do not patch telem (T-139).
+- **Symptom:** exit 2 `ABORT not recoverable`. Science started. chute
+  armed. apo 20.2 km Shores. landing catastrophic **154 m/s**. Apex
+  MET **45** mass **270.6** pitch **−58** q 16 kPa fuel 0 (was 1283 kg
+  / 178 fuel). Last mass **0** alt 45 flying recoverable=no. `broken`
+  null, wreck false until crash UI. Same 154 m/s as 06-53-50Z
+  (1677→270 while fuel still 124).
+- **Cause:** Post-burnout FAR q + attitude ripped tank/engine off the
+  OKTO. Hop has no mass/parts gate; `reliability_broken` stays null.
+  Dwell continued until crash UI.
+- **Fix:** `stack_sheared`: parts_n drop, or mass drop ≥40% and beyond
+  fuel burned. `hold` then abort `shear`. Do not wait crash UI.
+  Modules: `hop.py`.
+
+## 2026-08-23T06-53-50Z-hop — kRPC armed is not a deployed canopy
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T06-53-50Z-hop`). Hangar
+  `kspstuff-hop-valiant-proc-tank-pbc` (OKTO + Mk16 + 2HOT + Goo). Bound
+  T-068/T-070 temperatureScan, T-071 TELEMETRY, T-112 mysteryGoo.
+  F-013 2HOT start unlocked=yes on_craft=yes. Do not Hangar.
+- **Symptom:** exit 2 `ABORT not recoverable`. Logs `chute armed`,
+  science start thermo+TELEMETRY+goo, dwell. landing catastrophic
+  **154 m/s** Shores. Pad/airborne tape chute **cut**, MET 21–169
+  **armed**, 206 m still armed vz **−154** q 14 kPa, last **none**
+  sit=flying recoverable=no stage 0. apo 18.8 km. sci 1.4717 → 1.4717.
+- **Cause:** T-115 `arm_chutes` set kRPC `Parachute.armed` and fired
+  RealChute `Arm parachute` at first airborne. RealChute **auto-deploy
+  did not fire**. Hop latched `chute_armed` and never `Deploy chute`.
+  Packed Mk16 to lithobrake. Cut on the pad is kRPC State, not a
+  canopy that opened then ripped.
+- **Fix:** `deploy_chutes` (RealChute `Deploy chute` / kRPC `deploy()`)
+  when coasting, vz < 0, alt ≤ 5 km. Retry until deployed. Repack if
+  cut. Do not extra-stage. Modules: `pad.py`, `hop.py`.
+
+## 2026-08-23T00-10-20Z-hop — Mk16 never armed, 154 m/s Shores
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T00-10-20Z-hop`). Hangar
+  `kspstuff-hop-valiant-proc-tank-pbc` (OKTO + Mk16 + 2HOT). Bound
+  T-068/T-070 temperatureScan FlyingLow 138/0.002. F-013 2HOT start
+  unlocked=yes on_craft=yes. Geiger unlocked, **not** on craft — do not
+  patch a Geiger dwell. Do not Hangar. KSC leftover is Hank.
+- **Symptom:** exit 0 recovered sit=landed recoverable=yes. sci
+  1.4717 → 1.4717. landing catastrophic **154 m/s** Shores heading
+  **134** pitch **−59**. Pad stage **2**, airborne→last stage **1**.
+  vz **−176** at 5 km, **−154** at 192 m, q **10k→14k** (no bleed).
+  Tape chute/recoverable/sci_run **absent** (thin eyes; Wernher). EC
+  343→0 on impact. MET freeze 168.66 alt 51.
+- **Cause:** hop.py still **No chute** from the Flea sit. Light is the
+  only `activate_next_stage`. Mk16 `preferredStage=PARACHUTESTAGE` never
+  armed. RealChute auto-deploy needs **Arm parachute** (minPressure
+  0.04 / deploymentAlt 1000). 154 m/s is ballistic, not a failed
+  canopy. T-005 leftover-Flea overlay is **not** this hop (fuel 720,
+  apo 25 km Valiant) — that fingerprint is hangar kernel (T-052).
+- **Fix:** `pad.arm_chutes` after airborne (kRPC `Parachute.armed` /
+  RealChuteModule `Arm parachute`). Do **not** extra-stage at light.
+  Do not immediate Deploy (high-q shred). Modules: `pad.py`, `hop.py`,
+  `blocks.md`.
+
+## 2026-08-22T23-35-40Z-hop — 20 Hz freeze is not a 0.25 s Close
+
+- **When:** 2026-08-22 letsgrok `python main.py hop`
+  (`2026-08-22T23-35-40Z-hop`). Hangar
+  `kspstuff-hop-valiant-chute-stiff-pbc` parts=36. Bound T-068/T-070
+  temperatureScan FlyingLow 138/0.002. F-013 2HOT start unlocked=yes
+  on_craft=yes. Do not Hangar. KSC leftover is Hank.
+- **Symptom:** exit 2 `ABORT not recoverable`. Science started 2HOT
+  dwell. apo 20.4 km Shores. landing hard **89 m/s** heading **299**
+  pitch 90. Last sit=**flying** alt **72.6** MET **186.48** q=0
+  horiz 8.64. `hop recover sit=flying recoverable=no` then crash UI
+  unpause then `space_center (total wreck)`. 23-14-23Z same hang
+  **landed** recovered at 90 m/s. hz_median 0.28; impact tape 20 Hz.
+  No landing event.
+- **Cause:** MET-still was **5 pulses**. Near-ground telem is 20 Hz, so
+  freeze→Close in **0.25 s** before KSP flipped sit=landed. Chute still
+  not a 138 s hang (Gus T-089) — recover is this desk.
+- **Fix:** Frozen MET is **5 wall seconds**. After unpause, settle 2 s
+  for sit=landed/`recoverable` before Close. Modules: `hop.py`.
+
+## 2026-08-22T22-33-17Z-hop — bound FlyingLow is not leftover FlyingHigh
+
+- **When:** 2026-08-22 letsgrok `python main.py hop`
+  (`2026-08-22T22-33-17Z-hop`). Hangar
+  `kspstuff-hop-valiant-chute-pbc`. Bound T-068/T-070 temperatureScan
+  FlyingLow 138/0.002. F-013 2HOT start unlocked=yes on_craft=yes.
+  hop_apo 18 km. Do not Hangar. KSC leftover is Hank.
+- **Symptom:** exit 2 `ABORT no science (FlyingHigh lid)`. Light
+  vertical. First flying MET **1.1** alt **96**. apo max **25.5 km**,
+  alt max **15.8 km** — never 50 km. Biome **Shores** the whole way.
+  `science wait FlyingHigh`; 2HOT never Toggle. EC 2049→0. Frozen last
+  MET **162.8** alt **55** flying q=0 vz **−146** heading **299**
+  horiz **33**. `gate ec=0` / `hop ec=0 wait recoverable` /
+  `hop recover sit=flying recoverable=no` then `hop down`.
+- **Cause:** `hop_wants_flying_high` scanned **every** open science
+  ticket. Unbound leftover T-069 `FlyingHigh@Forest` TELEMETRY (no
+  `experiment_id`) set the 50 km lid. Bound flying ids were
+  `temperatureScan` FlyingLow. Lit hop with empty modules then waited
+  recoverable as leftover HD. Crash UI never Close (FlyingHigh abort
+  first) — leftover freeze.
+- **Fix:** Lid is the **bound** flying card only. Unbound leftover
+  High is not 50 km. FlyingLow Toggles airborne. Lit empty wreck is
+  not leftover HD. Missed-lid unrecoverable leaves crash UI (Space
+  Center). Chute 138 s is the dwell. Modules: `hop.py`.
+
+## 2026-08-22T22-24-26Z-hop — OKTO RW duplicate PAW is not a hop abort
+
+- **When:** 2026-08-22 letsgrok `python main.py hop`
+  (`2026-08-22T22-24-26Z-hop`). Hangar
+  `kspstuff-hop-valiant-chute-pbc` sit=pre_launch parts=33 hop_apo=18000.
+  F-013 temperatureScan sensorThermometer start unlocked=yes on_craft=yes.
+  Matching leftover PRELAUNCH (fuel 675, MET 0) stays on pad. Do not
+  Hangar. Do not recover.
+- **Symptom:** Hangar ready, then first `telem.read()` `ValueError Key:
+  Reaction Wheels` in `reliability_broken` → `_module_flag` (`telem.py`
+  `getattr(module, "fields")`). Never staged. MET 0 throttle 0. jsonl
+  one `kind=start` — heading none / horiz none. last-flight still prior
+  `ksc` exit 0. Stuck still: pad, HDG 000, no crash UI.
+- **Cause:** OKTO (`probeCoreOcto_v2`) carries `ModuleReactionWheel`.
+  kRPC 0.6 `Module.fields` is a dict of **visible PAW gui names** and
+  throws on duplicate keys. Stayputnik hangs never hit this (no wheel).
+  Hop did not fly; the abort is schema, not a burn.
+- **Fix:** none in `hop.py`. `telem._module_flag` walks `field_list` /
+  `get_field_by_id` first; `Module.fields` is try/except (OKTO
+  `ModuleReactionWheel` duplicate gui `Reaction Wheels`). First
+  `telem.read()` must not abort. Matching PRELAUNCH leftover stays —
+  Commander hop may enter Flight. Do not Hangar. Do not recover.
+  Modules: `telem.py`.
+
 ## 2026-08-22T10-11-27Z-hop-to-water — 20 Hz dump 108 LF then 9 m/s rebuilt to 62
 
 - **When:** 2026-08-22 letsgrok `python main.py hop-to-water`
@@ -1207,3 +1594,97 @@ python main.py pad
   is not KSC. Hangar raises `Hangar waits` and does not `launch_vessel`
   until then. Never `revert_to_launch`. Modules: `hangar.py`,
   `hop.py`, `blocks.md`.
+
+## 2026-08-23T06-32-23Z-hop — launch_vessel hang poisons Session
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T06-32-23Z-hop`). Lock live, jsonl events=`start`
+  samples=0. Still: KSC overview, kRPC green, UT 3 Jan 1951 17:36,
+  warp 1.5, no Flight Results. `ship.md` as_of 00:13Z sit=landed
+  ec=0 — previous hop. Do not Hangar. Do not take the stick.
+- **Symptom:** hop pid `launch_vessel` thread in `select` 4+ min
+  past the 25 s watchdog. KSP.log pre-flight **PASS / Go for Launch**
+  then `NullReferenceException` (SaveGame / StartWithNewLaunch).
+  Scene stayed KSC. Tape never sampled.
+- **Cause:** L-022 NRE did not raise on the Python client. In-flight
+  `launch_vessel` holds the Session RPC lock. Watchdog abort (second
+  client) cannot unblock it. Hangar then `go_space_center` on the
+  same Session — deadlock. `ship.md` is Telem-only, so radio stayed
+  the last hop.
+- **Fix:** `_launch_watched` raises on hang (no 20 s join). Abort
+  client connect is itself timed. Hangar does not retry RPCs on a
+  poisoned Session. `publish_hangar_radio` writes sit=ksc; `python
+  main.py ship` prints `stale: yes` when as_of predates lock.
+  Modules: `hangar.py`, `flightlog.py`.
+
+## 2026-08-23T06-44-54Z-hop — abort-to-KSC killed a live Flight load
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T06-44-54Z-hop`) after T-116 and Hank leftover clean
+  (`ksc_ready` true, vessels n=0). Do not Hangar. Do not take the stick.
+- **Symptom:** jsonl `start,hangar` samples=0. Radio sit=ksc flags=preflight.
+  Still KSC, warp 1.5, no Flight Results. Clock moved (17:38 vs 17:36).
+- **Cause:** Pre-flight PASS, `Launching vessel from LaunchPad`, kRPC
+  scene **Flight** at 08:45:04 (Kopernicus/Parallax load). T-116 25 s
+  watchdog treated the still-open RPC as a pre-flight dialog and set
+  `game_scene=space_center` at 08:45:31 — yanking a live launch back
+  to KSC. Hop Session then `close()` blocked on that RPC until ~08:49.
+- **Fix:** `launch_vessel` on a **side** client so the hop Session can
+  poll scene. Scene `flight` waits (90 s grace) — do not abort to KSC.
+  KSC-only stall still aborts. `Session.close` abandons a hung conn
+  after 5 s. Modules: `hangar.py`, `session.py`.
+
+## 2026-08-23T07-06-08Z-hop — broken is not shear
+
+- **When:** 2026-08-23 letsgrok hops `2026-08-23T06-53-50Z-hop` and
+  `2026-08-23T07-06-08Z-hop`. Tank+engine leave after burnout (q +
+  attitude); OKTO+chute remain. Do not Hangar. Do not retune hop.py
+  (Lars T-140).
+- **Symptom:** landing skim `broken=none` wreck=no, ship.md flags
+  `ec=0,empty tanks` sit=flying — same as a living coast. Jsonl
+  already had mass 1677→270 / 1284→271 at stage 1.
+- **Cause:** `reliability_broken` walks Kerbalism `broken`/`malfunction`
+  module flags. Exploded/decoupled parts are not that. Mass lived on
+  state rows but not ship, `_kin`, or the tape skim line.
+- **Fix:** Log `parts_n`, `root`, `debris_n`. `stack_shear` (parts drop
+  or mass remaining ≤50% beyond fuel, stage unchanged) → `kind=shear`
+  + flag. Tape `stack: mass=… parts=… shear=yes`. ship.md mass/parts_n.
+  Modules: `telem.py`, `tape.py`, `flightlog.py`.
+
+## leftover-ksc — walk home, never a named reload
+
+- **When:** 2026-08-23 letsgrok T-142. Os disabled Allow reverting
+  flights. Live sit: KSC, `ksc_ready` true, `can_revert` false,
+  vessels n=0. Do not Hangar. Do not recover Ast. XRL-564.
+- **Symptom:** `--space-center` / `go_ksc` saved `leftover-ksc` then
+  `load` to drop Flight Results. That is a reload.
+- **Cause:** Overlay dismiss overfit KSP quirks (`can_revert` + named
+  sfs). kRPC 0.6 UI does not expose Flight Results Close
+  (`stock_canvas` children empty; `UI.clear` is client widgets).
+- **Fix:** `walk_home`: recover leftover ships (enter Flight,
+  `recover()`, wait gone), Close `game_scene=space_center` with
+  `reload_save=False`. No `load_space_center`. `ksc_ready` is KSC +
+  leftover ships n=0 + overlay not painted (`can_revert` is one bit,
+  not the only). `load leftover-ksc` refused. Modules: `hangar.py`,
+  `recover_probe.py`.
+
+## 2026-08-23T07-50-48Z-hop — leftover can_revert is not overlay
+
+- **When:** 2026-08-23 letsgrok hop `2026-08-23T07-50-48Z-hop` then
+  Hank `recover-probe --space-center` (walk-home leftover n=1,
+  Close `reload_save=False`). Still:
+  `screenshots/stuck-flight-results-0750.png` — KSC overview, Tracking
+  "no vessels", no Flight Results, no revert dialog. Do not Hangar.
+  Never revert. Never leftover-ksc.
+- **Symptom:** ships n=0, scene `space_center`, `ksc_ready` false
+  (`flight results overlay`), `can_revert` / `can_revert_to_launch`
+  true, active vessel UUID dead.
+- **Cause:** `overlay_painted` was `_can_revert`. Os disabled
+  Allow reverting flights; that leftover bit still reads true on a
+  clean Space Center after recover. T-088 treated n=0 +
+  `can_revert` as Revert painted; 07-50 is the same bits without a
+  dialog.
+- **Fix:** `overlay_painted` is false when scene is Space Center and
+  leftover ships n=0. `ksc_ready` is KSC + leftover ships n=0.
+  Disk sit: `ksc_ready` true wins over leftover `can_revert`. Close
+  stays `game_scene` only. Modules: `hangar.py`, `ops.py`.

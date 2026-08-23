@@ -1,8 +1,9 @@
 # Speed — desk snapshot and fewer Gene hires
 
-The loop works. It is slow because Gene is hired as a **merge bus**
-after every specialist, and every child re-runs `world` / `tech` /
-`parts`. Honesty and `go: yes` stay Gene-only.
+The loop works. It was slow because Gene was hired as a **merge bus**
+after every specialist, and every child re-ran `world` / `tech` /
+`parts`. Honesty and `go: yes` stay Gene-only. Kernel now batches
+Wernher on systems tickets; Learn is a fly-ticket field.
 
 Five desk audits (Commander, Gene, Linus/Gus, Lars/Wernher, parent) plus
 an org plan. First slice is in: `python main.py desk`.
@@ -25,16 +26,16 @@ Tape/EC: `catalog.ExperimentCfg` already has `size_mb` / `data_rate` /
 
 Replace Gene-after-every-`need_*` with:
 
-1. Os go → specialists if last Gene already named them, else one Gene draft.
-2. Same turn: Linus opportunities ∥ Gus capable (not bind).
+1. Os go → specialists if last Gene already named them, else Gene only if `ops next` names him.
+2. Same turn: Linus opportunities ∥ Gus capable (not bind); Wernher on systems.
 3. Linus bind after `capable: yes`.
-4. **One** Gene merge → only `go:`.
-5. Commander. Learn = one Gene. Miss = Lars then one Gene.
+4. Gene `go:` only when `ops next` hires him — not a merge after specialists.
+5. Commander. Learn = `payload.learn` (Gene hire only if `needs_learn`). Miss = Lars; Wernher iff kRPC trap or open systems.
 
 Legal parallel stays file-split. Illegal: two Commanders, Gene+flight, two
 desks on one file, bind before capable.
 
-Packet: `docs/program/desk.md` (parent writes it) + ≤2 role paths.
+Packet: `docs/program/desk.md` + `tickets packet T-NNN` + BRIEF (no BOARD.md).
 Parent copies f013 (tree, instrument, unlocked, on_craft).
 
 ## C. First PR (this slice)
@@ -51,3 +52,34 @@ Expected: 5–7 Gene/sit → 1 draft + 1 merge (or 0 draft + 1 merge).
 
 Gene only `go: yes`. One kRPC writer. Parent does not patch `.py`.
 Depth 1. Honesty / F-013 / Lars XOR Wernher / Commander copies CLI.
+
+## E. RSI-JUMP kernel (2026-08-22)
+
+Loop shape stays. `needing_go` batches systems / Wernher. Learn is
+`payload.learn`, not a TYPE. Skim is desk + BRIEF + this ticket (no
+BOARD.md). Reasoning floors (Os 2026-08-23): Jeb/Lars low, Wernher
+medium, Mortimer medium. `rsi_loop=software` → Wernher.
+Do not hire Gene as a merge bus.
+
+## F. Pad occupancy (Os 2026-08-23)
+
+Tape is the product. An idle pad is a miss. Inventory (Linus shelf,
+Gus many signed hangs) fills **during** lock live. Uncrewed miss:
+Hank leftover (seconds; `recover()` + Close, never leftover-ksc load,
+never revert) → Lars on the **live** control file if it broke →
+re-fly last `cli:` or the next already-signed alt. **Do not hire
+Gene to consider.** Wernher standing `type=systems`. Expected: pad
+flying; Gene 1 stamp per sit, not a 15 min conference after the hop.
+
+## G. Live watch (Os 2026-08-23)
+
+`ship.md` is the live eye (disk). Commander reacts in-flight. Hank
+reads it from time to time — no `status`, no jsonl. Off-nominal:
+hire the owning desk (Gene/Lars/Wernher). Nominal: silent ground.
+After-flight review stays Hank. Do not spawn a spotter.
+
+## H. RSI (Os 2026-08-23)
+
+Stumble → ticket. Thin tape is first-class (`type=systems`). Log more
+kRPC. Bind science side-by-side. **Idle pad is a sin** — a letter
+does not stop the batch.

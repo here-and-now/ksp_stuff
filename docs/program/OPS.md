@@ -42,13 +42,13 @@ communication failure.
 |---|---|---|---|
 | **Os** | Founder | Goal ratification, talk-by-name | Click crash UI, fly |
 | **Mortimer Grokman** | CEO / Administrator | Slate *objective*, org RSI, CTT spend, CHARTER/PROTOCOL mutation | Day-to-day dispatch, fly, Hangar, `.py` |
-| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, leftover/KSC hygiene (`recover-probe` / `ksc`), time, parallel ground vs flight | `go:` (Gene), mission CLI, Hangar, `.craft` (Gus), science bind (Linus), control.*, `.py` on a fly turn |
-| **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty | PROTOCOL, ticket routing, stick while lock live |
+| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, leftover/KSC, **after-flight tape** (`desk` / `attach-run` / `landing`), time, parallel ground vs flight | `go:` (Gene), mission CLI, Hangar, `.craft` (Gus), science bind (Linus), control.*, `.py` on a fly turn, hiring Commander to debrief |
+| **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, ticket routing, **stick** (Commander writes) |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
 | **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol | Vehicle *control* loops, `.craft` |
 | **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown*: pad/hop/splash/control, **this-hop** splash HD recover, blocks.md phases | Leftover recover-then-Hangar (Hank/Wernher), world-interface, org, Hangar from Gene |
-| **Seated Commander** | Pilot | Exact CLI on a fly ticket; one kRPC writer | leftover recover / Close crash UI; `.py`, `.craft`; `note-tech` is tape — miss opens `type=control` |
+| **Seated Commander** | Pilot | Exact CLI on a fly ticket until **exit**; one kRPC writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review / jsonl / attach-run / landing; miss tickets **after** process exit |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
 
@@ -76,9 +76,10 @@ Three RSI clocks, all **tickets**:
    stay Lars. XOR: one of them patches `.py` per miss.
 
 A closed ticket with fingerprint `F` increments `tickets/fingerprints.json`.
-At count **3**, kernel opens `T-rsi-<F>` P1 to Hank. Hank assigns
-CSE or VSE or Mortimer. That is the imperative: the loop *must*
-open the ticket; no LLM “we should maybe improve.”
+At count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` →
+desk **wernher**; else Hank. Hank still routes org/ops RSI. That is
+the imperative: the loop *must* open the ticket; no LLM “we should
+maybe improve.”
 
 ---
 
@@ -171,7 +172,7 @@ Enforced in `tickets.py`, not job-card prose:
 - Linus may last-write science payload.
 - Lars may close `type=control` with `lesson`.
 - Wernher may close `type=systems`.
-- Commander may open `type=control` via `python main.py tickets open` (replaces `note-tech` as the bus; a shim can still append the log). Hop abort leftover files to Hank, not a Commander recover CLI.
+- Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open` / `from-need`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
 - Hank may close `type=recover` after leftover/KSC CLI.
 - Mortimer may close `type=org|ctt`.
 - Nobody else stamps `go`.
@@ -215,9 +216,17 @@ hire:
 
 ```
 if lock live:
-    ground_only = tickets ready whose desk ∉ {jebediah, gene}
+    python main.py ship  (disk envelope). never status Session. never the jsonl.
+    if off-nominal (wreck flags, lithobrake, empty tanks+flying,
+                    heading dead, EC=0 before dwell, crash UI):
+        uplink abort|hold if wreck-class
+        hire Gene if plan/go must change (no stick)
+        hire Lars if hop.py / control
+        hire Wernher if kRPC / telem / desk
+        issue-clear → that desk, not a Gene novel
+    ground_only = tickets ready whose desk ≠ jebediah
     batch by desk (one hire per desk, many tickets)
-    never Commander, never Gene
+    never a second Commander
     return
 
 # lock free — leftover hygiene before pad occupancy
@@ -225,11 +234,18 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
     open/boost recover ticket S1 desk=hank
     Hank runs (not Commander):
       recover-probe                    # signal only
-      recover-probe --recover          # recoverable leftover
-      recover-probe --space-center     # crash UI / total wreck
-      ksc                              # same
+      recover-probe --recover          # recoverable leftover — recover()
+      ksc                              # scene after Close, not a reload
+    # Walk home: recover() the ship and Close to KSC. Os disabled
+    # reverting flights. Never revert. Never leftover-ksc save/load
+    # (that looked like a reload / return to pre-launch).
     # pad occupancy after leftover is clean
     return
+
+# after Commander CLI return — tape before the next hire
+# desk; attach-run fly ticket jsonl; tickets landing; open control
+# from last-flight abort if none exists. Do not hire Commander to
+# explain. Then leftover (above) or fly_ready (below).
 
 if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in catalog:
     hire Commander with T.cli
@@ -238,9 +254,13 @@ if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in cata
     return
 
 if fly ticket T with go empty or wait:
-    hire Gene ONCE to stamp T (not a merge bus after every Gus line)
+    hire Gene ONCE (go stamp, or campaign-stop Learn if
+    campaign != uncrewed and payload.learn empty)
     if vehicle tickets unsigned: hire Gus with those ids (batch)
     if science tickets unbound: hire Linus with those ids (batch)
+    if control tickets open: hire Lars with those ids (batch)
+    if systems tickets / desk=wernher: hire Wernher (batch)
+    # not a merge bus after every Gus line
     # bind after capable is still serial honesty: Linus tickets stay
     # blocked on vehicle.capable until Gus returns
     return
@@ -257,35 +277,47 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 
 | Condition | Hire | Tickets in packet |
 |---|---|---|
-| Lock free, leftover live / crash UI | **Hank** | recover ticket; CLI `recover-probe` / `ksc` |
-| Lock free, fly ready, hangar none | Commander | that fly ticket |
-| Fly needs `go` | Gene | that fly ticket only |
+| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars hop.py; Wernher kRPC — **no stick**, no `status` |
+| Lock live, nominal | ground desks (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time |
+| Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
+| Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run`, `landing`; control from last-flight if miss |
+| Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
+| Fly needs `go` | Gene | that fly ticket; batch vehicle/science/control/**systems** |
+| Campaign-stop Learn (not uncrewed, empty `payload.learn`) | Gene | that fly ticket |
 | Tree unlocked, no crafts | Gus | all open vehicle tickets for that node |
 | Unstarted REACH / leftover science | Linus | all open science tickets |
 | Miss abort / control fingerprint | Lars | control ticket + live_run |
-| kRPC trap / leftover disk vs live / telem frame | Wernher | systems ticket |
+| Open `type=systems` / unused kRPC / leftover overlay / telem frame | **Wernher** (standing; not miss-only) | systems tickets (also lock-live and `needing_go`) |
 | CTT payable | Mortimer | ctt ticket |
 | First sci/orbit/unlock | Verena | press ticket |
-| Fingerprint count ≥ 3 | Hank opens rsi, then Mortimer or CSE | rsi ticket |
+| Fingerprint count ≥ 3 | kernel opens rsi (`software` → Wernher, else Hank) | rsi ticket |
 | Os talks org/objective | Mortimer | org ticket |
 | Os talks ops | Hank (this process) | — |
 
 **Gene is not hired** because a specialist returned. Specialists
 write the ticket. Hank reads the board. Gene is hired when a fly
-ticket lacks `go`, or a campaign **stop** needs Learn (batch of
-reviews attached as evidence).
+ticket lacks `go`, or `needs_learn` (campaign is not `uncrewed` and
+`payload.learn` is empty). Uncrewed `go: yes` hires the Commander,
+not Gene. **Do not hire Gene to consider an uncrewed miss.**
 
 **Lars is not hired** after clean 0. Campaign re-fly is kernel:
 same fly ticket, lock free, last exit 0, abort none, sci moved or
-science started.
+science started. After a miss: leftover first, then Lars on the
+**live** control file if it broke; pad waits that file. Hang still
+capable + `go: yes` → Commander last `cli:`. Hang died → next
+already-signed alt (Gene only if that fly ticket has no `go:`).
 
 ### 4.3 Time is valued
 
 - One hire, many tickets of the same desk.
+- Tape is the product. An idle pad is a miss. A 10–15 min Gene
+  conference after a test hop is the anti-pattern. A Commander
+  after-flight review is the same waste — CLI exit ends the hop.
 - Pad/flight never waits on Gene Learn (I-016): campaign fly ticket
-  stays `go: yes` until stop conditions.
-- Ground work **during** `flight.lock` (Gus/Linus/CSE/VSE on other
-  files). Legal because they do not Hangar.
+  stays `go: yes` until stop conditions. Uncrewed miss is leftover +
+  live-file patch + re-fly, not Learn.
+- Ground work **during** `flight.lock` (Gus/Linus/CSE on other
+  files — inventory). Legal because they do not Hangar.
 - Spawn tax is paid only when the kernel emits `hire:`.
 - SLA on a control ticket: one `.py` + one lesson heading, then
   stop (Lars wall).
@@ -310,8 +342,8 @@ on its vehicle ticket (F-013). That serial is honesty, not ritual.
 ```
 desk.md          ← python main.py desk (snapshot, not the board)
 tickets/head.json ← source of truth
-jsonl envelope   ← evidence on fly/control tickets (heading, horiz, pitch, aoa, biome)
-last-flight.md   ← abort/handoff only (I-020)
+jsonl envelope   ← evidence on fly/control tickets (heading, horiz, pitch, aoa, biome); Hank attach-run after CLI
+last-flight.md   ← abort/handoff only (I-020); Commander Return is this, not a review
 lessons.md       ← VSE/CSE dated physics/API
 ship.md          ← radio, Walt
 ```
@@ -322,23 +354,33 @@ it). `python main.py protocol fly` reads `head.json` with plan+card
 fallback so a missing fly ticket does not brick.
 
 **Commander packet `read:`:** skim from
-`python main.py tickets packet T-NNN` (desk, briefing, science dump —
-**no jsonl**). Deep dive: `python main.py tickets packet T-NNN --deep`
-(jsonl, last-flight, craft, reviews). Hank chooses `--deep` when
-`reasoning=high`. Never xhigh. Mortimer always high.
+`python main.py tickets packet T-NNN` (desk + BRIEF + this ticket +
+landing envelope — **no BOARD.md**, **no jsonl rows**). `--deep` is
+opt-in (PNG, craft, last-flight, `tape: python main.py telem …`).
+Hank does **not** auto-`--deep`. Never xhigh. Desk floors (Os
+2026-08-23): Jeb/Lars **low**, Wernher **medium**, Mortimer **medium**,
+Gene/Gus/Linus **medium**. Hank is the TUI session. Fresh spawn vs
+`resume_from`: Commander and new tickets are fresh; resume only an
+unfinished patch on the same file.
 
-**Learn:** Gene hire with evidence[] = reviews since last Learn.
-Empty `_Gene fills this.` is a kernel check: campaign stop cannot
-`done` the fly ticket until Learn stamps or Hank marks batch skip.
+**Learn:** `payload.learn` on the fly ticket (Gene stamp from
+`tickets landing` / tape envelope — never Commander Return
+prose). Review auto-fills heading/horiz/pitch; `ksc`/`load`/`recover-probe`
+skip the Gene blank. `needs_learn` is campaign not `uncrewed` and learn
+empty. Hygiene reviews are not a Gene hire. After-flight attach-run is
+**Hank**, not the Commander.
 
 ---
 
 ## 6. Flight walls
 
 One kRPC writer. Depth 1. Never revert / quickload / rewind UT.
+Os disabled reverting flights. Lock live: Hank reads `ship.md`. No
+`status`. Off-nominal → hire.
 Os does not click crash UI. Commander does not recover leftover or
 Close the crash dialog — hop abort `ksc leftover` is a handoff to
-Hank. Hank `recover-probe` / `ksc` only when lock **free**. Clean-pad
+Hank. Commander does not review after CLI exit. Hank leftover (lock
+**free**) is `recover()` + Close — never leftover-ksc load. Clean-pad
 Hangar of the seated craft for the sortie may stay inside hop
 (`install_and_launch`) — launch, not leftover hygiene. Splash HD
 recover of **this** hop after a briefed dwell stays mission.

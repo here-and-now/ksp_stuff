@@ -72,6 +72,14 @@ class TestTickets(unittest.TestCase):
         self.assertEqual(tickets.fly_fields(t2)["go"], "yes")
         self.assertEqual(tickets.fly_fields(t2)["cli"], "python main.py pad")
         self.assertEqual(tickets.fly_fields(None)["go"], "")
+        self.assertEqual(tickets.fly_fields(None)["learn"], "")
+        t3 = {"payload": {"learn": "heading never 090", "campaign": "none"}}
+        self.assertEqual(tickets.fly_fields(t3)["learn"], "heading never 090")
+        self.assertFalse(tickets.needs_learn(t3))
+        self.assertTrue(tickets.needs_learn({"payload": {"campaign": "none"}}))
+        self.assertFalse(
+            tickets.needs_learn({"payload": {"campaign": "uncrewed"}})
+        )
 
     def test_seated_fly_ticket_missing_head(self):
         self.assertIsNone(tickets.seated_fly_ticket())
@@ -104,6 +112,11 @@ class TestTickets(unittest.TestCase):
         self.assertEqual(cur["go"], "yes")
         self.assertEqual(cur["payload"]["cli"], "python main.py hop")
         self.assertEqual(cur["payload"]["campaign"], "uncrewed")
+        tickets.stamp_learn(t["id"], "envelope heading 300", who="gene")
+        cur = tickets.show_ticket(t["id"])
+        self.assertEqual(cur["go"], "yes")
+        self.assertEqual(cur["payload"]["learn"], "envelope heading 300")
+        self.assertEqual(tickets.fly_fields(cur)["learn"], "envelope heading 300")
 
     def test_only_gene_stamps_go(self):
         tickets.open_ticket(
@@ -129,8 +142,23 @@ class TestTickets(unittest.TestCase):
         self.assertIsNotNone(rsi)
         self.assertEqual(rsi["type"], "rsi")
         self.assertEqual(rsi["priority"], "P1")
+        self.assertEqual(rsi["desk"], "hank")
         again = tickets.maybe_open_rsi("ec=0-after-loft")
         self.assertIsNone(again)
+
+    def test_rsi_software_desk_wernher(self):
+        for i in range(3):
+            tickets.open_ticket(
+                type="systems",
+                title=f"leftover vs krpc {i}",
+                reporter="Wernher",
+                fingerprint="desk-leftover-vs-krpc",
+                rsi_loop="software",
+            )
+        rsi = tickets.maybe_open_rsi("desk-leftover-vs-krpc")
+        self.assertIsNotNone(rsi)
+        self.assertEqual(rsi["desk"], "wernher")
+        self.assertEqual(rsi["rsi_loop"], "software")
 
     def test_batch_ids(self):
         tickets.open_ticket(type="vehicle", title="a", reporter="Gus")
@@ -197,6 +225,77 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(desks.count("gene"), 1)
         self.assertIn("gus", desks)
         self.assertIn("linus", desks)
+
+    def test_needing_go_batches_systems(self):
+        tickets.open_ticket(
+            type="fly", title="hop-splash", reporter="Hank", desk="gene"
+        )
+        tickets.open_ticket(
+            type="systems", title="packet skim", reporter="Wernher", desk="wernher"
+        )
+        tickets.open_ticket(type="vehicle", title="t7", reporter="Gus")
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        desks = [h["desk"] for h in act["hire"]]
+        self.assertEqual(desks[0], "gene")
+        self.assertIn("wernher", desks)
+        self.assertIn("gus", desks)
+        self.assertNotIn("jebediah", desks)
+        self.assertIsNone(act["fly_ready"])
+
+    def test_fly_ready_not_stolen_by_learn(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+            payload={"campaign": "none", "cli": "python main.py hop-splash"},
+        )
+        tickets.patch_ticket(
+            t["id"],
+            {"go": "yes", "status": "ready"},
+            who="gene",
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        desks = [h["desk"] for h in act["hire"]]
+        self.assertEqual(desks[0], "jebediah")
+        self.assertNotIn("gene", desks)
+        self.assertEqual(act["fly_ready"], t["id"])
+
+    def test_campaign_stop_hires_gene_for_learn(self):
+        tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+            payload={"campaign": "none", "cli": "python main.py hop-splash"},
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        hire = act["hire"][0]
+        self.assertEqual(hire["desk"], "gene")
+        self.assertIn("Learn", hire["why"])
+        self.assertIsNone(act["fly_ready"])
+
+    def test_uncrewed_missing_go_is_stamp_not_learn(self):
+        tickets.open_ticket(
+            type="fly",
+            title="hop-splash",
+            reporter="Hank",
+            desk="gene",
+            payload={"campaign": "uncrewed"},
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertEqual(act["hire"][0]["desk"], "gene")
+        self.assertEqual(act["hire"][0]["why"], "fly ticket needs go stamp")
+
+    def test_lock_live_hires_wernher_not_gene(self):
+        tickets.open_ticket(
+            type="systems", title="desk leftover", reporter="Wernher"
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=True)
+        desks = [h["desk"] for h in act["hire"]]
+        self.assertIn("wernher", desks)
+        self.assertNotIn("gene", desks)
+        self.assertNotIn("jebediah", desks)
 
     def test_s1_recover_first(self):
         tickets.open_ticket(
@@ -315,7 +414,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         for p in self.patches:
             p.stop()
 
-    def test_reasoning_never_xhigh_mortimer_always_high(self):
+    def test_reasoning_desk_floors_never_xhigh(self):
         t = tickets.open_ticket(
             type="ops",
             title="hygiene",
@@ -327,7 +426,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn(tickets.reasoning_for(t), tickets.REASONING)
         self.assertNotEqual(tickets.reasoning_for(t), "xhigh")
         t["desk"] = "mortimer"
-        self.assertEqual(tickets.reasoning_for(t), "high")
+        self.assertEqual(tickets.reasoning_for(t), "medium")
         s1 = tickets.open_ticket(
             type="recover",
             title="wreck",
@@ -336,8 +435,21 @@ class TestPacketAndReasoning(unittest.TestCase):
             priority="P0",
             desk="jebediah",
         )
-        self.assertEqual(tickets.reasoning_for(s1), "high")
-        self.assertEqual(tickets.reasoning_for(s1, "mortimer"), "high")
+        self.assertEqual(tickets.reasoning_for(s1), "low")
+        self.assertEqual(tickets.reasoning_for(s1, "mortimer"), "medium")
+        self.assertEqual(tickets.reasoning_for(s1, "wernher"), "medium")
+        self.assertEqual(tickets.reasoning_for(s1, "lars"), "low")
+        gene = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            severity="S2",
+            priority="P0",
+        )
+        self.assertEqual(tickets.reasoning_for(gene), "medium")
+        gene["severity"] = "S1"
+        self.assertEqual(tickets.reasoning_for(gene), "medium")
 
     def test_skim_omits_jsonl_deep_includes_it(self):
         t = tickets.open_ticket(
@@ -361,10 +473,17 @@ class TestPacketAndReasoning(unittest.TestCase):
         skim = tickets.format_packet(t["id"], deep=False)
         deep = tickets.format_packet(t["id"], deep=True)
         self.assertIn("docs/program/desk.md", skim)
+        self.assertIn("docs/program/tickets/BRIEF.md", skim)
+        self.assertNotIn("BOARD.md", skim)
+        self.assertIn("inbox:", skim)
         self.assertNotIn(".jsonl", skim)
         self.assertIn("packet T-001 --deep", skim)
+        self.assertNotRegex(deep, r"(?m)^  - .+\.jsonl")
+        self.assertIn("python main.py telem", deep)
         self.assertIn(".jsonl", deep)
-        self.assertIn("reasoning: high", skim)
+        self.assertNotIn('"kind": "state"', deep)
+        self.assertNotIn("kind=state", skim)
+        self.assertIn("reasoning: low", skim)
         self.assertNotIn("xhigh", skim)
         self.assertNotIn("xhigh", deep)
 
@@ -397,8 +516,10 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertEqual(rc, 0)
         self.assertIn("ticket: T-001", out)
         self.assertIn("docs/program/desk.md", out)
+        self.assertNotIn("BOARD.md", out)
         self.assertNotIn(".jsonl", out)
         self.assertIn("--deep", out)
+        self.assertIn("reasoning: medium", out)
 
     def test_ops_hire_has_reasoning_and_packet(self):
         t = tickets.open_ticket(
@@ -424,6 +545,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn(hire["reasoning"], tickets.REASONING)
         self.assertNotEqual(hire["reasoning"], "xhigh")
         self.assertIn("tickets packet", hire["packet"])
+        self.assertNotIn("--deep", hire["packet"])
         text = ops.format_next(act)
         self.assertIn("reasoning=", text)
         self.assertIn("packet:", text)
@@ -486,6 +608,46 @@ class TestPacketAndReasoning(unittest.TestCase):
             ("kerbalism_TELEMETRY", "mysteryGoo"),
         )
 
+    def test_fly_science_ids_union_bound_not_shadow(self):
+        tickets.open_ticket(
+            type="science",
+            title="flying telem",
+            reporter="Linus",
+            payload={
+                "experiment_id": "kerbalism_TELEMETRY",
+                "situation": "FlyingLow",
+                "seq": 2,
+            },
+        )
+        tickets.open_ticket(
+            type="science",
+            title="flying goo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "mysteryGoo",
+                "situation": "FlyingLow",
+                "seq": 3,
+            },
+        )
+        fly = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={"science_ids": ["temperatureScan"]},
+        )
+        self.assertEqual(
+            tickets.card_science_ids(situation="flying", ticket=fly),
+            ("kerbalism_TELEMETRY", "mysteryGoo", "temperatureScan"),
+        )
+        self.assertEqual(
+            tickets.union_science_ids(
+                ("kerbalism_TELEMETRY", "mysteryGoo"),
+                ("temperatureScan",),
+            ),
+            ("kerbalism_TELEMETRY", "mysteryGoo", "temperatureScan"),
+        )
+
     def test_attach_run_landing_on_skim_not_jsonl(self):
         t = tickets.open_ticket(
             type="fly",
@@ -505,10 +667,19 @@ class TestPacketAndReasoning(unittest.TestCase):
         skim = tickets.format_packet(t["id"], deep=False)
         deep = tickets.format_packet(t["id"], deep=True)
         self.assertIn("landing: catastrophic", skim)
+        self.assertIn("horiz=", skim)
+        self.assertIn("pitch=", skim)
         self.assertIn("category: flight", skim)
         self.assertIn("docs/program/tickets/BRIEF.md", skim)
+        self.assertNotIn("BOARD.md", skim)
         self.assertNotIn("hard-splash.jsonl", skim)
         self.assertIn("hard-splash.jsonl", deep)
+        self.assertIn("python main.py telem", deep)
+        self.assertNotRegex(deep, r"(?m)^  - .+\.jsonl")
+        self.assertIn("eyes:", skim)
+        self.assertIn("last:", skim)
+        self.assertNotIn('"kind": "state"', skim)
+        self.assertNotIn("kind=state", skim)
         self.assertIn("catastrophic", tickets.format_inbox("gene"))
 
     def test_attach_run_preserves_top_level_go(self):
@@ -561,3 +732,61 @@ class TestPacketAndReasoning(unittest.TestCase):
             rc2 = tickets.cmd_tickets(["landing", str(path)])
         self.assertEqual(rc2, 0)
         self.assertIn("catastrophic", buf2.getvalue())
+        self.assertIn("eyes:", buf2.getvalue())
+        self.assertNotIn('"kind": "state"', buf2.getvalue())
+
+    def test_packet_prints_learn(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop-to-water",
+            reporter="Hank",
+            desk="gene",
+            payload={"cli": "python main.py hop-to-water", "campaign": "none"},
+        )
+        tickets.stamp_learn(t["id"], "heading never 090", who="gene")
+        skim = tickets.format_packet(t["id"], deep=False)
+        self.assertIn("learn: heading never 090", skim)
+        self.assertNotIn("BOARD.md", skim)
+
+
+class TestReviewLearn(unittest.TestCase):
+    def test_hop_learn_has_envelope_not_placeholder(self):
+        import shutil
+        from review import write_review
+
+        src = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "telem"
+            / "hard-splash.jsonl"
+        )
+        dest = Path(tempfile.mkdtemp()) / "hop-to-water.jsonl"
+        shutil.copy(src, dest)
+        text = write_review(
+            dest, command="hop-to-water", exit_code=2, abort="ABORT"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("_Gene fills this", text)
+        learn = text.split("## Learn", 1)[1]
+        self.assertIn("heading", learn)
+        self.assertIn("horiz max", learn)
+        self.assertIn("pitch", learn)
+        self.assertIn("payload.learn", learn)
+
+    def test_ksc_learn_is_hygiene(self):
+        import shutil
+        from review import write_review
+
+        src = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "telem"
+            / "hard-splash.jsonl"
+        )
+        dest = Path(tempfile.mkdtemp()) / "ksc.jsonl"
+        shutil.copy(src, dest)
+        text = write_review(
+            dest, command="ksc", exit_code=0, abort=None
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("_Gene fills this", text)
+        learn = text.split("## Learn", 1)[1]
+        self.assertIn("hygiene ksc", learn)

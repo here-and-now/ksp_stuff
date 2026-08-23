@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 import unittest
 from pathlib import Path
 
@@ -60,12 +61,23 @@ class TestLinusCardSchema(unittest.TestCase):
         self.assertIn("recover_banks:", text)
 
 
+def _md_image_targets(path: Path) -> list[str]:
+    text = path.read_text(encoding="utf-8")
+    out: list[str] = []
+    for m in re.finditer(r"!\[[^\]]*\]\(([^)]+)\)", text):
+        raw = m.group(1).strip().split()[0]
+        if raw:
+            out.append(raw)
+    return out
+
+
 class TestPressDesk(unittest.TestCase):
     def test_verena_files(self):
         self.assertTrue(Path("docs/crew/verena.md").is_file())
         self.assertTrue(Path(".grok/agents/verena.md").is_file())
         self.assertTrue(Path("docs/press/INDEX.md").is_file())
         self.assertTrue(Path("docs/press/pad-goo.md").is_file())
+        self.assertTrue(Path("docs/press/forest-for-the-trees.md").is_file())
 
     def test_readme_portrait(self):
         text = Path("README.md").read_text(encoding="utf-8")
@@ -74,6 +86,55 @@ class TestPressDesk(unittest.TestCase):
         self.assertIn("Os", text)
         self.assertIn("Verena", text)
         self.assertIn("python main.py world", text)
+        heads = re.findall(r"^## .+", text, flags=re.M)
+        self.assertTrue(heads)
+        self.assertEqual(heads[-1], "## Agent checkout")
+        hist = text.index("## History (so far)")
+        checkout = text.index("## Agent checkout")
+        self.assertGreater(checkout, hist)
+        self.assertIn("python main.py world", text[checkout:])
+        self.assertIn("python main.py tech", text[checkout:])
+
+    def test_press_images_resolve(self):
+        files = [Path("README.md"), *sorted(Path("docs/press").glob("*.md"))]
+        missing: list[str] = []
+        for path in files:
+            for raw in _md_image_targets(path):
+                if raw.startswith("http://") or raw.startswith("https://"):
+                    continue
+                dest = (path.parent / raw).resolve()
+                if not dest.is_file():
+                    missing.append(f"{path}: {raw}")
+        self.assertEqual(missing, [])
+
+    def test_forest_tale_from_disk(self):
+        tale = Path("docs/press/forest-for-the-trees.md").read_text(encoding="utf-8")
+        for needle in (
+            "chute",
+            "shear",
+            "girder",
+            "Forest",
+            "latitude",
+            "longitude",
+            "trees",
+            "Ad astra",
+            "sci",
+        ):
+            self.assertIn(needle, tale)
+        self.assertTrue(
+            "2026-08-23T11-11-21Z-hop" in tale
+            or "2026-08-23T10-47-12Z-hop" in tale
+        )
+        lessons = Path("docs/lessons.md").read_text(encoding="utf-8")
+        self.assertIn("latitude", lessons)
+        self.assertIn("Forest is 270", lessons)
+
+    def test_index_leads_with_science_gained(self):
+        index = Path("docs/press/INDEX.md").read_text(encoding="utf-8")
+        self.assertIn("13.26 sci → 16.47 sci", index)
+        self.assertIn("5.67 sci → 7.77 sci", index)
+        self.assertNotIn("16.47 sci → 1.47 sci", index)
+        self.assertNotIn("16.47 → **1.47**", index)
 
     def test_goo_shot_preserved(self):
         from screenshot import PRESERVE, resolve_dest

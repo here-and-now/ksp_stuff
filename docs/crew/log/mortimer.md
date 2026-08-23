@@ -1,5 +1,16 @@
 # Mortimer Grokman — log
 
+- 2026-08-23 — Sunday token tax: desk reasoning floors (Jeb/Lars low, Wernher/Mortimer medium, Gene/Gus/Linus medium, Hank=TUI). Never xhigh. Fresh spawn vs resume_from in PROTOCOL. Packet skim; no auto --deep.
+- 2026-08-23 — T-143: leftover-ksc load retired. Walk home recover()+Close. Os disabled reverting. PROTOCOL/OPS/CHARTER/Practice/Hank/GLOSSARY. Code stays T-142.
+- 2026-08-23 — T-114: working goal is next tech node `stability` 18; do not rest until banked. CHARTER/slate/Practice aligned. Crumbs 1.47 unspent. Creed untouched.
+- 2026-08-23 — Os RSI: log more kRPC; thin tape is a ticket; science side-by-side; idle pad is a sin. T-106 closed. Systems T-107–T-110. Science T-111–T-112. Vehicle T-113.
+- 2026-08-23 — Os: live telem watch. Jeb notes/holds in-flight. Hank reads ship.md; off-nominal hires Gene/Lars/Wernher (no stick, no status). T-103 closed. T-104 ship envelope CLI.
+- 2026-08-23 — Os: flight ends at CLI exit. After-flight tape is Hank (desk/attach-run/landing/leftover), not Jeb review. T-101 closed.
+- 2026-08-23 — Os: Procedural Parts on the shelf. Gus prefers unlocked proc tank/decoupler/SRB/heatshield; unsigned proc tanks is a miss. T-096 closed. Vehicle T-097–T-100. Pad stays flying.
+- 2026-08-23 — Os pad occupancy: tape is the product; idle pad is a miss. 15 spent; chute workshop toward stability 18. PROTOCOL/Practice/job cards: inventory during lock, uncrewed miss leftover+Lars+re-fly (no Gene consider), Wernher standing, leftover overlay `--space-center`. T-086 closed.
+- 2026-08-22 — RSI jump applied: `docs/program/rsi-jump.md`. Kernel+cards match; leftover T-051 landing/attach-run, T-052 refile T-005, T-053 RSI leftover-prelaunch-ghost ×3 (software/wernher).
+- 2026-08-22 — RSI-JUMP house: PROTOCOL/AGENTS/OPS/SPEED + job cards match kernel. Packet = desk+BRIEF+ticket (no BOARD). Gene Learn = `payload.learn`; uncrewed not a Gene hire. Wernher on systems tickets. Remaining: landing horiz/pitch skim, hop-exit attach-run, refile T-005.
+- 2026-08-22 — RSI jump workflow: `.grok/workflows/rsi-jump.rhai` (brief `docs/program/tickets/RSI-JUMP.md`). Comms → friction → interview → Wernher design → Os gate → apply. Loop shape stays; dataflow and Wernher hire are the jump. Pad not flown this sit.
 - 2026-08-22 — T-048 paid survivability: sci 16.4716835→1.4716835. Backup persistent.sfs.bak-survivability. `load rd-survivability` seated Ast. XRL-564; `ksc` (F-015). Rock not recovered. Spend kept. Mk16/RC_cone Available. Gus hangs a chute.
 - 2026-08-22 — T-030: leftover/KSC is Hank (`recover-probe` / `ksc`). Commander hop is flight. Gene honesty, `go: wait` on dirty hangar. Lars not leftover recover-then-Hangar. Wernher kernel T-029.
 - 2026-08-21 — I-020: jsonl envelope is the tape. Gene/Linus/Lars/Jeb cite heading/horiz/pitch; last-flight is abort/exit. Water died on heading never 090.

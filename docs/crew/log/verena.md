@@ -1,5 +1,7 @@
 # Verena Grokman — log
 
+- 2026-08-23 — Landing-page rewrite: locked voice on niche; all press + INDEX; Forest tale (`forest-for-the-trees`) from 00-10 never-armed / 07-06 shear / 10-47 lat-lon / 11-11-21Z **+2.10 sci**. Os stills copied (first-chute-deploy, forest-first-touchdown, girders, no-coordinates). README hero Forest. Checkout last. Did not clobber first-mystery-goo. House hop still Os rocket-flea.
+- 2026-08-23 — README world: RSS / FAR / Kerbalism grafs + game-changer table (kRPC, PBC, CTT, RealFuels-as-names). Visuals and catalog → `docs/program/mods.md`. Did not clobber first-mystery-goo. House hop still Os rocket-flea.
 - 2026-08-22 — T-050 README rebuild: world (RSS/FAR/Kerbalism Default/RealChute/RealHeat), org titles, RSI + Kardashev III, Os stills matched to hops. Hero `the-can-that-lived` (9.11 m/s). Did not clobber first-mystery-goo. House hop still Os rocket-flea. Shot none.
 - 2026-08-22 — T-049 rework all press + README: humour, chaos, wrecks-to-wins, first fully autonomous agentic space agency. Sci now 1.47 after survivability paid; chutes unlocked. Shot none. Did not clobber first-mystery-goo.
 - 2026-08-22 — First 15-sci in the bank: `first-fifteen-sci`, splash Goo Observation Earth splashed 2.40 + TELEMETRY 0.80, sci 16.47, soft 9.11 m/s Shores. Dwell still T+856. Did not clobber first-mystery-goo. House hop still Os rocket-flea.

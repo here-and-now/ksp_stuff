@@ -44,8 +44,9 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         return num
 
     alt_min = peri_min = lf_min = fuel_min = ec_min = float("inf")
-    apo_max = warp_max = met_max = -float("inf")
+    apo_max = warp_max = met_max = horiz_max = -float("inf")
     lf0 = lf1 = fuel0 = fuel1 = ec0 = ec1 = float("nan")
+    hdg0 = hdg1 = pitch0 = pitch1 = float("nan")
     t_esc = t_atmo = t_dip = 0.0
     prev_t = 0.0
     first_line = last_line = ""
@@ -69,6 +70,17 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         alt, peri, apo = _f(row, "alt"), _f(row, "peri"), _f(row, "apo")
         lf, warp = _f(row, "lf"), _f(row, "warp")
         fuel, ec, met = _f(row, "fuel"), _f(row, "ec"), _f(row, "met")
+        hdg, horiz, pitch = _f(row, "heading"), _f(row, "horiz"), _f(row, "pitch")
+        if math.isfinite(hdg):
+            if not math.isfinite(hdg0):
+                hdg0 = hdg
+            hdg1 = hdg
+        if math.isfinite(horiz):
+            horiz_max = max(horiz_max, horiz)
+        if math.isfinite(pitch):
+            if not math.isfinite(pitch0):
+                pitch0 = pitch
+            pitch1 = pitch
         if not math.isfinite(lf):
             lf = fuel
         if math.isfinite(alt):
@@ -138,6 +150,11 @@ def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         ][:40],
         "first": first_line,
         "last": last_line,
+        "heading_first": _fin(hdg0),
+        "heading_last": _fin(hdg1),
+        "horiz_max": _fin(horiz_max),
+        "pitch_first": _fin(pitch0),
+        "pitch_last": _fin(pitch1),
     }
 
 
@@ -197,18 +214,46 @@ def write_review(
     lines.extend(f"- {x}" for x in stats["event_lines"] or ["(none)"])
     if handoff and handoff.is_file():
         lines.extend(["", "## Handoff", "", "```", handoff.read_text(encoding="utf-8")[:4000], "```"])
-    lines.extend(
-        [
-            "",
-            "## Learn",
-            "",
-            "_Gene fills this. What worked, what failed, what to change in",
-            "the library vs this pilot's style. One short paragraph._",
-            "",
-        ]
-    )
+    lines.extend(learn_block(command, exit_code, abort, stats))
     out.write_text("\n".join(lines), encoding="utf-8")
     return out
+
+
+_HYGIENE = frozenset({"ksc", "load", "recover-probe"})
+
+
+def _env_num(val: float | None) -> str:
+    if val is None:
+        return "?"
+    return str(int(round(val)))
+
+
+def learn_block(
+    command: str,
+    exit_code: int,
+    abort: str | None,
+    stats: dict[str, Any],
+) -> list[str]:
+    """Envelope Learn from jsonl stats. Hygiene commands skip the Gene blank."""
+    env: list[str] = []
+    h0, h1 = stats.get("heading_first"), stats.get("heading_last")
+    if h0 is not None or h1 is not None:
+        env.append(f"heading {_env_num(h0)}→{_env_num(h1)}")
+    if stats.get("horiz_max") is not None:
+        env.append(f"horiz max {_env_num(stats.get('horiz_max'))}")
+    p0, p1 = stats.get("pitch_first"), stats.get("pitch_last")
+    if p0 is not None or p1 is not None:
+        env.append(f"pitch {_env_num(p0)}→{_env_num(p1)}")
+    env_s = ", ".join(env) if env else "none"
+    cmd = (command or "").strip().lower()
+    if cmd in _HYGIENE:
+        body = f"hygiene {cmd} exit={exit_code} envelope {env_s}."
+    else:
+        body = (
+            f"exit={exit_code} abort={abort or 'none'}. envelope {env_s}. "
+            "Stamp payload.learn on the fly ticket."
+        )
+    return ["", "## Learn", "", body, ""]
 
 
 def latest_jsonl(flight_id: str | None = None) -> Path | None:

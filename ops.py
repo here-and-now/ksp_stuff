@@ -12,6 +12,7 @@ from tickets import (
     fly_fields,
     list_tickets,
     load_head,
+    needs_learn,
     packet_cmd,
     show_ticket,
 )
@@ -19,6 +20,8 @@ from tickets import (
 ROOT = Path(__file__).resolve().parent
 LOCK = ROOT / "docs" / "program" / "flight.lock"
 DESK = ROOT / "docs" / "program" / "desk.md"
+OVERLAY = ROOT / "docs" / "program" / "overlay.last"
+_OVERLAY_KEYS = frozenset({"can_revert", "overlay", "ksc_ready"})
 
 
 def lock_live() -> bool:
@@ -44,6 +47,18 @@ def parse_desk(text: str | None = None) -> dict[str, str]:
             out[key] = v.strip()
     if leftover_n and "leftover" not in out:
         out["leftover"] = leftover_n
+    if text is None and OVERLAY.is_file():
+        try:
+            overlay_txt = OVERLAY.read_text(encoding="utf-8")
+        except OSError:
+            overlay_txt = ""
+        for line in overlay_txt.splitlines():
+            if ":" not in line:
+                continue
+            k, _, v = line.partition(":")
+            key = k.strip().lower()
+            if key in _OVERLAY_KEYS and v.strip():
+                out[key] = v.strip()
     return out
 
 
@@ -63,6 +78,9 @@ def leftover_n(desk: dict[str, str]) -> int:
 def leftover_cli(desk: dict[str, str]) -> str:
     hangar = (desk.get("hangar") or "none").strip().lower()
     rec = (desk.get("recoverable") or "").strip().lower()
+    overlay = (desk.get("can_revert") or desk.get("overlay") or "").strip().lower()
+    if overlay in {"true", "yes", "1"}:
+        return "python main.py recover-probe --space-center"
     if rec in {"no", "false", "0"}:
         return "python main.py recover-probe --space-center"
     if hangar.startswith("recover "):
@@ -72,9 +90,16 @@ def leftover_cli(desk: dict[str, str]) -> str:
 
 def leftover_sit(desk: dict[str, str]) -> bool:
     hangar = desk.get("hangar") or "none"
+    n = leftover_n(desk)
+    ready = (desk.get("ksc_ready") or "").strip().lower()
+    if n == 0 and ready in {"true", "yes", "1"}:
+        return False
+    overlay = (desk.get("can_revert") or desk.get("overlay") or "").strip().lower()
+    if overlay in {"true", "yes", "1"}:
+        return True
     if hangar.startswith("recover ") or hangar.startswith("phase "):
         return True
-    return leftover_n(desk) > 0
+    return n > 0
 
 
 def _open_by_type(*types: str) -> list[dict[str, Any]]:
@@ -211,24 +236,32 @@ def next_actions(
     needing_go = [t for t in fly_tickets if fly_fields(t).get("go") != "yes"]
     if needing_go:
         t = needing_go[0]
-        _hire("gene", [t], "fly ticket needs go stamp")
-        veh = [
+        why = (
+            "campaign stop — batch Learn"
+            if needs_learn(t)
+            else "fly ticket needs go stamp"
+        )
+        _hire("gene", [t], why)
+        ready = {"inbox", "triage", "ready", "assigned"}
+
+        def _typed(*types: str) -> list[dict[str, Any]]:
+            return [
+                x
+                for x in list_tickets(open_only=True)
+                if x.get("type") in types and x.get("status") in ready
+            ]
+
+        veh = _typed("vehicle")
+        sci = _typed("science")
+        ctrl = _typed("control")
+        seen = {x["id"] for x in veh + sci + ctrl}
+        sys_rows = [
             x
             for x in list_tickets(open_only=True)
-            if x.get("type") == "vehicle"
-            and x.get("status") in {"inbox", "triage", "ready", "assigned"}
-        ]
-        sci = [
-            x
-            for x in list_tickets(open_only=True)
-            if x.get("type") == "science"
-            and x.get("status") in {"inbox", "triage", "ready", "assigned"}
-        ]
-        ctrl = [
-            x
-            for x in list_tickets(open_only=True)
-            if x.get("type") == "control"
-            and x.get("status") in {"inbox", "triage", "ready", "assigned"}
+            if x["id"] not in seen
+            and x.get("status") in ready
+            and x.get("type") not in {"fly", "recover"}
+            and (x.get("type") == "systems" or x.get("desk") == "wernher")
         ]
         if veh:
             _hire("gus", veh, "batch vehicle tickets (tree/unlock)")
@@ -236,6 +269,8 @@ def next_actions(
             _hire("linus", sci, "batch science tickets (bind still blocked on capable)")
         if ctrl:
             _hire("lars", ctrl, "batch control tickets (miss/fingerprint)")
+        if sys_rows:
+            _hire("wernher", sys_rows, "batch systems tickets")
         return {
             "lock": "free",
             "pad": "idle",

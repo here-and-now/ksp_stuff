@@ -102,21 +102,16 @@ def _card_ids(phase: str, science_text: str) -> tuple[str, ...]:
 
 
 def _bound_ids(ticket, sit, phase: str, science_text: str) -> tuple[str, ...]:
-    ff = fly_fields(ticket)
-    ids = tuple(ff.get("science_ids") or ())
+    sit_key = _PHASE_SIT.get(phase, "")
+    ids: tuple[str, ...] = ()
+    try:
+        from tickets import card_science_ids
+
+        ids = card_science_ids(situation=sit_key, ticket=ticket)
+    except Exception:
+        ids = tuple(fly_fields(ticket).get("science_ids") or ())
     if ids:
         return ids
-    sit_key = _PHASE_SIT.get(phase, "")
-    craft = str(getattr(sit, "craft", "") or "")
-    if sit_key:
-        try:
-            from tickets import science_ids_for
-
-            ids = science_ids_for(situation=sit_key, craft=craft)
-        except Exception:
-            ids = ()
-        if ids:
-            return ids
     return _card_ids(phase, science_text)
 
 

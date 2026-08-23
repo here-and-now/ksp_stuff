@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from pathlib import Path
+
+# RSS Earth mean radius. Live telem prefers body.equatorial_radius.
+EARTH_R_M = 6_371_000.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -92,3 +96,35 @@ def default_pad_ll(ksp_root: str | Path) -> tuple[float, float]:
     if site is None:
         return STOCK_PAD.latitude, STOCK_PAD.longitude
     return site.latitude, site.longitude
+
+
+def downrange_km(
+    lat: float,
+    lon: float,
+    pad_lat: float,
+    pad_lon: float,
+    radius_m: float = EARTH_R_M,
+) -> float:
+    """Great-circle km from pad to (lat, lon). NaN if any input is not finite."""
+    try:
+        lat_f = float(lat)
+        lon_f = float(lon)
+        plat = float(pad_lat)
+        plon = float(pad_lon)
+        radius = float(radius_m)
+    except (TypeError, ValueError):
+        return float("nan")
+    if not all(math.isfinite(x) for x in (lat_f, lon_f, plat, plon, radius)):
+        return float("nan")
+    if radius <= 0.0:
+        return float("nan")
+    rlat1 = math.radians(lat_f)
+    rlat2 = math.radians(plat)
+    dlat = math.radians(plat - lat_f)
+    dlon = math.radians(plon - lon_f)
+    a = (
+        math.sin(dlat / 2.0) ** 2
+        + math.cos(rlat1) * math.cos(rlat2) * math.sin(dlon / 2.0) ** 2
+    )
+    a = min(1.0, max(0.0, a))
+    return (radius * 2.0 * math.atan2(math.sqrt(a), math.sqrt(1.0 - a))) / 1000.0

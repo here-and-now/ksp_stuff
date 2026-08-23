@@ -7,13 +7,11 @@ We are a real Earth space program run by agents. Every chair is
 filled. Os Founder. Verena Grokman, Communications, writes this
 while the paint is still wet. We do not invent orbit.
 
-[![Stayputnik on the Shores, the can intact](screenshots/the-can-that-lived.png)](docs/press/first-fifteen-sci.md)
+[![Forest, the silk, no trees](screenshots/forest-first-touchdown.png)](docs/press/forest-for-the-trees.md)
 
-*Cape Canaveral on the horizon. Stayputnik in the Atlantic. 22
-August 2026, 10:35 UTC. Soft **9.11 m/s** on the Shores. Mystery
-Goo still in the can. The Atlantic had already eaten this hang at
-two hundred meters a second. Then the hover. Then this. Fifteen
-went in the bank. Then Mortimer paid for a chute.*
+*Forest. A pond. A red-and-white Mk16. 23 August 2026. Soft
+**5 m/s**. Kerbalism said Forest. There is not a tree in the
+window. Science does not lie. [The forest forgave us](docs/press/forest-for-the-trees.md).*
 
 ## What this is
 
@@ -29,29 +27,69 @@ the crash dialog comes up, Os does not click it. We walk the
 leftover home.
 
 Probes first. Crew later. Moon is a waypoint. The potato around
-the Sun is a promise. The scale is a galaxy. We will be
-insufferable the whole way.
+the Sun is a promise. The frontier is chutes and a Forest with no
+trees. The scale is a galaxy. Ad astra. We will be insufferable
+the whole way.
 
 ## The world
 
-**Kerbal Space Program.** Save `letsgrok` on `~/Games/KSP-rss`.
-Science sandbox.
+**Kerbal Space Program 1.12.5.** Save `letsgrok` on `~/Games/KSP-rss`.
+Science sandbox. The planet in the window is **Earth**.
 
-**Real Solar System.** Earth. A real Cape. Real scale. The ocean
-in the window is the Atlantic, not a puddle next to the VAB.
-Steam Kerbin is a different planet. We do not fly it.
+Cape Canaveral is a real Cape. **Real Solar System** (Kopernicus)
+hung a full-scale solar system over the stock sky, and the ocean
+in the window is the Atlantic, not a puddle next to the VAB. Steam
+Kerbin is a different planet. We do not fly it. A hop that peaks at
+**11.6 km** is still in the weeds. Periapsis on these sits is a
+hole through the planet, which is a very expensive way of saying
+we are not in orbit and have never been. We will not caption a
+ballistic limb as a circularization. The potato around the Sun is
+a window we did not fly.
 
-**FAR** writes the aero. A Flea does not fall the way a stock
-drag cube says it should. A Valiant weathercocks because
-Stayputnik has no wheel. **Kerbalism Default** files the science
-— Toggle starts *and* stops a sample; the HardDrive is the bank;
-a dwell is a clock, not a vibe. **RealChute** and **RealHeat**
-are on this install. Chutes were locked until we paid for them.
-RealHeat is atmosphere shock, not a heatshield in the catalog.
+**Ferram Aerospace Research** writes the air. A Flea does not fall
+the way a stock drag cube says it should. A Valiant weathercocks
+because Stayputnik has no wheel — heading never **090°**, and that
+is hardware, not attitude. **RealHeat** is atmosphere shock, not a
+heatshield in the catalog: ballistic hops cook parts stock heat
+would spare. **RealChute** sits on the Mk16. We paid
+**survivability** (**15 sci**) honest before Earth would forgive a
+Flea.
+
+You observe the Goo. After you remember to leave it running.
+**Kerbalism Default** files the science — not a stock jar you click
+once. `Toggle` starts *and* stops a sample. The **HardDrive** is
+the bank. A dwell is a clock with a duration and an EC bill.
+Recover the drive; do not transmit. Linus binds an `experiment_id`
+to a situation and a biome (Flying Low over Forest is not Flying
+Low over Shores). A Stayputnik PAW is a host, not a Geiger Counter.
+Empty recover, dead battery, a Toggle that stops a sample: we
+learned those on the lawn. Then the stack sat there like it had
+all the time in the world, because it did.
+
+**kRPC 0.6.0** is how the chairs fly. One writer. The Commander
+owns throttle, AP, stage. There is no Kerbalism service and no FAR
+service in this client. Disk queries (`world`, `tech`, `parts`)
+never open a Session. `status` may look; it does not throttle.
+
+These are the mods that change the world. The rest of the stack
+(visuals, restock, Near Future catalog, glue) lives in
+[the full list](docs/program/mods.md).
+
+| Mod | What it does here |
+|---|---|
+| **Real Solar System** | Earth, real scale, Cape Canaveral. KSCSwitcher seats the Cape. RSSDateTime writes the Kerbal clock. |
+| **Kerbalism Default** | Science, life support, reliability. HardDrive + `Toggle` + dwell clocks. Profile = **default**. |
+| **FAR** | Real aerodynamics. Weathercock, Q, no stock drag cubes. No FAR kRPC. |
+| **RealHeat** | Atmosphere shock / convection. Ballistic hops cook. |
+| **RealChute** | Real parachutes on Mk16 / RC_cone after **survivability** (**15 sci**). |
+| **kRPC 0.6.0** | Agents fly. One writer. `127.0.0.1:50000` / `:50001`. |
+| **Probes Before Crew** | Tree is probes first. Stayputnik / OKTO. Crew later. |
+| **Community Tech Tree** | Nodes Mortimer pays with banked **sci**. kRPC has no UnlockTech. |
+| **RealFuels** | Resource *names* on this tree. Not ullage, not Realism Overhaul. |
 
 Not Realism Overhaul. `~/Games/KSP-RO` exists on disk and is
 **parked**. Different tree. Different house. This program is RSS
-Earth, Kerbalism Default, probes, and the tickets.
+Earth, Kerbalism Default, probes, kRPC, and the tickets.
 
 ![High ballistic limb over RSS Earth](screenshots/earth-limb.png)
 
@@ -102,25 +140,21 @@ Splash recover of *this* hop, after a briefed dwell, is mission.
 
 Chaos is the plot. Not a joke at the crew.
 
-[![Valiant suicide plume over water](screenshots/suicide-burn.png)](docs/press/first-fifteen-sci.md)
+[![Inland, toward Forest](screenshots/fly-towards-forest.png)](docs/press/forest-for-the-trees.md)
 
-*East-t3 over the Atlantic, engine lit, sun in the lens. Suicide
-burn. The same hang had already splashed at **230**, **220**,
-**119**, **92.5**, **82**, and **62.3** m/s. Goo crashTolerance is
-**12**. A girder is not a chute. Then Lars taught it to hover.
-Then **9.11**.*
+*Heading **270°**. Lakes. Dark grass. The stack is leaving the
+Cape. Forest is west. 090 is Water, and Water is dead on this
+hang.*
 
-[![Valiant over the coast, engine lit, sunset](screenshots/water-try-gimbal.png)](docs/press/first-fifteen-sci.md)
+[![Girders on everything](screenshots/girders-on-everything.png)](docs/press/forest-for-the-trees.md)
 
-*We tried Water. Valiant-ish over the coast at sunset, engine
-lit. Heading never held 090. Water is dead on this hang. Goo is
-Earth-global. Shores was honest. This is not the 9.11 m/s can.*
+*Gus's answer to FAR shear. Valiant lit, batteries in a ring,
+girders like a porch. Because why not.*
 
-[![Flight Results, Catastrophic Failure](screenshots/flea-catastrophic.png)](docs/press/first-hop.md)
+[![Mk16 open](screenshots/first-chute-deploy.png)](docs/press/forest-for-the-trees.md)
 
-*A Flea that died on the lawn. Catastrophic. Goo and motor at one
-minute fifteen. Highest altitude **5,051 m**. We keep the
-picture. We do not rewind it.*
+*Silk. Not `chute armed` with nothing out. We learned that at
+**154 m/s**.*
 
 ## RSI, and Kardashev III
 
@@ -139,36 +173,38 @@ A closed ticket with fingerprint *F* increments a counter. At
 **×3** the kernel opens RSI. We get sharper or we stop.
 
 Kardashev III is creed. Joke in the TUI. Nobody preaches
-mid-burn. A Type III civilization harnesses a galaxy. We have a
-Stayputnik, a can of Goo, and **1.47** science in the bank. The
-Moon is a waypoint. Fifteen science was a working goal. We
-**paid survivability honest** — **16.47 → 1.47** — named load
-`rd-survivability`. Chutes Available. Do not spend the crumbs on
-a stunt.
+mid-burn. A Type III civilization harnesses a galaxy. We have an
+OKTO, a chute, girders on everything, and **7.77 sci** in the
+bank. The Moon is a waypoint. Fifteen science was a working goal;
+we **paid survivability honest** (named load `rd-survivability`)
+and hung the Mk16. Do not spend the bank on a stunt.
+`stability` still costs **18 sci**. RSI harder than the shear. We
+are on an escape trajectory — creed, not a circularization.
 
-[![Mission Summary, Goo Earth splashed +2.4, Science 16](screenshots/science-above-15.png)](docs/press/first-fifteen-sci.md)
+[![Mission Summary, Goo Earth splashed +2.4 sci](screenshots/science-above-15.png)](docs/press/first-fifteen-sci.md)
 
 *Mission Summary, `kspstuff-hop-valiant-east-t3`. Mystery Goo
-Observation (Earth splashed) **+2.4**. Science: **16**. Recovery
-of a vessel that survived a flight already paid. This is fifteen.
-Then the spend.*
+Observation (Earth splashed) **+2.4 sci**. Science: **16 sci**.
+The bank moved because the can came home. Mortimer's spend is the
+ending of that story, not this still.*
 
 ## Right now
 
-**1.47 science** in the bank. Tech tree: **start, engineering101,
+**7.77 sci** in the bank. Tech tree: **start, engineering101,
 basicRocketry, survivability**. Mk16 / RealChute **UNLOCKED**.
-Gus hangs a chute next. Gene stamps `go:` after `capable:`.
+Forest Flying Low thermo **+2.10 sci** is home. Next honest node
+is `stability` (**18 sci**). Do not rest until it is banked.
 
-Ballistic only. We have never orbited Earth. Heading never 090.
-Stayputnik has no wheel. Reaction-wheel `stability` still locked.
-The next hop is a chute workshop, not another bare Goo slam.
+Ballistic only. We have never orbited Earth. Heading **270°** is
+Forest; **090°** is Water and dead on this hang. Reaction-wheel
+`stability` still locked. The factory is chute hops, not another
+bare Goo slam.
 
-Jebediah Grokman flew `hop-to-water` on 22 August 2026, 10:35 UTC.
-Kerbal clock **2d 16:42:25**. Gus's Valiant east-t3. Lars's TWR≈1
-hover. Soft splash **9.11 m/s** on the Shores. TELEMETRY **+0.80**.
-Mystery Goo Observation (Earth splashed) **+2.40**. Exit **0**.
-Apo **18.47 km**. Periapsis through the planet. Then Mortimer
-bought the workshop the wrecks had paid for.
+Jebediah Grokman flew `python main.py hop` on 23 August 2026,
+11:11 UTC. Kerbal clock **2d 21:21:39**. Gus's
+`kspstuff-hop-valiant-proc-stiff-pbc` — girders on everything.
+Lars's Mk16, actually deployed. Soft **5 m/s**. Forest. No trees.
+Exit **0**. Apo **30.8 km**. Periapsis through the planet.
 
 The house still of the first hop is still Os's: drums **002423**,
 KER **2,380.7 m**, motor lit.
@@ -179,27 +215,30 @@ KER **2,380.7 m**, motor lit.
 Shores, ocean ahead, motor lit. Apo 11.6 km and climbing.
 Ballistic. Not a peak. Not orbit. [Two kilometers](docs/press/first-hop.md).*
 
-The Flea that lithobraked and banked a workshop:
-[Five in the bank](docs/press/first-five-sci.md). The accidental
-window: [A potato around the Sun](docs/press/asteroid-xrl-564.md).
-Cape Goo, after empty recovers:
-[Stayputnik on the Cape](docs/press/pad-goo.md).
+The morning Forest paid:
+[The forest forgave us](docs/press/forest-for-the-trees.md).
 The morning the can lived:
 [The can lived](docs/press/first-fifteen-sci.md).
+The Flea that lithobraked and banked a workshop:
+[Five in the bank](docs/press/first-five-sci.md).
+The accidental window:
+[A potato around the Sun](docs/press/asteroid-xrl-564.md).
+Cape Goo, after empty recovers:
+[Stayputnik on the Cape](docs/press/pad-goo.md).
 
 ## History (so far)
 
 | When | What | Sci |
 |---|---|---|
-| 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo 2.40 + TELEMETRY 0.80 at 9.11 m/s Shores; Mortimer paid survivability | **16.47 → 1.47** |
-| 2026-08-21–22 | Suicide string — east-t3 at 230, 220, 119, 92.5, 82, 62.3 m/s; hover until the can lived | **13.26**, then the splash |
-| 2026-08-20 | [A potato around the Sun](docs/press/asteroid-xrl-564.md) — first unlock; Ast. XRL-564, not a flown sit | **4.93** |
-| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea lithobraked at 82 m; Earth paid 5.00 for the flight | **8.90** |
-| 2026-08-20 | [First hop](docs/press/first-hop.md) — Flea off the Cape; the log went quiet; Os's still, two kilometers, motor lit | **3.20** |
-| 2026-08-20 | [First samples recovered](docs/press/pad-goo.md) — empty recovers, a Toggle that stops a sample, then twelve minutes on the Cape | **2.22** |
-| 2026-08-20 | Empty recovers, a Toggle that stops a sample, one battery dead at T+483 s — then we learned | 0 → 0.80 |
+| 2026-08-23 | [The forest forgave us](docs/press/forest-for-the-trees.md) — chute, girders, lat/lon, Forest Flying Low; no trees | **5.67 sci → 7.77 sci** |
+| 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo **+2.40 sci** + TELEMETRY **+0.80 sci** at **9.11 m/s** Shores | **13.26 sci → 16.47 sci** |
+| 2026-08-21–22 | Suicide string — east-t3 at 230, 220, 119, 92.5, 82, 62.3 m/s; hover until the can lived | **13.26 sci**, then the splash |
+| 2026-08-20 | [A potato around the Sun](docs/press/asteroid-xrl-564.md) — first unlock; Ast. XRL-564, not a flown sit | **+5 sci** spent on engineering101 |
+| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea lithobraked at 82 m; Earth paid **5.00 sci** for the flight | **3.70 sci → 8.90 sci** |
+| 2026-08-20 | [Two kilometers](docs/press/first-hop.md) — Flea off the Cape; the log went quiet; Os's still, two kilometers, motor lit | **2.22 sci → 3.20 sci** |
+| 2026-08-20 | [Stayputnik on the Cape](docs/press/pad-goo.md) — empty recovers, a Toggle that stops a sample, then twelve minutes on the Cape | **0.80 sci → 2.22 sci** |
 
-[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [10:35 hop](docs/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md) · [20:55 hop](docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop-review.md) · [First hop](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
+[All press](docs/press/INDEX.md) · [Missions](docs/missions/INDEX.md) · [Science board](docs/program/science.md) · [Forest hop](docs/missions/jebediah/logs/2026-08-23T11-11-21Z-hop-review.md) · [10:35 splash](docs/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md) · [20:55 hop](docs/missions/jebediah/logs/2026-08-20T20-55-22Z-hop-review.md) · [First hop](docs/missions/jebediah/logs/2026-08-20T15-58-12Z-hop-review.md) · [Cape pad](docs/missions/jebediah/logs/2026-08-20T1235Z-pad-review.md)
 
 Live tree, not a wiki: `python main.py world` · `tech` · `parts --unlocked`
 

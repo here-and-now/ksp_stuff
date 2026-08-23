@@ -1,16 +1,42 @@
 # Ticket board
 
-open: 10 / 50
+open: 36 / 166
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
-| T-013 | fly | flight | S2 | P0 | high | verify | gene | catastrophic,landing,hard-splash,hard | hop-to-water east slew toward Water splash |
-| T-005 | control | bug | S2 | P1 | high | inbox | lars |  | I-019 leftover hop-flea vs seated craft |
-| T-041 | vehicle | craft | S2 | P1 | high | assigned | gus | east-t3,goo,hard-splash | east-t3 is T-040 suicide-burn Goo test hang |
-| T-008 | fly | flight | S2 | P2 | high | blocked | gene |  | hop-splash t7 toward 15 sci |
-| T-019 | science | science_opportunity | S3 | P1 | high | ready | linus | splash,goo,east-t3,global | splash mysteryGoo 2.40 closes 15 |
-| T-020 | science | science_opportunity | S3 | P1 | high | ready | linus | splash,telemetry,east-t3,shores | splash TELEMETRY 0.80 sequential first |
+| T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft | chute workshop hop: living recover Forest/Grasslands FlyingLow |
+| T-164 | control | bug | S2 | P0 | low | inbox | lars | heading | T-163 still no 270: 10-47-12Z burnout 185/-20, no re-point, Shores +0 |
+| T-069 | science | science_opportunity | S3 | P1 | medium | inbox | linus | remaining,forest,telemetry,leftover,unbound | Forest FlyingHigh TELEMETRY leftover 1.51 |
+| T-070 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,grasslands,thermo,chute,bound,stiff-pbc | Grasslands FlyingLow thermo 2.10 |
+| T-071 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,grasslands,telemetry,bound,stiff-pbc | Grasslands FlyingLow TELEMETRY 1.40 |
 | T-025 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,thermo,unbound | FlyingLow@Water thermo 2.10 wait heading 090 |
 | T-026 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingLow@Water TELEMETRY 1.40 wait heading 090 |
 | T-027 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingHigh@Water TELEMETRY 1.80 wait heading 090 |
 | T-028 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,splash,unbound | splash TELEMETRY@Water 0.80 wait heading 090 |
+| T-052 | ops | ops | S3 | P2 | medium | inbox | hank | feedback | refile T-005 leftover-prelaunch-ghost to systems (hangar kernel, not burn) |
+| T-072 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,tropics,thermo,chute,unbound | Tropics FlyingLow thermo 2.10 |
+| T-073 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,savanna,thermo,chute,unbound | Savanna FlyingLow thermo 2.10 |
+| T-074 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingLow TELEMETRY 1.40 |
+| T-075 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingLow TELEMETRY 1.40 |
+| T-076 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,telemetry,unbound | Grasslands FlyingHigh TELEMETRY 1.80 |
+| T-077 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,forest,thermo,landed,unbound | Forest SrfLanded thermo 0.90 chute land |
+| T-078 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,thermo,landed,unbound | Grasslands SrfLanded thermo 0.90 chute land |
+| T-079 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,telemetry,landed,unbound | Grasslands SrfLanded TELEMETRY 0.60 chute land |
+| T-090 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,tropics,thermo,landed,unbound | Tropics SrfLanded thermo 0.90 chute land |
+| T-091 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,savanna,thermo,landed,unbound | Savanna SrfLanded thermo 0.90 chute land |
+| T-092 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,tropics,telemetry,landed,unbound | Tropics SrfLanded TELEMETRY 0.60 chute land |
+| T-093 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,savanna,telemetry,landed,unbound | Savanna SrfLanded TELEMETRY 0.60 chute land |
+| T-117 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,tundra,thermo,chute,unbound | Tundra FlyingLow thermo 2.10 |
+| T-118 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,tundra,telemetry,unbound | Tundra FlyingLow TELEMETRY 1.40 |
+| T-119 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,mountains,thermo,chute,unbound | Mountains FlyingLow thermo 2.10 |
+| T-120 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,mountains,telemetry,unbound | Mountains FlyingLow TELEMETRY 1.40 |
+| T-121 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,desert,thermo,chute,unbound | Desert FlyingLow thermo 2.10 |
+| T-122 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,desert,telemetry,unbound | Desert FlyingLow TELEMETRY 1.40 |
+| T-123 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,ice-caps,thermo,chute,unbound | Ice Caps FlyingLow thermo 2.10 |
+| T-124 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,ice-caps,telemetry,unbound | Ice Caps FlyingLow TELEMETRY 1.40 |
+| T-125 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,taiga,thermo,chute,unbound | Taiga FlyingLow thermo 2.10 |
+| T-126 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,taiga,telemetry,unbound | Taiga FlyingLow TELEMETRY 1.40 |
+| T-156 | vehicle | craft | S3 | P2 | medium | inbox | gus | chute,cone | geiger-cone-pbc empty RealChute PARACHUTE inherits minPressure 0.04 / 0.8 m |
+| T-080 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,forest,geiger,f013,unbound | Forest SrfLanded geiger 1.20 wait Geiger part |
+| T-094 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingHigh TELEMETRY 1.80 wait ≥50 km |
+| T-095 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingHigh TELEMETRY 1.80 wait ≥50 km |

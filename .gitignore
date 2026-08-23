@@ -26,6 +26,7 @@ venv/
 
 # Live kRPC handoff — not the lesson chain
 docs/last-flight.md
+docs/program/overlay.last
 docs/missions/*/sorties/*.jsonl
 
 # Local campaign backups (tar of old flights/jsonl)

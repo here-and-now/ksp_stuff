@@ -8,7 +8,7 @@ from pathlib import Path
 from desk import DeskSit, F013
 from unittest.mock import patch
 
-from protocol import FlyGate, fly_gate, format_gate, parse_return
+from protocol import FlyGate, _bound_ids, fly_gate, format_gate, parse_return
 from phases import NAMES
 
 
@@ -255,6 +255,25 @@ class TestFlyGate(unittest.TestCase):
             ticket=ticket,
         )
         self.assertEqual(gate.fly, "yes")
+
+    def test_fly_science_ids_union_bound(self):
+        ticket = {
+            "go": "yes",
+            "payload": {
+                "cli": "python main.py hop",
+                "phase": "hop",
+                "science_ids": ("temperatureScan",),
+            },
+        }
+        with patch(
+            "tickets.science_ids_for",
+            return_value=("kerbalism_TELEMETRY", "mysteryGoo"),
+        ):
+            ids = _bound_ids(ticket, _sit(), "hop", "# no experiments\n")
+        self.assertEqual(
+            ids,
+            ("kerbalism_TELEMETRY", "mysteryGoo", "temperatureScan"),
+        )
 
     def test_names_match_blocks(self):
         blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")

@@ -363,40 +363,91 @@ story this fly. Dead kRPC GUID is not leftover.
 ## Practice (Mortimer)
 
 - `desk.md` is the sit. Children do not re-run `world`/`tech`/`parts`
-  if that file is this sit.
+  if that file is this sit. Facts / Horizon dated 2026-08-21 are
+  **pre-spend** (survivability then LOCKED). Do not bank 15 twice.
 - `hangar:` is the Hangar call (`none` / `recover <name>` / `blocked`).
   Gene `go: wait` if `recover` / `blocked`. Do not `go: yes` over a
   dirty hangar.
-- Leftover/KSC hygiene is **Hank** (Os 2026-08-22): desk, then
-  `recover-probe` / `--recover` / `--space-center` or `ksc`. Commander
-  hop is flight — not leftover recover, not Close crash UI. Hop abort
-  `ksc leftover` hands to Hank. Splash HD recover of **this** hop after
-  a briefed dwell stays mission. Clean-pad Hangar of the seated craft
-  for the sortie may stay inside hop (`install_and_launch`) — launch,
-  not leftover hygiene. Lars does not patch leftover recover-then-Hangar
-  as vehicle control (Hank/Wernher).
+- Leftover/KSC hygiene is **Hank**: desk, then `recover()` the ship
+  and **Close** to KSC (`recover-probe --recover` if recoverable). Os
+  disabled reverting flights (2026-08-23). Never revert. Never
+  leftover-ksc save/load (that looked like a reload / return to
+  pre-launch). Commander hop is flight — not leftover recover, not
+  Close crash UI. Hop abort `ksc leftover` hands to Hank. Splash HD
+  recover of **this** hop after a briefed dwell stays mission.
+  Clean-pad Hangar of the seated craft for the sortie may stay inside
+  hop (`install_and_launch`) — launch, not leftover hygiene. Lars does
+  not patch leftover recover-then-Hangar as vehicle control
+  (Hank/Wernher).
 - `f013` on every bind / capable / `go:` / miss. Missing line = wait.
-- `agents_md: false`. Gene max two hires per sit. Lars miss only.
+- `agents_md: false`. Gene only when `ops next` names him. Open
+  `type=systems` → Wernher **standing**. Lars miss only (control).
+  Packet skim is desk + BRIEF + this ticket (no BOARD.md).
 - `load rd-<node>` never `load persistent`. One kRPC writer. No rewind.
   Honest CTT spend only when the bank **pays**. No GameData. No UnlockTech.
-- Os mid-flight → parent reads `ship.md`. Wreck → Walt + one PNG.
+- **Live watch:** Commander watches telem in-flight (`note` / hold /
+  abort if unusual). Hank periodically reads `docs/program/ship.md`
+  (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.
+  Off-nominal: uplink wreck-class; hire Gene if plan/`go` must change
+  (no stick); Lars if hop.py; Wernher if kRPC/telem. After CLI exit,
+  tape is still Hank (T-101). Os “how’s it going?” on a nominal hop →
+  `ship.md` as Walt. Wreck → Walt + hire.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
-- Working goal (Os 2026-08-22): `survivability` **paid** (sci
-  16.4716835→1.4716835). Chutes Available. Same lithobrake Flea is
-  still not the campaign. Gus hangs a chute; Gene `go:` after capable.
-  Linus binds subjects that still pay, not spent Cape. Lars owns MET /
-  crash UI — not a recover cheat. Stayputnik is not a Geiger.
+- Working goal (Os 2026-08-23): next tech node `stability` **18**. Do
+  not rest until it is banked. `survivability` **spent** (sci
+  16.4716835→1.4716835). Bank **1.47** crumbs — do not spend on a
+  stunt. Need **~16.53**. Cape Shores is capped. Forest / Grasslands /
+  Tropics / Savanna FlyingLow still pay. Water waits heading 090. Do
+  not slam east-t3. Same lithobrake Flea is still not the campaign.
+  Stayputnik is not a Geiger. A living recover with sci unchanged is
+  not rest.
+- **Pad occupancy:** Tape is the product. An **idle pad is a sin**.
+  Linus always has a **shelf** of `science_opportunity` and binds
+  **side-by-side** (thermo + TELEMETRY + goo if honest). Gus always
+  has **many** signed `.craft` alts on disk. **Procedural Parts** on
+  that shelf when unlocked. Gene **picks** and stamps `go:` — he does
+  not take 15 min after a miss to write a novel. Ground fills the
+  shelf **during** lock live. Stop the batch only leftover / crash UI
+  / f013 fail / live control `.py` / Os wait. An RSI letter does not
+  empty the pad.
+- **Thin tape / 9 columns** is a first-class problem. Stumble →
+  `tickets open --type systems` (or `ops --tag feedback`). Cite it
+  like `f013`. Query Tape, never raw jsonl. Do not shrug in a log.
+  Wernher **logs more kRPC** (EC, q, recoverable, chute state, science
+  rem/run, stage, broken, resources, g) into disk; all data is good
+  data if stored.
+- **RSI:** every hire leaves a sharper sit. Stumble → ticket. Not a
+  log shrug. Not a conference that idles the pad.
+- Unsigned **procedural tanks** after `proceduralTankRealFuels` is
+  unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
+  stacked FL-T100 / stock girder hangs (T-089) are not the next
+  pattern. Nail the `.craft` MODULE config. Never GameData.
 - Uncrewed campaign: Gene first `go:` + `campaign: uncrewed`; parent
-  re-flies last recommended on clean 0; Gene **batch Learn** at stop
-  (miss, leftover hangar, empty card, Os wait). Pad does not idle
-  for a per-hop Learn (I-016). `protocol fly` still gates. Stop the
-  string when remaining subjects cannot finish on this hang/craft.
-- Parent **re-desks** after Gus `capable: yes` before bind/merge
+  re-flies last `cli:` on clean 0 **and** on a miss of a hang that is
+  still capable; **no Gene** between hops. Learn is `payload.learn`.
+  `ops next` hires Gene for Learn only when campaign is not
+  `uncrewed` and learn is empty. Pad does not idle for Learn or
+  “consideration” (I-016 amended). After a hop: Hank leftover first.
+  Walk home: `recover()` + Close. Never revert. Never leftover-ksc
+  load. Lars patches the **live** control file only; pad waits that
+  file. Hang died → next already-signed Gus alt (Gene stamps only if
+  that fly ticket has no `go:`). No alt → hire Gus while leftover
+  cleans. `protocol fly` still gates.
+- Parent **re-desks** after Gus `capable: yes` before bind / Gene `go`
   (I-014). Stale capable/f013 is wait.
 - **jsonl envelope** is the flight tape (`heading` / `horiz` / pitch
-  on `kind=state`). Gene Learn cites those numbers. last-flight prose
-  is not proof of heading. Water died on heading never 090, not on
-  Jeb’s write-up (I-020).
+  on `kind=state`). Gene stamps `payload.learn` from the **review**
+  envelope (`tickets landing` / `--deep`); never from Commander Return
+  prose. last-flight is abort/exit only. Water died on heading never
+  090, not on Jeb’s write-up (I-020).
+- Flight **ends at CLI exit**. The Commander does not write an
+  after-flight review (no jsonl cite, no attach-run, no landing
+  essay). **Hank** owns leftover + tape (`desk`, `attach-run`,
+  `landing`), then `ops next`. Do not hire Jeb to debrief.
+- Do not hire Gene as a merge bus after specialists. Wernher vs Lars:
+  systems/kRPC vs vehicle control. XOR on a **miss patch of the same
+  `.py`**. Wernher is **standing** on open `type=systems` (unused
+  kRPC 0.6, desk, hangar scenes, leftover overlay) — not miss-only.
 
 ## Open questions (between exits)
 

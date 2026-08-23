@@ -7,13 +7,16 @@ import unittest
 from desk import (
     DeskSit,
     F013,
+    _clip_note,
     card_experiments,
     format_sit,
     hangar_call,
     parse_last_flight,
+    pick_banked_science,
     prior_sci,
     sci_delta,
 )
+from ops import leftover_cli, leftover_sit
 from world import SaveVessel
 
 
@@ -77,6 +80,8 @@ class TestDesk(unittest.TestCase):
     def test_format_sit_has_hangar_and_f013_not_gym_scan(self):
         text = format_sit(_sit())
         self.assertIn("hangar: none", text)
+        self.assertIn("sci_src: sfs", text)
+        self.assertNotIn("sci_disk:", text)
         self.assertIn("leftover: 0", text)
         self.assertIn("scene: unknown (disk)", text)
         self.assertIn("mods: none", text)
@@ -94,6 +99,35 @@ class TestDesk(unittest.TestCase):
     def test_sci_delta(self):
         self.assertIn("+1.0000", sci_delta(2.0, 1.0))
         self.assertIn("no prior", sci_delta(2.0, None))
+
+    def test_parse_last_flight_sci(self):
+        text = "command: hop\nexit: 0\nabort:\nsci: 5.6718\nlast:\n  x\n"
+        out = parse_last_flight(text)
+        self.assertEqual(out["sci"], "5.6718")
+
+    def test_pick_banked_science_live_beats_stale_sfs(self):
+        now, src, lag = pick_banked_science(1.4718, live=5.6718)
+        self.assertAlmostEqual(now, 5.6718)
+        self.assertEqual(src, "krpc")
+        self.assertAlmostEqual(lag, 1.4718)
+
+    def test_pick_banked_science_last_flight_when_sfs_lags(self):
+        now, src, lag = pick_banked_science(1.4718, last_flight=5.6718)
+        self.assertAlmostEqual(now, 5.6718)
+        self.assertEqual(src, "last-flight")
+        self.assertAlmostEqual(lag, 1.4718)
+
+    def test_pick_banked_science_disk_when_last_not_ahead(self):
+        now, src, lag = pick_banked_science(5.6718, last_flight=5.6718)
+        self.assertAlmostEqual(now, 5.6718)
+        self.assertEqual(src, "sfs")
+        self.assertIsNone(lag)
+
+    def test_format_sit_notes_disk_lag(self):
+        text = format_sit(_sit(sci=5.6718, sci_src="last-flight", sci_disk=1.4718))
+        self.assertIn("sci: 5.6718", text)
+        self.assertIn("sci_src: last-flight", text)
+        self.assertIn("sci_disk: 1.4718 (lag)", text)
 
     def test_hangar_none_when_ksc_empty(self):
         hangar, active = hangar_call(vessels=(), lock="free")
@@ -157,6 +191,26 @@ class TestDesk(unittest.TestCase):
         self.assertEqual(hangar, "phase kspstuff-hop-flea-pbc sit=PRELAUNCH")
         self.assertEqual(active, "kspstuff-hop-flea-pbc")
 
+    def test_leftover_overlay_cli_space_center(self):
+        d = {"hangar": "none", "leftover": "0", "can_revert": "true"}
+        self.assertTrue(leftover_sit(d))
+        self.assertIn("--space-center", leftover_cli(d))
+
+    def test_leftover_ksc_ready_ignores_stale_can_revert(self):
+        d = {
+            "hangar": "none",
+            "leftover": "0",
+            "can_revert": "true",
+            "ksc_ready": "true",
+        }
+        self.assertFalse(leftover_sit(d))
+
+    def test_leftover_phase_prelaunch_cli_recover(self):
+        d = {"hangar": "phase flea sit=PRELAUNCH", "leftover": "1"}
+        self.assertTrue(leftover_sit(d))
+        self.assertIn("--recover", leftover_cli(d))
+        self.assertNotIn("--space-center", leftover_cli(d))
+
     def test_f013_paw_is_not_unlocked_hardware(self):
         from tests.test_world import FIXTURE
         from world import load_world
@@ -169,6 +223,24 @@ class TestDesk(unittest.TestCase):
             self.assertNotEqual(row.unlocked, "yes")
         else:
             self.assertIn(row.unlocked, {"yes", "no"})
+
+    def test_format_sit_clips_note_tech(self):
+        text = format_sit(_sit(note_tech="word " * 80))
+        line = next(ln for ln in text.splitlines() if ln.startswith("note-tech:"))
+        self.assertLessEqual(len(line), 180)
+        self.assertTrue(line.endswith("…"))
+
+    def test_format_sit_bind_hop_apo(self):
+        text = format_sit(
+            _sit(bind="T-020 TELEMETRY 30/0.052 seq0", hop_apo="18 km")
+        )
+        self.assertIn("bind: T-020 TELEMETRY 30/0.052 seq0", text)
+        self.assertIn("hop_apo: 18 km", text)
+        self.assertNotIn("bind:", format_sit(_sit()))
+
+    def test_clip_note_one_line(self):
+        self.assertEqual(_clip_note("  a \n b  "), "a b")
+        self.assertLessEqual(len(_clip_note("x" * 400)), 160)
 
 
 if __name__ == "__main__":

@@ -2,8 +2,29 @@
 
 from __future__ import annotations
 
-from hangar import _can_revert, dismiss_flight_results, game_scene, ksc_ready
+from hangar import (
+    _can_revert,
+    dismiss_flight_results,
+    game_scene,
+    ksc_ready,
+    leftover_ships,
+    walk_home,
+    write_overlay_last,
+)
 from session import Session
+
+
+def _print_sci(session: Session) -> None:
+    try:
+        from career import space_center_science
+
+        bank = space_center_science(session)
+        if bank is not None:
+            print(f"sci: {bank:.4f} (RAM RD; sfs may lag)", flush=True)
+        else:
+            print("sci: ?", flush=True)
+    except Exception as exc:
+        print(f"sci: err {exc}", flush=True)
 
 
 def _sit(v: object) -> str:
@@ -46,7 +67,10 @@ def cmd_recover_probe(
         vessels = list(getattr(sc, "vessels", []) or [])
     except Exception as exc:
         print(f"vessels: err {exc}", flush=True)
+    ships = leftover_ships(session)
     print(f"vessels n={len(vessels)}", flush=True)
+    print(f"ships n={len(ships)}", flush=True)
+    write_overlay_last(session, ready=ok)
     active = None
     try:
         active = sc.active_vessel
@@ -81,10 +105,16 @@ def cmd_recover_probe(
             flush=True,
         )
     if space_center:
-        print("dismiss flight results — not revert, no click", flush=True)
+        print("walk home + Close — not leftover-ksc, not revert", flush=True)
+        n = walk_home(session)
+        print(f"walk home recovered n={n}", flush=True)
+        _print_sci(session)
         msg = dismiss_flight_results(session)
         print(msg, flush=True)
         print(f"scene now {game_scene(session)}", flush=True)
+        ok, why = ksc_ready(session)
+        print(f"ksc_ready: {ok} ({why})", flush=True)
+        write_overlay_last(session)
         return 0
     if not recover:
         print("never revert_to_launch; pass --recover or --space-center", flush=True)
@@ -119,4 +149,14 @@ def cmd_recover_probe(
         pass
     pad.recover()
     print("recover() returned", flush=True)
+    _print_sci(session)
+    print("Close after recover — not leftover-ksc", flush=True)
+    n = walk_home(session)
+    print(f"walk home recovered n={n}", flush=True)
+    msg = dismiss_flight_results(session)
+    print(msg, flush=True)
+    print(f"scene now {game_scene(session)}", flush=True)
+    ok, why = ksc_ready(session)
+    print(f"ksc_ready: {ok} ({why})", flush=True)
+    write_overlay_last(session)
     return 0

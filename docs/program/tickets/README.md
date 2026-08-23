@@ -25,14 +25,19 @@ python main.py tickets packet T-008
 python main.py tickets packet T-008 --deep
 python main.py tickets attach-run T-013 --path docs/missions/jebediah/logs/<run>.jsonl
 python main.py tickets landing T-013
+python main.py telem docs/missions/jebediah/logs/<run>.jsonl
+python main.py telem docs/missions/jebediah/logs/<run>.jsonl --window impact
 python main.py tickets from-need --need need_stack --title "hop-splash"
 python main.py ops next
 python main.py protocol fly
 ```
 
-Skim packet: desk + board + BRIEF + landing one-liner. Jsonl / PNG /
-reviews only on `--deep`. `ops next` prints `reasoning=` and the
-packet command. Never xhigh. Mortimer always high.
+Skim packet: desk + this ticket + BRIEF + landing envelope (pad/last
+heading, apo, hz). No BOARD.md. Jsonl stays on disk — query `telem` /
+`tickets landing`. `--deep` is PNG / craft / last-flight / tape CLI,
+not rows. Desk floors (Os 2026-08-23): Jeb/Lars low, Wernher/Mortimer
+medium, Gene medium. `ops next` prints `reasoning=` and
+the packet command (skim; no auto `--deep`). Never xhigh.
 
 Categories replace cards: `craft`, `science_opportunity`, `bug`,
 `improvement`, plus `flight` / `recover` / `org`. Tags are free.

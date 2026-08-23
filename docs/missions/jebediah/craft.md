@@ -1,20 +1,21 @@
 # jebediah stack
 
 status: signed
-craft: kspstuff-hop-valiant-east-t3-pbc
+craft: kspstuff-hop-valiant-proc-stiff-pbc
 parts:
-  - probeCoreSphere.v2
+  - probeCoreOcto.v2
+  - parachuteSingle
   - Engineer7500
   - batteryPack
   - SurfAntenna
-  - sensorThermometer
   - GooExperiment
-  - fuelTankSmallFlat
+  - sensorThermometer
+  - proceduralTankRealFuels
+  - trussPiece1x
   - restock-engine-125-valiant
   - basicFin
-notes: T-041 **capable yes**. Hang **east-t3** is the T-040 suicide-burn
-  test article (splash target ≤ Goo **12**). T-035 capable no vs 82 m/s
-  tape still honest; this stamp is not a chute. Stayputnik stack-only
-  (Heaviest, no rigid). **20×Z-100**. Engineer7500 + 16-S + 2HOT + Goo.
-  **3× FL-T100** + Valiant Boattail. **3× basicFin on the lowest T100**.
-  No geiger. No RW. Not a Flea.
+notes: T-165 **capable yes**. OKTO + Nylon Mk16 5/35 + 3×
+  proceduralTankRealFuels 800 L (1080 kero) + 3× `trussPiece1x`
+  Heaviest/rigid + Valiant + 2HOT + Goo. Not T+38
+  `proc-tank-pbc` (engine autostrut Off / FAR shear). Not T-156
+  geiger-cone. Not a Flea.

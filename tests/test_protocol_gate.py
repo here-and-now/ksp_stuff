@@ -188,6 +188,57 @@ class TestFlyGate(unittest.TestCase):
         text = format_gate(gate)
         self.assertIn("fly: yes", text)
 
+    def _waste_ticket(self, **landing):
+        env = {
+            "recoverable": True,
+            "sci_run": 0,
+            "sit": "landed",
+            "biome": "Shores",
+        }
+        env.update(landing)
+        return {
+            "go": "yes",
+            "payload": {
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+                "landing": env,
+            },
+        }
+
+    def test_waste_mismatch_is_wait(self):
+        with patch("protocol.waste_blocks_refly", return_value=True):
+            gate = fly_gate(
+                sit=_sit(),
+                plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+                science_text=_FLYING,
+                ticket=self._waste_ticket(),
+            )
+        self.assertEqual(gate.fly, "wait")
+        self.assertIn("sci-unchanged-recovered", gate.reason)
+        self.assertIn("cannot pay", gate.reason)
+        self.assertEqual(gate.commander, "none")
+
+    def test_waste_match_or_changed_is_yes(self):
+        with patch("protocol.waste_blocks_refly", return_value=False):
+            gate = fly_gate(
+                sit=_sit(),
+                plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+                science_text=_FLYING,
+                ticket=self._waste_ticket(sit="splashed", biome="Forest"),
+            )
+        self.assertEqual(gate.fly, "yes")
+        self.assertEqual(gate.commander, "none")
+
+    def test_living_sci_run_1_is_yes(self):
+        gate = fly_gate(
+            sit=_sit(),
+            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            science_text=_FLYING,
+            ticket=self._waste_ticket(sci_run=1, sit="splashed", biome="Forest"),
+        )
+        self.assertEqual(gate.fly, "yes")
+
     def test_phase_leftover_cli(self):
         gate = fly_gate(
             sit=_sit(hangar="phase flea sit=PRELAUNCH", capable="no"),

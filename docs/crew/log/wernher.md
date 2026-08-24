@@ -1,5 +1,28 @@
 # Wernher Grokman — log
 
+- 2026-08-24 — T-388 leftover-prelaunch-ghost: kRPC Vessel has no .id; persist _object_id to unrecoverable.last immediately. leftover_ships reads disk so the next process skips rec=0 crash-UI. No hop.py. Never revert.
+
+- 2026-08-24 — T-388 leftover-prelaunch-ghost: crash-UI rec=0 MET frozen is not pad occupancy. remember vessel.id; leftover_ships skip that GUID after Close lists SUB_ORBITAL. Os will not click Recover. No hop.py. Never revert.
+
+- 2026-08-24 — T-388 leftover-prelaunch-ghost: living SUB_ORBITAL leftover (go_flight parts=20) wait land on MET then recover(). Close while flying does not drop it. Dead GUID still not leftover. No hop.py. Never revert.
+
+- 2026-08-24 — T-388 leftover-prelaunch-ghost: walk_home enters Flight first (rec at KSC is a lie). recover() wait gone before Close; Close during recover left SUB_ORBITAL tracking ghost. Dead GUID not leftover. Desk hangar from leftover_ships (stale sfs SUB_ORBITAL is not leftover). No hop.py. Never revert.
+
+- 2026-08-24 — T-346 unbrick: waste_blocks_refly is living recover (rec=yes + sci_run=0) only. Wreck rec=no re-flies last cli. FlyingHigh apo ≥50 km still on living +0. No hop.py. Never revert.
+
+- 2026-08-24 — T-346 sci-unchanged-recovered: protocol fly waits living recover sci_run=0 until bind sit/biome/apo can pay (FlyingHigh ≥50 km) or hang/bind changed. Wreck rec=no is not this latch (unbrick). fp bump stays living +0. No hop.py. Never revert.
+
+- 2026-08-24 — Findings door: `tickets feedback --claim`; payload.findings; close harvests close_why; attach-run harvests learn once; inbox any owner. Legacy trio still reads. Never revert.
+- 2026-08-24 — T-378/T-379: `tickets feedback` appends payload.feedback; close refuses empty; packet last row; inbox --feedback. Leftover abort/chute/want_coast live in physics_warp; hop.py wrappers. No hop_factory. Never revert.
+
+- 2026-08-24 — T-372 flyinghigh-lid: `want_coast` 1× on `chute_arm_sit` / deploy / silk (15-10-47Z 4× silk sheared 28→18). Climbing armed still 4×. Ask Lars to `apply_sit_warp` before Arm. No hop_factory. Never revert.
+
+- 2026-08-24 — T-341 sci-unchanged-recovered: protocol fly waits living recover sci_run=0 until bound sit/biome matches envelope or hang/bind changed. attach_run latches payload.waste. needs_learn uncrewed false. No hop_factory. Never revert.
+
+- 2026-08-24 — T-339 chute-deploy-sit: `chute_arm_sit` lofted vz<0 (not only 2 km); deploy still ≤2 km or semi; 1× high q. 11-11-37Z lithobrake 2.9 km stowed. Ask Lars to Arm on arm sit. No hop_factory. Never revert.
+
+- 2026-08-24 — T-334 control-blocks: sit-named warp/coast/chute/timeout in physics_warp (`apply_sit_warp`, `airborne_cannot_pay`, `chute_deploy_sit`, `timeout_hit`, `leftover_call`). 4× only lofted burnout AND q≤5 kPa. Ask Lars to drop `_after_skip`. No hop_factory. Never revert.
+
 - 2026-08-24 — T-325: Snapshot link/snr/via; ship.md + tape where:; comms dump is TL/LIVE/SILENT tables from ConfigCache. No hop.py. No GameData.
 
 - 2026-08-24 — T-323: attach_run stamps payload.learn from envelope (T-081 22-33-35Z); refuse empty fp on control/systems/feedback; alias prefix; sci-unchanged-recovered bump on +0 rec. review uncrewed drops Gene nag. No hop.py.

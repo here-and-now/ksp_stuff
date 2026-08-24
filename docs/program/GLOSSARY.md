@@ -17,14 +17,15 @@ titles. Drop RAF/spy/radio-compact.
 | **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene. Uncrewed `payload.learn` is hop-exit `attach-run` (kernel), not Gene. `ops next` hires Gene for Learn only when campaign is not `uncrewed` and learn is empty. `none` = Learn each hop. Plan.md is a render. |
 | **CAPCOM** | NASA loop. Walt. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
-| **leftover / KSC** | Space Center wreck or unmatched vessel. **Hank** walk home: `recover()` + Close (`recover-probe --recover` if recoverable). Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |
+| **leftover / KSC** | Space Center wreck or unmatched vessel (includes timeout still-flying). **Hank** walk home: `recover()` if recoverable, else Close (`recover-probe --recover` when recoverable). Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |
 | **leftover-ksc** | **Retired.** Named save/load of the overlay looked like a reload / return to pre-launch. Os disabled reverting flights. Overlay dismiss is `recover()` + Close. Never that load. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
 | **F-014 / I-012** | Gym ids live only inside a ticket **title**. Speech is the twin **T-id** (F-014 → T-184). |
 | **need_*** | Do not emit. Open `--type control|vehicle|science|…`. Parent may still shim a leftover token. |
 | **world model** | `docs/program/world-model.md`. Gene chairs flight layers. Mortimer chairs **Practice**. |
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
-| **improve:** | Leftover. Open `type=ops --tag feedback` or `type=rsi`. `I-NNN` twins are tickets. |
+| **improve:** | Leftover blob. After the hire: `tickets feedback T-NNN --claim "…"` on the work ticket. Stumble *during* work: `type=ops --tag feedback` or `type=rsi`. `I-NNN` twins are tickets. |
+| **tickets feedback** | Mandatory after every hire. `--claim` required; `--evidence` `--owner` `--real` optional. Appends `payload.findings` on the packet T-id. Close harvests `close_why` if empty. Not Return keys. Not a child ticket per hire. |
 | **ask:** | Leftover. Open `type=ops --tag ask` (desk = addressee). P1 if it blocks `go`. |
 | **explore:** | Leftover. Open `type=ops --tag explore` P3. Rare field itch. |
 | **note-tech.md** | Tape, not the bus. Commander may still append; miss opens `type=control\|recover`. |

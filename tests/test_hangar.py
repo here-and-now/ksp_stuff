@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import hangar as hangar_mod
 from hangar import (
     Hangar,
     _abort_preflight_hang,
@@ -17,6 +18,7 @@ from hangar import (
     install_signed,
     ksc_ready,
     leftover_ship,
+    leftover_will_land,
     overlay_painted,
     load_save,
     name_is_refused,
@@ -25,17 +27,16 @@ from hangar import (
 from session import ConnectionSettings, SessionError
 
 
-def _craft(name="wreck", *, recoverable=False, typ="ship"):
-    return type(
-        "V",
-        (),
-        {
-            "name": name,
-            "recoverable": recoverable,
-            "type": type("T", (), {"name": typ})(),
-            "situation": type("S", (), {"name": "landed"})(),
-        },
-    )()
+def _craft(name="wreck", *, recoverable=False, typ="ship", sit="landed", id=None):
+    attrs = {
+        "name": name,
+        "recoverable": recoverable,
+        "type": type("T", (), {"name": typ})(),
+        "situation": type("S", (), {"name": sit})(),
+    }
+    if id is not None:
+        attrs["id"] = id
+    return type("V", (), attrs)()
 
 
 class _Scene:
@@ -133,6 +134,49 @@ class TestKscReady(unittest.TestCase):
         rock = _craft("Ast. XRL-564", typ="spaceobject")
         self.assertFalse(leftover_ship(rock))
         session = _Session(scene="space_center", revert=False, vessels=(rock,))
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
+
+    def test_sub_orbital_will_land_orbiting_will_not(self):
+        self.assertTrue(leftover_will_land(_craft("t7-pbc", sit="sub_orbital")))
+        self.assertFalse(leftover_will_land(_craft("t7-pbc", sit="orbiting")))
+
+    def test_unrecoverable_guid_is_not_leftover_ship(self):
+        wreck = _craft("t7-pbc", sit="sub_orbital", id="guid-crash-ui")
+        self.assertTrue(leftover_ship(wreck))
+        hangar_mod._UNRECOVERABLE.add("guid-crash-ui")
+        try:
+            self.assertFalse(leftover_ship(wreck))
+            session = _Session(scene="space_center", revert=False, vessels=(wreck,))
+            ok, why = ksc_ready(session)
+            self.assertTrue(ok)
+            self.assertEqual(why, "ksc")
+        finally:
+            hangar_mod._UNRECOVERABLE.discard("guid-crash-ui")
+
+    def test_unrecoverable_guid_survives_fresh_process(self):
+        wreck = _craft("t7-pbc", sit="sub_orbital", id="guid-disk")
+        path = Path(tempfile.mkdtemp()) / "unrecoverable.last"
+        hangar_mod._UNRECOVERABLE.clear()
+        with patch("hangar.UNRECOVERABLE_LAST", path):
+            hangar_mod.remember_unrecoverable(wreck)
+            hangar_mod._UNRECOVERABLE.clear()
+            self.assertFalse(leftover_ship(wreck))
+            self.assertIn("guid-disk", path.read_text(encoding="utf-8"))
+            session = _Session(scene="space_center", revert=False, vessels=(wreck,))
+            ok, why = ksc_ready(session)
+            self.assertTrue(ok)
+            self.assertEqual(why, "ksc")
+
+    def test_dead_guid_is_not_leftover_ship(self):
+        class _Dead:
+            @property
+            def name(self):
+                raise RuntimeError("No such vessel")
+
+        self.assertFalse(leftover_ship(_Dead()))
+        session = _Session(scene="space_center", revert=False, vessels=(_Dead(),))
         ok, why = ksc_ready(session)
         self.assertTrue(ok)
         self.assertEqual(why, "ksc")
@@ -237,9 +281,12 @@ class TestHangarLaunchGate(unittest.TestCase):
         session = _Session(scene="tracking_station", revert=False, vessels=(wreck,))
         hangar = Hangar(ksp_root=Path("/tmp"), save="letsgrok")
         with patch("hangar.time.sleep"):
-            with patch.object(hangar, "_launch_watched") as launch:
-                with self.assertRaises(SessionError) as ctx:
-                    hangar.launch(session, "kspstuff-hop-valiant-east-pbc", uncrewed=True)
+            with patch("hangar.go_flight"):
+                with patch.object(hangar, "_launch_watched") as launch:
+                    with self.assertRaises(SessionError) as ctx:
+                        hangar.launch(
+                            session, "kspstuff-hop-valiant-east-pbc", uncrewed=True
+                        )
         self.assertIn("Hangar waits", str(ctx.exception))
         launch.assert_not_called()
         self.assertEqual(session.space_center.reverts, 0)
@@ -306,6 +353,120 @@ class TestHangarLaunchGate(unittest.TestCase):
         self.assertEqual(n, 1)
         self.assertEqual(session.space_center.vessels, [])
         self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+
+    def test_walk_home_enters_flight_when_ksc_not_recoverable(self):
+        wreck = _craft("t7-pbc", recoverable=False, sit="sub_orbital")
+        session = _Session(scene="space_center", revert=False, vessels=[wreck])
+
+        def _go_flight(sess, vessel, **_kwargs):
+            vessel.recoverable = True
+            vessel.situation = type("S", (), {"name": "splashed"})()
+
+        def _recover() -> None:
+            session.space_center.vessels = []
+
+        wreck.recover = _recover  # type: ignore[method-assign]
+        with patch("hangar.time.sleep"):
+            with patch("hangar.go_flight", side_effect=_go_flight) as gf:
+                n = walk_home(session)
+        self.assertEqual(n, 1)
+        gf.assert_called()
+        self.assertEqual(session.space_center.vessels, [])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+
+    def test_walk_home_crash_ui_guid_not_pad_occupancy(self):
+        wreck = _craft(
+            "t7-pbc", recoverable=False, sit="sub_orbital", id="guid-crash-ui"
+        )
+        session = _Session(scene="space_center", revert=False, vessels=[wreck])
+
+        def _go_flight(_sess, vessel, **_kwargs):
+            vessel.recoverable = False
+            vessel.situation = type("S", (), {"name": "landed"})()
+
+        def _recover() -> None:
+            raise RuntimeError("not recoverable")
+
+        wreck.recover = _recover  # type: ignore[method-assign]
+        hangar_mod._UNRECOVERABLE.discard("guid-crash-ui")
+        path = Path(tempfile.mkdtemp()) / "unrecoverable.last"
+        try:
+            with patch("hangar.UNRECOVERABLE_LAST", path):
+                with patch("hangar.time.sleep"):
+                    with patch("hangar.go_flight", side_effect=_go_flight):
+                        with patch("hangar._wait_leftover_land", return_value=False):
+                            n = walk_home(session)
+                self.assertEqual(n, 0)
+                hangar_mod._UNRECOVERABLE.clear()
+                wreck.situation = type("S", (), {"name": "sub_orbital"})()
+                self.assertFalse(leftover_ship(wreck))
+                ok, why = ksc_ready(session)
+                self.assertTrue(ok)
+                self.assertEqual(why, "ksc")
+            self.assertEqual(session.space_center.reverts, 0)
+            self.assertEqual(session.space_center.saves, [])
+        finally:
+            hangar_mod._UNRECOVERABLE.discard("guid-crash-ui")
+
+    def test_walk_home_close_when_sub_orbital_still_not_recoverable(self):
+        wreck = _craft("t7-pbc", recoverable=False, sit="sub_orbital")
+        session = _Session(scene="space_center", revert=False, vessels=[wreck])
+        with patch("hangar.time.sleep"):
+            with patch("hangar.go_flight") as gf:
+                with patch("hangar._wait_leftover_land", return_value=False):
+                    n = walk_home(session)
+        self.assertEqual(n, 0)
+        gf.assert_called()
+        self.assertEqual(session.space_center.vessels, [wreck])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.space_center.loads, [])
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+
+    def test_walk_home_waits_sub_orbital_land_then_recover(self):
+        wreck = _craft("t7-pbc", recoverable=False, sit="sub_orbital")
+        session = _Session(scene="space_center", revert=False, vessels=[wreck])
+
+        def _land(_session, vessel, **_kwargs):
+            vessel.recoverable = True
+            vessel.situation = type("S", (), {"name": "landed"})()
+            return True
+
+        def _recover() -> None:
+            session.space_center.vessels = []
+
+        wreck.recover = _recover  # type: ignore[method-assign]
+        with patch("hangar.time.sleep"):
+            with patch("hangar.go_flight"):
+                with patch("hangar._wait_leftover_land", side_effect=_land) as wait:
+                    n = walk_home(session)
+        self.assertEqual(n, 1)
+        wait.assert_called()
+        self.assertEqual(session.space_center.vessels, [])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+        self.assertTrue(leftover_will_land(wreck))
+
+    def test_walk_home_waits_gone_when_recover_already_in_flight(self):
+        wreck = _craft("t7-pbc", recoverable=False, sit="splashed")
+        session = _Session(scene="flight", revert=False, vessels=[wreck])
+
+        def _gone(_session, name, **_kwargs):
+            session.space_center.vessels = []
+            return True
+
+        with patch("hangar.time.sleep"):
+            with patch("hangar.go_flight") as gf:
+                with patch("hangar._wait_recovered", side_effect=_gone):
+                    n = walk_home(session)
+        self.assertEqual(n, 1)
+        gf.assert_not_called()
+        self.assertEqual(session.space_center.vessels, [])
+        self.assertEqual(session.space_center.reverts, 0)
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
 
     def test_launch_after_ksc_clean(self):

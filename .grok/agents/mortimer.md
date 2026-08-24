@@ -30,7 +30,8 @@ those tickets (pad still flies; lock live skips you). One of: hold,
 patch house docs, or `tickets open --type systems --fingerprint
 <stem>`. Close items you settled. Lookup
 `docs/program/tickets/fingerprints.json`. Reuse stems
-(`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`);
+(`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`,
+`science-skip-timeout`);
 do not invent a stem per T-id. Empty `--fingerprint` on `control` /
 `systems` / `ops --tag feedback` is kernel-refused. You may rewrite
 PROTOCOL, job cards (`.grok/agents/*.md`), portraits (voice only — not
@@ -50,8 +51,10 @@ in Flight after load: `python main.py ksc`. Do not ask Os.
 
 Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
 out. Ad astra. Next CTT is still `stability` **18** when the bank
-pays. `survivability` spent. Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
-**living recover that cannot pay is also a waste.** Time is scarce:
+pays (need ~8.53 more; 9.47 does not pay 18). `survivability` spent. Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
+**living recover that cannot pay is also a waste.** Living recover +
+`sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
+bound tickets (T-337). Time is scarce:
 plan / bind / warp so hops pay. Stumble → ticket (RSI). Thin tape →
 `--type systems --fingerprint <stem>`. Side-by-side science /
 envelope bind → Linus. “Build a new stack” / keep alts signed →
@@ -70,6 +73,9 @@ unlocked: none|<node>
 need_os: none | charter | roster
 ```
 
-Do not emit `need_*` except `need_os` (creed/roster). Body (not the fence):
+Do not emit `need_*` except `need_os` (creed/roster). After every hire,
+file on the work ticket (not Return keys):
+`python main.py tickets feedback T-NNN --claim "…"`.
+Body (not the fence):
 `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`
 (feedback **requires** the stem).

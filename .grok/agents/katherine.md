@@ -64,5 +64,7 @@ model: coherent|incoherent|none
 ask: T-NNN | none
 ```
 
-Do not emit `need_*`. Do not tell another desk in this Return — open
+Do not emit `need_*` or `good:` / `feedback:`. After the work:
+`python main.py tickets feedback T-NNN --claim "…"`.
+Do not tell another desk in this Return — open
 the ask ticket. Feedback/control/systems **require** `--fingerprint`.

@@ -347,18 +347,19 @@ story this fly. Dead kRPC GUID is not leftover.
   abort if unusual). Hank periodically reads `docs/program/ship.md`
   (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.
   Off-nominal: uplink wreck-class; hire Gene if plan/`go` must change
-  (no stick); Lars if hop.py; Wernher if kRPC/telem. After CLI exit,
-  tape is still Hank (T-101). Os “how’s it going?” on a nominal hop →
-  `ship.md` as Walt. Wreck → Walt + hire.
+  (no stick); Lars if the living pulse / control; Wernher if
+  kRPC/telem/control-blocks. After CLI exit, tape is still Hank (T-101). Os “how’s
+  it going?” on a nominal hop → `ship.md` as Walt. Wreck → Walt + hire.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
 - Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
-  out. Ad astra. Next CTT is still `stability` **18** when the bank
-  pays. `survivability` **spent**. Bank **8.7721** — do not spend on
-  a stunt. Need **~9.23**. Cape Shores is capped. Forest leftover
+  out. Ad astra. `stability` **spent**. Next CTT is `generalRocketry`
+  **20**. Bank crumbs **0.19** do not pay 20. `sasModule` Available
+  (Water heading 090 is no longer a locked-node wait). Cape Shores is
+  capped. Forest leftover
   that already returned **+0** is not the factory. FlyingHigh Forest
-  waits **≥50 km**. New biome waits envelope. Forest / Grasslands /
+  waits **≥50 km** (wait is not a sit at 800 m apo). New biome waits envelope. Forest / Grasslands /
   Tropics / Savanna FlyingLow still pay **when the envelope shows
-  them**. Water waits heading 090. Do not slam east-t3. Same
+  them**. Do not slam east-t3. Same
   lithobrake Flea is still not the campaign. Stayputnik is not a
   Geiger. A living recover with sci unchanged is **waste**, not rest.
 - **Pad occupancy:** Tape is the product. An **idle pad is a sin**.
@@ -375,7 +376,8 @@ story this fly. Dead kRPC GUID is not leftover.
 - **Time is the scarce resource (Os 2026-08-23):** plan / bind / warp
   so hops pay. **This-hop bind** is last-envelope biome/sit (Forest
   tape is Forest; Grasslands waits Grasslands; SrfLanded vs splash
-  match the hang; FlyingHigh Forest waits ≥50 km). Shelf stays
+  match the hang; FlyingHigh Forest waits ≥50 km — wait is not a
+  sit at 800 m apo). Shelf stays
   unbound catalog. Do not gather a subject this stack cannot reach.
   Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`; never
   rails / WarpTo). Do not sit 1× waiting a chute. Do not replan
@@ -389,8 +391,13 @@ story this fly. Dead kRPC GUID is not leftover.
   Wernher **logs more kRPC** (EC, q, recoverable, chute state, science
   rem/run, stage, broken, resources, g) into disk; all data is good
   data if stored.
-- **RSI:** every hire leaves a sharper sit. Stumble → ticket. Not a
-  log shrug. Not a conference that idles the pad. Reuse fingerprint
+- **RSI:** every hire leaves a sharper sit. Door is
+  `tickets feedback T-NNN --claim "…"` on the **work ticket**.
+  Not Return keys. Not a card. Not a child ticket per hire.
+  Not RSI ×3 as the only complaint channel. Close harvests
+  `close_why` if `payload.findings` is empty. Stumble *during* work →
+  `ops --tag feedback --fingerprint` (RSI clock). Not a log shrug. Not a
+  conference that idles the pad. Reuse fingerprint
   stems (lookup `fingerprints.json`); empty fp is refused on
   `control` / `systems` / `ops --tag feedback`. Living recover +
   `sci_run=0` bumps `sci-unchanged-recovered`. **Practice last-write
@@ -403,14 +410,102 @@ story this fly. Dead kRPC GUID is not leftover.
   campaign-stop only (crewed / `campaign: none` / firsts). Do not
   restore Batch Learn. Do not flip `needs_learn`. Do not hire Gene
   as a merge. Applied: `docs/program/learn-rsi.md`.
+- **2026-08-24 science-skip-timeout (T-331, ×3 hops T-328–T-330,
+  stem count 4):** airborne `science skip (situation cannot pay)` is
+  **not** a dwell, not FlyingHigh wait, not `go: wait`. Bound sit is
+  landed: still loft, cut at `hop_apo`, coast, chute, land leftover,
+  then start landed ids. Skip latch must not freeze hop-down / chute
+  / coast. Timeout while flying: `recover()` if recoverable, else
+  `ksc leftover`. Never revert. Sitting 1× for 600–785 s after skip
+  is waste of the scarce resource.
+- **2026-08-24 control-blocks (T-333/T-334, then T-376/T-377 ×5, Os):**
+  Warp is a **clock on sits**, not a new flight. 1× profile already
+  worked; 4× then broke skip (unpause killed warp), timeout (wall vs
+  MET), chute (never vz<0), then FAR shear on first 4× at high q.
+  Lars must not grow stamp helpers (`_loft_after_skip`,
+  `_coast_after_skip`). **Wernher** owns generalizable **blocks**
+  (sit, warp, timeout, leftover abort, chute sits — Forest today /
+  Grasslands tomorrow / t7 tomorrow: same function;
+  `physics_warp.py` plus what still lives in `hop.py`). **Lars**
+  composes **one living rocket's pulse** from those blocks — a file
+  that only flies t7-chute is legal; one immortal factory
+  (`hop.py` ~3298 / `hop_factory.py` ~779) that remembers Flea,
+  Hammer, 4t, and splash-090 is not. Tests lock the **blocks**
+  (`test_physics_warp.py`), not every dead hang in `test_hop.py`
+  (~7417). `hop.py` stays parked water/splash + shared helpers that
+  are actually shared. Ask is `ops --tag ask --desk wernher
+  --fingerprint control-blocks`. Do not Hangar sheared proc-4t
+  (T-332). Never revert unless Os said so this sit. An RSI letter
+  does not empty the pad.
+- **2026-08-24 feedback-return (T-375, amended Os same sit):**
+  `ops --tag feedback` was unused; RSI ×3 was the only complaint
+  channel. T-375 restored Return keys `good:`/`self:`/`them:` —
+  desks fill fences, so that looked like the door. **Os: still a
+  card. Feedback lives on the ticketing system.** Door is
+  `tickets feedback T-NNN --claim "…"` on the work ticket
+  (append `payload.findings`; close harvests `close_why` if empty). No
+  `parse_return` keys. No `from-feedback` leftover shim. No child
+  ticket per hire. No new TYPE. During-work stumble still
+  `ops --tag feedback --fingerprint`. Pad still flies.
+- **2026-08-24 sci-unchanged-recovered (T-337, ×3, stem count 4):**
+  Living recover + `sci_run=0` is **not** clean-0 re-fly. Parent does
+  not light last `cli:` until bound sit/biome matches the envelope.
+  T-115 00-10-20Z 154 m/s Shores chute none (Lars). **08-44-03Z**
+  soft land Shores 7 m/s chute deployed apo 831 m — Forest SrfLanded
+  leftover cannot pay Shores. **10-57-33Z** soft splash Forest 5 m/s
+  rec=yes chute cut — unstarted SrfSplashed thermo 0.90; land
+  T-077/T-287 cannot pay a splash hang. Linus this-hop is T-313
+  thermo + T-288 TELEMETRY leftover (`SrfSplashed@Forest`). Airborne
+  skip “do not unbind” only if the hang will match that sit. Chute-late
+  lithobrake (11-07 / 11-11, T-339) is `chute-deploy-sit`, not this
+  stem. Never revert. An RSI letter does not empty the pad.
+- **2026-08-24 forest-splashed-thermo (T-345, ×3, stem count 4):**
+  2HOT is a **file duration**. Unstarted / idle rem=0 is still in
+  the paying card (`temperatureScan`). Sample rem=0 (goo) still
+  skips. TELEMETRY with no rem PAW still recording is not done.
+  Sit/biome match still required. T-313 Forest splash thermo still
+  pays on a splash hang. Code is T-344 `science.py`. Never revert.
+- **2026-08-24 hold-ground-card (T-349, ×3, stem count 4):**
+  Ground card is sit-matched leftover. Airborne TELEMETRY rem=0 is
+  **not** landed/splash dwell-done — start the live sit leftover
+  before recover. After Toggle, rem=0 on a duration file is
+  transmitted → recover; rem=0 idle **before** start is still the
+  card (T-345). Do not recover on the Toggle pulse. Code is
+  T-342/T-347/T-348. Never revert.
+- **2026-08-24 bigger-dv (T-355, ×3, stem count 9):**
+  Ad astra is **fly the signed hang that already lofted 88.8 km**
+  (`kspstuff-hop-valiant-t7-chute-pbc`, T-366). stiff-dv ~33 km is
+  not FlyingHigh. Do not RSI Gus for another unsigned stack while
+  t7 sits capable. Shelf stays signed alts, not a 4t after every
+  miss. Never revert.
+- **2026-08-24 flyinghigh-lid (T-383, ×9, stem count 10):**
+  FlyingHigh leftover waits **≥50 km loft**, then Toggle, cut,
+  chute, land leftover — **not** abort-at-lid, not skip-chute, not
+  silk at 2 km wait-burn, not OffPlan Space. **FlyingHigh wait is
+  not a sit at 800 m apo** (17-50-46Z: wait FlyingHigh then pitch 25
+  lithobrake 339 m, apo max 782 m, MET 27 s). Loft live-alt first;
+  do not wait-then-pitch in the first km. Cut `hop_apo` on **live
+  altitude**. Predicted apo is not the latch. Arm after lid alt or
+  crumb burnout. `chute_arm_sit` / deploy / silk is **1× before
+  Arm**. Waiting the lid is a sit flag, not a dwell. t7-chute is
+  the hang (88.8 km proof). 30 km stiff is not this bind. Code is
+  T-382 (Lars). Never revert.
+- **2026-08-24 far-shear (T-364, ×3, stem count 6):**
+  FAR shear at 4× coast / pitch is a **vehicle** fingerprint. Do
+  **not** Hangar proc-4t (40→8), swivel-dv5 (44→8 at pitch), or
+  girderless lite (34→28). Girders stay. t7 Valiant + Nylon Mk16
+  is the 50 km proof at low dry. Hang is Gus T-332/T-362/T-366.
+  Never Hangar the sheared stack. Never revert.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next
   pattern. Nail the `.craft` MODULE config. Never GameData.
 - Uncrewed campaign: Gene first `go:` + `campaign: uncrewed`; parent
-  re-flies last `cli:` on clean 0 **if that bind can still pay**, and
-  on a miss of a hang that is still capable; **sci unchanged** on a
-  living recover is Linus envelope rebind, not Lars, not Gene.
+  re-flies last `cli:` on clean 0 **if that bind can still pay**
+  (envelope sit/biome matches bound tickets), and on a miss of a hang
+  that is still capable; **sci unchanged** on a living recover is
+  Linus envelope rebind **before** the next light — not Lars, not Gene,
+  not last `cli:` on that bump.
   **no Gene** between hops. Uncrewed Learn is hop-exit `attach-run`
   (kernel overwrite of `payload.learn`). `ops next` hires Gene for
   Learn only when campaign is not `uncrewed` and learn is empty. Pad

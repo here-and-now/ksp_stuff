@@ -22,8 +22,8 @@ Parked org novels are not dispatch.
 | **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, ticket routing, **stick** (Commander writes) |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
-| **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol | Vehicle *control* loops, `.craft` |
-| **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown*: pad/hop/splash/control, **this-hop** splash HD recover, blocks.md phases | Leftover recover-then-Hangar (Hank/Wernher), world-interface, org, Hangar from Gene |
+| **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol; **control blocks** (sit, warp, timeout, leftover abort, chute sits) | this-hop pulse, `.craft` |
+| **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown this sit*: **one living rocket's pulse** composed from Wernher blocks (`hop_factory.py` or a t7-only file), pad/splash, this-hop splash HD | Leftover recover-then-Hangar (Hank/Wernher), warp *law*, stamp-named helpers, immortal `hop.py` factory, org, Hangar from Gene |
 | **Seated Commander** | Abort officer | Starts `cli:` when `commander: jebediah`; `note` / hold / abort / one stuck PNG. Hop **pid** is the writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review; uncrewed start (parent does) |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
@@ -58,7 +58,10 @@ prefix). Empty fp is refused on `control` / `systems` /
 `ops --tag feedback` (`legacy-twin` exempt) so the clock can tick.
 Abort novels, timestamps, and `hop-<digits>` do not count. A patch
 that *adds* a fp counts. Living recover + `sci_run=0` bumps
-`sci-unchanged-recovered` on `attach_run` (once per new jsonl). At
+`sci-unchanged-recovered` on `attach_run` (once per new jsonl). That
+bump is **not** fly_ready on last `cli:` — bind must pay envelope
+sit/biome/apo (FlyingHigh ≥50 km) first (T-337). Wreck rec=no
+re-flies last `cli:`. At
 count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` → desk
 **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only the
 CLI). `ops next` prints `rsi:` and hires Mortimer lock-free; lock
@@ -87,6 +90,8 @@ python main.py tickets assign T-014 --desk gus
 python main.py tickets evidence T-014 --path docs/missions/jebediah/logs/….jsonl
 python main.py tickets stamp T-014 --field go --value yes   # Gene only, enforced in code
 python main.py tickets close T-014 --why …
+python main.py tickets feedback T-014 --claim "…"
+  # finding on the work ticket; close harvests --why if empty; not Return keys
 python main.py ops next     # Hank dispatch: who to hire, which tickets, why
 ```
 
@@ -206,8 +211,8 @@ if lock live:
                     heading dead, EC=0 before dwell, crash UI):
         uplink abort|hold if wreck-class
         hire Gene if plan/go must change (no stick)
-        hire Lars if hop_factory / physics_warp / control
-        hire Wernher if kRPC / telem / desk
+        hire Lars if the living pulse / control
+        hire Wernher if kRPC / telem / desk / control-blocks (physics_warp)
         issue-clear → that desk, not a Gene novel
     ground_only = tickets ready whose desk ≠ jebediah
     batch by desk (one hire per desk, many tickets)
@@ -265,7 +270,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 
 | Condition | Hire | Tickets in packet |
 |---|---|---|
-| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars hop_factory/physics_warp; Wernher kRPC — **no stick**, no `status` |
+| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse; Wernher kRPC/control-blocks — **no stick**, no `status` |
 | Lock live, nominal | ground desks (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time |
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
@@ -308,10 +313,12 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
   waste — CLI exit ends the hop.
 - **This-hop bind** is last-envelope biome/sit. Forest tape is
   Forest. Grasslands waits Grasslands. SrfLanded vs splash match
-  the hang. FlyingHigh waits ≥50 km. Do not gather a subject this
-  stack cannot reach. After sci unchanged, do not re-fly the same
-  bind — Linus rebinds from the envelope, or Gene picks the next
-  signed hang that can bank.
+  the hang. FlyingHigh waits ≥50 km (wait is not a sit at 800 m
+  apo; loft live-alt first). Do not gather a subject this
+  stack cannot reach. After living recover + sci unchanged, do not
+  re-fly a bind the envelope cannot pay — Linus rebinds from the
+  envelope, or Gene picks the next signed hang that can bank.
+  Wreck rec=no is a miss: re-fly last `cli:`.
 - Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`;
   never rails / WarpTo). Sitting 1× for minutes waiting a chute is
   a miss.

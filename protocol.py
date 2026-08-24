@@ -7,7 +7,7 @@ from pathlib import Path
 
 from card import card_flying_ids, card_pad_ids, card_splash_ids
 from phases import NAMES as PHASE_NAMES
-from tickets import commander_for, fly_fields, seated_fly_ticket
+from tickets import commander_for, fly_fields, seated_fly_ticket, waste_blocks_refly
 
 SCHEMAS: dict[str, tuple[str, ...]] = {
     "gene": ("go", "recommended", "phase", "f013"),
@@ -166,16 +166,29 @@ def fly_gate(
             return _out("wait", "leftover", rec)
     if phase not in names:
         return _out("wait", f"phase {phase or '(none)'} not in blocks", rec)
+
+    def _card(phase_name: str, cli: str) -> FlyGate:
+        gate = _f013_and_card(sit, science_text, phase_name, cli, campaign, t)
+        if gate.fly == "yes" and waste_blocks_refly(
+            t, craft=str(getattr(sit, "craft", "") or "")
+        ):
+            return _out(
+                "wait",
+                "sci-unchanged-recovered bind cannot pay envelope",
+                rec,
+            )
+        return gate
+
     if hangar.startswith("phase "):
         cli = rec or f"python main.py phase {phase}"
-        return _f013_and_card(sit, science_text, phase, cli, campaign, t)
+        return _card(phase, cli)
     if phase in _HANGAR_PHASES:
         if str(sit.capable).lower() != "yes":
             return _out("wait", "capable is not yes", rec)
         cli = rec or f"python main.py {phase}"
-        return _f013_and_card(sit, science_text, phase, cli, campaign, t)
+        return _card(phase, cli)
     cli = rec or f"python main.py phase {phase}"
-    return _f013_and_card(sit, science_text, phase, cli, campaign, t)
+    return _card(phase, cli)
 
 
 def _f013_and_card(

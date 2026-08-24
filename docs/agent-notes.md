@@ -670,6 +670,20 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   with no Flight Results. `can_revert` / `can_revert_to_launch` stayed
   true (active vessel UUID dead). That leftover bit is not overlay.
   `ksc_ready` / `overlay_painted` must not fail that sit.
+- **2026-08-24** — T-388: splash `recover()` then Close too soon leaves
+  a SUB_ORBITAL tracking ghost (same name, `recoverable=0`, MET still
+  ticks). `vessel.recoverable` at `space_center` is often false — enter
+  Flight first. recover() returns before the ship leaves `vessels`;
+  wait gone *before* Close. A later Session may 404 the GUID (`No such
+  vessel`) — `name` raising is not leftover. Desk hangar leftover is
+  live `leftover_ships`, not stale `persistent.sfs` SUB_ORBITAL after
+  recover. A *living* SUB_ORBITAL leftover (go_flight parts loaded)
+  will land — wait the MET clock, then `recover()`. Close while flying
+  does not drop it. Crash-UI MET freeze never sets `recoverable`. After
+  Close, Tracking may list the same GUID as SUB_ORBITAL rec=0 —
+  remember kRPC `_object_id` (Vessel has no `.id` in this 0.6 client)
+  on disk (`unrecoverable.last`) so the next process skips it. Os will
+  not click Recover. Never revert. Never leftover-ksc.
 - **2026-08-23** — Tape eyes: state rows carry `recoverable`, `chute`,
   `sci_run`/`sci_rem`, `mass`, `available_thrust`, streamed
   `flight.g_force`. `kind=landing` also on wreck; `kind=recoverable` on

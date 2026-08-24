@@ -1,9 +1,14 @@
 """Factory inland hop pulse: light, slew 270, chute, sit-matched science, recover.
 
-Flying card after loft. Pad boost (fuel, not lofted) does not science or
-hop-down — sit=landed at pad alt with fuel is still burning. Parked
-water/splash CLIs stay in hop.py. This module must not name those flags.
-Helpers live on the hop module so test patches of hop.* still bind.
+Flying card after loft. FlyingHigh wait is loft to lid alt, not a dwell
+at 1 km. Lid hold is throttle 1 + SAS vertical until lid; inland slew
+after. Airborne cannot-pay: FlyingLow skip still lofts — High waits the
+lid, then Toggle; skip-latch does not drop a bound High card. After
+High lid, 1× (dwell / reentry). FlyingLow skip may still 4×. Then
+coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
+sit=landed at pad alt with fuel is still burning. Parked water/splash
+CLIs stay in hop.py. This module must not name those flags. Helpers live
+on the hop module so test patches of hop.* still bind.
 """
 
 from __future__ import annotations
@@ -15,8 +20,177 @@ from typing import Callable
 import hop as H
 from emergencies import Ctx, call
 from phases import OffPlan, check_expect
+from physics_warp import (
+    airborne_cannot_pay,
+    apply_sit_warp,
+    chute_arm_sit,
+    chute_deploy_sit,
+    leftover_call,
+    met_elapsed,
+    timeout_hit,
+)
 from screenshot import mission_event
 from telem import EventLog, MissionAbort, Telem, gates
+
+
+def _lid_alt_reached(snap: object, hop_apo: float) -> bool:
+    """FlyingHigh hop_apo is live altitude. Predicted apo in thick air is not the lid."""
+    if not H.hop_wants_flying_high():
+        return False
+    alt = H._snap_alt(snap)
+    return math.isfinite(alt) and alt >= hop_apo
+
+
+def _lid_burn_sit(
+    snap: object, *, hop_apo: float, flying_high: bool
+) -> bool:
+    """Leftover LF before lid alt is still the burn sit. Not lofted burnout.
+
+    FlyingHigh wait at ~1 km is not FlyingHigh. Throttle 0 with leftover
+    LF is not 4×. Crumbs before lid may coast if q is actually low.
+    After lid, ``_high_dwell_sit`` is 1×.
+    """
+    if not flying_high:
+        return False
+    if _lid_alt_reached(snap, hop_apo):
+        return False
+    fuel = H._snap_fuel(snap)
+    return math.isfinite(fuel) and fuel > H.WATER_BRAKE_FUEL_MIN
+
+
+def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
+    """After FlyingHigh lid, 1×. Skip FlyingLow may still 4×.
+
+    Paying High dwell and High descent are not lofted burnout.
+    Forest / Grasslands: same.
+    """
+    return bool(reached_lid) and not down
+
+
+def _lid_vertical_sit(
+    snap: object,
+    *,
+    hop_apo: float,
+    flying_high: bool,
+    lofted_lid: bool = False,
+) -> bool:
+    """FlyingHigh below lid alt stays vertical. Pitch 25 at 1 km is not loft.
+
+    Predicted apo in thick air is not the lid. After lid alt, slew.
+    Forest / Grasslands: same.
+    """
+    if not flying_high or lofted_lid:
+        return False
+    return not _lid_alt_reached(snap, hop_apo)
+
+
+def _hold_lid(
+    vessel: object,
+    snap: object,
+    *,
+    hop_apo: float,
+    flying_high: bool,
+    lofted_lid: bool = False,
+) -> bool:
+    """FlyingHigh below lid: throttle 1, SAS vertical. Not inland slew.
+
+    AP engage at zenith has no heading. Inland slew clears SAS and does
+    not hold vertical. SAS from light holds the loft until lid alt or
+    crumbs. Forest / Grasslands: same.
+    """
+    burn = _lid_burn_sit(snap, hop_apo=hop_apo, flying_high=flying_high)
+    vertical = _lid_vertical_sit(
+        snap, hop_apo=hop_apo, flying_high=flying_high, lofted_lid=lofted_lid
+    )
+    if not burn and not vertical:
+        return False
+    try:
+        control = vessel.control
+    except Exception:
+        return True
+    if burn:
+        try:
+            control.throttle = 1.0
+        except Exception:
+            pass
+    if vertical:
+        try:
+            control.sas = True
+        except Exception:
+            pass
+    return True
+
+
+def _chute_arm_now(
+    snap: object,
+    *,
+    hop_apo: float,
+    flying_high: bool,
+    crumbs: bool,
+    apo_cut: bool,
+) -> bool:
+    """Arm after lid alt or burnout descent. Climbing wait-burn is not silk.
+
+    FlyingLow is ``chute_arm_sit``. FlyingHigh waits for lid alt or crumbs.
+    Throttle 0 with a full tank is not burnout. Forest / Grasslands: same.
+    """
+    if not chute_arm_sit(snap):
+        return False
+    if not flying_high:
+        return True
+    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo)
+
+
+def _chute_deploy_now(
+    snap: object,
+    *,
+    hop_apo: float,
+    flying_high: bool,
+    crumbs: bool,
+    apo_cut: bool,
+) -> bool:
+    """Deploy ≤2 km after lid alt or burnout. FlyingHigh wait-burn is not silk.
+
+    FlyingLow is ``chute_deploy_sit``. ``deploy_chutes`` Arms inside — leftover
+    LF before lid is not a canopy. Forest / Grasslands: same.
+    """
+    if not chute_deploy_sit(snap):
+        return False
+    if not flying_high:
+        return True
+    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo)
+
+
+def _offplan_apo_lid(snap: object) -> float:
+    """OffPlan apo lid. Gene expect_apo_max raises it; hop_apo is the cut.
+
+    FlyingLow stays ≥50 km so an SRB overshoot is not OffPlan. FlyingHigh
+    sit is Space unless the plan envelope is higher. A paying FlyingHigh
+    loft under that envelope is not Space OffPlan. Forest / Grasslands: same.
+    """
+    lid = H.hop_offplan_apo()
+    if not H.hop_wants_flying_high():
+        return lid
+    atm = getattr(snap, "atm_depth", float("nan"))
+    try:
+        atm_f = float(atm)
+    except (TypeError, ValueError):
+        atm_f = float("nan")
+    if math.isfinite(atm_f) and atm_f > 0.0:
+        lid = atm_f
+    try:
+        from phases import _kv
+
+        raw = _kv().get("expect_apo_max", "")
+    except Exception:
+        raw = ""
+    try:
+        plan = float(raw) if str(raw).strip() else float("nan")
+    except (TypeError, ValueError):
+        plan = float("nan")
+    if math.isfinite(plan) and plan > lid:
+        return plan
+    return lid
 
 
 def run_factory_vessel(
@@ -68,18 +242,26 @@ def run_factory_vessel(
     said_deploy = False
     said_coast = [""]
     lofted = False
+    met0: float | None = None
     reached_lid = False
     link_was: bool | None = None
     prev_stack_mass = float("nan")
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
     H._say(f"hop apo={hop_apo:.0f}", on_log)
-    H._say(
-        f"hop slew yaw {H.INLAND_YAW_FROM_UP:g}° then pitch "
-        f"{H.INLAND_PITCH_FROM_UP:g}° inland heading "
-        f"{H.INLAND_HEADING_DEG:g} after pad, hold through burnout",
-        on_log,
-    )
+    if H.hop_wants_flying_high():
+        H._say(
+            f"hop hold vertical until lid {hop_apo:.0f} m, then slew "
+            f"inland heading {H.INLAND_HEADING_DEG:g}",
+            on_log,
+        )
+    else:
+        H._say(
+            f"hop slew yaw {H.INLAND_YAW_FROM_UP:g}° then pitch "
+            f"{H.INLAND_PITCH_FROM_UP:g}° inland heading "
+            f"{H.INLAND_HEADING_DEG:g} after pad, hold through burnout",
+            on_log,
+        )
 
     with Telem(session, events=log_events) as telem:
         while True:
@@ -103,6 +285,16 @@ def run_factory_vessel(
             ctx.vessel = vessel
             snap = telem.read()
             pulses += 1
+            if did_light and met0 is None:
+                try:
+                    m0 = float(getattr(snap, "met", float("nan")))
+                except (TypeError, ValueError):
+                    m0 = float("nan")
+                if not math.isfinite(m0):
+                    vm = H._vessel_met(vessel)
+                    m0 = float(vm) if vm is not None else float("nan")
+                if math.isfinite(m0):
+                    met0 = m0
             deaf = H._zero_stick_if_deaf(vessel, snap)
             H._link_edge(log_events, not deaf, link_was)
             link_was = not deaf
@@ -151,10 +343,6 @@ def run_factory_vessel(
             if H._reached_high_lid(snap):
                 reached_lid = True
             down = H._down(snap, flown=left_pad) or litho
-            if not lofted:
-                H._apply_hop_physics(
-                    session, coast=False, on_log=on_log, last=said_coast
-                )
 
             if left_pad and H._vessel_gone(snap, vessel):
                 if H._recoverable(vessel):
@@ -234,27 +422,79 @@ def run_factory_vessel(
                         call("abort_pad", ctx)
                         raise MissionAbort(reason)
 
+            arm_now = False
+            deploy_now = False
+            st_now = str(getattr(snap, "chute", "") or "")
+            if st_now in H._CHUTE_OPEN:
+                chute_open = True
+            if lofted and down:
+                apo_cut = True
+                try:
+                    vessel.control.throttle = 0.0
+                except Exception:
+                    pass
+            if left_pad and not down:
+                if chute_open:
+                    apo_cut = True
+                flying_high = H.hop_wants_flying_high()
+                if _lid_alt_reached(snap, hop_apo):
+                    apo_cut = True
+                fuel_now = H._snap_fuel(snap)
+                crumbs = math.isfinite(fuel_now) and fuel_now <= H.WATER_BRAKE_FUEL_MIN
+                arm_now = _chute_arm_now(
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=flying_high,
+                    crumbs=crumbs,
+                    apo_cut=apo_cut,
+                )
+                if arm_now:
+                    apo_cut = True
+                deploy_now = _chute_deploy_now(
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=flying_high,
+                    crumbs=crumbs,
+                    apo_cut=apo_cut,
+                )
+                lid_burn = _lid_burn_sit(
+                    snap, hop_apo=hop_apo, flying_high=flying_high
+                )
+                if lid_burn:
+                    apo_cut = False
+                else:
+                    apo_cut, _braking = H._hold_or_cut(
+                        vessel,
+                        snap,
+                        math.inf if flying_high else hop_apo,
+                        cut=apo_cut,
+                        hold=1.0,
+                        brake=False,
+                        braking=False,
+                    )
+                    del _braking
+                _hold_lid(
+                    vessel,
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=flying_high,
+                    lofted_lid=reached_lid,
+                )
+
             apo = getattr(snap, "apo", float("nan"))
             try:
                 apo_f = float(apo)
             except (TypeError, ValueError):
                 apo_f = float("nan")
-            lid = H.hop_offplan_apo()
+            lid = _offplan_apo_lid(snap)
             label = "Space" if H.hop_wants_flying_high() else "FlyingLow"
-            if H.hop_wants_flying_high():
-                atm = getattr(snap, "atm_depth", float("nan"))
-                try:
-                    atm_f = float(atm)
-                except (TypeError, ValueError):
-                    atm_f = float("nan")
-                if math.isfinite(atm_f) and atm_f > 0.0:
-                    lid = atm_f
             if (
                 left_pad
                 and not down
                 and not waiting_hd
                 and math.isfinite(apo_f)
                 and apo_f > lid
+                and not (H.hop_wants_flying_high() and apo_cut)
             ):
                 raise OffPlan(f"apo {apo_f:.0f} > {lid:.0f} {label}")
             if left_pad and not down and not waiting_hd:
@@ -264,9 +504,6 @@ def run_factory_vessel(
                 if airborne:
                     lit = True
                 elif not left_pad and str(snap.situation) in H._LIGHT_SIT:
-                    H._apply_hop_physics(
-                        session, coast=False, on_log=on_log, last=said_coast
-                    )
                     H._light(vessel, on_log, snap)
                     if not deaf:
                         try:
@@ -285,30 +522,11 @@ def run_factory_vessel(
                             session=session,
                         )
 
-            st_now = str(getattr(snap, "chute", "") or "")
-            if st_now in H._CHUTE_OPEN:
-                chute_open = True
-            if lofted and down:
-                apo_cut = True
-                try:
-                    vessel.control.throttle = 0.0
-                except Exception:
-                    pass
-            if left_pad and not down:
-                if chute_open:
-                    apo_cut = True
-                apo_cut, _braking = H._hold_or_cut(
-                    vessel,
-                    snap,
-                    hop_apo,
-                    cut=apo_cut,
-                    hold=1.0,
-                    brake=False,
-                    braking=False,
-                )
-                del _braking
-
-            burning_now = H._burning(vessel, snap, lofted=lofted)
+            burning_now = H._burning(vessel, snap, lofted=lofted) or _lid_burn_sit(
+                snap,
+                hop_apo=hop_apo,
+                flying_high=H.hop_wants_flying_high(),
+            )
             if lit and not down and left_pad and not deaf:
                 flown_p = H._snap_pitch(snap)
                 flown_h = H._snap_heading(snap)
@@ -316,89 +534,93 @@ def run_factory_vessel(
                     met_slew = float(getattr(snap, "met", float("nan")))
                 except (TypeError, ValueError):
                     met_slew = float("nan")
-                if not inland_yawed:
-                    inland_yaw_n += 1
-                inland_pitch, inland_yawed = H._inland_cmd_pitch(
-                    inland_yawed,
-                    inland_yaw_n,
-                    flown_p,
-                    flown_h,
-                    met_slew,
-                )
-                H._steer_inland(
-                    vessel,
-                    pitch=inland_pitch,
-                    flown_pitch=flown_p,
-                    flown_heading=flown_h,
-                    burning=burning_now,
-                )
-                if not said_slew:
-                    H._say(
-                        "hop slew yaw inland after pad "
-                        f"heading={H.INLAND_HEADING_DEG:g}",
-                        on_log,
+                flying_high = H.hop_wants_flying_high()
+                if _lid_vertical_sit(
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=flying_high,
+                    lofted_lid=reached_lid,
+                ):
+                    inland_pitch = H.WATER_PITCH_UP
+                    _hold_lid(
+                        vessel,
+                        snap,
+                        hop_apo=hop_apo,
+                        flying_high=flying_high,
+                        lofted_lid=reached_lid,
                     )
-                    said_slew = True
-                if inland_yawed and not said_pitch:
-                    H._say(
-                        f"hop pitch {H.INLAND_PITCH_FROM_UP:g}° inland "
-                        f"heading={H.INLAND_HEADING_DEG:g}",
-                        on_log,
+                else:
+                    if not inland_yawed:
+                        inland_yaw_n += 1
+                    inland_pitch, inland_yawed = H._inland_cmd_pitch(
+                        inland_yawed,
+                        inland_yaw_n,
+                        flown_p,
+                        flown_h,
+                        met_slew,
                     )
-                    said_pitch = True
+                    H._steer_inland(
+                        vessel,
+                        pitch=inland_pitch,
+                        flown_pitch=flown_p,
+                        flown_heading=flown_h,
+                        burning=burning_now,
+                    )
+                    if not said_slew:
+                        H._say(
+                            "hop slew yaw inland after pad "
+                            f"heading={H.INLAND_HEADING_DEG:g}",
+                            on_log,
+                        )
+                        said_slew = True
+                    if inland_yawed and not said_pitch:
+                        H._say(
+                            f"hop pitch {H.INLAND_PITCH_FROM_UP:g}° inland "
+                            f"heading={H.INLAND_HEADING_DEG:g}",
+                            on_log,
+                        )
+                        said_pitch = True
                 if not burning_now and not said_hold:
                     H._say("hop hold inland through burnout", on_log)
                     said_hold = True
+
+            apply_sit_warp(
+                session,
+                snap,
+                left_pad=left_pad,
+                down=down,
+                burning=burning_now
+                or _high_dwell_sit(reached_lid=reached_lid, down=down),
+                on_log=on_log,
+                last=said_coast,
+                uplink_rate=H.phys_warp_rate(),
+            )
 
             if left_pad and not down and not chute_open:
                 if st_now in H._CHUTE_OPEN:
                     chute_open = True
                 else:
-                    if not chute_armed:
+                    if not chute_armed and arm_now:
                         st = H.arm_chutes(vessel, on_log)
                         chute_armed = True
                         if st in {"", "none"}:
                             chute_open = True
                         else:
                             H._say(f"hop chute {st}", on_log)
-                    if not chute_open and not burning_now:
-                        vz_ch = H._snap_v_vert(snap)
-                        try:
-                            alt_ch = float(getattr(snap, "alt", float("nan")))
-                        except (TypeError, ValueError):
-                            alt_ch = float("nan")
-                        descending = math.isfinite(vz_ch) and vz_ch < 0.0
-                        if (
-                            descending
-                            and math.isfinite(alt_ch)
-                            and 0.0 < alt_ch <= H.CHUTE_DEPLOY_ALT_M
-                        ):
-                            st = H.deploy_chutes(vessel, on_log)
-                            if st in H._CHUTE_OPEN:
-                                chute_open = True
-                            if not said_deploy and st not in {"", "none"}:
-                                H._say(f"hop chute {st}", on_log)
-                                said_deploy = True
-                                mission_event(
-                                    "chute",
-                                    snap,
-                                    beauty=True,
-                                    pose="chute-silk",
-                                    session=session,
-                                )
-
-            H._apply_hop_physics(
-                session,
-                coast=H._want_coast_phys(
-                    snap,
-                    left_pad=left_pad,
-                    down=down,
-                    chute_open=chute_open,
-                    burning=burning_now,
-                ),
-                on_log=on_log,
-                last=said_coast,
-            )
+                    if not chute_open and deploy_now:
+                        st = H.deploy_chutes(vessel, on_log)
+                        if st in H._CHUTE_OPEN:
+                            chute_open = True
+                        if not said_deploy and st not in {"", "none"}:
+                            H._say(f"hop chute {st}", on_log)
+                            said_deploy = True
+                            mission_event(
+                                "chute",
+                                snap,
+                                beauty=True,
+                                pose="chute-silk",
+                                session=session,
+                            )
 
             if left_pad and not down and not science_attempted:
                 if (not did_light) and H._keep_hd(
@@ -419,6 +641,7 @@ def run_factory_vessel(
                     need = H.bound_science_need(
                         live_sit=H._live_sit(vessel, snap),
                         live_biome=H._snap_biome(snap, vessel),
+                        alt=H._snap_alt(snap),
                     )
                     started = H._start_paying(vessel, ids, snap, on_log, need)
                     if started:
@@ -440,27 +663,61 @@ def run_factory_vessel(
                         raise MissionAbort(
                             "no science (wanted " + ",".join(ids) + ")"
                         )
-                    elif ids:
+                    elif ids and not H.hop_wants_flying_high():
+                        science_attempted = True
                         H._say("science skip (situation cannot pay)", on_log)
-                elif H.hop_wants_flying_high() and not said_lid:
+                    elif H.hop_wants_flying_high() and not said_lid:
+                        H._say("science wait FlyingHigh", on_log)
+                        said_lid = True
+                elif (
+                    H.hop_wants_flying_high()
+                    and not said_lid
+                    and _lid_alt_reached(snap, hop_apo)
+                ):
                     H._say("science wait FlyingHigh", on_log)
                     said_lid = True
+
+            if left_pad and not down:
+                _hold_lid(
+                    vessel,
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=H.hop_wants_flying_high(),
+                    lofted_lid=reached_lid,
+                )
 
             waiting_lid = (
                 H.hop_wants_flying_high()
                 and did_light
                 and not started
+                and not science_attempted
                 and left_pad
                 and not down
             )
+            cannot_pay = airborne_cannot_pay(
+                lofted=lofted,
+                down=down,
+                started=started,
+                science_attempted=science_attempted,
+                waiting_hd=waiting_hd,
+            )
 
-            if left_pad and down and not waiting_hd and lofted:
+            live_now = H._live_sit(vessel, snap)
+            live_biome = H._snap_biome(snap, vessel)
+            live_l = str(live_now or "").lower()
+            wreck_now = bool(getattr(snap, "wreck", False))
+            ground_now = down or "landed" in live_l or "splash" in live_l
+            leftover_ids = H.hop_landed_science_ids()
+            matching_ids = H.hop_landed_science_ids(
+                live_sit=live_now, live_biome=live_biome
+            )
+            started_ground: list[str] = []
+            if left_pad and ground_now and not waiting_hd and lofted:
                 need = H.bound_science_need(
-                    live_sit=H._live_sit(vessel, snap),
-                    live_biome=H._snap_biome(snap, vessel),
+                    live_sit=live_now,
+                    live_biome=live_biome,
                 )
-                landed_ids = H.hop_landed_science_ids()
-                pending = tuple(eid for eid in landed_ids if eid not in started)
+                pending = tuple(eid for eid in matching_ids if eid not in started)
                 more = (
                     H._start_paying(vessel, pending, snap, on_log, need)
                     if pending
@@ -468,6 +725,7 @@ def run_factory_vessel(
                 )
                 if more:
                     started.extend(more)
+                    started_ground = more
                     science_attempted = True
                     H._say("science " + ",".join(more), on_log)
                     log_events.emit("science", ids=list(more))
@@ -493,7 +751,25 @@ def run_factory_vessel(
                 call("abort_pad", ctx)
                 raise MissionAbort("no science (FlyingHigh lid)")
 
-            hold_card = H._hold_ground_card(vessel, started, ids, snap)
+            # Leftover file rem=0 on Toggle is idle, not transmitted.
+            # Unpaid leftover that can pay this sit (or any leftover while
+            # still flying) blocks recover. SrfLanded does not hold splash.
+            unpaid_match = tuple(eid for eid in matching_ids if eid not in started)
+            unpaid_any = tuple(eid for eid in leftover_ids if eid not in started)
+            wait_leftover = (
+                left_pad
+                and lofted
+                and not wreck_now
+                and not waiting_hd
+                and (
+                    bool(unpaid_match)
+                    if ground_now
+                    else bool(unpaid_any)
+                )
+            )
+            hold_card = H._hold_ground_card(vessel, started, ids, snap) or (
+                bool(started_ground) and not wreck_now
+            )
 
             pad_boost = H._pad_boosting(
                 lit=did_light,
@@ -502,7 +778,7 @@ def run_factory_vessel(
                 down=down,
                 burning=burning_now,
             )
-            if waiting_lid or hold_card:
+            if waiting_lid or hold_card or cannot_pay or wait_leftover:
                 pass
             elif pad_boost:
                 if not deaf:
@@ -535,7 +811,9 @@ def run_factory_vessel(
 
             met = H._vessel_met(vessel)
             frozen = False
-            if left_pad and not H._recoverable(vessel):
+            if cannot_pay:
+                still_t0 = None
+            elif left_pad and not H._recoverable(vessel):
                 still_t0, frozen = H._met_still(met, prev_met, still_t0, clock())
             else:
                 still_t0 = None
@@ -543,6 +821,13 @@ def run_factory_vessel(
             if frozen and sit_now in H._AIR and H._q_zero(snap):
                 litho = True
                 down = True
+            cannot_pay = airborne_cannot_pay(
+                lofted=lofted,
+                down=down,
+                started=started,
+                science_attempted=science_attempted,
+                waiting_hd=waiting_hd,
+            )
 
             if down and left_pad and not pad_boost:
                 if not said_down:
@@ -568,7 +853,7 @@ def run_factory_vessel(
                 down=down,
                 burning=burning_now,
             )
-            if waiting_lid or hold_card:
+            if waiting_lid or hold_card or cannot_pay or wait_leftover:
                 pass
             elif pad_boost:
                 if not deaf:
@@ -639,8 +924,25 @@ def run_factory_vessel(
             if met is not None and math.isfinite(met):
                 prev_met = met
 
-            elapsed = clock() - t0
-            if pulses > 1 and elapsed >= budget:
+            try:
+                met_now = float(getattr(snap, "met", float("nan")))
+            except (TypeError, ValueError):
+                met_now = float("nan")
+            if not math.isfinite(met_now) and met is not None:
+                met_now = met
+            elapsed_m = met_elapsed(met_now, met0)
+            elapsed_wall = clock() - t0
+            timed_out = timeout_hit(
+                met=met_now, met0=met0, budget=budget, down=down
+            )
+            if (
+                not timed_out
+                and pulses > 1
+                and not math.isfinite(elapsed_m)
+                and elapsed_wall >= budget
+            ):
+                timed_out = True
+            if timed_out:
                 if left_pad:
                     got = H._recover_hd(vessel, on_log)
                     if got is not None:
@@ -656,7 +958,14 @@ def run_factory_vessel(
                     continue
                 if down and left_pad:
                     raise MissionAbort("not recoverable")
-                H._say(f"hop timeout {elapsed:.0f}s", on_log)
+                shown = elapsed_m if math.isfinite(elapsed_m) else elapsed_wall
+                H._say(f"hop timeout {shown:.0f}s", on_log)
+                if leftover_call(recoverable=H._recoverable(vessel)) == "recover":
+                    got = H._force_recover(vessel, on_log)
+                    if got is not None:
+                        return got
+                if left_pad:
+                    H.abort_ksc_leftover(vessel, on_log, why="timeout")
                 raise MissionAbort("timeout")
             nap(H._nap_dt(pulse, snap, braking=False))
 

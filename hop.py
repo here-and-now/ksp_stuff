@@ -49,7 +49,19 @@ from hangar import (
     wait_vessel_ready,
 )
 from pad import arm_chutes, deploy_chutes, recover_or_abort
-from physics_warp import COAST_RATE, apply_coast, coast_rate, set_factor as _physics_factor
+from physics_warp import (
+    CHUTE_DEPLOY_ALT_M,
+    CHUTE_OPEN as _CHUTE_OPEN,
+    COAST_RATE,
+    apply_coast,
+    chute_deploy_sit,
+    coast_rate,
+    leftover_abort_kv,
+    leftover_abort_why,
+    leftover_ksc_call,
+    set_factor as _physics_factor,
+    want_coast,
+)
 from science import (
     card_has_data,
     card_slots,
@@ -83,10 +95,8 @@ FLYING_HIGH_M = 140_000.0
 _HOP_PREFIX = "kspstuff-hop-"
 DEFAULT_HOP_S = 600.0
 _AIRBORNE_M = 250.0
-# Mk16: arm airborne, Deploy on descent below 2 km (vz < 0). Not at apo.
+# Mk16: arm airborne. Deploy / silk / coast clock live in physics_warp.
 # kRPC armed is not a canopy.
-CHUTE_DEPLOY_ALT_M = 2_000.0
-_CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
 # kRPC physics_warp_factor: 0=1×, 1=2×, 2=3×, 3=4×. Never rails. Never WarpTo.
 # Coast and silk cruise default 4× (1× through deploy). Pin with KSPSTUFF_PHYS_WARP.
 HOP_COAST_PHYS_RATE = COAST_RATE
@@ -324,28 +334,45 @@ def hop_science_ids() -> tuple[str, ...]:
     return ids
 
 
-def hop_landed_science_ids() -> tuple[str, ...]:
-    """Bound SrfLanded / SrfSplashed leftover. Empty is not a miss — flying card may still pay."""
+def hop_landed_science_ids(
+    live_sit: str = "",
+    live_biome: str = "",
+) -> tuple[str, ...]:
+    """Bound SrfLanded / SrfSplashed leftover. Empty is not a miss — flying card may still pay.
+
+    Live sit keeps Forest land vs splash: SrfLanded@Forest pays landed, not flying.
+    """
     from tickets import science_ids_for, union_science_ids
 
     try:
-        return union_science_ids(
+        ids = union_science_ids(
             science_ids_for(situation="landed"),
             science_ids_for(situation="splash"),
         )
     except Exception:
         return ()
+    if not ids or not (live_sit or live_biome):
+        return ids
+    need = bound_science_need(live_sit=live_sit, live_biome=live_biome)
+    return tuple(
+        eid
+        for eid in ids
+        if sit_matches(live_sit, live_biome, *(need.get(eid, ("", ""))))
+    )
 
 
 def bound_science_need(
     live_sit: str = "",
     live_biome: str = "",
+    *,
+    alt: float = float("nan"),
 ) -> dict[str, tuple[str, str]]:
     """eid → (situation, biome) from bound science tickets.
 
     Prefer the bound ticket that can pay live sit (land vs splash).
     First seq is a reject sentinel when live sit is empty or no ticket
     matches (airborne skip still cannot-pay a SrfLanded pin).
+    FlyingHigh vs live flying uses alt ≥50 km.
     """
     out: dict[str, tuple[str, str]] = {}
     rows: list[tuple[int, str, str, str]] = []
@@ -385,7 +412,7 @@ def bound_science_need(
         if eid in match:
             continue
         if (live_sit or live_biome) and sit_matches(
-            live_sit, live_biome, sit, biome
+            live_sit, live_biome, sit, biome, alt=alt
         ):
             match[eid] = (sit, biome)
     first.update(match)
@@ -419,7 +446,8 @@ def _start_paying(
     """Start only slots that can pay this sit/biome. Empty = skip, not abort."""
     sit = _live_sit(vessel, snap)
     biome = _snap_biome(snap, vessel)
-    paying = paying_eids(vessel, names, sit=sit, biome=biome, need=need)
+    alt = _snap_alt(snap)
+    paying = paying_eids(vessel, names, sit=sit, biome=biome, need=need, alt=alt)
     if not paying:
         return []
     return start_experiments(
@@ -429,6 +457,7 @@ def _start_paying(
         sit=sit,
         biome=biome,
         need=need,
+        alt=alt,
     )
 
 
@@ -578,12 +607,6 @@ def _find_unmatched_leftover(session: object) -> object | None:
     return None
 
 
-def leftover_ksc_call(recoverable: bool) -> str:
-    if recoverable:
-        return "python main.py recover-probe --recover"
-    return "python main.py recover-probe --space-center"
-
-
 def abort_ksc_leftover(
     vessel: object | None,
     on_log: Callable[[str], None] | None,
@@ -593,20 +616,10 @@ def abort_ksc_leftover(
     """Print Hank's leftover call, then abort. Do not recover. Do not KSC."""
     sit = _vessel_sit(vessel)
     rec = _recoverable(vessel)
-    rec_s = "yes" if rec else "no"
-    call = leftover_ksc_call(rec)
-    for line in (
-        "ksc: leftover",
-        f"sit: {sit}",
-        f"recoverable: {rec_s}",
-        f"call: {call}",
-    ):
+    for line in leftover_abort_kv(sit=sit, recoverable=rec):
         print(line, flush=True)
         _say(line, on_log)
-    extra = f" {why}" if why else ""
-    raise MissionAbort(
-        f"ksc leftover sit={sit} recoverable={rec_s} call: {call}{extra}"
-    )
+    raise MissionAbort(leftover_abort_why(sit=sit, recoverable=rec, why=why))
 
 
 def _recover_unmatched_leftover(
@@ -1486,34 +1499,9 @@ def _want_coast_phys(
     chute_open: bool,
     burning: bool,
 ) -> bool:
-    """4× after burnout; 1× through deploy; 4× again once silk is deployed.
-
-    Pad / burn / recover stay 1×. ``semi_deployed`` is still the deploy
-    window. Landed is ``down``.
-    """
+    """Warp clock is ``physics_warp.want_coast``. ``chute_open`` is snap.chute."""
     del chute_open
-    if not left_pad or down or burning:
-        return False
-    if not _lofted(snap):
-        return False
-    st = str(getattr(snap, "chute", "") or "").lower().replace("-", "_")
-    if st == "deployed":
-        return True
-    if st in {"semi_deployed", "semideployed"}:
-        return False
-    vz = _snap_v_vert(snap)
-    try:
-        alt = float(getattr(snap, "alt", float("nan")))
-    except (TypeError, ValueError):
-        alt = float("nan")
-    if (
-        math.isfinite(vz)
-        and vz < 0.0
-        and math.isfinite(alt)
-        and 0.0 < alt <= CHUTE_DEPLOY_ALT_M
-    ):
-        return False
-    return True
+    return want_coast(snap, left_pad=left_pad, down=down, burning=burning)
 
 
 def _apply_hop_physics(
@@ -2753,31 +2741,20 @@ def run_on_vessel(
                             chute_open = True
                         else:
                             _say(f"hop chute {st}", on_log)
-                    if not chute_open and not burning_now:
-                        vz_ch = _snap_v_vert(snap)
-                        try:
-                            alt_ch = float(getattr(snap, "alt", float("nan")))
-                        except (TypeError, ValueError):
-                            alt_ch = float("nan")
-                        descending = math.isfinite(vz_ch) and vz_ch < 0.0
-                        if (
-                            descending
-                            and math.isfinite(alt_ch)
-                            and 0.0 < alt_ch <= CHUTE_DEPLOY_ALT_M
-                        ):
-                            st = deploy_chutes(vessel, on_log)
-                            if st in _CHUTE_OPEN:
-                                chute_open = True
-                            if not said_deploy and st not in {"", "none"}:
-                                _say(f"hop chute {st}", on_log)
-                                said_deploy = True
-                                mission_event(
-                                    "chute",
-                                    snap,
-                                    beauty=True,
-                                    pose="chute-silk",
-                                    session=session,
-                                )
+                    if not chute_open and not burning_now and chute_deploy_sit(snap):
+                        st = deploy_chutes(vessel, on_log)
+                        if st in _CHUTE_OPEN:
+                            chute_open = True
+                        if not said_deploy and st not in {"", "none"}:
+                            _say(f"hop chute {st}", on_log)
+                            said_deploy = True
+                            mission_event(
+                                "chute",
+                                snap,
+                                beauty=True,
+                                pose="chute-silk",
+                                session=session,
+                            )
 
             _apply_hop_physics(
                 session,
@@ -2811,6 +2788,7 @@ def run_on_vessel(
                     need = bound_science_need(
                         live_sit=_live_sit(vessel, snap),
                         live_biome=_snap_biome(snap, vessel),
+                        alt=_snap_alt(snap),
                     )
                     started = _start_paying(vessel, ids, snap, on_log, need)
                     if started:

@@ -88,7 +88,9 @@ fly_ready already hires him without emptying the pad (`:254-256`).
 
 **Feedback door.** Hop-class friction is the bump, not a remembered
 CLI. House friction keeps **one** tag: `ops --tag feedback
---fingerprint <existing>`. No new TYPE. No Return `feedback:` key.
+--fingerprint <existing>`. No new TYPE. **Amended T-375 / T-378 (Os):**
+after-hire door is `tickets feedback T-NNN --good --self --them` on
+the work ticket — not Return keys, not a card.
 
 ## 5 Files changed
 
@@ -173,7 +175,10 @@ pitfall), not only Os letters.
   Clock ticks on **new** opens.
 - `ops.py:278` hire-why still says “batch Learn”.
 - Hop-exit `attach_run` exceptions are swallowed (`main.py:106-107`).
-- `sci-unchanged-recovered=1` — no RSI yet. Living +0 is still waste.
+- `sci-unchanged-recovered` T-337 RSI ×3 (stem count 4). Practice
+  last-write: living +0 is not clean-0 re-fly; envelope sit/biome
+  must match bound tickets. Splash now T-313/T-288. Chute-late is
+  T-339 (`chute-deploy-sit`).
 - Lock-live still skips Mortimer (`ops.py:210-220`) — by design.
 - Gene log still novels (`docs/crew/log/gene.md:3`). Cards patched;
   habit is not.

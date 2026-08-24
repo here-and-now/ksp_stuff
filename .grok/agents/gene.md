@@ -46,16 +46,23 @@ crafts) a bind **this hang can bank**. Schedule the pad. Always some
 actual flight unless leftover / crash UI, missing `f013`, no capable
 craft, empty shelf, or Os wait. `go: wait` **only** those. Do not take
 15 minutes after a miss to write a novel. An RSI letter does **not**
-empty the pad. Do not re-fly a +0 Forest loft — that living recover
-cannot pay and is waste; restamp from the envelope or the next signed
-alt. Thin tape: cite it like `f013` and open `--type systems --fingerprint
+empty the pad. Do not re-fly a living +0 (any sit/biome) — not only
+a Forest loft. 08-44 Shores land is not Forest leftover; 10-57 Forest
+splash is not a land bind; stiff-pbc **splashes**. FlyingHigh leftover
+is t7-chute loft ≥50 km, not `go: wait`, not silk, not abort-at-lid,
+not wait-at-800 m then pitch.
+Do not Hangar 4t / dv5 / girderless lite. Restamp from the
+envelope or the next signed alt. Thin tape: cite it like `f013` and open `--type systems --fingerprint
 <stem>` — still stamp `go: yes` if leftover clean and the hang lives. Bind
 **side-by-side** science when Linus has it; do not fly thermo-only
 because it is familiar. Stumble → ticket with `--fingerprint`. Uncrewed miss is **not**
 your hire — leftover is Hank, live `.py` is Lars, re-fly last `cli:`
 if the hang lives **and the bind can still pay**, next already-signed
-alt if it died (stamp that fly ticket only if it has no `go:`). Cheap
-probe sit: first `go: yes` includes `campaign: uncrewed`. **Leave
+alt if it died (stamp that fly ticket only if it has no `go:`).
+Airborne `science skip (situation cannot pay)` of a landed bind is
+**not** `go: wait` during the hop — the hop still lands leftover.
+After CLI, recovered sit **is** the next bind. Cheap probe sit:
+first `go: yes` includes `campaign: uncrewed`. **Leave
 `go: yes`.** Parent re-flies last `cli:` on clean 0 **and** on a miss of
 a hang that is still capable without hiring you. Do not `go: yes` as
 “same Flea until 15” — 15 is spent. Remaining subjects cannot finish on
@@ -65,8 +72,9 @@ vehicle/science tickets. Missing block → `--type control --fingerprint <stem>`
 Firsts → `--type press`. Paid node → `--type ctt`. Friction → `--type ops
 --tag feedback --fingerprint <stem>`. Lookup
 `docs/program/tickets/fingerprints.json`. Reuse `heading-never-090`,
-`sci-unchanged-recovered`, `flyinghigh-lid` — do not invent a stem per
-T-id. Empty `--fingerprint` on `control` / `systems` / `ops --tag
+`sci-unchanged-recovered`, `flyinghigh-lid`, `science-skip-timeout`,
+`forest-splashed-thermo`, `hold-ground-card`, `bigger-dv`, `far-shear` —
+do not invent a stem per T-id. Empty `--fingerprint` on `control` / `systems` / `ops --tag
 feedback` is refused. `payload.cli` is the exact Commander CLI.
 Do not tell another desk in Return prose. **Landing wins `learn`.**
 
@@ -131,6 +139,8 @@ slate: docs/program/slate.md
 ```
 
 Uncrewed `learn:` is `none` here (kernel already stamped). Also stamp
-`--field cli|campaign|phase`. Do not emit `need_*`. Body (not the
+`--field cli|campaign|phase`. Do not emit `need_*` or `good:` / `feedback:`.
+After the work: `python main.py tickets feedback T-NNN --claim "…"`
+(one finding — not a Learn novel). Body (not the
 fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`
 (feedback **requires** the stem).

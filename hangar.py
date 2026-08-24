@@ -428,13 +428,28 @@ def install_signed(
 
 
 OVERLAY_LAST = Path(__file__).resolve().parent / "docs" / "program" / "overlay.last"
+UNRECOVERABLE_LAST = (
+    Path(__file__).resolve().parent / "docs" / "program" / "unrecoverable.last"
+)
 _SKIP_LEFTOVER_TYPES = frozenset(
     {"spaceobject", "flag", "eva", "debris", "asteroid", "unknown"}
 )
 
 
+_RECOVER_SITS = frozenset({"landed", "splashed", "pre_launch", "prelaunch"})
+_WRECK_SITS = frozenset({"landed", "splashed"})
+_AIR_SITS = frozenset({"flying", "sub_orbital", "suborbital"})
+_LEFTOVER_LAND_MET_S = 900.0
+_UNRECOVERABLE: set[str] = set()
+
+
 def leftover_ship(vessel: Any) -> bool:
-    """Living craft we walk home. Asteroids, debris, EVA, flags are not."""
+    """Living craft we walk home. Asteroids, debris, EVA, flags, dead GUID are not.
+
+    Crash-UI wreck (landed/splashed, recoverable=0) is not pad occupancy.
+    Os will not click Recover. A GUID we already Closed stays out after
+    Space Center lists it as SUB_ORBITAL again.
+    """
     try:
         name = str(getattr(vessel, "name", "") or "").strip()
     except Exception:
@@ -448,6 +463,9 @@ def leftover_ship(vessel: Any) -> bool:
         return False
     typ = _status_name(getattr(vessel, "type", None))
     if typ in _SKIP_LEFTOVER_TYPES:
+        return False
+    vid = _vessel_id(vessel)
+    if vid and vid in _load_unrecoverable():
         return False
     return True
 
@@ -467,6 +485,173 @@ def leftover_ships(session: Any) -> list[Any]:
     return out
 
 
+def _vessel_id(vessel: Any) -> str:
+    """kRPC 0.6 Vessel has no ``.id``. ``_object_id`` is stable across clients."""
+    for attr in ("id", "_object_id"):
+        try:
+            raw = getattr(vessel, attr, None)
+        except Exception:
+            continue
+        if raw is None:
+            continue
+        text = str(raw).strip()
+        if text and text not in {"None"}:
+            return text
+    return ""
+
+
+def _overlay_unrecoverable() -> set[str]:
+    out: set[str] = set()
+    try:
+        text = OVERLAY_LAST.read_text(encoding="utf-8")
+    except Exception:
+        return out
+    for line in text.splitlines():
+        if not line.startswith("unrecoverable:"):
+            continue
+        raw = line.split(":", 1)[1]
+        for tok in raw.replace(",", " ").split():
+            if tok:
+                out.add(tok)
+    return out
+
+
+def _load_unrecoverable() -> set[str]:
+    ids = set(_UNRECOVERABLE)
+    ids |= _overlay_unrecoverable()
+    try:
+        text = UNRECOVERABLE_LAST.read_text(encoding="utf-8")
+    except Exception:
+        text = ""
+    for line in text.splitlines():
+        tok = line.strip()
+        if tok and not tok.startswith("#"):
+            ids.add(tok)
+    return ids
+
+
+def _persist_unrecoverable() -> None:
+    ids = _load_unrecoverable()
+    UNRECOVERABLE_LAST.parent.mkdir(parents=True, exist_ok=True)
+    body = "\n".join(sorted(ids))
+    UNRECOVERABLE_LAST.write_text(body + ("\n" if body else ""), encoding="utf-8")
+
+
+def remember_unrecoverable(vessel: Any) -> None:
+    """Crash-UI rec=0 wreck we Closed. Disk so the next process skips it."""
+    vid = _vessel_id(vessel)
+    if not vid:
+        log.warning(
+            "walk home unrecoverable %s sit=%s has no object id",
+            _vessel_name(vessel),
+            _vessel_sit(vessel),
+        )
+        return
+    _UNRECOVERABLE.add(vid)
+    _persist_unrecoverable()
+    log.info(
+        "walk home unrecoverable %s id=%s sit=%s — not pad occupancy",
+        _vessel_name(vessel),
+        vid,
+        _vessel_sit(vessel),
+    )
+
+
+def _vessel_name(vessel: Any) -> str:
+    try:
+        return str(getattr(vessel, "name", "") or "").strip() or "?"
+    except Exception:
+        return "?"
+
+
+def _vessel_sit(vessel: Any) -> str:
+    try:
+        return _status_name(getattr(vessel, "situation", None))
+    except Exception:
+        return "?"
+
+
+def _vessel_recoverable(vessel: Any) -> bool:
+    try:
+        return bool(vessel.recoverable)
+    except Exception:
+        return False
+
+
+def _vessel_met(vessel: Any) -> float | None:
+    try:
+        met = float(getattr(vessel, "met", float("nan")))
+    except (TypeError, ValueError):
+        return None
+    if met != met:  # NaN
+        return None
+    return met
+
+
+def leftover_will_land(vessel: Any) -> bool:
+    """SUB_ORBITAL / flying leftover will hit the ground. Orbiting will not."""
+    return _vessel_sit(vessel) in _RECOVER_SITS or _vessel_sit(vessel) in _AIR_SITS
+
+
+def _wait_leftover_land(
+    session: Session, vessel: Any, *, budget: float | None = None
+) -> bool:
+    """Wait a living leftover to land, then Recover. MET clock. Never revert.
+
+    Close on a flying leftover leaves it in the list (19-09-12Z parts=20).
+    Crash-UI MET freeze: stop waiting, do not revert.
+    """
+    from physics_warp import set_rate, timeout_hit, unpause_clock
+
+    cap = _LEFTOVER_LAND_MET_S if budget is None else float(budget)
+    if cap <= 0:
+        return _vessel_recoverable(vessel)
+    unpause_clock(session)
+    met0 = _vessel_met(vessel)
+    prev = met0
+    still = 0
+    log.info(
+        "walk home wait land %s sit=%s met=%s",
+        _vessel_name(vessel),
+        _vessel_sit(vessel),
+        met0,
+    )
+    while True:
+        rec = _vessel_recoverable(vessel)
+        sit = _vessel_sit(vessel)
+        down = sit in _RECOVER_SITS
+        if rec:
+            set_rate(session, 1)
+            return True
+        met = _vessel_met(vessel)
+        if timeout_hit(met=met, met0=met0, budget=cap, down=down):
+            set_rate(session, 1)
+            return False
+        if met is not None and prev is not None and abs(met - prev) < 0.05:
+            still += 1
+        else:
+            still = 0
+            prev = met
+        if still > 40:
+            set_rate(session, 1)
+            log.info(
+                "walk home wait land MET frozen sit=%s rec=%s — Close",
+                sit,
+                int(rec),
+            )
+            return rec
+        alt = None
+        try:
+            alt = float(vessel.flight().mean_altitude)
+        except Exception:
+            alt = None
+        if sit in _AIR_SITS and (alt is None or alt > 5000):
+            set_rate(session, 4)
+        else:
+            set_rate(session, 1)
+        time.sleep(0.3)
+
+
 def _wait_recovered(session: Any, name: str, *, timeout: float = 20.0) -> bool:
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
@@ -482,45 +667,109 @@ def _wait_recovered(session: Any, name: str, *, timeout: float = 20.0) -> bool:
     return False
 
 
+def _recover_wait(session: Session, vessel: Any, name: str) -> bool:
+    try:
+        run_physics(session)
+    except Exception:
+        pass
+    try:
+        log.info("walk home recover() %s sit=%s", name, _vessel_sit(vessel))
+        vessel.recover()
+    except Exception as exc:
+        log.warning("walk home recover %s: %s", name, exc)
+        return False
+    if _wait_recovered(session, name):
+        return True
+    log.warning("walk home %s still in vessel list after recover()", name)
+    return False
+
+
 def walk_home(session: Session) -> int:
     """Recover leftover ships, then Close. Never revert. Never leftover-ksc.
 
-    Recoverable: enter Flight, ``vessel.recover()``, wait until gone.
-    Not recoverable: Close with ``reload_save=False`` (no launch-save
-    respawn). Do not recover asteroids.
+    ``recoverable`` at Space Center is often false. Enter Flight first,
+    then ``vessel.recover()`` if KSP will take it. recover() returns
+    before the ship leaves the list — wait gone *before* Close. Close
+    during recover leaves a SUB_ORBITAL tracking ghost (18-34-09Z).
+    Living SUB_ORBITAL (parts loaded): wait land on the MET clock, then
+    recover(). Crash-UI (landed/splashed rec=0, MET frozen): not pad
+    occupancy — remember vessel.id so Space Center SUB_ORBITAL listing
+    does not block Hangar. Close ``reload_save=False``. Never revert.
     """
     session.require_connected()
     n = 0
+    recovered_names: list[str] = []
     for vessel in leftover_ships(session):
-        name = "?"
-        try:
-            name = str(vessel.name or "?")
-        except Exception:
-            pass
-        rec = False
-        try:
-            rec = bool(vessel.recoverable)
-        except Exception:
-            rec = False
-        if not rec:
-            log.info("leftover %s not recoverable — Close, no save/load", name)
-            continue
-        try:
-            if game_scene(session) != "flight":
+        name = _vessel_name(vessel)
+        started_in_flight = game_scene(session) == "flight"
+        if not started_in_flight:
+            try:
                 go_flight(session, vessel)
-            log.info("walk home recover() %s", name)
-            vessel.recover()
+            except Exception as exc:
+                log.warning(
+                    "walk home go_flight %s: %s — Close, no save/load", name, exc
+                )
+                continue
+        rec = _vessel_recoverable(vessel)
+        sit = _vessel_sit(vessel)
+        if not rec and sit in _RECOVER_SITS:
+            try:
+                run_physics(session)
+            except Exception:
+                pass
+            time.sleep(1.0)
+            rec = _vessel_recoverable(vessel)
+            sit = _vessel_sit(vessel)
+        if not rec and sit in _AIR_SITS and leftover_will_land(vessel):
+            rec = _wait_leftover_land(session, vessel)
+            sit = _vessel_sit(vessel)
+        if rec:
+            recovered_names.append(name)
+            if _recover_wait(session, vessel, name):
+                n += 1
+        elif started_in_flight:
+            recovered_names.append(name)
             if _wait_recovered(session, name):
                 n += 1
+            elif _vessel_recoverable(vessel) and _recover_wait(session, vessel, name):
+                n += 1
+            elif sit in _WRECK_SITS:
+                remember_unrecoverable(vessel)
+                log.info(
+                    "leftover %s sit=%s rec=0 crash UI — not pad occupancy",
+                    name,
+                    sit,
+                )
             else:
-                log.warning("walk home %s still in vessel list after recover()", name)
-        except Exception as exc:
-            log.warning("walk home recover %s: %s", name, exc)
+                log.info(
+                    "leftover %s sit=%s not recoverable — Close, no save/load",
+                    name,
+                    sit,
+                )
+        elif sit in _WRECK_SITS:
+            if _recover_wait(session, vessel, name):
+                recovered_names.append(name)
+                n += 1
+            else:
+                remember_unrecoverable(vessel)
+                log.info(
+                    "leftover %s sit=%s rec=0 crash UI — not pad occupancy",
+                    name,
+                    sit,
+                )
+        else:
+            log.info(
+                "leftover %s sit=%s not recoverable — Close, no save/load",
+                name,
+                sit,
+            )
     _close_to_ksc(session, reload_save=False)
     try:
         session.space_center = session.conn.space_center
     except Exception:
         pass
+    for name in recovered_names:
+        _wait_recovered(session, name)
     return n
 
 
@@ -567,6 +816,8 @@ def write_overlay_last(session: Any, *, ready: bool | None = None) -> None:
             n = 0
         OVERLAY_LAST.parent.mkdir(parents=True, exist_ok=True)
         ships = leftover_ships(session)
+        wrecks = sorted(_load_unrecoverable())
+        wreck_line = ",".join(wrecks)
         OVERLAY_LAST.write_text(
             (
                 f"scene: {game_scene(session)}\n"
@@ -575,6 +826,7 @@ def write_overlay_last(session: Any, *, ready: bool | None = None) -> None:
                 f"overlay: {str(bool(painted)).lower()}\n"
                 f"vessels: {n}\n"
                 f"ships: {len(ships)}\n"
+                f"unrecoverable: {wreck_line}\n"
             ),
             encoding="utf-8",
         )

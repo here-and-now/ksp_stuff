@@ -994,17 +994,21 @@ class TestCardWaitLine(unittest.TestCase):
 
 class TestSituationCanPay(unittest.TestCase):
     def test_sample_remaining_zero_skips(self):
-        mod = _Mod("Experiment", "temperatureScan")
+        mod = _Mod("Experiment", "mysteryGoo")
         mod.fields["remaining"] = 0
         vessel = _Vessel([mod])
-        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        vessel.parts = _Parts([_Part("GooExperiment", [mod])])
         lines: list[str] = []
         ran = start_experiments(
-            vessel, names=("temperatureScan",), on_log=lines.append
+            vessel, names=("mysteryGoo",), on_log=lines.append
         )
         self.assertEqual(ran, [])
         self.assertEqual(mod.triggered, [])
         self.assertTrue(any("cannot pay" in x for x in lines))
+        self.assertEqual(
+            paying_eids(vessel, ("mysteryGoo",), sit="splashed", biome="Forest"),
+            [],
+        )
 
     def test_duration_remaining_zero_still_starts(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -1014,6 +1018,58 @@ class TestSituationCanPay(unittest.TestCase):
         ran = start_experiments(vessel, names=("kerbalism_TELEMETRY",))
         self.assertEqual(ran, ["kerbalism_TELEMETRY"])
         self.assertEqual(tel.triggered, ["Start Experiment"])
+
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 0
+        tv = _Vessel([thermo], sit="splashed")
+        tv.parts = _Parts([_Part("sensorThermometer", [thermo])])
+        need = {"temperatureScan": ("SrfSplashed@Forest", "Forest")}
+        self.assertEqual(
+            paying_eids(
+                tv,
+                ("temperatureScan",),
+                sit="splashed",
+                biome="Forest",
+                need=need,
+            ),
+            ["temperatureScan"],
+        )
+        ran = start_experiments(
+            tv,
+            names=("temperatureScan",),
+            sit="splashed",
+            biome="Forest",
+            need=need,
+        )
+        self.assertEqual(ran, ["temperatureScan"])
+        self.assertEqual(thermo.triggered, ["Start Experiment"])
+
+        geiger = _Mod("Experiment", "geigerCounter")
+        geiger.fields["remaining"] = 0
+        gv = _Vessel([geiger], sit="flying")
+        gv.parts = _Parts([_Part("kerbalism-geigercounter", [geiger])])
+        need_g = {"geigerCounter": ("FlyingHigh", "")}
+        self.assertEqual(
+            paying_eids(
+                gv,
+                ("geigerCounter",),
+                sit="flying",
+                biome="Shores",
+                need=need_g,
+                alt=54_477.0,
+            ),
+            ["geigerCounter"],
+        )
+        ran = start_experiments(
+            gv,
+            names=("geigerCounter",),
+            sit="flying",
+            biome="Shores",
+            need=need_g,
+            alt=54_477.0,
+        )
+        self.assertEqual(ran, ["geigerCounter"])
+        self.assertEqual(geiger.triggered, ["Start Experiment"])
 
     def test_srflanded_skips_while_flying(self):
         mod = _Mod("Experiment", "temperatureScan")
@@ -1086,6 +1142,59 @@ class TestSituationCanPay(unittest.TestCase):
             sit_matches("landed", "Forest", "SrfSplashed@Forest", "Forest")
         )
         self.assertTrue(sit_matches("flying", "", "FlyingLow@Grasslands", "Grasslands"))
+        self.assertFalse(
+            sit_matches("flying", "Forest", "FlyingHigh@Forest", "Forest")
+        )
+        self.assertFalse(
+            sit_matches(
+                "flying", "Forest", "FlyingHigh@Forest", "Forest", alt=880.0
+            )
+        )
+        self.assertTrue(
+            sit_matches(
+                "flying",
+                "Forest",
+                "FlyingHigh@Forest",
+                "Forest",
+                alt=50_400.0,
+            )
+        )
+        self.assertTrue(
+            sit_matches(
+                "flying",
+                "Shores",
+                "FlyingHigh",
+                "global",
+                alt=50_400.0,
+            )
+        )
+        self.assertTrue(
+            sit_matches(
+                "sub_orbital",
+                "Shores",
+                "FlyingHigh",
+                "",
+                alt=54_477.0,
+            )
+        )
+        self.assertFalse(
+            sit_matches(
+                "flying",
+                "Shores",
+                "FlyingHigh",
+                "global",
+                alt=880.0,
+            )
+        )
+        self.assertFalse(
+            sit_matches(
+                "landed",
+                "Forest",
+                "FlyingHigh@Forest",
+                "Forest",
+                alt=50_400.0,
+            )
+        )
 
     def test_stop_does_not_toggle(self):
         mod = _Mod(
@@ -1109,8 +1218,18 @@ class TestSituationCanPay(unittest.TestCase):
         tel.fields["remaining"] = 0
         tv = _Vessel([tel])
         tv.parts = _Parts([_Part("probeCoreOcto.v2", [tel])])
+        self.assertTrue(ground_card_done(tv, ("kerbalism_TELEMETRY",)))
+        tel.fields["remaining"] = 6
         self.assertFalse(ground_card_done(tv, ("kerbalism_TELEMETRY",)))
+        tel.fields["remaining"] = 0
         self.assertTrue(experiment_can_pay(tel, "kerbalism_TELEMETRY"))
+        del tel.fields["remaining"]
+        self.assertFalse(ground_card_done(tv, ("kerbalism_TELEMETRY",)))
+        idle = _Mod("Experiment", "temperatureScan", running=True)
+        iv = _Vessel([idle])
+        iv.parts = _Parts([_Part("sensorThermometer", [idle])])
+        self.assertTrue(ground_card_done(iv, ("temperatureScan",)))
+        self.assertTrue(experiment_can_pay(idle, "temperatureScan"))
 
 
 class _Uplink:

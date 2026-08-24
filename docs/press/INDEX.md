@@ -15,6 +15,7 @@ are copied here under honest slugs when the photo is the right event.
 
 | Date | Story | Sci | Shot |
 |---|---|---|---|
+| 2026-08-24 | [The smiles came home](first-space.md) — silk-while-burn, girders, the same Forest, RSI until Flying High; Goo and Geiger in the black; apo **~275 km**, not orbit | **9.47 sci → 18.19 sci** | [Cape, bank 18.2](../../screenshots/first-flying-high.png) |
 | 2026-08-23 | [The forest forgave us](forest-for-the-trees.md) — chute, girders, lat/lon, Forest Flying Low; no trees in the window | **5.67 sci → 7.77 sci** (**+2.10 sci**) | [Forest, silk](../../screenshots/forest-first-touchdown.png) |
 | 2026-08-22 | [The can lived](first-fifteen-sci.md) — splash Goo **+2.40 sci** + TELEMETRY **+0.80 sci** at **9.11 m/s** Shores | **13.26 sci → 16.47 sci** | [the can, floating](../../screenshots/the-can-that-lived.png) |
 | 2026-08-20 | [A potato around the Sun](asteroid-xrl-564.md) — first unlock; accidental first look at Ast. XRL-564 | **+5 sci** spent on engineering101 after **8.90 sci** banked | [the rock](../../screenshots/asteroid-xrl-564.png) |
@@ -22,6 +23,6 @@ are copied here under honest slugs when the photo is the right event.
 | 2026-08-20 | [Two kilometers](first-hop.md) — first hop; the log went quiet; Os's still, motor lit | **2.22 sci → 3.20 sci** | [T+7 s](../../screenshots/rocket-flea.png) |
 | 2026-08-20 | [Stayputnik on the Cape](pad-goo.md) — first samples home, after empty recovers and a Toggle that stops a sample | **0.80 sci → 2.22 sci** | [Goo](../../screenshots/first-mystery-goo.png) |
 
-Mortimer's CTT spends (engineering101, survivability) are named-load
-scenes at the *end* of those stories. The news is the **sci** that
-came home. The unlock is the ending.
+Mortimer's CTT spends (engineering101, survivability, stability) are
+named-load scenes at the *end* of those stories. The news is the
+**sci** that came home. The unlock is the ending.

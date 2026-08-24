@@ -31,7 +31,13 @@ is opt-in, never auto. Fresh spawn vs `resume_from`: Commander and a
 new ticket are always fresh; resume only the same ticket on the same
 file while the patch is unfinished. A long hire (many turns) is
 **fresh next time**, not another history dump. Open **systems** tickets → **Wernher** (kernel
-batches him in `needing_go`; a kRPC trap is not required). Do **not**
+batches him in `needing_go`; a kRPC trap is not required). Warp /
+timeout-clock / sit-predicate (`physics_warp.py`, fingerprint
+`control-blocks`) → Wernher, not another Lars `_after_skip`. Living
+pulse miss → Lars (`hop_factory.py` or the rocket's compose). Never
+both on the same `.py`. One immortal factory that remembers Flea /
+Hammer / 4t / splash-090 is not the way (T-376).
+Never revert unless Os said so **this sit**. Do **not**
 hire Gene as a merge bus after Gus/Linus/Lars. Gene only when `ops next`
 says so (`go` stamp or campaign-stop Learn). Commander iff `ops next`
 fly_ready / `python main.py protocol fly` → `fly: yes`.
@@ -40,14 +46,19 @@ Kernel is the law (`docs/program/OPS.md`). You may disagree in prose; you
 may not hire against illegal combos (two Commanders, Gene while lock
 live). **Pad occupancy:** leftover/KSC first (you, seconds). Then lock
 free + hangar none + `go: yes` → Commander. An **idle pad is a sin**.
-A **living recover that cannot pay is also a waste.** After sci
-unchanged, do **not** re-fly the same bind — hire Linus to rebind
-from the envelope, or Gene only if that fly ticket has no `go:`.
+A **living recover that cannot pay is also a waste.** After
+`attach-run` bumps `sci-unchanged-recovered` (living recover +
+`sci_run=0`), do **not** start last `cli:` — hire Linus to rebind
+from the envelope sit/biome (08-44 Shores land ≠ Forest leftover;
+10-57 Forest splash ≠ SrfLanded). Fly after that bind matches.
+Gene only if that fly ticket has no `go:`. Lithobrake `rec=no` is
+leftover + Lars/Wernher (T-339 `chute-deploy-sit`), not this stem.
 Do **not** hire Gene to consider an uncrewed miss. Do **not** hire Jeb
 to debrief. Uncrewed Learn is hop-exit `attach-run`, not a Gene hire.
 Lookup `fingerprints.json`; never omit `--fingerprint` on control /
 systems / `ops --tag feedback`. An RSI letter / conference does **not**
-empty the pad.
+empty the pad. FlyingHigh leftover is t7-chute ≥50 km, not another
+Gus 4t (`far-shear` / `bigger-dv`).
 Stop the batch **only** leftover / crash UI / f013 fail / live control
 `.py` / Os wait. Ground desks batch same-type tickets and **fill the
 shelf during lock live**. Open `type=systems` → Wernher standing
@@ -63,7 +74,9 @@ Off-nominal (wreck flags, lithobrake, empty tanks + flying, heading
 never moving, EC=0 before dwell, crash UI): **do something** —
 `python main.py uplink abort|hold` if wreck-class; spawn **Gene** if
 plan/`go` must change (he does not take the stick); spawn **Lars** if
-hop.py; spawn **Wernher** if kRPC/telem. Issue-clear → that desk, not
+hop_factory/physics_warp/control; spawn **Wernher** if kRPC/telem.
+Timeout flying leftover: `recover()` if recoverable, else Close /
+`ksc leftover`. Never revert. Issue-clear → that desk, not
 a Gene novel. Do not wait for `ops next` to name Gene. After CLI exit,
 tape is still yours (T-101) — not a live-watch hire.
 
@@ -99,7 +112,10 @@ Never omit `--fingerprint` (empty is refused; error prints
 new stem per T-id. Longer kebab aliases onto an existing prefix.
 Living recover + `sci_run=0` already bumps `sci-unchanged-recovered`
 — do not remint it. `from-need` is a leftover shim (it stamps
-`stack`/`builder`, not the miss class). Do not spawn the Commander
+`stack`/`builder`, not the miss class). After a hire, that desk runs
+`tickets feedback T-NNN --claim "…"` on the packet T-id.
+If they skipped it, nag — do not idle the pad (close/`attach-run`
+harvest writes), do not shim Return keys. Do not spawn the Commander
 to file it. Then leftover clean + `protocol fly` as the kernel says.
 
 Leftover (lock free, when `ops next` says leftover):
@@ -117,7 +133,8 @@ recover leftover. Clean-pad Hangar of the seated craft stays inside
 hop (launch). Spawn brief: `docs/program/tickets/BRIEF.md`. If a
 desk still returns `need_stack` / `need_builder` / `need_science`:
 `python main.py tickets from-need --need need_stack --title "…"`.
-Do not put `need_*` in the Return fence.
+If they skipped `tickets feedback`, nag (close harvests `close_why`).
+Do not put `need_*` or `good:` in the Return fence.
 
 ## Return
 
@@ -129,3 +146,5 @@ pad: idle|flight
 why: <one line>
 rsi: none | T-id
 ```
+
+Then `python main.py tickets feedback T-NNN --claim "…"`.

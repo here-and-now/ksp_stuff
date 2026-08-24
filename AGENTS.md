@@ -80,7 +80,7 @@ Do not `read_file` the growing jsonl. Nominal hop: no Gene, no 15 s
 narration. Off-nominal (wreck flags, lithobrake, empty tanks + flying,
 heading stuck, EC=0 before dwell, crash UI): `python main.py uplink
 abort|hold` if wreck-class; spawn **Gene** if plan/`go` must change;
-spawn **Lars** if hop_factory/physics_warp/control; spawn **Wernher** if kRPC/telem/desk.
+spawn **Lars** if the living pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks.
 Issue-clear → that desk. Gene does not take the stick. Os “how’s it
 going?” on a **nominal** hop → read `ship.md`, speak as Walt — no hire.
 Off-nominal → hire, then Walt. `ship.md` is radio, not chat.
@@ -95,8 +95,8 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Launch / Flight Director** | `gene` | Gene Grokman | Stamp `go:` on a **fly ticket**, briefing, leftover honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, routing, **stick** (Commander is the writer) |
 | **Vehicle Engineering Lead** | `gus` | Gus Grokman | `.craft` (many vehicle tickets / hire), `capable:` | Hangar, fly, `.py` |
 | **Director of Research** | `linus` | Linus Grokman | Science tickets (many / hire), bind when capable | Commander radio, Hangar, `.craft` |
-| **Chief Systems Engineer** | `wernher` | Wernher Grokman | World/software architecture: desk, hangar scenes, telem, kRPC, ops kernel | Vehicle *control* loops, `.craft` |
-| **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control: `hop_factory.py` inland, `physics_warp.py`, pad/splash; recover; `blocks.md` | World-interface architecture, Hangar, stamp-`if`s in the pulse |
+| **Chief Systems Engineer** | `wernher` | Wernher Grokman | World/software architecture: desk, hangar, telem, kRPC, ops kernel; **control sit/warp blocks** (`physics_warp.py`, sit predicates, timeout clock) | This-hop factory pulse, `.craft` |
+| **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control **pulse**: one living rocket composed from Wernher blocks (`hop_factory.py` or a t7-only file), pad/splash | Warp *law*, stamp-named helpers, immortal `hop.py` factory, Hangar, kRPC world |
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI; watch telem; note/hold/abort if unusual; one stuck PNG **during hop** | `.py`, `.craft`, after-flight review, 15 s narration |
 | **Communications** | `verena` | Verena Grokman | Press tickets | Commander, Hangar, uplink, `.py` |
 | **Flight Dynamics** | `katherine` (else `general-purpose` + `.grok/agents/katherine.md`) | Katherine Grokman | Tape windows, atmosphere/FAR/attitude models; rare asks to Lars/Gus/Linus/Gene | kRPC, Hangar, `hop.py`, jsonl in prompt, every-turn pad occupancy |
@@ -187,7 +187,8 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
 - Open `type=control` / `vehicle` / `science` / `systems` already on
   the board → spawn those specialists **without Gene between them**.
   Legal parallel: Linus opportunities ∥ Gus `capable:` (not bind);
-  Linus opportunities ∥ Lars control; Wernher systems ∥ ground.
+  Linus opportunities ∥ Lars pulse; Wernher systems/blocks ∥ Lars pulse
+  (**different files** — Wernher `physics_warp.py`, Lars the living pulse).
   Linus **bind** only after Gus `capable: yes`.
 - After that set returns → **do not** spawn Gene as a merge bus.
   Gene is the only `go:` when `ops next` hires him. `go: wait` when
@@ -234,10 +235,12 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   from last-flight if the Commander did not (after-exit) — always
   `--fingerprint <stem>` (lookup `fingerprints.json`; empty is
   refused; longer kebab aliases onto an existing prefix). Spawn **Lars**
-  on the named control file (`hop_factory.py` factory inland,
-  `physics_warp.py` coast/pad warp, `hop.py` only parked water/splash,
-  `pad.py` pad dwell, `science.py` sit-match). Packet `read:` third
-  path is that file — not `hop.py` for a factory miss. Spawn Wernher **iff** Lars said
+  on the named **pulse** file (`hop_factory.py` inland or the living compose,
+  `pad.py` pad dwell, `science.py` sit-match, parked `hop.py` water/splash).
+  Packet `read:` third path is that file — not `hop.py` for a factory miss.
+  Warp / timeout-clock / sit-predicate misses → **Wernher** on
+  `physics_warp.py` (or open `type=systems --fingerprint control-blocks`).
+  Spawn Wernher **iff** that, or Lars said
   `stack: ok` **and** the abort is a kRPC trap, **or** open
   `type=systems` (Wernher without a miss — kRPC explore is standing).
   **Do not hire Gene to consider the miss.** If leftover clean and
@@ -248,8 +251,10 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   freeze keeps throttle 1.
 - Open `type=control` (or leftover `need_stack`) → spawn **Lars**
   immediately. Do not auto-Gene after. Never a heredoc. Packet
-  `read:` ≤3: desk + BRIEF + **the named `.py`** (`hop_factory.py` /
-  `physics_warp.py` / `pad.py` / `science.py` / parked `hop.py`).
+  `read:` ≤3: desk + BRIEF + **the named pulse `.py`** (`hop_factory.py`
+  or the living compose / `pad.py` / `science.py` / parked `hop.py`).
+  Warp law is Wernher (`physics_warp.py`). Do not send Lars a new
+  `_after_skip` helper. Tests lock blocks, not dead-hang envelopes.
   Every Lars science-miss packet names **tree** and whether the sit’s
   Science instrument is unlocked (F-013). Do not send him to patch a
   Geiger dwell at Start. Do not send him `hop.py` for an inland-slew
@@ -277,9 +282,11 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   tape, not a postmortem). Not a heartbeat. Not press. grim is not
   kRPC (not a second writer).
 - `status` must not overwrite `docs/last-flight.md`.
-- `improve:` / `ask:` / `feedback:` / `explore:` → do **not** file
-  `I-NNN` / world-model; parent `tickets open --type ops --tag
-  ask|feedback|explore` (or hire `type=rsi` if repeating house
+- `improve:` / `ask:` / `feedback:` / `explore:` / `good:` → do **not**
+  file `I-NNN` / world-model / Return keys. After the hire:
+  `python main.py tickets feedback T-NNN --claim "…"`
+  on the work ticket. Stumble *during* work: `tickets open --type
+  ops --tag ask|feedback|explore` (or hire `type=rsi` if repeating house
   friction). Spawn **Mortimer** iff lock free and **3+ open**
   `type=rsi` or `type=org`, or Os says org/RSI, or a Practice pitfall
   repeats. Leftover `need_qol` → Wernher / `type=systems`. `need_os`

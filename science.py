@@ -29,6 +29,7 @@ debris or leaves flight so the HD banks. EVA hatch is not wired
 from __future__ import annotations
 
 import logging
+import math
 from typing import Any, Callable, Iterable
 
 from card import HOP_EXPERIMENTS, PAD_EXPERIMENTS, SPLASH_EXPERIMENTS
@@ -63,8 +64,12 @@ _START_EVENTS = (
 _KERBALISM_MODULES = frozenset({"Experiment", "ModuleScienceExperiment"})
 _KERBALISM_MODULE_ALIASES = frozenset({"moduleksmexperiment", "kerbalismexperiment"})
 # Duration experiments sit at remaining=0 before a fresh start. Sample rem=0
-# cannot pay this sit. TELEMETRY still needs a sit/biome match.
-_DURATION_EIDS = frozenset(
+# cannot pay this sit. File duration (TELEMETRY, 2HOT, geiger) still needs a
+# sit/biome match. FlyingHigh is alt ≥50 km, not any flying sit (1 km loft is
+# FlyingLow). TELEMETRY-family often has no rem PAW while the file is still
+# open; 2HOT always exposes remaining.
+_FLYING_HIGH_ALT_M = 50_000.0
+_KERBALISM_FILE_EIDS = frozenset(
     {
         "kerbalism_TELEMETRY",
         "kerbalism_LITE",
@@ -72,6 +77,7 @@ _DURATION_EIDS = frozenset(
         "kerbalism_SITE",
     }
 )
+_DURATION_EIDS = _KERBALISM_FILE_EIDS | {"temperatureScan", "geigerCounter"}
 _DRIVE_MODULES = frozenset({"HardDrive", "harddrive"})
 _EMPTY_DRIVE = frozenset(
     {
@@ -738,13 +744,22 @@ def sit_matches(
     live_biome: str,
     need_sit: str,
     need_biome: str,
+    *,
+    alt: float = float("nan"),
 ) -> bool:
-    """Bound sit/biome vs live vessel. Empty need is not a gate."""
+    """Bound sit/biome vs live vessel. Empty need is not a gate.
+
+    FlyingHigh pays only at alt ≥50 km. sit=flying at 1 km is not High.
+    biome global / none / any is not a biome. sub_orbital at High alt
+    is still High — Forest / Grasslands / Shores: same.
+    """
     need = _norm_sit(need_sit)
     live = _norm_sit(live_sit)
     bio_need = (need_biome or "").strip().lower()
     if not bio_need and "@" in (need_sit or ""):
         bio_need = need_sit.split("@", 1)[1].strip().lower()
+    if bio_need in {"global", "none", "any"}:
+        bio_need = ""
     bio_live = (live_biome or "").strip().lower()
     if (
         bio_need
@@ -755,7 +770,15 @@ def sit_matches(
         return False
     if not need:
         return True
-    if "flyinghigh" in need or need.startswith("flying"):
+    if "flyinghigh" in need:
+        if "landed" in live or "splash" in live:
+            return False
+        try:
+            alt_f = float(alt)
+        except (TypeError, ValueError):
+            return False
+        return math.isfinite(alt_f) and alt_f >= _FLYING_HIGH_ALT_M
+    if need.startswith("flying"):
         return "flying" in live
     if "splash" in need:
         return "splash" in live
@@ -780,11 +803,12 @@ def experiment_can_pay(
     biome: str = "",
     need_sit: str = "",
     need_biome: str = "",
+    alt: float = float("nan"),
 ) -> bool:
     """True if starting this slot can credit leftover / remaining."""
     if not remaining_pays(module, eid):
         return False
-    return sit_matches(sit, biome, need_sit, need_biome)
+    return sit_matches(sit, biome, need_sit, need_biome, alt=alt)
 
 
 def start_experiments(
@@ -795,6 +819,7 @@ def start_experiments(
     sit: str | None = None,
     biome: str | None = None,
     need: dict[str, tuple[str, str]] | None = None,
+    alt: float = float("nan"),
 ) -> list[str]:
     """Start Kerbalism ``Experiment`` modules via events.
 
@@ -885,6 +910,7 @@ def start_experiments(
             biome=live_biome,
             need_sit=need_sit,
             need_biome=need_biome,
+            alt=alt,
         ):
             _say(f"science skip {label} (situation cannot pay)")
             continue
@@ -982,6 +1008,7 @@ def paying_eids(
     sit: str = "",
     biome: str = "",
     need: dict[str, tuple[str, str]] | None = None,
+    alt: float = float("nan"),
 ) -> list[str]:
     """In-card ids that can start and pay in this sit/biome."""
     want = [str(n).strip() for n in (names or ()) if n]
@@ -1000,6 +1027,7 @@ def paying_eids(
             biome=live_biome,
             need_sit=need_sit,
             need_biome=need_biome,
+            alt=alt,
         ):
             ok.add(eid)
     return [eid for eid in want if eid in ok]
@@ -1011,20 +1039,23 @@ def card_slots(vessel: Any, names: Iterable[str] | None) -> bool:
 
 
 def ground_card_done(vessel: Any, names: Iterable[str]) -> bool:
-    """Landed dwell finished: samples spent or duration stopped.
+    """Landed/splashed dwell finished: rem=0 spent or file transmitted.
 
-    TELEMETRY remaining=0 while running is still recording. Sample rem=0
-    running is spent — stop and recover.
+    Kerbalism file remaining=0 is done even if still running. Sample rem=0
+    running is spent — stop and recover. Duration with no rem field still
+    recording is not done.
     """
     slots = _best_slots(vessel, names)
     if not slots:
         return True
     for _part, module, eid in slots:
         if status_running(module):
-            if str(eid).strip() in _DURATION_EIDS:
-                return False
             rem = _remaining_value(module)
-            if rem is not None and rem > 0.0:
+            if rem is None:
+                if str(eid).strip() in _KERBALISM_FILE_EIDS:
+                    return False
+                continue
+            if rem > 0.0:
                 return False
             continue
         if not experiment_done(module):

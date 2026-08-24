@@ -1,0 +1,1761 @@
+ship = kspstuff-hop-valiant-proc-4t-cone-pbc
+version = 1.12.5
+description = PBC inland Δv RC_cone alt T-319. OKTO+RC_cone 0.625m Nylon 50m / pre 2.5m minIsPressure false minDeployment 2500 deployAlt 700 mustGoDown +Goo+2HOT+20xZ-100+4x proceduralTankRealFuels (1.25x0.65 Cylinder, 800 L; 1440 kero; volumeMax 0.8 kL). 3x girder on tank2 + 3x on tank3 Heaviest/rigid. Fins on lowest tank. Not Mk16 factory (proc-4t). Not proc-long. Chute istg=0 engine istg=1. f013 2HOT+Goo on_craft TELEMETRY OKTO. Not a Flea.
+type = VAB
+size = 2,14,2
+steamPublishedFileId = 0
+persistentId = 1550005517
+rot = 0,0,0,1
+missionFlag = Squad/Flags/default
+vesselType = Probe
+PART
+{
+	part = probeCoreOcto.v2_1666040601
+	partName = Part
+	persistentId = 1612581531
+	pos = 0.0,14.9126,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,14.9126,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = RC.cone_1888000001
+	link = batteryPack_1085135241
+	link = batteryPack_1482868628
+	link = batteryPack_1910979825
+	link = SurfAntenna_1514786686
+	link = GooExperiment_1865582982
+	link = sensorThermometer_1895451311
+	link = proceduralTankRealFuels_1970000001
+	attN = top,RC.cone_1888000001
+	attN = bottom,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	RESOURCE
+	{
+		name = ElectricCharge
+		amount = 50
+		maxAmount = 50
+	}
+}
+PART
+{
+	part = RC.cone_1888000001
+	partName = Part
+	persistentId = 1888000201
+	pos = 0.0,15.1088998,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,0.1962998,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 0
+	resPri = 0
+	dstg = 0
+	sidx = 0
+	sqor = 0
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	attN = bottom,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = RealChuteModule
+		caseMass = 0.04
+		timer = 0
+		mustGoDown = True
+		cutSpeed = 0.5
+		spareChutes = 5
+		stagingEnabled = True
+		PARACHUTE
+		{
+			material = Nylon
+			capName = cone
+			parachuteName = RC_triple_canopy
+			preDeploymentAnimation = RC_triple_chute_semi_deploy
+			deploymentAnimation = RC_triple_chute_full_deploy
+			preDeployedDiameter = 2.5
+			deployedDiameter = 50
+			minIsPressure = false
+			minDeployment = 2500
+			deploymentAlt = 700
+			cutAlt = -1
+			preDeploymentSpeed = 2
+			deploymentSpeed = 6
+		}
+	}
+	MODULE
+	{
+		name = ProceduralChute
+		size = 2
+		lastSize = 2
+		originalSize = 0.425,0.4,0.425
+		textureLibrary = RealChute
+		type = Cone
+		currentCase = Main
+		currentCanopies = Main chute
+	}
+}
+PART
+{
+	part = batteryPack_1085135241
+	partName = Part
+	persistentId = 1371257135
+	pos = 0.13,15.0326,0.0
+	attPos = 0,0,0
+	attPos0 = 0.13,0.12,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_1482868628
+	partName = Part
+	persistentId = 1660451209
+	pos = 0.13,14.9126,0.0
+	attPos = 0,0,0
+	attPos0 = 0.13,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_1910979825
+	partName = Part
+	persistentId = 1976547402
+	pos = 0.13,14.7926,0.0
+	attPos = 0,0,0
+	attPos0 = 0.13,-0.12,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = Engineer7500_1189642615
+	partName = Part
+	persistentId = 1045198612
+	pos = 0.0,14.69302,0.65
+	attPos = 0,0,0
+	attPos0 = 0.0,0.28,0.65
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = SurfAntenna_1514786686
+	partName = Part
+	persistentId = 1001635446
+	pos = -0.12,14.9126,0.0
+	attPos = 0,0,0
+	attPos0 = -0.12,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = GooExperiment_1865582982
+	partName = Part
+	persistentId = 1246527409
+	pos = 0.0,14.9626,0.14
+	attPos = 0,0,0
+	attPos0 = 0.0,0.05,0.14
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = sensorThermometer_1895451311
+	partName = Part
+	persistentId = 1939055433
+	pos = 0.0,14.9626,-0.14
+	attPos = 0,0,0
+	attPos0 = 0.0,0.05,-0.14
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = proceduralTankRealFuels_1970000001
+	partName = Part
+	persistentId = 1970000101
+	pos = 0.0,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,14.41302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = batteryPack_2100000001
+	link = batteryPack_2100000002
+	link = batteryPack_2100000003
+	link = batteryPack_2100000004
+	link = batteryPack_2100000005
+	link = batteryPack_2100000006
+	link = batteryPack_2100000007
+	link = Engineer7500_1189642615
+	link = proceduralTankRealFuels_1970000002
+	attN = top,probeCoreOcto.v2_1666040601
+	attN = bottom,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ProceduralPart
+		shapeName = Cylinder
+		textureSet = PlainWhite
+	}
+	MODULE
+	{
+		name = ProceduralShapeCylinder
+		diameter = 1.25
+		length = 0.65
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 800
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 360
+			maxAmount = 360
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 440
+			maxAmount = 440
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 360
+		maxAmount = 360
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 440
+		maxAmount = 440
+	}
+}
+PART
+{
+	part = batteryPack_2100000001
+	partName = Part
+	persistentId = 2100000101
+	pos = 0.65,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.65,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000002
+	partName = Part
+	persistentId = 2100000102
+	pos = -0.65,14.41302,0.0
+	attPos = 0,0,0
+	attPos0 = -0.65,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000003
+	partName = Part
+	persistentId = 2100000103
+	pos = 0.0,14.41302,0.65
+	attPos = 0,0,0
+	attPos0 = 0.0,0.0,0.65
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000004
+	partName = Part
+	persistentId = 2100000104
+	pos = 0.0,14.41302,-0.65
+	attPos = 0,0,0
+	attPos0 = 0.0,0.0,-0.65
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000005
+	partName = Part
+	persistentId = 2100000105
+	pos = 0.46,14.41302,0.46
+	attPos = 0,0,0
+	attPos0 = 0.46,0.0,0.46
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000006
+	partName = Part
+	persistentId = 2100000106
+	pos = -0.46,14.41302,0.46
+	attPos = 0,0,0
+	attPos0 = -0.46,0.0,0.46
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000007
+	partName = Part
+	persistentId = 2100000107
+	pos = 0.46,14.41302,-0.46
+	attPos = 0,0,0
+	attPos0 = 0.46,0.0,-0.46
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000001
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = proceduralTankRealFuels_1970000002
+	partName = Part
+	persistentId = 1970000102
+	pos = 0.0,13.76302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,13.76302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = batteryPack_2100000008
+	link = batteryPack_2100000009
+	link = batteryPack_2100000010
+	link = batteryPack_2100000011
+	link = batteryPack_2100000012
+	link = batteryPack_2100000013
+	link = batteryPack_2100000014
+	link = batteryPack_2100000015
+	link = batteryPack_2100000016
+	link = batteryPack_2100000017
+	link = proceduralTankRealFuels_1970000003
+	link = trussPiece1x_1890000001
+	link = trussPiece1x_1890000002
+	link = trussPiece1x_1890000003
+	attN = top,proceduralTankRealFuels_1970000001
+	attN = bottom,proceduralTankRealFuels_1970000003
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ProceduralPart
+		shapeName = Cylinder
+		textureSet = PlainWhite
+	}
+	MODULE
+	{
+		name = ProceduralShapeCylinder
+		diameter = 1.25
+		length = 0.65
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 800
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 360
+			maxAmount = 360
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 440
+			maxAmount = 440
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 360
+		maxAmount = 360
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 440
+		maxAmount = 440
+	}
+}
+PART
+{
+	part = trussPiece1x_1890000001
+	partName = Part
+	persistentId = 1890000101
+	pos = 0.7,13.76302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.7,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = trussPiece1x_1890000002
+	partName = Part
+	persistentId = 1890000102
+	pos = -0.35,13.76302,0.6062177826
+	attPos = 0,0,0
+	attPos0 = -0.35,0.0,0.6062177826
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = trussPiece1x_1890000003
+	partName = Part
+	persistentId = 1890000103
+	pos = -0.35,13.76302,-0.6062177826
+	attPos = 0,0,0
+	attPos0 = -0.35,0.0,-0.6062177826
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000008
+	partName = Part
+	persistentId = 2100000108
+	pos = 0.65,13.76302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.65,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000009
+	partName = Part
+	persistentId = 2100000109
+	pos = 0.526,13.76302,0.382
+	attPos = 0,0,0
+	attPos0 = 0.526,0.0,0.382
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000010
+	partName = Part
+	persistentId = 2100000110
+	pos = 0.201,13.76302,0.618
+	attPos = 0,0,0
+	attPos0 = 0.201,0.0,0.618
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000011
+	partName = Part
+	persistentId = 2100000111
+	pos = -0.201,13.76302,0.618
+	attPos = 0,0,0
+	attPos0 = -0.201,0.0,0.618
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000012
+	partName = Part
+	persistentId = 2100000112
+	pos = -0.526,13.76302,0.382
+	attPos = 0,0,0
+	attPos0 = -0.526,0.0,0.382
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000013
+	partName = Part
+	persistentId = 2100000113
+	pos = -0.65,13.76302,0.0
+	attPos = 0,0,0
+	attPos0 = -0.65,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000014
+	partName = Part
+	persistentId = 2100000114
+	pos = -0.526,13.76302,-0.382
+	attPos = 0,0,0
+	attPos0 = -0.526,0.0,-0.382
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000015
+	partName = Part
+	persistentId = 2100000115
+	pos = -0.201,13.76302,-0.618
+	attPos = 0,0,0
+	attPos0 = -0.201,0.0,-0.618
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000016
+	partName = Part
+	persistentId = 2100000116
+	pos = 0.201,13.76302,-0.618
+	attPos = 0,0,0
+	attPos0 = 0.201,0.0,-0.618
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = batteryPack_2100000017
+	partName = Part
+	persistentId = 2100000117
+	pos = 0.526,13.76302,-0.382
+	attPos = 0,0,0
+	attPos0 = 0.526,0.0,-0.382
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000002
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = proceduralTankRealFuels_1970000003
+	partName = Part
+	persistentId = 1970000103
+	pos = 0.0,13.11302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,13.11302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = proceduralTankRealFuels_1970000004
+	link = trussPiece1x_1890000004
+	link = trussPiece1x_1890000005
+	link = trussPiece1x_1890000006
+	attN = top,proceduralTankRealFuels_1970000002
+	attN = bottom,proceduralTankRealFuels_1970000004
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ProceduralPart
+		shapeName = Cylinder
+		textureSet = PlainWhite
+	}
+	MODULE
+	{
+		name = ProceduralShapeCylinder
+		diameter = 1.25
+		length = 0.65
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 800
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 360
+			maxAmount = 360
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 440
+			maxAmount = 440
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 360
+		maxAmount = 360
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 440
+		maxAmount = 440
+	}
+}
+PART
+{
+	part = trussPiece1x_1890000004
+	partName = Part
+	persistentId = 1890000104
+	pos = 0.7,13.11302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.7,0.0,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000003
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = trussPiece1x_1890000005
+	partName = Part
+	persistentId = 1890000105
+	pos = -0.35,13.11302,0.6062177826
+	attPos = 0,0,0
+	attPos0 = -0.35,0.0,0.6062177826
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000003
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = trussPiece1x_1890000006
+	partName = Part
+	persistentId = 1890000106
+	pos = -0.35,13.11302,-0.6062177826
+	attPos = 0,0,0
+	attPos0 = -0.35,0.0,-0.6062177826
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000003
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = proceduralTankRealFuels_1970000004
+	partName = Part
+	persistentId = 1970000104
+	pos = 0.0,12.46302,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,12.46302,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = restock-engine-125-valiant_1226153168
+	link = basicFin_1562494527
+	link = basicFin_1169236445
+	link = basicFin_1855602232
+	attN = top,proceduralTankRealFuels_1970000003
+	attN = bottom,restock-engine-125-valiant_1226153168
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ProceduralPart
+		shapeName = Cylinder
+		textureSet = PlainWhite
+	}
+	MODULE
+	{
+		name = ProceduralShapeCylinder
+		diameter = 1.25
+		length = 0.65
+	}
+	MODULE
+	{
+		name = ModuleFuelTanks
+		volume = 800
+		type = Default
+		TANK
+		{
+			name = Kerosene
+			amount = 360
+			maxAmount = 360
+		}
+		TANK
+		{
+			name = LqdOxygen
+			amount = 440
+			maxAmount = 440
+		}
+	}
+	RESOURCE
+	{
+		name = Kerosene
+		amount = 360
+		maxAmount = 360
+	}
+	RESOURCE
+	{
+		name = LqdOxygen
+		amount = 440
+		maxAmount = 440
+	}
+}
+PART
+{
+	part = restock-engine-125-valiant_1226153168
+	partName = Part
+	persistentId = 1927692361
+	pos = 0.0,11.70052,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,11.70052,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.0,0.0,1.0
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Heaviest
+	rigidAttachment = True
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = 0
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	attN = top,proceduralTankRealFuels_1970000004
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ModulePartVariants
+		isEnabled = True
+		useVariantMass = True
+		stagingEnabled = False
+		selectedVariant = Boattail
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleJettison
+		isEnabled = True
+		isJettisoned = True
+		shroudHideOverride = True
+		stagingEnabled = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+			JettisonAction
+			{
+				actionGroup = None
+			}
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+	MODULE
+	{
+		name = ModuleGimbal
+		isEnabled = True
+		gimbalLock = False
+		gimbalLimit = 100
+		gimbalRange = 7.5
+		stagingEnabled = False
+		EVENTS
+		{
+		}
+		ACTIONS
+		{
+		}
+		UPGRADESAPPLIED
+		{
+		}
+	}
+}
+PART
+{
+	part = basicFin_1562494527
+	partName = Part
+	persistentId = 1347814544
+	pos = 0.0,12.26302,0.623
+	attPos = 0,0,0
+	attPos0 = 0.0,-0.2,0.623
+	rot = 0.0,0.707106829,0.0,0.707106829
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.707106829,0.0,0.707106829
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000004
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = basicFin_1169236445
+	partName = Part
+	persistentId = 1352751940
+	pos = 0.539533575,12.26302,-0.3115
+	attPos = 0,0,0
+	attPos0 = 0.539533575,-0.2,-0.3115
+	rot = 0.0,0.965925872,0.0,-0.258819103
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.965925872,0.0,-0.258819103
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000004
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}
+PART
+{
+	part = basicFin_1855602232
+	partName = Part
+	persistentId = 1759123314
+	pos = -0.539533575,12.26302,-0.3115
+	attPos = 0,0,0
+	attPos0 = -0.539533575,-0.2,-0.3115
+	rot = 0.0,0.258819014,0.0,-0.965925872
+	attRot = 0,0,0,1
+	attRot0 = 0.0,0.258819014,0.0,-0.965925872
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 1
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	srfN = srfAttach,proceduralTankRealFuels_1970000004
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+}

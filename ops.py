@@ -17,6 +17,7 @@ from tickets import (
     packet_cmd,
     science_is_catalog,
     show_ticket,
+    waste_blocks_refly,
 )
 
 ROOT = Path(__file__).resolve().parent
@@ -156,7 +157,13 @@ def next_actions(
         if t.get("type") == "fly"
         and t.get("status") not in {"done", "wont", "blocked"}
     ]
-    fly_ready = [t for t in fly_tickets if fly_fields(t).get("go") == "yes"]
+    craft = d.get("craft") or ""
+    fly_ready = [
+        t
+        for t in fly_tickets
+        if fly_fields(t).get("go") == "yes"
+        and not waste_blocks_refly(t, craft=craft)
+    ]
     recover = [
         t
         for t in list_tickets(open_only=True)
@@ -268,6 +275,36 @@ def next_actions(
             "fly_ready": t["id"],
             "commander": who,
             "writer": "hop-pid",
+            "hire": hires,
+        }
+
+    wasted = [
+        t
+        for t in fly_tickets
+        if fly_fields(t).get("go") == "yes"
+        and waste_blocks_refly(t, craft=craft)
+    ]
+    if wasted:
+        why = "sci-unchanged-recovered bind cannot pay envelope"
+        ready = {"inbox", "triage", "ready", "assigned"}
+        sci = [
+            x
+            for x in list_tickets(open_only=True)
+            if x.get("type") == "science"
+            and x.get("status") in ready
+            and not science_is_catalog(x)
+        ]
+        if sci:
+            _hire("linus", sci, why)
+        wern = _desk_ground("wernher")
+        if wern:
+            _hire("wernher", wern, why)
+        if not hires:
+            _hire("linus", sci, why)
+        return {
+            "lock": "free",
+            "pad": "idle",
+            "fly_ready": None,
             "hire": hires,
         }
 

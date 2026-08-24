@@ -78,8 +78,10 @@ abort: <one line>
 last: <3 heartbeat lines>
 ```
 
-Flight **ends** at CLI exit. Return is that fence only. Do not emit
-`envelope:` / `need_*` / `improve:` / `feedback:`. Do not spawn. Do not
-paste the 1 Hz stream. Do not write a landing essay, biome story, or
+Flight **ends** at CLI exit. Return is that fence only. After the hop:
+`python main.py tickets feedback T-NNN --claim "…"`
+on the fly ticket (one line each — not a landing essay). Do not emit
+`envelope:` / `need_*` / `improve:` / `feedback:` / `good:`. Do not spawn. Do not
+paste the 1 Hz stream. Do not write a biome story or
 chute-dwell novel. CLI only — no scratch throttle. Hank owns leftover
 + tape after this.

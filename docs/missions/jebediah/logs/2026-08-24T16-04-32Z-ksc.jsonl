@@ -1,0 +1,3 @@
+{"t": 0.006, "kind": "start", "msg": "command=ksc crew=", "earth_utc": "2026-08-24 16:04:32 UTC", "earth_stamp": "2026-08-24T16-04-32Z", "kerbal_ut_s": 294382.412, "kerbal_met_s": null, "kerbal_ut": "3d 09:46:22 UT", "kerbal_met": "?"}
+{"t": 18.416, "kind": "sci_bank", "msg": "sci=9.4718", "sci": 9.471807479858398}
+{"t": 18.417, "kind": "end", "msg": "samples=2"}

@@ -13,16 +13,20 @@ only (crewed / `campaign: none` / firsts): **one line** from
 
 **Fingerprint:** lookup `docs/program/tickets/fingerprints.json`. Reuse
 the class (`heading-never-090`, `sci-unchanged-recovered`,
-`flyinghigh-lid`). Longer kebab aliases onto the shortest existing
+`flyinghigh-lid`, `forest-splashed-thermo`, `hold-ground-card`,
+`bigger-dv`, `far-shear`). Longer kebab aliases onto the shortest existing
 prefix (`flyinghigh-lid-18km-hop` → `flyinghigh-lid`). Do not invent a
 stem per T-id, `hop-<digits>`, or a timestamp novel. Do not map inland
 heading 299 → `heading-never-090` (Water-dead). `control` / `systems` /
 `ops --tag feedback` **require** `--fingerprint` (empty is refused;
 error prints `reuse (count):` plus a copy line). `legacy-twin` seed is
 exempt. Stumble → that stem, not a log shrug. Do not tell another desk
-in prose — `ops --tag ask` and `payload.to`. House friction is
-`ops --tag feedback --fingerprint <existing>` (×3 → rsi). No new TYPE.
-No Return `feedback:` / `need_*`.
+in prose — `ops --tag ask` and `payload.to`. House friction *during*
+work is `ops --tag feedback --fingerprint <existing>` (×3 → rsi).
+After the hire, file on the **work ticket** (not Return keys):
+`python main.py tickets feedback T-NNN --claim "…"`.
+Kernel appends `payload.findings`. Close harvests `close_why` if empty.
+No new TYPE. No `need_*` / `good:` as Return keys.
 
 ```
 python main.py science-scan                      # Linus: live MM caps (not tweak cfg)
@@ -46,6 +50,8 @@ python main.py tickets stamp T-NNN --field capable --value yes --who gus
 python main.py tickets tag T-NNN --add hard-splash
 python main.py tickets attach-run T-NNN --path docs/missions/jebediah/logs/<run>.jsonl
   # overwrites payload.learn (who=hank)
+python main.py tickets feedback T-NNN --claim "…"
+  # append payload.findings on the work ticket; close harvests --why if empty
 ```
 
 **Categories:** `craft` `science_opportunity` `bug` `improvement`
@@ -54,10 +60,13 @@ python main.py tickets attach-run T-NNN --path docs/missions/jebediah/logs/<run>
 **Tags:** free lowercase (`hard-splash`, `heading-090`, `east-t3`).
 `ops --tag ask|feedback|explore`. At most tag `learn` — no new TYPE.
 Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q`.
-Lars packet `read:` third path is the **named file** (`hop_factory.py`
-inland, `physics_warp.py` warp, `pad.py` pad, `science.py` sit-match).
-Not `hop.py` for a factory miss. Lars `lessons.md` heading **names**
-the reusable fingerprint.
+Lars packet `read:` third path is the **named pulse file**
+(`hop_factory.py` inland, or the living rocket's compose, `pad.py`
+pad, `science.py` sit-match). Not `hop.py` for a factory miss. Warp /
+sit / timeout / leftover-abort / chute-sit **blocks** are Wernher
+(`physics_warp.py`). Tests lock those blocks, not dead-hang envelopes
+in `test_hop.py`. Lars `lessons.md` heading **names** the reusable
+fingerprint.
 
 Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
 Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.
@@ -83,6 +92,7 @@ is fly `payload.campaign` (`uncrewed` → parent starts hop,
 `commander: none`; `none` → abort officer). Factory cli is
 `python main.py hop` — not `hop-to-water` / `hop-splash`. Ask / itch /
 friction: `tickets open --type ops --tag ask|explore` or
-`--tag feedback --fingerprint <stem>`. Do not emit `need_*` /
-`recommended:` / `ask:` as Return keys. Gym `F-014` speech is the twin
+`--tag feedback --fingerprint <stem>`. After the hire:
+`tickets feedback T-NNN --claim "…"`. Do not emit `need_*` /
+`recommended:` / `ask:` / `feedback:` / `good:` as Return keys. Gym `F-014` speech is the twin
 ticket id (e.g. T-184).

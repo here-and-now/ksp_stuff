@@ -27,6 +27,7 @@ venv/
 # Live kRPC handoff — not the lesson chain
 docs/last-flight.md
 docs/program/overlay.last
+docs/program/unrecoverable.last
 docs/missions/*/sorties/*.jsonl
 
 # Local campaign backups (tar of old flights/jsonl)
@@ -51,6 +52,7 @@ screenshots/*
 !screenshots/far-glide.png
 !screenshots/first-chute-deploy.png
 !screenshots/first-five-recover.png
+!screenshots/first-flying-high.png
 !screenshots/first-hop.png
 !screenshots/first-mystery-goo.png
 !screenshots/flea-after-geiger.png

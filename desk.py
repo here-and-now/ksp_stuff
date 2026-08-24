@@ -1,9 +1,10 @@
 """Sit object for Gene / Linus / Gus / Lars packets.
 
-World/tree/leftover ships stay disk. Banked ``sci:`` is RAM R&D when a
-Session can speak (``SpaceCenter.science``); ``persistent.sfs`` lags
-until Hangar autosave. No leftover-ksc. No revert. No ``status`` while
-``flight.lock`` is live.
+World/tree stay disk. Banked ``sci:`` and leftover *ships* are live
+kRPC when a Session can speak (``SpaceCenter.science`` /
+``leftover_ships``). ``persistent.sfs`` lags after splash recover —
+disk SUB_ORBITAL is not leftover when tracking is empty. No
+leftover-ksc. No revert. No ``status`` while ``flight.lock`` is live.
 """
 
 from __future__ import annotations
@@ -12,7 +13,12 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from card import card_experiments
-from tickets import card_science_ids, list_tickets, seated_fly_ticket
+from tickets import (
+    card_science_ids,
+    list_tickets,
+    seated_fly_ticket,
+    waste_blocks_refly,
+)
 from missions import (
     hangar_craft_name,
     seated_craft_path,
@@ -74,6 +80,7 @@ class DeskSit:
     mods: tuple[str, ...]
     bind: str = ""
     hop_apo: str = ""
+    pay: str = ""
     sci_src: str = "sfs"
     sci_disk: float | None = None
 
@@ -144,6 +151,26 @@ def hangar_call(
     return f"recover {pick.name} sit={tag}", pick.name
 
 
+def hangar_from_live(
+    rows: tuple[tuple[str, str], ...],
+    *,
+    lock: str,
+) -> tuple[str, str]:
+    """Hangar vs recover from kRPC leftover_ships. Empty tracking is hangar none.
+
+    Disk SUB_ORBITAL after splash recover is stale sfs — not leftover.
+    """
+    if lock == "live":
+        return "blocked", rows[0][0] if rows else "none"
+    if not rows:
+        return "none", "none"
+    name, sit = rows[0]
+    tag = sit or "?"
+    if _norm_sit(sit) in _PHASE_SITS:
+        return f"phase {name} sit={tag}", name
+    return f"recover {name} sit={tag}", name
+
+
 def parse_last_flight(text: str) -> dict[str, str]:
     out = {"command": "", "exit": "", "abort": "", "sci": ""}
     for raw in text.splitlines()[:12]:
@@ -192,29 +219,53 @@ def pick_banked_science(
     return disk, "sfs", None
 
 
-def probe_rd_science() -> float | None:
-    """Get-only ``SpaceCenter.science``. Skip while the stick is live."""
+def probe_live_desk() -> tuple[float | None, tuple[tuple[str, str], ...] | None]:
+    """RAM RD sci and leftover_ships. None leftover → fall back to disk ships."""
     if lock_state() == "live":
-        return None
+        return None, None
     try:
         from flightlog import live_records, writer_lock_live
 
         if not live_records() or writer_lock_live():
-            return None
+            return None, None
     except Exception:
-        return None
+        return None, None
     try:
         from career import space_center_science
+        from hangar import leftover_ships
         from session import Session
 
         session = Session()
         session.connect()
         try:
-            return space_center_science(session)
+            sci = space_center_science(session)
+            rows: list[tuple[str, str]] = []
+            for vessel in leftover_ships(session):
+                try:
+                    name = str(getattr(vessel, "name", "") or "").strip()
+                except Exception:
+                    continue
+                if not name:
+                    continue
+                sit = "?"
+                try:
+                    raw = getattr(vessel, "situation", None)
+                    tag = getattr(raw, "name", None)
+                    sit = tag if isinstance(tag, str) else str(raw or "?")
+                except Exception:
+                    sit = "?"
+                rows.append((name, sit))
+            return sci, tuple(rows)
         finally:
             session.close()
     except Exception:
-        return None
+        return None, None
+
+
+def probe_rd_science() -> float | None:
+    """Get-only ``SpaceCenter.science``. Skip while the stick is live."""
+    sci, _ = probe_live_desk()
+    return sci
 
 
 def latest_review() -> Path | None:
@@ -349,10 +400,29 @@ def bind_line() -> str:
         dur = pl.get("duration_s", "")
         rate = pl.get("ec_rate", "")
         seq = pl.get("seq", "")
-        bits.append(f"{t['id']} {eid} {dur}/{rate} seq{seq}")
+        sit = str(pl.get("situation") or "").strip()
+        if sit:
+            bits.append(f"{t['id']} {eid} {sit} {dur}/{rate} seq{seq}")
+        else:
+            bits.append(f"{t['id']} {eid} {dur}/{rate} seq{seq}")
         if len(bits) >= 6:
             break
     return "; ".join(bits)
+
+
+def pay_line() -> str:
+    try:
+        t = seated_fly_ticket()
+    except Exception:
+        return ""
+    if not t:
+        return ""
+    try:
+        if waste_blocks_refly(t):
+            return "no"
+    except Exception:
+        return ""
+    return ""
 
 
 def hop_apo_line() -> str:
@@ -403,17 +473,23 @@ def build_sit(world: World | None = None) -> DeskSit:
         else []
     )
     lock = lock_state()
-    ships = tuple(v for v in world.vessels if is_disk_ship(v))
-    hangar, active = hangar_call(
-        vessels=ships,
-        lock=lock,
-        seated_craft=craft if craft not in {"", "(none)"} else "",
-    )
+    disk_ships = tuple(v for v in world.vessels if is_disk_ship(v))
+    live_sci, live_rows = probe_live_desk()
+    if live_rows is not None:
+        hangar, active = hangar_from_live(live_rows, lock=lock)
+        vessel_names = tuple(name for name, _ in live_rows[:12])
+    else:
+        hangar, active = hangar_call(
+            vessels=disk_ships,
+            lock=lock,
+            seated_craft=craft if craft not in {"", "(none)"} else "",
+        )
+        vessel_names = tuple(v.name for v in disk_ships[:12])
     disk = world.research.science
     last_sci = _sci_token(last.get("sci") or "")
     now, sci_src, sci_disk = pick_banked_science(
         disk,
-        live=probe_rd_science(),
+        live=live_sci,
         last_flight=last_sci,
     )
     before = prior_sci(DESK_MD.read_text(encoding="utf-8")) if DESK_MD.is_file() else None
@@ -439,7 +515,7 @@ def build_sit(world: World | None = None) -> DeskSit:
         note_tech=_last_note_tech(),
         f013=f013,
         stack=tuple(names),
-        vessels=tuple(v.name for v in ships[:12]),
+        vessels=vessel_names,
         leftover_science=rows,
         stack_dump=(
             format_stack(world, names, label=f"seated {seated_id()}").rstrip()
@@ -449,6 +525,7 @@ def build_sit(world: World | None = None) -> DeskSit:
         mods=detect_mods(world.ksp_root),
         bind=bind_line(),
         hop_apo=hop_apo_line(),
+        pay=pay_line(),
     )
 
 
@@ -502,6 +579,8 @@ def format_sit(sit: DeskSit) -> str:
         lines.append(f"bind: {sit.bind}")
     if sit.hop_apo:
         lines.append(f"hop_apo: {sit.hop_apo}")
+    if sit.pay:
+        lines.append(f"pay: {sit.pay}")
     if sit.note_tech:
         lines.append(f"note-tech: {_clip_note(sit.note_tech)}")
     lines.append(f"# leftover vessels n={len(sit.vessels)}")

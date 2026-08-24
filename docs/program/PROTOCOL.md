@@ -29,8 +29,8 @@ exit **ends** the hop — Commander does not review.
 | Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
 | Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
 | Hank | Linus, Director of Research | open science tickets | ids (batch) | payload bind (blocked until vehicle `capable`) |
-| Hank | Lars, Vehicle Systems Engineer | control tickets / miss | ticket + `live_run` | `lesson:` close |
-| Hank | Wernher, Chief Systems Engineer | systems / kRPC world | ticket | systems close |
+| Hank | Lars, Vehicle Systems Engineer | control **pulse** miss | ticket + `live_run` | `lesson:` close |
+| Hank | Wernher, Chief Systems Engineer | systems / kRPC world / **control sit/warp blocks** | ticket | systems close |
 | Commander | ticket bus | miss **during hop** (still connected) | `tickets open --type control --fingerprint <stem>` | Hank after exit |
 | Hank | ticket bus | miss after process exit | open control from last-flight abort **with `--fingerprint`** | Lars if needed — **no Jeb debrief** |
 | Commander / hop pid | Hank | campaign clean 0 CLI exit | last-flight only | Hank tape then uncrewed re-run `cli:` — **no Gene, no Jeb** |
@@ -78,8 +78,16 @@ every packet. Kardashev creed in the model; joke in the TUI.
 ## Questions
 
 Ground desks do **not** return `ask:` / `explore:` / `improve:` /
-`feedback:` / `recommended:` / `card:` / `need_*` as the bus. Open
-tickets (`payload.to` = addressee on `ask`):
+`feedback:` / `good:` / `self:` / `them:` / `recommended:` / `card:` /
+`need_*` as the bus. Every hire **does** file structured feedback on
+the **work ticket** (packet T-id):
+
+```
+python main.py tickets feedback T-NNN --claim "…"
+```
+
+That is RSI ore, not a hire token, not a Return key, not a second
+bus. Open tickets (`payload.to` = addressee on `ask`):
 
 ```
 python main.py tickets open --type ops --tag ask --title "…" --desk <addressee>
@@ -125,10 +133,16 @@ sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`;
 one kRPC writer; Lars XOR Wernher on a **miss**. Open `type=systems` →
-Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap) without
-waiting for a miss. Lars owns vehicle control (`hop_factory.py` factory inland,
-`physics_warp.py` coast/pad warp, `pad.py` / `splash.py` /
-`blocks.md`; `hop.py` is parked water/splash + helpers).
+Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
+**control blocks**: sit, warp, timeout, leftover abort, chute sits)
+without waiting for a miss. `physics_warp.py` is Wernher. Lars
+**composes one living rocket's pulse** from those blocks
+(`hop_factory.py` inland, or a file that only flies t7-chute —
+legal). `pad.py` / `splash.py` / `blocks.md` stay pulse/phase.
+`hop.py` is parked water/splash + **shared** helpers that are
+actually shared. One immortal factory that remembers Flea, Hammer,
+4t, and splash-090 is not the way. Tests lock the **blocks**, not
+dead-hang envelopes. No stamp-named `_after_skip`.
 
 **Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
 is a sin**. A **living recover that cannot pay is also a waste**.
@@ -137,7 +151,12 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
-splash match the hang; FlyingHigh waits ≥50 km). Do not gather a
+splash match the hang; FlyingHigh waits ≥50 km on **t7-chute**, not
+a 30 km stiff loft). FlyingHigh wait is loft live-alt ≥50 km /
+Toggle / cut / chute / land leftover — not a sit at 800 m apo, not
+wait-then-pitch in the first km, not silk, not abort-at-lid, not
+skip-chute. Do not Hangar
+FAR-sheared 4t / dv5 / girderless lite. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;
 uplink `phys-warp` / `no_warp`; never rails / WarpTo). Ground fills
 the shelf **during** flight (lock live, other files). Wernher **logs
@@ -146,9 +165,14 @@ miss** (`type=systems` standing). All data is good data if stored.
 A 10–15 min Gene conference, an RSI letter, “consider the 154 m/s”,
 or conference-then-+0 hops does **not** empty the pad — and does
 **not** re-fly the same +0 bind. After sci unchanged: rebind from
-the envelope or the next signed hang that can bank. Stop the batch
-**only** leftover / crash UI, f013 fail, live control `.py` must be
-patched, or Os wait. `go: wait` **only** those.
+the envelope or the next signed hang that can bank. Living recover +
+`sci_run=0` is the waste class (`sci-unchanged-recovered`) — **not**
+clean 0. Bind can still pay = last-envelope sit/biome/apo matches
+bound tickets (08-44 Shores land ≠ Forest leftover; 10-57 Forest
+splash ≠ SrfLanded). Wreck rec=no is a miss: re-fly last `cli:`.
+Stop the batch **only** leftover / crash UI, f013 fail,
+live control `.py` must be patched, or Os wait. `go: wait` **only**
+those.
 
 **Thin tape is first-class:** a 9-column space program is not a log
 shrug. Every desk that stumbles on it opens `--type systems` (or
@@ -169,8 +193,7 @@ periodically runs **`python main.py ship`** (disk envelope from
 flags, lithobrake, empty tanks + still flying, heading never moving,
 EC=0 before dwell, crash UI): **do something** — `uplink abort|hold`
 if wreck-class; spawn **Gene** if the plan/`go` must change
-mid-sortie; spawn **Lars** if hop_factory/physics_warp/control; spawn **Wernher** if
-kRPC/telem/desk. Issue-clear → that desk, not a Gene novel.
+mid-sortie; spawn **Lars** if the living pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks (`physics_warp.py`). Issue-clear → that desk, not a Gene novel.
 **Nominal** hop: no Gene, no 15 s narration, no heartbeat swallow.
 “Do not spawn Gene during the phase” is **repealed for off-nominal
 only**. Depth 1. Gene does **not** take the stick (Commander is the
@@ -195,9 +218,16 @@ and **Close** to KSC (`recover-probe --recover` if recoverable). Os
 disabled reverting flights. Never revert. Never leftover-ksc save/load
 (that looked like a reload / return to pre-launch).
 Then: clean 0 → re-fly last `cli:` **only if that bind can still
-pay**. Miss (nonzero / ABORT / `science (none)`): spawn **Lars**
-on the named control file. **sci unchanged** on a living recover:
-Linus rebinds last-envelope biome/sit — not Lars unless the live
+pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
+≥50 km). Living recover + `sci_run=0` is **not** that path — do not
+light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
+re-flies last `cli:`. Miss (nonzero / ABORT / `science (none)` / `science skip`):
+spawn **Lars** on the named **pulse** file (`hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
+Airborne cannot-pay skip is **not** a dwell and **not** Gene —
+still loft, cut, coast, chute, land leftover. Timeout while flying:
+Hank `recover()` if recoverable, else Close / `ksc leftover`. Never
+revert. **sci unchanged** on a living recover:
+Linus rebinds last-envelope biome/sit **before** the next light — not Lars unless the live
 `.py` actually broke, not Gene to consider. Pad waits only for
 leftover and for a patch of the **live** control `.py` (cannot hop
 while Lars writes the named control `.py`). **Do not hire Gene to replan a miss.**
@@ -220,7 +250,7 @@ Uncrewed Learn is already on the ticket from `attach-run`.
 | Together | Wait for |
 |---|---|
 | Linus opportunities + Gus `capable` (not bind) | Linus bind to named craft |
-| Wernher systems + ground on other files | never the live writer’s `.py` |
+| Wernher systems/blocks + Lars pulse on **other files** | never both on the same `.py` |
 | Parent **re-desk** after Gus `capable: yes` (I-014) | Linus bind / Gene `go` on stale capable/f013 |
 | Disk `python main.py world` anytime | never a second writer |
 | Disk `python main.py science-scan` / `comms` (MM last write) | never Kerbalism tweak cfg as gospel |
@@ -267,9 +297,9 @@ is a skim block on the fly ticket after `tickets attach-run`
 `cli:` is fly `payload.cli`
 **copied verbatim** (F-004) from `python main.py protocol fly` — not
 Gene `recommended:`, not seated `plan.md`. Lars `read:` third path is
-the **named control file** (`hop_factory.py` inland, `physics_warp.py`
-warp, `pad.py` pad, `science.py` sit-match) — not `hop.py` for a
-factory miss. Lars first command is inbox,
+the **named pulse file** (`hop_factory.py` inland, or the living
+rocket's compose, `pad.py` pad, `science.py` sit-match) — not
+`hop.py` for a factory miss, not `physics_warp.py` (Wernher blocks). Lars first command is inbox,
 skim, not a named jsonl. Parent copies **f013**
 from desk. Do not send parked campaign notes. Children do
 not re-run `world`/`tech`/`parts` if desk is this sit.
@@ -329,11 +359,19 @@ dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 ## Return (this job)
 
 Open tickets. Do not emit `need_*`, `ask:`, `explore:`, `improve:`,
-`feedback:`, Linus `card:`, or Gene `recommended:` (`cli:` is the
-fence). Body text may say `tickets open --type ops --tag
+`feedback:`, `good:`, `self:`, `them:`, Linus `card:`, or Gene
+`recommended:` (`cli:` is the fence). After the work, file on the
+packet T-id (T-378; not a card):
+
+```
+python main.py tickets feedback T-NNN --claim "…"
+```
+
+Body text may say `tickets open --type ops --tag
 ask|explore|feedback` (paid node `--type ctt`; press `--type press`).
 Leftover `need_*` is a Hank `from-need` shim only — not in the Gene
-body, not a hire token.
+body, not a hire token. Do not shim leftover Return `good:` into
+tickets — desks run `tickets feedback`.
 
 **Gene** (stamps + identity; routing is ticket ids):
 
@@ -371,22 +409,22 @@ Bind = patch science payload (`experiment_id` / `part` / `duration_s` /
 `ec_rate` / `recover_banks`). Rewrite `docs/program/science.md` as dump
 only. Idle on open science tickets, not `need_science`.
 
-**Gus** — `capable:` `craft:` `f013:` `tickets:` `blocker:` (if no).
+**Gus** — `capable:` `craft:` `f013:` `tickets:` `blocker:` (if no). Then `tickets feedback`.
 
-**Lars** — `tickets:` `stack:` `lesson:` `f013:` `blocks:`.
+**Lars** — `tickets:` `stack:` `lesson:` `f013:` `blocks:`. Then `tickets feedback`.
 
-**Wernher** — `tickets:` `ready_to_fly:` `files:` `blocker:`.
+**Wernher** — `tickets:` `ready_to_fly:` `files:` `blocker:`. Then `tickets feedback`.
 
-**Verena** — `tickets:` `story:` `shot:` `readme:`.
+**Verena** — `tickets:` `story:` `shot:` `readme:`. Then `tickets feedback`.
 
 **Katherine** — `tickets:` `model:` `ask:`. Disk tape only. Ask is a ticket
-id, not prose.
+id, not prose. Then `tickets feedback`.
 
-**Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`.
+**Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`. Then `tickets feedback`.
 
-**Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). After Commander CLI: `desk`, `attach-run`, `landing`, leftover, then `ops next`. Leftover `need_*` in a child return → `tickets from-need` (shim). Desks must not emit those keys. Do not hire the Commander to explain the hop.
+**Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). After Commander CLI: `desk`, `attach-run`, `landing`, leftover, then `ops next`. Leftover `need_*` in a child return → `tickets from-need` (shim). Child skipped `tickets feedback` → nag; do not idle the pad (harvest writes). Desks must not emit `need_*` or Return `good:`/`self:`/`them:`. Do not hire the Commander to explain the hop.
 
-**Pilot** — `result:` `exit:` `handoff:` `abort:` `last:`. Drop `envelope:` / `improve:` / `feedback:` / `need_*`. CLI exit **ends** the hop. Miss `type=control` only **during** the hop if still connected; after exit Hank opens from last-flight. Hop abort `ksc leftover` → Hank, not Commander recover. No attach-run, no landing, no jsonl cite.
+**Pilot** — `result:` `exit:` `handoff:` `abort:` `last:`. Then `tickets feedback` on the fly ticket (`--claim`, not a landing essay). Drop `envelope:` / `improve:` / `feedback:` / `good:` / `need_*`. CLI exit **ends** the hop. Miss `type=control` only **during** the hop if still connected; after exit Hank opens from last-flight. Hop abort `ksc leftover` → Hank, not Commander recover. No attach-run, no landing, no jsonl cite.
 
 ## Files
 
@@ -424,16 +462,35 @@ experiment_id / part / duration_s / ec_rate / recover_banks: yes|no
 
 Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` sci does not move after a briefed recover → Linus, then Gene.
 
-## Feedback
+## Feedback (T-375 amended; findings)
 
-Gym `F-NNN` / `I-NNN` twins live on the ticket board. Nested gym MD is
-parked — not dispatch. Flight bugs stay in
-`docs/lessons.md` as **run — title** headings (the filename stem, not letter-codes).
+Every hire files **at least one finding** on the **work ticket**
+(packet T-id). Content is free (own work, own workflow, or a request).
+Os: not a card. Not Return keys. Not `need_*`. Not a markdown log as
+the bus.
 
-Leftover `improve:` / `feedback:` → parent
-`tickets open --type ops --tag feedback --fingerprint <existing>`
-(or `type=rsi` if repeating house friction). House friction keeps
-**one** tag. No Return `feedback:` key. Empty stem fails closed and
-prints the reuse catalog. Do not file live `I-NNN.md`. Leftover
-`ask:` → `--type ops --tag ask` (not the world-model table).
-Mortimer `need_os: none|charter|roster` is creed only.
+```
+python main.py tickets feedback T-NNN --claim "…" [--evidence "path:line"] [--owner desk|none] [--real]
+```
+
+`--claim` is the one required line. `--evidence` / `--owner` optional.
+`--real` only with nonempty evidence. Cheap. Not a 15 min novel. Not
+Learn. Not a hire token. Not a second bus (do not open a child
+`ops --tag feedback` per hire). Kernel **appends** `payload.findings`
+`{who,claim,evidence,owner,real,at}`. Close harvests nonempty
+`close_why` when findings are empty; refuses if both empty.
+`attach-run` harvests one `learn:` finding when empty. Packet skim
+prints all findings (cap 8) and a `--claim` copy-line. `tickets inbox
+--desk X --feedback` lists every `owner=X` plus owned tickets with
+zero findings.
+
+CHARTER “every hire leaves a sharper sit, a pitfall, a question, or
+code” is this CLI + harvest — **not** `protocol parse`. Do not
+add `good`/`self`/`them` to Return fences. Do not land
+`from-feedback` as a leftover shim.
+
+Stumble *during* work still
+`tickets open --type ops --tag feedback --fingerprint <stem>`
+(RSI ×3 clock). Empty stem still refused. Gym `F-NNN` / `I-NNN`
+twins stay tickets. `lessons.md` stays run headings. Leftover
+`ask:` → `--type ops --tag ask`. Mortimer `need_os` is creed only.

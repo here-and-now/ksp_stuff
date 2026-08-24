@@ -75,4 +75,6 @@ shot: none|now|dwell|after-recover
 readme: updated|hold
 ```
 
-Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback`.
+Do not emit `need_*` or `good:` / `feedback:`. After the work:
+`python main.py tickets feedback T-NNN --claim "…"`.
+Body (not the fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.

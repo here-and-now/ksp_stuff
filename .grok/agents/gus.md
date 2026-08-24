@@ -48,6 +48,10 @@ different crafts already signed on disk** (not one hang designed after
 a wreck). Fill the shelf **during** lock live. Today: Mk16 OKTO chute
 exists; RC_cone and 2×T100 alts stay hangs, not inbox-only. T+38 FAR
 shear of 3×T100 is a reason to have an **aero-stiff** alt already.
+Do **not** Hangar proc-4t / swivel-dv5 / girderless lite (`far-shear`).
+`kspstuff-hop-valiant-t7-chute-pbc` is the ≥50 km hang (`bigger-dv`,
+88.8 km proof). stiff-dv ~33 km is not FlyingHigh. Keep alts signed;
+do not design a 4t after a wreck.
 
 **Procedural Parts (Os 2026-08-23):** when a proc part is **unlocked**
 for the job, prefer it over stock. `proceduralTankRealFuels` (shapes
@@ -82,5 +86,7 @@ tickets: T-NNN | none
 blocker: <only if no>
 ```
 
-Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
+Do not emit `need_*` or `good:` / `feedback:`. After the work:
+`python main.py tickets feedback T-NNN --claim "…"`.
+Body (not the fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
 Do not tell another desk in this Return.

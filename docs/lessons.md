@@ -21,6 +21,609 @@ python main.py pad
 
 ---
 
+## 2026-08-24T19-57-33Z-hop — far-shear
+
+- **When:** 2026-08-24 letsgrok. T-394. t7-pbc. Bound FlyingHigh
+  T-069 Forest TELEMETRY leftover + T-368 goo + T-369 geiger.
+  f013 TELEMETRY Stayputnik on_craft=yes; Goo start unlocked=yes
+  on_craft=yes; geiger e101 unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability. Do not Hangar.
+- **Symptom:** hop_apo=50000. goo+geiger Toggle at High, dwell, hold
+  burnout, 4× then 1×, shear 20→9 rec=no. Envelope apo=275 km
+  q_max=134 kPa g=13 sit=flying impact 132 m/s sci_run=1 bank
+  12.38→16.19 (files; goo sample lost). Tape MET 90 lid q=1.8 kPa
+  thr 1; MET 103 75 km sci_run=1 q=69 Pa; 4× climb through apo;
+  1× from ~271 km. High descent MET 533 alt 53 km q=1.6 kPa.
+- **Cause:** `want_coast` 4× after real burnout when q ≤1 kPa. High
+  dwell is still lofted burnout on that clock. 4× through apo
+  tumbled into High descent q; q gate never saw 4× there (already
+  1× on `chute_arm_sit`). FAR sheared on 1× lithobrake.
+- **Fix:** `_high_dwell_sit` 1× once FlyingHigh lid latches, until
+  down. Skip FlyingLow may still 4×. Same inland hop Forest /
+  Grasslands. Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T19-57-33Z-hop — leftover-prelaunch-ghost
+
+- **When:** 2026-08-24 letsgrok T-388. After rec=0 MET freeze Close,
+  walk_home logged not pad occupancy but the next `python` still
+  leftover=1 hangar recover sit=sub_orbital. protocol fly wait leftover.
+  Never revert. Do not Hangar.
+- **Symptom:** GUID skip was process-local. overlay.last
+  `unrecoverable:` empty. kRPC 0.6 Vessel has no `.id`.
+- **Cause:** `remember_unrecoverable` no-op without id. recover-probe
+  overlay write started with an empty in-memory set.
+- **Fix:** identity is kRPC `_object_id` (stable across clients this
+  game). Persist immediately to `unrecoverable.last`. leftover_ships
+  reads that file in a fresh process.
+- **Modules:** `hangar.py`. Not hop.py.
+
+## 2026-08-24T19-23-00Z-hop — science-skip-timeout
+
+- **When:** 2026-08-24 letsgrok. T-392. t7-pbc. Bound FlyingHigh
+  T-069 Forest TELEMETRY leftover + T-368 goo global + T-369 geiger.
+  f013 TELEMETRY Stayputnik on_craft=yes; Goo start unlocked=yes
+  on_craft=yes; geiger e101 unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability. Do not Hangar.
+- **Symptom:** hop_apo=50000. Pitch 25, burnout, `science skip
+  (situation cannot pay)`, coast 4×, splash rec=yes sci=run=0 bank
+  12.38. Tape MET 92 alt 54 km sit=flying biome=Shores fuel 0.9
+  thr 1; apex 274 km sit=sub_orbital. Trio never Toggled.
+- **Cause:** T-331 skip-latch fired at the High lid when paying_eids
+  was empty. `sit_matches` treated biome `global` as Shores, and
+  required live sit to contain `flying` (sub_orbital at High alt
+  is still High). geiger idle rem=0 was not a file duration.
+- **Fix:** `sit_matches` High is alt ≥50 km (not landed/splash);
+  global/none/any is not a biome. geigerCounter idle rem=0 still
+  pays. Factory skip-latch is FlyingLow cannot-pay only — High
+  waits the lid, then Toggle. Forest / Grasslands / Shores: same.
+  Never revert. Do not Hangar.
+- **Modules:** `science.py`, `hop_factory.py`. Not `physics_warp.py`
+  this hire (XOR).
+
+## 2026-08-24T19-23-00Z-hop — leftover-prelaunch-ghost
+
+- **When:** 2026-08-24 letsgrok T-388. t7-pbc hop exit 0 splash recover,
+  recover() still listed, SC ghost sub_orbital. `--space-center`
+  wait-land → MET frozen sit=landed rec=0 (crash UI). Close. leftover
+  n=1. Desk hangar recover sit=sub_orbital. protocol fly wait leftover.
+  Os will not click Recover. Never revert.
+- **Symptom:** crash-UI wreck cannot `recover()`. Close leaves the same
+  GUID in Tracking as SUB_ORBITAL rec=0. leftover_ships counted it as
+  pad occupancy.
+- **Cause:** KSP Recover never arms on Flight Results freeze. Tracking
+  sit after Close is SUB_ORBITAL even though Flight was landed rec=0.
+- **Fix:** `remember_unrecoverable(vessel.id)` after crash-UI rec=0.
+  leftover_ships / ksc_ready skip that GUID. Not pad occupancy. Close
+  `reload_save=False`. Never leftover-ksc.
+- **Modules:** `hangar.py`. Not hop.py.
+
+## 2026-08-24T19-09-12Z-hop — leftover-prelaunch-ghost
+
+- **When:** 2026-08-24 letsgrok T-388. t7-pbc litho sit=landed rec=no
+  met=606 alt=380. `--space-center` then KSC leftover sit=sub_orbital
+  rec=0. Second `--space-center`: go_flight parts=20, not recoverable,
+  Close, leftover n=1. protocol fly wait leftover. Do not Hangar.
+  Never revert.
+- **Symptom:** Close on a living SUB_ORBITAL leftover does not drop it.
+  go_flight loads the craft (20 parts, MET ticking). Dead-GUID filter
+  does not apply.
+- **Cause:** T-388 first patch Closed when rec=0 after Flight. That
+  ship will land. KSP Recover only after landed/splashed.
+- **Fix:** `walk_home` waits leftover land on the MET clock (4× high,
+  1× below 5 km, rails 0). recover() when KSP will take it. MET freeze
+  (crash UI) stops the wait. Still rec=0: Close `reload_save=False`.
+  Never leftover-ksc.
+- **Modules:** `hangar.py`. Not hop.py.
+
+## 2026-08-24T18-59-08Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-391. t7-chute hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY Stayputnik
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes. Tree start,engineering101,basicRocketry,
+  survivability.
+- **Symptom:** hop_apo=50000, expect_apo_max=400000. OFFPLAN apo 163402
+  > 140000 Space. Tape MET 85 alt 41.8 km thr 1 fuel 123, still
+  climbing. 18-34-09Z apo 275 km paid after the cut.
+- **Cause:** Factory OffPlan used Space atm_depth 140 km on predicted
+  apo before live hop_apo. Gene's envelope was 400 km. A paying
+  FlyingHigh loft at 41 km is not Space.
+- **Fix:** `_offplan_apo_lid` raises the abort to expect_apo_max when
+  that number is higher than the sit lid. hop_apo stays the cut.
+  FlyingLow stays ≥50 km. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T18-34-09Z-hop — leftover-prelaunch-ghost
+
+- **When:** 2026-08-24 letsgrok T-388. t7-pbc lofted apo 275 km, hop
+  recovered sit=splashed rec=yes exit 0. Then `recover-probe --recover`:
+  recover() splash, walk-home still listed. KSC leftover n=1
+  sit=SUB_ORBITAL recoverable=0 met climbing. `--space-center` Close
+  did not drop it. `ksc` SESSION leftover. Do not Hangar. Never revert.
+- **Symptom:** splash recover left a tracking ghost. `walk_home` saw
+  rec=0 at Space Center and Closed without entering Flight. protocol
+  fly waited leftover. Next Session: dead GUID
+  (`No such vessel`), vessels n=0, `ksc_ready` true.
+- **Cause:** `vessel.recoverable` at `space_center` is often false.
+  recover() returns before the ship leaves `vessels`. Close during that
+  gap leaves a SUB_ORBITAL tracking remnant (same name, rec=0). Dead
+  GUID is not leftover (`name` raises).
+- **Fix:** `walk_home` enters Flight first. recover() if KSP will take
+  it; wait gone before Close; after Close wait recovered names off the
+  list. Already in Flight + rec=0: recover-in-progress, wait gone, do
+  not Close first. Still not recoverable after Flight: Close
+  `reload_save=False`. Desk hangar uses live `leftover_ships` (empty
+  tracking beats stale sfs SUB_ORBITAL). Never `revert_to_launch`.
+  Never leftover-ksc.
+- **Modules:** `hangar.py`, `desk.py`. Not hop.py.
+
+## 2026-08-24T18-15-43Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-386. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes; 2HOT start unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** hop_apo=50000. hold vertical until lid 50000 m, hop light,
+  airborne, crash UI sit=landed rec=no met=28.22 alt=388.7 q=3598. Envelope
+  hard impact 81 m/s apo=739 pitch=-85 Shores rec=no sci_run=0 bank=9.47.
+  Tape MET 0.84 alt 88 thr 1; MET 8.6 alt 422 thr 0 fuel 1431 pitch 89.5
+  q=3700; apex MET 16.9 thr 0 pitch 84; last MET 25 pitch=-85.
+- **Cause:** Throttle was not 1 the whole burn. Lid vertical called
+  `_steer_inland` at pitch 90: SAS off, AP not engaged (zenith has no
+  heading), roll-0 vs zenith. `_hold_or_cut` still ran. Leftover LF at
+  400 m is still the burn sit. Flip is after the cut, falling.
+- **Fix:** `_hold_lid` keeps throttle 1 and SAS vertical until lid alt or
+  crumbs. Do not inland-slew or apo-cut that sit. After lid, slew. Forest /
+  Grasslands: same. Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T17-59-29Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-384. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes; 2HOT start unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** hop_apo=50000. hold vertical until lid 50000 m, hop light,
+  airborne, science wait FlyingHigh, shear 28→1. Envelope hard impact
+  81 m/s apo=880 pitch=-89 Shores rec=no sci_run=0 bank=9.47. Tape MET
+  0.84 alt 88 thr 1; MET 9.44 alt 492 thr 0 fuel 1417 q=4502.
+- **Cause:** Factory science-waited FlyingHigh at light. Wait is loft, not
+  a dwell at 1 km. sit_matches treated FlyingHigh as any flying sit.
+  Throttle 0 with leftover LF before lid alt; FAR sheared the vertical
+  stack.
+- **Fix:** Bound FlyingHigh pays only after lid alt. Do not wait, skip-latch,
+  or cut until live alt is High. `_lid_burn_sit` keeps hold=1. Forest /
+  Grasslands: same. Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`, `science.py`. Not `physics_warp.py` this
+  hire (XOR).
+
+## 2026-08-24T17-50-46Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-382. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes; 2HOT start unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** hop_apo=50000. science wait FlyingHigh, pitch 25 inland,
+  crash UI sit=landed rec=no met=29.20 alt=339.3 q=4574. Envelope hard
+  impact 89 m/s apo=782 Shores sci_run=0 bank=9.47.
+- **Cause:** Factory slewed 25° inland as soon as airborne. FlyingHigh at
+  ~1 km with apo hundreds of metres is not the lid. Pitch-over dumped
+  the loft; t7 lithobraked.
+- **Fix:** `_lid_vertical_sit` holds vertical until lid alt. Predicted
+  apo is not the lid. After lid, inland slew. Forest / Grasslands: same.
+  Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T17-42-28Z-hop — silk-while-burn
+
+- **When:** 2026-08-24 letsgrok. T-381. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes; 2HOT start unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** hop_apo=50000. science wait FlyingHigh, pitch 25 inland,
+  chute deployed, shear 28→1. Envelope hard impact 91 m/s apo=802
+  Shores rec=no chute=cut sci_run=0 bank=9.47. Tape apex MET 18 alt 797
+  thr 0 fuel 1424 vz=-10 chute=stowed; T-380 4× did not run.
+- **Cause:** `_chute_arm_now` skipped Arm. Factory Deploy still sat on
+  raw `chute_deploy_sit` (vz<0 ≤2 km). `deploy_chutes` Arms inside.
+  800 m FlyingHigh wait with leftover LF is not the lid.
+- **Fix:** `_chute_deploy_now` Deploys after lid alt or crumb burnout,
+  and only on `chute_deploy_sit`. Climbing / wait-burn is not silk.
+  Same inland hop Forest / Grasslands. Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T17-26-04Z-hop — sci-unchanged-recovered
+
+- **When:** 2026-08-24 letsgrok. T-346 unbrick. t7-chute-pbc. Bound
+  FlyingHigh T-069/T-368/T-369. Last envelope shear rec=no apo=917
+  sci_run=0 bank=9.47. Hang still capable.
+- **Symptom:** `protocol fly` wait, `fly_ready` none, desk `pay: no`.
+  Pad idle — cannot loft 50 km because the last wreck was 917 m.
+- **Cause:** `waste_blocks_refly` used `_sci_run_zero` (wreck or
+  recover). T-337 law is living recover + sci_run=0 only.
+- **Fix:** latch is `_sci_unchanged_waste` (recoverable=true +
+  sci_run=0). Wreck rec=no re-flies last `cli:`. FlyingHigh still
+  needs apo ≥50 km on a living +0. Never revert. Do not Hangar.
+- **Modules:** `tickets.py`. Not hop.py.
+
+## 2026-08-24T17-26-04Z-hop — far-shear
+
+- **When:** 2026-08-24 letsgrok. T-380. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes; 2HOT start unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** hop_apo=50000. science wait FlyingHigh, pitch 25 inland,
+  hold burnout, 4× rails=0, shear 28→1. Envelope apo=917 q_max=4728
+  fuel 1575→1413 rec=no chute=stowed sci_run=0 bank=9.47.
+- **Cause:** `want_coast` treated lofted (250 m) + throttle 0 + q≤5 kPa
+  as 4×. FlyingHigh wait at ~1 km with leftover LF is not lofted
+  burnout. 4.7 kPa is not actually low. FAR sheared at 4×.
+- **Fix:** `high_q_sit` 1× until q ≤1 kPa. Factory `_lid_burn_sit` keeps
+  leftover LF before lid alt on the burn clock (unpause is not 4×).
+  Same inland hop Forest / Grasslands. Never revert. Do not Hangar.
+- **Modules:** `physics_warp.py`, `hop_factory.py`. Not `hop.py`.
+
+## 2026-08-24T16-02-25Z-hop — sci-unchanged-recovered
+
+- **When:** 2026-08-24 letsgrok. T-346. t7-chute-pbc. Bound FlyingHigh
+  T-069 Forest TELEMETRY + T-368 goo + T-369 geiger. Last envelope
+  catastrophic apo=2574 Shores rec=no sci_run=0 bank=9.47.
+- **Symptom:** `protocol fly` said yes. Parent would light last `cli:`
+  on a FlyingHigh bind this 2.5 km hop cannot pay.
+- **Cause:** Waste gate required living recover, so wreck +0 skipped
+  it. `_sit_biome_match` treated FlyingHigh as any `flying` sit
+  (T-369 empty biome matched Shores at 2.5 km).
+- **Fix:** FlyingHigh vs envelope uses apo ≥50 km (not any flying sit).
+  Waste latch stayed living recover. Wreck rec=no over-latched next sit
+  (T-346 unbrick). Never revert.
+- **Modules:** `tickets.py`, `protocol.py`, `desk.py`. Not hop.py.
+
+## 2026-08-24T15-44-16Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-374. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes. Tree start,engineering101,basicRocketry,
+  survivability.
+- **Symptom:** hop_apo=50000. science wait FlyingHigh, hold burnout, chute
+  armed, shear 28→10, recover Shores apo 2357 rec=yes sci_run=0. Tape
+  MET 15 alt 1.2 km thr 0 fuel 1317 vz=+148 chute=stowed; apex 2.3 km
+  vz<0 then silk deployed pad 0.41 km.
+- **Cause:** Factory Armed on `chute_arm_sit` during FlyingHigh wait-burn.
+  Descent at 2 km with a full tank is not the lid. Silk killed the loft.
+  Throttle 0 with leftover LF is not burnout.
+- **Fix:** `_chute_arm_now` Arms after lid alt or crumb burnout, and only
+  on `chute_arm_sit`. Climbing / wait-burn is not silk. Same inland hop
+  Forest / Grasslands. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T15-24-17Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-373. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes. Tree start,engineering101,basicRocketry,
+  survivability.
+- **Symptom:** hop_apo=50000. 15-05-30Z predicted apo 163 km OffPlan. Next
+  hop 15-24-17Z crash UI MET 59 alt 2279 q=4572 rec=no, fuel leftover,
+  apo max 2.8 km. `hop hold inland through burnout` then 4× into dirt.
+- **Cause:** FlyingHigh hop_apo latched on predicted apo and on first
+  `chute_arm_sit` descent. Thick-air apo is not 50 km alt. Descent at
+  2.3 km with fuel still needed the lid. Warp ran after Arm, so the
+  first `chute_arm_sit` tick was still 4×.
+- **Fix:** `_lid_alt_reached` cuts on live altitude. Predicted apo is
+  not the latch. `chute_arm_sit` cuts only after the lid or crumbs.
+  `apply_sit_warp` before Arm so that tick is already 1×. Toggle after
+  50 km alt, then cut, silk, recover. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T15-05-30Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-371. t7-chute-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover + goo + geiger. f013 TELEMETRY OKTO
+  on_craft=yes; Goo start unlocked=yes on_craft=yes; geiger e101
+  unlocked=yes on_craft=yes. Tree start,engineering101,basicRocketry,
+  survivability.
+- **Symptom:** hop_apo=50000, `science wait FlyingHigh`, then OFFPLAN
+  apo 163170 > 140000 Space. Tape MET 97 apo 46 km thr 1 fuel 349;
+  MET 126 alt 62 km apo 163 km fuel crumbs thr 0. No Toggle.
+- **Cause:** Factory OffPlan Space ran before `_hold_or_cut`. hop_apo
+  50 km never latched; leftover fuel kept throttle 1 through the lid.
+  62 km alt is already FlyingHigh — Space abort stole the Toggle.
+- **Fix:** Cut hop_apo first. FlyingHigh after that cut is the inland
+  hop (Toggle, chute, land leftover), not Space OffPlan. Crumb fuel
+  is not a reason to keep throttle 1. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T15-10-47Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-372. t7-chute-pbc hang. Bound FlyingHigh
+  leftover. f013 TELEMETRY OKTO on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** 15-10-47Z `hop coast physics 4x`, `chute armed`, `chute
+  deployed`, then `hop physics 1x`, shear 28→18 ABORT. 13-31-03Z t7
+  no-chute 88.8 km shear=no. Tape thin: last state 8.7 km chute=armed
+  q=46 kPa vz=+371 parts=28.
+- **Cause:** `want_coast` kept 4× on lofted descent (`chute_arm_sit`)
+  and flipped 4× again on silk. RealChute inflated at 4×. 1× was after
+  canopy, not before Arm.
+- **Fix:** `apply_sit_warp` 1× when `chute_arm_sit` or
+  `chute_deploy_sit` or silk. Climbing armed may still 4×. Factory
+  should warp before Arm so the first descent tick is already 1×.
+  Never revert.
+- **Modules:** `physics_warp.py`. Not `hop_factory.py` this hire (XOR).
+
+## 2026-08-24T13-49-58Z-hop — flyinghigh-lid
+
+- **When:** 2026-08-24 letsgrok. T-357. proc-stiff-pbc hang. Bound FlyingHigh
+  Forest TELEMETRY leftover. f013 TELEMETRY OKTO on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** hop_apo=50000, `science wait FlyingHigh`, crash UI flying
+  rec=no met=277 alt=3025 q=20 kPa chute=stowed. Forest apo 32040 rec=no
+  impact 197 m/s. 18 km hops chute fine. Tape throttle 1 fuel 0.292
+  warp=Nonex through descent.
+- **Cause:** Waiting FlyingHigh is a sit flag, not a dwell. Factory Arm
+  sat behind `not burning_now`. hop_apo 50 km never reached, crumb fuel
+  kept throttle 1, `_burning` stayed true, `chute_arm_sit` never ran.
+  waiting_lid pass skipped recover only — warp/chute already keyed off
+  burning.
+- **Fix:** Descent after loft (`chute_arm_sit`) cuts. Arm on
+  `chute_arm_sit`, Deploy on `chute_deploy_sit`, independent of
+  waiting_lid / burning crumbs. Same inland hop as cannot-pay: loft,
+  coast, chute, land leftover. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T12-45-00Z-hop — hold-ground-card
+
+- **When:** 2026-08-24 letsgrok. T-348. proc-stiff-pbc hang. Bound Forest
+  land leftover T-077 2HOT seq0 (0.497) and splash T-313 seq1. f013
+  2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** Forest land rec=yes chute=armed sci=run=1 rem=0 bank +0.
+  leftover thermo 0.497 unstarted. Log: airborne TELEMETRY start/dwell,
+  hop down, recover sit=landed. No science start temperatureScan after
+  down.
+- **Cause:** Factory recovered on airborne TELEMETRY rem=0 at first
+  recoverable. `hop_landed_science_ids` union was not sit-matched to
+  live landed Forest, so T-077 never Toggled. T-347 hold is the Toggle
+  pulse; T-342 rem=0 after dwell still recovers.
+- **Fix:** `hop_landed_science_ids` sit_matches live sit (SrfLanded@Forest
+  on landed, splash on splash, empty while flying). Start that leftover
+  before recover. Hold unpaid leftover while flying; rem=0 after dwell
+  recovers. Forest / Grasslands same helper. Never revert.
+- **Modules:** `hop.py`, `hop_factory.py`.
+
+## 2026-08-24T12-16-38Z-hop — hold-ground-card
+
+- **When:** 2026-08-24 letsgrok. T-347. proc-stiff-pbc hang. Bound Forest
+  land T-077 2HOT (`temperatureScan` 83 s file) + T-287 TELEMETRY. f013
+  2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** Forest land apo ~25 km rec=yes chute=cut sci=run=0 rem=0
+  bank 8.87→8.87 (+0). leftover thermo 0.54→0.514. Log: science start
+  temperatureScan + TELEMETRY, science dwell, hop down, recover same
+  pulse. No wait-science line.
+- **Cause:** Factory recovered the Toggle pulse. Leftover file rem=0
+  while running is idle PAW, not transmitted. `ground_card_done` said
+  done. T-342 rem=0 after dwell still recovers next pulse.
+- **Fix:** Landed start holds that pulse (wreck still recovers). Then
+  `_hold_ground_card`: rem>0 recording, rem=0 after dwell recover. Same
+  inland Forest / Grasslands. Never revert.
+- **Modules:** `hop_factory.py`. Not `science.py` this hire (XOR).
+
+## 2026-08-24T11-25-56Z-hop — forest-splashed-thermo
+
+- **When:** 2026-08-24 letsgrok. T-344. Same hop as hold-ground-card. Bound
+  Forest splash T-313 2HOT (`temperatureScan` 138 s file). f013 2HOT start
+  unlocked=yes on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** Forest splash apo 29468 rec=yes chute=cut sci=run=1 rem=0
+  bank +0.10 TELEMETRY only. Log: `science skip temperatureScan on
+  sensorThermometer (not in card)`. T-313 never Toggled.
+- **Cause:** `paying_eids` dropped idle rem=0 unless the eid was in
+  `_DURATION_EIDS`. 2HOT is file duration, not a sample; unstarted rem=0
+  never entered the paying card, so `_start_paying` passed TELEMETRY only.
+- **Fix:** `temperatureScan` is duration. Sample rem=0 (goo) still skips.
+  Sit/biome match still required. TELEMETRY with no rem PAW still
+  recording is not done; 2HOT exposes remaining. Forest / Grasslands same
+  helper. Never revert.
+- **Modules:** `science.py`. Not `hop_factory.py`.
+
+## 2026-08-24T08-44-03Z-hop — sci-unchanged-recovered
+
+- **When:** 2026-08-24 letsgrok. T-341. Living recover sci_run=0 is not clean-0
+  re-fly. 08-44 Shores land 7 m/s rec=yes +0 vs Forest leftover; 10-57 Forest
+  splash rec=yes sci_run=0 then rebound T-313/T-288.
+- **Symptom:** `protocol fly` said yes after leftover n=0. Parent lit last
+  `cli:` on the same +0 bind. Pad grind.
+- **Cause:** Gate treated recovered leftover-clean as clean 0. Envelope
+  sit/biome was not checked against bound tickets. Hang/bind unchanged.
+- **Fix:** `waste_blocks_refly` — living recover + sci_run=0 waits until a
+  bound sit/biome matches the envelope, or hang/bind changed. attach_run
+  latches `payload.waste`. Uncrewed `needs_learn` stays false. Never revert.
+- **Modules:** `protocol.py`, `tickets.py`, `ops.py`. Not hop_factory.
+
+## 2026-08-24T11-25-56Z-hop — hold-ground-card
+
+- **When:** 2026-08-24 letsgrok. T-342. proc-stiff-pbc hang. Bound Forest
+  splash T-288 TELEMETRY + T-313 thermo. f013 2HOT start unlocked=yes
+  on_craft=yes; TELEMETRY OKTO on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** Forest splash apo 29468 rec=yes chute=cut sci=run=1 rem=0
+  bank 8.77→8.87 (+0.10). TELEMETRY start/dwell, hop down, then silence
+  until Os uplink abort. hold_card true → factory `pass`, never recover.
+- **Cause:** `ground_card_done` treated duration rem=0 while running as
+  still recording. Kerbalism file rem=0 is transmitted. Timeout does not
+  fire while down, so the pulse waited forever.
+- **Fix:** rem=0 is done (sample spent or file transmitted), landed or
+  splashed. Factory recovers when leftover rem is gone. Same inland hop
+  Forest / Grasslands. Never revert.
+- **Modules:** `science.py`. Not `hop_factory.py` this hire (XOR). Helper
+  `_hold_ground_card` already follows `ground_card_done`.
+
+## 2026-08-24T11-11-37Z-hop — chute-deploy-sit
+
+- **When:** 2026-08-24 letsgrok. T-340. proc-stiff-pbc hang. Bound Forest
+  leftover. f013 2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO
+  on_craft=yes. Tree start,engineering101,basicRocketry,survivability.
+- **Symptom:** crash UI sit=flying rec=no met=264 alt=2918 q=5748
+  chute=stowed. Forest apo 34222. Impact 111 m/s. T-338 Arm waited for
+  ≤2 km after burnout.
+- **Cause:** Factory Arm+Deploy both sat on `chute_deploy_sit` (vz<0
+  **and** ≤2 km). Lofted descent at 2.9 km never Armed. T-338 whoosh was
+  first-airborne Arm, not this sit.
+- **Fix:** Arm on Wernher `chute_arm_sit` (lofted descent). Deploy still
+  `chute_deploy_sit` ≤2 km or semi. Do not Arm first airborne. 1× high
+  q. Same inland Forest / Grasslands. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T11-11-37Z-hop — chute-deploy-sit
+
+- **When:** 2026-08-24 letsgrok. T-339. proc-stiff-pbc hang. Bound Forest
+  leftover. f013 2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO
+  on_craft=yes. Tree start,engineering101,basicRocketry,survivability.
+- **Symptom:** crash UI sit=flying rec=no met=264 alt=2918 q=5748
+  chute=stowed. Forest apo 34222. No Arm after T-338. Impact 111 m/s.
+- **Cause:** `chute_deploy_sit` was vz<0 **and** ≤2 km. Factory Arm+Deploy
+  both sat on that gate, so silk never armed before FAR ate the stack
+  at ~3 km. T-338 whoosh was first-airborne Arm, not this sit.
+- **Fix:** `chute_arm_sit` = lofted descent (vz<0 / pitch down). Not
+  light. Not only below 2 km. `chute_deploy_sit` still ≤2 km or semi.
+  1× high q / canopy. 4× only lofted burnout AND q≤5 kPa. Lars must
+  Arm on `chute_arm_sit`, Deploy on `chute_deploy_sit`. Never revert.
+- **Modules:** `physics_warp.py`. Not `hop_factory.py` this hire (XOR).
+
+## 2026-08-24T10-57-33Z-hop — chute-arm-ascent
+
+- **When:** 2026-08-24 letsgrok. T-338. proc-stiff-pbc hang (do not Hangar
+  proc-4t). Bound Forest leftover. f013 2HOT start unlocked=yes
+  on_craft=yes; TELEMETRY OKTO on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability.
+- **Symptom:** Os heard RealChute zhiiiissh at light. Tape: hop light,
+  hop airborne, immediately `chute armed` / `hop chute armed`, then
+  slew/pitch. Recovered sit=splashed Forest apo=35841 impact=5 m/s
+  rec=yes chute=cut sci=run=0. parts 36 shear=no.
+- **Cause:** Factory pulse armed Mk16 on first `left_pad` tick. RealChute
+  Arm is a PAW whoosh, not extra-stage. Ascent/loft/burn still packed.
+- **Fix:** Arm and Deploy on Wernher `chute_deploy_sit` (vz<0 below 2 km)
+  after real burnout. Do not Arm while burning or lofting. Same inland
+  hop Forest / Grasslands. Never extra-stage. Never revert.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T10-31-47Z-hop — control-blocks
+
+- **When:** 2026-08-24 letsgrok. T-335. proc-stiff-pbc hang (do not Hangar
+  proc-4t, T-332 FAR shear). Bound T-077 Forest SrfLanded thermo leftover
+  + T-287 land TELEMETRY. f013 2HOT start unlocked=yes on_craft=yes.
+  Tree start,engineering101,basicRocketry,survivability.
+- **Symptom:** Factory pulse owned skip as a second flight:
+  `_loft_after_skip` / `_coast_after_skip`, extra Hangar unpause, wall
+  timeout while MET was 8 / 129. Paying loft and cannot-pay loft
+  diverged. 10-31-47Z 4× at burnout q≈29.5 kPa sheared.
+- **Cause:** Warp was a new hop after skip, not a clock on the sit.
+  Timeout was wall seconds. Skip unpause was extra, not `apply_sit_warp`.
+- **Fix:** Factory inland calls Wernher sits: `apply_sit_warp` (4× only
+  lofted burnout AND q≤5 kPa; unpause is not 1×), `airborne_cannot_pay`
+  (skip is a flag, not a dwell), `chute_deploy_sit` (vz<0 below 2 km),
+  `timeout_hit` (MET / down; wall only if MET unknown), `leftover_call`
+  (recover if recoverable else ksc leftover). Same inland hop whether
+  airborne science pays or not. Never revert. Never WarpTo. Never rails.
+  Forest / Grasslands same.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
+## 2026-08-24T10-31-47Z-hop — control-blocks
+
+
+- **When:** 2026-08-24 letsgrok. T-334. proc-4t-pbc. Bound T-077 Forest
+  SrfLanded thermo leftover + T-287 land TELEMETRY. f013 2HOT start
+  unlocked=yes on_craft=yes. Tree start,engineering101,basicRocketry,
+  survivability. Do not Hangar 4t (T-332).
+- **Symptom:** Warp treated as a new flight. Stamp helpers
+  `_loft_after_skip` / `_coast_after_skip` in hop_factory. T-328 skip
+  latch wall 612 s MET~8. T-329/T-330 unpause killed 4×; chute never
+  vz<0 below 2 km; wall 785 s still flying. 10-31-47Z first 4× coast
+  at burnout q≈29.5 kPa FAR-sheared 40→8.
+- **Cause:** 1× profile already worked. 4× then overfit the skip stamp
+  instead of sits. Timeout was wall seconds. Hangar `run_physics` is
+  unpause+1×. High q was not a 1× sit.
+- **Fix:** `physics_warp` sit blocks Lars calls: `want_coast` /
+  `apply_sit_warp` (4× only lofted burnout AND q≤5 kPa; unpause is not
+  1×), `airborne_cannot_pay` (skip is a flag, not a dwell),
+  `chute_deploy_sit` (vz<0 below 2 km), `timeout_hit` (MET / down),
+  `leftover_call` (recover if recoverable else ksc leftover). Never
+  revert. Never WarpTo. Never rails. Forest / Grasslands same.
+- **Modules:** `physics_warp.py`. Not `hop_factory.py` this hire (XOR).
+
+## 2026-08-24T10-00-57Z-hop — science-skip-timeout
+
+- **When:** 2026-08-24 letsgrok `python main.py hop`
+  (`2026-08-24T10-00-57Z-hop`). proc-4t-pbc. Bound T-077 Forest
+  SrfLanded thermo leftover + T-287 land TELEMETRY. hop_apo 18 km.
+  f013 2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO host
+  on_craft=yes. Tree start,engineering101,basicRocketry,survivability.
+  Do not Hangar.
+- **Symptom:** T-329 loft-after-skip. Skip, unpause, hold, coast 4×,
+  then 1×, 4×. Wall timeout 785 s still sit=flying rec=no Forest
+  apo 49 km alt 42 km vz +369 chute=armed never down. MET 129.
+  Land leftover never started. Abort ksc leftover.
+- **Cause:** Skip unpause was Hangar `run_physics` (clock + 1×).
+  loft_after_skip also used wreck MET-still, so a living 47 km
+  coast did not keep the clock or 4×. Mk16 deploy is still vz<0
+  below 2 km — Forest/Grasslands never reached it.
+- **Fix:** `_coast_after_skip`: airborne cannot-pay unpauses the
+  clock without killing warp, then `apply_coast` after burnout.
+  Not a wreck freeze. Cut, coast, chute ≤2 km, start landed ids,
+  then recover.
+- **Modules:** `hop_factory.py`, `physics_warp.py`.
+
+## 2026-08-24T09-32-32Z-hop — science-skip-timeout
+
+- **When:** 2026-08-24 letsgrok `python main.py hop`
+  (`2026-08-24T09-32-32Z-hop`). proc-4t-pbc. Bound T-077 Forest
+  SrfLanded thermo leftover + T-287 land TELEMETRY. hop_apo 18 km.
+  f013 2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO host
+  on_craft=yes. Tree start,engineering101,basicRocketry,survivability.
+  Do not Hangar.
+- **Symptom:** T-328 latched skip. Then wall timeout 612 s still
+  sit=flying rec=no. Tape MET 0–8.3 apo=534 Shores. Never hop-down,
+  never coast, never chute. Land leftover never started. Abort
+  ksc leftover.
+- **Cause:** Skip latch cleared FlyingHigh wait, so the pulse tried
+  flying hop-down / `_pool` instead of keeping the inland loft.
+  MET stayed ~8 s while the wall ran 612 s. Land leftover starts
+  after lofted+down, which never came.
+- **Fix:** `_loft_after_skip`: airborne cannot-pay still loft.
+  Unpause on skip. Do not hop-down or `_pool` until land. Cut at
+  hop_apo, coast, chute, start landed ids, then recover. Timeout
+  still recovers if recoverable else ksc leftover.
+- **Modules:** `hop_factory.py`.
+
+## 2026-08-24T09-07-59Z-hop — science-skip-timeout
+
+- **When:** 2026-08-24 letsgrok `python main.py hop`
+  (`2026-08-24T09-07-59Z-hop`). proc-4t-pbc. Bound T-077 Forest
+  SrfLanded thermo leftover + T-287 land TELEMETRY. hop_apo 18 km.
+  f013 2HOT start unlocked=yes on_craft=yes; TELEMETRY OKTO host
+  on_craft=yes. T-069 FlyingHigh unbound. Do not Hangar.
+- **Symptom:** lofted, `science skip (situation cannot pay)`, wall
+  timeout 695 s, ABORT timeout. Tape sit=flying apo=525 biome=Shores
+  rec=no sci=run=0. Flying leftover. Landed ids never started.
+- **Cause:** Factory logged airborne cannot-pay but left
+  `science_attempted` false, so every pulse retried the flying card.
+  Timeout raised without recover of a flying vessel. Bound sit is
+  landed; skip is not a 50 km wait.
+- **Fix:** Latch skip, keep lofting. After lofted+down start landed
+  ids. FlyingHigh wait only before a Toggle sit, not after skip.
+  Budget while still airborne recovers if recoverable, else
+  `ksc leftover`.
+- **Modules:** `hop_factory.py`.
+
 ## 2026-08-24 — link-lost
 
 - **When:** Os 2026-08-24: hop honors `can_communicate`. T-326.

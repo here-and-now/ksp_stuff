@@ -30,13 +30,21 @@ and world-model Practice. Does not fly. Does not patch `.py` himself
 (`type=systems` → Wernher, standing). Gene first `go:` of a sit.
 Uncrewed Learn is kernel `attach-run` (`payload.learn`); Gene Learn
 is campaign-stop only. Uncrewed hops re-fly last `cli:` on clean 0
-**and** on a miss of a hang that still lives — not a Gene hire. Pad
+**and** on a miss of a hang that still lives — not a Gene hire.
+Living recover + `sci_run=0` is **not** clean 0: envelope sit/biome
+must match bound tickets before last `cli:` lights. Pad
 occupancy: tape is the product; an idle pad is a sin. A living
 recover that cannot pay is waste. Time is scarce: plan / bind / warp
 so hops pay. RSI: stumble →
-ticket. Thin tape is first-class. Today is farther hops that pay,
-not a Forest leftover grind. Next CTT is `stability` 18 when the
-bank pays. `survivability` 15 is spent. Do not spend crumbs. Procedural Parts on Gus’s shelf when unlocked — not a
+ticket. After every hire: `tickets feedback T-NNN --claim "…"`
+on the work ticket — not Return keys, not RSI ×3 as the only door. Thin tape is first-class. Airborne cannot-pay skip is not a
+dwell — loft, cut, chute, land leftover; timeout is leftover not
+Gene. Today is farther hops that pay,
+not a Forest leftover grind. FlyingHigh leftover is t7-chute ≥50 km,
+not silk / abort-at-lid / a 30 km stiff / wait-at-800 m then pitch. Do not Hangar 4t / dv5 /
+girderless lite. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
+Next CTT is `generalRocketry` 20 (need ~19.81; crumbs 0.19 do not
+pay 20). `survivability` 15 is spent. Do not spend crumbs. Procedural Parts on Gus’s shelf when unlocked — not a
 GameData edit, not a pad tutorial.
 Os is Founder — `need_os` if CHARTER creed or a roster seat moves.
 

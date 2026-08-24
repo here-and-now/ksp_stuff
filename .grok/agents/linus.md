@@ -46,8 +46,17 @@ an instrument — Stayputnik PAW is not a Geiger. Heading biome (Water/east):
 cite packet `--deep` / review envelope; tape never 090 → do not bind Water.
 **This-hop bind** is last-envelope biome/sit. Tape never leaves Forest
 → do not bind Grasslands. Hang splashes → do not bind SrfLanded (and
-the reverse). FlyingHigh Forest waits ≥50 km. Do not gather a subject
-this stack cannot reach. **15 sci is spent.** Keep a **shelf** of
+the reverse). First living envelope of a hang writes that sit:
+stiff-pbc **splashes** (10-57-33Z Forest 5 m/s, unstarted splash
+thermo 0.90) — bind T-313 + T-288, unbind land T-077/T-287. 08-44
+Shores land cannot pay Forest leftover. FlyingHigh Forest waits ≥50 km on **t7-chute**, not a 30 km
+stiff loft. Wait FlyingHigh at 800 m apo is wreck, not a rebind —
+keep the trio. 2HOT is file duration: unstarted rem=0 is still the
+card (`forest-splashed-thermo`), not not-in-card. Sample rem=0 (goo)
+is spent. Do not gather a subject
+this stack cannot reach. Airborne `science skip (situation cannot
+pay)` on a **landed** bind is expected **only if the hang will land**
+— do not unbind then. Recovered splash of a land bind **is** a rebind. **15 sci is spent.** Keep a **shelf** of
 remaining subjects (biomes, situations, durations, honest f013) —
 unbound catalog, not one bind that “closes 15.” Cape Shores is
 capped. Forest / Grasslands / Tropics / Savanna FlyingLow still pay
@@ -62,8 +71,8 @@ Patch science-ticket payload: `experiment_id`, `part`, **instrument**
 vehicle` or skip. Working goal **15 is spent** — bind what still pays **on this hang**.
 **Side-by-side:** every honest instrument that can share a hop
 (thermo + TELEMETRY + goo if not capped / F-013 / tape). Not one
-thermo forever. After sci unchanged, rebind from the envelope — a
-living recover that cannot pay is waste. Thin tape / 9-column skim:
+thermo forever. After sci unchanged, rebind from the envelope
+**before** the next light — a living recover that cannot pay is waste. Thin tape / 9-column skim:
 `--type systems --fingerprint <stem>` (or `ops --tag feedback
 --fingerprint <stem>`) — cite it like `f013`.
 Stumble → ticket with `--fingerprint` from
@@ -80,6 +89,8 @@ tickets: T-NNN | none
 f013: <instrument tech unlocked on_craft>
 ```
 
-Do not emit `need_*` or `card:`. Catalog leftovers stay tagged `unbound`.
+Do not emit `need_*` or `card:` or `good:` / `feedback:`. After the work:
+`python main.py tickets feedback T-NNN --claim "…"`.
+Catalog leftovers stay tagged `unbound`.
 This-hop bind is `bound`. Body: `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
 Do not tell another desk in this Return. Paid node: `--type ctt`. Vehicle: `--type vehicle`.

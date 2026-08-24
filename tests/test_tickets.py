@@ -282,6 +282,231 @@ class TestTickets(unittest.TestCase):
         tickets.patch_ticket(t["id"], {"title": "ghost 2"}, who="hank")
         self.assertEqual(tickets.fingerprint_count("desk-leftover-vs-krpc"), 1)
 
+    def test_feedback_appends_and_close_refuses_empty(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        self.assertEqual(len(tickets.TYPES), 11)
+        hire = tickets.open_ticket(
+            type="systems",
+            title="kernel door",
+            reporter="Mortimer",
+            desk="wernher",
+            fingerprint="feedback-return",
+        )
+        with self.assertRaises(tickets.TicketError) as ctx:
+            tickets.close_ticket(hire["id"], who="wernher")
+        self.assertIn("empty findings", str(ctx.exception))
+        with self.assertRaises(tickets.TicketError) as empty_claim:
+            tickets.add_feedback(hire["id"], claim="", who="wernher")
+        self.assertIn("claim required", str(empty_claim.exception))
+        with self.assertRaises(tickets.TicketError) as real_no_ev:
+            tickets.add_feedback(
+                hire["id"],
+                claim="confirm leftover",
+                real=True,
+                who="wernher",
+            )
+        self.assertIn("--real requires --evidence", str(real_no_ev.exception))
+        own = tickets.add_feedback(
+            hire["id"],
+            claim="I could write fewer tests",
+            who="wernher",
+        )
+        rows = tickets.finding_rows(own)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["claim"], "I could write fewer tests")
+        self.assertEqual(rows[0]["owner"], "none")
+        self.assertEqual(rows[0]["evidence"], "")
+        self.assertFalse(rows[0]["real"])
+        self.assertEqual(rows[0]["who"], "wernher")
+        self.assertNotIn("good", rows[0])
+        self.assertNotIn("self", rows[0])
+        self.assertNotIn("them", rows[0])
+        req = tickets.add_feedback(
+            hire["id"],
+            claim="leftover abort should live in physics_warp",
+            evidence="hop.py:892",
+            owner="lars leftover abort",
+            who="wernher",
+        )
+        self.assertEqual(len(tickets.finding_rows(req)), 2)
+        last = tickets.last_feedback(req)
+        assert last is not None
+        self.assertEqual(last["owner"], "lars")
+        self.assertEqual(tickets.them_desk(str(last.get("owner") or "")), "lars")
+        ops_rows = [t for t in tickets.list_tickets() if t.get("type") == "ops"]
+        self.assertEqual(ops_rows, [])
+        with self.assertRaises(SystemExit):
+            tickets.cmd_tickets(
+                [
+                    "feedback",
+                    hire["id"],
+                    "--good",
+                    "CLI append",
+                    "--self",
+                    "close after three rows",
+                    "--them",
+                    "none",
+                    "--who",
+                    "wernher",
+                ]
+            )
+        buf = StringIO()
+        with redirect_stdout(buf):
+            rc = tickets.cmd_tickets(
+                [
+                    "feedback",
+                    hire["id"],
+                    "--claim",
+                    "CLI append",
+                    "--who",
+                    "wernher",
+                ]
+            )
+        self.assertEqual(rc, 0)
+        self.assertIn("feedback", buf.getvalue())
+        stored = tickets.show_ticket(hire["id"])
+        claims = [r["claim"] for r in tickets.finding_rows(stored)]
+        self.assertIn("CLI append", claims)
+        skim = tickets.format_packet(hire["id"], deep=False)
+        self.assertIn("finding:", skim)
+        self.assertIn("CLI append", skim)
+        self.assertIn("I could write fewer tests", skim)
+        self.assertIn(f'tickets feedback {hire["id"]} --claim "…"', skim)
+        self.assertNotIn("good=", skim)
+        nag = tickets.inbox_for("wernher", feedback=True)
+        self.assertFalse(any(r["id"] == hire["id"] for r in nag))
+        addressed = tickets.inbox_for("lars", feedback=True)
+        self.assertEqual([r["id"] for r in addressed], [hire["id"]])
+        tickets.add_feedback(
+            hire["id"],
+            claim="keep flying",
+            owner="none",
+            who="wernher",
+        )
+        addressed = tickets.inbox_for("lars", feedback=True)
+        self.assertEqual([r["id"] for r in addressed], [hire["id"]])
+        buf2 = StringIO()
+        with redirect_stdout(buf2):
+            rc2 = tickets.cmd_tickets(
+                ["close", hire["id"], "--why", "kernel door", "--who", "wernher"]
+            )
+        self.assertEqual(rc2, 0)
+        self.assertIn("done", buf2.getvalue())
+
+    def test_legacy_trio_reads_as_finding(self):
+        hire = tickets.open_ticket(
+            type="systems",
+            title="legacy door",
+            reporter="Mortimer",
+            desk="wernher",
+            fingerprint="feedback-return",
+        )
+        tickets.patch_ticket(
+            hire["id"],
+            {
+                "payload": {
+                    "feedback": [
+                        {
+                            "who": "mortimer",
+                            "good": "packet skim",
+                            "self": "T-375 restored Return keys",
+                            "them": "wernher land tickets feedback",
+                            "at": "2026-08-24T00:00:00Z",
+                        }
+                    ]
+                }
+            },
+            who="hank",
+        )
+        rows = tickets.finding_rows(tickets.show_ticket(hire["id"]))
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["claim"], "T-375 restored Return keys")
+        self.assertEqual(rows[0]["owner"], "wernher")
+        self.assertEqual(rows[0]["evidence"], "")
+        self.assertFalse(rows[0]["real"])
+        self.assertEqual(rows[0]["who"], "mortimer")
+
+    def test_close_harvests_why_when_findings_empty(self):
+        hire = tickets.open_ticket(
+            type="control",
+            title="lid ifs",
+            reporter="Lars",
+            desk="lars",
+            fingerprint="flyinghigh-lid",
+        )
+        closed = tickets.close_ticket(
+            hire["id"], why="kernel door from close_why", who="lars"
+        )
+        self.assertEqual(closed["status"], "done")
+        self.assertEqual(closed.get("close_why"), "kernel door from close_why")
+        rows = tickets.finding_rows(closed)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["claim"], "kernel door from close_why")
+        self.assertEqual(rows[0]["who"], "lars")
+
+    def test_feedback_real_needs_evidence_via_cli(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        hire = tickets.open_ticket(
+            type="systems",
+            title="confirm leftover",
+            reporter="Wernher",
+            desk="wernher",
+            fingerprint="control-blocks",
+        )
+        rc_bad = tickets.cmd_tickets(
+            [
+                "feedback",
+                hire["id"],
+                "--claim",
+                "confirm leftover_wreck still hop.py:892",
+                "--who",
+                "wernher",
+                "--real",
+            ]
+        )
+        self.assertEqual(rc_bad, 1)
+        self.assertEqual(tickets.finding_rows(tickets.show_ticket(hire["id"])), [])
+        buf = StringIO()
+        with redirect_stdout(buf):
+            rc = tickets.cmd_tickets(
+                [
+                    "feedback",
+                    hire["id"],
+                    "--claim",
+                    "confirm leftover_wreck still hop.py:892",
+                    "--evidence",
+                    "hop.py:892",
+                    "--who",
+                    "wernher",
+                    "--real",
+                ]
+            )
+        self.assertEqual(rc, 0)
+        last = tickets.last_feedback(tickets.show_ticket(hire["id"]))
+        assert last is not None
+        self.assertTrue(last["real"])
+        self.assertEqual(last["evidence"], "hop.py:892")
+        skim = tickets.format_packet(hire["id"], deep=False)
+        self.assertIn(" real", skim)
+
+    def test_inbox_feedback_nags_owned_missing(self):
+        t = tickets.open_ticket(
+            type="systems",
+            title="extract blocks",
+            reporter="Mortimer",
+            desk="wernher",
+            fingerprint="control-blocks",
+        )
+        rows = tickets.inbox_for("wernher", feedback=True)
+        self.assertEqual([r["id"] for r in rows], [t["id"]])
+        text = tickets.format_inbox("wernher", feedback=True)
+        self.assertIn("inbox wernher feedback:", text)
+        self.assertIn(t["id"], text)
+
 
 class TestOpsNext(unittest.TestCase):
     def setUp(self):
@@ -1123,6 +1348,18 @@ class TestLiveDocsInventory(unittest.TestCase):
         self.assertFalse(Path("docs/program/improve/README.md").is_file())
         self.assertFalse(Path("docs/crew/niche/gene.md").is_file())
 
+    def test_live_trio_rows_read_as_findings(self):
+        self.assertEqual(len(tickets.TYPES), 11)
+        for tid in ("T-375", "T-378", "T-379"):
+            t = tickets.show_ticket(tid)
+            rows = tickets.finding_rows(t)
+            self.assertTrue(rows, tid)
+            for row in rows:
+                self.assertTrue(row.get("claim"), tid)
+                self.assertIn(row.get("owner"), set(tickets.DESKS) | {"none"})
+                self.assertFalse(row.get("real"))
+                self.assertEqual(row.get("evidence"), "")
+
     def test_twins_on_live_board(self):
         from docs_inventory import if_tokens, twin_title_hits
 
@@ -1280,14 +1517,22 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         skim = tickets.format_packet(t["id"], deep=False)
         self.assertIn("learn:", skim)
         self.assertIn("rec=yes", skim)
+        harvested = tickets.finding_rows(cur)
+        self.assertEqual(len(harvested), 1)
+        self.assertEqual(harvested[0]["who"], "hank")
+        self.assertEqual(harvested[0]["claim"], learn)
+        self.assertEqual(harvested[0]["evidence"], str(path))
+        self.assertIn(f'tickets feedback {t["id"]} --claim "…"', skim)
         with patch("tape.envelope", return_value=env):
             tickets.attach_run(t["id"], path, who="hank")
         self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 1)
+        self.assertEqual(len(tickets.finding_rows(tickets.show_ticket(t["id"]))), 1)
         path2 = Path(tempfile.mkdtemp()) / "b.jsonl"
         path2.write_text("{}\n", encoding="utf-8")
         with patch("tape.envelope", return_value=env):
             tickets.attach_run(t["id"], path2, who="hank")
         self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 2)
+        self.assertEqual(len(tickets.finding_rows(tickets.show_ticket(t["id"]))), 1)
         wreck = {
             **env,
             "landing": "catastrophic",
@@ -1307,6 +1552,284 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 2)
         rsi = [x for x in tickets.list_tickets() if x.get("type") == "rsi"]
         self.assertEqual(rsi, [])
+        waste = (tickets.show_ticket(t["id"]).get("payload") or {}).get("waste")
+        self.assertIsInstance(waste, dict)
+        self.assertIn("bind", waste)
+        wreck_pl = tickets.show_ticket(fly2["id"]).get("payload") or {}
+        self.assertNotIn("waste", wreck_pl)
+        self.assertFalse(tickets.waste_blocks_refly(tickets.show_ticket(fly2["id"])))
+
+    def test_waste_blocks_refly_until_bind_or_hang_changes(self):
+        forest = tickets.open_ticket(
+            type="science",
+            title="Forest landed thermo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "SrfLanded@Forest",
+                "biome": "Forest",
+                "bound": "yes",
+                "craft": "kspstuff-hop-valiant-proc-stiff-pbc",
+            },
+        )
+        landing = {
+            "landing": "soft",
+            "sit": "landed",
+            "biome": "Shores",
+            "recoverable": True,
+            "sci_run": 0,
+            "sci_bank": 8.77,
+        }
+        snap = tickets.bind_snapshot(craft="kspstuff-hop-valiant-proc-stiff-pbc")
+        fly = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+                "landing": landing,
+                "waste": snap,
+            },
+        )
+        tickets.patch_ticket(fly["id"], {"go": "yes", "status": "ready"}, who="gene")
+        cur = tickets.show_ticket(fly["id"])
+        self.assertTrue(
+            tickets.waste_blocks_refly(
+                cur, craft="kspstuff-hop-valiant-proc-stiff-pbc"
+            )
+        )
+        self.assertFalse(tickets.needs_learn(cur))
+        self.assertFalse(tickets.bind_matches_envelope(landing))
+        tickets.patch_ticket(
+            forest["id"],
+            {
+                "payload": {
+                    **(tickets.show_ticket(forest["id"]).get("payload") or {}),
+                    "situation": "SrfLanded@Shores",
+                    "biome": "Shores",
+                }
+            },
+            who="linus",
+        )
+        self.assertTrue(tickets.bind_matches_envelope(landing))
+        self.assertFalse(
+            tickets.waste_blocks_refly(
+                tickets.show_ticket(fly["id"]),
+                craft="kspstuff-hop-valiant-proc-stiff-pbc",
+            )
+        )
+
+    def test_waste_blocks_refly_hang_changed_does_not_idle(self):
+        tickets.open_ticket(
+            type="science",
+            title="Forest landed thermo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "SrfLanded@Forest",
+                "biome": "Forest",
+                "bound": "yes",
+                "craft": "old-hang",
+            },
+        )
+        landing = {
+            "sit": "landed",
+            "biome": "Shores",
+            "recoverable": True,
+            "sci_run": 0,
+        }
+        fly = {
+            "go": "yes",
+            "payload": {
+                "campaign": "uncrewed",
+                "landing": landing,
+                "waste": {
+                    "bind": [
+                        {
+                            "id": "T-001",
+                            "eid": "temperatureScan",
+                            "situation": "SrfLanded@Forest",
+                            "biome": "Forest",
+                        }
+                    ],
+                    "craft": "old-hang",
+                },
+            },
+        }
+        self.assertTrue(tickets.waste_blocks_refly(fly, craft="old-hang"))
+        self.assertFalse(tickets.waste_blocks_refly(fly, craft="new-hang"))
+        run1 = {**landing, "sci_run": 1}
+        fly_run = {"payload": {"campaign": "uncrewed", "landing": run1, "waste": fly["payload"]["waste"]}}
+        self.assertFalse(tickets.waste_blocks_refly(fly_run, craft="old-hang"))
+        self.assertFalse(tickets.needs_learn(fly_run))
+
+    def test_waste_blocks_refly_wreck_rec_no_does_not_block(self):
+        tickets.open_ticket(
+            type="science",
+            title="FlyingHigh goo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "mysteryGoo",
+                "situation": "FlyingHigh",
+                "biome": "global",
+                "bound": "yes",
+                "craft": "t7-chute-pbc",
+            },
+        )
+        wreck = {
+            "landing": "catastrophic",
+            "sit": "landed",
+            "biome": "Shores",
+            "apo_max": 917,
+            "recoverable": False,
+            "sci_run": 0,
+            "sci_bank": 9.47,
+        }
+        living = {**wreck, "recoverable": True, "landing": "soft", "sit": "flying"}
+        snap = tickets.bind_snapshot(craft="t7-chute-pbc")
+        self.assertFalse(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": wreck, "waste": snap}},
+                craft="t7-chute-pbc",
+            )
+        )
+        self.assertTrue(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": living, "waste": snap}},
+                craft="t7-chute-pbc",
+            )
+        )
+
+    def test_waste_blocks_refly_flyinghigh_short_hop_cannot_pay(self):
+        tickets.open_ticket(
+            type="science",
+            title="FlyingHigh goo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "mysteryGoo",
+                "situation": "FlyingHigh",
+                "biome": "global",
+                "bound": "yes",
+                "craft": "t7-chute-pbc",
+            },
+        )
+        landing = {
+            "landing": "catastrophic",
+            "sit": "flying",
+            "biome": "Shores",
+            "apo_max": 2574,
+            "recoverable": False,
+            "sci_run": 0,
+            "sci_bank": 9.47,
+        }
+        self.assertFalse(tickets.bind_matches_envelope(landing))
+        snap = tickets.bind_snapshot(craft="t7-chute-pbc")
+        fly = {"payload": {"landing": landing, "waste": snap}}
+        self.assertFalse(tickets.waste_blocks_refly(fly, craft="t7-chute-pbc"))
+        living = {**landing, "recoverable": True, "landing": "soft"}
+        self.assertTrue(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": living, "waste": snap}},
+                craft="t7-chute-pbc",
+            )
+        )
+        high = {**landing, "apo_max": 60_000, "recoverable": True}
+        self.assertTrue(tickets.bind_matches_envelope(high))
+        self.assertFalse(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": high, "waste": snap}},
+                craft="t7-chute-pbc",
+            )
+        )
+        run1 = {**landing, "sci_run": 1}
+        self.assertFalse(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": run1, "waste": snap}},
+                craft="t7-chute-pbc",
+            )
+        )
+
+    def test_bind_matches_envelope_flyinglow_pays_short_hop(self):
+        tickets.open_ticket(
+            type="science",
+            title="FlyingLow Shores thermo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "FlyingLow@Shores",
+                "biome": "Shores",
+                "bound": "yes",
+            },
+        )
+        landing = {
+            "sit": "flying",
+            "biome": "Shores",
+            "apo_max": 2574,
+            "recoverable": False,
+            "sci_run": 0,
+        }
+        self.assertTrue(tickets.bind_matches_envelope(landing))
+        self.assertFalse(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": landing, "waste": tickets.bind_snapshot()}},
+                craft="",
+            )
+        )
+
+    def test_ops_fly_gate_waste_mismatch_wait(self):
+        tickets.open_ticket(
+            type="science",
+            title="Forest landed thermo",
+            reporter="Linus",
+            payload={
+                "experiment_id": "temperatureScan",
+                "situation": "SrfLanded@Forest",
+                "biome": "Forest",
+                "bound": "yes",
+                "craft": "kspstuff-hop-valiant-proc-stiff-pbc",
+            },
+        )
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+                "landing": {
+                    "recoverable": True,
+                    "sci_run": 0,
+                    "sit": "landed",
+                    "biome": "Shores",
+                },
+                "waste": tickets.bind_snapshot(
+                    craft="kspstuff-hop-valiant-proc-stiff-pbc"
+                ),
+            },
+        )
+        tickets.patch_ticket(
+            t["id"], {"go": "yes", "status": "ready"}, who="gene"
+        )
+        g = ops.fly_gate(
+            desk={
+                "hangar": "none",
+                "craft": "kspstuff-hop-valiant-proc-stiff-pbc",
+            },
+            locked=False,
+        )
+        self.assertEqual(g["fly"], "wait")
+        self.assertIn("sci-unchanged-recovered", g["reason"])
+        self.assertFalse(tickets.needs_learn(tickets.show_ticket(t["id"])))
+        g2 = ops.fly_gate(
+            desk={"hangar": "none", "craft": "new-hang"},
+            locked=False,
+        )
+        self.assertEqual(g2["fly"], "yes")
 
 
 class TestReviewLearn(unittest.TestCase):

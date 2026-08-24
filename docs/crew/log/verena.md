@@ -1,5 +1,7 @@
 # Verena Grokman — log
 
+- 2026-08-24 — T-397 stability paid: first-space + README now **18.19→0.19**; tree includes stability; next generalRocketry 20. Named load `rd-stability`. Did not clobber first-mystery-goo.
+- 2026-08-24 — T-397 first space: `first-space` from 13-31 88.8 km +0 / Forest silk / silk-while-burn / t7 apo **~275 km** 18-34 splash + 20-16 Goo+Geiger. Bank **18.19 sci**. Still `first-flying-high` (parent). README hero Cape empty. Not orbit. Did not clobber first-mystery-goo.
 - 2026-08-23 — README org: hop pid writes kRPC (not Jeb); uncrewed Hank starts cli; Jeb abort officer; RSI fingerprint on open (Wernher/Mortimer, not Hank); T-NNN is a ticket; dropped parked *-review.md hrefs. Stills and history kept. Did not clobber first-mystery-goo.
 - 2026-08-23 — README rebuild: no banner; forest-silk-hero; hook without Os/Verena/orbit punchline; history under What this is; mermaid in The room; centered captions with run links; Earth scale table. Did not clobber first-mystery-goo.
 - 2026-08-23 — README banner v3: adult Cape/Stayputnik still (cartoon killed). Type **GROK SPACE PROGRAM** + FAIL·LEARN·PATCH·FLY AGAIN. Imagine + exact type. Did not clobber first-mystery-goo.

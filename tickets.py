@@ -151,6 +151,8 @@ _FP_ABORT = 80
 _LAST_RSI_ID = ""
 _FP_REQUIRED = frozenset({"control", "systems"})
 SCI_UNCHANGED_FP = "sci-unchanged-recovered"
+# RSS Earth FlyingLow / FlyingHigh split. Disk envelope law — not hop.py.
+FLYING_HIGH_LID_M = 50_000.0
 # Timestamp-prefixed / hop-<digits> novels do not count toward ×3.
 _FP_NOVEL_RE = re.compile(
     r"^(?:\d{4}-\d{2}-\d{2}(?:t\d{2}-\d{2}-\d{2}z?)?|\d{2}-\d{2}-\d{2}z?|hop-\d+)"
@@ -505,6 +507,23 @@ def format_packet(tid: str, *, deep: bool = False) -> str:
     learn = payload.get("learn") or payload.get("learned") or t.get("learn")
     if learn:
         lines.append(f"learn: {learn}")
+    findings = finding_rows(t)[:8]
+    for row in findings:
+        owner = row.get("owner") or "none"
+        line = (
+            "finding: "
+            f"who={row.get('who') or ''} "
+            f"owner={owner} "
+            f"claim={row.get('claim') or ''}"
+        )
+        ev = row.get("evidence") or ""
+        if ev:
+            shown = "telem_run" if str(ev).endswith(".jsonl") else ev
+            line += f" evidence={shown}"
+        if row.get("real"):
+            line += " real"
+        lines.append(line)
+    lines.append(f'tickets feedback {tid} --claim "…"')
     return "\n".join(lines) + "\n"
 
 
@@ -540,6 +559,141 @@ def from_need(
         fingerprint=key.replace("need_", ""),
         rsi_loop="ops",
     )
+
+
+_THEM_EMPTY = frozenset({"", "none", "-", "n/a", "na", "nobody"})
+
+
+def them_desk(them: str) -> str:
+    """First token if it is a desk slug. ``none`` is empty."""
+    return _finding_owner(them)
+
+
+def _finding_owner(owner: str) -> str:
+    """Desk slug, or empty for none."""
+    raw = (owner or "").strip()
+    if not raw:
+        return ""
+    first = raw.split()[0].strip().lower().rstrip(":,.")
+    if first in _THEM_EMPTY:
+        return ""
+    if first in DESKS:
+        return first
+    return ""
+
+
+def _as_finding(row: dict[str, Any]) -> dict[str, Any] | None:
+    """Normalize a stored row. Legacy {good,self,them} becomes a finding."""
+    claim = str(row.get("claim") or "").strip()
+    if not claim:
+        claim = str(row.get("self") or "").strip() or str(row.get("good") or "").strip()
+    if not claim:
+        return None
+    evidence = str(row.get("evidence") or "").strip()
+    owner = _finding_owner(str(row.get("owner") or row.get("them") or ""))
+    real = bool(row.get("real")) if row.get("real") is not None else False
+    if real and not evidence:
+        real = False
+    return {
+        "who": str(row.get("who") or "hank").strip() or "hank",
+        "claim": claim,
+        "evidence": evidence,
+        "owner": owner or "none",
+        "real": real,
+        "at": str(row.get("at") or ""),
+    }
+
+
+def _raw_finding_lists(t: dict[str, Any] | None) -> list[dict[str, Any]]:
+    if not t:
+        return []
+    pl = t.get("payload") or {}
+    blobs: list[Any] = []
+    for key in ("findings", "feedback"):
+        raw = pl.get(key)
+        if isinstance(raw, list):
+            blobs.extend(raw)
+        elif isinstance(raw, dict):
+            blobs.append(raw)
+    return [row for row in blobs if isinstance(row, dict)]
+
+
+def finding_rows(t: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """payload.findings plus legacy payload.feedback as {who,claim,evidence,owner,real,at}."""
+    out: list[dict[str, Any]] = []
+    for row in _raw_finding_lists(t):
+        found = _as_finding(row)
+        if found:
+            out.append(found)
+    return out
+
+
+def feedback_rows(t: dict[str, Any] | None) -> list[dict[str, Any]]:
+    """Alias: findings (legacy trio rows included)."""
+    return finding_rows(t)
+
+
+def last_feedback(t: dict[str, Any] | None) -> dict[str, Any] | None:
+    rows = finding_rows(t)
+    return rows[-1] if rows else None
+
+
+def add_feedback(
+    tid: str,
+    *,
+    claim: str,
+    evidence: str = "",
+    owner: str = "",
+    who: str = "hank",
+    real: bool = False,
+) -> dict[str, Any]:
+    """Append one finding on the work ticket. Not a child ticket."""
+    c = (claim or "").strip()
+    if not c:
+        raise TicketError("feedback claim required")
+    ev = (evidence or "").strip()
+    if real and not ev:
+        raise TicketError("feedback --real requires --evidence")
+    stored_owner = _finding_owner(owner) or "none"
+    cur = show_ticket(tid)
+    payload = dict(cur.get("payload") or {})
+    raw = payload.get("findings")
+    rows: list[Any]
+    if isinstance(raw, list):
+        rows = list(raw)
+    elif isinstance(raw, dict):
+        rows = [raw]
+    else:
+        rows = []
+    rows.append(
+        {
+            "who": (who or "hank").strip() or "hank",
+            "claim": c,
+            "evidence": ev,
+            "owner": stored_owner,
+            "real": bool(real) and bool(ev),
+            "at": _now(),
+        }
+    )
+    payload["findings"] = rows
+    return patch_ticket(tid, {"payload": payload}, who=who)
+
+
+def close_ticket(tid: str, *, why: str = "", who: str = "hank") -> dict[str, Any]:
+    """Harvest nonempty close_why as a finding when empty; refuse if both empty."""
+    cur = show_ticket(tid)
+    why_s = (why or "").strip()
+    if not finding_rows(cur):
+        if not why_s:
+            raise TicketError(
+                f"{tid} close refused: empty findings "
+                f"(tickets feedback {tid} --claim …)"
+            )
+        add_feedback(tid, claim=why_s, who=who)
+    fields: dict[str, Any] = {"status": "done"}
+    if why_s:
+        fields["close_why"] = why_s
+    return patch_ticket(tid, fields, who=who)
 
 
 def _write_board_md(tickets: dict[str, dict[str, Any]]) -> None:
@@ -927,11 +1081,9 @@ def format_learn_line(row: dict[str, Any] | None) -> str:
     )
 
 
-def _sci_unchanged_waste(landing: dict[str, Any] | None) -> bool:
-    """Living recover + sci_run=0. Unknown run does not count."""
+def _sci_run_zero(landing: dict[str, Any] | None) -> bool:
+    """sci_run=0. Unknown run does not count."""
     if not isinstance(landing, dict):
-        return False
-    if landing.get("recoverable") is not True:
         return False
     run = landing.get("sci_run")
     if run is None:
@@ -940,6 +1092,206 @@ def _sci_unchanged_waste(landing: dict[str, Any] | None) -> bool:
         return int(run) == 0
     except (TypeError, ValueError):
         return not bool(run)
+
+
+def _sci_unchanged_waste(landing: dict[str, Any] | None) -> bool:
+    """Living recover + sci_run=0. Unknown run does not count."""
+    if not isinstance(landing, dict):
+        return False
+    if landing.get("recoverable") is not True:
+        return False
+    return _sci_run_zero(landing)
+
+
+def _envelope_apo(landing: dict[str, Any] | None) -> float | None:
+    if not isinstance(landing, dict):
+        return None
+    for key in ("apo_max", "apo"):
+        raw = landing.get(key)
+        if raw is None:
+            continue
+        try:
+            return float(raw)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+sci_unchanged_waste = _sci_unchanged_waste
+
+
+def _norm_sit_key(text: str) -> str:
+    return (text or "").strip().lower().replace(" ", "").replace("_", "")
+
+
+def _payload_sit_biome(pl: dict[str, Any]) -> tuple[str, str]:
+    sit = str(pl.get("situation") or "").strip()
+    biome = str(pl.get("biome") or "").strip()
+    if not biome and "@" in sit:
+        biome = sit.split("@", 1)[1].strip()
+    return sit, biome
+
+
+def _sit_biome_match(
+    live_sit: str,
+    live_biome: str,
+    need_sit: str,
+    need_biome: str,
+    *,
+    apo: float | None = None,
+) -> bool:
+    """Bound sit/biome/apo vs envelope. FlyingHigh is ≥50 km, not any flying."""
+    need = _norm_sit_key(need_sit)
+    live = _norm_sit_key(live_sit)
+    bio_need = (need_biome or "").strip().lower()
+    if not bio_need and "@" in (need_sit or ""):
+        bio_need = need_sit.split("@", 1)[1].strip().lower()
+    if bio_need in {"global", "none", "any"}:
+        bio_need = ""
+    bio_live = (live_biome or "").strip().lower()
+    if (
+        bio_need
+        and bio_live
+        and bio_need not in bio_live
+        and bio_live not in bio_need
+    ):
+        return False
+    if not need:
+        return True
+    if "flyinghigh" in need:
+        if "flying" not in live:
+            return False
+        return apo is not None and apo >= FLYING_HIGH_LID_M
+    if "flying" in need:
+        return "flying" in live
+    if "splash" in need:
+        return "splash" in live
+    if "landed" in need or "srfland" in need:
+        return "landed" in live
+    return True
+
+
+def _bound_science_rows() -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    try:
+        tickets = list_tickets(open_only=True)
+    except Exception:
+        return rows
+    for t in tickets:
+        if t.get("type") != "science" and t.get("category") != "science_opportunity":
+            continue
+        if science_is_catalog(t):
+            continue
+        pl = t.get("payload") or {}
+        if not isinstance(pl, dict):
+            continue
+        eid = str(pl.get("experiment_id") or pl.get("eid") or "").strip()
+        if not eid:
+            continue
+        sit, biome = _payload_sit_biome(pl)
+        rows.append(
+            {
+                "id": str(t.get("id") or ""),
+                "eid": eid,
+                "situation": sit,
+                "biome": biome,
+                "craft": str(pl.get("craft") or "").strip(),
+            }
+        )
+    rows.sort(key=lambda r: (r.get("id") or "", r.get("eid") or ""))
+    return rows
+
+
+def bind_snapshot(*, craft: str = "") -> dict[str, Any]:
+    """Open bound science (eid/sit/biome) plus hang craft. attach_run waste latch."""
+    rows = _bound_science_rows()
+    crafts = [r["craft"] for r in rows if r.get("craft")]
+    bind = [
+        {
+            "id": r["id"],
+            "eid": r["eid"],
+            "situation": r["situation"],
+            "biome": r["biome"],
+        }
+        for r in rows
+    ]
+    return {"bind": bind, "craft": craft or (crafts[0] if crafts else "")}
+
+
+def _bind_key(snap: dict[str, Any] | None) -> tuple[tuple[str, str, str, str], ...]:
+    if not isinstance(snap, dict):
+        return ()
+    out: list[tuple[str, str, str, str]] = []
+    for raw in snap.get("bind") or []:
+        if not isinstance(raw, dict):
+            continue
+        out.append(
+            (
+                str(raw.get("id") or ""),
+                str(raw.get("eid") or ""),
+                str(raw.get("situation") or ""),
+                str(raw.get("biome") or ""),
+            )
+        )
+    return tuple(out)
+
+
+def bind_matches_envelope(landing: dict[str, Any] | None) -> bool:
+    """True if a bound ticket sit/biome/apo can pay the last envelope."""
+    if not isinstance(landing, dict) or not landing:
+        return False
+    live_sit = str(landing.get("sit") or "").strip()
+    live_biome = str(landing.get("biome") or "").strip()
+    if not live_sit and not live_biome:
+        return False
+    apo = _envelope_apo(landing)
+    for row in _bound_science_rows():
+        need_sit = str(row.get("situation") or "")
+        need_biome = str(row.get("biome") or "")
+        if not need_sit and not need_biome:
+            continue
+        if _sit_biome_match(
+            live_sit, live_biome, need_sit, need_biome, apo=apo
+        ):
+            return True
+    return False
+
+
+def hang_or_bind_changed(snap: Any, *, craft: str = "") -> bool:
+    """Linus rebound or Gus hang changed since the waste latch. Missing snap is not changed."""
+    if not isinstance(snap, dict) or not snap:
+        return False
+    now = bind_snapshot(craft=craft)
+    if _bind_key(now) != _bind_key(snap):
+        return True
+    prev = str(snap.get("craft") or "").strip()
+    cur = str(craft or now.get("craft") or "").strip()
+    return bool(prev and cur and prev != cur)
+
+
+def waste_blocks_refly(
+    ticket: dict[str, Any] | None,
+    *,
+    craft: str = "",
+) -> bool:
+    """Living +0 is not clean-0 until bind can pay envelope or hang/bind changed.
+
+    Wreck rec=no is a miss — re-fly last cli. Not this latch.
+    """
+    if not ticket:
+        return False
+    pl = ticket.get("payload") or {}
+    if not isinstance(pl, dict):
+        return False
+    landing = pl.get("landing")
+    env = landing if isinstance(landing, dict) else None
+    if not _sci_unchanged_waste(env):
+        return False
+    if bind_matches_envelope(env):
+        return False
+    if hang_or_bind_changed(pl.get("waste"), craft=craft):
+        return False
+    return True
 
 
 def bump_fingerprint(
@@ -987,6 +1339,10 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
         pass
     tags = list(cur.get("tags") or [])
     landing = payload.get("landing") or {}
+    if cur.get("type") == "fly" and _sci_unchanged_waste(
+        landing if isinstance(landing, dict) else None
+    ):
+        payload["waste"] = bind_snapshot()
     kind = str(landing.get("landing") or "")
     if kind:
         tags = _norm_tags(tags + [kind, "landing"])
@@ -998,6 +1354,9 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
     learn = format_learn_line(landing if isinstance(landing, dict) else None)
     if learn:
         t = stamp_learn(tid, learn, who="hank")
+    t = show_ticket(tid)
+    if learn and not finding_rows(t):
+        t = add_feedback(tid, claim=learn, evidence=p, who="hank")
     fresh_run = p != prev_run and p not in prev_evs
     if fresh_run and cur.get("type") == "fly" and _sci_unchanged_waste(
         landing if isinstance(landing, dict) else None
@@ -1007,15 +1366,26 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
     return t
 
 
-def inbox_for(desk: str) -> list[dict[str, Any]]:
-    """Own desk plus ``ops --tag ask`` addressed with ``payload.to``."""
+def inbox_for(desk: str, *, feedback: bool = False) -> list[dict[str, Any]]:
+    """Own desk plus ``ops --tag ask`` addressed with ``payload.to``.
+
+    ``feedback=True``: any finding ``owner=desk`` plus owned tickets with
+    zero findings.
+    """
     want = (desk or "").strip().lower()
     out: list[dict[str, Any]] = []
     seen: set[str] = set()
     for t in list_tickets(open_only=True):
         pl = t.get("payload") or {}
         to = str(pl.get("to") or "").strip().lower()
-        if t.get("desk") != want and to != want:
+        if feedback:
+            owned = t.get("desk") == want
+            rows = finding_rows(t)
+            missing = owned and not rows
+            owners = {_finding_owner(str(row.get("owner") or "")) for row in rows}
+            if not missing and want not in owners:
+                continue
+        elif t.get("desk") != want and to != want:
             continue
         if t["id"] in seen:
             continue
@@ -1025,11 +1395,12 @@ def inbox_for(desk: str) -> list[dict[str, Any]]:
     return out
 
 
-def format_inbox(desk: str) -> str:
-    rows = inbox_for(desk)
+def format_inbox(desk: str, *, feedback: bool = False) -> str:
+    rows = inbox_for(desk, feedback=feedback)
+    label = f"inbox {desk}" + (" feedback" if feedback else "")
     if not rows:
-        return f"inbox {desk}: none\n"
-    lines = [f"inbox {desk}: {len(rows)}"]
+        return f"{label}: none\n"
+    lines = [f"{label}: {len(rows)}"]
     for t in rows:
         cat = t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")
         tags = ",".join(t.get("tags") or []) or "-"
@@ -1338,12 +1709,24 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     fn.add_argument("--reporter", default="Gene Grokman, Flight Director")
     fn.add_argument("--severity", default="S2", choices=SEVERITY)
     fn.add_argument("--priority", default="P1", choices=PRIORITY)
+    fb = sub.add_parser("feedback")
+    fb.add_argument("id")
+    fb.add_argument("--claim", required=True)
+    fb.add_argument("--evidence", default="")
+    fb.add_argument("--owner", default="")
+    fb.add_argument("--who", default="hank")
+    fb.add_argument("--real", action="store_true")
     tg = sub.add_parser("tag")
     tg.add_argument("id")
     tg.add_argument("--add", action="append", default=[], dest="tags")
     tg.add_argument("--who", default="hank")
     ib = sub.add_parser("inbox")
     ib.add_argument("--desk", required=True, choices=DESKS)
+    ib.add_argument(
+        "--feedback",
+        action="store_true",
+        help="owner=<desk> plus owned tickets with zero findings",
+    )
     ld = sub.add_parser("landing")
     ld.add_argument("target", help="ticket id or jsonl path")
     ar = sub.add_parser("attach-run")
@@ -1394,10 +1777,7 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
             print(t["id"], t["desk"], t["status"])
             return 0
         if args.act == "close":
-            fields: dict[str, Any] = {"status": "done"}
-            if args.why:
-                fields["close_why"] = args.why
-            t = patch_ticket(args.id, fields, who=args.who)
+            t = close_ticket(args.id, why=args.why, who=args.who)
             print(t["id"], t["status"])
             return 0
         if args.act == "evidence":
@@ -1429,12 +1809,27 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
             )
             print(t["id"], t["type"], t["desk"])
             return 0
+        if args.act == "feedback":
+            t = add_feedback(
+                args.id,
+                claim=args.claim,
+                evidence=args.evidence,
+                owner=args.owner,
+                who=args.who,
+                real=bool(args.real),
+            )
+            last = last_feedback(t) or {}
+            print(t["id"], "feedback", last.get("owner") or "none")
+            return 0
         if args.act == "tag":
             t = add_tags(args.id, list(args.tags or []), who=args.who)
             print(t["id"], "tags", ",".join(t.get("tags") or []))
             return 0
         if args.act == "inbox":
-            print(format_inbox(args.desk), end="")
+            print(
+                format_inbox(args.desk, feedback=bool(args.feedback)),
+                end="",
+            )
             return 0
         if args.act == "landing":
             target = args.target

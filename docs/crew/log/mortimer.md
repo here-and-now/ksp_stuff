@@ -1,5 +1,16 @@
 # Mortimer Grokman — log
 
+- 2026-08-24 — T-398 paid stability: sci 18.1882801→0.1882801. Backup persistent.sfs.bak-stability. `load rd-stability` seated Ast. XRL-564; `ksc` (F-015). Rock not recovered. Spend kept. sasModule/PresMat Available. Next CTT generalRocketry 20. Do not spend crumbs.
+- 2026-08-24 — T-383 flyinghigh-lid ×9: wait is not a sit at 800 m apo (17-50-46Z pitch 25 lithobrake 339 m). Loft live-alt ≥50 km then Toggle/cut/chute. Code T-382. Pad still flies.
+- 2026-08-24 — Practice last-write T-345/T-349/T-355/T-358/T-364: 2HOT idle rem=0 still in card; ground card sit-matches leftover; fly signed t7-chute ≥50 km; FlyingHigh is loft/cut/chute not silk/abort; do not Hangar 4t/dv5/lite. Pad still flies.
+- 2026-08-24 — Feedback door applied: `tickets feedback T-NNN --claim "…"`. Drop `--good --self --them`. Harvest close_why / one learn. Pad still flies.
+- 2026-08-24 — Feedback plan compile only (`docs/program/feedback-plan.md`). T-378 trio is the door to replace, not law. No kernel. Pad still flies.
+- 2026-08-24 — T-378 redirected: Os rejected Return-key cards. Door is `tickets feedback T-NNN --good --self --them` on the work ticket; close refuses empty. No parse_return keys, no from-feedback shim, no child ticket per hire. T-375 amended. Pad still flies.
+- 2026-08-24 — T-375/T-376/T-377: feedback door is `good:`/`self:`/`them:` (one line; from-feedback stores; ops feedback only if them≠none or self is a stem). Pulse-per-living-rocket from Wernher blocks; hop.py/hop_factory immortal factory is not the way; tests lock blocks. Systems for Wernher. Pad still flies.
+- 2026-08-24 — T-350 hold: bank 9.4718 does not pay `stability` 18 (ScienceGain×1; remaining ~8.53). ~9.23 was leftover-to-18 at bank 8.77, not the cost. No fake unlock. Pad still flies.
+- 2026-08-24 — T-337: sci-unchanged-recovered ×3. Living +0 is not clean-0 re-fly; envelope sit/biome must match bound tickets. 08-44 Shores land / 10-57 Forest splash. Splash now T-313/T-288. Systems protocol-fly gate. T-339 chute separate. Pad still flies.
+- 2026-08-24 — T-333: control-blocks. Warp is a clock on sits, not a new flight. Wernher owns physics_warp/sit/timeout blocks; Lars composes hop_factory. No `_after_skip` overfit. Never revert unless Os said so this sit. T-334 Wernher. T-332 Gus far-shear — do not Hangar 4t.
+- 2026-08-24 — T-331: science-skip-timeout ×3. Skip is not a dwell — loft/cut/chute/land leftover; timeout recover or ksc leftover; never revert. Practice last-write. Pad still flies (Lars T-330).
 - 2026-08-24 — Learn/RSI applied: `docs/program/learn-rsi.md`. Uncrewed Learn is kernel attach-run, not Gene. T-323/T-324 done. Leftover for Wernher (`payload-learn-attach`): hop-exit still who=wernher; from_need stack/builder; ops needing_go why still “batch Learn”. Pad still flies.
 - 2026-08-24 — T-324: uncrewed Learn is kernel attach-run, not Gene. Reuse stems; empty fp refused on control/systems/feedback. Practice pitfall skip-Learn. T-323 already stamped the envelope. Pad still flies.
 - 2026-08-24 — T-317: Os Ad astra. Slate/CHARTER/Practice: bigger rockets, more Δv, farther out. Bank 8.7721 not a stunt. Next CTT still stability 18 when it pays. Gus T-318 hangs. Do not re-fly +0 Forest leftover.

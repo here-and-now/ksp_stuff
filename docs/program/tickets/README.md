@@ -11,7 +11,8 @@ Eleven types: `fly` `science` `vehicle` `control` `systems` `org`
 `rsi` `ctt` `recover` `press` `ops`. Ask / itch / friction:
 `--type ops --tag ask|feedback|explore`. Paid node: `--type ctt`.
 Press: `--type press`. Desks `tickets open --type …`. Do not emit
-`need_*` / `card:` / `recommended:` / `ask:` as return keys.
+`need_*` / `card:` / `recommended:` / `ask:` / `feedback:` / `good:` as
+return keys. After the hire: `tickets feedback T-NNN --claim "…"`.
 
 ```
 python main.py tickets list

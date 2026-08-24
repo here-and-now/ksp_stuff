@@ -12,6 +12,7 @@ from desk import (
     card_experiments,
     format_sit,
     hangar_call,
+    hangar_from_live,
     latest_review,
     parse_last_flight,
     pick_banked_science,
@@ -157,6 +158,21 @@ class TestDesk(unittest.TestCase):
         self.assertEqual(hangar, "none")
         self.assertEqual(active, "none")
 
+    def test_hangar_live_empty_is_not_disk_suborbital_ghost(self):
+        hangar, active = hangar_from_live((), lock="free")
+        self.assertEqual(hangar, "none")
+        self.assertEqual(active, "none")
+
+    def test_hangar_live_recover_sub_orbital(self):
+        hangar, active = hangar_from_live(
+            (("kspstuff-hop-valiant-t7-pbc", "SUB_ORBITAL"),),
+            lock="free",
+        )
+        self.assertEqual(
+            hangar, "recover kspstuff-hop-valiant-t7-pbc sit=SUB_ORBITAL"
+        )
+        self.assertEqual(active, "kspstuff-hop-valiant-t7-pbc")
+
     def test_hangar_recover_names_save_vessel(self):
         ships = (
             SaveVessel(name="kspstuff-hop-flea-pbc", sit="FLYING", type="Ship", landed=False),
@@ -260,6 +276,8 @@ class TestDesk(unittest.TestCase):
         self.assertIn("bind: T-020 TELEMETRY 30/0.052 seq0", text)
         self.assertIn("hop_apo: 18 km", text)
         self.assertNotIn("bind:", format_sit(_sit()))
+        self.assertNotIn("pay:", format_sit(_sit()))
+        self.assertIn("pay: no", format_sit(_sit(pay="no")))
 
     def test_clip_note_one_line(self):
         self.assertEqual(_clip_note("  a \n b  "), "a b")

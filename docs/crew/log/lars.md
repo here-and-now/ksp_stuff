@@ -1,5 +1,16 @@
 # Lars Grokman — log
 
+- 2026-08-24 — T-394 far-shear: hop_factory `_high_dwell_sit` 1× after FlyingHigh lid (19-57-33Z 4× after goo/geiger dwell sheared 20→9). Skip FlyingLow may still 4×. Do not Hangar.
+- 2026-08-24 — T-392 science-skip-timeout: FlyingLow cannot-pay does not skip-latch a bound High trio (19-23-00Z 54 km Shores splash +0). `sit_matches` High is alt ≥50 km; biome global is not Shores; geiger idle rem=0 still pays. Do not Hangar.
+- 2026-08-24 — T-382 flyinghigh-lid: hop_factory `_lid_vertical_sit` holds vertical until lid alt (17-50-46Z pitch 25 at 1 km apo 782 lithobraked 339 m). Predicted apo is not the lid. Do not Hangar.
+- 2026-08-24 — T-381 silk-while-burn: hop_factory `_chute_deploy_now` Deploys after lid alt or crumb burnout (17-42-28Z Mk16 at 800 m wait-burn sheared 28→1). `deploy_chutes` Arms inside. Do not Hangar.
+- 2026-08-24 — T-380 far-shear: 4× only lofted burnout AND q ≤1 kPa (`want_coast` / `high_q_sit`). Factory `_lid_burn_sit` leftover LF before lid is still burn (17-26-04Z 4.7 kPa 28→1). Do not Hangar.
+- 2026-08-24 — T-374 flyinghigh-lid: hop_factory `_chute_arm_now` Arms after lid alt or crumb burnout (15-44-16Z silk at 2 km wait-burn). Climbing / full-tank throttle 0 is not silk. Do not Hangar.
+- 2026-08-24 — T-373 flyinghigh-lid: hop_factory `_lid_alt_reached` cuts hop_apo on altitude (15-24-17Z 2.3 km predicted-apo / first-descent cut). Warp before Arm. Crumbs still silk. Do not Hangar.
+- 2026-08-24 — T-357 flyinghigh-lid: hop_factory cuts on `chute_arm_sit`, Arms/Deploys on Wernher sits even while waiting FlyingHigh (crumbs + thr 1 is still that sit). Same inland hop as cannot-pay. Do not Hangar.
+- 2026-08-24 — T-344 forest-splashed-thermo: science.py `_DURATION_EIDS` includes `temperatureScan` (2HOT file, idle rem=0 still pays). Sample rem=0 (goo) still skips. TELEMETRY with no rem PAW still recording is not done. Do not Hangar.
+- 2026-08-24 — T-338 chute-arm-ascent: hop_factory Arms+Deploys on `chute_deploy_sit` (vz<0 below 2 km), not first airborne. RealChute whoosh is descent. Do not Hangar.
+- 2026-08-24 — T-335 control-blocks: hop_factory calls Wernher sits (`apply_sit_warp`, `airborne_cannot_pay`, `chute_deploy_sit`, `timeout_hit`, `leftover_call`). Dropped `_loft_after_skip` / `_coast_after_skip`. Same inland hop if science pays or not. Do not Hangar.
 - 2026-08-24 — T-326 closed: link-lost. hop.py `_command_ok` / `_zero_stick_if_deaf`; pad-light aborts `no signal (pad)`; after pad zero stick, do not abort lid. kRPC Control is not the radio. Do not Hangar.
 - 2026-08-23 — T-322: 22-33-35Z 50 km FlyingHigh never reached the lid (apo 1.6 km); factory aborted instead of land leftover. `_abort_high_lid` after Toggle sit; cut throttle lofted-and-down. Do not Hangar.
 - 2026-08-23 — T-314: 20-47-10Z pad boost 104 m started Shores goo then hop-down. hop_factory flying card after loft; `_pad_boosting` stays burning-not-lofted on a bounce. Do not Hangar.

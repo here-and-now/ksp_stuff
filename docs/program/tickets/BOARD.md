@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 74 / 403
+open: 75 / 404
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -21,8 +21,9 @@ open: 74 / 403
 | T-396 | systems | bug | S2 | P2 | medium | inbox | wernher |  | Close/walk-home must never rewind UT; entropy is one-way |
 | T-069 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,leftover,flyinghigh,bound | Forest FlyingHigh TELEMETRY leftover 1.51 |
 | T-368 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,goo,bound | FlyingHigh goo unstarted 5.40 wait t7+Mk16 |
-| T-369 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,geiger,f013,bound | FlyingHigh geiger unstarted 3.60 wait t7+Mk16 Geiger part |
+| T-369 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,geiger,f013,bound | FlyingHigh geiger leftover 0.85 |
 | T-399 | systems | improvement | S3 | P1 | medium | inbox | wernher |  | house_dump still prices next CTT as stability 18 |
+| T-404 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,barometer,bound | FlyingHigh barometer unstarted 2.70 |
 | T-025 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,thermo,unbound | FlyingLow@Water thermo 2.10 wait heading 090 |
 | T-026 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingLow@Water TELEMETRY 1.40 wait heading 090 |
 | T-027 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingHigh@Water TELEMETRY 1.80 wait heading 090 |

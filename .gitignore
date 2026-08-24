@@ -47,8 +47,14 @@ docs/program/sit-card.json
 # `!screenshots/<slug>.png` line here.
 screenshots/*
 !screenshots/asteroid-xrl-564.png
+!screenshots/bigger-rocket.png
+!screenshots/chute-fail-silk-burn.png
 !screenshots/chute-over-ksc-no-coordinates.png
+!screenshots/earth-is-round.png
 !screenshots/earth-limb.png
+!screenshots/even-more-girders.png
+!screenshots/farthest-flight-city.png
+!screenshots/first-space-black.png
 !screenshots/far-glide.png
 !screenshots/first-chute-deploy.png
 !screenshots/first-five-recover.png
@@ -68,3 +74,4 @@ screenshots/*
 !screenshots/success-splashdown.png
 !screenshots/suicide-plume.png
 !screenshots/the-can-that-lived.png
+!screenshots/we-are-radiating.png

@@ -4,9 +4,9 @@
 Kardashev III or bust.**
 
 <p align="center">
-  <a href="docs/press/first-space.md"><img src="screenshots/first-flying-high.png" alt="Cape empty, bank 18.2, kRPC idle"></a>
+  <a href="docs/press/first-space.md"><img src="screenshots/first-space-black.png" alt="Stayputnik, seven tanks, thin blue limb, stars"></a>
 </p>
-<p align="center"><em>Cape empty. Bank 18.2, then Mortimer paid stability. Periapsis is still a hole through the planet.</em><br>
+<p align="center"><em>Stayputnik. Seven tanks. No Mk16. A thin blue limb. Suborbital. Periapsis is still a hole through the planet.</em><br>
 <small><a href="docs/press/first-space.md">The smiles came home</a>
 · 24 Aug 2026 · Flying High · apo **~275 km** · not orbit</small></p>
 
@@ -135,10 +135,11 @@ restock, Near Future, glue) is in [the full list](docs/program/mods.md).
 Not RO. `~/Games/KSP-RO` is parked.
 
 <p align="center">
-  <img src="screenshots/earth-limb.png" alt="High ballistic limb over RSS Earth">
+  <a href="docs/press/first-space.md"><img src="screenshots/earth-is-round.png" alt="t7 over turquoise shallows, fat blue limb, stars"></a>
 </p>
-<p align="center"><em>Stars. Limb. Periapsis through the planet. Pretty enough to lie about. We have never orbited Earth.</em><br>
-<small>21 Aug 2026 · apo **98.3 km** · not orbit. 24 Aug lofted **~275 km**. Still not orbit.</small></p>
+<p align="center"><em>Earth is round. Pretty enough to lie about. Periapsis is still a hole through the planet. We have never orbited Earth.</em><br>
+<small><a href="docs/press/first-space.md">The smiles came home</a>
+· 24 Aug 2026 · same t7 · not orbit</small></p>
 
 <p align="center">
   <a href="docs/press/first-fifteen-sci.md"><img src="screenshots/far-glide.png" alt="FAR weathercock over the Florida coast"></a>
@@ -203,22 +204,24 @@ UT. Splash recover of *this* hop, after a briefed dwell, is
 mission. Chaos is the plot. Not a joke at the crew.
 
 <p align="center">
-  <a href="docs/press/forest-for-the-trees.md"><img src="screenshots/fly-towards-forest.png" alt="Inland toward Forest, heading 270"></a>
+  <a href="docs/press/first-space.md"><img src="screenshots/chute-fail-silk-burn.png" alt="Mk16 open, engine still lit, smoke over dark grass"></a>
 </p>
-<p align="center"><em>Heading 270°. Lakes. Dark grass. Forest is west. 090 is Water, and Water is dead on this hang.</em><br>
-<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a></small></p>
+<p align="center"><em>Mk16 open. Engine still lit. This is not a landing.</em><br>
+<small><a href="docs/press/first-space.md">The smiles came home</a>
+· 24 Aug 2026 · silk-while-burn</small></p>
 
 <p align="center">
-  <a href="docs/press/forest-for-the-trees.md"><img src="screenshots/girders-on-everything.png" alt="Valiant with girders on everything"></a>
+  <a href="docs/press/first-space.md"><img src="screenshots/even-more-girders.png" alt="Valiant with a porch of girders, plume, Milky Way"></a>
 </p>
-<p align="center"><em>Gus's answer to FAR shear. Batteries in a ring, girders like a porch. Because why not.</em><br>
-<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a></small></p>
+<p align="center"><em>Gus's answer to FAR shear. Girders like a space elevator. Because why not.</em><br>
+<small><a href="docs/press/first-space.md">The smiles came home</a>
+· 24 Aug 2026</small></p>
 
 <p align="center">
-  <a href="docs/press/forest-for-the-trees.md"><img src="screenshots/first-chute-deploy.png" alt="Mk16 deployed"></a>
+  <a href="docs/press/first-space.md"><img src="screenshots/farthest-flight-city.png" alt="Girder stack over night city lights"></a>
 </p>
-<p align="center"><em>Silk. Not chute-armed with nothing out. We learned that at 154 m/s.</em><br>
-<small><a href="docs/press/forest-for-the-trees.md">The forest forgave us</a></small></p>
+<p align="center"><em>Inland. City lights. Forest campaign. Not Flying High. Heading 270. 090 is Water, and Water is dead on this hang.</em><br>
+<small><a href="docs/press/first-space.md">The smiles came home</a></small></p>
 
 ## RSI, and Kardashev III
 
@@ -251,11 +254,11 @@ on a stunt. `generalRocketry` still costs **20 sci**. RSI harder
 than the shear. Escape trajectory is creed, not a circularization.
 
 <p align="center">
-  <a href="docs/press/first-fifteen-sci.md"><img src="screenshots/science-above-15.png" alt="Mission Summary, Goo Earth splashed"></a>
+  <a href="docs/press/first-space.md"><img src="screenshots/we-are-radiating.png" alt="Kerbalism Radiation Scan 3.4 of 4.0 running"></a>
 </p>
-<p align="center"><em>Mystery Goo Observation, Earth splashed, +2.4 sci. The bank moved because the can came home.</em><br>
-<small><a href="docs/press/first-fifteen-sci.md">The can lived</a>
-· 22 Aug 2026</small></p>
+<p align="center"><em>Radiation Scan 3.4 / 4.0, running. Goo 1.7 / 6.0, running. The smiles went on the HardDrive.</em><br>
+<small><a href="docs/press/first-space.md">The smiles came home</a>
+· 24 Aug 2026</small></p>
 
 ## Agent checkout
 

@@ -3,8 +3,8 @@
 Dump of **science tickets**, not dispatch. Bind is ticket payload.
 Catalog (`unbound`) is the shelf. This-hop work is **bound**.
 
-Craft `kspstuff-hop-valiant-t7-pbc`. Tree `start,engineering101,basicRocketry,survivability,stability`. Bank **0.1883**. Next CTT
-`generalRocketry` 20 → need ~**19.81**. Recover banks for hops; transmit is a radio (rate on `comms`), not the hop path. F-013:
+Craft `kspstuff-hop-valiant-t7-wheel-pbc`. Tree `start,engineering101,basicRocketry,survivability,stability`. Bank **1.4896**. Next CTT
+`stability` 18 → need ~**16.51**. Recover banks for hops; transmit is a radio (rate on `comms`), not the hop path. F-013:
 instrument part, never Stayputnik PAW as Geiger.
 
 ```bash
@@ -21,7 +21,8 @@ python main.py tickets list --type science
 |---|---|---|---|---|---|---|---|---|
 | **T-069** | `kerbalism_TELEMETRY` | FlyingHigh@Forest | Forest | `probeCoreSphere_v2` | 25 | 0.052 | 1.512 | yes |
 | **T-368** | `mysteryGoo` | FlyingHigh | global | `GooExperiment` | 641 | 0.18 | 5.4 | yes |
-| **T-369** | `geigerCounter` | FlyingHigh |  | `kerbalism-geigercounter` | 497 | 0.005 | 3.6 | yes |
+| **T-369** | `geigerCounter` | FlyingHigh |  | `kerbalism-geigercounter` | 117 | 0.005 | 0.849 | yes |
+| **T-404** | `barometerScan` | FlyingHigh |  | `sensorBarometer` | 305 | 0.05 | 2.7 | yes |
 
 ## Catalog (unbound shelf — not `ops next` / not hop bind)
 
@@ -77,4 +78,4 @@ python main.py tickets list --type science
 | **T-303** | `` | FlyingHigh@Taiga | Taiga | `probeCoreOcto_v2` | 30 | 0.052 | 1.8 | yes |
 | **T-316** | `geigerCounter` | FlyingLow |  | `kerbalism-geigercounter` | 56 | 0.005 | 0.316 | yes |
 
-Desk leftover vessels n=1. Query desk leftover-science.
+Desk leftover vessels n=0. Query desk leftover-science.

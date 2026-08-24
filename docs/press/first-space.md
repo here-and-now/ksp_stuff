@@ -15,11 +15,12 @@ Flying High on RSS Earth is **fifty kilometers**. We lofted
 **two hundred and seventy-five**. Periapsis through the planet —
 ballistic, expected, *not orbit*. We have never flown orbit.
 
-![Cape empty, bank 18.2](../../screenshots/first-flying-high.png)
+![Stayputnik, seven tanks, thin blue limb](../../screenshots/first-space-black.png)
 
-*Cape Canaveral after the ships came home. Toolbar **18.2**. kRPC
-idle. No vessels. Kerbalism paid in the black; Hank walked the
-leftover. This is the bank, not a circularization.*
+*24 August 2026, 21:59 UTC. Stayputnik, seven tanks, no Mk16, no
+plume. Stars. A thin blue limb. This is the hang that lofted
+**~275 km**. Suborbital. Not a circle. Periapsis is still a hole
+through the planet.*
 
 The chalkboard went **9.47 sci → 18.19 sci**. Linus had bound Forest
 Flying High TELEMETRY leftover, Flying High Goo, Flying High Geiger
@@ -27,12 +28,28 @@ since the morning the hang finally cleared fifty. 18:34 UTC the
 Valiant peaked apo **274.5 km**, splashed, recovered — and the card
 still thought the 2HOT was the news. 20:16 UTC the same hang lit
 the Goo and the Geiger together, dwelled in Flying High, and the
-smiles went on the HardDrive. The Geiger still holds **1.45 of
-3.60**. Forest TELEMETRY leftover **0.29 of 1.80**. Then Mortimer
-Grokman, CEO paid `stability` (**18 sci**): named load
-`rd-stability` (do not `load persistent` — F-014). **18.19 sci →
-0.19 sci**. Tree now **start, engineering101, basicRocketry,
-survivability, stability**. Next CTT `generalRocketry` (**20 sci**).
+smiles went on the HardDrive.
+
+![Radiation Scan 3.4 of 4.0, running](../../screenshots/we-are-radiating.png)
+
+*24 August 2026, 22:20 UTC. Kerbalism Module Devices. Radiation
+Scan **3.4 / 4.0**, T−1m 20s, **running**. Mystery Goo Observation
+**1.7 / 6.0**, T−9m 27s, **running**. Temperature Scan **3.0 / 3.0**,
+stopped. Telemetry Report **0.0 / 2.0**, stopped. This is the
+smiles-in-the-black number. Not a portrait of a person.*
+
+The Geiger still holds **1.45 of 3.60**. Forest TELEMETRY leftover
+**0.29 of 1.80**. Then Mortimer Grokman, CEO paid `stability`
+(**18 sci**): named load `rd-stability` (do not `load persistent`
+— F-014). **18.19 sci → 0.19 sci**. Tree now **start,
+engineering101, basicRocketry, survivability, stability**. Next
+CTT `generalRocketry` (**20 sci**).
+
+![Cape empty, bank 18.2](../../screenshots/first-flying-high.png)
+
+*Cape Canaveral after the ships came home. Toolbar **18.2**. kRPC
+idle. No vessels. Then Mortimer paid stability. This is the bank,
+not a circularization.*
 
 Three days earlier the house had already *been*. 21 August, 13:31
 UTC, this same t7, apo **88.8 km**, splash recover, MET **440.5**,
@@ -43,12 +60,18 @@ starting under.
 Then we invented latitude, hung silk, and spent a day in a Forest
 with no trees.
 
+![Girder stack over night city](../../screenshots/farthest-flight-city.png)
+
+*24 August 2026, 11:00 UTC. Girder hang over night city lights.
+Inland. Dark. This is the Forest campaign, heading **270°**. It is
+not Flying High. There is not a tree in the window. There is a
+city.*
+
 ![Forest, the silk, no trees](../../screenshots/forest-first-touchdown.png)
 
 *Dark grass, a pond, a red-and-white Mk16. Kerbalism said Forest.
-There is not a tree in the window. We landed here until leftover
-thermo and TELEMETRY could not pay another Cape. Heading **270°**.
-090 is Water, and Water is still dead.*
+We landed here until leftover thermo and TELEMETRY could not pay
+another Cape. 090 is Water, and Water is still dead.*
 
 The wrecks, in the order the room survived them:
 
@@ -58,6 +81,8 @@ The wrecks, in the order the room survived them:
   Bank **7.77 sci**. The forest forgave us. It did not loft us.
 - 24 August, morning — the same Forest, again. Land. Splash. Land.
   Apo **~30 km**. Bank **9.47 sci**. High still a lid at fifty.
+- 10:49 UTC — Mk16 *open*, engine *still lit*, dark grass, smoke.
+  Silk-while-burn. This is not a landing.
 - 15:05 UTC — t7-chute inland. Apo **163.2 km**. OFFPLAN over a
   **140 km** Space line. The hang could fly. The abort was the map.
 - 15:44 UTC — Mk16 *armed* at two kilometers, tanks still full.
@@ -97,24 +122,26 @@ again, if the hang still lived.
 | Sci | **9.47 sci → 18.19 sci** (Flying High 2HOT, then Goo and Geiger in the black). Then Mortimer paid **stability** (**18 sci**): bank **0.19 sci**. Geiger leftover **1.45 / 3.60**. Forest High TELEMETRY leftover **0.29 / 1.80**. |
 | Tree | **start, engineering101, basicRocketry, survivability, stability** — sasModule / PresMat **Available**. Next `generalRocketry` **20 sci**. |
 
-![Girders on everything](../../screenshots/girders-on-everything.png)
+![Mk16 open, engine still lit](../../screenshots/chute-fail-silk-burn.png)
 
-*Gus's answer to FAR shear. Valiant lit, batteries in a ring,
-girders like a space elevator that had not left the Cape. Because
-why not. The hang that paid High was seven tanks and no porch —
-the elevator was the week we survived to light it.*
+*24 August 2026, 10:49 UTC. Mk16 **open**. Engine **still lit**.
+Smoke over dark grass. This is silk-while-burn. It is not a
+landing. Deploy is a descent. We learned that with the Valiant
+still talking.*
 
-![Silk, when it was supposed to](../../screenshots/first-chute-deploy.png)
+![Valiant, porch of girders, Milky Way](../../screenshots/even-more-girders.png)
 
-*Mk16 open over a dark sky. This is a canopy on descent. 15:44 and
-17:42 were silk during the burn. We learned that at eight hundred
-meters with the Valiant still talking.*
+*24 August 2026, 16:23 UTC. Valiant lit. Girders like a space
+elevator that had not left the Cape. Milky Way behind the plume.
+Because why not. The hang that paid High was seven tanks and no
+porch — the elevator was the week we survived to light it.*
 
-![Stars. Limb. Not orbit](../../screenshots/earth-limb.png)
+![Earth is round. Periapsis is a hole](../../screenshots/earth-is-round.png)
 
-*Pretty enough to lie about. 21 August, apo **98.3 km**, periapsis
-a hole through the planet. This afternoon was **275 km** and the
-same hole. We will not caption either as a circularization.*
+*24 August 2026, 22:20 UTC. Same t7 over turquoise shallows and
+islands. Fat blue limb. Stars. Pretty enough to lie about.
+Periapsis is still a hole through the planet. We will not caption
+this as a circularization.*
 
 Mortimer does not spend crumbs on a stunt. **stability** is paid
 (**18 sci**). Bank crumbs **0.19 sci**. Next honest spend is

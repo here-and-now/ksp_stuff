@@ -2,7 +2,7 @@
 
 science: tickets
 flight: jebediah
-craft: kspstuff-hop-valiant-t7-pbc
+craft: kspstuff-hop-valiant-t7-wheel-pbc
 recover_banks: yes
 notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not live.
   fly: T-081 cli=python main.py hop
@@ -30,7 +30,15 @@ notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not liv
   situation: FlyingHigh
   experiment_id: geigerCounter
   part: kerbalism-geigercounter
-  duration_s: 497
+  duration_s: 117
   ec_rate: 0.005
   recover_banks: yes
   ticket: T-369
+- experiment: barometerScan
+  situation: FlyingHigh
+  experiment_id: barometerScan
+  part: sensorBarometer
+  duration_s: 305
+  ec_rate: 0.05
+  recover_banks: yes
+  ticket: T-404

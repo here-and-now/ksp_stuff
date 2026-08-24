@@ -439,6 +439,7 @@ _SKIP_LEFTOVER_TYPES = frozenset(
 _RECOVER_SITS = frozenset({"landed", "splashed", "pre_launch", "prelaunch"})
 _WRECK_SITS = frozenset({"landed", "splashed"})
 _AIR_SITS = frozenset({"flying", "sub_orbital", "suborbital"})
+_SKY_SITS = _AIR_SITS | frozenset({"orbiting", "escaping"})
 _LEFTOVER_LAND_MET_S = 900.0
 _UNRECOVERABLE: set[str] = set()
 
@@ -448,7 +449,8 @@ def leftover_ship(vessel: Any) -> bool:
 
     Crash-UI wreck (landed/splashed, recoverable=0) is not pad occupancy.
     Os will not click Recover. A GUID we already Closed stays out after
-    Space Center lists it as SUB_ORBITAL again.
+    Space Center lists it as SUB_ORBITAL again. Airborne leftovers are
+    still listed; they do not occupy the pad (``leftover_occupies_pad``).
     """
     try:
         name = str(getattr(vessel, "name", "") or "").strip()
@@ -483,6 +485,18 @@ def leftover_ships(session: Any) -> list[Any]:
         except Exception:
             continue
     return out
+
+
+def leftover_occupies_pad(vessel: Any) -> bool:
+    """Ground leftover blocks Hangar. Airborne does not (Os)."""
+    if not leftover_ship(vessel):
+        return False
+    return _vessel_sit(vessel) not in _SKY_SITS
+
+
+def leftover_pad_ships(session: Any) -> list[Any]:
+    """Pad occupancy. Tracking leftovers in the sky are not a Hangar veto."""
+    return [vessel for vessel in leftover_ships(session) if leftover_occupies_pad(vessel)]
 
 
 def _vessel_id(vessel: Any) -> str:
@@ -656,7 +670,7 @@ def _wait_recovered(session: Any, name: str, *, timeout: float = 20.0) -> bool:
     deadline = time.monotonic() + timeout
     while time.monotonic() < deadline:
         names = []
-        for vessel in leftover_ships(session):
+        for vessel in leftover_pad_ships(session):
             try:
                 names.append(str(getattr(vessel, "name", "") or ""))
             except Exception:
@@ -687,14 +701,15 @@ def _recover_wait(session: Session, vessel: Any, name: str) -> bool:
 def walk_home(session: Session) -> int:
     """Recover leftover ships, then Close. Never revert. Never leftover-ksc.
 
-    ``recoverable`` at Space Center is often false. Enter Flight first,
-    then ``vessel.recover()`` if KSP will take it. recover() returns
-    before the ship leaves the list — wait gone *before* Close. Close
-    during recover leaves a SUB_ORBITAL tracking ghost (18-34-09Z).
-    Living SUB_ORBITAL (parts loaded): wait land on the MET clock, then
-    recover(). Crash-UI (landed/splashed rec=0, MET frozen): not pad
-    occupancy — remember vessel.id so Space Center SUB_ORBITAL listing
-    does not block Hangar. Close ``reload_save=False``. Never revert.
+    rec=yes at Space Center: ``recover()`` there. Do **not** ``go_flight``
+    a rec=0 wreck to Close — switching a tracking ghost loads stale
+    persistent and can drop ``SpaceCenter.ut`` (21-21-27Z). Airborne
+    rec=0 is not pad occupancy: leave it in the sky. Already in Flight:
+    wait land on the MET clock if it will, then recover(). Crash-UI
+    (landed/splashed rec=0): remember vessel.id. Close skips the scene
+    setter when already at KSC (re-set rewinds). From Flight: persist
+    RAM then scene; save fail stays Flight; rewind is failure.
+    ``reload_save=False``. Never revert.
     """
     session.require_connected()
     n = 0
@@ -702,16 +717,29 @@ def walk_home(session: Session) -> int:
     for vessel in leftover_ships(session):
         name = _vessel_name(vessel)
         started_in_flight = game_scene(session) == "flight"
-        if not started_in_flight:
-            try:
-                go_flight(session, vessel)
-            except Exception as exc:
-                log.warning(
-                    "walk home go_flight %s: %s — Close, no save/load", name, exc
-                )
-                continue
         rec = _vessel_recoverable(vessel)
         sit = _vessel_sit(vessel)
+        if not rec and not started_in_flight:
+            # Rec=0 at KSC: never go_flight just to Close (UT rewind).
+            if sit in _WRECK_SITS:
+                remember_unrecoverable(vessel)
+                log.info(
+                    "leftover %s sit=%s rec=0 crash UI — not pad occupancy",
+                    name,
+                    sit,
+                )
+            else:
+                log.info(
+                    "leftover %s sit=%s rec=0 — leave in sky, no go_flight",
+                    name,
+                    sit,
+                )
+            continue
+        if rec:
+            recovered_names.append(name)
+            if _recover_wait(session, vessel, name):
+                n += 1
+            continue
         if not rec and sit in _RECOVER_SITS:
             try:
                 run_physics(session)
@@ -776,11 +804,12 @@ def walk_home(session: Session) -> int:
 def overlay_painted(session: Any) -> bool:
     """Flight Results still up. Reverting may be disabled — can_revert is not enough.
 
-    Space Center + leftover ships n=0 is the overview: leftover
+    Space Center + pad leftover n=0 is the overview: leftover
     ``can_revert`` after walk-home is not an overlay (07-50 screenshot).
+    Airborne leftovers are not overlay and not a Hangar veto.
     """
     scene = game_scene(session).lower().replace(" ", "_")
-    if scene == "space_center" and not leftover_ships(session):
+    if scene == "space_center" and not leftover_pad_ships(session):
         return False
     return _can_revert(session)
 
@@ -788,8 +817,9 @@ def overlay_painted(session: Any) -> bool:
 def go_ksc(session: Any, *, timeout: float = 45.0) -> str:
     """Walk leftover ships home and Close to KSC. No named save/load.
 
-    Scene-only is not enough: leftover ships block Hangar. Overlay is
-    Close (``game_scene``), not leftover-ksc. Never revert.
+    Scene-only is not enough: ground leftover ships block Hangar.
+    Airborne leftovers do not. Overlay is Close (``game_scene``), not
+    leftover-ksc. Never rewind UT. Never revert.
     """
     walk_home(session)
     go_space_center(session, timeout=timeout, reload_save=False)
@@ -815,7 +845,7 @@ def write_overlay_last(session: Any, *, ready: bool | None = None) -> None:
         except Exception:
             n = 0
         OVERLAY_LAST.parent.mkdir(parents=True, exist_ok=True)
-        ships = leftover_ships(session)
+        ships = leftover_pad_ships(session)
         wrecks = sorted(_load_unrecoverable())
         wreck_line = ",".join(wrecks)
         OVERLAY_LAST.write_text(
@@ -835,7 +865,7 @@ def write_overlay_last(session: Any, *, ready: bool | None = None) -> None:
 
 
 def dismiss_flight_results(session: Session) -> str:
-    """Close Flight Results. Scene setter only. No leftover-ksc. No revert.
+    """Close Flight Results. Save RAM from Flight, then scene. No leftover-ksc.
 
     Live probe (KSC, kRPC 0.6 UI): ``UI.clear`` removes *client* widgets
     only; ``stock_canvas`` has no Flight Results buttons. There is no
@@ -1008,18 +1038,19 @@ def _can_revert(session: Any) -> bool:
 
 
 def ksc_ready(session: Any) -> tuple[bool, str]:
-    """KSC overview, leftover ships gone, overlay not painted.
+    """KSC overview, ground leftover gone, overlay not painted.
 
-    Asteroids/debris are not leftover ships. ``can_revert`` on a clean
-    Space Center after walk-home is leftover, not Flight Results. Empty
-    Tracking is not KSC. Never leftover-ksc. Never revert.
+    Asteroids/debris are not leftover ships. Airborne leftovers are
+    not a Hangar veto (Os). ``can_revert`` on a clean Space Center
+    after walk-home is leftover, not Flight Results. Empty Tracking
+    is not KSC. Never leftover-ksc. Never revert.
     """
     scene = game_scene(session).lower().replace(" ", "_")
     if scene in _TRACKING:
         return False, "tracking (empty Tracking is not KSC)"
     if scene != "space_center":
         return False, f"scene {scene}"
-    ships = leftover_ships(session)
+    ships = leftover_pad_ships(session)
     if ships:
         names = []
         for vessel in ships[:4]:
@@ -1033,22 +1064,113 @@ def ksc_ready(session: Any) -> tuple[bool, str]:
     return True, "ksc"
 
 
-def _close_to_ksc(session: Session, *, reload_save: bool = False) -> None:
-    """Space Center / Close. Never revert, quickload, leftover-ksc, or VAB.
+def _space_center_ut(session: Any) -> float | None:
+    try:
+        ut = float(getattr(session.space_center, "ut", float("nan")))
+    except (TypeError, ValueError, AttributeError):
+        return None
+    if ut != ut:  # NaN
+        return None
+    return ut
 
-    ``load_space_center`` reloads the last launch save and can respawn
-    the stack on the pad at MET 0. Default is scene setter only.
-    ``reload_save=True`` is forbidden on the crash/overlay path.
+
+def _ut_rewound(before: float | None, after: float | None) -> bool:
+    if before is None or after is None:
+        return False
+    return after < before - 0.5
+
+
+def _persist_ram(session: Session) -> None:
+    """Write RAM to disk so Flight→KSC loads this clock. Not a load.
+
+    ``save('persistent')`` is not ``load('persistent')`` (F-014). Never
+    leftover-ksc. Named ``hop-exit-<stamp>`` is also legal; last SaveGame
+    must be current RAM.
+    """
+    sc = getattr(session, "space_center", None)
+    fn = getattr(sc, "save", None) if sc is not None else None
+    if not callable(fn):
+        raise SessionError("SpaceCenter.save missing")
+    fn("persistent")
+
+
+def _krpc_scene(session: Session, name: str) -> Any:
+    krpc = getattr(getattr(session, "conn", None), "krpc", None)
+    gs = getattr(krpc, "GameScene", None) if krpc is not None else None
+    if gs is None:
+        return None
+    return getattr(gs, name, None)
+
+
+def _set_game_scene(session: Session, name: str) -> None:
+    """HighLogic.LoadScene via kRPC. Never revert, never leftover-ksc.
+
+    From Flight, Space Center is the overlay Space Center *button* (launch
+    SaveGame, pad MET 0). Tracking is the wreck exit. Any UT drop after a
+    scene change is Close failure — do not Hangar.
     """
     krpc = getattr(getattr(session, "conn", None), "krpc", None)
-    if krpc is not None:
+    target = _krpc_scene(session, name)
+    if krpc is None or target is None:
+        raise SessionError(f"kRPC GameScene.{name} missing")
+    ut0 = _space_center_ut(session)
+    try:
+        krpc.game_scene = target
+    except Exception as exc:
+        log.warning("game_scene %s failed (%s)", name, exc)
+        raise SessionError(f"game_scene {name} failed ({exc})") from exc
+    for _ in range(8):
         try:
-            krpc.game_scene = krpc.GameScene.space_center
-        except Exception as exc:
-            log.warning("game_scene setter failed (%s)", exc)
+            session.space_center = session.conn.space_center
+        except Exception:
+            pass
+        ut1 = _space_center_ut(session)
+        if _ut_rewound(ut0, ut1):
+            log.error(
+                "Close rewound UT %.3f → %.3f — entropy is one-way; no save/load",
+                ut0,
+                ut1,
+            )
+            raise SessionError(
+                f"Close rewound UT {ut0:.3f} → {ut1:.3f} — entropy is one-way"
+            )
+        if game_scene(session) == name:
+            return
+        time.sleep(0.2)
+    log.warning("game_scene still %s after %s", game_scene(session), name)
+
+
+def _close_to_ksc(session: Session, *, reload_save: bool = False) -> None:
+    """Leave Flight via Tracking, then KSC. Never revert or leftover-ksc.
+
+    ``StartWithNewLaunch`` writes persistent before the hop. Space Center
+    from Flight loads that file (pad MET 0). Tracking is KSP's wreck
+    ``onLeavingFlight``. Persist RAM first so the clock on disk is *this*
+    flight. Save fail: stay Flight. ``reload_save=True`` is refused.
+    """
     if reload_save:
         log.warning("load_space_center refused — Close is scene setter only")
+    scene = game_scene(session)
+    if scene == "space_center":
         return
+    if scene == "flight":
+        try:
+            from ra_align import align_live
+
+            align_live(session)
+        except Exception as exc:
+            log.warning("RA align before Close (%s)", exc)
+        try:
+            _persist_ram(session)
+        except Exception as exc:
+            log.warning("Close save persistent failed (%s) — not setting scene", exc)
+            raise SessionError(
+                f"Close refused: save RAM failed ({exc}); staying in Flight"
+            ) from exc
+        _set_game_scene(session, "tracking_station")
+        scene = game_scene(session)
+    if scene in _TRACKING:
+        _set_game_scene(session, "space_center")
 
 
 def go_space_center(
@@ -1056,9 +1178,9 @@ def go_space_center(
 ) -> None:
     """Leave flight/editor for the KSC overview. Close, no named load.
 
-    Scene setter once. Never leftover-ksc. Never ``load_space_center``
-    (pad respawn). Never revert. Overlay without leftover ships: Close
-    and poll; kRPC 0.6 UI cannot click Flight Results.
+    From Flight: persist RAM, Tracking (wreck exit), then KSC. Never
+    leftover-ksc. Never ``load_space_center``. Never rewind UT. Never
+    revert. Rewind is a Hangar veto.
     """
     session.require_connected()
     log.info("scene %s → space_center", game_scene(session))
@@ -1076,7 +1198,7 @@ def go_space_center(
             return
         scene = game_scene(session)
         if scene == "space_center":
-            if leftover_ships(session):
+            if leftover_pad_ships(session):
                 return
             dismiss_flight_results(session)
             time.sleep(1.0)
@@ -1238,8 +1360,9 @@ class Hangar:
     ) -> None:
         """Launch from KSC. Recovers junk flights and pre-flight dialogs itself.
 
-        Close until KSC is clean before ``launch_vessel`` (14-52-25Z
-        Flight Results over Tracking is not KSC). Never revert.
+        Close until KSC has no ground leftover before ``launch_vessel``
+        (14-52-25Z Flight Results over Tracking is not KSC). Airborne
+        leftovers are not a veto. Never rewind UT. Never revert.
         Probes: ``uncrewed=True`` (empty crew list). Do not seat a kerbal
         in a Stayputnik (L-017 is Mk1-only).
         """

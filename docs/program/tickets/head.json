@@ -14219,6 +14219,14 @@
             "owner": "wernher",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-24T21:50:20Z",
+            "claim": "Flight\u2192KSC save(persistent) then game_scene. Setter loads last SaveGame (launch snapshot) unless RAM was written first. Save fail stays Flight. Rewind is Close failure, not Hangar. Air leftover is not a veto. Never load_space_center. Never leftover-ksc. Never revert.",
+            "evidence": "docs/lessons.md:2026-08-24T21-21-27Z-hop leftover-ksc; hangar.py:_persist_ram+_close_to_ksc; tests/test_hangar.py close_from_flight_*",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -14234,7 +14242,7 @@
       "tags": [],
       "title": "Close/walk-home must never rewind UT; entropy is one-way",
       "type": "systems",
-      "updated": "2026-08-24T20:39:34Z"
+      "updated": "2026-08-24T21:50:20Z"
     },
     "T-397": {
       "assignee": "",
@@ -14548,5 +14556,5 @@
       "updated": "2026-08-24T21:29:56Z"
     }
   },
-  "updated": "2026-08-24T21:32:16Z"
+  "updated": "2026-08-24T21:50:20Z"
 }

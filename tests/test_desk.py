@@ -163,22 +163,20 @@ class TestDesk(unittest.TestCase):
         self.assertEqual(hangar, "none")
         self.assertEqual(active, "none")
 
-    def test_hangar_live_recover_sub_orbital(self):
+    def test_hangar_live_air_leftover_is_not_veto(self):
         hangar, active = hangar_from_live(
             (("kspstuff-hop-valiant-t7-pbc", "SUB_ORBITAL"),),
             lock="free",
         )
-        self.assertEqual(
-            hangar, "recover kspstuff-hop-valiant-t7-pbc sit=SUB_ORBITAL"
-        )
+        self.assertEqual(hangar, "none")
         self.assertEqual(active, "kspstuff-hop-valiant-t7-pbc")
 
-    def test_hangar_recover_names_save_vessel(self):
+    def test_hangar_flying_save_vessel_is_not_pad_occupancy(self):
         ships = (
             SaveVessel(name="kspstuff-hop-flea-pbc", sit="FLYING", type="Ship", landed=False),
         )
         hangar, active = hangar_call(vessels=ships, lock="free")
-        self.assertEqual(hangar, "recover kspstuff-hop-flea-pbc sit=FLYING")
+        self.assertEqual(hangar, "none")
         self.assertEqual(active, "kspstuff-hop-flea-pbc")
 
     def test_hangar_phase_prelaunch(self):

@@ -103,6 +103,14 @@ _PHASE_SITS = frozenset(
         "srfsplashed",
     }
 )
+_SKY_SITS = frozenset(
+    {
+        "flying",
+        "suborbital",
+        "orbiting",
+        "escaping",
+    }
+)
 
 
 def detect_mods(ksp_root: Path | None) -> tuple[str, ...]:
@@ -148,6 +156,8 @@ def hangar_call(
     tag = pick.sit or "?"
     if sit in _PHASE_SITS or pick.landed:
         return f"phase {pick.name} sit={tag}", pick.name
+    if sit in _SKY_SITS:
+        return "none", pick.name
     return f"recover {pick.name} sit={tag}", pick.name
 
 
@@ -156,9 +166,10 @@ def hangar_from_live(
     *,
     lock: str,
 ) -> tuple[str, str]:
-    """Hangar vs recover from kRPC leftover_ships. Empty tracking is hangar none.
+    """Hangar vs recover from kRPC leftover_pad_ships. Empty tracking is hangar none.
 
     Disk SUB_ORBITAL after splash recover is stale sfs — not leftover.
+    Airborne leftovers are not a Hangar veto (Os).
     """
     if lock == "live":
         return "blocked", rows[0][0] if rows else "none"
@@ -168,6 +179,8 @@ def hangar_from_live(
     tag = sit or "?"
     if _norm_sit(sit) in _PHASE_SITS:
         return f"phase {name} sit={tag}", name
+    if _norm_sit(sit) in _SKY_SITS:
+        return "none", name
     return f"recover {name} sit={tag}", name
 
 
@@ -232,15 +245,21 @@ def probe_live_desk() -> tuple[float | None, tuple[tuple[str, str], ...] | None]
         return None, None
     try:
         from career import space_center_science
-        from hangar import leftover_ships
+        from hangar import leftover_pad_ships
         from session import Session
 
         session = Session()
         session.connect()
         try:
+            try:
+                from ra_align import align_live
+
+                align_live(session)
+            except Exception:
+                pass
             sci = space_center_science(session)
             rows: list[tuple[str, str]] = []
-            for vessel in leftover_ships(session):
+            for vessel in leftover_pad_ships(session):
                 try:
                     name = str(getattr(vessel, "name", "") or "").strip()
                 except Exception:

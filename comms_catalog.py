@@ -335,7 +335,7 @@ def format_ra_tables(cat: CommsCatalog) -> str:
     node = cat.owned_node or "-"
     relay = "-" if cat.min_relay_tl is None else str(cat.min_relay_tl)
     lines = [
-        "# live RA (ModuleManager.ConfigCache last write). No kRPC.",
+        "# RA ConfigCache last write (cfg spawn gate). Live TL is kRPC GSTL.",
         f"# owned comms TL = {cat.owned_tl} ({node}). sample = recover the can. file = HD.",
         "# python main.py comms",
         "#",

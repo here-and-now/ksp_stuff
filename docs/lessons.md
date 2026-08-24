@@ -21,6 +21,36 @@ python main.py pad
 
 ---
 
+## 2026-08-25 — Close is Tracking, then KSC
+
+- **When:** After IL dump of `FlightResultsDialog` / `StartWithNewLaunch`.
+- **Cause:** Space Center from Flight is the overlay Space Center button
+  (launch `persistent`, pad MET 0). Tracking is `onLeavingFlight`.
+  Persist RAM first; UT drop is Hangar veto. Sandbox RA GSTL is MaxTL
+  unless house `align_tech_level`.
+- **Fix:** `_close_to_ksc` persist → Tracking → KSC. `ra_align` stamps
+  owned comms TL. Never leftover-ksc. Never revert.
+- **Modules:** `hangar.py`, `ra_align.py`, `desk.py`. kRPC RealAntennas.
+
+## 2026-08-24T21-21-27Z-hop — leftover-ksc
+
+- **When:** 2026-08-24 letsgrok T-396. t7-wheel-pbc hop splash rec=yes
+  recover() in Flight, then walk_home `_close_to_ksc`. Os: clean KSP,
+  UT back 3–4 min, tracking showed the same flight again. Never revert.
+  Do not Hangar on a rewound clock.
+- **Symptom:** Close logged after the damage. `load_space_center` was
+  already refused. Scene setter from Flight still loaded Hangar's
+  launch SaveGame. Vessel reappeared. leftover-air was not this fire.
+- **Cause:** `launch_vessel` internally `FlightDriver.StartWithNewLaunch`
+  → `GamePersistence.SaveGame`. `GameScene.space_center` from Flight is
+  the Space Center button: KSP loads that last SaveGame. RAM (recovered,
+  UT current) was never written first. `_ut_rewound` only logged.
+- **Fix:** From Flight: `SpaceCenter.save("persistent")` then scene.
+  Save fail: do not set scene. After scene, UT drop is Close failure —
+  do not Hangar. Never `load_space_center`. Never leftover-ksc. Never
+  `load("persistent")` (F-014). Air leftover is not a Hangar veto.
+- **Modules:** `hangar.py`. Not hop.py.
+
 ## 2026-08-24T19-57-33Z-hop — far-shear
 
 - **When:** 2026-08-24 letsgrok. T-394. t7-pbc. Bound FlyingHigh

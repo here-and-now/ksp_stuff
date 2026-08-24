@@ -20,7 +20,7 @@ class TestFixtureComms(unittest.TestCase):
 
     def test_dump_has_tl_live_and_silent(self):
         text = self.text
-        self.assertIn("# live RA (ModuleManager.ConfigCache last write). No kRPC.", text)
+        self.assertIn("# RA ConfigCache last write (cfg spawn gate). Live TL is kRPC GSTL.", text)
         self.assertIn("owned comms TL = 0", text)
         self.assertIn("minRelayTL = 0", text)
         self.assertIn("rate_bps", text)

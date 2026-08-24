@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import hangar as hangar_mod
+from ra_align import align_live
 from hangar import (
     Hangar,
     _abort_preflight_hang,
@@ -45,8 +46,9 @@ class _Scene:
 
 
 class _Krpc:
-    def __init__(self, scene="space_center"):
+    def __init__(self, scene="space_center", sc=None):
         self._scene = _Scene(scene)
+        self._sc = sc
         self.GameScene = type(
             "GS",
             (),
@@ -63,17 +65,32 @@ class _Krpc:
 
     @game_scene.setter
     def game_scene(self, val):
-        self._scene = val if hasattr(val, "name") else _Scene(str(val))
+        new = val if hasattr(val, "name") else _Scene(str(val))
+        old = self._scene.name
+        if self._sc is not None:
+            self._sc.order.append(("game_scene", getattr(new, "name", str(new))))
+        self._scene = new
+        if (
+            self._sc is not None
+            and old == "flight"
+            and getattr(new, "name", "") != "flight"
+        ):
+            # Leaving Flight without persist loads last SaveGame (launch UT).
+            self._sc.ut = float(self._sc.last_save_ut)
 
 
 class _SC:
-    def __init__(self, *, revert=False, vessels=()):
+    def __init__(self, *, revert=False, vessels=(), ut=1000.0, launch_ut=None):
         self._revert = revert
         self.closes = 0
         self.reverts = 0
         self.vessels = list(vessels)
         self.saves: list[str] = []
         self.loads: list[str] = []
+        self.order: list[tuple[str, str]] = []
+        self.ut = float(ut)
+        self.last_save_ut = float(ut if launch_ut is None else launch_ut)
+        self.save_error: Exception | None = None
 
     def can_revert_to_launch(self):
         return bool(self._revert)
@@ -87,21 +104,44 @@ class _SC:
         self._revert = False
 
     def save(self, name):
-        self.saves.append(name)
+        slug = str(name or "")
+        if slug.lower() in {"leftover-ksc", "leftover_ksc"}:
+            raise AssertionError("never leftover-ksc save")
+        self.order.append(("save", slug))
+        if self.save_error is not None:
+            raise self.save_error
+        self.saves.append(slug)
+        self.last_save_ut = float(self.ut)
 
     def load(self, name):
-        self.loads.append(name)
+        slug = str(name or "")
+        if slug.lower() == "persistent":
+            raise AssertionError("never load persistent (F-014)")
+        self.loads.append(slug)
         self._revert = False
 
 
 class _Session:
-    def __init__(self, scene="space_center", *, revert=False, vessels=()):
-        self.space_center = _SC(revert=revert, vessels=vessels)
+    def __init__(
+        self,
+        scene="space_center",
+        *,
+        revert=False,
+        vessels=(),
+        ut=1000.0,
+        launch_ut=None,
+    ):
+        if launch_ut is None and scene == "flight":
+            launch_ut = float(ut) - 240.0
+        self.space_center = _SC(
+            revert=revert, vessels=vessels, ut=ut, launch_ut=launch_ut
+        )
         self.settings = ConnectionSettings()
+        krpc = _Krpc(scene, sc=self.space_center)
         self.conn = type(
             "C",
             (),
-            {"krpc": _Krpc(scene), "space_center": self.space_center},
+            {"krpc": krpc, "space_center": self.space_center},
         )()
 
     def require_connected(self):
@@ -196,6 +236,19 @@ class TestKscReady(unittest.TestCase):
         self.assertTrue(ok)
         self.assertEqual(why, "ksc")
 
+    def test_airborne_leftover_is_not_hangar_veto(self):
+        wreck = _craft("t7-pbc", sit="sub_orbital")
+        session = _Session(scene="space_center", vessels=(wreck,))
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
+
+
+class TestRaAlign(unittest.TestCase):
+    def test_align_live_noop_without_service(self):
+        session = _Session(scene="space_center")
+        self.assertFalse(align_live(session, world=None))
+
 
 class TestGoSpaceCenter(unittest.TestCase):
     def test_close_does_not_load_space_center(self):
@@ -254,6 +307,59 @@ class TestGoSpaceCenter(unittest.TestCase):
         self.assertEqual(n["n"], 0)
         self.assertEqual(session.space_center.reverts, 0)
         self.assertEqual(session.space_center.saves, [])
+
+    def test_close_from_flight_saves_before_scene(self):
+        session = _Session(scene="flight", ut=1200.0, launch_ut=900.0)
+        with patch("hangar.time.sleep"):
+            go_space_center(session, timeout=5.0)
+        self.assertEqual(session.space_center.saves, ["persistent"])
+        self.assertEqual(
+            session.space_center.order,
+            [
+                ("save", "persistent"),
+                ("game_scene", "tracking_station"),
+                ("game_scene", "space_center"),
+            ],
+        )
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.loads, [])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertEqual(session.space_center.ut, 1200.0)
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
+
+    def test_close_from_flight_save_fail_stays_flight(self):
+        session = _Session(scene="flight", ut=1200.0, launch_ut=900.0)
+        session.space_center.save_error = RuntimeError("SaveGame NRE")
+        with patch("hangar.time.sleep"):
+            with self.assertRaises(SessionError) as ctx:
+                go_space_center(session, timeout=5.0)
+        self.assertIn("save RAM", str(ctx.exception))
+        self.assertEqual(session.conn.krpc.game_scene.name, "flight")
+        self.assertEqual(session.space_center.ut, 1200.0)
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.loads, [])
+        self.assertEqual(session.space_center.saves, [])
+        self.assertNotIn(
+            ("game_scene", "space_center"), session.space_center.order
+        )
+        self.assertNotIn(
+            ("game_scene", "tracking_station"), session.space_center.order
+        )
+
+    def test_close_from_flight_rewind_is_failure(self):
+        session = _Session(scene="flight", ut=1200.0, launch_ut=900.0)
+        with patch("hangar.time.sleep"):
+            with patch("hangar._persist_ram"):
+                with self.assertRaises(SessionError) as ctx:
+                    go_space_center(session, timeout=5.0)
+        self.assertIn("rewound", str(ctx.exception).lower())
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.loads, [])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertLess(session.space_center.ut, 1200.0 - 0.5)
 
 
 class TestDismissFlightResults(unittest.TestCase):
@@ -355,37 +461,28 @@ class TestHangarLaunchGate(unittest.TestCase):
         self.assertEqual(session.space_center.saves, [])
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
 
-    def test_walk_home_enters_flight_when_ksc_not_recoverable(self):
+    def test_walk_home_ksc_air_leftover_no_go_flight(self):
         wreck = _craft("t7-pbc", recoverable=False, sit="sub_orbital")
         session = _Session(scene="space_center", revert=False, vessels=[wreck])
-
-        def _go_flight(sess, vessel, **_kwargs):
-            vessel.recoverable = True
-            vessel.situation = type("S", (), {"name": "splashed"})()
-
-        def _recover() -> None:
-            session.space_center.vessels = []
-
-        wreck.recover = _recover  # type: ignore[method-assign]
         with patch("hangar.time.sleep"):
-            with patch("hangar.go_flight", side_effect=_go_flight) as gf:
+            with patch("hangar.go_flight") as gf:
                 n = walk_home(session)
-        self.assertEqual(n, 1)
-        gf.assert_called()
-        self.assertEqual(session.space_center.vessels, [])
+        self.assertEqual(n, 0)
+        gf.assert_not_called()
+        self.assertEqual(session.space_center.vessels, [wreck])
         self.assertEqual(session.space_center.reverts, 0)
         self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.space_center.loads, [])
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
 
     def test_walk_home_crash_ui_guid_not_pad_occupancy(self):
         wreck = _craft(
-            "t7-pbc", recoverable=False, sit="sub_orbital", id="guid-crash-ui"
+            "t7-pbc", recoverable=False, sit="landed", id="guid-crash-ui"
         )
         session = _Session(scene="space_center", revert=False, vessels=[wreck])
-
-        def _go_flight(_sess, vessel, **_kwargs):
-            vessel.recoverable = False
-            vessel.situation = type("S", (), {"name": "landed"})()
 
         def _recover() -> None:
             raise RuntimeError("not recoverable")
@@ -396,10 +493,10 @@ class TestHangarLaunchGate(unittest.TestCase):
         try:
             with patch("hangar.UNRECOVERABLE_LAST", path):
                 with patch("hangar.time.sleep"):
-                    with patch("hangar.go_flight", side_effect=_go_flight):
-                        with patch("hangar._wait_leftover_land", return_value=False):
-                            n = walk_home(session)
+                    with patch("hangar.go_flight") as gf:
+                        n = walk_home(session)
                 self.assertEqual(n, 0)
+                gf.assert_not_called()
                 hangar_mod._UNRECOVERABLE.clear()
                 wreck.situation = type("S", (), {"name": "sub_orbital"})()
                 self.assertFalse(leftover_ship(wreck))
@@ -419,16 +516,18 @@ class TestHangarLaunchGate(unittest.TestCase):
                 with patch("hangar._wait_leftover_land", return_value=False):
                     n = walk_home(session)
         self.assertEqual(n, 0)
-        gf.assert_called()
+        gf.assert_not_called()
         self.assertEqual(session.space_center.vessels, [wreck])
         self.assertEqual(session.space_center.reverts, 0)
         self.assertEqual(session.space_center.saves, [])
         self.assertEqual(session.space_center.loads, [])
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+        ok, _ = ksc_ready(session)
+        self.assertTrue(ok)
 
     def test_walk_home_waits_sub_orbital_land_then_recover(self):
         wreck = _craft("t7-pbc", recoverable=False, sit="sub_orbital")
-        session = _Session(scene="space_center", revert=False, vessels=[wreck])
+        session = _Session(scene="flight", revert=False, vessels=[wreck])
 
         def _land(_session, vessel, **_kwargs):
             vessel.recoverable = True
@@ -440,14 +539,17 @@ class TestHangarLaunchGate(unittest.TestCase):
 
         wreck.recover = _recover  # type: ignore[method-assign]
         with patch("hangar.time.sleep"):
-            with patch("hangar.go_flight"):
+            with patch("hangar.go_flight") as gf:
                 with patch("hangar._wait_leftover_land", side_effect=_land) as wait:
                     n = walk_home(session)
         self.assertEqual(n, 1)
+        gf.assert_not_called()
         wait.assert_called()
         self.assertEqual(session.space_center.vessels, [])
         self.assertEqual(session.space_center.reverts, 0)
-        self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.space_center.saves, ["persistent"])
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.loads, [])
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
         self.assertTrue(leftover_will_land(wreck))
 
@@ -467,6 +569,17 @@ class TestHangarLaunchGate(unittest.TestCase):
         gf.assert_not_called()
         self.assertEqual(session.space_center.vessels, [])
         self.assertEqual(session.space_center.reverts, 0)
+        self.assertEqual(session.space_center.saves, ["persistent"])
+        self.assertEqual(
+            session.space_center.order,
+            [
+                ("save", "persistent"),
+                ("game_scene", "tracking_station"),
+                ("game_scene", "space_center"),
+            ],
+        )
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.loads, [])
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
 
     def test_launch_after_ksc_clean(self):
@@ -483,6 +596,25 @@ class TestHangarLaunchGate(unittest.TestCase):
                                 uncrewed=True,
                             )
         launch.assert_called_once()
+        self.assertEqual(session.space_center.reverts, 0)
+
+    def test_hangar_does_not_launch_on_rewound_clock(self):
+        session = _Session(scene="flight", ut=1200.0, launch_ut=900.0)
+        hangar = Hangar(ksp_root=Path("/tmp"), save="letsgrok")
+        with patch("hangar.time.sleep"):
+            with patch("hangar._persist_ram"):
+                with patch.object(hangar, "_launch_watched") as launch:
+                    with self.assertRaises(SessionError) as ctx:
+                        hangar.launch(
+                            session,
+                            "kspstuff-hop-valiant-east-pbc",
+                            uncrewed=True,
+                        )
+        self.assertIn("Hangar waits", str(ctx.exception))
+        self.assertIn("rewound", str(ctx.exception).lower())
+        launch.assert_not_called()
+        self.assertEqual(session.space_center.closes, 0)
+        self.assertEqual(session.space_center.loads, [])
         self.assertEqual(session.space_center.reverts, 0)
 
     def test_hung_launch_does_not_rpc_poisoned_session(self):

@@ -387,12 +387,16 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   Control** pre-flight dialog; kRPC waits there. Empty command pods are
   not probes. Crew names must be `RosterStatus.available` — assigned or
   missing kerbals still launch empty. `create_kerbal(name, "Pilot", True)`
-  if the roster is busy. Close is `conn.krpc.game_scene =
-  GameScene.space_center` (**not** `load_space_center` — that reloads
-  the launch save onto the pad at MET 0). Os disabled Allow reverting
-  flights. Never `revert_to_launch`. Never leftover-ksc save/load
-  (that was a reload). Walk leftover **ships** home: enter Flight,
-  `vessel.recover()`, wait until gone from `vessels`. Asteroids
+  if the roster is busy. Close from Flight is `SpaceCenter.save("persistent")`
+  then `conn.krpc.game_scene = GameScene.space_center`. The setter loads
+  the last SaveGame (`launch_vessel` → `FlightDriver.StartWithNewLaunch`)
+  unless RAM was saved first — otherwise UT rewinds 3–4 min (21-21-27Z).
+  Save fail: do not set scene. Rewind after setter is Close failure; do
+  not Hangar. **Not** `load_space_center` (pad MET 0). **Not**
+  `load("persistent")` (F-014 autosaves then reads stale disk). Never
+  leftover-ksc. Os disabled Allow reverting flights. Never
+  `revert_to_launch`. Walk leftover **ships** home: recover() in Flight
+  if rec=yes, wait until gone from `vessels`. Asteroids
   (Ast. XRL-564, `VesselType.spaceobject`) are not ships — do not
   recover them. Crash / not recoverable: Close with
   `reload_save=False`. kRPC 0.6 `UI.clear` removes *client* widgets
@@ -684,6 +688,12 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   remember kRPC `_object_id` (Vessel has no `.id` in this 0.6 client)
   on disk (`unrecoverable.last`) so the next process skips it. Os will
   not click Recover. Never revert. Never leftover-ksc.
+- **2026-08-24** — T-396: `GameScene.space_center` from Flight loads the
+  last SaveGame (launch snapshot) unless `SpaceCenter.save("persistent")`
+  wrote current RAM first. Detect-and-log after UT drops cannot un-rewind.
+  Save fail stays Flight. Named `hop-exit-<stamp>` is legal; never
+  leftover-ksc; never `load("persistent")` (F-014). Air leftover is not
+  a Hangar veto; rewind is.
 - **2026-08-23** — Tape eyes: state rows carry `recoverable`, `chute`,
   `sci_run`/`sci_rem`, `mass`, `available_thrust`, streamed
   `flight.g_force`. `kind=landing` also on wreck; `kind=recoverable` on

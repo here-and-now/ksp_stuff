@@ -308,6 +308,14 @@ and yawed 340 at burnout. Do not write `target_pitch`/`target_heading`
 zenith up tumbled Stayputnik 16-57-24Z; north up is off the 270/090
 path. `target_direction` still maps to those Eulers.
 
+**Launch × physics warp (live 2026-08-23 warp-batch):** Hangar/revert/light
+are 1×. `run_physics` after each. Revert returns a ghost (~13 t) before
+the hop (mass/parts/stage snapshot). Lighting that ghost, or a second
+`activate_next_stage` after whoosh stage 2→1, is the chute. `pre_launch`
+MET does not tick — 3× on clamps is not a race. After loft, 3× races
+wall-clock (2 s → ~5 s MET). Grim during 3× desyncs the loop. Os allowed
+`revert_to_launch` for that batch only.
+
 **Pause (plugin 0.6):** `conn.krpc.paused` is the KRPC service flag.
 `space_center.paused` may also exist. Flight Results / `launch_vessel`
 can freeze physics **without** that flag reading True — always *set*
@@ -671,6 +679,11 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   grim 10 s ticks skip after a grab ≥0.8 s; `Telem.read` does not grim
   inside the timed pulse. Silk recover with last `sit=flying` still
   envelopes `sit=landed rec=yes`.
+- **2026-08-23** — Warp-batch (Os revert-ok that sit): Hangar 1×
+  stage=2 eng=0/1. Light 8 s → 545 m. Revert ghost mass ~13 t then
+  hop 4077 kg stage=2. 3× after loft: 2 s wall → 5.34 s MET, rails 0.
+  1× tracks wall. Whoosh on revert-load is the ghost / a premature
+  stage — wait for the Hangar snapshot before `activate_next_stage`.
   kRPC 0.6 still unused: `Flight.mach` / `static_pressure` /
   `terminal_velocity` / `atmosphere_density`, `Vessel.delta_v` /
   `burn_time` / torque tensors, `CrewCount`. RealChute is

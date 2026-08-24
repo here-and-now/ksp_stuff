@@ -34,6 +34,9 @@ RUNS_DIR = SHOT_DIR / "runs"
 MISSION_INTERVAL_S = 10.0
 TICK_KEEP = 3
 TICK_BUDGET_S = 0.8
+# Hop wrecks when grim blocks the burn (21-31 / 21-37 MET 15). Leave capture
+# code; mission_event / mission_observe do not fire. Flip True to restore.
+TRIGGER = False
 _SLUG = re.compile(r"[^a-z0-9-]+")
 # Hyprland send_shortcut F2 → KSP TOGGLE_UI. Works in flight; KSC is a no-op.
 # Do not focus the window (that yanks Unity onto the portrait monitor).
@@ -1018,6 +1021,8 @@ def mission_shots() -> ShotCadence:
 
 def mission_observe(snap: object, *, event: str | None = None) -> Path | None:
     """Tape cadence (HUD on). Capture only — do not read the PNG."""
+    if not TRIGGER:
+        return None
     try:
         return mission_shots().observe(snap, event=event)
     except Exception:
@@ -1038,6 +1043,8 @@ def mission_event(
 
     Grim is wall-clock. Pin physics 1× first or MET races during the shot.
     """
+    if not TRIGGER:
+        return None
     if session is not None:
         try:
             from hangar import run_physics
@@ -1067,6 +1074,9 @@ def cmd_screenshot(
     full: bool = False,
     beauty: bool = False,
 ) -> int:
+    if not TRIGGER:
+        print("screenshot disabled (TRIGGER=False)", flush=True)
+        return 0
     try:
         path, method, window = capture(
             out=out, force=force, name=name, full=full, beauty=beauty

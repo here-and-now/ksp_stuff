@@ -1,5 +1,7 @@
 # Lars Grokman — log
 
+- 2026-08-23 — T-322: 22-33-35Z 50 km FlyingHigh never reached the lid (apo 1.6 km); factory aborted instead of land leftover. `_abort_high_lid` after Toggle sit; cut throttle lofted-and-down. Do not Hangar.
+- 2026-08-23 — T-314: 20-47-10Z pad boost 104 m started Shores goo then hop-down. hop_factory flying card after loft; `_pad_boosting` stays burning-not-lofted on a bounce. Do not Hangar.
 - 2026-08-23 — T-312 closed: hop.py helpers name sit (lofted/burning/landed/splashed), not a stamp. `_pad_boosting` gates recover. Docs are the rule. Do not Hangar.
 - 2026-08-23 — T-311 closed: 18-34-22Z hop-down MET 1.8 throttle 0 fuel 1054 alt 101. hop.py `_burning` / coast-phys wait for real loft; do not hop-down a full tank at pad alt. Do not Hangar.
 - 2026-08-23 — T-309 closed: 18-10-57Z splash skipped T-288. hop.py matches live sit to land-or-splash leftover (not first-seq SrfLanded); airborne goo does not skip ground start. Do not Hangar.

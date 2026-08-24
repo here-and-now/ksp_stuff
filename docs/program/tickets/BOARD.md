@@ -1,17 +1,18 @@
 # Ticket board
 
-open: 55 / 312
+open: 59 / 324
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
-| T-069 | science | science_opportunity | S3 | P1 | medium | inbox | linus | remaining,forest,telemetry,leftover,unbound | Forest FlyingHigh TELEMETRY leftover 1.51 |
-| T-077 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,thermo,landed,leftover,bound,proc-stiff-pbc | Forest SrfLanded thermo leftover 0.54 |
-| T-287 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,landed,bound,proc-stiff-pbc | Forest SrfLanded TELEMETRY 0.60 chute land |
-| T-288 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,splash,leftover,bound,proc-stiff-pbc | Forest SrfSplashed TELEMETRY leftover 0.16 |
-| T-304 | ops | ops | S3 | P1 | medium | inbox | gene | ask,science | T-081 science_ids still mysteryGoo; this-hop is Forest land leftover |
-| T-307 | ops | ops | S3 | P1 | medium | inbox | gene | ask | T-081 drop spent mysteryGoo from science_ids |
+| T-318 | vehicle | craft | S2 | P1 | medium | inbox | gus | craft | Bigger hang: more dV, farther than 30 km apo, still chute-recoverable |
+| T-069 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,leftover,bound,proc-long-pbc | Forest FlyingHigh TELEMETRY leftover 1.51 |
+| T-077 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,thermo,landed,leftover,bound,proc-long-pbc | Forest SrfLanded thermo leftover 0.54 |
+| T-287 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,landed,bound,proc-long-pbc | Forest SrfLanded TELEMETRY 0.60 chute land |
+| T-288 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,splash,leftover,bound,proc-long-pbc | Forest SrfSplashed TELEMETRY leftover 0.16 |
+| T-313 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,thermo,splash,bound,proc-long-pbc | Forest SrfSplashed thermo 0.90 chute splash |
+| T-321 | ops | ops | S3 | P1 | medium | inbox | linus | ask | Bind T-069 FlyingHigh@Forest TELEMETRY leftover 1.51 so T-081 hop_apo 50 km unclamps |
 | T-025 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,thermo,unbound | FlyingLow@Water thermo 2.10 wait heading 090 |
 | T-026 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingLow@Water TELEMETRY 1.40 wait heading 090 |
 | T-027 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingHigh@Water TELEMETRY 1.80 wait heading 090 |
@@ -51,6 +52,8 @@ open: 55 / 312
 | T-299 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,ice-caps,telemetry,landed,unbound | Ice Caps SrfLanded TELEMETRY 0.60 chute land |
 | T-301 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,taiga,thermo,landed,unbound | Taiga SrfLanded thermo 0.90 chute land |
 | T-302 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,taiga,telemetry,landed,unbound | Taiga SrfLanded TELEMETRY 0.60 chute land |
+| T-319 | vehicle | craft | S3 | P2 | medium | inbox | gus | craft | Bigger hang RC_cone 50m alt of proc-long |
+| T-320 | vehicle | craft | S3 | P2 | medium | inbox | gus | craft | Bigger hang proc heatshield alt of proc-long |
 | T-080 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,forest,geiger,f013,unbound | Forest SrfLanded geiger 1.20 wait Geiger part |
 | T-094 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-095 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingHigh TELEMETRY 1.80 wait ≥50 km |
@@ -59,3 +62,4 @@ open: 55 / 312
 | T-297 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,desert,telemetry,unbound | Desert FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-300 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,ice-caps,telemetry,unbound | Ice Caps FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-303 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,taiga,telemetry,unbound | Taiga FlyingHigh TELEMETRY 1.80 wait ≥50 km |
+| T-316 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,geiger,leftover,flyinglow,f013,unbound | FlyingLow geiger leftover 0.32 wait Geiger part |

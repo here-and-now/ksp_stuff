@@ -161,6 +161,8 @@ call. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
 Gene when **`ops next` names him** (unstamped `go`, or campaign-stop
 Learn), **or** lock live and `ship.md` is off-nominal and plan/`go`
 must change. Uncrewed hops **between** (lock free) are not Gene hires.
+Uncrewed Learn is hop-exit `attach-run` (kernel overwrite of
+`payload.learn`) — do not skip tape; do not hire Gene to stamp it.
 Do not hire Gene as a merge after specialists.
 
 Spawn the Commander only if **`python main.py protocol fly`** prints
@@ -216,18 +218,22 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   (F-014). Do not ask Os. Then Gene only if `ops next` names him.
 - Pilot returns **0** or miss (**2** / **1** / ABORT / SESSION):
   **Hank leftover + tape** — `desk`, `recover-probe --recover` if
-  recoverable then Close, `tickets attach-run` on the fly ticket, `tickets
-  landing`. **Do not hire the Commander to debrief.** Clean 0 +
-  `campaign: uncrewed` + `protocol fly` → `fly: yes` / `commander: none`
-  → parent runs `cli:` again. **Do not hire Gene. Do not hire Jeb.**
-  Campaign-stop Learn is an `ops next` Gene hire only when campaign is
-  **not** `uncrewed` and `payload.learn` is empty. Crewed /
-  `campaign: none` / firsts → Gene Learn each hop (`needs_learn`) from
-  the **review envelope**, never Jeb Return prose.
+  recoverable then Close, `tickets attach-run` on the fly ticket
+  (overwrites uncrewed `payload.learn`), `tickets landing`. **Do not
+  hire the Commander to debrief.** Clean 0 + `campaign: uncrewed` +
+  `protocol fly` → `fly: yes` / `commander: none` → parent runs
+  `cli:` again. **Do not hire Gene. Do not hire Jeb.** Uncrewed Learn
+  is that `attach-run` — do not skip it. Campaign-stop Learn is an
+  `ops next` Gene hire only when campaign is **not** `uncrewed` and
+  `payload.learn` is empty. Crewed / `campaign: none` / firsts → Gene
+  Learn each hop (`needs_learn`) from the **review envelope**, never
+  Jeb Return prose.
 - Pilot miss (nonzero, ABORT, `science (none)`, sci unchanged, **4
   OFFPLAN**, **2 ABORT**, **1 SESSION**): Hank leftover first
   (`recover()` + Close; never leftover-ksc load). Open `type=control`
-  from last-flight if the Commander did not (after-exit). Spawn **Lars**
+  from last-flight if the Commander did not (after-exit) — always
+  `--fingerprint <stem>` (lookup `fingerprints.json`; empty is
+  refused; longer kebab aliases onto an existing prefix). Spawn **Lars**
   on the named control file (`hop_factory.py` factory inland,
   `physics_warp.py` coast/pad warp, `hop.py` only parked water/splash,
   `pad.py` pad dwell, `science.py` sit-match). Packet `read:` third

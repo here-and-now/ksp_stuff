@@ -5,8 +5,10 @@ House **Grokman**. **Kardashev III or bust.**
 An Earth program (**RSS + Kerbalism Default**, science sandbox, PBC
 probes first). FAR, RealChute, and RealHeat are on this install (2026-08-21).
 Not Realism Overhaul. `~/Games/KSP-RO` is parked. Agents are the staff.
-**Working goal (Os 2026-08-23):** next tech node `stability` (18). Do
-not rest until it is banked. Chute hops are the factory, not a rest.
+**Working goal (Os 2026-08-24):** bigger rockets, more Δv, farther
+out. Ad astra. Next CTT is still `stability` (18) when the bank
+pays (~9.23). Do not spend the 8.7721 bank on a stunt. Chute hops
+that cannot bank FlyingHigh / a new biome are not the factory.
 Pad occupancy: inventory (many science, many crafts), Gene picks, fly.
 Tape is the product. Creed is still Kardashev III. Do not spend crumbs.
 **Recursive self-improvement is an imperative:** every hire

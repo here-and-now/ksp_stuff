@@ -1,5 +1,8 @@
 # Mortimer Grokman — log
 
+- 2026-08-24 — Learn/RSI applied: `docs/program/learn-rsi.md`. Uncrewed Learn is kernel attach-run, not Gene. T-323/T-324 done. Leftover for Wernher (`payload-learn-attach`): hop-exit still who=wernher; from_need stack/builder; ops needing_go why still “batch Learn”. Pad still flies.
+- 2026-08-24 — T-324: uncrewed Learn is kernel attach-run, not Gene. Reuse stems; empty fp refused on control/systems/feedback. Practice pitfall skip-Learn. T-323 already stamped the envelope. Pad still flies.
+- 2026-08-24 — T-317: Os Ad astra. Slate/CHARTER/Practice: bigger rockets, more Δv, farther out. Bank 8.7721 not a stunt. Next CTT still stability 18 when it pays. Gus T-318 hangs. Do not re-fly +0 Forest leftover.
 - 2026-08-23 — T-310: time is scarce. Bind last-envelope biome/sit; warp the coast; living recover that cannot pay is waste. Practice/PROTOCOL/OPS/job cards. Goal still `stability` 18. Pad still flies (Lars T-308).
 - 2026-08-23 — Hired **Katherine Grokman, Flight Dynamics**. Tape windows, not jsonl. Relays by ticket. Off default pad occupancy unless inbox. Not Linus, not Lars, not Wernher schema.
 - 2026-08-23 — Sunday token tax: desk reasoning floors (Jeb/Lars low, Wernher/Mortimer medium, Gene/Gus/Linus medium, Hank=TUI). Never xhigh. Fresh spawn vs resume_from in PROTOCOL. Packet skim; no auto --deep.

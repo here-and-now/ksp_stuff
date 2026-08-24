@@ -31,10 +31,10 @@ exit **ends** the hop — Commander does not review.
 | Hank | Linus, Director of Research | open science tickets | ids (batch) | payload bind (blocked until vehicle `capable`) |
 | Hank | Lars, Vehicle Systems Engineer | control tickets / miss | ticket + `live_run` | `lesson:` close |
 | Hank | Wernher, Chief Systems Engineer | systems / kRPC world | ticket | systems close |
-| Commander | ticket bus | miss **during hop** (still connected) | `tickets open --type control` | Hank after exit |
-| Hank | ticket bus | miss after process exit | open control from last-flight abort | Lars if needed — **no Jeb debrief** |
+| Commander | ticket bus | miss **during hop** (still connected) | `tickets open --type control --fingerprint <stem>` | Hank after exit |
+| Hank | ticket bus | miss after process exit | open control from last-flight abort **with `--fingerprint`** | Lars if needed — **no Jeb debrief** |
 | Commander / hop pid | Hank | campaign clean 0 CLI exit | last-flight only | Hank tape then uncrewed re-run `cli:` — **no Gene, no Jeb** |
-| Anyone | ticket bus | friction | `tickets open` | Hank routes |
+| Anyone | ticket bus | friction | `tickets open --fingerprint <stem>` | Hank routes |
 | Hank | Mortimer | `type=ctt` / `org` / rsi×3 | ticket | RD spend / PROTOCOL mutation |
 | Hank | Verena, Communications | `type=press` firsts | ticket | `story:` `shot:` |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
@@ -85,6 +85,8 @@ tickets (`payload.to` = addressee on `ask`):
 python main.py tickets open --type ops --tag ask --title "…" --desk <addressee>
 python main.py tickets open --type ops --tag explore --priority P3 --title "…"
 python main.py tickets open --type ops --tag feedback --title "…" --fingerprint <stem>
+python main.py tickets open --type control --title "…" --fingerprint <stem>
+python main.py tickets open --type systems --title "…" --fingerprint <stem>
 python main.py tickets open --type rsi --title "…"
 python main.py tickets open --type ctt --title "…"
 python main.py tickets open --type press --title "…"
@@ -95,11 +97,21 @@ python main.py tickets open --type press --title "…"
 `need_os` is **not a ticket** (CHARTER creed / roster — Os). Leftover
 `need_*` in a return is a Hank shim (`tickets from-need`). Desks open
 with `--type` as above. Do not emit those leftover keys.
-**Fingerprint** is a short stem (`heading-never-090`), never an abort
-novel. Third hit opens `type=rsi` (software → Wernher, else Mortimer).
-Do not tell another desk in Return prose — open `ops --tag ask`
-(`payload.to` / `--desk` = addressee). **Landing envelope wins** over
-fly `payload.learn`.
+**Fingerprint** is a short stem (`flyinghigh-lid`,
+`sci-unchanged-recovered`), never an abort novel, never a timestamp,
+never `hop-<digits>`. Lookup `docs/program/tickets/fingerprints.json`.
+Reuse the existing stem; a longer kebab aliases onto the shortest
+prefix (`flyinghigh-lid-18km-hop` → `flyinghigh-lid`). Do not map
+inland heading 299 onto `heading-never-090` (Water-dead). Empty fp
+is **refused** on new `control` / `systems` / `ops --tag feedback`
+(`legacy-twin` seed exempt) — `tickets open` prints `reuse (count):`
+plus a copy line. Hop-class friction is that bump, not a remembered
+CLI. Third hit opens `type=rsi` (software → Wernher, else Mortimer).
+Lock live skips org; fly_ready still hires Mortimer without emptying
+the pad. Do not tell another desk in Return prose — open `ops --tag
+ask` (`payload.to` / `--desk` = addressee). **Landing envelope wins**
+over fly `payload.learn` (uncrewed: hop-exit `attach-run` overwrites
+it; Gene stamps only when `ops next` hires him).
 
 **Tree + hardware (F-013):** experiment_id is not a part. Every bind /
 capable / `go:` / Lars science-miss packet must say **tree node** and
@@ -168,10 +180,15 @@ CLI exit, tape is still Hank (T-101).
 **Uncrewed campaign (I-016, amended):** Gene stamps
 `payload.campaign=uncrewed` on the first `go: yes` of a cheap probe
 sit. He renders seated `plan.md`. Parent, lock free, leftover clean:
-`python main.py desk` then `protocol fly`. `fly: yes` → spawn the
-Commander with that `cli:` (`payload.cli`). **Do not hire Gene
-between hops** on clean 0 **or** on a miss of a hang that is still
-capable. Pad does not idle for Learn or for “consideration.”
+`python main.py desk` then `protocol fly`. `fly: yes` /
+`commander: none` → parent starts `cli:` (hop pid is the writer).
+**Do not hire Gene between hops** on clean 0 **or** on a miss of a
+hang that is still capable. Do not hire Jeb. Pad does not idle for
+Learn or for “consideration.” Uncrewed `payload.learn` is **kernel**:
+hop-exit `attach-run` overwrites it every hop (`who=hank`, one line
+from the envelope: landing + apo + biome + rec + sci). Next packet
+prints **this** hop. Gene is not that writer. `needs_learn` stays
+false. Do not restore Batch Learn.
 
 After a hop: **Hank leftover first.** Walk home: `recover()` the ship
 and **Close** to KSC (`recover-probe --recover` if recoverable). Os
@@ -191,10 +208,12 @@ stamps that fly ticket only if it has no `go:` yet.
 No alt on disk → hire Gus while leftover cleans, not a novel.
 Stop the string only: dirty hangar (`recover` / `blocked`), f013
 fail, Os wait, crewed/firsts Learn, empty shelf (no capable craft
-in the batch), `go: wait`. Gene **Learn** is `payload.learn`. `ops next` hires
-Gene for Learn only when campaign is **not** `uncrewed` and
-`payload.learn` is empty. `python main.py protocol fly` still owns
-the gate — missing `go: yes` is wait.
+in the batch), `go: wait`. Gene **Learn** is campaign-stop only:
+`ops next` hires him when campaign is **not** `uncrewed` and
+`payload.learn` is empty (crewed / `campaign: none` / firsts).
+Uncrewed Learn is already on the ticket from `attach-run`.
+`python main.py protocol fly` still owns the gate — missing
+`go: yes` is wait.
 
 ## Parallel (same parent turn, still depth 1)
 
@@ -210,7 +229,8 @@ the gate — missing `go: yes` is wait.
 | Gene / Commander `python main.py screenshot --name stuck-<stem>` | logs first; one still; read the PNG. No kRPC. |
 | Retro comments on open F- items (gym archive) | Gene chairs ops; Mortimer if org/goal |
 | Ground `ops --tag ask` tickets | addressee’s next spawn (lock free) |
-| Gene `payload.learn` stamp | never mid-phase |
+| Hank `attach-run` uncrewed `learn` | every hop-exit (kernel overwrite) |
+| Gene `payload.learn` stamp | campaign-stop / crewed / firsts; never mid-phase; never uncrewed |
 | Hank `python main.py ship` (lock live) | never `status` Session; never the jsonl |
 
 Not parallel: two Commanders; Lars on a clean 0. Gene **+** flight is
@@ -242,7 +262,8 @@ Do not read the tape. **Reasoning floors (Os 2026-08-23):** never
 xhigh. Jeb / Lars **low**. Wernher **medium**. Mortimer **medium**.
 Gene / Gus / Linus **medium**. Hank is the TUI session — do not bump.
 Packet is skim; `--deep` is opt-in. Landing **envelope**
-is a skim block on the fly ticket after `tickets attach-run`. Commander
+is a skim block on the fly ticket after `tickets attach-run`
+(uncrewed `learn:` is that overwrite). Commander
 `cli:` is fly `payload.cli`
 **copied verbatim** (F-004) from `python main.py protocol fly` — not
 Gene `recommended:`, not seated `plan.md`. Lars `read:` third path is
@@ -267,8 +288,11 @@ miss / bind that claims a heading or a biome cites the review envelope
 (`heading`, `horiz`, pitch) or `tickets landing T-NNN`. Jsonl stays on
 disk. `docs/last-flight.md` is abort/exit only — it can look like
 skill while heading never 090. **Hank** `attach-run` + `landing` after
-Commander CLI exit. Gene stamps `payload.learn` from that envelope
-when `ops next` hires him — **never** from Commander Return prose.
+Commander CLI exit. Uncrewed `attach-run` **overwrites**
+`payload.learn` from the envelope (`who=hank`). Gene stamps
+`payload.learn` from that envelope only when `ops next` hires him
+(campaign-stop / crewed / firsts) — **never** from Commander Return
+prose, **never** between uncrewed hops.
 Linus does not bind Water/east if the tape never held heading; does
 not bind Grasslands if tape never left Forest; does not bind
 SrfLanded if the hang splashed (or splash if it landed). Lars
@@ -290,11 +314,13 @@ Gene is the only `go:`. Hire Gene when `ops next` names him
 (unstamped `go`, or campaign-stop Learn: campaign not `uncrewed` and
 `payload.learn` empty), **or** lock live and `ship.md` is off-nominal
 and the plan/`go` must change. Uncrewed hops **between** (lock free)
-are not Gene. Crewed / `campaign: none` / firsts: Learn each hop
-(`needs_learn`). Do **not** hire Gene as a merge bus after specialists.
-Do not hire Gene after every clean 0 on an uncrewed string. **Do not
-hire Gene to consider an uncrewed miss after exit.** Open
-`type=systems` → Wernher without a Gene in between (standing explore).
+are not Gene — and are not a skip of Learn: hop-exit `attach-run`
+already wrote `payload.learn`. Crewed / `campaign: none` / firsts:
+Learn each hop (`needs_learn`). Do **not** hire Gene as a merge bus
+after specialists. Do not hire Gene after every clean 0 on an
+uncrewed string. **Do not hire Gene to consider an uncrewed miss
+after exit.** Open `type=systems` → Wernher without a Gene in
+between (standing explore).
 
 A **run** is one Commander command. Filename Earth UTC with seconds
 (`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
@@ -328,9 +354,10 @@ slate: docs/program/slate.md
 ```
 
 Stamp: `tickets stamp T-NNN --field go --value yes|wait --who gene` and
-patch `payload.cli` / `payload.campaign` / `payload.phase` /
-`payload.learn`. Then render seated `plan.md`. Do not `from-need` from
-this body.
+patch `payload.cli` / `payload.campaign` / `payload.phase`. Stamp
+`payload.learn` only when hired for Learn (crewed / firsts /
+campaign-stop). Uncrewed: do not stamp learn (`attach-run` already
+did). Then render seated `plan.md`. Do not `from-need` from this body.
 
 **Linus**
 
@@ -403,7 +430,10 @@ Gym `F-NNN` / `I-NNN` twins live on the ticket board. Nested gym MD is
 parked — not dispatch. Flight bugs stay in
 `docs/lessons.md` as **run — title** headings (the filename stem, not letter-codes).
 
-Leftover `improve:` / `feedback:` → parent `tickets open --type ops --tag feedback`
-(or `type=rsi` if repeating house friction). Do not file live `I-NNN.md`.
-Leftover `ask:` → `--type ops --tag ask` (not the world-model table).
+Leftover `improve:` / `feedback:` → parent
+`tickets open --type ops --tag feedback --fingerprint <existing>`
+(or `type=rsi` if repeating house friction). House friction keeps
+**one** tag. No Return `feedback:` key. Empty stem fails closed and
+prints the reuse catalog. Do not file live `I-NNN.md`. Leftover
+`ask:` → `--type ops --tag ask` (not the world-model table).
 Mortimer `need_os: none|charter|roster` is creed only.

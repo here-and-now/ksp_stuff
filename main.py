@@ -193,6 +193,32 @@ def cmd_pad(session: Session, args: argparse.Namespace) -> int:
         release_lock()
 
 
+def cmd_warp_batch(session: Session, args: argparse.Namespace) -> int:
+    from flightlog import WriterLockError, release_lock, start
+    from warp_launch_batch import run_batch, run_chute_batch
+
+    fn = run_chute_batch if bool(getattr(args, "chute", False)) else run_batch
+    try:
+        start("warp-batch", crew="", session=session)
+        try:
+            code = fn(session, on_log=_log)
+            write_handoff(command="warp-batch", exit_code=code)
+            return code
+        except MissionAbort as exc:
+            _log(f"ABORT {exc}")
+            write_handoff(command="warp-batch", exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command="warp-batch", exit_code=1, abort=f"SESSION {exc}")
+            return 1
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    finally:
+        release_lock()
+
+
 def cmd_hop(session: Session, args: argparse.Namespace) -> int:
     from emergencies import Ctx, call as emergency_call
     from flightlog import WriterLockError, release_lock, start
@@ -564,6 +590,15 @@ def main(argv: list[str] | None = None) -> int:
         type=float,
         default=0.0,
         help="Wall-clock abort (seconds). 0 = none (default).",
+    )
+    warp_b = sub.add_parser(
+        "warp-batch",
+        help="Os-ok revert-to-launch: warp × hangar/light cases in succession",
+    )
+    warp_b.add_argument(
+        "--chute",
+        action="store_true",
+        help="Chute arm/deploy vs extra-stage at 1× and 3×",
     )
     splash_p = sub.add_parser(
         "splash",
@@ -1045,6 +1080,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_pad(session, args)
         if args.cmd == "hop":
             return cmd_hop(session, args)
+        if args.cmd == "warp-batch":
+            return cmd_warp_batch(session, args)
         if args.cmd == "splash":
             return cmd_splash(session, args)
         if args.cmd == "hop-to-water":

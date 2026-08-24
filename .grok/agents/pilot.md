@@ -45,7 +45,7 @@ dead, EC=0 before dwell, crash UI, off-plan apo):
 review after recover. Ground reads `ship.md`; you do not wait for
 them. If the eyes are **blind** (telem looks like 9 columns, no
 chute/EC/q): `note` it during the hop. After exit Hank opens
-`--type systems`. Do not write a tape essay.
+`--type systems --fingerprint <stem>`. Do not write a tape essay.
 
 If the CLI `SESSION`s, stop. Stuck **during the hop** (lock live, logs
 cannot tell): **one** `python main.py screenshot --name stuck-<stem>`,
@@ -53,12 +53,16 @@ cannot tell): **one** `python main.py screenshot --name stuck-<stem>`,
 — Hank). Not `--full` unless unreadable. Not press. Cadence stills in
 `screenshots/runs/` — do not read them. grim is not kRPC.
 
-Miss **during the hop** (still connected):
-`tickets open --type control --category bug --title "…" --severity S2 --priority P1 --desk lars --tag <fingerprint>`.
-After process exit: **stop**. Hank opens control from last-flight.
+Miss **during the hop** (still connected): lookup
+`docs/program/tickets/fingerprints.json` and reuse the class
+(`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`):
+`tickets open --type control --category bug --title "…" --severity S2 --priority P1 --desk lars --fingerprint <stem>`.
+Never omit `--fingerprint`. Do not invent a stem per T-id. After
+process exit: **stop**. Hank opens control from last-flight.
 Do not `attach-run`. Do not `tickets landing`. Do not cite jsonl
-heading/horiz/pitch. Do not Learn. `note-tech` during the hop is tape,
-not a debrief. Uncrewed miss does **not** wait for Gene.
+heading/horiz/pitch. Do not Learn (Hank `attach-run` stamps the
+one-liner). `note-tech` during the hop is tape, not a debrief.
+Uncrewed miss does **not** wait for Gene.
 
 Wait on a **named part** from the last CLI line / desk — not a
 timer. Science is `wait science <id>` on the instrument Gene named. Load

@@ -22,7 +22,8 @@ and you **explore unused kRPC 0.6** so we **log more** (EC, q,
 recoverable, chute/parachute state, science rem/run, stage, broken,
 resources, g, throttle). All data is good data if stored on disk.
 Hank/Gene/Lars query **Tape**, never raw jsonl. A 9-column skim while
-the jsonl is richer is **your** miss — open more `--type systems`.
+the jsonl is richer is **your** miss — open more `--type systems
+--fingerprint <stem>`.
 A kRPC trap is **not** required. Stream/protobuf traps stay yours if
 Lars returns `stack: ok`.
 Fingerprint: `ksc_ready` true while Revert is still painted (vessels
@@ -41,7 +42,11 @@ python main.py tickets packet T-NNN
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
 `docs/program/tickets/BRIEF.md`. Jsonl / agent-notes / last-flight only
-`--deep`. Do not re-run `world` / `tech` / `parts`. Open `--type systems`.
+`--deep`. Do not re-run `world` / `tech` / `parts`. Open `--type systems
+--fingerprint <stem>`. Lookup `docs/program/tickets/fingerprints.json`.
+Never omit `--fingerprint` (empty is refused). Reuse the class; do not
+invent a stem per T-id. Uncrewed `payload.learn` is already Hank
+`attach-run` — do not restore Gene Batch Learn or flip `needs_learn`.
 If you still think `need_qol`, `tickets from-need` — never in the Return
 fence.
 
@@ -50,10 +55,11 @@ fence.
 Patch the `.py` named on the ticket (smallest close). **Log more
 kRPC** into jsonl / Tape windows / `python main.py telem` skim — not
 just a parser over 9 columns. On a miss, one `docs/lessons.md` heading
-(`## <sortie> — title`). `docs/agent-notes.md` only for still-true
+(`## <sortie> — <fingerprint>`). `docs/agent-notes.md` only for still-true
 kRPC API facts. One log line `docs/crew/log/wernher.md`. Leftover
 recover-then-Hangar *kernel* is yours; Hank runs the CLI. Stumble on
-thin tape → another `--type systems`. Do not idle the pad.
+thin tape → another `--type systems --fingerprint <stem>`. Do not idle
+the pad.
 
 ## Do not
 

@@ -64,9 +64,13 @@ vehicle` or skip. Working goal **15 is spent** — bind what still pays **on thi
 (thermo + TELEMETRY + goo if not capped / F-013 / tape). Not one
 thermo forever. After sci unchanged, rebind from the envelope — a
 living recover that cannot pay is waste. Thin tape / 9-column skim:
-`--type systems` (or `ops --tag feedback`) — cite it like `f013`.
-Stumble → ticket. Do not rewrite `science.md` as the bind. One log
-line `docs/crew/log/linus.md`. Do not idle the pad.
+`--type systems --fingerprint <stem>` (or `ops --tag feedback
+--fingerprint <stem>`) — cite it like `f013`.
+Stumble → ticket with `--fingerprint` from
+`docs/program/tickets/fingerprints.json`. Reuse the class; never omit
+on `control` / `systems` / `ops --tag feedback`; do not invent a stem
+per T-id. Do not rewrite `science.md` as the bind. One log line
+`docs/crew/log/linus.md`. Do not idle the pad.
 
 ## Return
 

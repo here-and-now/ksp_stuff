@@ -170,22 +170,117 @@ class TestTickets(unittest.TestCase):
     def test_rsi_long_abort_fingerprint_ignored(self):
         novel = "suicide leftover LF MET 179.7 then splash catastrophic impact 124 m/s " * 2
         self.assertGreater(len(novel), 80)
-        for i in range(3):
+        self.assertEqual(tickets.normalize_fingerprint(novel), "")
+        with self.assertRaises(tickets.TicketError) as ctx:
             tickets.open_ticket(
                 type="control",
-                title=f"splash novel {i}",
+                title="splash novel",
                 reporter="Jebediah",
+                fingerprint=novel,
+            )
+        self.assertIn("fingerprint required", str(ctx.exception))
+        self.assertIn("reuse (count):", str(ctx.exception))
+        for i in range(3):
+            tickets.open_ticket(
+                type="vehicle",
+                title=f"splash novel {i}",
+                reporter="Gus",
                 fingerprint=novel,
             )
         rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
         self.assertEqual(rsi_rows, [])
-        self.assertEqual(tickets.normalize_fingerprint(novel), "")
 
     def test_batch_ids(self):
         tickets.open_ticket(type="vehicle", title="a", reporter="Gus")
         tickets.open_ticket(type="vehicle", title="b", reporter="Gus")
         rows = tickets.list_tickets(desk="gus")
         self.assertEqual([r["id"] for r in rows], ["T-001", "T-002"])
+
+    def test_control_empty_fingerprint_refused(self):
+        with self.assertRaises(tickets.TicketError) as ctx:
+            tickets.open_ticket(
+                type="control", title="heading 299", reporter="Lars"
+            )
+        msg = str(ctx.exception)
+        self.assertIn("fingerprint required for control", msg)
+        self.assertIn("copy: --fingerprint", msg)
+        with self.assertRaises(tickets.TicketError):
+            tickets.open_ticket(
+                type="ops",
+                title="house friction",
+                reporter="Hank",
+                tags=["feedback"],
+            )
+        t = tickets.open_ticket(
+            type="ops",
+            title="ask gus",
+            reporter="Linus",
+            tags=["ask"],
+        )
+        self.assertEqual(t["fingerprint"], "")
+        twin = tickets.open_ticket(
+            type="control",
+            title="old lesson",
+            reporter="Lars",
+            tags=["legacy-twin", "lesson"],
+            fingerprint="",
+        )
+        self.assertEqual(twin["fingerprint"], "")
+
+    def test_fingerprint_alias_and_novels(self):
+        self.assertEqual(tickets.normalize_fingerprint("hop-081"), "")
+        self.assertEqual(
+            tickets.normalize_fingerprint("2026-08-23-heading-stuck"), ""
+        )
+        self.assertEqual(tickets.normalize_fingerprint("22-33-35Z-shear"), "")
+        self.assertEqual(
+            tickets.normalize_fingerprint("flyinghigh-lid-18km-hop"),
+            "flyinghigh-lid-18km-hop",
+        )
+        first = tickets.open_ticket(
+            type="control",
+            title="flyinghigh lid",
+            reporter="Lars",
+            fingerprint="flyinghigh-lid",
+        )
+        self.assertEqual(first["fingerprint"], "flyinghigh-lid")
+        second = tickets.open_ticket(
+            type="control",
+            title="flyinghigh lid 18km",
+            reporter="Lars",
+            fingerprint="flyinghigh-lid-18km-hop",
+        )
+        self.assertEqual(second["fingerprint"], "flyinghigh-lid")
+        self.assertEqual(tickets.fingerprint_count("flyinghigh-lid"), 2)
+        self.assertEqual(tickets.fingerprint_count("flyinghigh-lid-18km-hop"), 0)
+        inland = tickets.open_ticket(
+            type="control",
+            title="inland heading 299",
+            reporter="Lars",
+            fingerprint="heading-299-inland",
+        )
+        self.assertEqual(inland["fingerprint"], "heading-299-inland")
+        self.assertNotEqual(inland["fingerprint"], "heading-never-090")
+        tickets.open_ticket(
+            type="control",
+            title="flyinghigh lid again",
+            reporter="Lars",
+            fingerprint="flyinghigh-lid-retry",
+        )
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(len(rsi_rows), 1)
+        self.assertEqual(rsi_rows[0]["fingerprint"], "flyinghigh-lid")
+
+    def test_patch_add_fp_increments(self):
+        t = tickets.open_ticket(type="vehicle", title="ghost", reporter="Gus")
+        self.assertEqual(t["fingerprint"], "")
+        self.assertEqual(tickets.fingerprint_count("desk-leftover-vs-krpc"), 0)
+        tickets.patch_ticket(
+            t["id"], {"fingerprint": "desk-leftover-vs-krpc"}, who="hank"
+        )
+        self.assertEqual(tickets.fingerprint_count("desk-leftover-vs-krpc"), 1)
+        tickets.patch_ticket(t["id"], {"title": "ghost 2"}, who="hank")
+        self.assertEqual(tickets.fingerprint_count("desk-leftover-vs-krpc"), 1)
 
 
 class TestOpsNext(unittest.TestCase):
@@ -396,7 +491,11 @@ class TestOpsNext(unittest.TestCase):
             type="fly", title="hop-splash", reporter="Hank", desk="gene"
         )
         tickets.open_ticket(
-            type="systems", title="packet skim", reporter="Wernher", desk="wernher"
+            type="systems",
+            title="packet skim",
+            reporter="Wernher",
+            desk="wernher",
+            fingerprint="packet-skim",
         )
         tickets.open_ticket(type="vehicle", title="t7", reporter="Gus")
         act = ops.next_actions(desk={"hangar": "none"}, locked=False)
@@ -454,7 +553,10 @@ class TestOpsNext(unittest.TestCase):
 
     def test_lock_live_hires_wernher_not_gene(self):
         tickets.open_ticket(
-            type="systems", title="desk leftover", reporter="Wernher"
+            type="systems",
+            title="desk leftover",
+            reporter="Wernher",
+            fingerprint="desk-leftover-vs-krpc",
         )
         act = ops.next_actions(desk={"hangar": "none"}, locked=True)
         desks = [h["desk"] for h in act["hire"]]
@@ -623,6 +725,7 @@ class TestPacketAndReasoning(unittest.TestCase):
             desk="lars",
             severity="S2",
             priority="P0",
+            fingerprint="heading-hold",
         )
         self.assertEqual(tickets.reasoning_for(lars), "medium")
         rsi = tickets.open_ticket(
@@ -642,6 +745,7 @@ class TestPacketAndReasoning(unittest.TestCase):
             severity="S2",
             priority="P1",
             desk="lars",
+            fingerprint="relight-on-descent",
             payload={"live_run": "2026-08-21T21-14-09Z-hop-splash"},
         )
         tickets.patch_ticket(
@@ -742,6 +846,7 @@ class TestPacketAndReasoning(unittest.TestCase):
             category="bug",
             tags=["Hard Splash", "east-t3"],
             desk="lars",
+            fingerprint="hard-splash-east-t3",
         )
         self.assertEqual(t["category"], "bug")
         self.assertEqual(t["tags"], ["hard-splash", "east-t3"])
@@ -984,6 +1089,7 @@ class TestMigrateSecondBus(unittest.TestCase):
             title="F-014 load persistent autosaves RAM first",
             reporter="Mortimer",
             desk="wernher",
+            fingerprint="f-014",
         )
         skim = tickets.format_packet(t["id"], deep=False)
         for path in packet_read_paths(skim):
@@ -1102,6 +1208,7 @@ class TestPacketAttachAndInbox(unittest.TestCase):
             reporter="Jebediah",
             desk="lars",
             tags=["heading-090"],
+            fingerprint="heading-301",
         )
         buf = StringIO()
         with redirect_stdout(buf):
@@ -1135,6 +1242,72 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         self.assertIn("learn: heading never 090", skim)
         self.assertNotIn("BOARD.md", skim)
 
+    def test_attach_run_stamps_learn_and_sci_unchanged_bump(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={"cli": "python main.py hop", "campaign": "uncrewed"},
+        )
+        env = {
+            "landing": "soft",
+            "impact_ms": 5,
+            "heading": 299,
+            "horiz": 0,
+            "pitch": 90,
+            "sit": "landed",
+            "apo_max": 1611,
+            "biome": "Shores",
+            "recoverable": True,
+            "sci_run": 0,
+            "sci_bank": 8.77,
+        }
+        path = Path(tempfile.mkdtemp()) / "a.jsonl"
+        path.write_text("{}\n", encoding="utf-8")
+        with patch("tape.envelope", return_value=env):
+            tickets.attach_run(t["id"], path, who="wernher")
+        cur = tickets.show_ticket(t["id"])
+        learn = (cur.get("payload") or {}).get("learn") or ""
+        self.assertIn("landing: soft", learn)
+        self.assertIn("apo=1611", learn)
+        self.assertIn("biome=Shores", learn)
+        self.assertIn("rec=yes", learn)
+        self.assertIn("sci=run=0", learn)
+        self.assertIn("bank=8.77", learn)
+        self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 1)
+        self.assertFalse(tickets.needs_learn(cur))
+        skim = tickets.format_packet(t["id"], deep=False)
+        self.assertIn("learn:", skim)
+        self.assertIn("rec=yes", skim)
+        with patch("tape.envelope", return_value=env):
+            tickets.attach_run(t["id"], path, who="hank")
+        self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 1)
+        path2 = Path(tempfile.mkdtemp()) / "b.jsonl"
+        path2.write_text("{}\n", encoding="utf-8")
+        with patch("tape.envelope", return_value=env):
+            tickets.attach_run(t["id"], path2, who="hank")
+        self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 2)
+        wreck = {
+            **env,
+            "landing": "catastrophic",
+            "recoverable": False,
+        }
+        path3 = Path(tempfile.mkdtemp()) / "c.jsonl"
+        path3.write_text("{}\n", encoding="utf-8")
+        fly2 = tickets.open_ticket(
+            type="fly",
+            title="hop wreck",
+            reporter="Hank",
+            desk="gene",
+            payload={"campaign": "uncrewed"},
+        )
+        with patch("tape.envelope", return_value=wreck):
+            tickets.attach_run(fly2["id"], path3, who="hank")
+        self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 2)
+        rsi = [x for x in tickets.list_tickets() if x.get("type") == "rsi"]
+        self.assertEqual(rsi, [])
+
 
 class TestReviewLearn(unittest.TestCase):
     def test_hop_learn_has_envelope_not_placeholder(self):
@@ -1150,7 +1323,11 @@ class TestReviewLearn(unittest.TestCase):
         dest = Path(tempfile.mkdtemp()) / "hop-to-water.jsonl"
         shutil.copy(src, dest)
         text = write_review(
-            dest, command="hop-to-water", exit_code=2, abort="ABORT"
+            dest,
+            command="hop-to-water",
+            exit_code=2,
+            abort="ABORT",
+            campaign="none",
         ).read_text(encoding="utf-8")
         self.assertNotIn("_Gene fills this", text)
         learn = text.split("## Learn", 1)[1]
@@ -1177,3 +1354,48 @@ class TestReviewLearn(unittest.TestCase):
         self.assertNotIn("_Gene fills this", text)
         learn = text.split("## Learn", 1)[1]
         self.assertIn("hygiene ksc", learn)
+
+    def test_uncrewed_learn_skips_gene_nag(self):
+        import shutil
+        from review import learn_block, write_review
+
+        src = (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "telem"
+            / "hard-splash.jsonl"
+        )
+        dest = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        shutil.copy(src, dest)
+        text = write_review(
+            dest, command="hop", exit_code=2, abort=None, campaign="uncrewed"
+        ).read_text(encoding="utf-8")
+        learn = text.split("## Learn", 1)[1]
+        self.assertNotIn("payload.learn", learn)
+        self.assertNotIn("Stamp", learn)
+        block = "\n".join(
+            learn_block(
+                "hop",
+                0,
+                None,
+                {
+                    "heading_first": 299,
+                    "heading_last": 34,
+                    "horiz_max": 5,
+                    "pitch_first": 90,
+                    "pitch_last": -9,
+                },
+                campaign="uncrewed",
+            )
+        )
+        self.assertNotIn("Stamp payload.learn", block)
+        crewed = "\n".join(
+            learn_block(
+                "hop",
+                0,
+                None,
+                {"heading_first": 90, "heading_last": 90},
+                campaign="none",
+            )
+        )
+        self.assertIn("Stamp payload.learn", crewed)

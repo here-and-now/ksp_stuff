@@ -54,17 +54,21 @@ Packet is `docs/program/desk.md` + inbox + this ticket +
 `docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Cite
 `tickets landing T-NNN` — not last-flight prose, not jsonl. Query
 **Tape**. Open **many** control fingerprints in one hire. Thin tape /
-leftover overlay → `--type systems` (Wernher). `need_stack` →
+leftover overlay → `--type systems --fingerprint <stem>` (Wernher). `need_stack` →
 `tickets from-need`, never in Return. Pad waits **only the live
 control file**.
 
 You go **first after a miss** (nonzero, ABORT, empty science), or on
 a **control** ticket. Skip a clean exit 0 unless asked. **sci
 unchanged** on a living recover is Linus (envelope rebind), unless
-the live `.py` broke. Wernher only if you return `stack: ok` **and**
-the abort is a kRPC trap (he is also standing on `type=systems`).
-Not patching: `lesson: none`. `f013.unlocked=no` → do not patch a
-dwell for that instrument.
+the live `.py` broke — kernel already bumped
+`sci-unchanged-recovered` on `attach_run`. Wernher only if you return
+`stack: ok` **and** the abort is a kRPC trap (he is also standing on
+`type=systems`). Not patching: `lesson: none`. `f013.unlocked=no` →
+do not patch a dwell for that instrument. Uncrewed Learn is kernel
+`attach-run`, not Gene. When you open control: lookup
+`docs/program/tickets/fingerprints.json`; reuse the class; never omit
+`--fingerprint`; do not map inland 299 onto `heading-never-090`.
 
 **Warp the coast:** physics 2–4× after real burnout (fuel gone, or
 throttle 0 **after loft**). 1× while burning, chute deploy, recover.
@@ -82,12 +86,13 @@ sit. `-k` is legal.
 
 ## After a miss
 
-Append `## <run> — title` to `docs/lessons.md`. Patch the **named
-file above**, smallest close. Prefer a helper that still holds on
-another biome/sit/heading. Update `blocks.md` only if you add a
-phase name. Do not re-fly. Do not patch leftover Hangar into hop.
-Never revert, quickload, or rewind UT. Splash HD of **this** hop
-stays yours.
+Append `## <run> — <fingerprint>` to `docs/lessons.md`. The heading
+**must** name the reusable fingerprint (the stem on the control
+ticket). Patch the **named file above**, smallest close. Prefer a
+helper that still holds on another biome/sit/heading. Update
+`blocks.md` only if you add a phase name. Do not re-fly. Do not
+patch leftover Hangar into hop. Never revert, quickload, or rewind
+UT. Splash HD of **this** hop stays yours.
 
 ## Return
 
@@ -100,5 +105,9 @@ blocks: pad
 ```
 
 Do not emit `need_*`. Body (not the fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`.
-Miss → `--type recover|control`. Short fingerprint stem. Do not tell
-another desk in this Return.
+Miss → `--type recover|control --fingerprint <stem>`. Lookup
+`docs/program/tickets/fingerprints.json`. Reuse the existing stem
+(longer kebab aliases onto the shortest prefix). Never omit
+`--fingerprint` on control / systems / `ops --tag feedback` — empty
+is refused and prints `reuse (count):`. Do not tell another desk in
+this Return.

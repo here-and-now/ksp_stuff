@@ -14,7 +14,7 @@ titles. Drop RAF/spy/radio-compact.
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |
 | **go: / wait** | MCC. Keep. |
-| **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene. Learn is `payload.learn`. `ops next` hires Gene for Learn only when campaign is not `uncrewed` and learn is empty. `none` = Learn each hop. Plan.md is a render. |
+| **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene. Uncrewed `payload.learn` is hop-exit `attach-run` (kernel), not Gene. `ops next` hires Gene for Learn only when campaign is not `uncrewed` and learn is empty. `none` = Learn each hop. Plan.md is a render. |
 | **CAPCOM** | NASA loop. Walt. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
 | **leftover / KSC** | Space Center wreck or unmatched vessel. **Hank** walk home: `recover()` + Close (`recover-probe --recover` if recoverable). Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |

@@ -415,6 +415,12 @@ class _Snap:
 
 
 class TestShotCadence(TestCase):
+    def test_trigger_off_skips_mission_hooks(self):
+        from screenshot import mission_event, mission_observe
+
+        self.assertIsNone(mission_event("light"))
+        self.assertIsNone(mission_observe(object()))
+
     def test_interval_and_events(self):
         written: list[str] = []
         t = {"now": 0.0}

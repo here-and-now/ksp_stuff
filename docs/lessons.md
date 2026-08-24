@@ -21,6 +21,43 @@ python main.py pad
 
 ---
 
+## 2026-08-23T22-33-35Z-hop — FlyingHigh lid abort on a hop that never reached 50 km
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T22-33-35Z-hop`). Long-pbc. Bound T-069 FlyingHigh
+  Forest TELEMETRY. f013 TELEMETRY on_craft=yes; thermometer start
+  unlocked on_craft=yes. Do not Hangar. Live hop pid already loaded —
+  next hop takes this.
+- **Symptom:** hop_apo 50000, apo_max 1611 m, alt_max 1549 m, Shores
+  0.58 km. Apex throttle 1 fuel 1400 chute deployed. Last sit=landed
+  throttle 1 fuel 0.3. Exit 2 ABORT no science (FlyingHigh lid). sci +0.
+  Recoverable yes. T-077 Forest land still on the card.
+- **Cause:** Factory treated pad loft (250 m) as a missed 50 km lid and
+  aborted before land leftover. `_hold_or_cut` kept throttle 1 to
+  hop_apo on the ground.
+- **Fix:** `_reached_high_lid` / `_abort_high_lid` name the Toggle sit.
+  A hop that never reached 50 km recovers leftover; cut throttle once
+  lofted and down or under silk. Do not dump the tank on the pad.
+- **Modules:** `hop_factory.py`, `hop.py` (`_abort_high_lid`).
+
+## 2026-08-23T20-47-10Z-hop — pad boost dwelt Shores goo then hop-down
+
+- **When:** 2026-08-23 letsgrok `python main.py hop`
+  (`2026-08-23T20-47-10Z-hop`). Stiff-pbc. f013 2HOT start
+  unlocked=yes on_craft=yes. Do not Hangar. Live hop pid already
+  loaded — next hop takes this.
+- **Symptom:** Light, airborne T+1, slew 270, chute armed. Flying card
+  skip thermo/TELEMETRY (not in card), start mysteryGoo, dwell, hop-down.
+  apo_max 119 m alt_max 104 m biome Shores only. Throttle 0 MET 1.88
+  fuel 1053. Exit 2 ABORT. sci +0.
+- **Cause:** `_science_ready` is sit=flying, not lofted. Factory started
+  the flying card at pad alt, then `_pad_boosting` dropped on
+  sit=landed so a bounce hopped down and dwelt capped Shores goo.
+- **Fix:** Flying card after loft. `_pad_boosting` stays true while
+  burning and not lofted (bounce landed with fuel is still pad boost).
+  Relight. Do not hop-down or dwell Shores on a 104 m hop.
+- **Modules:** `hop_factory.py`, `hop.py` (`_pad_boosting`).
+
 ## T-312 — hop helpers name sit, not a stamp
 
 - **When:** Os 2026-08-23: hop.py hub reasonably good. T-312. f013 2HOT

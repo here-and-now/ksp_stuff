@@ -9,7 +9,11 @@ phase: hop
 next: none
 expect_body: Earth
 expect_peri_min: -500000
-expect_apo_max: 50000
-craft: kspstuff-hop-valiant-proc-stiff-pbc
-hop_apo: 18000
+expect_apo_max: 140000
+craft: kspstuff-hop-valiant-proc-long-pbc
+hop_apo: 50000
 go: yes
+cli: python main.py hop
+campaign: uncrewed
+science_ids: temperatureScan,kerbalism_TELEMETRY
+emergencies: hold, cut, no_warp, stage, recover, science, abort_pad

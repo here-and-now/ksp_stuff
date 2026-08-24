@@ -30,6 +30,7 @@ Itch is `tickets open --type ops --tag explore`. Nested notebooks are parked.
 Os is Founder, not a god. Gene can still `go: wait`. The Commander
 process flies; Gene is **between exits** and **off-nominal mid-sortie**
 (Hank hire — uplink / `go: wait` / tickets, **not** the stick).
+Uncrewed Learn is kernel `attach-run`, not a Gene stamp.
 Catalog `blocks.md`.
 Missing block → control ticket. Missing rocket → vehicle ticket. Science
 card → science ticket. Copy Linus into the briefing. Ground desks may

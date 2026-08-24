@@ -19,9 +19,24 @@ def _sess(sc):
     return type("S", (), {"space_center": sc})()
 
 
-def test_coast_rate_is_3x():
-    assert COAST_RATE == 3
+def test_coast_rate_is_4x():
+    assert COAST_RATE == 4
     assert PAD_RATE == 3
+
+
+def test_coast_rate_env_pins_test_hop(monkeypatch):
+    from physics_warp import coast_rate
+
+    monkeypatch.delenv("KSPSTUFF_PHYS_WARP", raising=False)
+    assert coast_rate() == 4
+    monkeypatch.setenv("KSPSTUFF_PHYS_WARP", "1")
+    assert coast_rate() == 1
+    monkeypatch.setenv("KSPSTUFF_PHYS_WARP", "4")
+    assert coast_rate() == 4
+    monkeypatch.setenv("KSPSTUFF_PHYS_WARP", "9")
+    assert coast_rate() == 4
+    monkeypatch.setenv("KSPSTUFF_PHYS_WARP", "nope")
+    assert coast_rate() == 4
 
 
 def test_set_rate_3x_is_factor_2_rails_0():
@@ -44,16 +59,16 @@ def test_apply_coast_false_is_1x():
     assert any("hop physics 1x" in x for x in logs)
 
 
-def test_apply_coast_default_3x():
+def test_apply_coast_default_4x():
     sc = _sc()
     last: list[str] = [""]
     logs: list[str] = []
     n = apply_coast(_sess(sc), coast=True, on_log=logs.append, last=last)
-    assert n == 2
-    assert sc.physics_warp_factor == 2
+    assert n == 3
+    assert sc.physics_warp_factor == 3
     assert sc.rails_warp_factor == 0
-    assert last[0] == "3x"
-    assert any("hop coast physics 3x rails=0" in x for x in logs)
+    assert last[0] == "4x"
+    assert any("hop coast physics 4x rails=0" in x for x in logs)
 
 
 def test_apply_coast_uplink_1x():

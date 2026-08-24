@@ -118,3 +118,15 @@
 - 2026-08-23T18-19-00Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T18-19-00Z-hop.md review=docs/archive/reviews/2026-08-23T18-19-00Z-hop-review.md
 - 2026-08-23T18-34-22Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T18-34-22Z-hop.md review=docs/archive/reviews/2026-08-23T18-34-22Z-hop-review.md
 - 2026-08-23T19-15-36Z ksc exit=0 → docs/missions/jebediah/logs/2026-08-23T19-15-36Z-ksc.md review=docs/archive/reviews/2026-08-23T19-15-36Z-ksc-review.md
+- 2026-08-23T20-47-10Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-23T20-47-10Z-hop.md review=docs/archive/reviews/2026-08-23T20-47-10Z-hop-review.md
+- 2026-08-23T21-01-14Z hop exit=2 abort=ksc leftover sit=landed recoverable=no call: python main.py recover-probe --space-center total wreck → docs/missions/jebediah/logs/2026-08-23T21-01-14Z-hop.md review=docs/archive/reviews/2026-08-23T21-01-14Z-hop-review.md
+- 2026-08-23T21-05-27Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-23T21-05-27Z-hop.md review=docs/archive/reviews/2026-08-23T21-05-27Z-hop-review.md
+- 2026-08-23T21-16-18Z warp-batch exit=2 → docs/missions/jebediah/logs/2026-08-23T21-16-18Z-warp-batch.md review=docs/archive/reviews/2026-08-23T21-16-18Z-warp-batch-review.md
+- 2026-08-23T21-18-21Z warp-batch exit=2 → docs/missions/jebediah/logs/2026-08-23T21-18-21Z-warp-batch.md review=docs/archive/reviews/2026-08-23T21-18-21Z-warp-batch-review.md
+- 2026-08-23T21-22-13Z warp-batch exit=0 → docs/missions/jebediah/logs/2026-08-23T21-22-13Z-warp-batch.md review=docs/archive/reviews/2026-08-23T21-22-13Z-warp-batch-review.md
+- 2026-08-23T21-25-42Z warp-batch exit=0 → docs/missions/jebediah/logs/2026-08-23T21-25-42Z-warp-batch.md review=docs/archive/reviews/2026-08-23T21-25-42Z-warp-batch-review.md
+- 2026-08-23T21-31-54Z hop exit=2 abort=ksc leftover sit=landed recoverable=no call: python main.py recover-probe --space-center total wreck → docs/missions/jebediah/logs/2026-08-23T21-31-54Z-hop.md review=docs/archive/reviews/2026-08-23T21-31-54Z-hop-review.md
+- 2026-08-23T21-37-49Z hop exit=2 abort=ksc leftover sit=landed recoverable=no call: python main.py recover-probe --space-center total wreck → docs/missions/jebediah/logs/2026-08-23T21-37-49Z-hop.md review=docs/archive/reviews/2026-08-23T21-37-49Z-hop-review.md
+- 2026-08-23T21-46-20Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T21-46-20Z-hop.md review=docs/archive/reviews/2026-08-23T21-46-20Z-hop-review.md
+- 2026-08-23T21-53-04Z hop exit=0 → docs/missions/jebediah/logs/2026-08-23T21-53-04Z-hop.md review=docs/archive/reviews/2026-08-23T21-53-04Z-hop-review.md
+- 2026-08-23T22-33-35Z hop exit=2 abort=no science (FlyingHigh lid) → docs/missions/jebediah/logs/2026-08-23T22-33-35Z-hop.md review=docs/archive/reviews/2026-08-23T22-33-35Z-hop-review.md

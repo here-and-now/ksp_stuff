@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -148,14 +149,82 @@ def _norm_tags(tags: Any) -> list[str]:
 _FP_STEM_MAX = 48
 _FP_ABORT = 80
 _LAST_RSI_ID = ""
+_FP_REQUIRED = frozenset({"control", "systems"})
+SCI_UNCHANGED_FP = "sci-unchanged-recovered"
+# Timestamp-prefixed / hop-<digits> novels do not count toward ×3.
+_FP_NOVEL_RE = re.compile(
+    r"^(?:\d{4}-\d{2}-\d{2}(?:t\d{2}-\d{2}-\d{2}z?)?|\d{2}-\d{2}-\d{2}z?|hop-\d+)"
+    r"(?:-|$)",
+    re.I,
+)
 
 
 def normalize_fingerprint(fp: str) -> str:
-    """Short stem for RSI. Abort novels (>80 chars) do not count toward ×3."""
+    """Short stem for RSI. Abort/timestamp/hop-N novels do not count toward ×3."""
     raw = str(fp or "").strip()
     if not raw or len(raw) > _FP_ABORT:
         return ""
-    return _norm_tag(raw)[:_FP_STEM_MAX]
+    stem = _norm_tag(raw)[:_FP_STEM_MAX]
+    if not stem or _FP_NOVEL_RE.match(stem):
+        return ""
+    return stem
+
+
+def fingerprint_required(typ: str, tags: list[str] | None) -> bool:
+    """control / systems / ops --tag feedback. legacy-twin seed is exempt."""
+    tags_n = _norm_tags(tags)
+    if "legacy-twin" in tags_n:
+        return False
+    if typ in _FP_REQUIRED:
+        return True
+    return typ == "ops" and "feedback" in tags_n
+
+
+def alias_fingerprint(
+    fp: str, existing: dict[str, int] | None = None
+) -> str:
+    """Reuse the shortest existing kebab prefix (flyinghigh-lid-18km-hop → flyinghigh-lid)."""
+    stem = normalize_fingerprint(fp)
+    if not stem:
+        return ""
+    fps = existing if existing is not None else (load_head().get("fingerprints") or {})
+    best = stem
+    best_parts = len([p for p in stem.split("-") if p])
+    for other in fps:
+        if not other:
+            continue
+        parts = len([p for p in other.split("-") if p])
+        if parts < 2:
+            continue
+        if stem == other or stem.startswith(other + "-"):
+            if parts < best_parts:
+                best = other
+                best_parts = parts
+    return best
+
+
+def format_fp_catalog(*, limit: int = 12) -> str:
+    """reuse (count): stem (n), … plus a copy line. Empty board is valid."""
+    fps = load_head().get("fingerprints") or {}
+    rows = sorted(
+        ((int(n), s) for s, n in fps.items() if s and int(n) > 0),
+        reverse=True,
+    )
+    if not rows:
+        return "reuse (count): (none)\ncopy: --fingerprint <stem>"
+    parts = [f"{s} ({n})" for n, s in rows[:limit]]
+    return (
+        "reuse (count): " + ", ".join(parts) + "\n"
+        f"copy: --fingerprint {rows[0][1]}"
+    )
+
+
+def _fp_required_error(typ: str) -> TicketError:
+    extra = " --tag feedback" if typ == "ops" else ""
+    return TicketError(
+        f"fingerprint required for {typ}{extra} (empty/novel rejected)\n"
+        + format_fp_catalog()
+    )
 
 
 def science_is_catalog(t: dict[str, Any]) -> bool:
@@ -209,8 +278,16 @@ def _rebuild() -> dict[str, Any]:
             tid = ev["id"]
             if tid not in tickets:
                 continue
+            prev_fp = tickets[tid].get("fingerprint") or ""
             tickets[tid] = {**tickets[tid], **ev.get("fields", {})}
             tickets[tid]["updated"] = ev.get("at") or tickets[tid].get("updated")
+            new_fp = tickets[tid].get("fingerprint") or ""
+            if new_fp and not prev_fp:
+                fps[new_fp] = fps.get(new_fp, 0) + 1
+        elif kind == "fp":
+            fp = ev.get("fp") or ""
+            if fp:
+                fps[fp] = fps.get(fp, 0) + 1
     head = {"tickets": tickets, "fingerprints": fps, "updated": _now()}
     HEAD.write_text(json.dumps(head, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     FINGERPRINTS.write_text(json.dumps(fps, indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -517,6 +594,10 @@ def open_ticket(
     tickets = head.get("tickets") or {}
     tid = _next_id(tickets)
     now = _now()
+    tags_n = _norm_tags(tags)
+    fp = alias_fingerprint(fingerprint, head.get("fingerprints") or {})
+    if fingerprint_required(type, tags_n) and not fp:
+        raise _fp_required_error(type)
     ticket = {
         "id": tid,
         "type": type,
@@ -528,10 +609,10 @@ def open_ticket(
         "priority": priority,
         "status": "inbox",
         "blockers": [],
-        "fingerprint": fingerprint.strip(),
+        "fingerprint": fp,
         "rsi_loop": rsi_loop,
         "category": _norm_category(category, type),
-        "tags": _norm_tags(tags),
+        "tags": tags_n,
         "payload": payload or {},
         "evidence": [],
         "sci_expect": None,
@@ -541,7 +622,6 @@ def open_ticket(
     }
     if ticket["desk"] not in DESKS:
         raise TicketError(f"bad desk {ticket['desk']}")
-    ticket["fingerprint"] = normalize_fingerprint(fingerprint)
     _append({"op": "open", "at": now, "ticket": ticket})
     _rebuild()
     global _LAST_RSI_ID
@@ -582,9 +662,24 @@ def patch_ticket(tid: str, fields: dict[str, Any], *, who: str) -> dict[str, Any
         }
     if "tags" in fields:
         fields = {**fields, "tags": _norm_tags(fields.get("tags"))}
+    if "fingerprint" in fields:
+        fields = {
+            **fields,
+            "fingerprint": alias_fingerprint(str(fields.get("fingerprint") or "")),
+        }
+    prev_fp = cur.get("fingerprint") or ""
     now = _now()
     _append({"op": "patch", "at": now, "id": tid, "who": who, "fields": fields})
-    return _rebuild()["tickets"][tid]
+    out = _rebuild()["tickets"][tid]
+    new_fp = out.get("fingerprint") or ""
+    if new_fp and not prev_fp and out.get("type") != "rsi":
+        loop = str(out.get("rsi_loop") or "")
+        maybe_open_rsi(
+            new_fp,
+            rsi_loop=None if loop in {"", "none"} else loop,
+        )
+        out = show_ticket(tid)
+    return out
 
 
 def list_tickets(
@@ -795,11 +890,91 @@ def card_science_ids(
     return union_science_ids(bound, fly)
 
 
+def format_learn_line(row: dict[str, Any] | None) -> str:
+    """One-line hop Learn: format_landing + apo + biome + rec + sci run/bank."""
+    if not isinstance(row, dict) or not row:
+        return ""
+    from telem import format_landing
+
+    landing = format_landing(row)
+    apo = row.get("apo_max")
+    try:
+        apo_s = str(int(round(float(apo)))) if apo is not None else "?"
+    except (TypeError, ValueError):
+        apo_s = "?"
+    biome = str(row.get("biome") or "").strip()
+    if not biome:
+        biomes = [str(b) for b in (row.get("biomes") or []) if b]
+        biome = biomes[0] if biomes else "?"
+    rec = row.get("recoverable")
+    rec_s = "yes" if rec is True else ("no" if rec is False else "?")
+    sci_run = row.get("sci_run")
+    if sci_run is None:
+        run_s = "?"
+    else:
+        try:
+            run_s = "0" if int(sci_run) == 0 else "1"
+        except (TypeError, ValueError):
+            run_s = "1" if sci_run else "0"
+    bank = row.get("sci_bank")
+    try:
+        bank_s = f"{float(bank):.2f}" if bank is not None else "?"
+    except (TypeError, ValueError):
+        bank_s = "?"
+    return (
+        f"{landing} apo={apo_s} biome={biome} rec={rec_s} "
+        f"sci=run={run_s} bank={bank_s}"
+    )
+
+
+def _sci_unchanged_waste(landing: dict[str, Any] | None) -> bool:
+    """Living recover + sci_run=0. Unknown run does not count."""
+    if not isinstance(landing, dict):
+        return False
+    if landing.get("recoverable") is not True:
+        return False
+    run = landing.get("sci_run")
+    if run is None:
+        return False
+    try:
+        return int(run) == 0
+    except (TypeError, ValueError):
+        return not bool(run)
+
+
+def bump_fingerprint(
+    fp: str,
+    *,
+    who: str = "hank",
+    source: str = "",
+    tid: str = "",
+) -> int:
+    """Count a miss class without minting a ticket. ×3 still opens type=rsi."""
+    stem = normalize_fingerprint(fp)
+    if not stem:
+        return 0
+    _append(
+        {
+            "op": "fp",
+            "at": _now(),
+            "fp": stem,
+            "who": who,
+            "source": source,
+            "id": tid,
+        }
+    )
+    _rebuild()
+    maybe_open_rsi(stem)
+    return fingerprint_count(stem)
+
+
 def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, Any]:
-    """Link a telem jsonl onto a ticket. Merge payload; do not blank top-level go."""
+    """Link a telem jsonl onto a ticket. Overwrite payload.learn from the envelope."""
     p = str(path)
     cur = show_ticket(tid)
-    evs = list(cur.get("evidence") or [])
+    prev_run = str((cur.get("payload") or {}).get("telem_run") or "")
+    prev_evs = list(cur.get("evidence") or [])
+    evs = list(prev_evs)
     if p not in evs:
         evs.append(p)
     payload = dict(cur.get("payload") or {})
@@ -815,11 +990,21 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
     kind = str(landing.get("landing") or "")
     if kind:
         tags = _norm_tags(tags + [kind, "landing"])
-    return patch_ticket(
+    t = patch_ticket(
         tid,
         {"evidence": evs, "payload": payload, "tags": tags},
         who=who,
     )
+    learn = format_learn_line(landing if isinstance(landing, dict) else None)
+    if learn:
+        t = stamp_learn(tid, learn, who="hank")
+    fresh_run = p != prev_run and p not in prev_evs
+    if fresh_run and cur.get("type") == "fly" and _sci_unchanged_waste(
+        landing if isinstance(landing, dict) else None
+    ):
+        bump_fingerprint(SCI_UNCHANGED_FP, who="hank", source=p, tid=tid)
+        t = show_ticket(tid)
+    return t
 
 
 def inbox_for(desk: str) -> list[dict[str, Any]]:
@@ -1111,7 +1296,11 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     op.add_argument("--severity", default="S3", choices=SEVERITY)
     op.add_argument("--priority", default="P2", choices=PRIORITY)
     op.add_argument("--desk", default="", choices=("",) + DESKS)
-    op.add_argument("--fingerprint", default="")
+    op.add_argument(
+        "--fingerprint",
+        default="",
+        help="required for control/systems/ops --tag feedback; reuse catalog on error",
+    )
     op.add_argument("--rsi-loop", default="none")
     op.add_argument("--category", default="", choices=("",) + CATEGORIES)
     op.add_argument("--tag", action="append", default=[])
@@ -1267,6 +1456,9 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
         if args.act == "attach-run":
             t = attach_run(args.id, args.path, who=args.who)
             print(t["id"], "telem", (t.get("payload") or {}).get("telem_run"))
+            learn = (t.get("payload") or {}).get("learn")
+            if learn:
+                print("learn:", learn)
             return 0
         if args.act == "board":
             _rebuild()

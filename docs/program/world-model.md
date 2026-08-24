@@ -351,14 +351,16 @@ story this fly. Dead kRPC GUID is not leftover.
   tape is still Hank (T-101). Os “how’s it going?” on a nominal hop →
   `ship.md` as Walt. Wreck → Walt + hire.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
-- Working goal (Os 2026-08-23): next tech node `stability` **18**. Do
-  not rest until it is banked. `survivability` **spent**. Bank
-  **8.7721** — do not spend on a stunt. Need **~9.23**. Cape Shores
-  is capped. Forest / Grasslands / Tropics / Savanna FlyingLow still
-  pay **when the envelope shows them**. Water waits heading 090. Do
-  not slam east-t3. Same lithobrake Flea is still not the campaign.
-  Stayputnik is not a Geiger. A living recover with sci unchanged is
-  **waste**, not rest.
+- Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
+  out. Ad astra. Next CTT is still `stability` **18** when the bank
+  pays. `survivability` **spent**. Bank **8.7721** — do not spend on
+  a stunt. Need **~9.23**. Cape Shores is capped. Forest leftover
+  that already returned **+0** is not the factory. FlyingHigh Forest
+  waits **≥50 km**. New biome waits envelope. Forest / Grasslands /
+  Tropics / Savanna FlyingLow still pay **when the envelope shows
+  them**. Water waits heading 090. Do not slam east-t3. Same
+  lithobrake Flea is still not the campaign. Stayputnik is not a
+  Geiger. A living recover with sci unchanged is **waste**, not rest.
 - **Pad occupancy:** Tape is the product. An **idle pad is a sin**.
   A **living recover that cannot pay is also a waste**. Linus always
   has a **shelf** of `science_opportunity` and **this-hop binds**
@@ -381,13 +383,26 @@ story this fly. Dead kRPC GUID is not leftover.
   unchanged, rebind from the envelope or pick the next signed hang
   that can bank.
 - **Thin tape / 9 columns** is a first-class problem. Stumble →
-  `tickets open --type systems` (or `ops --tag feedback`). Cite it
-  like `f013`. Query Tape, never raw jsonl. Do not shrug in a log.
+  `tickets open --type systems --fingerprint <stem>` (or
+  `ops --tag feedback --fingerprint <stem>`). Cite it like `f013`.
+  Query Tape, never raw jsonl. Do not shrug in a log.
   Wernher **logs more kRPC** (EC, q, recoverable, chute state, science
   rem/run, stage, broken, resources, g) into disk; all data is good
   data if stored.
 - **RSI:** every hire leaves a sharper sit. Stumble → ticket. Not a
-  log shrug. Not a conference that idles the pad.
+  log shrug. Not a conference that idles the pad. Reuse fingerprint
+  stems (lookup `fingerprints.json`); empty fp is refused on
+  `control` / `systems` / `ops --tag feedback`. Living recover +
+  `sci_run=0` bumps `sci-unchanged-recovered`. **Practice last-write
+  from rsi tickets** (stem, count, pitfall) — not only Os letters.
+- **2026-08-24 uncrewed skip-Learn (T-324 / T-323):** rsi-jump
+  (2026-08-22) correctly skipped Gene between uncrewed hops and also
+  skipped the only writer of `payload.learn`. Packet skim printed a
+  frozen shear over live tape. Kernel `attach_run` now overwrites
+  `learn` each hop (`who=hank`, envelope one-liner). Gene Learn =
+  campaign-stop only (crewed / `campaign: none` / firsts). Do not
+  restore Batch Learn. Do not flip `needs_learn`. Do not hire Gene
+  as a merge. Applied: `docs/program/learn-rsi.md`.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next
@@ -396,10 +411,11 @@ story this fly. Dead kRPC GUID is not leftover.
   re-flies last `cli:` on clean 0 **if that bind can still pay**, and
   on a miss of a hang that is still capable; **sci unchanged** on a
   living recover is Linus envelope rebind, not Lars, not Gene.
-  **no Gene** between hops. Learn is `payload.learn`.
-  `ops next` hires Gene for Learn only when campaign is not
-  `uncrewed` and learn is empty. Pad does not idle for Learn or
-  “consideration” (I-016 amended). After a hop: Hank leftover first.
+  **no Gene** between hops. Uncrewed Learn is hop-exit `attach-run`
+  (kernel overwrite of `payload.learn`). `ops next` hires Gene for
+  Learn only when campaign is not `uncrewed` and learn is empty. Pad
+  does not idle for Learn or “consideration” (I-016 amended). After
+  a hop: Hank leftover first.
   Walk home: `recover()` + Close. Never revert. Never leftover-ksc
   load. Lars patches the **live** control file only; pad waits that
   file. Hang died → next already-signed Gus alt (Gene stamps only if
@@ -408,10 +424,13 @@ story this fly. Dead kRPC GUID is not leftover.
 - Parent **re-desks** after Gus `capable: yes` before bind / Gene `go`
   (I-014). Stale capable/f013 is wait.
 - **jsonl envelope** is the flight tape (`heading` / `horiz` / pitch
-  on `kind=state`). Gene stamps `payload.learn` from the **review**
-  envelope (`tickets landing` / `--deep`); never from Commander Return
-  prose. last-flight is abort/exit only. Water died on heading never
-  090, not on Jeb’s write-up (I-020).
+  on `kind=state`). Uncrewed `payload.learn` is hop-exit `attach-run`
+  from that envelope (`who=hank`). Gene stamps `learn` from
+  `tickets landing` / `--deep` only when `ops next` hires him
+  (campaign-stop / crewed / firsts) — never Commander Return prose,
+  never between uncrewed hops. last-flight is abort/exit only. Water
+  died on heading never 090, not on Jeb’s write-up (I-020). Drop
+  “Gene stamps from review” as the uncrewed path.
 - Flight **ends at CLI exit**. The Commander does not write an
   after-flight review (no jsonl cite, no attach-run, no landing
   essay). **Hank** owns leftover + tape (`desk`, `attach-run`,

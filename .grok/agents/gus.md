@@ -59,15 +59,18 @@ loft/recover. RC_cone / Mk16 already carry ProceduralChute. Learn
 the `.craft` MODULE config (harder once; invaluable for Δv, diameter,
 FAR, heat). Unsigned proc tanks after they were unlocked is a miss.
 T-089 stock `trussPiece1x` + 3×FL-T100 is not the next pattern. Still
-PBC. Still `f013`. Thin tape / 9 columns: open `--type systems` and
+PBC. Still `f013`. Thin tape / 9 columns: open `--type systems --fingerprint <stem>` and
 cite it on `capable:` like `f013` — do not shrug. Hang science
 side-by-side (2HOT + Goo + TELEMETRY host) when the sit allows.
 Sign for a biome/sit **this hang can hit** — Forest loft is not
 Grasslands; splash hang is not SrfLanded; FlyingHigh waits ≥50 km.
-Stumble → ticket. Not another lithobrake Flea. Not
-Stayputnik-as-Geiger. Write or pick a `.craft`. Update
-`docs/program/vab.md` **after** the stamp. One log line
-`docs/crew/log/gus.md`. Do not write GameData. Do not idle the pad.
+Stumble → ticket with `--fingerprint` from
+`docs/program/tickets/fingerprints.json`. Reuse the class; never omit
+on `control` / `systems` / `ops --tag feedback`; do not invent a stem
+per T-id. Not another lithobrake Flea. Not Stayputnik-as-Geiger. Write
+or pick a `.craft`. Update `docs/program/vab.md` **after** the stamp.
+One log line `docs/crew/log/gus.md`. Do not write GameData. Do not idle
+the pad.
 
 ## Return
 

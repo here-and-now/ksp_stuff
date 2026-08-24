@@ -3,15 +3,42 @@
 kRPC ``physics_warp_factor``: 0=1×, 1=2×, 2=3×, 3=4×.
 Pad dwell and factory hop coast both call this. Do not drive
 ``rails_warp_factor`` other than 0. Do not call ``WarpTo``.
+
+Launch laws (live 2026-08-23 warp-batch, revert-ok that sit only):
+
+- Hangar / revert / light / pad boost / grim: **1×**, rails 0.
+- ``run_physics`` after Hangar, after revert, and after light (unpause).
+- Revert returns a ghost first (mass ~13 t). Wait until Hangar snapshot
+  matches (mass/parts/stage) before staging. Stage 2→1 is the Valiant.
+  A second ``activate_next_stage`` while stage already 1 is the chute.
+- ``pre_launch`` MET does not tick. 3× on the clamps does not race MET.
+- After loft, 4× coast. 1× through chute deploy (semi or below 2 km
+  descending). 4× again once ``deployed``. Grim pins 1×. Recover is 1×.
+- Valiant: stage 2→1 is the engine (chute stays stowed). A second
+  ``activate_next_stage`` (1× or 3×) is RealChute **arm**, stage 0 —
+  that is the whoosh. Arm/Deploy are module events; do not extra-stage.
+  Revert restores stage 2; kRPC chute may stay ``armed``.
 """
 
 from __future__ import annotations
 
+import os
 from typing import Callable
 
-COAST_RATE = 3
+COAST_RATE = 4
 PAD_RATE = 3
 _MAX_RATE = 4
+
+
+def coast_rate() -> int:
+    """Coast × multiplier. ``KSPSTUFF_PHYS_WARP=1..4`` pins a test hop."""
+    raw = (os.environ.get("KSPSTUFF_PHYS_WARP") or "").strip()
+    if not raw:
+        return COAST_RATE
+    try:
+        return min(max(int(raw), 1), _MAX_RATE)
+    except ValueError:
+        return COAST_RATE
 
 
 def _sc(session: object) -> object | None:

@@ -48,7 +48,7 @@ from hangar import (
     wait_vessel_ready,
 )
 from pad import arm_chutes, deploy_chutes, recover_or_abort
-from physics_warp import COAST_RATE, apply_coast, set_factor as _physics_factor
+from physics_warp import COAST_RATE, apply_coast, coast_rate, set_factor as _physics_factor
 from science import (
     card_has_data,
     card_slots,
@@ -87,6 +87,7 @@ _AIRBORNE_M = 250.0
 CHUTE_DEPLOY_ALT_M = 2_000.0
 _CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
 # kRPC physics_warp_factor: 0=1×, 1=2×, 2=3×, 3=4×. Never rails. Never WarpTo.
+# Coast and silk cruise default 4× (1× through deploy). Pin with KSPSTUFF_PHYS_WARP.
 HOP_COAST_PHYS_RATE = COAST_RATE
 # Structure gone, not propellant: mass drop ≥40% well beyond fuel burned.
 SHEAR_MASS_FRAC = 0.40
@@ -697,6 +698,29 @@ def _science_ready(snap: object) -> bool:
         return True
     alt = _snap_alt(snap)
     return math.isfinite(alt) and alt >= lid
+
+
+def _reached_high_lid(snap: object) -> bool:
+    """FlyingHigh Toggle sit. Pad loft (250 m) is not the lid."""
+    return hop_wants_flying_high() and _science_ready(snap)
+
+
+def _abort_high_lid(
+    *,
+    lit: bool,
+    started: list[str] | tuple[str, ...],
+    left_pad: bool,
+    down: bool,
+    reached_lid: bool,
+) -> bool:
+    """Abort FlyingHigh only after the Toggle sit with nothing started.
+
+    A hop that never reached 50 km is not a lid miss. Land leftover still
+    pays. Pad loft is not the lid.
+    """
+    if not hop_wants_flying_high():
+        return False
+    return bool(lit and not started and left_pad and down and reached_lid)
 
 
 def _down(snap: object, *, flown: bool) -> bool:
@@ -1375,8 +1399,17 @@ def _pad_boosting(
     down: bool,
     burning: bool,
 ) -> bool:
-    """Lit, left pad, still burning, not lofted — not recover, not coast."""
+    """Lit, left pad, flying, still burning, not lofted — not recover, not coast.
+
+    ``down`` (landed/splashed) is not boost: do not throttle into dirt.
+    sit=flying below loft with fuel is still 1× boost. Warp does not change this.
+    """
     return bool(lit and left_pad and not lofted and not down and burning)
+
+
+def _chute_fully_open(snap: object) -> bool:
+    st = str(getattr(snap, "chute", "") or "").lower().replace("-", "_")
+    return st == "deployed"
 
 
 def _want_coast_phys(
@@ -1387,10 +1420,20 @@ def _want_coast_phys(
     chute_open: bool,
     burning: bool,
 ) -> bool:
-    """After real burnout, flying, waiting chute. 1× burn/pad/chute/recover."""
-    if not left_pad or down or chute_open or burning:
+    """4× after burnout; 1× through deploy; 4× again once silk is deployed.
+
+    Pad / burn / recover stay 1×. ``semi_deployed`` is still the deploy
+    window. Landed is ``down``.
+    """
+    del chute_open
+    if not left_pad or down or burning:
         return False
     if not _lofted(snap):
+        return False
+    st = str(getattr(snap, "chute", "") or "").lower().replace("-", "_")
+    if st == "deployed":
+        return True
+    if st in {"semi_deployed", "semideployed"}:
         return False
     vz = _snap_v_vert(snap)
     try:
@@ -1420,7 +1463,7 @@ def _apply_hop_physics(
         coast=coast,
         on_log=on_log,
         last=last,
-        default_rate=HOP_COAST_PHYS_RATE,
+        default_rate=coast_rate(),
         uplink_rate=phys_warp_rate(),
     )
 

@@ -44,13 +44,17 @@ A **living recover that cannot pay is also a waste.** After sci
 unchanged, do **not** re-fly the same bind — hire Linus to rebind
 from the envelope, or Gene only if that fly ticket has no `go:`.
 Do **not** hire Gene to consider an uncrewed miss. Do **not** hire Jeb
-to debrief. An RSI letter / conference does **not** empty the pad.
+to debrief. Uncrewed Learn is hop-exit `attach-run`, not a Gene hire.
+Lookup `fingerprints.json`; never omit `--fingerprint` on control /
+systems / `ops --tag feedback`. An RSI letter / conference does **not**
+empty the pad.
 Stop the batch **only** leftover / crash UI / f013 fail / live control
 `.py` / Os wait. Ground desks batch same-type tickets and **fill the
 shelf during lock live**. Open `type=systems` → Wernher standing
 (**log more kRPC**; explore is not a miss hire). Thin tape / 9-column
-skim: open `--type systems` — first-class, not a shrug. Stumble →
-ticket. Time is scarce: warp is Lars; bind is Linus.
+skim: open `--type systems --fingerprint <stem>` — first-class, not a
+shrug. Stumble → ticket with `--fingerprint`. Time is scarce: warp is
+Lars; bind is Linus.
 
 **Live watch (lock live):** from time to time **read
 `docs/program/ship.md`** (disk). No `status` Session. Do not eat the
@@ -74,10 +78,29 @@ python main.py tickets landing T-NNN
 python main.py ops next
 ```
 
+`attach-run` **overwrites** `payload.learn` (`who=hank`) from the
+envelope (format_landing + apo + biome + rec + sci). That is the
+uncrewed Learn path. Packet skim is **this hop**. Do **not** hire
+Gene to stamp it. RSI letter / conference still does **not** empty
+the pad.
+
 Jsonl is the product; **you** attach it. Landing skim is yours. If
-last-flight abort and no control ticket: `tickets open --type control`
-(or `from-need`) from that abort — do not spawn the Commander to file
-it. Then leftover clean + `protocol fly` as the kernel says.
+last-flight abort and no control ticket, lookup
+`docs/program/tickets/fingerprints.json` and **reuse** the class
+(`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`):
+
+```
+python main.py tickets open --type control --category bug --title "…" \
+  --severity S2 --priority P1 --desk lars --fingerprint <stem>
+```
+
+Never omit `--fingerprint` (empty is refused; error prints
+`reuse (count):` plus a copy line). Do not mint `hop-<digits>` or a
+new stem per T-id. Longer kebab aliases onto an existing prefix.
+Living recover + `sci_run=0` already bumps `sci-unchanged-recovered`
+— do not remint it. `from-need` is a leftover shim (it stamps
+`stack`/`builder`, not the miss class). Do not spawn the Commander
+to file it. Then leftover clean + `protocol fly` as the kernel says.
 
 Leftover (lock free, when `ops next` says leftover):
 

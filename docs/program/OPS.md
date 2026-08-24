@@ -53,10 +53,16 @@ Three RSI clocks, all **tickets**:
    stay Lars. XOR: one of them patches `.py` per miss.
 
 Each **open** with fingerprint `F` increments `tickets/fingerprints.json`.
-At count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` →
-desk **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only
-the CLI). Long abort-string fingerprints do not count. `ops next`
-prints `rsi:` and hires Mortimer lock-free; lock live skips org.
+Reuse the existing stem (longer kebab aliases onto the shortest
+prefix). Empty fp is refused on `control` / `systems` /
+`ops --tag feedback` (`legacy-twin` exempt) so the clock can tick.
+Abort novels, timestamps, and `hop-<digits>` do not count. A patch
+that *adds* a fp counts. Living recover + `sci_run=0` bumps
+`sci-unchanged-recovered` on `attach_run` (once per new jsonl). At
+count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` → desk
+**wernher**; else **Mortimer**. `open_ticket` trips RSI (not only the
+CLI). `ops next` prints `rsi:` and hires Mortimer lock-free; lock
+live skips org; fly_ready still hires him without emptying the pad.
 That is the imperative: the loop *must* open the ticket; no LLM “we
 should maybe improve.”
 
@@ -222,9 +228,10 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
     return
 
 # after Commander CLI return — tape before the next hire
-# desk; attach-run fly ticket jsonl; tickets landing; open control
-# from last-flight abort if none exists. Do not hire Commander to
-# explain. Then leftover (above) or fly_ready (below).
+# desk; attach-run fly ticket jsonl (overwrites payload.learn);
+# tickets landing; open control from last-flight abort if none
+# exists (always --fingerprint <stem>; empty is refused). Do not
+# hire Commander to explain. Then leftover (above) or fly_ready.
 
 if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in catalog:
     hop pid is the writer (flight.lock)
@@ -261,7 +268,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 | Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars hop_factory/physics_warp; Wernher kRPC — **no stick**, no `status` |
 | Lock live, nominal | ground desks (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time |
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
-| Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run`, `landing`; control from last-flight if miss |
+| Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
 | Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
 | Fly needs `go` | Gene | that fly ticket; batch vehicle/science/control/**systems** |
 | Campaign-stop Learn (not uncrewed, empty `payload.learn`) | Gene | that fly ticket |
@@ -358,11 +365,15 @@ Everyone else **medium**. Hank is the TUI session. Fresh spawn vs
 `resume_from`: Commander and new tickets are fresh; resume only an
 unfinished patch on the same file.
 
-**Learn:** `payload.learn` on the fly ticket (Gene stamp from
-`tickets landing` / tape envelope — never Commander Return
-prose). Review auto-fills heading/horiz/pitch; `ksc`/`load`/`recover-probe`
-skip the Gene blank. `needs_learn` is campaign not `uncrewed` and learn
-empty. Hygiene reviews are not a Gene hire. After-flight attach-run is
+**Learn:** `payload.learn` on the fly ticket. Uncrewed: hop-exit
+`attach-run` overwrites a one-liner from the envelope (`who=hank`) —
+Gene is not that writer; `needs_learn` stays false. Crewed /
+`campaign: none` / firsts: Gene stamps from `tickets landing` / tape
+envelope when `ops next` hires him — never Commander Return prose.
+Review auto-fills heading/horiz/pitch; uncrewed review does not nag
+“Stamp payload.learn”. `ksc`/`load`/`recover-probe` skip the Gene
+blank. `needs_learn` is campaign not `uncrewed` and learn empty.
+Hygiene reviews are not a Gene hire. After-flight attach-run is
 **Hank**, not the Commander.
 
 ---

@@ -1,7 +1,9 @@
 """Factory inland hop pulse: light, slew 270, chute, sit-matched science, recover.
 
-Parked water/splash CLIs stay in hop.py. This module must not name those
-flags. Helpers live on the hop module so test patches of hop.* still bind.
+Flying card after loft. Pad boost (fuel, not lofted) does not science or
+hop-down — sit=landed at pad alt with fuel is still burning. Parked
+water/splash CLIs stay in hop.py. This module must not name those flags.
+Helpers live on the hop module so test patches of hop.* still bind.
 """
 
 from __future__ import annotations
@@ -66,6 +68,7 @@ def run_factory_vessel(
     said_deploy = False
     said_coast = [""]
     lofted = False
+    reached_lid = False
     prev_stack_mass = float("nan")
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
@@ -130,17 +133,24 @@ def run_factory_vessel(
                 if not left_pad:
                     H._say("hop airborne", on_log)
                     log_events.emit("hop", result="airborne")
-                    mission_event(
-                        "airborne",
-                        snap,
-                        beauty=True,
-                        pose="ascent",
-                        session=session,
-                    )
+                    if lofted:
+                        mission_event(
+                            "airborne",
+                            snap,
+                            beauty=True,
+                            pose="ascent",
+                            session=session,
+                        )
                 left_pad = True
             if H._lofted(snap):
                 lofted = True
+            if H._reached_high_lid(snap):
+                reached_lid = True
             down = H._down(snap, flown=left_pad) or litho
+            if not lofted:
+                H._apply_hop_physics(
+                    session, coast=False, on_log=on_log, last=said_coast
+                )
 
             if left_pad and H._vessel_gone(snap, vessel):
                 if H._recoverable(vessel):
@@ -250,19 +260,38 @@ def run_factory_vessel(
                 if airborne:
                     lit = True
                 elif not left_pad and str(snap.situation) in H._LIGHT_SIT:
+                    H._apply_hop_physics(
+                        session, coast=False, on_log=on_log, last=said_coast
+                    )
                     H._light(vessel, on_log)
+                    try:
+                        vessel.control.throttle = 1.0
+                    except Exception:
+                        pass
                     lit = True
                     did_light = True
                     log_events.emit("hop", result="light")
-                    mission_event(
-                        "light",
-                        snap,
-                        beauty=True,
-                        pose="pad-plume",
-                        session=session,
-                    )
+                    if lofted:
+                        mission_event(
+                            "light",
+                            snap,
+                            beauty=True,
+                            pose="pad-plume",
+                            session=session,
+                        )
 
+            st_now = str(getattr(snap, "chute", "") or "")
+            if st_now in H._CHUTE_OPEN:
+                chute_open = True
+            if lofted and down:
+                apo_cut = True
+                try:
+                    vessel.control.throttle = 0.0
+                except Exception:
+                    pass
             if left_pad and not down:
+                if chute_open:
+                    apo_cut = True
                 apo_cut, _braking = H._hold_or_cut(
                     vessel,
                     snap,
@@ -317,7 +346,6 @@ def run_factory_vessel(
                     said_hold = True
 
             if left_pad and not down and not chute_open:
-                st_now = str(getattr(snap, "chute", "") or "")
                 if st_now in H._CHUTE_OPEN:
                     chute_open = True
                 else:
@@ -382,7 +410,7 @@ def run_factory_vessel(
                         session=session,
                     )
                     waiting_hd = True
-                elif H._science_ready(snap):
+                elif lofted and H._science_ready(snap):
                     need = H.bound_science_need(
                         live_sit=H._live_sit(vessel, snap),
                         live_biome=H._snap_biome(snap, vessel),
@@ -413,19 +441,6 @@ def run_factory_vessel(
                     H._say("science wait FlyingHigh", on_log)
                     said_lid = True
 
-            missed_lid = (
-                H.hop_wants_flying_high()
-                and did_light
-                and not started
-                and left_pad
-                and down
-            )
-            if missed_lid:
-                if not H._recoverable(vessel):
-                    H._leave_crash_ui(session, on_log, total_wreck=True)
-                call("abort_pad", ctx)
-                raise MissionAbort("no science (FlyingHigh lid)")
-
             waiting_lid = (
                 H.hop_wants_flying_high()
                 and did_light
@@ -434,7 +449,7 @@ def run_factory_vessel(
                 and not down
             )
 
-            if left_pad and down and not waiting_hd:
+            if left_pad and down and not waiting_hd and lofted:
                 need = H.bound_science_need(
                     live_sit=H._live_sit(vessel, snap),
                     live_biome=H._snap_biome(snap, vessel),
@@ -461,6 +476,18 @@ def run_factory_vessel(
                     H._say("science dwell", on_log)
                     log_events.emit("science_dwell", phase="start")
 
+            if H._abort_high_lid(
+                lit=did_light,
+                started=started,
+                left_pad=left_pad,
+                down=down,
+                reached_lid=reached_lid,
+            ):
+                if not H._recoverable(vessel):
+                    H._leave_crash_ui(session, on_log, total_wreck=True)
+                call("abort_pad", ctx)
+                raise MissionAbort("no science (FlyingHigh lid)")
+
             hold_card = H._hold_ground_card(vessel, started, ids, snap)
 
             pad_boost = H._pad_boosting(
@@ -473,7 +500,10 @@ def run_factory_vessel(
             if waiting_lid or hold_card:
                 pass
             elif pad_boost:
-                pass
+                try:
+                    vessel.control.throttle = 1.0
+                except Exception:
+                    pass
             elif left_pad and H._recoverable(vessel):
                 if not said_down:
                     H._say("hop down", on_log)
@@ -508,17 +538,17 @@ def run_factory_vessel(
                 litho = True
                 down = True
 
-            if down and left_pad:
+            if down and left_pad and not pad_boost:
                 if not said_down:
                     H._say("hop down", on_log)
                     said_down = True
 
-            if (
-                H.hop_wants_flying_high()
-                and did_light
-                and not started
-                and left_pad
-                and down
+            if H._abort_high_lid(
+                lit=did_light,
+                started=started,
+                left_pad=left_pad,
+                down=down,
+                reached_lid=reached_lid,
             ):
                 if not H._recoverable(vessel):
                     H._leave_crash_ui(session, on_log, total_wreck=True)
@@ -535,7 +565,10 @@ def run_factory_vessel(
             if waiting_lid or hold_card:
                 pass
             elif pad_boost:
-                pass
+                try:
+                    vessel.control.throttle = 1.0
+                except Exception:
+                    pass
             elif left_pad and (down or H._low_flying(snap)):
                 got = H._force_recover(vessel, on_log)
                 if got is not None:

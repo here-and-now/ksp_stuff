@@ -1,4 +1,4 @@
-"""After-flight rollup. Facts from jsonl; Gene writes the learn line."""
+"""After-flight rollup. Facts from jsonl; attach_run stamps payload.learn."""
 
 from __future__ import annotations
 
@@ -165,6 +165,7 @@ def write_review(
     exit_code: int,
     abort: str | None,
     handoff: Path | None = None,
+    campaign: str | None = None,
 ) -> Path:
     rows = load_rows(jsonl)
     stats = summarize(rows)
@@ -220,7 +221,7 @@ def write_review(
     lines.extend(f"- {x}" for x in stats["event_lines"] or ["(none)"])
     if handoff and handoff.is_file():
         lines.extend(["", "## Handoff", "", "```", handoff.read_text(encoding="utf-8")[:4000], "```"])
-    lines.extend(learn_block(command, exit_code, abort, stats))
+    lines.extend(learn_block(command, exit_code, abort, stats, campaign=campaign))
     out.write_text("\n".join(lines), encoding="utf-8")
     return out
 
@@ -234,13 +235,23 @@ def _env_num(val: float | None) -> str:
     return str(int(round(val)))
 
 
+def _fly_campaign() -> str:
+    try:
+        from tickets import fly_fields, seated_fly_ticket
+
+        return str(fly_fields(seated_fly_ticket()).get("campaign") or "")
+    except Exception:
+        return ""
+
+
 def learn_block(
     command: str,
     exit_code: int,
     abort: str | None,
     stats: dict[str, Any],
+    campaign: str | None = None,
 ) -> list[str]:
-    """Envelope Learn from jsonl stats. Hygiene commands skip the Gene blank."""
+    """Envelope Learn from jsonl stats. Uncrewed hops skip the Gene nag."""
     env: list[str] = []
     h0, h1 = stats.get("heading_first"), stats.get("heading_last")
     if h0 is not None or h1 is not None:
@@ -252,8 +263,11 @@ def learn_block(
         env.append(f"pitch {_env_num(p0)}→{_env_num(p1)}")
     env_s = ", ".join(env) if env else "none"
     cmd = (command or "").strip().lower()
+    camp = (campaign if campaign is not None else _fly_campaign()).strip().lower()
     if cmd in _HYGIENE:
         body = f"hygiene {cmd} exit={exit_code} envelope {env_s}."
+    elif camp == "uncrewed":
+        body = f"exit={exit_code} abort={abort or 'none'}. envelope {env_s}."
     else:
         body = (
             f"exit={exit_code} abort={abort or 'none'}. envelope {env_s}. "

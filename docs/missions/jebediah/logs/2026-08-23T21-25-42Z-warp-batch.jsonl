@@ -1,0 +1,5 @@
+{"t": 0.006, "kind": "start", "msg": "command=warp-batch crew=", "earth_utc": "2026-08-23 21:25:42 UTC", "earth_stamp": "2026-08-23T21-25-42Z", "kerbal_ut_s": 266125.967, "kerbal_met_s": null, "kerbal_ut": "3d 01:55:25 UT", "kerbal_met": "?"}
+{"t": 1.032, "kind": "hangar", "msg": "launch kspstuff-hop-valiant-proc-stiff-pbc", "site": "LaunchPad"}
+{"t": 6.246, "kind": "hangar", "msg": "scene flight", "site": "LaunchPad"}
+{"t": 78.602, "kind": "sci_bank", "msg": "sci=8.7721", "sci": 8.772140502929688}
+{"t": 78.602, "kind": "end", "msg": "samples=4"}

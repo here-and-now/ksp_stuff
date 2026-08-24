@@ -39,8 +39,13 @@ path. Do not re-run `world` / `tech` / `parts`.
 2. Relay with tickets — `ops --tag ask` and `payload.to` =
    lars | gus | linus | gene. Instrument ask is a science ticket
    for Linus (bind) or vehicle ticket for Gus (part on the hang).
+   House friction: `ops --tag feedback --fingerprint <stem>`. Lookup
+   `docs/program/tickets/fingerprints.json`. Reuse the class; never
+   omit `--fingerprint` on `control` / `systems` / feedback. Do not
+   invent a stem per T-id.
 3. Rare mission change: `ops --tag ask --desk gene` P3 unless it
-   blocks `stability`. Gene still stamps `go:`.
+   blocks `stability`. Gene still stamps `go:`. Uncrewed `learn` is
+   Hank `attach-run`; do not nag Gene to stamp it.
 4. When waiting for more hops, stamp this ticket `status: verify`
    so `ops next` does not rehire you every pad.
 5. One line in `docs/crew/log/katherine.md`.
@@ -60,4 +65,4 @@ ask: T-NNN | none
 ```
 
 Do not emit `need_*`. Do not tell another desk in this Return — open
-the ask ticket.
+the ask ticket. Feedback/control/systems **require** `--fingerprint`.

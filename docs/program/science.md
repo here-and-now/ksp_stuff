@@ -4,7 +4,7 @@ Dump of **science tickets**, not dispatch. Bind is ticket payload.
 Catalog (`unbound`) is the shelf. This-hop work is **bound**.
 
 Craft `kspstuff-hop-valiant-proc-long-pbc`. Tree `start,engineering101,basicRocketry,survivability`. Bank **8.7721**. Next CTT
-`stability` 18 → need ~**9.23**. Do not transmit. F-013:
+`stability` 18 → need ~**9.23**. Recover banks for hops; transmit is a radio (rate on `comms`), not the hop path. F-013:
 instrument part, never Stayputnik PAW as Geiger.
 
 ```bash

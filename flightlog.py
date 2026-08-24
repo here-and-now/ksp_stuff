@@ -42,6 +42,9 @@ _SHIP_EXTRA = (
     "downrange",
     "biome",
     "flags",
+    "link",
+    "snr",
+    "via",
     "stale",
     "mass",
     "parts_n",
@@ -49,11 +52,11 @@ _SHIP_EXTRA = (
 )
 _AS_OF_FMT = ("%Y-%m-%dT%H:%MZ", "%Y-%m-%dT%H:%M:%SZ")
 _REPR_FIELD = re.compile(
-    r"\b(heading|wreck|ec|alt|situation|vessel|horiz|pitch|fuel|met|lat|lon|downrange|biome|apo|hz|throttle|body|mass|parts_n|root)="
+    r"\b(heading|wreck|ec|alt|situation|vessel|horiz|pitch|fuel|met|lat|lon|downrange|biome|apo|hz|throttle|body|mass|parts_n|root|link|snr|via)="
     r"([^,)]+)"
 )
 _STATUS_FIELD = re.compile(
-    r"\b(body|sit|alt|peri|apo|ec|fuel|wreck|horiz|vz|hdg|pitch|aoa|biome|lat|lon|downrange|vessel)=(\S+)"
+    r"\b(body|sit|alt|peri|apo|ec|fuel|wreck|horiz|vz|hdg|pitch|aoa|biome|lat|lon|downrange|vessel|link)=(\S+)"
 )
 _KV_LINE = re.compile(r"^([A-Za-z_]+)\s*:\s*(.*)$")
 _FLAGS_REPR = re.compile(r"\bflags=\(([^)]*)\)")
@@ -362,7 +365,7 @@ def _ship_num(val: Any) -> Any:
 
 
 def _fmt_ship(key: str, val: Any) -> str:
-    if key == "wreck":
+    if key in {"wreck", "link"}:
         if val in (True, 1, "1", "True", "true", "yes"):
             return "yes"
         if val in (False, 0, "0", "False", "false", "no"):
@@ -395,6 +398,9 @@ def envelope_from_snapshot(
     else:
         flag_s = str(flags)
     sit = getattr(state, "situation", None)
+    snr = getattr(state, "snr", None)
+    if isinstance(snr, float) and not math.isfinite(snr):
+        snr = None
     return {
         "heading": getattr(state, "heading", None),
         "wreck": getattr(state, "wreck", None),
@@ -413,6 +419,9 @@ def envelope_from_snapshot(
         "downrange": getattr(state, "downrange", None),
         "biome": getattr(state, "biome", None) or None,
         "flags": flag_s or None,
+        "link": getattr(state, "link", None),
+        "snr": snr,
+        "via": getattr(state, "via", None) or None,
         "mass": getattr(state, "mass", None),
         "parts_n": getattr(state, "parts_n", None),
         "root": getattr(state, "root", None) or None,

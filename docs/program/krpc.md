@@ -141,7 +141,7 @@ Program facts, not knobs:
 | Client | kRPC **0.6.0**, sockets 50000/50001, `autoAcceptConnections = True`. |
 | Auto-start | Disk `PluginData/settings.cfg`: **`autoStartServers = False`**. Zip ships empty cfg. Without Start, nothing binds. **Do not edit GameData to “fix” this.** |
 | Pause | `pauseServerWithGame = False`. Server can live while MET is frozen. |
-| Comms | RealAntennas on CommNet. **No RA kRPC service.** Early probes stay omni. Do not transmit. |
+| Comms | Unmanned command needs a CommNet path (`vessel.comms.can_communicate`). kRPC Control does **not** honor that; the hop process does. **No RA kRPC service** — early probes stay omni. Recover the HD; transmit is a radio (rate on `comms`), not the hop science path. |
 | Writer | One `phase`/`pad` process. `flight.lock` is the wall. |
 | Honesty | No revert / quickload / rewind. Crash UI is not a time machine. |
 

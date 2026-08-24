@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-24 — T-326 closed: link-lost. hop.py `_command_ok` / `_zero_stick_if_deaf`; pad-light aborts `no signal (pad)`; after pad zero stick, do not abort lid. kRPC Control is not the radio. Do not Hangar.
 - 2026-08-23 — T-322: 22-33-35Z 50 km FlyingHigh never reached the lid (apo 1.6 km); factory aborted instead of land leftover. `_abort_high_lid` after Toggle sit; cut throttle lofted-and-down. Do not Hangar.
 - 2026-08-23 — T-314: 20-47-10Z pad boost 104 m started Shores goo then hop-down. hop_factory flying card after loft; `_pad_boosting` stays burning-not-lofted on a bounce. Do not Hangar.
 - 2026-08-23 — T-312 closed: hop.py helpers name sit (lofted/burning/landed/splashed), not a stamp. `_pad_boosting` gates recover. Docs are the rule. Do not Hangar.

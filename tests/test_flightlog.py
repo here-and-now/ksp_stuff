@@ -380,6 +380,38 @@ class TestShipEnvelope(unittest.TestCase):
         self.assertIn("wreck: yes", text)
         self.assertIn("heading: 90", text)
 
+    def test_format_ship_link_no(self):
+        from telem import Snapshot
+
+        env = envelope_from_snapshot(
+            Snapshot(
+                heading=90.0,
+                wreck=False,
+                link=False,
+                snr=0.0,
+                via="KSC",
+                alt=400.0,
+            ),
+            as_of="2026-08-24T00:00Z",
+        )
+        self.assertIs(env["link"], False)
+        text = format_ship(env)
+        self.assertIn("link: no", text)
+        self.assertIn("via: KSC", text)
+        self.assertIn("snr: 0", text)
+        yes = format_ship(
+            envelope_from_snapshot(
+                Snapshot(link=True, wreck=False), as_of="2026-08-24T00:00Z"
+            )
+        )
+        self.assertIn("link: yes", yes)
+        none = format_ship(
+            envelope_from_snapshot(
+                Snapshot(link=None, wreck=False), as_of="2026-08-24T00:00Z"
+            )
+        )
+        self.assertNotIn("link:", none)
+
     def test_ship_carries_where(self):
         from telem import Snapshot
 

@@ -209,6 +209,11 @@ Same idea for other bundled addon DLLs. MechJeb is *not* in the stock zip;
 `parts.with_module("ModuleRealAntenna")`. At KSC with no vessel that probe
 excepts → `commnet=False`. Re-probe after spawn.
 
+kRPC 0.6 `PilotAddon.HasControlConnection` is RemoteTech-only (no RT →
+always true). House hop keys off `vessel.comms.can_communicate`. Live
+reads: `can_communicate`, `signal_strength`, `control_path` (slow pulse),
+`CommLink.Start` / `End`, `CommNode.Name` / `IsHome`. No RA targeting API.
+
 `conn.space_center` exists. `conn.mech_jeb` does not on this install.
 
 ---
@@ -545,6 +550,9 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-24** — T-325: stream `comms.can_communicate` / `signal_strength`;
+  `control_path` home `CommNode.Name` on the slow pulse. RT-only
+  `PilotAddon.HasControlConnection`. No RA targeting API.
 - **2026-08-23** — `Flight.latitude` / `Flight.longitude` are degrees on
   `vessel.flight()` (no-frame hold). `vessel.biome` is the RSS name.
   Downrange km is haversine from Cape (`sites.default_pad_ll`) with

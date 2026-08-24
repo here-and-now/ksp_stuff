@@ -24,7 +24,7 @@ and run the checkout (not an installed package, not `compileall`):
 source .venv/bin/activate
 python main.py world           # save, tree, science, unlocks
 python main.py science-scan    # live MM experiment caps (sample vs file)
-python main.py comms           # live RA antennas + probe HD
+python main.py comms           # live RA + HD + ground (MM last write)
 python main.py tech start
 python main.py parts --unlocked
 python main.py status          # one snapshot

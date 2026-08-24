@@ -26,7 +26,7 @@ No Return `feedback:` / `need_*`.
 
 ```
 python main.py science-scan                      # Linus: live MM caps (not tweak cfg)
-python main.py comms                             # Gus: RA + HD
+python main.py comms                             # Gus: RA + HD + ground last-write
 python main.py tickets inbox --desk <you>
 python main.py tickets packet T-NNN            # skim (envelope + this-hop learn)
 python main.py tickets packet T-NNN --deep     # tape CLI / PNG / craft

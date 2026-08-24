@@ -32,9 +32,9 @@ python main.py comms
 python main.py parts --unlocked --module ModuleRealAntenna
 ```
 
-Do not read RealAntennas readme as gospel. `comms` is ConfigCache:
-16-S L omni gain 2; TL2 (survivability) max **64 bps**; Goo/Jr are
-**samples** (not HD). Command `HD=` / `samp=` on that dump is the
+Do not read RealAntennas readme as gospel. `comms` is ConfigCache
+last-write (TL rates, craft gain/band/HD, ground LIVE/SILENT). Goo/Jr
+are **samples** (not HD). Command `HD=` / `samp=` on that dump is the
 disk — do not guess from Kerbalism tweak tables. Do not re-run
 `world` / `tech` when desk already has tree.
 `f013.unlocked=no` or `on_craft=no` → `capable: no`. Science-ticket

@@ -21,6 +21,23 @@ python main.py pad
 
 ---
 
+## 2026-08-24 — link-lost
+
+- **When:** Os 2026-08-24: hop honors `can_communicate`. T-326.
+  PBC unmanned. f013 2HOT start unlocked=yes on_craft=yes. Do not
+  Hangar. Disk only.
+- **Symptom:** kRPC 0.6 `PilotAddon.HasControlConnection` is true
+  without RemoteTech. `requireSignalForControl` does not stop
+  `vessel.control` writes. Unmanned probe keeps throttle/SAS/stage
+  with no radio. Throttle 1 after a fake LOS is a lithobrake.
+- **Cause:** House hop never asked the radio. Control is not
+  `can_communicate`.
+- **Fix:** `_command_ok` / `_zero_stick_if_deaf`. Pad-light while
+  deaf aborts `no signal (pad)`. After pad, zero stick; coast,
+  science Toggle, and recover stay legal. Fail open unless we know
+  deaf (`snap.link` False, or comms False). Crewed is always ok.
+- **Modules:** `hop.py`, `hop_factory.py`.
+
 ## 2026-08-23T22-33-35Z-hop — FlyingHigh lid abort on a hop that never reached 50 km
 
 - **When:** 2026-08-23 letsgrok `python main.py hop`

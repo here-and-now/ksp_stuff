@@ -58,6 +58,9 @@ _COMPACT = (
     "debris_n",
     "shear",
     "landing",
+    "link",
+    "snr",
+    "via",
 )
 WINDOWS = ("pad", "airborne", "apex", "burnout", "descent", "impact", "events")
 _BURN_THROTTLE = 0.05
@@ -505,6 +508,8 @@ class Tape:
             "root": (last or {}).get("root") or "",
             "debris_n": (last or {}).get("debris_n"),
             "shear": shear,
+            "link": (last or {}).get("link"),
+            "via": (last or {}).get("via") or "",
             "events": kinds + (["shear"] if shear and "shear" not in kinds else []),
         }
 
@@ -638,11 +643,24 @@ def format_envelope(row: dict[str, Any]) -> str:
         )
     biomes = row.get("biomes") or []
     biome = ",".join(str(b) for b in biomes if b) or (row.get("biome") or "?")
+    link = row.get("link")
+    if link is True:
+        link_s = "yes"
+    elif link is False:
+        link_s = "no"
+    else:
+        link_s = ""
+    via = str(row.get("via") or "")
+    radio = ""
+    if link_s:
+        radio += f" link={link_s}"
+    if via:
+        radio += f" via={via}"
     lines.append(
         f"where: lat={_fmt(row.get('lat'), '.4f')} "
         f"lon={_fmt(row.get('lon'), '.4f')} "
         f"down={_fmt(row.get('downrange'), '.2f')} km "
-        f"biome={biome}"
+        f"biome={biome}{radio}"
     )
     lines.append(
         f"eyes: apo={_fmt(row.get('apo_max'))} m alt={_fmt(row.get('alt_max'))} m "

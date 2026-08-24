@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-24 — T-325: Snapshot link/snr/via; ship.md + tape where:; comms dump is TL/LIVE/SILENT tables from ConfigCache. No hop.py. No GameData.
+
 - 2026-08-24 — T-323: attach_run stamps payload.learn from envelope (T-081 22-33-35Z); refuse empty fp on control/systems/feedback; alias prefix; sci-unchanged-recovered bump on +0 rec. review uncrewed drops Gene nag. No hop.py.
 
 - 2026-08-23 — T-305: 16-47-21Z envelope burn was cutoff 15/16 (throttle=0). Powered hold 297/65 hz 20. Burn window stops at last throttle>0.05; min-pitch among those. 09-28 209/3 still throttled. No hop.py.

@@ -97,3 +97,61 @@ PART
 		experiment_id = mysteryGoo
 	}
 }
+url = RealAntennas/RealAntennasCommNetParams.cfg
+RealAntennasCommNetParams
+{
+	minRelayTL = 0
+	BandInfo
+	{
+		name = L
+		TechLevel = 0
+	}
+	TechLevelInfo
+	{
+		name = commsTL0
+		Level = 0
+		MaxDataRate = 4
+	}
+	TechLevelInfo
+	{
+		name = commsTL2
+		Level = 2
+		MaxDataRate = 64
+	}
+}
+url = RealAntennas/TechTree.cfg
+PARTUPGRADE
+{
+	name = commsTL2
+	techRequired = survivability
+}
+City2
+{
+	name = CanaveralTrackingStation
+	objectName = US - Cape Canaveral
+	lat = 28.608389
+	lon = -80.604333
+	RACommNetStation = True
+	Antenna
+	{
+		RFBand = L
+		referenceGain = 1.5
+		TxPower = 40
+		TechLevel = 0
+	}
+}
+City2
+{
+	name = SilentTrackingStation
+	objectName = Silent Station
+	lat = 35.4251
+	lon = -116.8914
+	RACommNetStation = True
+	Antenna
+	{
+		RFBand = S
+		referenceGain = 40
+		TxPower = 60
+		TechLevel = 3
+	}
+}

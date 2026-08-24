@@ -76,7 +76,7 @@
     "ice-caps-landed-telemetry": 1,
     "ice-caps-landed-thermo": 1,
     "inline-goo-crash-12": 1,
-    "krpc-explore": 1,
+    "krpc-explore": 2,
     "krpc-log-chute-science": 1,
     "krpc-unused-properties": 1,
     "land-or-splash": 1,
@@ -107,6 +107,7 @@
     "legacy-i-015": 1,
     "legacy-i-016": 1,
     "legacy-i-020": 1,
+    "link-lost": 1,
     "live-ship-envelope": 1,
     "live-telem-watch": 1,
     "lt05-skip-splash": 1,
@@ -11859,7 +11860,58 @@
       "title": "Job cards + PROTOCOL/OPS/Practice: kernel learn, reuse stems, no Gene novel",
       "type": "org",
       "updated": "2026-08-24T08:20:00Z"
+    },
+    "T-325": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "close_why": "telem link/snr/via; comms dump TL+LIVE/SILENT tables from ConfigCache",
+      "created": "2026-08-24T08:02:01Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "krpc-explore",
+      "id": "T-325",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "comms",
+        "ra"
+      ],
+      "title": "telem + comms dump: link/snr/via and RA ground/TL tables",
+      "type": "systems",
+      "updated": "2026-08-24T08:16:10Z"
+    },
+    "T-326": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "close_why": "hop.py _command_ok/_zero_stick_if_deaf; pad-light aborts no signal (pad); after pad zero stick, coast/science/recover legal",
+      "created": "2026-08-24T08:02:01Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "link-lost",
+      "id": "T-326",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "comms"
+      ],
+      "title": "hop honors can_communicate; no stick when unmanned deaf",
+      "type": "control",
+      "updated": "2026-08-24T08:12:31Z"
     }
   },
-  "updated": "2026-08-24T08:20:00Z"
+  "updated": "2026-08-24T08:16:10Z"
 }

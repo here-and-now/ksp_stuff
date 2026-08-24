@@ -162,6 +162,9 @@ class Snapshot:
     debris_n: int | None = None
     shear: bool = False
     available_thrust: float = float("nan")
+    link: bool | None = None
+    snr: float = float("nan")
+    via: str = ""
     resources: dict[str, float] = field(default_factory=dict)
     flags: tuple[str, ...] = field(default_factory=tuple)
 
@@ -178,11 +181,16 @@ def format_snapshot(snap: Snapshot) -> str:
         return f"status vessel=none scene={snap.scene}"
     ec = "?" if snap.ec is None else f"{snap.ec:g}"
     fuel = "?" if snap.fuel is None else f"{snap.fuel:g}"
+    link_s = ""
+    if snap.link is True:
+        link_s = " link=yes"
+    elif snap.link is False:
+        link_s = " link=no"
     return (
         f"status body={snap.body} sit={snap.situation} "
         f"alt={snap.alt:.1f} peri={snap.peri:.1f} apo={snap.apo:.1f} "
         f"atm={snap.atm_depth:.1f} in_atmo={int(snap.in_atmo)} "
-        f"ec={ec} fuel={fuel} wreck={int(snap.wreck)} "
+        f"ec={ec} fuel={fuel} wreck={int(snap.wreck)}{link_s} "
         f"horiz={snap.horiz:.0f} vz={snap.v_vert:.0f} "
         f"hdg={snap.heading:.0f} "
         f"pitch={snap.pitch:.0f} aoa={snap.aoa:.0f} biome={snap.biome or '?'} "
@@ -514,11 +522,56 @@ def reliability_broken(vessel: Any) -> str | None:
     return None
 
 
+def comms_via(vessel: Any) -> str:
+    """Home ``CommNode.Name`` on ``control_path``. Slow RPC; never the 20 Hz path."""
+    try:
+        comms = getattr(vessel, "comms", None)
+        if comms is None:
+            return ""
+        path = getattr(comms, "control_path", None)
+        links = list(path or [])
+    except Exception:
+        return ""
+    home = ""
+    end_name = ""
+    for link in links:
+        for attr in ("end", "start"):
+            try:
+                node = getattr(link, attr, None)
+            except Exception:
+                continue
+            if node is None:
+                continue
+            try:
+                name = str(getattr(node, "name", "") or "")
+            except Exception:
+                name = ""
+            is_home = False
+            try:
+                is_home = bool(getattr(node, "is_home", False))
+            except Exception:
+                is_home = False
+            if not is_home:
+                try:
+                    is_home = bool(getattr(node, "IsHome", False))
+                except Exception:
+                    is_home = False
+            if not name:
+                continue
+            if is_home:
+                home = name
+            elif attr == "end":
+                end_name = name
+    return home or end_name
+
+
 def gates(snap: Snapshot) -> list[str]:
     """Body-relative gates. No Kerbin DIP/ESC strings."""
     out: list[str] = []
     if snap.wreck:
         out.append("wreck")
+    if snap.link is False:
+        out.append("deaf")
     if snap.broken:
         out.append(f"reliability {snap.broken}")
     if snap.shear:
@@ -695,6 +748,7 @@ class Telem:
         self._slow_parts: int | None = None
         self._slow_root: str = ""
         self._slow_resources: dict[str, float] = {}
+        self._slow_via: str = ""
         self._pad_ll: tuple[float, float] | None = None
         self._body_r: float = float("nan")
 
@@ -724,6 +778,7 @@ class Telem:
         self._slow_parts = None
         self._slow_root = ""
         self._slow_resources = {}
+        self._slow_via = ""
 
     def __enter__(self) -> Telem:
         return self
@@ -745,6 +800,7 @@ class Telem:
         if old != key:
             self._slow_at = 0.0
             self._slow_cost_s = 0.0
+            self._slow_via = ""
         if vessel is None:
             return
         self._flight = vessel.flight()
@@ -779,6 +835,16 @@ class Telem:
                 self._streams["ctrl.throttle"] = add_stream(getattr, ctrl, "throttle")
         except Exception:
             pass
+        try:
+            comms = getattr(vessel, "comms", None)
+        except Exception:
+            comms = None
+        if comms is not None:
+            for prop in ("can_communicate", "signal_strength"):
+                try:
+                    self._streams[f"comms.{prop}"] = add_stream(getattr, comms, prop)
+                except Exception:
+                    pass
 
     def _stream(self, key: str, fallback: Any = float("nan")) -> float:
         stream = self._streams.get(key)
@@ -788,6 +854,18 @@ class Telem:
             return _finite(stream())
         except Exception:
             return _finite(fallback)
+
+    def _stream_bool(self, key: str) -> bool | None:
+        stream = self._streams.get(key)
+        if stream is None:
+            return None
+        try:
+            val = stream()
+        except Exception:
+            return None
+        if val is None:
+            return None
+        return bool(val)
 
     def _downrange_km(self, lat: float, lon: float) -> float:
         if not math.isfinite(lat) or not math.isfinite(lon):
@@ -878,6 +956,8 @@ class Telem:
             "ctrl.throttle",
             getattr(getattr(vessel, "control", None), "throttle", float("nan")),
         )
+        link = self._stream_bool("comms.can_communicate")
+        snr = self._stream("comms.signal_strength")
         thrust = float("nan")
         try:
             thrust = float(vessel.thrust)
@@ -977,6 +1057,10 @@ class Telem:
             except Exception:
                 self._slow_broken = None
             self._slow_debris = debris_count(self.session)
+            try:
+                self._slow_via = comms_via(vessel)
+            except Exception:
+                self._slow_via = ""
             self._slow_at = time.monotonic()
             self._slow_cost_s = self._slow_at - t_slow
         else:
@@ -993,6 +1077,7 @@ class Telem:
             sci_run, sci_rem = self._slow_sci
         sci_bank = self._slow_bank
         debris_n = self._slow_debris
+        via = self._slow_via
         avail = _finite(getattr(vessel, "available_thrust", float("nan")))
         landing = ""
         downish = sit in _DOWN or wreck
@@ -1091,6 +1176,9 @@ class Telem:
             debris_n=debris_n,
             shear=bool(sheared),
             available_thrust=avail,
+            link=link,
+            snr=snr,
+            via=via,
             resources=resources,
         )
         reasons = gates(snap)

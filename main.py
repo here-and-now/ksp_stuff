@@ -726,7 +726,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub.add_parser(
         "comms",
-        help="Live RA antennas + probe HD from MM cache (no kRPC). Gus/Linus.",
+        help="RA TL + LIVE/SILENT ground + craft HD from MM cache (no kRPC).",
     )
     sub.add_parser("world", help="KSP root, save, tree, science (no kRPC)")
     sub.add_parser(

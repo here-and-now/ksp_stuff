@@ -85,7 +85,8 @@ def format_science_dump(*, desk: dict[str, str] | None = None) -> str:
         "Catalog (`unbound`) is the shelf. This-hop work is **bound**.",
         "",
         f"Craft `{craft}`. Tree `{unlocked}`. Bank **{sci}**. Next CTT",
-        f"`stability` 18 → need ~**{need_s}**. Do not transmit. F-013:",
+        f"`stability` 18 → need ~**{need_s}**. Recover banks for hops; "
+        "transmit is a radio (rate on `comms`), not the hop path. F-013:",
         "instrument part, never Stayputnik PAW as Geiger.",
         "",
         "```bash",

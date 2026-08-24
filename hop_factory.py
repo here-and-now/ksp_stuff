@@ -69,6 +69,7 @@ def run_factory_vessel(
     said_coast = [""]
     lofted = False
     reached_lid = False
+    link_was: bool | None = None
     prev_stack_mass = float("nan")
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
@@ -102,6 +103,9 @@ def run_factory_vessel(
             ctx.vessel = vessel
             snap = telem.read()
             pulses += 1
+            deaf = H._zero_stick_if_deaf(vessel, snap)
+            H._link_edge(log_events, not deaf, link_was)
+            link_was = not deaf
             if not did_light and H.leftover_wreck_before_light(snap, vessel):
                 sit = str(getattr(snap, "situation", "") or "") or H._vessel_sit(
                     vessel
@@ -263,11 +267,12 @@ def run_factory_vessel(
                     H._apply_hop_physics(
                         session, coast=False, on_log=on_log, last=said_coast
                     )
-                    H._light(vessel, on_log)
-                    try:
-                        vessel.control.throttle = 1.0
-                    except Exception:
-                        pass
+                    H._light(vessel, on_log, snap)
+                    if not deaf:
+                        try:
+                            vessel.control.throttle = 1.0
+                        except Exception:
+                            pass
                     lit = True
                     did_light = True
                     log_events.emit("hop", result="light")
@@ -304,7 +309,7 @@ def run_factory_vessel(
                 del _braking
 
             burning_now = H._burning(vessel, snap, lofted=lofted)
-            if lit and not down and left_pad:
+            if lit and not down and left_pad and not deaf:
                 flown_p = H._snap_pitch(snap)
                 flown_h = H._snap_heading(snap)
                 try:
@@ -500,10 +505,11 @@ def run_factory_vessel(
             if waiting_lid or hold_card:
                 pass
             elif pad_boost:
-                try:
-                    vessel.control.throttle = 1.0
-                except Exception:
-                    pass
+                if not deaf:
+                    try:
+                        vessel.control.throttle = 1.0
+                    except Exception:
+                        pass
             elif left_pad and H._recoverable(vessel):
                 if not said_down:
                     H._say("hop down", on_log)
@@ -565,10 +571,11 @@ def run_factory_vessel(
             if waiting_lid or hold_card:
                 pass
             elif pad_boost:
-                try:
-                    vessel.control.throttle = 1.0
-                except Exception:
-                    pass
+                if not deaf:
+                    try:
+                        vessel.control.throttle = 1.0
+                    except Exception:
+                        pass
             elif left_pad and (down or H._low_flying(snap)):
                 got = H._force_recover(vessel, on_log)
                 if got is not None:

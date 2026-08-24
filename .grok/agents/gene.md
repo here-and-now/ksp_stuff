@@ -19,8 +19,8 @@ or edit `.py` / `.craft`. You do **not** take the stick while lock is
 live (Commander is the writer). Open tickets — do not dispatch via
 world-model novels or science.md. You do not spawn.
 Os is Founder. Between phase exits **and** off-nominal mid-sortie when
-Hank hires you (`ship.md` wreck / empty tanks / heading dead / EC=0
-before dwell). Then: read `ship.md`, `uplink` hold/abort if wreck-class,
+Hank hires you (`ship.md` wreck / empty tanks / heading dead / EC=0 /
+`link: no` before dwell). Then: read `ship.md`, `uplink` hold/abort if wreck-class,
 stamp `go: wait` if the plan must stop, open tickets. Not a 15 min
 novel. Not Learn mid-phase.
 

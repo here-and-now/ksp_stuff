@@ -15,6 +15,7 @@ from telem import (
     EventLog,
     Telem,
     classify_impact,
+    comms_via,
     format_landing,
     format_snapshot,
     gates,
@@ -1202,3 +1203,187 @@ class TestWhere(unittest.TestCase):
         self.assertIn("lon=-80.7100", text)
         self.assertIn("down=13.60 km", text)
         self.assertIn("biome=Shores,Forest", text)
+
+
+class _CommNode:
+    def __init__(self, name, home=False):
+        self.name = name
+        self.is_home = home
+
+
+class _CommLink:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+
+class _Comms:
+    def __init__(self, *, can=True, snr=1.0, home="KSC"):
+        self.can_communicate = can
+        self.signal_strength = snr
+        end = _CommNode(home, True) if home else _CommNode("", False)
+        self.control_path = [_CommLink(_CommNode("probe", False), end)]
+
+
+class TestCommsLink(unittest.TestCase):
+    def test_gates_deaf_only_when_link_false(self):
+        self.assertIn("deaf", gates(Snapshot(link=False, vessel="probe")))
+        self.assertNotIn("deaf", gates(Snapshot(link=None, vessel="probe")))
+        self.assertNotIn("deaf", gates(Snapshot(link=True, vessel="probe")))
+        line = format_snapshot(Snapshot(vessel="probe", body="Earth", link=False))
+        self.assertIn("link=no", line)
+
+    def test_missing_comms_link_none_no_deaf(self):
+        vessel = _Vessel(alt=80.0, sit="pre_launch")
+        session = _Session(vessel)
+        snap = read_snapshot(session)
+        self.assertIsNone(snap.link)
+        self.assertNotIn("deaf", gates(snap))
+        self.assertFalse(math.isfinite(snap.snr))
+        self.assertEqual(snap.via, "")
+        names = [c[2] for c in session.stream_calls]
+        self.assertNotIn("can_communicate", names)
+
+    def test_streams_can_communicate_and_via_home(self):
+        vessel = _Vessel(alt=80.0, sit="pre_launch")
+        vessel.comms = _Comms(can=True, snr=0.9, home="KSC")
+        session = _Session(vessel)
+        with Telem(session) as telem:
+            snap = telem.read()
+        self.assertIs(snap.link, True)
+        self.assertAlmostEqual(snap.snr, 0.9)
+        self.assertEqual(snap.via, "KSC")
+        self.assertNotIn("deaf", snap.flags)
+        names = [c[2] for c in session.stream_calls]
+        self.assertIn("can_communicate", names)
+        self.assertIn("signal_strength", names)
+        self.assertEqual(comms_via(vessel), "KSC")
+
+    def test_link_false_flags_deaf(self):
+        vessel = _Vessel(
+            alt=200_000.0, sit="flying", fuel=10.0, speed=50.0, ec=5, depth=140_000.0
+        )
+        vessel.orbit.periapsis_altitude = 180_000.0
+        vessel.orbit.apoapsis_altitude = 220_000.0
+        vessel.comms = _Comms(can=False, snr=0.0, home="")
+        snap = read_snapshot(_Session(vessel))
+        self.assertIs(snap.link, False)
+        self.assertIn("deaf", gates(snap))
+        self.assertIn("deaf", snap.flags)
+        self.assertIn("link=no", format_snapshot(snap))
+
+    def test_comms_property_throw_fail_open(self):
+        class _Boom(_Vessel):
+            @property
+            def comms(self):
+                raise RuntimeError("no comms")
+
+        snap = read_snapshot(_Session(_Boom(alt=80.0, sit="pre_launch")))
+        self.assertIsNone(snap.link)
+        self.assertNotIn("deaf", gates(snap))
+
+    def test_comms_streams_throw_fail_open(self):
+        class _BoomComms:
+            @property
+            def can_communicate(self):
+                raise RuntimeError("boom")
+
+            @property
+            def signal_strength(self):
+                raise RuntimeError("boom")
+
+            @property
+            def control_path(self):
+                raise RuntimeError("boom")
+
+        vessel = _Vessel(alt=80.0, sit="pre_launch")
+        vessel.comms = _BoomComms()
+        snap = read_snapshot(_Session(vessel))
+        self.assertIsNone(snap.link)
+        self.assertNotIn("deaf", gates(snap))
+        self.assertEqual(snap.via, "")
+
+    def test_via_not_on_fast_path(self):
+        class _HitComms:
+            def __init__(self):
+                self.can_communicate = True
+                self.signal_strength = 1.0
+                self.hits = 0
+
+            @property
+            def control_path(self):
+                self.hits += 1
+                return [_CommLink(_CommNode("probe"), _CommNode("KSC", True))]
+
+        comms = _HitComms()
+        vessel = _Vessel(alt=12_000.0, sit="flying", speed=200.0)
+        vessel.comms = comms
+        with Telem(_Session(vessel)) as telem:
+            first = telem.read()
+            n = comms.hits
+            self.assertGreater(n, 0)
+            self.assertEqual(first.via, "KSC")
+            telem._last_read_s = 0.1
+            telem._slow_at = time.monotonic() - 10.0
+            telem._slow_cost_s = 5.0
+            second = telem.read()
+            self.assertEqual(comms.hits, n)
+            self.assertEqual(second.via, "KSC")
+            self.assertIs(second.link, True)
+
+    def test_jsonl_includes_link_via(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        tmp.write_text("", encoding="utf-8")
+        _bind_run_jsonl(self, tmp)
+        vessel = _Vessel(alt=80.0, sit="pre_launch")
+        vessel.comms = _Comms(can=True, snr=0.5, home="KSC")
+        with Telem(_Session(vessel), scene="flight") as telem:
+            telem.read()
+        rows = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        states = [row for row in rows if row.get("kind") == "state"]
+        self.assertEqual(len(states), 1)
+        self.assertTrue(states[0]["link"])
+        self.assertEqual(states[0]["via"], "KSC")
+        self.assertAlmostEqual(states[0]["snr"], 0.5)
+
+    def test_envelope_link_via_on_where(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+                "alt": 84.0,
+                "link": True,
+                "via": "KSC",
+            },
+            {
+                "kind": "state",
+                "t": 10.0,
+                "met": 8.0,
+                "situation": "flying",
+                "heading": 299.0,
+                "horiz": 5.0,
+                "pitch": 80.0,
+                "alt": 400.0,
+                "link": False,
+                "via": "KSC",
+            },
+            {"kind": "end", "t": 11.0},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        text = format_envelope(env)
+        self.assertIs(env["link"], False)
+        self.assertEqual(env["via"], "KSC")
+        self.assertIn("link=no", text)
+        self.assertIn("via=KSC", text)
+        self.assertIn("where:", text)

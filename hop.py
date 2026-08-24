@@ -4,6 +4,7 @@ Factory inland (``python main.py hop``) lives in hop_factory. Coast
 physics 2–4× lives in physics_warp. Sit/biome Toggle lives in science.
 
 Helpers name sit: lofted, burning, landed, splashed, recoverable.
+Unmanned deaf (known no radio) zeros the stick; pad-light aborts.
 Burnout is fuel gone, or throttle 0 after loft well above the pad.
 A 0-tick on the pad with a full tank is still burning — do not hop-down
 that pad boost. Hold AP through burnout; do not rewrite fuel=0.
@@ -1350,7 +1351,72 @@ def _uplink_tick(ctx: Ctx) -> None:
         raise MissionAbort(verb)
 
 
-def _light(vessel: object, on_log: Callable[[str], None] | None) -> None:
+def _command_ok(snap: object | None, vessel: object | None = None) -> bool:
+    """False only when we know the unmanned probe is deaf.
+
+    snap.link is True/False/None (Wernher). None or missing → try
+    vessel.comms.can_communicate; unreadable → True (Hangar/KSC).
+    Crewed: True.
+    """
+    if vessel is not None:
+        try:
+            n = int(getattr(vessel, "crew_count", 0) or 0)
+        except Exception:
+            n = 0
+        if n > 0:
+            return True
+    link = getattr(snap, "link", None) if snap is not None else None
+    if link is False:
+        return False
+    if link is True:
+        return True
+    if vessel is None:
+        return True
+    try:
+        can = getattr(vessel.comms, "can_communicate")
+    except Exception:
+        return True
+    if can is None:
+        return True
+    return bool(can)
+
+
+def _zero_stick_if_deaf(vessel: object, snap: object | None) -> bool:
+    """If not _command_ok: throttle 0, SAS off. Return True if deaf.
+
+    Do not stage. Do not abort here.
+    """
+    if _command_ok(snap, vessel):
+        return False
+    try:
+        control = vessel.control
+        control.throttle = 0.0
+        control.sas = False
+    except Exception:
+        pass
+    return True
+
+
+def _link_edge(
+    events: EventLog | None, ok: bool, was: bool | None
+) -> None:
+    """kind=link on yes↔no only. Not 5 Hz."""
+    if events is None or was is None or bool(ok) == bool(was):
+        return
+    events.emit(
+        "link",
+        link=int(bool(ok)),
+        msg="link yes" if ok else "link no",
+    )
+
+
+def _light(
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+    snap: object | None = None,
+) -> None:
+    if _zero_stick_if_deaf(vessel, snap):
+        raise MissionAbort("no signal (pad)")
     try:
         control = vessel.control
     except Exception as exc:
@@ -2000,6 +2066,8 @@ def _suicide_gate(
     not cut and do not slam 1. Live vz ~0 while the snap is still
     sinking means the stream is not bound — do not false-cut.
     """
+    if _zero_stick_if_deaf(vessel, snap):
+        return False
     dt = 1.0 / WATER_BRAKE_HZ
     t_end = now() + budget_s
     _steer_brake(vessel)
@@ -2007,6 +2075,8 @@ def _suicide_gate(
     stepped = False
     lit = bool(hover)
     while now() < t_end:
+        if _zero_stick_if_deaf(vessel, snap):
+            return False
         if abort is not None:
             try:
                 if abort():
@@ -2117,6 +2187,8 @@ def _hold_or_cut(
     when coast impact ≤ Goo 12. ``hover`` keeps leftover until coast
     ≤12 — not a TTI wait and not a vz −10 drop-out.
     """
+    if _zero_stick_if_deaf(vessel, snap):
+        return cut, False
     try:
         control = vessel.control
         apo = float(getattr(snap, "apo", float("nan")))
@@ -2266,6 +2338,7 @@ def run_on_vessel(
     said_deploy = False
     said_coast = [""]
     lofted = False
+    link_was: bool | None = None
     prev_stack_mass = float("nan")
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
@@ -2311,6 +2384,9 @@ def run_on_vessel(
             ctx.vessel = vessel
             snap = telem.read()
             pulses += 1
+            deaf = _zero_stick_if_deaf(vessel, snap)
+            _link_edge(log_events, not deaf, link_was)
+            link_was = not deaf
             sit_live = str(getattr(snap, "situation", "") or "").lower()
             leftover_splash = (
                 wait_splash
@@ -2507,7 +2583,7 @@ def run_on_vessel(
                 if airborne:
                     lit = True
                 elif not left_pad and str(snap.situation) in _LIGHT_SIT:
-                    _light(vessel, on_log)
+                    _light(vessel, on_log, snap)
                     lit = True
                     did_light = True
                     log_events.emit("hop", result="light")
@@ -2585,7 +2661,9 @@ def run_on_vessel(
                 and math.isfinite(leftover_lf)
                 and leftover_lf > 0.0
             )
-            if (braking or aim_up) and lit and not down and left_pad:
+            if deaf:
+                pass
+            elif (braking or aim_up) and lit and not down and left_pad:
                 _steer_brake(vessel)
                 if braking and not said_brake:
                     label = "hop-splash" if wait_splash else "hop-to-water"

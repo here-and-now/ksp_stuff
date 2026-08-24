@@ -1,5 +1,6 @@
 # Hank Grokman — log
 
+- 2026-08-24 — Os radio honesty. T-325 Wernher (telem `link`/`snr`/`via`, `comms` TL+ground). T-326 Lars (`_command_ok`, pad-light `no signal (pad)`). `zzzzkspstuffComms` on disk; mute waits next KSP boot (MM cache). Did not hop (KSP down).
 - 2026-08-21 — COO seat. Ticket bus `docs/program/OPS.md`. Os talks here for the loop.
 - 2026-08-21 — Os: east again (hop-to-water). T-013 fly blocked on leftover T-010 + Gus T-014. T-008 splash parked. Hire Jeb T-010 recover-probe --recover. No hop until Gene stamps T-013.
 - 2026-08-22 — Os: high-rate telem + tickets replace cards. T-013 landing catastrophic 230 m/s heading 301. Bus: category/tags, BRIEF, attach-run, landing skim. T-015/016/017 bugs; T-019/T-020 splash science tickets.

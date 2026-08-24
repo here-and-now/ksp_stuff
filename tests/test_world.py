@@ -307,3 +307,20 @@ class TestLiveRss(unittest.TestCase):
         surf = cat.get("SurfAntenna")
         if surf is not None:
             self.assertEqual(surf.antenna_band, "L")
+
+    def test_cape_appears_in_comms(self):
+        from science_scan import format_comms
+        from world import WorldError
+
+        root = RSS_CACHE.parents[1]
+        try:
+            world = load_world(ksp_root=root)
+        except WorldError as exc:
+            self.skipTest(str(exc))
+        text = format_comms(world)
+        self.assertIn("Cape", text)
+        self.assertIn("LIVE", text)
+        self.assertNotIn(
+            "TL2 (survivability) MaxDataRate=64 bps on every ModuleRealAntenna",
+            text,
+        )

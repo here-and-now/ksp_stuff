@@ -56,12 +56,16 @@ from hop import (
     _apply_hop_physics,
     _abort_high_lid,
     _burning,
+    _command_ok,
     _hold_or_cut,
+    _light,
+    _link_edge,
     _lofted,
     _pad_boosting,
     _reached_high_lid,
     _steer_east,
     _want_coast_phys,
+    _zero_stick_if_deaf,
     _steer_inland,
     inland_direction,
     surface_direction,
@@ -100,7 +104,7 @@ from hop import (
 )
 from phases import OffPlan, check_expect
 from card import HOP_EXPERIMENTS, NO_BOUND_CARD, card_experiment_ids, card_flying_ids
-from telem import MissionAbort
+from telem import EventLog, MissionAbort, Telem
 
 
 def _fast_clock():
@@ -939,6 +943,176 @@ class TestBoundFlyingCard(unittest.TestCase):
         )
 
 
+class TestHopCommandLink(unittest.TestCase):
+    """T-326 link-lost: kRPC Control writes without a radio. Fail open."""
+
+    def test_command_ok_link_and_comms(self):
+        vessel = _Vessel([])
+        deaf = type("S", (), {"link": False})()
+        live = type("S", (), {"link": True})()
+        missing = type("S", (), {})()
+        self.assertFalse(_command_ok(deaf, vessel))
+        self.assertTrue(_command_ok(live, vessel))
+        self.assertTrue(_command_ok(missing, vessel))
+        self.assertTrue(_command_ok(None, vessel))
+        self.assertTrue(_command_ok(missing, None))
+        vessel.comms = type("C", (), {"can_communicate": False})()
+        self.assertFalse(_command_ok(missing, vessel))
+        self.assertTrue(_command_ok(live, vessel))
+        self.assertFalse(_command_ok(deaf, vessel))
+        vessel.comms = type("C", (), {"can_communicate": True})()
+        self.assertTrue(_command_ok(missing, vessel))
+        vessel.comms = type("C", (), {"can_communicate": None})()
+        self.assertTrue(_command_ok(missing, vessel))
+
+        class _Boom:
+            @property
+            def can_communicate(self):
+                raise RuntimeError("hangar")
+
+        vessel.comms = _Boom()
+        self.assertTrue(_command_ok(missing, vessel))
+        vessel.crew_count = 1
+        vessel.comms = type("C", (), {"can_communicate": False})()
+        self.assertTrue(_command_ok(deaf, vessel))
+
+    def test_light_aborts_when_deaf_else_stages(self):
+        deaf = type("S", (), {"link": False})()
+        vessel = _Vessel([])
+        vessel.control.sas = True
+        vessel.control.throttle = 0.4
+        with self.assertRaises(MissionAbort) as ctx:
+            _light(vessel, None, deaf)
+        self.assertIn("no signal (pad)", str(ctx.exception))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertFalse(vessel.control.sas)
+        live = _Vessel([])
+        _light(live, None, type("S", (), {"link": True})())
+        self.assertEqual(live.control.staged, 1)
+        self.assertEqual(live.control.throttle, 1.0)
+        missing = _Vessel([])
+        _light(missing, None)
+        self.assertEqual(missing.control.staged, 1)
+        crewed = _Vessel([])
+        crewed.crew_count = 1
+        _light(crewed, None, deaf)
+        self.assertEqual(crewed.control.staged, 1)
+
+    def test_zero_stick_and_factory_extra_throttle_skip(self):
+        vessel = _Vessel([])
+        vessel.control.throttle = 1.0
+        vessel.control.sas = True
+        snap = type("S", (), {"link": False})()
+        deaf = _zero_stick_if_deaf(vessel, snap)
+        if not deaf:
+            vessel.control.throttle = 1.0
+        self.assertTrue(deaf)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertFalse(vessel.control.sas)
+        self.assertEqual(vessel.control.staged, 0)
+        live = type("S", (), {"link": True})()
+        self.assertFalse(_zero_stick_if_deaf(vessel, live))
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_hold_or_cut_does_not_suicide_when_deaf(self):
+        vessel = _Vessel([])
+        light = type(
+            "S",
+            (),
+            {
+                "link": False,
+                "apo": 800.0,
+                "fuel": 40.0,
+                "alt": 700.0,
+                "speed": 220.0,
+                "v_vert": -220.0,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            light,
+            18_000.0,
+            cut=True,
+            hold=1.0,
+            brake=True,
+            braking=True,
+        )
+        self.assertTrue(cut)
+        self.assertFalse(braking)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        live = type(
+            "S",
+            (),
+            {
+                "link": True,
+                "apo": 800.0,
+                "fuel": 40.0,
+                "alt": 700.0,
+                "speed": 220.0,
+                "v_vert": -220.0,
+            },
+        )()
+        cut, braking = _hold_or_cut(
+            vessel,
+            live,
+            18_000.0,
+            cut=True,
+            hold=1.0,
+            brake=True,
+            braking=True,
+        )
+        self.assertTrue(braking)
+        self.assertEqual(vessel.control.throttle, 1.0)
+
+    def test_suicide_gate_zeros_when_deaf(self):
+        vessel = _Vessel([])
+        vessel.control.throttle = 0.5
+        snap = type(
+            "S",
+            (),
+            {
+                "link": False,
+                "apo": 800.0,
+                "fuel": 40.0,
+                "alt": 700.0,
+                "speed": 220.0,
+                "v_vert": -220.0,
+            },
+        )()
+        now, sleep, _t = _fast_clock()
+        self.assertFalse(_suicide_gate(vessel, snap, sleep=sleep, now=now))
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_link_edge_emits_yes_no_only(self):
+        ev = EventLog()
+        _link_edge(ev, True, None)
+        _link_edge(ev, True, True)
+        self.assertEqual(ev.events, [])
+        _link_edge(ev, False, True)
+        self.assertEqual(ev.events[-1]["event"], "link")
+        self.assertEqual(ev.events[-1]["link"], 0)
+        self.assertEqual(ev.events[-1]["msg"], "link no")
+        _link_edge(ev, True, False)
+        self.assertEqual(ev.events[-1]["link"], 1)
+        self.assertEqual(ev.events[-1]["msg"], "link yes")
+        self.assertEqual(len(ev.events), 2)
+        _link_edge(None, False, True)
+
+    def test_lid_abort_ignores_deaf(self):
+        snap = type("S", (), {"link": False})()
+        self.assertFalse(
+            _abort_high_lid(
+                lit=True,
+                started=[],
+                left_pad=True,
+                down=True,
+                reached_lid=False,
+            )
+        )
+        del snap
+
+
 class TestHopExpect(unittest.TestCase):
     def test_skip_peri(self):
         state = type(
@@ -1096,6 +1270,86 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(vessel.control.staged, 1)
         self.assertEqual(mod.triggered, ["Start Experiment"])
         self.assertEqual(sits, ["flying"])
+
+    def test_factory_pad_light_aborts_when_deaf(self):
+        vessel = _Vessel([_Mod("Experiment", "temperatureScan")])
+        now, sleep, _t = _fast_clock()
+
+        class _SnapLink:
+            def __init__(self, inner):
+                self._inner = inner
+                self.link = False
+
+            def __getattr__(self, name):
+                return getattr(self._inner, name)
+
+        orig = Telem.read
+
+        def wrapped(self):
+            return _SnapLink(orig(self))
+
+        with patch.object(Telem, "read", wrapped):
+            with self.assertRaises(MissionAbort) as ctx:
+                run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("temperatureScan",),
+                    now=now,
+                    sleep=sleep,
+                    timeout=5.0,
+                    pulse=1.0,
+                )
+        self.assertIn("no signal (pad)", str(ctx.exception))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_deaf_after_pad_recovers_does_not_abort_lid(self):
+        thermo = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([thermo], recoverable=False)
+        now, sleep, t = _fast_clock()
+        link = [True]
+
+        class _SnapLink:
+            def __init__(self, inner):
+                self._inner = inner
+                self.link = link[0]
+
+            def __getattr__(self, name):
+                return getattr(self._inner, name)
+
+        orig = Telem.read
+
+        def wrapped(self):
+            return _SnapLink(orig(self))
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                link[0] = False
+            elif vessel.situation == "flying" and thermo.triggered:
+                vessel.situation = "landed"
+                vessel._alt = 80.0
+                vessel._speed = 0.0
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch.object(Telem, "read", wrapped):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("temperatureScan",),
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(thermo.triggered, ["Start Experiment"])
 
     def test_airborne_arms_realchute_without_extra_stage(self):
         """00-10-20Z stage stayed 1; Mk16 never armed; 154 m/s Shores."""

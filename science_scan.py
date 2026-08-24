@@ -84,13 +84,12 @@ def format_live_defs(world: World) -> str:
 
 
 def format_comms(world: World) -> str:
-    """Live RA antennas + command-module HD from MM cache. Gus / Linus disk sit."""
-    lines = [
-        "# live RA + probe HD (ModuleManager.ConfigCache). No kRPC.",
-        "# TL2 (survivability) MaxDataRate=64 bps on every ModuleRealAntenna.",
-        "# 16-S omni L gain=2. Dishes start basicScience (HG-5 0.5m). Goo/Jr are samples.",
-        "# part  tech  title  gain  diam_m  band  HD_Mb  samples",
-    ]
+    """RA TL + LIVE/SILENT ground + craft HD from MM cache. No kRPC."""
+    from comms_catalog import format_ground, format_ra_tables, load_comms_catalog
+
+    cat = load_comms_catalog(world)
+    lines = format_ra_tables(cat).splitlines()
+    lines.append("# craft: part tech lock gain D band HD samp")
     owned = set(world.research.unlocked)
     rows: list[tuple[str, object]] = []
     for part in world.catalog.parts.values():
@@ -109,6 +108,7 @@ def format_comms(world: World) -> str:
             f"{part.name:36} {part.tech or '-':22} {lock:8} "
             f"gain={gain:6} D={diam:6} {band:4} HD={hd:6} samp={sm:4}  {title}"
         )
+    lines.extend(format_ground(cat).splitlines())
     return "\n".join(lines) + "\n"
 
 

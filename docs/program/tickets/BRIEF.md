@@ -38,7 +38,8 @@ python main.py tickets landing T-NNN           # envelope (pad/last/apo/hz)
 python main.py telem <run.jsonl>               # same eyes; --window pad|airborne|apex|burnout|descent|impact
   # last-flight 40 lines is not the vessel. Do not Learn from it.
   # 09-01Z: last-flight splash rec=yes vs jsonl flying 6 km rec=no q=17510.
-  # Question rows. Missing helper: --type systems --fingerprint telem-eyes-library --desk wernher (T-449)
+  # Question rows. T-449 landed sit_mismatch / landing_synthesized / sci_delta / thick_air_skip.
+  # New missing helper: --type systems --fingerprint telem-eyes-library --desk wernher
 python main.py ship                            # live eyes from ship.md (no jsonl). Lock-live status is a GET reader (kspstuff-read); writer Telem.read still owns jsonl/ship.md.
 python main.py tickets open --type science --category science_opportunity \
   --title "…" --severity S3 --priority P1 --desk linus --tag splash --tag goo

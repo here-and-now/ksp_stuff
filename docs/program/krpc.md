@@ -59,7 +59,7 @@ never take the stick.
 **Code (Wernher):** `telem.py` cheap pulse (`thin-tape`) — jsonl `hz`
 is 1/wall-dt, not requested 5–20. `session.py` + `flightlog.py`
 reader Session + `kind=recover` sit/rec at `recover()`
-(`telem-eyes-library`). T-449 still owns query helpers
+(`telem-eyes-library`). T-449 landed query helpers
 (`sit_mismatch`, `landing_synthesized`, `sci_delta` / `sci_paid`,
 `thick_air_skip`).
 

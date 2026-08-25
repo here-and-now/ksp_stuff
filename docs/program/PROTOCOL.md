@@ -204,8 +204,8 @@ rec=yes vs jsonl last snap flying 6 km 214 m/s rec=no q=17510
 rec=yes is not rec. One **control** writer; kRPC GET readers are
 legal. Cadence is the writer’s duty. Desks that touch tape file
 `tickets feedback --claim` and missing helpers as `type=systems
---fingerprint telem-eyes-library` (T-449 owns query helpers). Thin
-pulse → `thin-tape`.
+--fingerprint telem-eyes-library` (T-449 landed query helpers; still
+the stem). Thin pulse → `thin-tape`.
 
 **Science side-by-side:** Linus binds every honest instrument that can
 share a hop (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape).

@@ -376,7 +376,7 @@ story this fly. Dead kRPC GUID is not leftover.
   and tape files; it was not a ban on GET. Cadence is the control
   pid’s duty. Desks that touch tape file `tickets feedback --claim`
   and, if a helper is missing, `type=systems --fingerprint
-  telem-eyes-library` at Wernher (T-449 owns query helpers; reader
+  telem-eyes-library` at Wernher (T-449 landed query helpers; reader
   Session is the same stem). Thin pulse → `thin-tape`. Query
   `tape.Tape` / `python main.py telem` — do not `read_file` jsonl.
   Off-nominal: uplink wreck-class; hire Gene if plan/`go` must change
@@ -466,7 +466,7 @@ story this fly. Dead kRPC GUID is not leftover.
   last-flight / `active_vessel`. Cadence is the writer’s duty (09-01Z
   27/251 s). Not a dedicated telem pid this sit. Code: `thin-tape`
   (`telem.py`), `telem-eyes-library` (`session.py`, `flightlog.py`).
-  T-449 still owns query flags. Reader mode landed (T-454): `status`
+  T-449 landed query flags. Reader mode landed (T-454): `status`
   / leftover_ships while lock live are `kspstuff-read`. Writer
   `Telem.read` still owns jsonl / `ship.md`. Hank may still read
   `ship.md`.
@@ -669,7 +669,7 @@ story this fly. Dead kRPC GUID is not leftover.
   rec=yes vs jsonl last snap flying 6 km 214 m/s rec=no q=17510
   (landing synthesized; `sci_rem=0` whole flight). Do not Learn from
   last-flight. Helpers: last-snap sit vs recover sit, `sci_rem` vs
-  bank, rec, 4× q skip. Code T-449 Wernher. Never revert. An RSI
+  bank, rec, 4× q skip. Code T-449 landed. Never revert. An RSI
   letter does not empty the pad.
 - **2026-08-25 hold-ground-card (T-447, ×11, stem count 12):**
   09-01Z still claimed splash recover without Toggle of leftover
@@ -682,7 +682,7 @@ story this fly. Dead kRPC GUID is not leftover.
 - **2026-08-25 telem-eyes-library (T-455 RSI ×3, stem count 4):**
   Harvest only. Law already T-452 (one control writer; GET readers
   legal). Reader Session landed T-454 (`kspstuff-read`;
-  `kind=recover` sit at recover()). T-449 still owns query helpers.
+  `kind=recover` sit at recover()). T-449 landed query helpers.
   Do not rewrite GET-reader law. Never revert. An RSI letter does
   not empty the pad.
 - **2026-08-25 rf-ignition-ullage (T-456 org / T-457, stem count 1):**
@@ -704,6 +704,12 @@ story this fly. Dead kRPC GUID is not leftover.
   ignitions). Live miss is Lars T-464 `hop_factory.py` — not
   Wernher, not GameData. Do not rewrite RF-ullage law. An RSI
   letter does not empty the pad.
+- **2026-08-25 sci-unchanged-recovered (T-458 RSI ×15, stem count 18):**
+  Harvest only. Waste is still **living** rec=yes + `sci_run=0`.
+  Latch already T-346 (`waste_blocks_refly` is `_sci_unchanged_waste`
+  only). Do **not** retune `hop_factory.py`. GET readers already
+  T-452/T-454. Tape helpers T-449 landed. Wreck rec=no still
+  re-flies. Never revert. An RSI letter does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

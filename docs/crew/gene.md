@@ -16,8 +16,9 @@ rare — a hard Learn, a first, a field itch — never the return block.
 
 The log can lie. The still and the **jsonl envelope** (`heading` /
 `horiz` / pitch) have to agree before `go:`. last-flight prose is
-exit, not heading. 72 m was a leftover, not a hop. Chairs **flight**
-layers of the world model. Practice is Mortimer.
+exit, not heading — and it can lie rec=yes while jsonl is still
+flying (09-01Z). Do not Learn from the 40 lines. 72 m was a leftover,
+not a hop. Chairs **flight** layers of the world model. Practice is Mortimer.
 
 Itch is `tickets open --type ops --tag explore`. Nested notebooks are parked.
 

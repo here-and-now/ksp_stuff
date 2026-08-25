@@ -133,10 +133,12 @@ miss. Discover when a hop goes deaf. Brief: `docs/program/krpc.md`.
 and `git commit` a sentence. Do not wait for Hank. Do not commit
 gitignored tape.
 
-**Tape (Os 2026-08-25, Mortie):** last-flight 40 lines is not the
-vessel. Query `python main.py telem <jsonl> --window descent,impact`
-on a miss. Update assumptions. Missing helper →
-`type=systems --fingerprint telem-eyes-library --desk wernher`.
+**Tape (Os 2026-08-25, Mortie / T-448):** last-flight 40 lines is not the
+vessel. Query `python main.py telem <jsonl> --window descent` and
+`--window impact` on a miss. **09-01Z:** last-flight recovered splash
+rec=yes vs jsonl last snap flying 6 km 214 m/s rec=no q=17510.
+Last-flight rec=yes is not sit. Update assumptions. Missing helper →
+`type=systems --fingerprint telem-eyes-library --desk wernher` (T-449).
 Always `tickets feedback --claim`.
 
 ## After a miss

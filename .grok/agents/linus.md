@@ -84,9 +84,11 @@ still unpaid leftover — not a rebind. After sci unchanged, rebind from the env
 **before** the next light — a living recover that cannot pay is waste. Thin tape / 9-column skim:
 `--type systems --fingerprint <stem>` (or `ops --tag feedback
 --fingerprint <stem>`) — cite it like `f013`.
-**Tape (Os 2026-08-25, Mortie):** leftover is science-scan + jsonl
+**Tape (Os 2026-08-25, Mortie / T-448):** leftover is science-scan + jsonl
 `sci_rem` / bank, not last-flight skip lines. Capped leftover is not
-unstarted. Missing helper → `telem-eyes-library` at Wernher.
+unstarted. **09-01Z:** last-flight splash rec=yes vs jsonl flying 6 km
+rec=no; `sci_rem=0` whole flight; splash TELEMETRY capped. Do not Learn
+from last-flight. Missing helper → `telem-eyes-library` at Wernher (T-449).
 Stumble → ticket with `--fingerprint` from
 `docs/program/tickets/fingerprints.json`. Reuse the class; never omit
 on `control` / `systems` / `ops --tag feedback`; do not invent a stem

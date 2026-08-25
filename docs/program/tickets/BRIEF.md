@@ -36,8 +36,9 @@ python main.py tickets packet T-NNN            # skim (envelope + this-hop learn
 python main.py tickets packet T-NNN --deep     # tape CLI / PNG / craft
 python main.py tickets landing T-NNN           # envelope (pad/last/apo/hz)
 python main.py telem <run.jsonl>               # same eyes; --window pad|airborne|apex|burnout|descent|impact
-  # last-flight 40 lines is not the vessel. Question rows. If a helper
-  # is missing: tickets open --type systems --fingerprint telem-eyes-library --desk wernher
+  # last-flight 40 lines is not the vessel. Do not Learn from it.
+  # 09-01Z: last-flight splash rec=yes vs jsonl flying 6 km rec=no q=17510.
+  # Question rows. Missing helper: --type systems --fingerprint telem-eyes-library --desk wernher (T-449)
 python main.py ship                            # live eyes from ship.md (no jsonl, no kRPC)
 python main.py tickets open --type science --category science_opportunity \
   --title "…" --severity S3 --priority P1 --desk linus --tag splash --tag goo

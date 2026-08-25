@@ -315,8 +315,9 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
 
 - Wall-clock is scarce. Plan / bind / warp so hops pay. One hire,
   many tickets of the same desk.
-- Tape is the product. An idle pad is a miss. A **living recover
-  that cannot pay is also a waste.** A 10–15 min Gene conference
+- Tape is the product. An idle pad is a miss. Do **not** idle the
+  pad as a religion: a **living recover that cannot pay is also a
+  waste.** A 10–15 min Gene conference
   after a test hop is the anti-pattern. Conference-then-+0 hops
   are the same waste. A Commander after-flight review is the same
   waste — CLI exit ends the hop.
@@ -362,7 +363,7 @@ on its vehicle ticket (F-013). That serial is honesty, not ritual.
 desk.md          ← python main.py desk (snapshot, not the board)
 tickets/head.json ← source of truth
 jsonl envelope   ← evidence on fly/control tickets (heading, horiz, pitch, aoa, biome); Hank attach-run after CLI
-last-flight.md   ← abort/handoff only (I-020); Commander Return is this, not a review
+last-flight.md   ← abort/handoff only (I-020); can lie rec=yes while jsonl still flying (09-01Z); not a Learn
 lessons.md       ← VSE/CSE dated physics/API
 ship.md          ← radio, Walt
 ```
@@ -386,7 +387,9 @@ unfinished patch on the same file.
 `attach-run` overwrites a one-liner from the envelope (`who=hank`) —
 Gene is not that writer; `needs_learn` stays false. Crewed /
 `campaign: none` / firsts: Gene stamps from `tickets landing` / tape
-envelope when `ops next` hires him — never Commander Return prose.
+envelope when `ops next` hires him — never Commander Return prose,
+**never last-flight 40 lines** (09-01Z splash rec=yes vs jsonl flying
+6 km rec=no).
 Review auto-fills heading/horiz/pitch; uncrewed review does not nag
 “Stamp payload.learn”. `ksc`/`load`/`recover-probe` skip the Gene
 blank. `needs_learn` is campaign not `uncrewed` and learn empty.

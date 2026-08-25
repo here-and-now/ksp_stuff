@@ -145,7 +145,8 @@ actually shared. One immortal factory that remembers Flea, Hammer,
 dead-hang envelopes. No stamp-named `_after_skip`.
 
 **Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
-is a sin**. A **living recover that cannot pay is also a waste**.
+is a sin**. Do **not** idle the pad as a religion: a **living recover
+that cannot pay is also a waste**.
 Inventory stays full: Linus many `science_opportunity`; Gus many
 signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
@@ -187,9 +188,13 @@ shrug. Every desk that stumbles on it opens `--type systems` (or
 `--type ops --tag feedback`). Cite it on capable / bind / `go:` the
 way `f013` is cited. Do **not** idle the pad for it — Wernher patches
 during lock live. Query **Tape**, never raw jsonl. Last-flight 40
-lines is abort/exit, not the vessel (Os 2026-08-25 Mortie). Desks
+lines is abort/exit, not the vessel (Os 2026-08-25 Mortie / T-448).
+**Do not reason a Learn from it.** 09-01Z last-flight splash rec=yes
+vs jsonl last snap flying 6 km 214 m/s rec=no q=17510 (landing
+synthesized; `sci_rem=0`). Last-flight rec=yes is not rec. Desks
 that touch tape file `tickets feedback --claim` and missing helpers
-as `type=systems --fingerprint telem-eyes-library`.
+as `type=systems --fingerprint telem-eyes-library` (T-449 owns
+helpers).
 
 **Science side-by-side:** Linus binds every honest instrument that can
 share a hop (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape).
@@ -346,12 +351,14 @@ dump.
 miss / bind that claims a heading or a biome cites the review envelope
 (`heading`, `horiz`, pitch) or `tickets landing T-NNN`. Jsonl stays on
 disk. `docs/last-flight.md` is abort/exit only — it can look like
-skill while heading never 090. **Hank** `attach-run` + `landing` after
-Commander CLI exit. Uncrewed `attach-run` **overwrites**
+skill while heading never 090, and it can lie rec=yes while jsonl is
+still flying (09-01Z splash vs 6 km 214 m/s rec=no). **Do not reason
+a Learn from last-flight 40 lines.** **Hank** `attach-run` + `landing`
+after Commander CLI exit. Uncrewed `attach-run` **overwrites**
 `payload.learn` from the envelope (`who=hank`). Gene stamps
 `payload.learn` from that envelope only when `ops next` hires him
 (campaign-stop / crewed / firsts) — **never** from Commander Return
-prose, **never** between uncrewed hops.
+prose, **never** between uncrewed hops, **never** from last-flight.
 Linus does not bind Water/east if the tape never held heading; does
 not bind Grasslands if tape never left Forest; does not bind
 SrfLanded if the hang splashed (or splash if it landed). Lars

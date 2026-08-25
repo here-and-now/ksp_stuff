@@ -89,6 +89,12 @@ Brief: `docs/program/krpc.md`.
 tickets you stamped/closed), `git add` those paths and `git commit`
 a sentence. Do not wait for Hank. Do not commit gitignored tape.
 
+**Tape (Os 2026-08-25 / T-448):** last-flight 40 lines is abort/exit,
+not the vessel. **Do not Learn from it.** Stamp `learn` from
+`tickets landing` / envelope only. **09-01Z:** last-flight splash
+rec=yes vs jsonl flying 6 km rec=no — jsonl wins. Missing helper →
+`telem-eyes-library` at Wernher (T-449).
+
 ## Learn
 
 Uncrewed is **not** a 15 min novel and **not** your stamp. Hank
@@ -106,7 +112,9 @@ python main.py tickets stamp T-NNN --field learn --value "heading 300 horiz 32 p
 ```
 
 Cite the envelope (`heading` / `horiz` / pitch). Never Commander
-Return prose. last-flight is abort/exit only. Heading never 090 is
+Return prose. last-flight is abort/exit only — **do not Learn from
+the 40 lines.** 09-01Z last-flight splash rec=yes vs jsonl flying 6 km
+rec=no: jsonl / `tickets landing` wins. Heading never 090 is
 Water-dead — do not reuse that stem for inland 299. Campaign stop:
 stamp the one-liner, then `go: wait` unless Os continues.
 

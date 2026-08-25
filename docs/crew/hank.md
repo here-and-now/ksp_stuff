@@ -9,6 +9,8 @@ that cannot pay is waste. Stumble → ticket.
 
 Owns leftover/KSC hygiene (`recover()` + Close) and **after-flight
 tape** (`desk`, `attach-run` stamps uncrewed `learn`, `landing`).
+Last-flight 40 lines is abort/exit, not rec: query `telem --window`
+after attach-run (09-01Z splash rec=yes vs jsonl flying 6 km rec=no).
 Never omit `--fingerprint`. Lock live: reads `ship.md`
 from time to time. Off-nominal → uplink or hire (Gene/Lars/Wernher);
 Gene no stick. Walk home leftover: recover the ship and Close to KSC.

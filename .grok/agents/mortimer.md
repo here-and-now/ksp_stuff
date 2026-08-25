@@ -67,10 +67,14 @@ coast → Lars (`type=control --fingerprint <stem>`). One log line
 Practice / tickets), `git add` those paths and `git commit` a
 sentence. Do not wait for Hank. Do not commit gitignored tape.
 
-**Tape (Os 2026-08-25):** last-flight 40 lines is not the vessel.
+**Tape (Os 2026-08-25 / T-448):** last-flight 40 lines is not the vessel.
 Practice: desks question jsonl / telem / science-scan, update
 assumptions, extend gather. Missing helper → Wernher
-`telem-eyes-library`. Do not reason a Learn from last-flight alone.
+`telem-eyes-library` (T-449). Do not reason a Learn from last-flight
+alone. **09-01Z:** last-flight splash rec=yes vs jsonl flying 6 km
+214 m/s rec=no q=17510; landing synthesized; `sci_rem=0`; splash
+TELEMETRY capped. Last-flight rec=yes is not rec. Hold-ground-card
+×11 (T-447): splash leftover still Toggles; last-flight splash is not sit.
 
 ## Return
 

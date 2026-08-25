@@ -35,8 +35,10 @@ Toggles after airborne dwell — do not recover unpaid. Skip-latch is
 FlyingLow cannot-pay only. 163 km is not OffPlan
 when `expect_apo_max` is 400 km. Do **not** Hangar 4t / dv5 / girderless
 lite / a 4×-sheared t7 / T-409 as silk (`far-shear`). Idle pad is a
-sin; a living recover that cannot pay is waste. Warp the coast. Thin
-tape → `type=systems`. Do not recover Ast. XRL-564. Do not idle the
+sin; do not idle it as a religion — a living recover that cannot pay
+is waste. Last-flight 40 lines is not the vessel; do not Learn from it.
+Warp the coast. Thin tape → `type=systems` (`telem-eyes-library`).
+Do not recover Ast. XRL-564. Do not idle the
 pad for a letter, a VAB helper, or a 15 min replan. Live Cape path
 is **64 bps** (table and `RateToHome`).
 

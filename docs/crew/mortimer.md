@@ -33,8 +33,10 @@ is campaign-stop only. Uncrewed hops re-fly last `cli:` on clean 0
 **and** on a miss of a hang that still lives — not a Gene hire.
 Living recover + `sci_run=0` is **not** clean 0: envelope sit/biome
 must match bound tickets before last `cli:` lights. Pad
-occupancy: tape is the product; an idle pad is a sin. A living
-recover that cannot pay is waste. Time is scarce: plan / bind / warp
+occupancy: tape is the product; an idle pad is a sin. Do not idle the
+pad as a religion. A living recover that cannot pay is waste. Last-flight
+40 lines is not the vessel (09-01Z splash rec=yes vs jsonl flying 6 km
+rec=no) — do not Learn from it. Time is scarce: plan / bind / warp
 so hops pay. RSI: stumble →
 ticket. After every hire: `tickets feedback T-NNN --claim "…"`
 on the work ticket — not Return keys, not RSI ×3 as the only door. Thin tape is first-class. Airborne cannot-pay skip is not a

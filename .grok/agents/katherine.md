@@ -55,9 +55,11 @@ path. Do not re-run `world` / `tech` / `parts`.
 invent a targeting loop. Model a window from tape when we ask.
 Brief: `docs/program/krpc.md`.
 
-**Tape (Os 2026-08-25, Mortie):** `telem --window` is the product.
-Question descent/impact vs last-flight recover. Missing helper →
-`type=systems --fingerprint telem-eyes-library --desk wernher`.
+**Tape (Os 2026-08-25, Mortie / T-448):** `telem --window` is the product.
+Question descent/impact vs last-flight recover. **09-01Z:** last-flight
+splash rec=yes vs jsonl flying 6 km rec=no q=17510 (landing
+synthesized). Missing helper → `type=systems --fingerprint
+telem-eyes-library --desk wernher` (T-449).
 
 **Git (Os 2026-08-25):** after you change the checkout, `git add`
 those paths and `git commit` a sentence. Do not wait for Hank. Do

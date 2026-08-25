@@ -34,6 +34,8 @@ Owns `science.md` and a **shelf** of science tickets (`experiment_id`,
 PAW is not a Geiger. Cape Shores capped. Forest/Grasslands/Tropics/
 Savanna FlyingLow still pay **when the envelope shows them**. This-hop
 bind is last-envelope biome/sit. Water waits 090. Inventory during lock.
+Leftover is science-scan + jsonl `sci_rem` / bank, not last-flight skip
+(09-01Z splash TELEMETRY capped; last-flight rec=yes is not sit).
 Horizon layer of the world model. Does not Hangar. Stumble → ticket.
 
 Os is Founder. Same pad card is not more science (F-005). Humor: none

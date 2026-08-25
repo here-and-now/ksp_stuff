@@ -358,13 +358,18 @@ story this fly. Dead kRPC GUID is not leftover.
 - **Live watch:** Commander watches telem in-flight (`note` / hold /
   abort if unusual). Hank periodically reads `docs/program/ship.md`
   (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.
-- **Tape (Os 2026-08-25, Mortie):** last-flight 40 lines is abort/exit,
-  not the vessel. Question jsonl / `telem --window` / science-scan
-  whenever you bind, patch, or learn. Update assumptions. Extend what
-  we gather when a row cannot answer (sit at recover vs last snap,
-  `sci_rem` vs bank, rec, q at 4×). Desks that touch tape file
+- **Tape (Os 2026-08-25, Mortie / T-448):** last-flight 40 lines is
+  abort/exit, not the vessel. **Do not reason a Learn from it.**
+  Question jsonl / `telem --window` / science-scan whenever you bind,
+  patch, or learn. Update assumptions. Extend what we gather when a
+  row cannot answer (sit at recover vs last snap, `sci_rem` vs bank,
+  rec, q at 4×). **09-01Z:** last-flight said splash rec=yes; jsonl
+  last snap flying **6 km 214 m/s rec=no q=17510**; landing
+  synthesized; `sci_rem=0` whole flight; splash TELEMETRY capped.
+  Last-flight rec=yes is not rec. Desks that touch tape file
   `tickets feedback --claim` and, if a helper is missing,
-  `type=systems --fingerprint telem-eyes-library` at Wernher. Query
+  `type=systems --fingerprint telem-eyes-library` at Wernher
+  (T-449 owns helpers — do not invent a second stem). Query
   `tape.Tape` / `python main.py telem` — do not `read_file` jsonl.
   Off-nominal: uplink wreck-class; hire Gene if plan/`go` must change
   (no stick); Lars if the living pulse / control; Wernher if
@@ -389,7 +394,9 @@ story this fly. Dead kRPC GUID is not leftover.
   Geiger. A living recover with sci unchanged is **waste**, not rest.
   Wreck `rec=no` is a miss: re-fly last `cli:`.
 - **Pad occupancy:** Tape is the product. An **idle pad is a sin**.
-  A **living recover that cannot pay is also a waste**. Linus always
+  Do **not** idle the pad as a religion: a **living recover that
+  cannot pay is also a waste** (envelope sit/biome must match bound
+  tickets before last `cli:`). Linus always
   has a **shelf** of `science_opportunity` and **this-hop binds**
   last-envelope biome/sit **side-by-side** (thermo + TELEMETRY + goo
   if honest). Gus always has **many** signed `.craft` alts on disk.
@@ -632,6 +639,21 @@ story this fly. Dead kRPC GUID is not leftover.
   forbid TX. Linus T-443 sizes TX vs recover. Wernher T-445 uplink.
   Do not edit `science.py` this letter. Next CTT `generalRocketry`
   **20**. Never revert. An RSI letter does not empty the pad.
+- **2026-08-25 telem-eyes-library (T-448 org / T-449, stem count 2):**
+  Last-flight 40 lines is not the vessel. 09-01Z last-flight splash
+  rec=yes vs jsonl last snap flying 6 km 214 m/s rec=no q=17510
+  (landing synthesized; `sci_rem=0` whole flight). Do not Learn from
+  last-flight. Helpers: last-snap sit vs recover sit, `sci_rem` vs
+  bank, rec, 4× q skip. Code T-449 Wernher. Never revert. An RSI
+  letter does not empty the pad.
+- **2026-08-25 hold-ground-card (T-447, ×11, stem count 12):**
+  09-01Z still claimed splash recover without Toggle of leftover
+  TELEMETRY/thermo/PresMat after airborne cannot-pay (T-440/T-441).
+  Last-flight splash rec=yes is not sit — jsonl last snap flying
+  6 km rec=no. Bound splash T-028/T-422/T-423 still pays on splash
+  sit. File rem=0 still the card. Capped splash TELEMETRY is
+  science-scan, not last-flight skip. Code T-446 Lars. Tape T-449.
+  Do not Hangar. Never revert. An RSI letter does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next
@@ -659,9 +681,11 @@ story this fly. Dead kRPC GUID is not leftover.
   from that envelope (`who=hank`). Gene stamps `learn` from
   `tickets landing` / `--deep` only when `ops next` hires him
   (campaign-stop / crewed / firsts) — never Commander Return prose,
-  never between uncrewed hops. last-flight is abort/exit only. Water
-  died on heading never 090, not on Jeb’s write-up (I-020). Drop
-  “Gene stamps from review” as the uncrewed path.
+  never between uncrewed hops, **never last-flight 40 lines**.
+  last-flight is abort/exit only — it can lie rec=yes while jsonl is
+  still flying (09-01Z splash vs 6 km rec=no). Water died on heading
+  never 090, not on Jeb’s write-up (I-020). Drop “Gene stamps from
+  review” as the uncrewed path.
 - Flight **ends at CLI exit**. The Commander does not write an
   after-flight review (no jsonl cite, no attach-run, no landing
   essay). **Hank** owns leftover + tape (`desk`, `attach-run`,

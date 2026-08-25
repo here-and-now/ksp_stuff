@@ -1,14 +1,13 @@
 # Ticket board
 
-open: 71 / 445
+open: 70 / 449
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
-| T-440 | control | bug | S2 | P1 | medium | inbox | lars |  | Airborne cannot-pay then recover splash without Toggle splash leftover |
-| T-445 | systems | bug | S2 | P1 | medium | inbox | wernher |  | Uplink science/transmit; hop no longer skip those verbs; Kerbalism TX events |
+| T-449 | systems | bug | S2 | P1 | medium | inbox | wernher |  | jsonl helpers: last-state vs recover sit, sci_rem vs bank, 4x q skip (09-01Z) |
 | T-028 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,telemetry,splash,bound | splash TELEMETRY@Water 0.80 |
 | T-422 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,thermo,splash,bound | Water SrfSplashed thermo 0.90 |
 | T-423 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,barometer,splash,bound | Water SrfSplashed barometer 0.90 |

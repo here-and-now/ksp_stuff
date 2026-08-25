@@ -17,13 +17,16 @@ bus**, **who is hired this turn**, leftover / pad cleanliness,
 `no_warp`. Physics warp only. Never rails. Never WarpTo. Never
 10_000_000×. 4× when the loft is quiet (above thick air, fuel gone,
 q low). 1× when burn, silk, high q, or ≤18 km. Hop pid is the writer;
-you do not open a second Session. **Tape (Os 2026-08-25):** last-flight 40 lines is abort/exit, not the
+you do not open a second Session. **Tape (Os 2026-08-25 / T-448):** last-flight 40 lines is abort/exit, not the
 vessel. After attach-run / landing, query `python main.py telem
-<jsonl> --window descent,impact` (and science-scan when lock free).
-Update assumptions. If a helper is missing (last snap sit vs
-recover sit, `sci_rem` vs bank, rec=no vs last-flight rec=yes, 4×
-q skip): `tickets open --type systems --fingerprint
-telem-eyes-library --desk wernher`. Always `tickets feedback --claim`.
+<jsonl> --window descent` and `--window impact` (and science-scan
+when lock free). **09-01Z:** last-flight splash rec=yes vs jsonl last
+snap flying 6 km 214 m/s rec=no q=17510; landing synthesized;
+`sci_rem=0`. Last-flight rec=yes is not rec. Do not stamp Learn from
+last-flight. Update assumptions. If a helper is missing (last snap
+sit vs recover sit, `sci_rem` vs bank, rec, 4× q skip):
+`tickets open --type systems --fingerprint telem-eyes-library
+--desk wernher` (T-449 owns it). Always `tickets feedback --claim`.
 
 You also own **this-hop experiments**: leftover vs live sit,
 start what can pay, watch rem. Os 2026-08-25: **never-transmit /

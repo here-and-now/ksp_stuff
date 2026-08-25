@@ -36,6 +36,9 @@ shared helpers + parked water/splash). The pad waits that file, not a
 Gene conference. Not a tour of the tree. Not after a clean recover.
 Not Wernher. Not Gus. Uncrewed miss is leftover + this patch + re-fly.
 
+Last-flight 40 lines is not sit (09-01Z splash rec=yes vs jsonl flying
+6 km rec=no) — query `telem --window` on a miss.
+
 If the patch only works on this hop's envelope, it is not done. Put
 the rule on a helper that would still be true on a different biome,
 sit, or heading. Tests may cite `18-34-22Z`; the function must not.

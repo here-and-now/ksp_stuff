@@ -797,6 +797,7 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertIn("def _lid_vertical_sit", text)
         self.assertIn("def _hold_lid", text)
         self.assertIn("def _offplan_apo_lid", text)
+        self.assertIn("def _inland_high_sit", text)
         arm_at = text.find("H.arm_chutes")
         arm_sit_at = text.find("chute_arm_sit(snap)")
         deploy_at = text.find("H.deploy_chutes")
@@ -818,7 +819,7 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertGreater(wait_lid_at, deploy_at)
         self.assertGreater(wait_lid_at, warp_at)
         self.assertGreater(offplan_at, hold_at)
-        self.assertLess(text.count("\n") + 1, 1000)
+        self.assertLess(text.count("\n") + 1, 1100)
 
     def test_run_on_vessel_coasts_3x_then_1x(self):
         thermo = _Mod("Experiment", "temperatureScan")
@@ -994,6 +995,67 @@ class TestBoundFlyingCard(unittest.TestCase):
 
     def test_empty_flying_ids_is_none(self):
         self.assertIsNone(bound_card_is_flying_high([], flying_ids=()))
+
+    def test_inland_high_sit_splash_bind_is_lid(self):
+        """flyinghigh-lid: splash bind is not FlyingLow. Factory inland still waits the lid."""
+        from hop_factory import _inland_high_sit
+
+        splash = [
+            {
+                "type": "science",
+                "payload": {
+                    "experiment_id": "kerbalism_TELEMETRY",
+                    "situation": "SrfSplashed@Water",
+                },
+            },
+            {
+                "type": "science",
+                "payload": {
+                    "experiment_id": "temperatureScan",
+                    "situation": "SrfSplashed@Water",
+                },
+            },
+        ]
+        flying_low = [
+            {
+                "type": "science",
+                "payload": {
+                    "experiment_id": "temperatureScan",
+                    "situation": "FlyingLow@Forest",
+                },
+            }
+        ]
+        leftover_high = [
+            {
+                "type": "science",
+                "payload": {
+                    "wait_experiment_id": "kerbalism_TELEMETRY",
+                    "situation": "FlyingHigh@Forest",
+                },
+            }
+        ]
+        with patch("hop.hop_wants_flying_high", return_value=False):
+            self.assertTrue(_inland_high_sit(splash, flying_ids=()))
+            self.assertTrue(
+                _inland_high_sit(splash, flying_ids=("kerbalism_TELEMETRY",))
+            )
+            self.assertFalse(
+                _inland_high_sit(flying_low, flying_ids=("temperatureScan",))
+            )
+            self.assertFalse(
+                _inland_high_sit(
+                    flying_low + leftover_high, flying_ids=("temperatureScan",)
+                )
+            )
+            self.assertTrue(_inland_high_sit(leftover_high, flying_ids=()))
+            with patch("phases._kv", return_value={"hop_apo": "50000"}):
+                self.assertEqual(
+                    hop_target_apo(
+                        space=_inland_high_sit(splash, flying_ids=())
+                    ),
+                    50_000.0,
+                )
+                self.assertEqual(hop_target_apo(), 18_000.0)
 
     def test_lit_empty_modules_is_not_leftover_hd(self):
         vessel = _Vessel([], sit="flying", ec=0.0, recoverable=False)
@@ -2764,6 +2826,64 @@ class TestHopSequence(unittest.TestCase):
             self.assertFalse(
                 _lid_vertical_sit(wait, hop_apo=50_000.0, flying_high=False)
             )
+
+    def test_splash_bind_holds_vertical_until_lid(self):
+        """flyinghigh-lid: splash bind does not drop the lid / pitch 25 from pad."""
+        mod = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([mod], recoverable=False)
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        vessel.resources.fuel = 1400.0
+        now, sleep, t = _fast_clock()
+        logs: list[str] = []
+        low_sas: list[bool] = []
+        low_thr: list[float] = []
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 904.0
+                vessel._speed = 80.0
+                vessel._vz = 70.0
+                vessel.control.throttle = 1.0
+                vessel.resources.fuel = 1400.0
+                vessel.orbit.apoapsis_altitude = 782.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+            elif vessel.situation == "flying" and vessel._alt < 50_000.0:
+                low_sas.append(vessel.control.sas)
+                low_thr.append(vessel.control.throttle)
+                self.assertGreater(vessel.control.throttle, 0.05)
+                self.assertTrue(vessel.control.sas)
+                self.assertFalse(any("pitch 25" in line for line in logs))
+                vessel._alt = 50_400.0
+                vessel._vz = 200.0
+                vessel.orbit.apoapsis_altitude = 80_000.0
+            elif vessel.situation == "flying" and vessel._alt >= 50_000.0:
+                vessel.situation = "landed"
+                vessel._alt = 80.0
+                vessel._speed = 5.0
+                vessel._vz = 0.0
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("hop.hop_wants_flying_high", return_value=False):
+            with patch("hop_factory._inland_high_sit", return_value=True):
+                with patch("phases._kv", return_value={"hop_apo": "50000"}):
+                    result = run_on_vessel(
+                        _Session(vessel),
+                        vessel,
+                        science_ids=("temperatureScan",),
+                        on_log=logs.append,
+                        now=now,
+                        sleep=nap,
+                        timeout=30.0,
+                        pulse=1.0,
+                    )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(low_sas)
+        self.assertTrue(all(low_sas))
+        self.assertTrue(all(thr > 0.05 for thr in low_thr))
+        self.assertTrue(any("hold vertical until lid 50000" in line for line in logs))
+        self.assertFalse(any("pitch 25" in line for line in logs))
 
     def test_hold_lid_throttle_and_sas_before_lid(self):
         """flyinghigh-lid: 18-15-43Z thr 0 at MET 8.6 with leftover LF. Hold 1 + SAS."""

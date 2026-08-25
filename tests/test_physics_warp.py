@@ -462,6 +462,7 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "def _high_dwell_sit" in factory
     assert "def _lid_vertical_sit" in factory
     assert "def _hold_lid" in factory
+    assert "def _inland_high_sit" in factory
     assert "def _chute_arm_now" in factory
     assert "def _chute_deploy_now" in factory
     warp_at = factory.find("apply_sit_warp(")

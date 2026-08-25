@@ -2,8 +2,9 @@
 
 Flying card after loft. FlyingHigh wait is loft to lid alt, not a dwell
 at 1 km. Lid hold is throttle 1 + SAS vertical until lid; inland slew
-after. Airborne cannot-pay: FlyingLow skip still lofts — High waits the
-lid, then Toggle; skip-latch does not drop a bound High card. After
+after. Splash bind is not FlyingLow — factory inland still waits the
+High lid. Airborne cannot-pay: FlyingLow skip still lofts — High waits
+the lid, then Toggle; skip-latch does not drop a bound High card. After
 High lid, 1× (dwell / reentry). FlyingLow skip may still 4×. Then
 coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
 sit=landed at pad alt with fuel is still burning. Parked water/splash
@@ -33,9 +34,59 @@ from screenshot import mission_event
 from telem import EventLog, MissionAbort, Telem, gates
 
 
-def _lid_alt_reached(snap: object, hop_apo: float) -> bool:
+def _inland_high_sit(
+    tickets: list[object] | None = None,
+    *,
+    flying_ids: tuple[str, ...] | None = None,
+) -> bool:
+    """Splash bind is not FlyingLow. Factory inland still waits the High lid.
+
+    Bound FlyingLow flying card is airborne Toggle. Missing flying card
+    (splash paying) still lofts High. Unbound leftover High is not the
+    latch. Forest / Grasslands: same.
+    """
+    asked = tickets is not None or flying_ids is not None
+    if not asked and H.hop_wants_flying_high():
+        return True
+    try:
+        import sys
+        from tickets import list_tickets, science_ids_for
+
+        if not asked and "unittest" in sys.modules:
+            return H.hop_wants_flying_high()
+        rows = tickets if tickets is not None else list_tickets(open_only=True)
+        ids = flying_ids if flying_ids is not None else science_ids_for(
+            situation="flying"
+        )
+    except Exception:
+        return H.hop_wants_flying_high()
+    if H.bound_card_is_flying_high(list(rows or []), flying_ids=ids or ()) is True:
+        return True
+    want = {str(e).strip() for e in (ids or ()) if str(e).strip()}
+    if not want:
+        return True
+    for raw in rows or []:
+        pl = raw.get("payload") if isinstance(raw, dict) else None
+        if not isinstance(pl, dict):
+            continue
+        eid = str(pl.get("experiment_id") or pl.get("eid") or "").strip()
+        sit = str(pl.get("situation") or "").lower().replace(" ", "").replace("_", "")
+        if not eid or eid not in want:
+            continue
+        if "flyinghigh" in sit:
+            return True
+        if "flying" in sit and "high" not in sit:
+            return False
+    return True
+
+
+def _lid_alt_reached(
+    snap: object, hop_apo: float, *, flying_high: bool | None = None
+) -> bool:
     """FlyingHigh hop_apo is live altitude. Predicted apo in thick air is not the lid."""
-    if not H.hop_wants_flying_high():
+    if flying_high is None:
+        flying_high = _inland_high_sit()
+    if not flying_high:
         return False
     alt = H._snap_alt(snap)
     return math.isfinite(alt) and alt >= hop_apo
@@ -52,7 +103,7 @@ def _lid_burn_sit(
     """
     if not flying_high:
         return False
-    if _lid_alt_reached(snap, hop_apo):
+    if _lid_alt_reached(snap, hop_apo, flying_high=flying_high):
         return False
     fuel = H._snap_fuel(snap)
     return math.isfinite(fuel) and fuel > H.WATER_BRAKE_FUEL_MIN
@@ -81,7 +132,7 @@ def _lid_vertical_sit(
     """
     if not flying_high or lofted_lid:
         return False
-    return not _lid_alt_reached(snap, hop_apo)
+    return not _lid_alt_reached(snap, hop_apo, flying_high=flying_high)
 
 
 def _hold_lid(
@@ -138,7 +189,7 @@ def _chute_arm_now(
         return False
     if not flying_high:
         return True
-    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo)
+    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo, flying_high=flying_high)
 
 
 def _chute_deploy_now(
@@ -158,19 +209,19 @@ def _chute_deploy_now(
         return False
     if not flying_high:
         return True
-    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo)
+    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo, flying_high=flying_high)
 
 
 def _offplan_apo_lid(snap: object) -> float:
     """OffPlan apo lid. Gene expect_apo_max raises it; hop_apo is the cut.
 
-    FlyingLow stays ≥50 km so an SRB overshoot is not OffPlan. FlyingHigh
-    sit is Space unless the plan envelope is higher. A paying FlyingHigh
-    loft under that envelope is not Space OffPlan. Forest / Grasslands: same.
+    Splash bind is not FlyingLow. Factory inland High uses Space unless
+    the plan envelope is higher. FlyingLow stays ≥50 km. Forest /
+    Grasslands: same.
     """
-    lid = H.hop_offplan_apo()
-    if not H.hop_wants_flying_high():
-        return lid
+    if not _inland_high_sit():
+        return H.FLYING_LOW_M
+    lid = H.FLYING_HIGH_M
     atm = getattr(snap, "atm_depth", float("nan"))
     try:
         atm_f = float(atm)
@@ -209,7 +260,8 @@ def run_factory_vessel(
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars."""
     log_events = events if events is not None else EventLog()
     ids = science_ids if science_ids is not None else H.hop_science_ids()
-    hop_apo = H.hop_target_apo()
+    flying_high = _inland_high_sit()
+    hop_apo = H.hop_target_apo(space=flying_high)
     ctx = Ctx(session=session, vessel=vessel, events=log_events, science_ids=ids)
     clock = now if now is not None else time.monotonic
     nap = sleep if sleep is not None else time.sleep
@@ -222,7 +274,6 @@ def run_factory_vessel(
     science_attempted = False
     pulses = 0
     said_down = False
-    said_lid = False
     waiting_hd = False
     prev_met: float | None = None
     still_t0: float | None = None
@@ -249,7 +300,7 @@ def run_factory_vessel(
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
     H._say(f"hop apo={hop_apo:.0f}", on_log)
-    if H.hop_wants_flying_high():
+    if flying_high:
         H._say(
             f"hop hold vertical until lid {hop_apo:.0f} m, then slew "
             f"inland heading {H.INLAND_HEADING_DEG:g}",
@@ -340,7 +391,9 @@ def run_factory_vessel(
                 left_pad = True
             if H._lofted(snap):
                 lofted = True
-            if H._reached_high_lid(snap):
+            if H._reached_high_lid(snap) or _lid_alt_reached(
+                snap, hop_apo, flying_high=flying_high
+            ):
                 reached_lid = True
             down = H._down(snap, flown=left_pad) or litho
 
@@ -436,8 +489,7 @@ def run_factory_vessel(
             if left_pad and not down:
                 if chute_open:
                     apo_cut = True
-                flying_high = H.hop_wants_flying_high()
-                if _lid_alt_reached(snap, hop_apo):
+                if _lid_alt_reached(snap, hop_apo, flying_high=flying_high):
                     apo_cut = True
                 fuel_now = H._snap_fuel(snap)
                 crumbs = math.isfinite(fuel_now) and fuel_now <= H.WATER_BRAKE_FUEL_MIN
@@ -487,14 +539,14 @@ def run_factory_vessel(
             except (TypeError, ValueError):
                 apo_f = float("nan")
             lid = _offplan_apo_lid(snap)
-            label = "Space" if H.hop_wants_flying_high() else "FlyingLow"
+            label = "Space" if flying_high else "FlyingLow"
             if (
                 left_pad
                 and not down
                 and not waiting_hd
                 and math.isfinite(apo_f)
                 and apo_f > lid
-                and not (H.hop_wants_flying_high() and apo_cut)
+                and not (flying_high and apo_cut)
             ):
                 raise OffPlan(f"apo {apo_f:.0f} > {lid:.0f} {label}")
             if left_pad and not down and not waiting_hd:
@@ -525,7 +577,7 @@ def run_factory_vessel(
             burning_now = H._burning(vessel, snap, lofted=lofted) or _lid_burn_sit(
                 snap,
                 hop_apo=hop_apo,
-                flying_high=H.hop_wants_flying_high(),
+                flying_high=flying_high,
             )
             if lit and not down and left_pad and not deaf:
                 flown_p = H._snap_pitch(snap)
@@ -534,7 +586,6 @@ def run_factory_vessel(
                     met_slew = float(getattr(snap, "met", float("nan")))
                 except (TypeError, ValueError):
                     met_slew = float("nan")
-                flying_high = H.hop_wants_flying_high()
                 if _lid_vertical_sit(
                     snap,
                     hop_apo=hop_apo,
@@ -637,7 +688,11 @@ def run_factory_vessel(
                         session=session,
                     )
                     waiting_hd = True
-                elif lofted and H._science_ready(snap):
+                elif lofted and (
+                    H._snap_alt(snap) >= H.FLYING_LOW_M
+                    if flying_high
+                    else H._science_ready(snap)
+                ):
                     need = H.bound_science_need(
                         live_sit=H._live_sit(vessel, snap),
                         live_biome=H._snap_biome(snap, vessel),
@@ -663,31 +718,21 @@ def run_factory_vessel(
                         raise MissionAbort(
                             "no science (wanted " + ",".join(ids) + ")"
                         )
-                    elif ids and not H.hop_wants_flying_high():
+                    elif ids:
                         science_attempted = True
                         H._say("science skip (situation cannot pay)", on_log)
-                    elif H.hop_wants_flying_high() and not said_lid:
-                        H._say("science wait FlyingHigh", on_log)
-                        said_lid = True
-                elif (
-                    H.hop_wants_flying_high()
-                    and not said_lid
-                    and _lid_alt_reached(snap, hop_apo)
-                ):
-                    H._say("science wait FlyingHigh", on_log)
-                    said_lid = True
 
             if left_pad and not down:
                 _hold_lid(
                     vessel,
                     snap,
                     hop_apo=hop_apo,
-                    flying_high=H.hop_wants_flying_high(),
+                    flying_high=flying_high,
                     lofted_lid=reached_lid,
                 )
 
             waiting_lid = (
-                H.hop_wants_flying_high()
+                flying_high
                 and did_light
                 and not started
                 and not science_attempted

@@ -21,6 +21,21 @@ python main.py pad
 
 ---
 
+## 2026-08-25T06-57-16Z-hop — flyinghigh-lid
+
+- **When:** T-424. t7-wheel-pbc. Bound splash Water T-028/T-422/T-423.
+  Plan hop_apo 50 km. Do not Hangar. Never revert.
+- **Symptom:** hop apo=18000, pitch 25 from pad, `hop coast physics 4x`
+  at ~3 km q=2670, crash UI sit=flying rec=no met=73.94 alt=3265.9.
+- **Cause:** Splash bind is not FlyingHigh. `hop_wants_flying_high` false
+  clamped Gene's 50 km lid to 18 km. No vertical hold. Slew in thick
+  air. 4× is Wernher T-426.
+- **Fix:** `_inland_high_sit`: splash / missing flying card still waits
+  the High lid. Bound FlyingLow flying card is airborne Toggle. Unbound
+  leftover High is not the latch. `hop_target_apo(space=True)` keeps
+  Gene 50 km. Forest / Grasslands: same. Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
 ## 2026-08-25T06-57-16Z-hop — hop-coast-phys-warp
 
 - **When:** T-426. t7-wheel-pbc. hop_apo=18000 pitch 25 from pad. Lars

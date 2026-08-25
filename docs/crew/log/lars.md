@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-25 — T-424 flyinghigh-lid: hop_factory `_inland_high_sit` splash bind is not FlyingLow; factory inland still waits the High lid (06-57-16Z apo 18 km pitch 25 + 4× at 3 km). Bound FlyingLow is airborne Toggle. Do not Hangar.
 - 2026-08-25 — T-386 T-391 T-392 T-394 already in hop_factory: `_hold_lid` vertical until lid, `_offplan_apo_lid` honors expect_apo_max, High skip-latch FlyingLow-only, `_high_dwell_sit` 1× after lid. Do not Hangar.
 - 2026-08-24 — T-394 far-shear: hop_factory `_high_dwell_sit` 1× after FlyingHigh lid (19-57-33Z 4× after goo/geiger dwell sheared 20→9). Skip FlyingLow may still 4×. Do not Hangar.
 - 2026-08-24 — T-392 science-skip-timeout: FlyingLow cannot-pay does not skip-latch a bound High trio (19-23-00Z 54 km Shores splash +0). `sit_matches` High is alt ≥50 km; biome global is not Shores; geiger idle rem=0 still pays. Do not Hangar.

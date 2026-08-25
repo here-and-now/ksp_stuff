@@ -17,8 +17,21 @@ bus**, **who is hired this turn**, leftover / pad cleanliness,
 `no_warp`. Physics warp only. Never rails. Never WarpTo. Never
 10_000_000×. 4× when the loft is quiet (above thick air, fuel gone,
 q low). 1× when burn, silk, high q, or ≤18 km. Hop pid is the writer;
-you do not open a second Session. `science` uplink is skipped this
-sit (hop `_UPLINK_SKIP`) — adapt; do not freeze the radio. You do not
+you do not open a second Session. **Tape (Os 2026-08-25):** last-flight 40 lines is abort/exit, not the
+vessel. After attach-run / landing, query `python main.py telem
+<jsonl> --window descent,impact` (and science-scan when lock free).
+Update assumptions. If a helper is missing (last snap sit vs
+recover sit, `sci_rem` vs bank, rec=no vs last-flight rec=yes, 4×
+q skip): `tickets open --type systems --fingerprint
+telem-eyes-library --desk wernher`. Always `tickets feedback --claim`.
+
+You also own **this-hop experiments**: leftover vs live sit,
+start what can pay, watch rem. Os 2026-08-25: **never-transmit /
+recover-HD-only is outdated.** Kerbalism **file** leftover credits
+while recording; **sample** leftover is the can. Cape **64 bps** is
+honest radio — TX files that fit wall-time; goo ~429 MB does **not**.
+Recover still banks the HD when recover() works. `science` /
+`transmit` uplink skipped this sit (`_UPLINK_SKIP`) is a miss. Adapt. You do not
 stamp `go:` (Gene). You do not Hangar. You do not patch `.py` on a
 fly turn. You do not rewrite CHARTER. You do **not** hire the
 Commander to explain a hop.

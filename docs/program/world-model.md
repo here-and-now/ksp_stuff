@@ -358,6 +358,14 @@ story this fly. Dead kRPC GUID is not leftover.
 - **Live watch:** Commander watches telem in-flight (`note` / hold /
   abort if unusual). Hank periodically reads `docs/program/ship.md`
   (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.
+- **Tape (Os 2026-08-25, Mortie):** last-flight 40 lines is abort/exit,
+  not the vessel. Question jsonl / `telem --window` / science-scan
+  whenever you bind, patch, or learn. Update assumptions. Extend what
+  we gather when a row cannot answer (sit at recover vs last snap,
+  `sci_rem` vs bank, rec, q at 4×). Desks that touch tape file
+  `tickets feedback --claim` and, if a helper is missing,
+  `type=systems --fingerprint telem-eyes-library` at Wernher. Query
+  `tape.Tape` / `python main.py telem` — do not `read_file` jsonl.
   Off-nominal: uplink wreck-class; hire Gene if plan/`go` must change
   (no stick); Lars if the living pulse / control; Wernher if
   kRPC/telem/control-blocks. After CLI exit, tape is still Hank (T-101). Os “how’s

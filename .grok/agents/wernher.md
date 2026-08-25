@@ -91,6 +91,12 @@ recover-then-Hangar *kernel* is yours; Hank runs the CLI. Stumble on
 thin tape → another `--type systems --fingerprint <stem>`. Do not idle
 the pad.
 
+**Tape (Os 2026-08-25, Mortie):** last-flight 40 lines is not the
+vessel. Own jsonl helpers (`telem-eyes-library`): last snap sit vs
+recover sit, `sci_rem` vs bank, rec, 4× q skip. Desks file that
+fingerprint when a row cannot answer. Query `tape.Tape` — do not
+`read_file` jsonl.
+
 ## Do not
 
 - This-hop `_after_skip` helpers in the pulse (that is Lars

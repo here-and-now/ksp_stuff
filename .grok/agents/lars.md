@@ -133,6 +133,12 @@ miss. Discover when a hop goes deaf. Brief: `docs/program/krpc.md`.
 and `git commit` a sentence. Do not wait for Hank. Do not commit
 gitignored tape.
 
+**Tape (Os 2026-08-25, Mortie):** last-flight 40 lines is not the
+vessel. Query `python main.py telem <jsonl> --window descent,impact`
+on a miss. Update assumptions. Missing helper →
+`type=systems --fingerprint telem-eyes-library --desk wernher`.
+Always `tickets feedback --claim`.
+
 ## After a miss
 
 Append `## <run> — <fingerprint>` to `docs/lessons.md`. The heading

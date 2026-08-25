@@ -186,7 +186,10 @@ those.
 shrug. Every desk that stumbles on it opens `--type systems` (or
 `--type ops --tag feedback`). Cite it on capable / bind / `go:` the
 way `f013` is cited. Do **not** idle the pad for it — Wernher patches
-during lock live. Query **Tape**, never raw jsonl.
+during lock live. Query **Tape**, never raw jsonl. Last-flight 40
+lines is abort/exit, not the vessel (Os 2026-08-25 Mortie). Desks
+that touch tape file `tickets feedback --claim` and missing helpers
+as `type=systems --fingerprint telem-eyes-library`.
 
 **Science side-by-side:** Linus binds every honest instrument that can
 share a hop (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape).

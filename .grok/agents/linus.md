@@ -84,6 +84,9 @@ still unpaid leftover — not a rebind. After sci unchanged, rebind from the env
 **before** the next light — a living recover that cannot pay is waste. Thin tape / 9-column skim:
 `--type systems --fingerprint <stem>` (or `ops --tag feedback
 --fingerprint <stem>`) — cite it like `f013`.
+**Tape (Os 2026-08-25, Mortie):** leftover is science-scan + jsonl
+`sci_rem` / bank, not last-flight skip lines. Capped leftover is not
+unstarted. Missing helper → `telem-eyes-library` at Wernher.
 Stumble → ticket with `--fingerprint` from
 `docs/program/tickets/fingerprints.json`. Reuse the class; never omit
 on `control` / `systems` / `ops --tag feedback`; do not invent a stem

@@ -67,6 +67,11 @@ coast → Lars (`type=control --fingerprint <stem>`). One log line
 Practice / tickets), `git add` those paths and `git commit` a
 sentence. Do not wait for Hank. Do not commit gitignored tape.
 
+**Tape (Os 2026-08-25):** last-flight 40 lines is not the vessel.
+Practice: desks question jsonl / telem / science-scan, update
+assumptions, extend gather. Missing helper → Wernher
+`telem-eyes-library`. Do not reason a Learn from last-flight alone.
+
 ## Return
 
 ```

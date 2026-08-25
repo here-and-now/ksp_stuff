@@ -2,6 +2,7 @@
 
 - 2026-08-25 — Os locked Verena press voice (`docs/press/STYLE.md`): tables hold digits, firsts in words, sit-bands table-only, fresh joke per article, two house-owns, no CDN. Ticket for corpus rewrite from first-space.
 
+- 2026-08-25 — Mortie: tape Practice. last-flight 40 lines is not the vessel. T-448 org, T-449 telem-eyes-library. 09-01Z jsonl last snap flying 6 km 214 m/s rec=no; splash TELEMETRY capped; sci_rem=0. Did not hop.
 - 2026-08-25 — Os: Hank owns this-hop clock. `uplink phys-warp 4` at 79 km lofted coast. Factory still 1× ≤18 km / high q. Never rails. Science uplink still skipped (`_UPLINK_SKIP`) — next hop, not frozen.
 - 2026-08-25 — Os: C# first on RA rate. GSTL=2 real; 64 bps table; Cape RateToHome 31500 / Kerbalism 3.94 kB/s. Packet `docs/program/ra-rate.md` T-427. Pad does not hop. 18 km crash still T-424/T-426 (separate).
 - 2026-08-25 — Os: Gus reviews his own VAB process; files helper asks at Wernher (`vab-helper`). Gus does not write `.py`. Hop T-081 live (t7-wheel-pbc).

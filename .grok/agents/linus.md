@@ -49,10 +49,10 @@ cite packet `--deep` / review envelope; tape never 090 → do not bind Water.
 the reverse). First living envelope of a hang writes that sit:
 stiff-pbc **splashes** (10-57-33Z Forest 5 m/s, unstarted splash
 thermo 0.90) — bind T-313 + T-288, unbind land T-077/T-287. 08-44
-Shores land cannot pay Forest leftover. FlyingHigh Forest waits ≥50 km on **t7-chute**, not a 30 km
-stiff loft. Wait FlyingHigh at 800 m apo is wreck, not a rebind —
-keep the trio. 2HOT is file duration: unstarted rem=0 is still the
-card (`forest-splashed-thermo`), not not-in-card. Sample rem=0 (goo)
+Shores land cannot pay Forest leftover. FlyingHigh waits ≥50 km on **t7-wheel** / **t7-pbc**, not a 30 km
+stiff loft, not t7-chute this sit. Wait FlyingHigh at 800 m apo is wreck, not a rebind —
+keep the trio. 2HOT **and PresMat** are file duration: unstarted rem=0 is still the
+card (`hold-ground-card` / `forest-splashed-thermo`), not not-in-card. Sample rem=0 (goo)
 is spent. Do not gather a subject
 this stack cannot reach. Airborne `science skip (situation cannot
 pay)` on a **landed** bind is expected **only if the hang will land**
@@ -61,7 +61,7 @@ remaining subjects (biomes, situations, durations, honest f013) —
 unbound catalog, not one bind that “closes 15.” Cape Shores is
 capped. Forest / Grasslands / Tropics / Savanna FlyingLow still pay
 **when the envelope shows them**. Water waits heading 090. Inventory
-stays live during lock. Next honest node `stability` 18.
+stays live during lock. Next honest node `generalRocketry` 20 (bank does not pay).
 
 ## Bind (after Gus `capable: yes`)
 
@@ -70,8 +70,10 @@ Patch science-ticket payload: `experiment_id`, `part`, **instrument**
 `recover_banks`. LOCKED or not on craft → do not bind; open `--type
 vehicle` or skip. Working goal **15 is spent** — bind what still pays **on this hang**.
 **Side-by-side:** every honest instrument that can share a hop
-(thermo + TELEMETRY + goo if not capped / F-013 / tape). Not one
-thermo forever. After sci unchanged, rebind from the envelope
+(thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape). Not one
+thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is still the
+card — skip not-in-card is a miss when on_craft and the envelope sit
+can pay. After sci unchanged, rebind from the envelope
 **before** the next light — a living recover that cannot pay is waste. Thin tape / 9-column skim:
 `--type systems --fingerprint <stem>` (or `ops --tag feedback
 --fingerprint <stem>`) — cite it like `f013`.

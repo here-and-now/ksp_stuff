@@ -26,8 +26,13 @@ python main.py tickets open --type systems --category improvement \
 ```
 
 `craft.py` already has `StackBuilder` / attach / proc cylinder. Name
-the gap (clone hang + swap tank, chute MODULE, girder ring, PresMat
-stack). Wernher owns the script. You run it and stamp `capable:`.
+the gap. Catalog this sit (already filed): T-413 clone+swap tank,
+T-414 chute MODULE Nylon 5/35, T-416 girder ring, T-417 insert-inline
+sas/PresMat, T-418 proc cylinder Kero/LOx Default (not SolidFuel),
+T-419 Nylon donor copy, T-420 proc HS splice. Wernher owns the script.
+You run it and stamp `capable:`. Do not idle the pad for a helper.
+Seated loft is t7-wheel-pbc; T-406 t7-wheel-proc is the next loft
+(same length, more kero). T-409 nose is aero, not silk.
 
 ## First command
 

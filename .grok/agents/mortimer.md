@@ -51,7 +51,7 @@ in Flight after load: `python main.py ksc`. Do not ask Os.
 
 Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
 out. Ad astra. `stability` spent. Next CTT is `generalRocketry` **20**
-(need ~17.91; bank 2.09 does not pay 20). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
+(need ~17.71; bank 2.29 does not pay 20). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +
 `sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
 bound tickets (T-346). Wreck rec=no re-flies last `cli:`. Time is scarce:

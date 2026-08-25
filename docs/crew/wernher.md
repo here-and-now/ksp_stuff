@@ -32,7 +32,9 @@ Live watch is `ship.md` (disk). XOR with Lars on a miss patch of the
 same `.py`. `ksc_ready` with vessels n=0 + `can_revert` true is a lie
 while Revert is painted. RealAntennas kRPC is live — do not cheat a
 link. **VAB helpers** when Gus files `vab-helper` (`craft.py` / CLI;
-Gus does not write `.py`). Commit the patch. Not sequencing. Stumble
+Gus does not write `.py`). Catalog this sit: T-413–T-414, T-416–T-420.
+Pad flies the signed hang. T-421 latch already living — do not retune
+`hop_factory.py`. Commit the patch. Not sequencing. Stumble
 → ticket. Os is Founder.
 
 Logs: `docs/crew/log/wernher.md`.

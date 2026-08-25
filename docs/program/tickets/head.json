@@ -3560,7 +3560,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-25T07:01:10Z"
+      "updated": "2026-08-25T07:02:20Z"
     },
     "T-082": {
       "assignee": "",
@@ -14919,13 +14919,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write bigger-dv \u00d714: fly seated t7-wheel; T-406 is the next loft (same length, more kero). Pad flies.",
       "created": "2026-08-25T06:44:18Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "bigger-dv",
       "id": "T-407",
       "payload": {
-        "count": 14
+        "count": 14,
+        "findings": [
+          {
+            "at": "2026-08-25T07:02:14Z",
+            "claim": "Practice last-write bigger-dv \u00d714 (stem 15): seated t7-wheel-pbc while T-081 flies; signed next loft is t7-wheel-proc T-406 (same 4.375 m, 2415 kero), not a recover alt, not 4t/dv5/lite. Do not Hangar cone/chute this sit. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -14933,11 +14944,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI bigger-dv \u00d714",
       "type": "rsi",
-      "updated": "2026-08-25T06:44:18Z"
+      "updated": "2026-08-25T07:02:20Z"
     },
     "T-408": {
       "assignee": "",
@@ -15011,13 +15022,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write far-shear \u00d710: T-409 nose is aero not silk. Still 1\u00d7 after High dwell. Pad flies.",
       "created": "2026-08-25T06:44:18Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "far-shear",
       "id": "T-410",
       "payload": {
-        "count": 10
+        "count": 10,
+        "findings": [
+          {
+            "at": "2026-08-25T07:02:14Z",
+            "claim": "Practice last-write far-shear \u00d710 (stem 11): T-409 t7-wheel-nose is aero not silk \u2014 do not Hangar as a chute. Still 1\u00d7 after High lid until down. Still no 4t/dv5/lite/4\u00d7-sheared t7. Code T-394. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -15025,11 +15047,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI far-shear \u00d710",
       "type": "rsi",
-      "updated": "2026-08-25T06:44:18Z"
+      "updated": "2026-08-25T07:02:20Z"
     },
     "T-411": {
       "assignee": "",
@@ -15070,13 +15092,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write hold-ground-card \u00d75: PresMat idle rem=0 is still the card. T-404 stays bound. Pad flies.",
       "created": "2026-08-25T06:45:25Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "hold-ground-card",
       "id": "T-412",
       "payload": {
-        "count": 5
+        "count": 5,
+        "findings": [
+          {
+            "at": "2026-08-25T07:02:14Z",
+            "claim": "Practice last-write hold-ground-card \u00d75 (stem 6): PresMat idle rem=0 is still the paying card (with 2HOT). Skip barometerScan not-in-card while goo+geiger started is a miss when on_craft and sit can pay. T-404 stays bound FlyingHigh. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -15084,11 +15117,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI hold-ground-card \u00d75",
       "type": "rsi",
-      "updated": "2026-08-25T06:45:25Z"
+      "updated": "2026-08-25T07:02:20Z"
     },
     "T-413": {
       "assignee": "",
@@ -15178,13 +15211,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write vab-helper \u00d73: catalog T-413\u2013T-420 at Wernher. Pad flies the signed hang.",
       "created": "2026-08-25T06:45:55Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-415",
       "payload": {
-        "count": 3
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-25T07:02:14Z",
+            "claim": "Practice last-write vab-helper \u00d73 (stem 9): Gus files, Wernher writes craft.py. Catalog T-413 clone+swap, T-414 chute MODULE, T-416 girder ring, T-417 insert-inline, T-418 Kero/LOx cylinder, T-419 Nylon donor, T-420 proc HS. Pad flies the signed hang \u2014 do not idle for helpers.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -15192,11 +15236,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI vab-helper \u00d73",
       "type": "rsi",
-      "updated": "2026-08-25T06:45:55Z"
+      "updated": "2026-08-25T07:02:20Z"
     },
     "T-416": {
       "assignee": "",
@@ -15412,7 +15456,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
-      "close_why": "Latch already coded (T-346): living rec=yes + sci_run=0. Wreck rec=no re-flies. Linus rebinds. Do not empty the pad.",
+      "close_why": "Practice last-write sci-unchanged-recovered \u00d713: latch already living +0 (T-346). Do not retune hop_factory. Pad flies.",
       "created": "2026-08-25T06:46:08Z",
       "desk": "wernher",
       "evidence": [],
@@ -15428,6 +15472,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-25T07:02:14Z",
+            "claim": "Practice last-write sci-unchanged-recovered \u00d713 (stem 14): waste is living rec=yes + sci_run=0. Last-flight splash +0 cannot pay Forest T-069; Linus rebound T-369/T-404/T-368. Latch already T-346 \u2014 do not retune hop_factory.py. Wreck rec=no still re-flies. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
           }
         ]
       },
@@ -15441,7 +15493,7 @@
       "tags": [],
       "title": "RSI sci-unchanged-recovered \u00d713",
       "type": "rsi",
-      "updated": "2026-08-25T07:01:17Z"
+      "updated": "2026-08-25T07:02:20Z"
     },
     "T-422": {
       "assignee": "linus",
@@ -15544,5 +15596,5 @@
       "updated": "2026-08-25T06:55:27Z"
     }
   },
-  "updated": "2026-08-25T07:01:17Z"
+  "updated": "2026-08-25T07:02:20Z"
 }

@@ -362,12 +362,14 @@ story this fly. Dead kRPC GUID is not leftover.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
 - Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
   out. Ad astra. `stability` **spent**. Next CTT is `generalRocketry`
-  **20**. Bank **2.09** does not pay 20 (need ~**17.91**). `sasModule` /
+  **20**. Bank **2.29** does not pay 20 (need ~**17.71**). `sasModule` /
   PresMat Available. Cape Shores is
   capped. Forest leftover
-  that already returned **+0** is not the factory. FlyingHigh Forest
-  waits **≥50 km** on **t7-wheel** / **t7-pbc** (wait is not a sit at
-  800 m apo; t7-chute is not the loft this sit). New biome waits envelope. Forest / Grasslands /
+  that already returned **+0** is not the factory. FlyingHigh waits
+  **≥50 km** on seated **t7-wheel** / **t7-pbc** (wait is not a sit at
+  800 m apo; t7-chute is not the loft this sit). Signed next loft is
+  **t7-wheel-proc** (T-406: same 4.375 m, 2415 kero) — Hangar after
+  leftover, not this letter. New biome waits envelope. Forest / Grasslands /
   Tropics / Savanna FlyingLow still pay **when the envelope shows
   them**. Do not slam east-t3. Same
   lithobrake Flea is still not the campaign. Stayputnik is not a
@@ -519,6 +521,43 @@ story this fly. Dead kRPC GUID is not leftover.
   is **1× after FlyingHigh lid latch until down**. Skip FlyingLow
   may still 4×. 4× only lofted burnout AND q ≤1 kPa (T-380). Girders
   stay. Code T-394 Lars. Never revert.
+- **2026-08-25 bigger-dv (T-407, ×14, stem count 15):**
+  Seated hang stays **t7-wheel-pbc** while T-081 flies. Signed next
+  loft is **t7-wheel-proc** (T-406): 7× proc 1.25×0.625 / 2415 kero at
+  the **same 4.375 m** as the 88.8 km proof — more Δv, not a recover
+  alt, not 4t / dv5 / lite. Recover alts remain hs / cone (do not
+  Hangar cone this sit). Do not Hangar t7-chute. Gus T-400/T-406.
+  Never revert. An RSI letter does not empty the pad.
+- **2026-08-25 far-shear (T-410, ×10, stem count 11):**
+  T-409 **t7-wheel-nose** (OKTO + proceduralNoseCone 1.25-to-0) is an
+  **aero** alt, not silk, not t7-chute. Do not Hangar it as a chute
+  this sit. Still 1× after FlyingHigh lid until down. Still no 4t /
+  dv5 / girderless lite / 4×-sheared t7. Code T-394. Never revert.
+- **2026-08-25 hold-ground-card (T-412, ×5, stem count 6):**
+  Duration-file idle rem=0 is still the paying card — **PresMat** as
+  well as 2HOT (T-345). Last-flight skip `barometerScan` not-in-card
+  while goo+geiger started; T-404 stays bound FlyingHigh 305/0.05.
+  Skip not-in-card is a miss when the Science part is on_craft and
+  the envelope sit can pay. Airborne rem=0 is still not landed
+  dwell-done (T-349). Do not recover on the Toggle pulse. Never revert.
+- **2026-08-25 vab-helper (T-415, ×3, stem count 9):**
+  Gus does not default to hand-writing PART blocks. Door:
+  `type=systems --fingerprint vab-helper` at Wernher. Catalog this
+  sit: T-413 clone+swap tank, T-414 chute MODULE Nylon 5/35, T-416
+  girder ring, T-417 insert-inline sas/PresMat, T-418 proc cylinder
+  Kero/LOx Default (not SolidFuel pad_pbc), T-419 Nylon donor copy
+  (no 0.04 atm inherit), T-420 proc HS splice. Pad flies the signed
+  hang — do not idle for helpers. Wernher writes `craft.py`; Gus
+  runs it. Never GameData.
+- **2026-08-25 sci-unchanged-recovered (T-421, ×13, stem count 14):**
+  Waste is still **living** rec=yes + `sci_run=0`. Last-flight splash
+  recovered +0 (sci 2.2905 unchanged; skip not-in-card then only
+  goo+geiger). Envelope sit/biome must match bound tickets before
+  last `cli:` — Forest T-069 cannot pay Shores splash (Linus rebound
+  T-369/T-404/T-368). Wreck rec=no still re-flies. Latch already
+  T-346 (`waste_blocks_refly` is `_sci_unchanged_waste` only). Do
+  **not** re-patch `hop_factory.py`. Never revert. An RSI letter
+  does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

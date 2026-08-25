@@ -159,7 +159,10 @@ throttle-0 at light, not silk, not abort-at-lid, not skip-chute, not
 OffPlan under `expect_apo_max`. Throttle 1 + SAS vertical until lid;
 inland slew after. **1× after FlyingHigh lid latch until down** (4×
 after High dwell shears t7). Do not Hangar FAR-sheared 4t / dv5 /
-girderless lite / a 4×-sheared t7 this sit. Do not gather a
+girderless lite / a 4×-sheared t7 this sit. Do not Hangar
+**t7-wheel-nose** (T-409) as silk. Signed next loft is
+**t7-wheel-proc** (T-406, same length, more kero) — Hangar after
+leftover, not an RSI letter. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;
 uplink `phys-warp` / `no_warp`; never rails / WarpTo). Ground fills
 the shelf **during** flight (lock live, other files). Wernher **logs
@@ -184,8 +187,10 @@ way `f013` is cited. Do **not** idle the pad for it — Wernher patches
 during lock live. Query **Tape**, never raw jsonl.
 
 **Science side-by-side:** Linus binds every honest instrument that can
-share a hop (thermo + TELEMETRY + goo if not capped / F-013 / tape).
-Not one thermo forever.
+share a hop (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape).
+Not one thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is
+still the card — skip not-in-card is a miss when the part is on_craft
+and the envelope sit can pay (`hold-ground-card`).
 
 **Live watch (Os 2026-08-23):** Someone looks at the hop **while it
 flies**. The Commander watches telem/gates. Unusual →

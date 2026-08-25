@@ -36,8 +36,9 @@ ticket. Side-by-side science hosts. No Hangar. No `.py`. Not Lars.
 Fill alts during lock live. Stumble → ticket. No GameData.
 **VAB (Os 2026-08-25):** do not default to hand-writing PART blocks.
 Review your own spawns; file helper asks at Wernher
-(`type=systems --fingerprint vab-helper`). He writes `craft.py` /
-CLI. You run it. RealAntennas kRPC is live. Omni is the hang until
+(`type=systems --fingerprint vab-helper`). Catalog this sit: T-413–T-414,
+T-416–T-420. He writes `craft.py` / CLI. You run it. Pad flies the
+signed hang. RealAntennas kRPC is live. Omni is the hang until
 a ticket says otherwise. Commit `.craft` / `vab.md` when you change
 them.
 

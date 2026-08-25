@@ -119,6 +119,15 @@ def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
     return bool(reached_lid) and not down
 
 
+def _leftover_sit(*, down: bool, live_sit: str = "") -> bool:
+    """Sit-matched leftover still Toggles when down.
+
+    Airborne cannot-pay is not dwell-done. Forest / Grasslands / Water: same.
+    """
+    live_l = str(live_sit or "").lower()
+    return bool(down or "landed" in live_l or "splash" in live_l)
+
+
 def _lid_vertical_sit(
     snap: object,
     *,
@@ -752,18 +761,19 @@ def run_factory_vessel(
             live_l = str(live_now or "").lower()
             wreck_now = bool(getattr(snap, "wreck", False))
             sit_ground = "landed" in live_l or "splash" in live_l
-            ground_now = down or sit_ground
+            leftover_now = _leftover_sit(down=down, live_sit=live_now)
             leftover_ids = H.hop_landed_science_ids()
             matching_ids = H.hop_landed_science_ids(
                 live_sit=live_now, live_biome=live_biome
             )
             started_ground: list[str] = []
-            if left_pad and sit_ground and not waiting_hd and lofted:
+            if left_pad and leftover_now and not waiting_hd and lofted:
                 need = H.bound_science_need(
                     live_sit=live_now,
                     live_biome=live_biome,
                 )
-                pending = tuple(eid for eid in matching_ids if eid not in started)
+                card = tuple(dict.fromkeys((*leftover_ids, *matching_ids)))
+                pending = tuple(eid for eid in card if eid not in started)
                 more = (
                     H._start_paying(vessel, pending, snap, on_log, need)
                     if pending

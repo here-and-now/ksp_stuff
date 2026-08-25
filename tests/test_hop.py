@@ -3920,6 +3920,91 @@ class TestHopSequence(unittest.TestCase):
             or tel.triggered
         )
 
+    def test_leftover_sit_down_toggles_unmatched_ids(self):
+        """hold-ground-card: leftover still Toggles when down if matching emptied."""
+        from hop_factory import _leftover_sit
+
+        self.assertTrue(_leftover_sit(down=True, live_sit="flying"))
+        self.assertTrue(_leftover_sit(down=False, live_sit="splashed"))
+        self.assertFalse(_leftover_sit(down=False, live_sit="flying"))
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        goo = _Mod("Experiment", "mysteryGoo")
+        goo.fields["remaining"] = 1.0
+        vessel = _Vessel([goo], recoverable=False)
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        vessel.biome = "Shores"
+        now, sleep, t = _fast_clock()
+        sits: list[str] = []
+        logs: list[str] = []
+
+        def bind(mod):
+            def trigger_event(name):
+                sits.append(vessel.situation)
+                mod.triggered.append(name)
+                mod.fields["status"] = "Running"
+
+            mod.trigger_event = trigger_event
+
+        bind(tel)
+        bind(goo)
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 2_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel.biome = "Shores"
+                vessel.resources.fuel = 0.2
+                vessel.control.throttle = 0.0
+            elif vessel.situation == "flying" and goo.triggered:
+                goo.fields["remaining"] = 0
+                goo.fields["status"] = "Done"
+                vessel.situation = "splashed"
+                vessel.biome = "Water"
+                vessel._alt = 6.0
+                vessel._speed = 5.0
+                vessel.recoverable = True
+            elif vessel.situation == "splashed" and tel.triggered:
+                tel.fields["remaining"] = 0
+                tel.fields["status"] = "Done"
+            t[0] += dt if dt else 0.01
+
+        def landed_ids(live_sit="", live_biome=""):
+            if live_sit or live_biome:
+                return ()
+            return ("kerbalism_TELEMETRY",)
+
+        need = {
+            "kerbalism_TELEMETRY": ("SrfSplashed@Water", "Water"),
+            "mysteryGoo": ("", ""),
+        }
+        with patch("hop.bound_science_need", return_value=need):
+            with patch("hop.hop_landed_science_ids", side_effect=landed_ids):
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("kerbalism_TELEMETRY", "mysteryGoo"),
+                    on_log=logs.append,
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(goo.triggered, ["Start Experiment"])
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertIn("splashed", sits)
+        self.assertTrue(any("cannot pay" in line for line in logs))
+
     def test_splash_telemetry_rem_zero_recovers(self):
         """hold-ground-card: splash file rem=0 still running recovers, no uplink abort."""
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")

@@ -511,6 +511,7 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "def _lid_alt_reached" in factory
     assert "def _lid_burn_sit" in factory
     assert "def _high_dwell_sit" in factory
+    assert "def _leftover_sit" in factory
     assert "def _lid_vertical_sit" in factory
     assert "def _hold_lid" in factory
     assert "def _inland_high_sit" in factory

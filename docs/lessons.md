@@ -21,6 +21,25 @@ python main.py pad
 
 ---
 
+## 2026-08-25T09-01-24Z-hop — hold-ground-card
+
+- **When:** T-446. t7-wheel-pbc. Bound splash Water T-028 TELEMETRY /
+  T-422 2HOT / T-423 PresMat. Fly extras goo+geiger. f013 TELEMETRY
+  Stayputnik on_craft=yes; 2HOT start on_craft=yes; PresMat stability
+  on_craft=yes. Tree start,engineering101,basicRocketry,survivability,stability.
+  Do not Hangar. Never revert.
+- **Symptom:** After T-440 close, 09-01-24Z still recovered sit=splashed
+  Water rec=yes without Toggle TELEMETRY/thermo/PresMat. Bank 2.29 +0.
+  Airborne skip leftover cannot-pay, start goo+geiger, hop down, recover.
+- **Cause:** Factory leftover Toggle keyed off sit_ground only. Airborne
+  science is `not down`, so splash never entered that pass. Matching
+  leftover emptied, pending skipped `_start_paying`. Airborne cannot-pay
+  is a skip flag, not dwell-done.
+- **Fix:** `_leftover_sit` still Toggles sit-matched leftover when down.
+  Pending is leftover ids union matching. Forest / Grasslands / Water:
+  same. Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`.
+
 ## 2026-08-25T08-20-54Z-hop — hold-ground-card
 
 - **When:** T-440. t7-wheel-pbc. Bound splash Water T-028 TELEMETRY /

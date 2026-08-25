@@ -23,7 +23,7 @@ python main.py tickets list --type science
 | **T-460** | `barometerScan` | FlyingLow |  | `sensorBarometer` | 305 | 0.05 | 2.1 | yes |
 | **T-461** | `barometerScan` | SrfSplashed@Shores | Shores | `sensorBarometer` | 305 | 0.05 | 0.9 | yes |
 
-Last envelope 11-22-32Z pad abort sit=pre_launch Shores apo=86 rec=yes sci_run=0. Not splash. FlyingHigh pays once RF lights. Recover HD, not TX at 64 bps.
+Last envelope 20-36-06Z flameout apo=1179 sit=flying Shores rec=no sci_run=0 rem=0 bank +0. Not splash. FlyingHigh pays once RF lights. Recover HD, not TX at 64 bps.
 
 ## Catalog (unbound shelf — not `ops next` / not hop bind)
 

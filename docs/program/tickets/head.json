@@ -14977,7 +14977,8 @@
       "desk": "linus",
       "evidence": [
         "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
-        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl",
+        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl"
       ],
       "fingerprint": "flyinghigh-barometer",
       "id": "T-404",
@@ -15021,13 +15022,21 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-25T21:49:17Z",
+            "claim": "Kept FlyingHigh PresMat 305/0.05/2.70 seq0. 20-36-06Z flameout apo=1179 sit=flying Shores rec=no sci_run=0 rem=0 bank +0 is wreck, not a splash rebind. last-flight recovered sit=landed is not the envelope. FlyingHigh pays once RF lights >=50 km. File rem=0 still the card. Side-by-side T-460 FlyingLow 2.10 seq1 + T-461 Shores splash 0.90 seq2. Water TELEMETRY stays unbound (capped, never 090). Forest High TELEMETRY 1.512 T-069 shelf. Goo High T-368 wait t7+Mk16. recover HD 1.17 MB not TX 41 h. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": null,
-        "note": "this-hop FlyingHigh PresMat seq0 on t7-wheel-pbc (capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. 11-22-32Z pad abort sit=pre_launch Shores apo=86 rec=yes sci_run=0 is RF miss, not a splash rebind \u2014 do not Learn last-flight as splash. FlyingHigh pays once RF lights (\u226550 km). Goo High T-368 wait t7+Mk16. Forest High TELEMETRY 1.512 T-069 shelf (Forest loft). Side-by-side T-460 FlyingLow 2.10 seq1 + T-461 SrfSplashed@Shores 0.90 seq2. Not Water. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop FlyingHigh PresMat seq0 on t7-wheel-pbc (capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. 20-36-06Z flameout apo=1179 sit=flying Shores rec=no sci_run=0 rem=0 bank=2.29 +0 is wreck, not a splash rebind \u2014 do not Learn last-flight recovered sit=landed. FlyingHigh pays once RF lights (\u226550 km). Scan marks High out on the pad; hang still t7-wheel-pbc. Goo High T-368 wait t7+Mk16. Forest High TELEMETRY 1.512 T-069 shelf (Forest loft). Side-by-side T-460 FlyingLow 2.10 seq1 + T-461 SrfSplashed@Shores 0.90 seq2. Not Water. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
@@ -15072,7 +15081,7 @@
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-25T20:26:48Z"
+      "updated": "2026-08-25T21:49:17Z"
     },
     "T-405": {
       "assignee": "",
@@ -17423,7 +17432,9 @@
       "category": "science_opportunity",
       "created": "2026-08-25T11:04:29Z",
       "desk": "linus",
-      "evidence": [],
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl"
+      ],
       "fingerprint": "",
       "id": "T-460",
       "payload": {
@@ -17450,12 +17461,20 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-25T21:49:17Z",
+            "claim": "Kept FlyingLow PresMat 305/0.05/2.10 seq1. 20-36-06Z flying wreck apo 1.2 km is not a FlyingLow envelope \u2014 keep the trio for the loft. Not Water. Not Grasslands. recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "note": "this-hop FlyingLow PresMat seq1 on t7-wheel-pbc. Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. 11-22-32Z pad abort sit=pre_launch Shores is not FlyingLow \u2014 keep the trio for the loft. Side-by-side T-404 FlyingHigh seq0 + T-461 SrfSplashed@Shores seq2. Not Water (never 090). Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop FlyingLow PresMat seq1 on t7-wheel-pbc. Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. 20-36-06Z flying wreck apo 1.2 km is not a FlyingLow envelope \u2014 keep the trio for the loft. Not Water (never 090). Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
@@ -17482,7 +17501,7 @@
       ],
       "title": "FlyingLow barometer 2.10",
       "type": "science",
-      "updated": "2026-08-25T20:26:48Z"
+      "updated": "2026-08-25T21:49:17Z"
     },
     "T-461": {
       "assignee": "linus",
@@ -17490,7 +17509,9 @@
       "category": "science_opportunity",
       "created": "2026-08-25T11:04:29Z",
       "desk": "linus",
-      "evidence": [],
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl"
+      ],
       "fingerprint": "",
       "id": "T-461",
       "payload": {
@@ -17517,12 +17538,20 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-25T21:49:17Z",
+            "claim": "Kept SrfSplashed@Shores PresMat 305/0.05/0.90 seq2. 20-36-06Z sit=flying rec=no apo 1.2 km is wreck not splash \u2014 do not Learn last-flight recovered sit=landed. Hang splashes when it flies. Water splash T-423 unbound. recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "note": "this-hop SrfSplashed@Shores PresMat seq2 on t7-wheel-pbc. Unstarted barometerScan Surface@Shores ~0.90 (cap 3 \u00d7 0.3). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Hang splashes \u2014 not SrfLanded. 11-22-32Z pad abort sit=pre_launch Shores \u2014 do not Learn last-flight as splash. Keep splash for the hop that flies. Water splash PresMat T-423 shelf (never 090). Side-by-side T-404 FlyingHigh seq0 + T-460 FlyingLow seq1. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop SrfSplashed@Shores PresMat seq2 on t7-wheel-pbc. Unstarted barometerScan Surface@Shores ~0.90 (cap 3 \u00d7 0.3). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Hang splashes \u2014 not SrfLanded. 20-36-06Z sit=flying rec=no apo 1.2 km is wreck not splash \u2014 keep splash for the hop that flies. Water splash PresMat T-423 shelf (never 090). Side-by-side T-404 FlyingHigh seq0 + T-460 FlyingLow seq1. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
@@ -17550,7 +17579,7 @@
       ],
       "title": "Shores SrfSplashed barometer 0.90",
       "type": "science",
-      "updated": "2026-08-25T20:26:48Z"
+      "updated": "2026-08-25T21:49:17Z"
     },
     "T-462": {
       "assignee": "",
@@ -17766,5 +17795,5 @@
       "updated": "2026-08-25T21:10:56Z"
     }
   },
-  "updated": "2026-08-25T21:46:40Z"
+  "updated": "2026-08-25T21:49:17Z"
 }

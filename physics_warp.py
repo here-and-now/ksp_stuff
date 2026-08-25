@@ -6,11 +6,13 @@ Warp is a clock on sits, not a new flight. Lars composes
 
 Sits:
 
-- 1×: burn, chute_arm_sit, chute_deploy_sit, silk, recover, high q.
+- 1×: burn, chute_arm_sit, chute_deploy_sit, silk, recover, high q,
+  thick air (≤18 km lid).
 - Arm: descending (vz<0 / pitch down), lofted. Not light, not only 2 km.
   Clock is already 1× (15-10-47Z silk at 4× sheared 28→18).
 - Deploy canopy: still ≤2 km or already semi.
-- 4×: lofted coast after real burnout AND q actually low (≤1 kPa). Not arm sit. Not silk.
+- 4×: lofted coast after real burnout AND q actually low (≤1 kPa) AND
+  not thick air. Not arm sit. Not silk.
 - Never rails. Never WarpTo.
 - Timeout budget is MET / down, not wall seconds while 1×.
 - Airborne cannot-pay is a sit flag, not a dwell.
@@ -36,7 +38,10 @@ LOFT_ALT_M = 250.0
 CHUTE_DEPLOY_ALT_M = 2_000.0
 # 10-31-47Z 4× at burnout q≈29.5 kPa FAR-sheared. 17-26-04Z 4× at
 # q≈4.7 kPa after FlyingHigh wait sheared 28→1. 47 km loft is q≈0.4 kPa.
+# 06-57-16Z 4× after 18 km lid at ~3 km q=2.67 kPa sheared. 18 km is
+# RSS FlyingHigh sit start, still thick.
 COAST_Q_MAX_PA = 1_000.0
+THICK_AIR_ALT_M = 18_000.0
 CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
 _SEMI = frozenset({"semi_deployed", "semideployed"})
 _SILK = "deployed"
@@ -171,9 +176,27 @@ def lofted_sit(snap: object) -> bool:
 
 
 def high_q_sit(snap: object) -> bool:
-    """q above coast-safe (1 kPa). 1×. NaN is not high (fail open)."""
+    """q above coast-safe (1 kPa). 1×. NaN is high (fail closed)."""
     q = _finite(snap, "q")
-    return math.isfinite(q) and q > COAST_Q_MAX_PA
+    if not math.isfinite(q):
+        return True
+    return q > COAST_Q_MAX_PA
+
+
+def thick_air_sit(snap: object) -> bool:
+    """18 km lid is still thick. 4× only above. Vacuum is not this sit.
+
+    Unknown alt is thick (fail closed). ``in_atmo`` False (Mun) is not.
+    """
+    alt = _finite(snap, "alt")
+    if not math.isfinite(alt):
+        return True
+    if alt > THICK_AIR_ALT_M:
+        return False
+    in_atmo = getattr(snap, "in_atmo", None)
+    if in_atmo is False:
+        return False
+    return True
 
 
 def _descending(snap: object) -> bool:
@@ -238,15 +261,18 @@ def want_coast(
     down: bool,
     burning: bool,
 ) -> bool:
-    """4× lofted coast after real burnout AND q actually low (≤1 kPa).
+    """4× lofted coast after real burnout AND q actually low (≤1 kPa)
+    AND not thick air (≤18 km).
 
-    1×: pad, burn, chute_arm_sit, chute_deploy_sit, silk, recover, high q.
-    5 kPa was not low — 4.7 kPa at 1 km sheared. Climbing armed may still 4×.
-    Never rails.
+    1×: pad, burn, chute_arm_sit, chute_deploy_sit, silk, recover,
+    high q, thick air. Unknown q is not coast-safe. 18 km lid is still
+    thick. Climbing armed may still 4× above thick air. Never rails.
     """
     if not left_pad or down or burning:
         return False
     if not lofted_sit(snap):
+        return False
+    if thick_air_sit(snap):
         return False
     if high_q_sit(snap):
         return False

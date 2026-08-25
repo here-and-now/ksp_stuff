@@ -21,19 +21,37 @@ python main.py pad
 
 ---
 
-## 2026-08-25 — RA 64 bps is the table, not the path
+## 2026-08-25T06-57-16Z-hop — hop-coast-phys-warp
 
-- **When:** Os pad measure after Align GSTL=2. T-427.
-- **Symptom:** `python main.py comms` / desks: owned TL2 **64 bps**.
-  Live Cape `RateToHome` **31500** bps, Kerbalism **3.94 kB/s**.
+- **When:** T-426. t7-wheel-pbc. hop_apo=18000 pitch 25 from pad. Lars
+  T-424 lid. Splash Water bind. Do not Hangar. Never revert.
+- **Symptom:** `hop coast physics 4x` then crash UI sit=flying rec=no
+  met=73.94 alt=3265.9 q=2670. Envelope apo 3.5 km. Tape thin.
+- **Cause:** `want_coast` 4× after lofted 250 m + burnout + q≤1 kPa
+  (NaN q fail-open). 18 km lid is still thick air. 3 km FAR at 4×
+  sheared.
+- **Fix:** `thick_air_sit` 1× at alt ≤18 km. Unknown q is high (fail
+  closed). Vacuum `in_atmo` False is not thick. Same inland hop Forest
+  / Grasslands. Never revert. Do not Hangar.
+- **Modules:** `physics_warp.py`. Not `hop_factory.py` this hire (XOR).
+
+## 2026-08-25 — RA 64 bps is the table and the Cape path
+
+- **When:** T-427. Os radio prove **passed** after Harmony clamp.
+- **Symptom (pre-clamp):** dump / desks owned TL2 **64 bps**. Live Cape
+  `RateToHome` was **31500** bps, Kerbalism **3.94 kB/s**. That is not
+  current.
 - **Cause:** `MaxDataRateToHome` = min Fwd/Rev from `RateBoundariesJob`
-  (L ChannelWidth 31.5 kHz × 1 bit/s/Hz). Never reads
+  (L ChannelWidth 31.5 kHz × 1 bit/s/Hz). Never read
   `TechLevelInfo.MaxDataRate`. Align stamped GSTL, not RF.
-- **Fix (C# first):** Harmony-clamp RateBoundaries/FwdDataRate to the
-  antenna TL MaxDataRate. Not MM TechLevel. Not dump-only. Packet
-  `docs/program/ra-rate.md`. `build.sh` does not install.
-- **Modules:** `krpc_realantennas/` (Harmony, 000_Harmony already in
-  GameData). Dump header and tape `RateToHome` are second.
+- **Fix:** Harmony prefix `RACommLink` set_Fwd/RevDataRate (antenna
+  setters reclamp) + postfix `MaxDataRateToHome`. Cap is
+  `TechLevelInfo.MaxDataRate`. Burst job not patched. Prove: Cape
+  RateToHome **64**, Kerbalism 0.008 kB/s, table still 64, GSTL=2.
+  Dump: 64 is table **and** the path at Cape. Tape: `rate_bps`.
+  Packet `docs/program/ra-rate.md`.
+- **Modules:** `krpc_realantennas/src/RateClamp.cs`, `telem.py`,
+  `comms_catalog.py`, `flightlog.py`. `build.sh` does not install.
 
 ## 2026-08-25 — ctt-stability
 

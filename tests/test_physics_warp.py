@@ -11,6 +11,7 @@ from physics_warp import (
     COAST_RATE,
     LOFT_ALT_M,
     PAD_RATE,
+    THICK_AIR_ALT_M,
     airborne_cannot_pay,
     apply_coast,
     apply_sit_warp,
@@ -24,6 +25,7 @@ from physics_warp import (
     rails_zero,
     set_factor,
     set_rate,
+    thick_air_sit,
     timeout_hit,
     unpause_clock,
     want_coast,
@@ -152,7 +154,7 @@ def _snap(**kw):
 
 
 def test_want_coast_after_burnout_q_safe():
-    snap = _snap(v_vert=40.0, alt=12_000.0, q=400.0)
+    snap = _snap(v_vert=40.0, alt=41_884.0, q=400.0)
     assert want_coast(snap, left_pad=True, down=False, burning=False)
 
 
@@ -185,14 +187,16 @@ def test_want_coast_high_q_is_1x():
     assert not want_coast(wait, left_pad=True, down=False, burning=False)
     loft = _snap(v_vert=369.0, alt=41_884.0, q=400.0, chute="armed")
     assert want_coast(loft, left_pad=True, down=False, burning=False)
-    missing_q = _snap(v_vert=40.0, alt=12_000.0)
-    assert want_coast(missing_q, left_pad=True, down=False, burning=False)
+    missing_q = _snap(v_vert=40.0, alt=41_884.0)
+    assert high_q_sit(missing_q)
+    assert not want_coast(missing_q, left_pad=True, down=False, burning=False)
 
 
 def test_chute_deploy_sit_ignores_skip():
     assert CHUTE_DEPLOY_ALT_M == 2_000.0
     assert LOFT_ALT_M == 250.0
     assert COAST_Q_MAX_PA == 1_000.0
+    assert THICK_AIR_ALT_M == 18_000.0
     down = _snap(v_vert=-40.0, alt=1_500.0)
     assert chute_deploy_sit(down)
     assert not chute_deploy_sit(_snap(v_vert=40.0, alt=1_500.0))
@@ -276,6 +280,50 @@ def test_apply_sit_warp_skip_loft_keeps_4x():
     assert sc.physics_warp_factor == 3
     assert sc.rails_warp_factor == 0
     assert last[0] == "4x"
+
+
+def test_want_coast_thick_air_18km_lid_is_1x():
+    """06-57-16Z 4× at ~3 km after hop_apo=18000. 18 km lid is still thick."""
+    wreck = _snap(v_vert=40.0, alt=3_265.9, q=2_670.0, chute="stowed")
+    assert thick_air_sit(wreck)
+    assert high_q_sit(wreck)
+    assert not want_coast(wreck, left_pad=True, down=False, burning=False)
+    lid = _snap(v_vert=40.0, alt=18_000.0, q=400.0)
+    assert thick_air_sit(lid)
+    assert not want_coast(lid, left_pad=True, down=False, burning=False)
+    just = _snap(v_vert=40.0, alt=18_000.1, q=400.0)
+    assert not thick_air_sit(just)
+    assert want_coast(just, left_pad=True, down=False, burning=False)
+    twelve = _snap(v_vert=40.0, alt=12_000.0, q=400.0)
+    assert thick_air_sit(twelve)
+    assert not want_coast(twelve, left_pad=True, down=False, burning=False)
+    mun = _snap(v_vert=40.0, alt=5_000.0, q=0.0, in_atmo=False)
+    assert not thick_air_sit(mun)
+    assert want_coast(mun, left_pad=True, down=False, burning=False)
+    unknown_alt = _snap(v_vert=40.0, q=400.0)
+    assert thick_air_sit(unknown_alt)
+    assert not want_coast(unknown_alt, left_pad=True, down=False, burning=False)
+
+
+def test_apply_sit_warp_thick_air_is_1x_clock_runs():
+    sc = _sc(phys=3, rails=1)
+    krpc = type("K", (), {"paused": True})()
+    sess = type(
+        "S",
+        (),
+        {"space_center": sc, "conn": type("C", (), {"krpc": krpc})()},
+    )()
+    sc.paused = True
+    snap = _snap(v_vert=40.0, alt=3_265.9, q=2_670.0, chute="stowed")
+    last = ["4x"]
+    n = apply_sit_warp(
+        sess, snap, left_pad=True, down=False, burning=False, last=last
+    )
+    assert n == 0
+    assert sc.physics_warp_factor == 0
+    assert sc.rails_warp_factor == 0
+    assert krpc.paused is False
+    assert last[0] == "1x"
 
 
 def test_want_coast_1x_on_chute_arm_sit_before_silk():
@@ -392,6 +440,7 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "def timeout_hit" in warp
     assert "def leftover_ksc_call" in warp
     assert "def leftover_abort_kv" in warp
+    assert "def thick_air_sit" in warp
     assert "Never revert" in warp
     assert "WarpTo(" not in warp
     hop = Path("hop.py").read_text(encoding="utf-8")

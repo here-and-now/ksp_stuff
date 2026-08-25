@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-25 — T-427 prove passed: Cape RateToHome 64 is table and path. T-426 want_coast 1× in thick air ≤18 km; unknown q fail-closed. No Hangar. No hop. Never revert.
+
 - 2026-08-25 — T-413..T-420 VAB helpers on `python main.py craft` (clone, tanks FL-T100↔proc Default Kero/LOx, chute Nylon 5/35 or cone 50m, copy-chute, girders Heaviest/rigid, wheel+PresMat, HS disc/adapter). Roundtrip keeps RESOURCE/autostrut/sqor. T-421 latch already living rec=yes+sci_run=0. No Hangar. No hop_factory. Never revert.
 
 - 2026-08-25 — T-399 next CTT from owned tree (`generalRocketry` 20). T-396 Close persist→Tracking→KSC done; rewind is Hangar veto, not leftover-air. T-388/T-389 leftover GUID/crash-UI/wait-land stands. T-346 waste latch living +0 only. No hop.py. Never revert.

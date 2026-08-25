@@ -165,6 +165,7 @@ class Snapshot:
     link: bool | None = None
     snr: float = float("nan")
     via: str = ""
+    rate_bps: float = float("nan")
     resources: dict[str, float] = field(default_factory=dict)
     flags: tuple[str, ...] = field(default_factory=tuple)
 
@@ -186,11 +187,14 @@ def format_snapshot(snap: Snapshot) -> str:
         link_s = " link=yes"
     elif snap.link is False:
         link_s = " link=no"
+    rate_s = ""
+    if math.isfinite(getattr(snap, "rate_bps", float("nan"))):
+        rate_s = f" rate={snap.rate_bps:g}"
     return (
         f"status body={snap.body} sit={snap.situation} "
         f"alt={snap.alt:.1f} peri={snap.peri:.1f} apo={snap.apo:.1f} "
         f"atm={snap.atm_depth:.1f} in_atmo={int(snap.in_atmo)} "
-        f"ec={ec} fuel={fuel} wreck={int(snap.wreck)}{link_s} "
+        f"ec={ec} fuel={fuel} wreck={int(snap.wreck)}{link_s}{rate_s} "
         f"horiz={snap.horiz:.0f} vz={snap.v_vert:.0f} "
         f"hdg={snap.heading:.0f} "
         f"pitch={snap.pitch:.0f} aoa={snap.aoa:.0f} biome={snap.biome or '?'} "
@@ -565,6 +569,19 @@ def comms_via(vessel: Any) -> str:
     return home or end_name
 
 
+def comms_rate_bps(vessel: Any) -> float:
+    """Live RA RateToHome (bps). Table MaxDataRate is not this. Slow RPC."""
+    try:
+        client = getattr(vessel, "_client", None)
+        ra = getattr(client, "real_antennas", None) if client is not None else None
+        if ra is None or not bool(getattr(ra, "available", False)):
+            return float("nan")
+        comms = ra.comms(vessel)
+        return float(comms.rate_to_home)
+    except Exception:
+        return float("nan")
+
+
 def gates(snap: Snapshot) -> list[str]:
     """Body-relative gates. No Kerbin DIP/ESC strings."""
     out: list[str] = []
@@ -749,6 +766,7 @@ class Telem:
         self._slow_root: str = ""
         self._slow_resources: dict[str, float] = {}
         self._slow_via: str = ""
+        self._slow_rate_bps: float = float("nan")
         self._pad_ll: tuple[float, float] | None = None
         self._body_r: float = float("nan")
 
@@ -801,6 +819,7 @@ class Telem:
             self._slow_at = 0.0
             self._slow_cost_s = 0.0
             self._slow_via = ""
+            self._slow_rate_bps = float("nan")
         if vessel is None:
             return
         self._flight = vessel.flight()
@@ -1061,6 +1080,10 @@ class Telem:
                 self._slow_via = comms_via(vessel)
             except Exception:
                 self._slow_via = ""
+            try:
+                self._slow_rate_bps = comms_rate_bps(vessel)
+            except Exception:
+                self._slow_rate_bps = float("nan")
             self._slow_at = time.monotonic()
             self._slow_cost_s = self._slow_at - t_slow
         else:
@@ -1078,6 +1101,7 @@ class Telem:
         sci_bank = self._slow_bank
         debris_n = self._slow_debris
         via = self._slow_via
+        rate_bps = self._slow_rate_bps
         avail = _finite(getattr(vessel, "available_thrust", float("nan")))
         landing = ""
         downish = sit in _DOWN or wreck
@@ -1179,6 +1203,7 @@ class Telem:
             link=link,
             snr=snr,
             via=via,
+            rate_bps=rate_bps,
             resources=resources,
         )
         reasons = gates(snap)

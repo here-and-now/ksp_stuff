@@ -43,6 +43,7 @@ _SHIP_EXTRA = (
     "biome",
     "flags",
     "link",
+    "rate_bps",
     "snr",
     "via",
     "stale",
@@ -401,6 +402,9 @@ def envelope_from_snapshot(
     snr = getattr(state, "snr", None)
     if isinstance(snr, float) and not math.isfinite(snr):
         snr = None
+    rate_bps = getattr(state, "rate_bps", None)
+    if isinstance(rate_bps, float) and not math.isfinite(rate_bps):
+        rate_bps = None
     return {
         "heading": getattr(state, "heading", None),
         "wreck": getattr(state, "wreck", None),
@@ -422,6 +426,7 @@ def envelope_from_snapshot(
         "link": getattr(state, "link", None),
         "snr": snr,
         "via": getattr(state, "via", None) or None,
+        "rate_bps": rate_bps,
         "mass": getattr(state, "mass", None),
         "parts_n": getattr(state, "parts_n", None),
         "root": getattr(state, "root", None) or None,

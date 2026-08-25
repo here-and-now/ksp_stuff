@@ -335,8 +335,10 @@ def format_ra_tables(cat: CommsCatalog) -> str:
     node = cat.owned_node or "-"
     relay = "-" if cat.min_relay_tl is None else str(cat.min_relay_tl)
     lines = [
-        "# RA ConfigCache last write (cfg spawn gate). Live TL is kRPC GSTL.",
-        f"# owned comms TL = {cat.owned_tl} ({node}). sample = recover the can. file = HD.",
+        "# RA ConfigCache last write. TL2 rate_bps=64 is the table and,",
+        "# after Harmony clamp, the live Cape path (kRPC RateToHome).",
+        "# sample = recover the can. file = HD.",
+        f"# owned comms TL = {cat.owned_tl} ({node}).",
         "# python main.py comms",
         "#",
         f"# minRelayTL = {relay}",

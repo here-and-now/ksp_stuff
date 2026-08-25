@@ -85,9 +85,10 @@ T-419 Nylon donor copy, T-420 proc HS splice. Pad flies the signed
 hang — do not idle for helpers.
 
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
-cheat a link. **64 bps is the TL table, not Cape RF** (measured 31.5
-kbps / 3.94 kB/s). C# first: T-427 `docs/program/ra-rate.md`. Do not
-plan dump hours from `python main.py comms`. Brief: `docs/program/krpc.md`.
+cheat a link. T-427 prove **passed**: TL2 **64 bps is table and Cape
+path** (`RateToHome`). Pre-clamp 31.5 kbps is not current. Packet:
+`docs/program/ra-rate.md`. Do not plan dump hours from
+`python main.py comms`. Brief: `docs/program/krpc.md`.
 
 One hire may open **many** tickets (Linus: leftover subjects; Gus:
 alts; Lars: control fingerprints; Wernher: systems). Skim (envelope).

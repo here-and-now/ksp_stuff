@@ -19,6 +19,7 @@ refs=(
   "-r:$KRPC/KRPC.Core.dll"
   "-r:$KRPC/KRPC.SpaceCenter.dll"
   "-r:$RA/RealAntennas.dll"
+  "-r:$KSP/GameData/000_Harmony/0Harmony.dll"
   "-r:System.dll"
   "-r:System.Core.dll"
 )

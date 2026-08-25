@@ -159,9 +159,10 @@ Os dropped `KRPC.RealAntennas.dll` into `GameData/kRPC`. Live
 
 **Honesty.** Sandbox RA defaults GSTL to MaxTL. House `ra_align`
 stamps **owned comms TL** on desk / Close (`AlignTechLevel`). GSTL=2
-is real. **64 bps is the TechLevelInfo table, not the Cape path**
-(measured RateToHome 31500 bps / Kerbalism 3.94 kB/s). Align did
-**not** finish RF. C# first: T-427 / `docs/program/ra-rate.md`. Cheats:
+is real. T-427 prove **passed**: TL2 **64 bps is the table and the
+Cape path** (`RateToHome` / Kerbalism 0.008 kB/s). Pre-clamp 31500 bps
+was unclamped channel width — not current. Align did not finish RF;
+Harmony `RateClamp` did. Packet: `docs/program/ra-rate.md`. Cheats:
 stamp MaxTL, raise TxPower to invent range, `SetTarget*` to fake a
 path, ignore deaf, write GameData. Do not put dishes on every hang
 “just in case.” Do not plan dump hours from `python main.py comms`.

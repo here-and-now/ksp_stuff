@@ -558,13 +558,14 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
-- **2026-08-25** — Os measured Cape: GSTL/PAW/diff_max=2 (Align real).
-  `TechLevelInfo.MaxDataRate` 64 is **table**. `RateToHome` 31500 bps
-  = L ChannelWidth (MaxDataRateToHome = min Fwd/Rev; never reads the
-  table). Kerbalism 3.9375 kB/s = 31500/8000. C# first: Harmony
-  `RateBoundariesJob` so live rate cannot exceed TL MaxDataRate.
-  Packet: `docs/program/ra-rate.md` T-427. Dump `64 bps` is not path.
-  Hop tape does not log `RateToHome`.
+- **2026-08-25** — T-427 prove passed. GSTL/PAW/diff_max=2 (Align real).
+  Harmony prefix `RACommLink` Fwd/Rev + postfix `MaxDataRateToHome`
+  caps to `TechLevelInfo.MaxDataRate`. Cape `RateToHome` **64 bps**
+  (table and path). Kerbalism 0.008 kB/s. Burst `RateBoundariesJob`
+  not patched. Pre-clamp Cape was 31500 bps / 3.94 kB/s (channel width)
+  — not current. Dump `rate_bps` is still the table; at Cape it matches
+  the path. Tape: Snapshot `rate_bps` = `Comms.RateToHome`. Packet:
+  `docs/program/ra-rate.md`.
 - **2026-08-25** — Os: `KRPC.RealAntennas.dll` in GameData/kRPC.
   `conn.real_antennas` live (Flight / Tracking / KSC). `ra_align`
   stamps owned comms TL (anti-cheat vs sandbox MaxTL). Targeting:

@@ -503,7 +503,7 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertEqual(HOP_COAST_PHYS_RATE, 4)
 
     def test_want_coast_after_burnout(self):
-        snap = self._snap(v_vert=40.0, alt=12_000.0)
+        snap = self._snap(v_vert=40.0, alt=41_884.0, q=400.0)
         self.assertTrue(
             _want_coast_phys(
                 snap,
@@ -515,7 +515,7 @@ class TestHopCoastPhysics(unittest.TestCase):
         )
 
     def test_1x_while_burning_chute_down_deploy(self):
-        snap = self._snap(v_vert=40.0, alt=12_000.0)
+        snap = self._snap(v_vert=40.0, alt=41_884.0, q=400.0)
         self.assertFalse(
             _want_coast_phys(
                 snap, left_pad=False, down=False, chute_open=False, burning=False
@@ -842,13 +842,14 @@ class TestHopCoastPhysics(unittest.TestCase):
         def nap(dt):
             if vessel.control.staged and vessel.situation == "pre_launch":
                 vessel.situation = "flying"
-                vessel._alt = 12_000.0
+                vessel._alt = 41_884.0
                 vessel._speed = 80.0
                 vessel._vz = 40.0
                 vessel.control.throttle = 0.0
                 vessel.resources.fuel = 0.0
-                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.apoapsis_altitude = 49_000.0
                 vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel._flight.dynamic_pressure = 400.0
             elif vessel.situation == "flying":
                 coast_factors.append(sess.space_center.physics_warp_factor)
                 if t[0] >= 3.0:
@@ -3864,9 +3865,10 @@ class TestHopSequence(unittest.TestCase):
                     vessel.recoverable = True
                     vessel.resources.fuel = 0.0
                     vessel.control.throttle = 0.0
-                    vessel._alt = 12_000.0
+                    vessel._alt = 41_884.0
                     vessel._vz = 40.0
-                    vessel.orbit.apoapsis_altitude = 16_000.0
+                    vessel.orbit.apoapsis_altitude = 49_000.0
+                    vessel._flight.dynamic_pressure = 400.0
                 elif air_n[0] == 4:
                     vessel.recoverable = False
                     vessel.resources.fuel = 0.0
@@ -4700,12 +4702,12 @@ class TestHopSequence(unittest.TestCase):
                 vessel.recoverable = True
                 vessel.met = 1.8 + t[0]
             elif vessel.situation == "flying":
-                vessel._alt = 12_000.0
+                vessel._alt = 41_884.0
                 vessel._vz = 40.0
                 vessel._speed = 80.0
                 vessel.resources.fuel = 0.0
                 vessel.control.throttle = 0.0
-                vessel.orbit.apoapsis_altitude = 14_000.0
+                vessel.orbit.apoapsis_altitude = 49_000.0
                 vessel._flight.dynamic_pressure = 400.0
                 vessel.met = 20.0 + t[0]
                 vessel.recoverable = False
@@ -4794,12 +4796,12 @@ class TestHopSequence(unittest.TestCase):
                 vessel.met = 1.88 + t[0]
                 if t[0] >= 1.5:
                     vessel.situation = "flying"
-                    vessel._alt = 12_000.0
+                    vessel._alt = 41_884.0
                     vessel._vz = 40.0
                     vessel._speed = 80.0
                     vessel.resources.fuel = 0.0
                     vessel.control.throttle = 0.0
-                    vessel.orbit.apoapsis_altitude = 14_000.0
+                    vessel.orbit.apoapsis_altitude = 49_000.0
                     vessel._flight.dynamic_pressure = 400.0
                     vessel.met = 40.0 + t[0]
                     vessel.recoverable = False

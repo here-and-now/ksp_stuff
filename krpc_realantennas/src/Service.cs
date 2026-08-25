@@ -14,7 +14,7 @@ namespace KRPC.RealAntennas
     /// per-vessel comms and per-part antennas, including dish targeting.
     /// Does not wrap Kerbalism science dumps.
     /// </summary>
-    [KRPCService (Name = "RealAntennas", GameScene = GameScene.Flight | GameScene.TrackingStation | GameScene.SpaceCenter)]
+    [KRPCService (Name = "RealAntennas", GameScene = GameScene.All)]
     public static class Addon
     {
         static bool Probe ()

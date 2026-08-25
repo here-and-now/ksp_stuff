@@ -1232,6 +1232,11 @@ class TestCommsLink(unittest.TestCase):
         self.assertNotIn("deaf", gates(Snapshot(link=True, vessel="probe")))
         line = format_snapshot(Snapshot(vessel="probe", body="Earth", link=False))
         self.assertIn("link=no", line)
+        rated = format_snapshot(
+            Snapshot(vessel="probe", body="Earth", link=True, rate_bps=64.0)
+        )
+        self.assertIn("link=yes", rated)
+        self.assertIn("rate=64", rated)
 
     def test_missing_comms_link_none_no_deaf(self):
         vessel = _Vessel(alt=80.0, sit="pre_launch")

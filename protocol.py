@@ -149,15 +149,16 @@ def fly_gate(
     if sit.lock == "live":
         return _out("wait", "lock live", rec)
     hangar = str(sit.hangar)
+    occupancy = hangar.startswith("occupancy")
     if hangar == "blocked":
         return _out("wait", "hangar blocked", rec)
     if hangar.startswith("recover "):
         return _out("wait", f"leftover {hangar}", rec)
     vessels = getattr(sit, "vessels", ()) or ()
-    if vessels:
+    if vessels and not occupancy:
         return _out("wait", "leftover", rec)
     leftover = getattr(sit, "leftover", None)
-    if leftover is not None:
+    if leftover is not None and not occupancy:
         try:
             n = int(str(leftover).strip().lstrip("n=").split()[0])
         except ValueError:

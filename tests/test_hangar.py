@@ -829,6 +829,16 @@ class TestHangarRefuse(unittest.TestCase):
         self.assertIn("pre_launch", msg)
         self.assertEqual(control.throttle, 0.0)
 
+    def test_launch_skips_vessel_when_occupancy(self):
+        session = _Session(scene="flight")
+        control = type("C", (), {"throttle": 1.0})()
+        session.active_vessel = type("V", (), {"control": control})()
+        with patch("hangar.seated_prelaunch_occupancy", return_value=True):
+            Hangar(Path("/tmp"), save="kspstuff").launch(
+                session, "kspstuff-hop-valiant-t7-wheel-pbc", uncrewed=True
+            )
+        self.assertEqual(control.throttle, 0.0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -556,6 +556,35 @@ def leftover_pad_ships(session: Any) -> list[Any]:
     return [vessel for vessel in leftover_ships(session) if leftover_occupies_pad(vessel)]
 
 
+def seated_prelaunch_occupancy(session: Any, name: str | None = None) -> bool:
+    """Seated hop craft already PRELAUNCH on Cape. Fly this bird; do not recover."""
+    from missions import hangar_craft_name
+
+    try:
+        token = craft_basename((name or "").strip() or hangar_craft_name())
+    except Exception:
+        token = craft_basename(name or "")
+    if not token:
+        return False
+
+    def _match(vessel: Any) -> bool:
+        try:
+            sit = _vessel_sit(vessel)
+            nm = craft_basename(str(getattr(vessel, "name", "") or ""))
+        except Exception:
+            return False
+        return sit in {"pre_launch", "prelaunch"} and nm == token
+
+    try:
+        active = getattr(session, "active_vessel", None)
+    except Exception:
+        active = None
+    if active is not None and _match(active):
+        return True
+    ships = leftover_pad_ships(session)
+    return len(ships) == 1 and _match(ships[0])
+
+
 def _vessel_id(vessel: Any) -> str:
     """kRPC 0.6 Vessel has no ``.id``. ``_object_id`` is stable across clients."""
     for attr in ("id", "_object_id"):
@@ -1426,6 +1455,13 @@ class Hangar:
         session.require_connected()
         if site is None:
             site = "LaunchPad" if facility.upper() == "VAB" else "Runway"
+        if seated_prelaunch_occupancy(session, name):
+            log.info("Hangar occupancy %s pre_launch — skip launch_vessel", name)
+            try:
+                session.active_vessel.control.throttle = 0.0
+            except Exception:
+                pass
+            return
         try:
             walk_home(session)
             go_space_center(session)

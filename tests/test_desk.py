@@ -187,6 +187,23 @@ class TestDesk(unittest.TestCase):
         self.assertEqual(hangar, "phase kspstuff-hop-flea-pbc sit=PRELAUNCH")
         self.assertEqual(active, "kspstuff-hop-flea-pbc")
 
+    def test_hangar_occupancy_seated_prelaunch(self):
+        ships = (
+            SaveVessel(
+                name="kspstuff-hop-valiant-t7-wheel-pbc",
+                sit="PRELAUNCH",
+                type="Ship",
+                landed=True,
+            ),
+        )
+        hangar, active = hangar_call(
+            vessels=ships,
+            lock="free",
+            seated_craft="kspstuff-hop-valiant-t7-wheel-pbc",
+        )
+        self.assertEqual(hangar, "occupancy kspstuff-hop-valiant-t7-wheel-pbc")
+        self.assertEqual(active, "kspstuff-hop-valiant-t7-wheel-pbc")
+
     def test_hangar_blocked_when_lock_live(self):
         ships = (
             SaveVessel(name="pad", sit="PRELAUNCH", type="Ship", landed=True),

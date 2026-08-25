@@ -154,6 +154,10 @@ def hangar_call(
                 break
     sit = _norm_sit(pick.sit)
     tag = pick.sit or "?"
+    if craft and sit in {"prelaunch"} and (
+        craft in pick.name.lower() or pick.name.lower() in craft
+    ):
+        return f"occupancy {pick.name}", pick.name
     if sit in _PHASE_SITS or pick.landed:
         return f"phase {pick.name} sit={tag}", pick.name
     if sit in _SKY_SITS:
@@ -165,11 +169,13 @@ def hangar_from_live(
     rows: tuple[tuple[str, str], ...],
     *,
     lock: str,
+    seated_craft: str = "",
 ) -> tuple[str, str]:
     """Hangar vs recover from kRPC leftover_pad_ships. Empty tracking is hangar none.
 
     Disk SUB_ORBITAL after splash recover is stale sfs — not leftover.
-    Airborne leftovers are not a Hangar veto (Os).
+    Airborne leftovers are not a Hangar veto (Os). Seated PRELAUNCH is
+    occupancy (fly this bird), not leftover recover.
     """
     if lock == "live":
         return "blocked", rows[0][0] if rows else "none"
@@ -177,6 +183,11 @@ def hangar_from_live(
         return "none", "none"
     name, sit = rows[0]
     tag = sit or "?"
+    craft = seated_craft.lower().strip()
+    if craft and _norm_sit(sit) in {"prelaunch"} and (
+        craft in name.lower() or name.lower() in craft
+    ):
+        return f"occupancy {name}", name
     if _norm_sit(sit) in _PHASE_SITS:
         return f"phase {name} sit={tag}", name
     if _norm_sit(sit) in _SKY_SITS:
@@ -495,7 +506,11 @@ def build_sit(world: World | None = None) -> DeskSit:
     disk_ships = tuple(v for v in world.vessels if is_disk_ship(v))
     live_sci, live_rows = probe_live_desk()
     if live_rows is not None:
-        hangar, active = hangar_from_live(live_rows, lock=lock)
+        hangar, active = hangar_from_live(
+            live_rows,
+            lock=lock,
+            seated_craft=craft if craft not in {"", "(none)"} else "",
+        )
         vessel_names = tuple(name for name, _ in live_rows[:12])
     else:
         hangar, active = hangar_call(

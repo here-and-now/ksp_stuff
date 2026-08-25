@@ -127,6 +127,8 @@ def leftover_sit(desk: dict[str, str]) -> bool:
     overlay = (desk.get("can_revert") or desk.get("overlay") or "").strip().lower()
     if overlay in {"true", "yes", "1"}:
         return True
+    if hangar.startswith("occupancy"):
+        return False
     if hangar.startswith("recover ") or hangar.startswith("phase "):
         return True
     return n > 0

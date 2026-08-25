@@ -147,6 +147,18 @@ class TestFlyGate(unittest.TestCase):
         self.assertEqual(gate.fly, "wait")
         self.assertIn("leftover", gate.reason)
 
+    def test_occupancy_prelaunch_is_fly(self):
+        gate = fly_gate(
+            sit=_sit(
+                hangar="occupancy kspstuff-hop-hammer-pbc",
+                craft="kspstuff-hop-hammer-pbc",
+                vessels=("kspstuff-hop-hammer-pbc",),
+            ),
+            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            science_text=_FLYING,
+        )
+        self.assertEqual(gate.fly, "yes")
+
     def test_empty_card_is_wait(self):
         gate = fly_gate(
             sit=_sit(card=(), f013=(F013("", "none", "none", "n/a", "no", "none"),)),

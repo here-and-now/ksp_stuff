@@ -21,6 +21,23 @@ python main.py pad
 
 ---
 
+## 2026-08-25T09-01-24Z-hop — hop-coast-phys-warp
+
+- **When:** T-450. t7-wheel-pbc. Query Tape, not jsonl. Do not Hangar.
+  Never revert.
+- **Symptom:** Tape `thick_air_skip` 4× 55 km q=937 → 6 km q=17510 in
+  7.7 s wall / 43 MET (rate 5.6). 27 states / 251 s wall. Last snap
+  flying 6.05 km 214 m/s rec=no. `thick_air_sit` 1× never sampled.
+- **Cause:** `want_coast` only saw current alt. 55 km is above 18 km
+  and q=937 ≤1 kPa, so 4× stayed on. Pulse slower than 4× descent
+  through the lid. Factory already calls `apply_sit_warp` every pulse
+  (`burning=burning_now`). Not a skipped call.
+- **Fix:** `thick_air_cross_sit` 1× when 4× × 12 s slack × |vz| would
+  land at or below 18 km before the next snap. Unknown vz while
+  descending fail-closed. Quiet 200 km vz=-40 still 4× (T-442). Mun
+  `in_atmo` False is not. Never revert. Do not Hangar.
+- **Modules:** `physics_warp.py`. Not `hop_factory.py`.
+
 ## 2026-08-25T09-01-24Z-hop — telem-eyes-library
 
 - **When:** T-449. t7-wheel-pbc. Query Tape, not jsonl. Do not Hangar.

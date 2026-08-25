@@ -7,14 +7,15 @@ Warp is a clock on sits, not a new flight. Lars composes
 Sits:
 
 - 1×: burn, chute_arm_sit, chute_deploy_sit, silk, recover, high q,
-  thick air (≤18 km lid).
+  thick air (≤18 km lid), thick_air_cross_sit (4× this pulse would
+  skip the lid).
 - Arm: descending (vz<0 / pitch down), lofted, thick air (≤18 km).
   Not light, not only 2 km, not 200 km vacuum (silk ~15 km). Clock is
   already 1× in thick air (15-10-47Z silk at 4× sheared 28→18).
 - Deploy canopy: still ≤2 km or already semi.
 - 4×: lofted coast after real burnout AND q actually low (≤1 kPa) AND
-  not thick air. Quiet descent above thick air honors uplink. Not arm
-  sit. Not silk.
+  not thick air AND not a lid-cross this pulse. Quiet descent above
+  thick air honors uplink. Not arm sit. Not silk.
 - Never rails. Never WarpTo.
 - Timeout budget is MET / down, not wall seconds while 1×.
 - Airborne cannot-pay is a sit flag, not a dwell.
@@ -44,6 +45,10 @@ CHUTE_DEPLOY_ALT_M = 2_000.0
 # RSS FlyingHigh sit start, still thick.
 COAST_Q_MAX_PA = 1_000.0
 THICK_AIR_ALT_M = 18_000.0
+# 09-01Z 4× 55 km q=937 → 6 km q=17510 in 7.7 s wall / 43 MET
+# (27 states / 251 s). Pulse can be slower than 4× through 18 km.
+# Fail closed: this many wall seconds until the next apply_sit_warp.
+WARP_PULSE_SLACK_S = 12.0
 CHUTE_OPEN = frozenset({"deployed", "semi_deployed", "semideployed"})
 _SEMI = frozenset({"semi_deployed", "semideployed"})
 _SILK = "deployed"
@@ -210,6 +215,31 @@ def _descending(snap: object) -> bool:
     return math.isfinite(pitch) and pitch < 0.0
 
 
+def thick_air_cross_sit(snap: object, *, rate: int | None = None) -> bool:
+    """4× this pulse would be at or below 18 km before the next snap.
+
+    09-01Z 4× at 55 km q=937 skipped the lid to 6 km q=17510. Vacuum
+    200 km vz=-40 is not this (T-442). Already-thick is
+    ``thick_air_sit``. Mun ``in_atmo`` False is not. Unknown vz while
+    descending is this (fail closed).
+    """
+    if not _descending(snap):
+        return False
+    if getattr(snap, "in_atmo", None) is False:
+        return False
+    alt = _finite(snap, "alt")
+    if not math.isfinite(alt):
+        return True
+    if alt <= THICK_AIR_ALT_M:
+        return False
+    vz = _finite(snap, "v_vert")
+    n = COAST_RATE if rate is None else min(max(int(rate), 1), _MAX_RATE)
+    if not math.isfinite(vz):
+        return True
+    drop = abs(vz) * WARP_PULSE_SLACK_S * n
+    return alt - drop <= THICK_AIR_ALT_M
+
+
 def chute_arm_sit(snap: object) -> bool:
     """Arm on descent after loft in thick air. Not light. Not only 2 km.
 
@@ -265,20 +295,25 @@ def want_coast(
     left_pad: bool,
     down: bool,
     burning: bool,
+    rate: int | None = None,
 ) -> bool:
     """4× lofted coast after real burnout AND q actually low (≤1 kPa)
-    AND not thick air (≤18 km).
+    AND not thick air (≤18 km) AND not a lid-cross this pulse.
 
     1×: pad, burn, chute_arm_sit, chute_deploy_sit, silk, recover,
-    high q, thick air. Unknown q is not coast-safe. 18 km lid is still
-    thick. Climbing armed may still 4× above thick air. Quiet descent
-    above thick air honors uplink (T-442). Never rails.
+    high q, thick air, thick_air_cross_sit. Unknown q is not
+    coast-safe. 18 km lid is still thick. 09-01Z 4× at 55 km skipped
+    the lid (pulse slower than 4× through 18 km). Climbing armed may
+    still 4× above thick air. Quiet descent above thick air honors
+    uplink (T-442) unless this clock would skip the lid. Never rails.
     """
     if not left_pad or down or burning:
         return False
     if not lofted_sit(snap):
         return False
     if thick_air_sit(snap):
+        return False
+    if thick_air_cross_sit(snap, rate=rate):
         return False
     if high_q_sit(snap):
         return False
@@ -308,10 +343,15 @@ def apply_sit_warp(
     """
     unpause_clock(session)
     rate = coast_rate() if default_rate is None else int(default_rate)
+    clock = rate if uplink_rate is None else int(uplink_rate)
     return apply_coast(
         session,
         coast=want_coast(
-            snap, left_pad=left_pad, down=down, burning=burning
+            snap,
+            left_pad=left_pad,
+            down=down,
+            burning=burning,
+            rate=clock,
         ),
         on_log=on_log,
         last=last,

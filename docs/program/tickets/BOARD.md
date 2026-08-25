@@ -1,15 +1,16 @@
 # Ticket board
 
-open: 74 / 461
+open: 75 / 464
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
-| T-459 | control | bug | S1 | P1 | high | inbox | lars |  | Pad hop light spent Valiant ignition at throttle 0; ignitions remaining 0 |
+| T-464 | control | bug | S1 | P1 | high | inbox | lars |  | T-462 live: control throttle 1 ignitions 0 engine Current Throttle 0 still pre_launch |
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
 | T-449 | systems | bug | S2 | P1 | medium | inbox | wernher |  | jsonl helpers: last-state vs recover sit, sci_rem vs bank, 4x q skip (09-01Z) |
 | T-458 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI sci-unchanged-recovered ×15 |
+| T-463 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI rf-ignition-ullage ×3 |
 | T-404 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,barometer,bound | FlyingHigh barometer unstarted 2.70 |
 | T-460 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinglow,barometer,bound | FlyingLow barometer 2.10 |
 | T-461 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,shores,barometer,splash,bound | Shores SrfSplashed barometer 0.90 |

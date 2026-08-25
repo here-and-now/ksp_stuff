@@ -1,0 +1,3 @@
+{"t": 0.0, "kind": "start", "msg": "command=hangar crew=", "earth_utc": "2026-08-25 10:44:16 UTC", "earth_stamp": "2026-08-25T10-44-16Z", "kerbal_ut_s": 322882.634, "kerbal_met_s": null, "kerbal_ut": "3d 17:41:22 UT", "kerbal_met": "?"}
+{"t": 2.015, "kind": "hangar", "msg": "launch kspstuff-hop-valiant-t7-wheel-pbc", "site": "LaunchPad"}
+{"t": 11.863, "kind": "hangar", "msg": "scene flight", "site": "LaunchPad"}

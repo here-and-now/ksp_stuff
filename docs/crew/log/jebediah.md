@@ -203,3 +203,6 @@
 - 2026-08-25T06-57-16Z hop exit=2 abort=ksc leftover sit=flying recoverable=no call: python main.py recover-probe --space-center total wreck → docs/missions/jebediah/logs/2026-08-25T06-57-16Z-hop.md review=docs/archive/reviews/2026-08-25T06-57-16Z-hop-review.md
 - 2026-08-25T07-51-42Z hop exit=0 → docs/missions/jebediah/logs/2026-08-25T07-51-42Z-hop.md review=docs/archive/reviews/2026-08-25T07-51-42Z-hop-review.md
 - 2026-08-25T08-02-31Z hop exit=0 → docs/missions/jebediah/logs/2026-08-25T08-02-31Z-hop.md review=docs/archive/reviews/2026-08-25T08-02-31Z-hop-review.md
+- 2026-08-25T10-57-36Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-25T10-57-36Z-hop.md review=docs/archive/reviews/2026-08-25T10-57-36Z-hop-review.md
+- 2026-08-25T11-11-44Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-25T11-11-44Z-hop.md review=docs/archive/reviews/2026-08-25T11-11-44Z-hop-review.md
+- 2026-08-25T11-22-32Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-25T11-22-32Z-hop.md review=docs/archive/reviews/2026-08-25T11-22-32Z-hop-review.md

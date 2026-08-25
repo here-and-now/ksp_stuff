@@ -68,6 +68,7 @@ _VERBS = tuple(
             "stage",
             "recover",
             "science",
+            "transmit",
             "abort_pad",
             "resume",
             "capture",

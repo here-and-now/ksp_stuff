@@ -19,6 +19,7 @@ NAMES: tuple[str, ...] = (
     "stage",
     "recover",
     "science",
+    "transmit",
     "abort_pad",
 )
 
@@ -32,9 +33,13 @@ ALIASES: dict[str, str] = {
     "stage": "stage",
     "recover": "recover",
     "science": "science",
+    "transmit": "transmit",
     "abort_pad": "abort_pad",
     "abort": "abort_pad",
 }
+
+# Kerbalism TX is an Experiment event. Never Toggle (start/stop) or stock dump.
+_TX_NEVER = ("toggle", "dump", "reset")
 
 
 @dataclass
@@ -184,6 +189,80 @@ def science(ctx: Ctx) -> str:
     return "science:" + ",".join(ids) if ids else "science"
 
 
+def _is_tx_event(text: str) -> bool:
+    low = (text or "").strip().lower()
+    if not low or any(w in low for w in _TX_NEVER):
+        return False
+    return "transmit" in low
+
+
+def _fire_tx_event(module: Any) -> bool:
+    """Kerbalism Experiment Transmit event. Not stock Experiment.transmit()."""
+    try:
+        event_list = list(getattr(module, "event_list", None) or [])
+    except Exception:
+        event_list = []
+    for ev in event_list:
+        gui = str(getattr(ev, "gui_name", "") or "")
+        ident = str(getattr(ev, "name", "") or "")
+        if not (_is_tx_event(gui) or _is_tx_event(ident)):
+            continue
+        if getattr(ev, "active", True) is False:
+            continue
+        trig = getattr(ev, "trigger", None)
+        if callable(trig):
+            try:
+                trig()
+                return True
+            except Exception:
+                continue
+    try:
+        names = list(getattr(module, "events", None) or [])
+    except Exception:
+        names = []
+    for ev_name in names:
+        if not _is_tx_event(str(ev_name)):
+            continue
+        trigger = getattr(module, "trigger_event", None)
+        if callable(trigger):
+            try:
+                trigger(ev_name)
+                return True
+            except Exception:
+                pass
+        by_id = getattr(module, "trigger_event_by_id", None)
+        if callable(by_id):
+            try:
+                by_id(ev_name)
+                return True
+            except Exception:
+                continue
+    return False
+
+
+def transmit(ctx: Ctx) -> str:
+    """Flag Kerbalism files via Experiment TX events. Never stock dump/reset."""
+    from science import iter_science_modules
+
+    vessel = _vessel(ctx)
+    if vessel is None:
+        _emit(ctx, "call", name="transmit", ids=[])
+        return "transmit"
+    want = None
+    if ctx.science_ids is not None:
+        want = {str(n).strip() for n in ctx.science_ids if str(n).strip()}
+    done: list[str] = []
+    for _part, module, eid in iter_science_modules(vessel):
+        label = str(eid or "").strip() or str(getattr(module, "name", "") or "Experiment")
+        if want is not None and label not in want:
+            continue
+        if _fire_tx_event(module):
+            done.append(label)
+    _emit(ctx, "transmit", ids=list(done))
+    _emit(ctx, "call", name="transmit")
+    return "transmit:" + ",".join(done) if done else "transmit"
+
+
 def abort_pad(ctx: Ctx) -> str:
     cut(ctx)
     result = recover(ctx)
@@ -198,6 +277,7 @@ CALLABLES: dict[str, Callable[[Ctx], str]] = {
     "stage": stage,
     "recover": recover,
     "science": science,
+    "transmit": transmit,
     "abort_pad": abort_pad,
 }
 

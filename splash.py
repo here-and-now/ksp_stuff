@@ -43,7 +43,8 @@ log = logging.getLogger("kspstuff")
 
 _PULSE_S = 1.0
 _ABORT_UPLINK = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
-_UPLINK_SKIP = frozenset({"science", "stage"})
+# Extra-stage is splash's. Science/transmit are Gene radio (Kerbalism events).
+_UPLINK_SKIP = frozenset({"stage"})
 _SPLASHED = frozenset({"splashed"})
 _LANDED = frozenset({"landed"})
 _PAD_SIT = frozenset({"pre_launch", "prelaunch"})

@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-25 — T-445 ra-rate: hop/splash take science+transmit. Kerbalism Experiment TX events, not stock dump/reset/transmit(). Toggle is start/stop. Cape 64 bps. No science.py (T-440). No hop_factory. This pid will not reload. Never revert.
+
 - 2026-08-25 — T-442 hop-coast-phys-warp: `chute_arm_sit` is lofted descent in thick air ≤18 km, not 200 km vacuum. Quiet descent honors uplink. 1× thick air / high q / silk / burn. No hop_factory. Never revert.
 
 - 2026-08-25 — T-427 prove passed: Cape RateToHome 64 is table and path. T-426 want_coast 1× in thick air ≤18 km; unknown q fail-closed. No Hangar. No hop. Never revert.

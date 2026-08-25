@@ -9,7 +9,7 @@ import time
 import unittest
 from pathlib import Path
 
-from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold
+from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold, transmit
 from tape import Tape, envelope, format_envelope
 from telem import (
     EventLog,
@@ -328,11 +328,93 @@ class TestEmergencies(unittest.TestCase):
             "stage",
             "recover",
             "science",
+            "transmit",
             "abort_pad",
         ):
             self.assertIn(name, CALLABLES)
             self.assertIs(uplink.CALLABLES[name], CALLABLES[name])
         self.assertIs(uplink.CALLABLES["abort_pad"], abort_pad)
+        self.assertIs(uplink.CALLABLES["transmit"], transmit)
+
+    def test_transmit_fires_kerbalism_event_not_stock_or_toggle(self):
+        class _Ev:
+            def __init__(self, name, gui, active=True):
+                self.name = name
+                self.gui_name = gui
+                self.active = active
+                self.n = 0
+
+            def trigger(self):
+                self.n += 1
+
+        class _Mod:
+            def __init__(self):
+                self.name = "Experiment"
+                self.fields = {"experiment_id": "temperatureScan"}
+                self.events = ["Start Experiment", "Toggle", "Dump", "Reset", "Transmit"]
+                self.event_list = [
+                    _Ev("ToggleEvent", "Toggle"),
+                    _Ev("Dump", "Dump"),
+                    _Ev("Reset", "Reset"),
+                    _Ev("TransmitEvent", "Transmit"),
+                ]
+                self.triggered: list[str] = []
+
+            def trigger_event(self, name):
+                self.triggered.append(name)
+
+        class _Parts:
+            def __init__(self, part):
+                self.all = [part]
+
+            @property
+            def experiments(self):
+                raise AssertionError("must not use vessel.parts.experiments")
+
+        mod = _Mod()
+        part = type("P", (), {"name": "sensorThermometer", "modules": [mod]})()
+        vessel = _Vessel(sit="flying")
+        vessel.parts = _Parts(part)
+        ctx = Ctx(
+            session=_Session(vessel),
+            vessel=vessel,
+            events=EventLog(),
+            science_ids=("temperatureScan",),
+        )
+        self.assertEqual(call("transmit", ctx), "transmit:temperatureScan")
+        self.assertEqual(mod.event_list[3].n, 1)
+        self.assertEqual(mod.event_list[0].n, 0)
+        self.assertEqual(mod.event_list[1].n, 0)
+        self.assertEqual(mod.event_list[2].n, 0)
+        self.assertEqual(mod.triggered, [])
+        self.assertTrue(any(e["event"] == "transmit" for e in ctx.events.events))
+
+    def test_transmit_does_not_toggle_when_no_tx_event(self):
+        class _Mod:
+            def __init__(self):
+                self.name = "Experiment"
+                self.fields = {"experiment_id": "mysteryGoo"}
+                self.events = ["Start Experiment", "Toggle"]
+                self.triggered: list[str] = []
+
+            def trigger_event(self, name):
+                self.triggered.append(name)
+
+        class _Parts:
+            def __init__(self, part):
+                self.all = [part]
+
+            @property
+            def experiments(self):
+                raise AssertionError("must not use vessel.parts.experiments")
+
+        mod = _Mod()
+        part = type("P", (), {"name": "GooExperiment", "modules": [mod]})()
+        vessel = _Vessel(sit="flying")
+        vessel.parts = _Parts(part)
+        ctx = Ctx(session=_Session(vessel), vessel=vessel, events=EventLog())
+        self.assertEqual(call("transmit", ctx), "transmit")
+        self.assertEqual(mod.triggered, [])
 
     def test_cut_and_hold(self):
         vessel = _Vessel()

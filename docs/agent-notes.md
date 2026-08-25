@@ -474,8 +474,10 @@ test: encode the name mapping and assert file vs `vessel.parts` after launch.
 `available`, `has_data`, `inoperable`, `rerunnable`, `deployed`,
 `biome`, `run()` / `reset()` / `dump()` / `transmit()`.
 
-`science.run_ready` calls `run()` only. Do **not** transmit goo. Do
-**not** `dump`/`reset`. Skip EVA. Mk1 `ModuleScienceContainer` is
+`science.run_ready` calls `run()` only. Never stock `Experiment.transmit()` /
+`dump()` / `reset()`. Skip EVA. Kerbalism TX is an Experiment **event**
+(`Transmit` / `TransmitEvent`), uplink verb `transmit` (T-445). Cape
+`RateToHome` is 64 bps. Mk1 `ModuleScienceContainer` is
 `evaOnlyStorage = True`. `Run()` refuses `has_data`.
 
 **Kerbalism pad** is not that API. Live MM cache: Goo / thermometer /
@@ -488,9 +490,10 @@ KSPField. Use `Module.field_list` (`PartField.name` / `.value`),
 `gui_name` is localized Start/Stop). `parts.modules_with_name("Experiment")`
 lists them. Those Module objects are **new proxies** — Python `id()` is
 not a stable key vs `part.modules`. Dedup by (part name, experiment_id).
-`Toggle` / `ToggleEvent` starts *and* stops; fire once. `science.start_experiments`
-does **not** call `Experiment.run()`. Recover the HardDrive **after dwell**;
-do not transmit. Kerbalism Default is time + EC: goo ~641 s (`size` 429 MB
+`Toggle` / `ToggleEvent` starts *and* stops; fire once. Do not Toggle to TX.
+`science.start_experiments` does **not** call `Experiment.run()`. Recover
+the HardDrive **after dwell**, or Gene `uplink transmit` for Kerbalism TX
+events (never stock dump/reset/transmit()). Cape 64 bps. Kerbalism Default is time + EC: goo ~641 s (`size` 429 MB
 / `data_rate` ~0.669, `ec_rate` 0.18 on `GooExperiment`), thermometer
 ~138 s (`ec_rate` 0.002). `sample_amount` is sample count, not duration.
 Z-100 is 100 EC; Stayputnik 10; no solar on `kspstuff-pad-pbc`. Pad dwell

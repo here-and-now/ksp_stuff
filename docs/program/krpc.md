@@ -158,11 +158,13 @@ Os dropped `KRPC.RealAntennas.dll` into `GameData/kRPC`. Live
 `krpc_realantennas/` (`build.sh` does **not** copy to GameData).
 
 **Honesty.** Sandbox RA defaults GSTL to MaxTL. House `ra_align`
-stamps **owned comms TL** on desk / Close (`AlignTechLevel`). That is
-not a cheat. Cheats: stamp MaxTL, raise TxPower to invent range,
-`SetTarget*` to fake a path, ignore deaf, write GameData. We
-**discover** targeting / rate / hops when a hop actually goes deaf.
-Do not put dishes on every hang “just in case.”
+stamps **owned comms TL** on desk / Close (`AlignTechLevel`). GSTL=2
+is real. **64 bps is the TechLevelInfo table, not the Cape path**
+(measured RateToHome 31500 bps / Kerbalism 3.94 kB/s). Align did
+**not** finish RF. C# first: T-427 / `docs/program/ra-rate.md`. Cheats:
+stamp MaxTL, raise TxPower to invent range, `SetTarget*` to fake a
+path, ignore deaf, write GameData. Do not put dishes on every hang
+“just in case.” Do not plan dump hours from `python main.py comms`.
 
 **What exists (when we need it):** catalog `Bands` / `TechLevels` /
 `GroundStations` / GSTL / `MinRelayTechLevel`. Per vessel

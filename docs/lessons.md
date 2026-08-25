@@ -21,6 +21,20 @@ python main.py pad
 
 ---
 
+## 2026-08-25 — RA 64 bps is the table, not the path
+
+- **When:** Os pad measure after Align GSTL=2. T-427.
+- **Symptom:** `python main.py comms` / desks: owned TL2 **64 bps**.
+  Live Cape `RateToHome` **31500** bps, Kerbalism **3.94 kB/s**.
+- **Cause:** `MaxDataRateToHome` = min Fwd/Rev from `RateBoundariesJob`
+  (L ChannelWidth 31.5 kHz × 1 bit/s/Hz). Never reads
+  `TechLevelInfo.MaxDataRate`. Align stamped GSTL, not RF.
+- **Fix (C# first):** Harmony-clamp RateBoundaries/FwdDataRate to the
+  antenna TL MaxDataRate. Not MM TechLevel. Not dump-only. Packet
+  `docs/program/ra-rate.md`. `build.sh` does not install.
+- **Modules:** `krpc_realantennas/` (Harmony, 000_Harmony already in
+  GameData). Dump header and tape `RateToHome` are second.
+
 ## 2026-08-25 — ctt-stability
 
 - **When:** T-399. After Mortimer paid `stability`. Desk tree lists it.

@@ -558,10 +558,17 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-25** — Os measured Cape: GSTL/PAW/diff_max=2 (Align real).
+  `TechLevelInfo.MaxDataRate` 64 is **table**. `RateToHome` 31500 bps
+  = L ChannelWidth (MaxDataRateToHome = min Fwd/Rev; never reads the
+  table). Kerbalism 3.9375 kB/s = 31500/8000. C# first: Harmony
+  `RateBoundariesJob` so live rate cannot exceed TL MaxDataRate.
+  Packet: `docs/program/ra-rate.md` T-427. Dump `64 bps` is not path.
+  Hop tape does not log `RateToHome`.
 - **2026-08-25** — Os: `KRPC.RealAntennas.dll` in GameData/kRPC.
   `conn.real_antennas` live (Flight / Tracking / KSC). `ra_align`
-  stamps owned comms TL (anti-cheat vs sandbox MaxTL). Targeting /
-  rate / hops: discover when a hop goes deaf. Do not cheat a link.
+  stamps owned comms TL (anti-cheat vs sandbox MaxTL). Targeting:
+  discover when a hop goes deaf. Do not cheat a link.
 - **2026-08-24** — T-325: stream `comms.can_communicate` / `signal_strength`;
   `control_path` home `CommNode.Name` on the slow pulse. RT-only
   `PilotAddon.HasControlConnection`. RA targeting is the 2026-08-25

@@ -96,8 +96,10 @@ the pad.
 - PyQt UI, scratch vessel scripts. Never revert unless Os said so
   **this sit**.
 - Cheat a RealAntennas link (MaxTL, fake `SetTarget*` / TxPower,
-  ignore deaf). Service is live; discover use when a hop goes deaf.
-  Brief: `docs/program/krpc.md`.
+  ignore deaf). Service is live. **T-427 / `docs/program/ra-rate.md`:**
+  GSTL=2 is real; 64 bps is the table; live Cape is 31.5 kbps. Patch
+  `RateBoundaries`/`FwdDataRate` with Harmony (already in GameData).
+  Do not MM TechLevel. Do not hop for this.
 
 **Git (Os 2026-08-25):** after you patch `.py` / kRPC notes, `git add`
 those paths and `git commit` a sentence. Do not wait for Hank. Do

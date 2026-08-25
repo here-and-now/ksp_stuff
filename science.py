@@ -64,10 +64,10 @@ _START_EVENTS = (
 _KERBALISM_MODULES = frozenset({"Experiment", "ModuleScienceExperiment"})
 _KERBALISM_MODULE_ALIASES = frozenset({"moduleksmexperiment", "kerbalismexperiment"})
 # Duration experiments sit at remaining=0 before a fresh start. Sample rem=0
-# cannot pay this sit. File duration (TELEMETRY, 2HOT, geiger) still needs a
-# sit/biome match. FlyingHigh is alt ≥50 km, not any flying sit (1 km loft is
-# FlyingLow). TELEMETRY-family often has no rem PAW while the file is still
-# open; 2HOT always exposes remaining.
+# (goo) cannot pay this sit. File duration rem=0 (TELEMETRY, 2HOT, PresMat,
+# geiger) still needs a sit/biome match. FlyingHigh is alt ≥50 km, not any
+# flying sit (1 km loft is FlyingLow). TELEMETRY-family often has no rem PAW
+# while the file is still open; 2HOT / PresMat expose remaining.
 _FLYING_HIGH_ALT_M = 50_000.0
 _KERBALISM_FILE_EIDS = frozenset(
     {
@@ -77,7 +77,13 @@ _KERBALISM_FILE_EIDS = frozenset(
         "kerbalism_SITE",
     }
 )
-_DURATION_EIDS = _KERBALISM_FILE_EIDS | {"temperatureScan", "geigerCounter"}
+_DURATION_EIDS = _KERBALISM_FILE_EIDS | {
+    "temperatureScan",
+    "geigerCounter",
+    "barometerScan",
+}
+# Sample rem=0 is spent. File rem=0 still pays even when the eid is new.
+_SAMPLE_EIDS = frozenset({"mysteryGoo", "surfaceSample", "evaScience"})
 _DRIVE_MODULES = frozenset({"HardDrive", "harddrive"})
 _EMPTY_DRIVE = frozenset(
     {
@@ -112,6 +118,7 @@ _DRIVE_DATA_KEYS = (
 _PART_EXPERIMENTS = {
     "GooExperiment": "mysteryGoo",
     "sensorThermometer": "temperatureScan",
+    "sensorBarometer": "barometerScan",
     "kerbalism-geigercounter": "geigerCounter",
     "probeCoreSphere_v2": "kerbalism_TELEMETRY",
     "probeCoreSphere": "kerbalism_TELEMETRY",
@@ -454,6 +461,8 @@ def _slot_rank(part: Any, eid: str) -> int:
         return 0
     if eid == "temperatureScan" and "thermometer" in pname:
         return 0
+    if eid == "barometerScan" and "barometer" in pname:
+        return 0
     if eid == "mysteryGoo" and "goo" in stem.lower():
         return 0
     if eid == "geigerCounter" and "geiger" in pname:
@@ -787,12 +796,46 @@ def sit_matches(
     return True
 
 
+def _is_sample(module: Any, eid: str) -> bool:
+    """Goo / EVA sample. File sensors expose remaining, not remainingSampleMass."""
+    token = str(eid or "").strip()
+    if token in _SAMPLE_EIDS or token in EVA_EXPERIMENTS:
+        return True
+    return module_field(module, "remainingSampleMass") is not None
+
+
 def remaining_pays(module: Any, eid: str) -> bool:
-    """Sample remaining=0 cannot pay. Duration idle rem=0 still might."""
+    """Sample remaining=0 cannot pay. File duration idle rem=0 still might."""
     rem = _remaining_value(module)
     if rem is None or rem > 0.0:
         return True
-    return str(eid or "").strip() in _DURATION_EIDS
+    token = str(eid or "").strip()
+    if token in _DURATION_EIDS:
+        return True
+    return not _is_sample(module, eid)
+
+
+def _union_card_eids(
+    names: Iterable[str] | None,
+    need: dict[str, tuple[str, str]] | None,
+) -> list[str] | None:
+    """Names plus bound need eids. Fly extras cannot hide splash leftover."""
+    if names is None:
+        return None
+    out: list[str] = []
+    seen: set[str] = set()
+
+    def add(raw: object) -> None:
+        token = str(raw or "").strip()
+        if token and token not in seen:
+            seen.add(token)
+            out.append(token)
+
+    for n in names:
+        add(n)
+    for eid in need or ():
+        add(eid)
+    return out
 
 
 def experiment_can_pay(
@@ -826,18 +869,12 @@ def start_experiments(
     Does **not** call ``vessel.parts.experiments`` / ``Experiment.run()``.
     One trigger per experiment_id (card order). Native part wins — Stayputnik
     ``temperatureScan`` is a duplicate of 2HOT; a second Toggle stops Kerbalism.
+    Bound ``need`` eids stay in the card: wrong sit logs cannot-pay, not
+    not-in-card. Fly extras cannot hide splash leftover.
     """
-    want_list: list[str] | None = None
-    want: set[str] | None = None
-    if names is not None:
-        want_list = []
-        seen_want: set[str] = set()
-        for n in names:
-            token = str(n).strip()
-            if token and token not in seen_want:
-                seen_want.add(token)
-                want_list.append(token)
-        want = set(want_list)
+    need_map = need or {}
+    want_list = _union_card_eids(names, need_map) if names is not None else None
+    want = set(want_list) if want_list is not None else None
     done: list[str] = []
     live_sit = (
         sit if sit is not None else str(_attr(vessel, "situation", "") or "")
@@ -845,7 +882,6 @@ def start_experiments(
     live_biome = (
         biome if biome is not None else str(_attr(vessel, "biome", "") or "")
     ).strip()
-    need_map = need or {}
 
     def _say(msg: str) -> None:
         log.info(msg)

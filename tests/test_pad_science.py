@@ -1071,6 +1071,123 @@ class TestSituationCanPay(unittest.TestCase):
         self.assertEqual(ran, ["geigerCounter"])
         self.assertEqual(geiger.triggered, ["Start Experiment"])
 
+        baro = _Mod("Experiment", "barometerScan")
+        baro.fields["remaining"] = 0
+        bv = _Vessel([baro], sit="splashed")
+        bv.parts = _Parts([_Part("sensorBarometer", [baro])])
+        need_b = {"barometerScan": ("SrfSplashed@Water", "Water")}
+        self.assertEqual(
+            paying_eids(
+                bv,
+                ("barometerScan",),
+                sit="splashed",
+                biome="Water",
+                need=need_b,
+            ),
+            ["barometerScan"],
+        )
+        ran = start_experiments(
+            bv,
+            names=("barometerScan",),
+            sit="splashed",
+            biome="Water",
+            need=need_b,
+        )
+        self.assertEqual(ran, ["barometerScan"])
+        self.assertEqual(baro.triggered, ["Start Experiment"])
+
+    def test_bound_need_stays_in_card(self):
+        """Splash leftover stays in-card. Flying skip is cannot-pay, not not-in-card."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 0
+        baro = _Mod("Experiment", "barometerScan")
+        baro.fields["remaining"] = 0
+        geiger = _Mod("Experiment", "geigerCounter")
+        geiger.fields["remaining"] = 0
+        goo = _Mod("Experiment", "mysteryGoo")
+        goo.fields["remaining"] = 1.0
+        vessel = _Vessel([goo], sit="flying")
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("sensorThermometer", [thermo]),
+                _Part("sensorBarometer", [baro]),
+                _Part("kerbalism-geigercounter", [geiger]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        need = {
+            "kerbalism_TELEMETRY": ("SrfSplashed@Water", "Water"),
+            "temperatureScan": ("SrfSplashed@Water", "Water"),
+            "barometerScan": ("SrfSplashed@Water", "Water"),
+        }
+        names = ("barometerScan", "geigerCounter", "mysteryGoo")
+        lines: list[str] = []
+        ran = start_experiments(
+            vessel,
+            names=names,
+            on_log=lines.append,
+            sit="flying",
+            biome="Shores",
+            need=need,
+            alt=54_000.0,
+        )
+        self.assertEqual(ran, ["geigerCounter", "mysteryGoo"])
+        self.assertFalse(any("not in card" in x for x in lines if "TELEMETRY" in x))
+        self.assertFalse(
+            any("not in card" in x for x in lines if "temperatureScan" in x)
+        )
+        self.assertFalse(
+            any("not in card" in x for x in lines if "barometerScan" in x)
+        )
+        self.assertTrue(any("cannot pay" in x and "kerbalism_TELEMETRY" in x for x in lines))
+        self.assertTrue(any("cannot pay" in x and "temperatureScan" in x for x in lines))
+        self.assertTrue(any("cannot pay" in x and "barometerScan" in x for x in lines))
+        self.assertEqual(tel.triggered, [])
+        self.assertEqual(thermo.triggered, [])
+        self.assertEqual(baro.triggered, [])
+
+        tel.triggered.clear()
+        thermo.triggered.clear()
+        baro.triggered.clear()
+        geiger.triggered.clear()
+        goo.triggered.clear()
+        lines.clear()
+        ran = start_experiments(
+            vessel,
+            names=names,
+            on_log=lines.append,
+            sit="splashed",
+            biome="Water",
+            need=need,
+        )
+        self.assertIn("kerbalism_TELEMETRY", ran)
+        self.assertIn("temperatureScan", ran)
+        self.assertIn("barometerScan", ran)
+        self.assertFalse(any("not in card" in x for x in lines))
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(thermo.triggered, ["Start Experiment"])
+        self.assertEqual(baro.triggered, ["Start Experiment"])
+        paid = paying_eids(
+            vessel, names, sit="splashed", biome="Water", need=need
+        )
+        self.assertIn("barometerScan", paid)
+        self.assertNotIn("kerbalism_TELEMETRY", paid)
+        self.assertNotIn("temperatureScan", paid)
+        paid_bound = paying_eids(
+            vessel,
+            ("kerbalism_TELEMETRY", "temperatureScan", "barometerScan"),
+            sit="splashed",
+            biome="Water",
+            need=need,
+        )
+        self.assertEqual(
+            paid_bound,
+            ["kerbalism_TELEMETRY", "temperatureScan", "barometerScan"],
+        )
+
     def test_srflanded_skips_while_flying(self):
         mod = _Mod("Experiment", "temperatureScan")
         mod.fields["remaining"] = 114

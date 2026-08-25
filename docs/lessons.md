@@ -21,6 +21,28 @@ python main.py pad
 
 ---
 
+## 2026-08-25T07-51-42Z-hop — hold-ground-card
+
+- **When:** T-436. t7-wheel-pbc. Bound splash Water T-028 TELEMETRY /
+  T-422 2HOT / T-423 PresMat. f013 TELEMETRY Stayputnik host on_craft=yes;
+  2HOT start on_craft=yes; PresMat stability on_craft=yes. Tree
+  start,engineering101,basicRocketry,survivability,stability. Do not Hangar.
+  Never revert.
+- **Symptom:** High lid 50 km apo 225 km splash Water rec=yes exit 0.
+  skip TELEMETRY / temperatureScan / barometerScan **not in card** while
+  desk card lists them. Started goo+geiger (High leftover rem≈0). Bank
+  2.29 +0. Splash bind unpaid.
+- **Cause:** T-081 fly extras `barometerScan,geigerCounter,mysteryGoo`
+  hid splash leftover. `paying_eids` dropped cannot-pay then
+  `start_experiments` logged the rest not-in-card. PresMat idle rem=0
+  was not duration (2HOT was). Airborne skip should be cannot-pay;
+  Water splash still Toggles the leftover.
+- **Fix:** Bound `need` eids stay in the card — fly extras cannot hide
+  splash leftover. Wrong sit logs cannot-pay, not not-in-card. File rem=0
+  (PresMat as well as 2HOT / TELEMETRY / geiger) still pays; sample rem=0
+  (goo) still skips. Forest / Grasslands / Water: same. Never revert.
+- **Modules:** `science.py`. Not `hop_factory.py` this hire (XOR).
+
 ## 2026-08-25T06-57-16Z-hop — flyinghigh-lid
 
 - **When:** T-424. t7-wheel-pbc. Bound splash Water T-028/T-422/T-423.

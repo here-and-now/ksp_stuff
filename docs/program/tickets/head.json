@@ -17359,13 +17359,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Harvest only: law already T-456; stem rf-ignition-ullage count 5. Live miss is Lars T-464. No RF-ullage rewrite.",
       "created": "2026-08-25T11:14:51Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "rf-ignition-ullage",
       "id": "T-463",
       "payload": {
-        "count": 3
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-25T20:22:15Z",
+            "claim": "Harvest only: rf-ignition-ullage RSI \u00d73 (stem count 5). Law already T-456 (pad 1 g lights; restart not free; verify per hang; no part\u2192N table; do not raise ignitions). T-464 still owns the live miss (Lars hop_factory). Did not rewrite RF-ullage law. Pad still flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -17373,11 +17384,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI rf-ignition-ullage \u00d73",
       "type": "rsi",
-      "updated": "2026-08-25T11:14:51Z"
+      "updated": "2026-08-25T20:22:15Z"
     },
     "T-464": {
       "assignee": "",
@@ -17402,5 +17413,5 @@
       "updated": "2026-08-25T11:25:46Z"
     }
   },
-  "updated": "2026-08-25T11:25:46Z"
+  "updated": "2026-08-25T20:22:15Z"
 }

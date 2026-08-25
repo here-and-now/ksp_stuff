@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 75 / 464
+open: 74 / 464
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -10,7 +10,6 @@ open: 75 / 464
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
 | T-449 | systems | bug | S2 | P1 | medium | inbox | wernher |  | jsonl helpers: last-state vs recover sit, sci_rem vs bank, 4x q skip (09-01Z) |
 | T-458 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI sci-unchanged-recovered ×15 |
-| T-463 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI rf-ignition-ullage ×3 |
 | T-404 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,barometer,bound | FlyingHigh barometer unstarted 2.70 |
 | T-460 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinglow,barometer,bound | FlyingLow barometer 2.10 |
 | T-461 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,shores,barometer,splash,bound | Shores SrfSplashed barometer 0.90 |

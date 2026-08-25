@@ -698,6 +698,12 @@ story this fly. Dead kRPC GUID is not leftover.
   MECO / lid / `_hold_or_cut` suicide relight is false. Lars
   T-457 `hop_factory.py` (not `hop.py`, not Wernher). Never
   GameData. An RSI letter does not empty the pad.
+- **2026-08-25 rf-ignition-ullage (T-463 RSI ×3, stem count 5):**
+  Harvest only. Law already T-456 (pad 1 g lights; throttle 0 then
+  1 is a restart; verify per hang; no part→N table; do not raise
+  ignitions). Live miss is Lars T-464 `hop_factory.py` — not
+  Wernher, not GameData. Do not rewrite RF-ullage law. An RSI
+  letter does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

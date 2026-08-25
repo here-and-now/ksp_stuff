@@ -1,6 +1,6 @@
 # Lars Grokman — log
 
-- 2026-08-25 — T-446 hold-ground-card: hop_factory leftover Toggles when down after airborne cannot-pay (09-01-24Z Water rec=yes bank 2.29 unpaid). Do not Hangar.
+- 2026-08-25 — T-446 hold-ground-card: Tape 09-01-24Z last flying 6 km q=17510 rec=no; last-flight splash rec=yes is after that snap. Bank 2.29 is sci_rem=0 entire (capped), not missing Toggle. Factory already calls apply_sit_warp; leftover Toggle when down still if splash 1× rec=yes. Do not Hangar.
 - 2026-08-25 — T-440 hold-ground-card: idle file rem=0 is not dwell-done; sit-matched splash leftover still Toggles after airborne goo+geiger cannot-pay (08-20-54Z Water rec=yes bank +0). Do not Hangar.
 - 2026-08-25 — T-438 hop-coast-phys-warp: hop_factory High dwell is not a burn; `apply_sit_warp` `burning=burning_now` only so Hank `phys-warp 4` after 50 km lid is honored (08-20-54Z stayed 1×). Do not Hangar.
 - 2026-08-25 — T-436 hold-ground-card: science.py bound need eids stay in-card (cannot-pay, not not-in-card); file rem=0 including PresMat still pays. 07-51-42Z skipped TELEMETRY/thermo/PresMat then recovered Water splash unpaid. Sample rem=0 still skips. Do not Hangar.

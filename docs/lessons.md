@@ -44,15 +44,19 @@ python main.py pad
   T-422 2HOT / T-423 PresMat. Fly extras goo+geiger. f013 TELEMETRY
   Stayputnik on_craft=yes; 2HOT start on_craft=yes; PresMat stability
   on_craft=yes. Tree start,engineering101,basicRocketry,survivability,stability.
-  Do not Hangar. Never revert.
-- **Symptom:** After T-440 close, 09-01-24Z still recovered sit=splashed
-  Water rec=yes without Toggle TELEMETRY/thermo/PresMat. Bank 2.29 +0.
-  Airborne skip leftover cannot-pay, start goo+geiger, hop down, recover.
-- **Cause:** Factory leftover Toggle keyed off sit_ground only. Airborne
-  science is `not down`, so splash never entered that pass. Matching
-  leftover emptied, pending skipped `_start_paying`. Airborne cannot-pay
-  is a skip flag, not dwell-done.
-- **Fix:** `_leftover_sit` still Toggles sit-matched leftover when down.
+  Do not Hangar. Never revert. Query Tape, not last-flight.
+- **Symptom:** Tape last snap sit=flying alt=6054 q=17510 rec=no
+  v_vert=-214 chute=none. Landing synthesized catastrophic 214 m/s.
+  sci_rem=0 entire flight; sci_bank 2.29 never moved. 4× skip 55 km
+  q=937 → 6 km q=17510 in ~8 s wall. last-flight recovered splash
+  rec=yes is after that snap. Splash TELEMETRY capped; goo/geiger High
+  capped; Forest TELEMETRY leftover is Forest, this hop Shores→Water.
+- **Cause:** Bank 2.29 is rem=0 / capped subjects, not a missing splash
+  Toggle. Tape never sat splash rec=yes. Factory leftover was
+  sit_ground-only so `_start_paying` still never ran if we *do* splash
+  at 1× rec=yes. Factory already calls `apply_sit_warp` every pulse
+  (`burning=burning_now`); 4× through thick air is not a skipped call.
+- **Fix:** `_leftover_sit` Toggles sit-matched leftover when down.
   Pending is leftover ids union matching. Forest / Grasslands / Water:
   same. Never revert. Do not Hangar.
 - **Modules:** `hop_factory.py`.

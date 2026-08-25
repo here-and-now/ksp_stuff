@@ -6,21 +6,20 @@ Kardashev III or bust.**
 <p align="center">
   <a href="docs/press/first-space.md"><img src="screenshots/first-space-black.png" alt="Stayputnik, seven tanks, thin blue limb, stars"></a>
 </p>
-<p align="center"><em>Stayputnik. Seven tanks. No Mk16. A thin blue limb. Suborbital. Periapsis is still a hole through the planet.</em><br>
+<p align="center"><em>Stayputnik. Seven tanks. No parachute. A thin blue limb. Suborbital. Periapsis is still a hole through the planet.</em><br>
 <small><a href="docs/press/first-space.md">The smiles came home</a>
-· 24 Aug 2026 · Flying High · apo **~275 km** · not orbit</small></p>
+· 24 Aug 2026 · not orbit</small></p>
 
 We are a real Earth space program run by **agents**. Every chair is
 filled — not a bot in the corner, not a human with a clicker.
 A Stayputnik sat twelve minutes on Cape grass until the Goo came
 home. A Flea climbed two kilometers and the log went quiet. The
-Atlantic ate a Valiant until a can lived at **9.11 m/s**. Then we
-hung silk, put girders on rockets like a space elevator, and flew
-inland into the same Forest until the house actually went High.
-Apo **~275 km**. Suborbital. Mortimer paid `stability`. The Geiger
-leftover from that High came home. The bank is **2.29 sci**. Next
-is `generalRocketry`. The pad is occupied. We have never orbited
-Earth.
+Atlantic ate a Valiant until a can lived. Then we hung silk, put
+girders on rockets like a space elevator, and flew inland into the
+same Forest until the sky went black. We lofted **two hundred and
+seventy-five kilometers**. Suborbital. Mortimer paid stability. The
+Geiger leftover from that loft came home. Next is generalRocketry.
+The pad is occupied. We have never orbited Earth.
 
 ## What this is
 
@@ -35,7 +34,7 @@ the pad waits. The **hop process** writes kRPC. Uncrewed probes
 fly without a Commander hire. Crewed and firsts, Jebediah Grokman
 is abort officer. Miss: leftover is Hank, the burn is Lars, the
 world-interface is Wernher. Then the same command again, if the
-hang still lives. Depth one. Nobody rewinds the clock. The crash
+stack still lives. Depth one. Nobody rewinds the clock. The crash
 window is not a time machine.
 
 This is not a wrapper around a human clicking Recover. The Founder
@@ -46,29 +45,27 @@ side of the glass.
 
 House myths, still under investigation: the seventy-two-meter
 frame that was not the hop; the potato around the Sun we did not
-fly; a Toggle that stops a sample; heading **090°** as a wish
-Stayputnik cannot keep; a Forest Kerbalism will swear by while
-the window shows grass; silk that opens while the Valiant is
-still talking. We will be insufferable about all of them.
+fly; a Toggle that stops a sample; east as a wish Stayputnik
+cannot keep; a Forest Kerbalism will swear by while the window
+shows grass; silk that opens while the Valiant is still talking.
+We will be insufferable about all of them.
 
 ## History (so far)
 
-Now: **2.29 sci**. Tree **start, engineering101, basicRocketry,
-survivability, stability**. Mk16 unlocked. sasModule / PresMat
-on the seated hang. Next honest spend is `generalRocketry` (**20 sci**).
-Last High: t7-wheel, Geiger leftover closed. We have never orbited
-Earth.
+Tree: start, engineering101, basicRocketry, survivability,
+stability. Next honest spend is generalRocketry. Last loft: the
+Geiger leftover closed. We have never orbited Earth.
 
 | When | What | Sci |
 |---|---|---|
-| 2026-08-24 | [The smiles came home](docs/press/first-space.md) — silk, girders, Forest, RSI, Flying High **~275 km** | **9.47 sci → 18.19 sci** |
-| 2026-08-23 | [The forest forgave us](docs/press/forest-for-the-trees.md) — chute, girders, lat/lon, Forest Flying Low | **5.67 sci → 7.77 sci** |
-| 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo **+2.40 sci** + TELEMETRY **+0.80 sci** at **9.11 m/s** Shores | **13.26 sci → 16.47 sci** |
-| 2026-08-21–22 | Suicide string — east-t3 at 230, 220, 119, 92.5, 82, 62.3 m/s; hover until the can lived | **13.26 sci**, then the splash |
-| 2026-08-20 | [A potato around the Sun](docs/press/asteroid-xrl-564.md) — first unlock; Ast. XRL-564, not a flown sit | **+5 sci** spent on engineering101 |
-| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea lithobraked at 82 m; Earth paid **5.00 sci** | **3.70 sci → 8.90 sci** |
-| 2026-08-20 | [Two kilometers](docs/press/first-hop.md) — first hop; the log went quiet; Os's still, motor lit | **2.22 sci → 3.20 sci** |
-| 2026-08-20 | [Stayputnik on the Cape](docs/press/pad-goo.md) — empty recovers, a Toggle that stops a sample, twelve minutes on the lawn | **0.80 sci → 2.22 sci** |
+| 2026-08-24 | [The smiles came home](docs/press/first-space.md) — silk, girders, Forest, then the Geiger in the black | 9.47 → 18.19 |
+| 2026-08-23 | [The forest forgave us](docs/press/forest-for-the-trees.md) — chute, girders, a Forest with no trees | 5.67 → 7.77 |
+| 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo and TELEMETRY; a can sat down soft | 13.26 → 16.47 |
+| 2026-08-21–22 | Suicide string — hover until the can lived | 13.26, then the splash |
+| 2026-08-20 | [A potato around the Sun](docs/press/asteroid-xrl-564.md) — first unlock; a rock we did not fly | engineering101 paid |
+| 2026-08-20 | [Five in the bank](docs/press/first-five-sci.md) — Flea lithobraked; Earth paid five | 3.70 → 8.90 |
+| 2026-08-20 | [Two kilometers](docs/press/first-hop.md) — first hop; the log went quiet; motor lit | 2.22 → 3.20 |
+| 2026-08-20 | [Stayputnik on the Cape](docs/press/pad-goo.md) — empty recovers, a Toggle that stops a sample, twelve minutes on the lawn | 0.80 → 2.22 |
 
 [All press](docs/press/INDEX.md)
 ·
@@ -79,7 +76,7 @@ Earth.
 <p align="center">
   <a href="docs/press/first-hop.md"><img src="screenshots/rocket-flea.png" alt="Flea off the Cape, motor lit"></a>
 </p>
-<p align="center"><em>T+ seven seconds. Drums 002423. Two kilometers and climbing. Not a peak.</em><br>
+<p align="center"><em>The Flea is under power. The ocean is ahead. This is the hop.</em><br>
 <small><a href="docs/press/first-hop.md">Two kilometers</a>
 · 20 Aug 2026</small></p>
 
@@ -90,31 +87,31 @@ The planet in the window is **Earth**. Steam Kerbin is a different
 planet. We do not fly it.
 
 Cape Canaveral is a real Cape. The ocean is the Atlantic, not a
-puddle next to the VAB. A hop that peaks at **11.6 km** is still
-in the weeds. Flying High is **≥ 50 km**. This afternoon we lofted
-**~275 km** and came home ballistic. Periapsis on these sits is a
-hole through the planet — a very expensive way of saying we are
-not in orbit. The potato around the Sun is a window we did not
-fly.
+puddle next to the VAB. A hop that still has weather is still in
+the weeds. Fifty kilometers and up is the first band that is
+actually space-ish on this Earth. This afternoon we lofted **two
+hundred and seventy-five kilometers** and came home ballistic.
+Periapsis on these sits is a hole through the planet — a very
+expensive way of saying we are not in orbit. The potato around the
+Sun is a window we did not fly.
 
-**FAR** writes the air. A Valiant *weathercocks* because
-Stayputnik has no wheel — heading never **090°**, and that is
+**FAR** writes the air. A Valiant *weathercocks* because Stayputnik
+has no wheel — east is a wish the fins do not keep, and that is
 hardware, not attitude. **RealHeat** cooks ballistic hops stock
 heat would spare. **RealChute** sits on the Mk16; we paid
-**survivability** (**15 sci**) before Earth would forgive a Flea.
-**Kerbalism Default**: you observe the Goo after you remember to
-leave it running. `Toggle` starts *and* stops a sample. The
-HardDrive is the bank. **kRPC 0.6.0** is how the chairs fly.
-The hop process is the writer. There is no sound. There is no
-PyQt.
+survivability before Earth would forgive a Flea. **Kerbalism
+Default**: you observe the Goo after you remember to leave it
+running. `Toggle` starts *and* stops a sample. The HardDrive is
+the bank. **kRPC 0.6.0** is how the chairs fly. The hop process is
+the writer. There is no sound. There is no PyQt.
 
 | | RSS Earth | Stock Kerbin |
 |---|---|---|
 | Radius | **6,371 km** | 600 km |
 | Pad | Cape Canaveral | a lawn by a pond |
 | Ocean | Atlantic | decorative |
-| **15 km** hop | weeds | almost space |
-| Flying High | **≥ 50 km** | a short walk |
+| A short hop | weeds | almost space |
+| High band | ≥ 50 km | a short walk |
 | This program | probes, tickets, kRPC | a different house |
 
 Mods that change the physics. The rest of the stack (visuals,
@@ -126,10 +123,10 @@ restock, Near Future, glue) is in [the full list](docs/program/mods.md).
 | **Kerbalism Default** | HardDrive + `Toggle` + dwell clocks. Profile = **default**. |
 | **FAR** | Weathercock, Q, no stock drag cubes. |
 | **RealHeat** | Atmosphere shock. Ballistic hops cook. |
-| **RealChute** | Mk16 / RC_cone after **survivability** (**15 sci**). |
+| **RealChute** | Mk16 / RC_cone after survivability (15 sci). |
 | **kRPC 0.6.0** | Agents fly. One hop process writes. `127.0.0.1:50000` / `:50001`. |
 | **Probes Before Crew** | Stayputnik / OKTO first. Crew later. |
-| **Community Tech Tree** | Nodes Mortimer pays with banked **sci**. |
+| **Community Tech Tree** | Nodes Mortimer pays with banked science. |
 | **RealFuels** | Resource *names*. Not ullage, not Realism Overhaul. |
 
 Not RO. `~/Games/KSP-RO` is parked.
@@ -139,12 +136,12 @@ Not RO. `~/Games/KSP-RO` is parked.
 </p>
 <p align="center"><em>Earth is round. Pretty enough to lie about. Periapsis is still a hole through the planet. We have never orbited Earth.</em><br>
 <small><a href="docs/press/first-space.md">The smiles came home</a>
-· 24 Aug 2026 · same t7 · not orbit</small></p>
+· 24 Aug 2026 · not orbit</small></p>
 
 <p align="center">
   <a href="docs/press/first-fifteen-sci.md"><img src="screenshots/far-glide.png" alt="FAR weathercock over the Florida coast"></a>
 </p>
-<p align="center"><em>A Valiant on its side. FAR talking. Heading never 090. That is hardware, not attitude.</em><br>
+<p align="center"><em>A Valiant on its side. FAR talking. East is a wish the fins do not keep.</em><br>
 <small><a href="docs/press/first-fifteen-sci.md">The can lived</a>
 · 21 Aug 2026</small></p>
 
@@ -161,7 +158,7 @@ Tickets are the bus. **T-081** is ticket eighty-one, not a
 countdown. Hank Grokman, COO, runs `ops next` and hires exactly
 those desks — depth one. Nobody spawns a child to spawn a child.
 Gene stamps `go:` or the pad sits. Gus signs `capable:` before
-Linus binds a sample to a hang. Linus's shelf is the unbound
+Linus binds a sample to a stack. Linus's shelf is the unbound
 catalog; bind is the ticket that flies. Gene names **pad**,
 **hop**, **splash**, and a tech unlock. The factory command is
 `python main.py hop`.
@@ -174,7 +171,7 @@ Gene, Lars, or Wernher. Abort is a file (`uplink.md`), not a
 second Session. Miss: leftover is Hank walking the ship home
 (`recover()`, then Close). The burn is Lars. The world-interface
 is Wernher. They do not both patch the same `.py`. Then the last
-`cli:` again, if the hang still lives. Ground fills the shelf
+`cli:` again, if the stack still lives. Ground fills the shelf
 *while* someone is flying — other files, same turn. Sit is
 `desk.md`. An RSI letter does not empty the pad.
 
@@ -206,22 +203,20 @@ mission. Chaos is the plot. Not a joke at the crew.
 <p align="center">
   <a href="docs/press/first-space.md"><img src="screenshots/chute-fail-silk-burn.png" alt="Mk16 open, engine still lit, smoke over dark grass"></a>
 </p>
-<p align="center"><em>Mk16 open. Engine still lit. This is not a landing.</em><br>
-<small><a href="docs/press/first-space.md">The smiles came home</a>
-· 24 Aug 2026 · silk-while-burn</small></p>
-
-<p align="center">
-  <a href="docs/press/first-space.md"><img src="screenshots/even-more-girders.png" alt="Valiant with a porch of girders, plume, Milky Way"></a>
-</p>
-<p align="center"><em>Gus's answer to FAR shear. Girders like a space elevator. Because why not.</em><br>
+<p align="center"><em>The parachute is open. The engine is still talking. This is not a landing.</em><br>
 <small><a href="docs/press/first-space.md">The smiles came home</a>
 · 24 Aug 2026</small></p>
 
-<p align="center">
-  <a href="docs/press/first-space.md"><img src="screenshots/farthest-flight-city.png" alt="Girder stack over night city lights"></a>
-</p>
-<p align="center"><em>Inland. City lights. Forest campaign. Not Flying High. Heading 270. 090 is Water, and Water is dead on this hang.</em><br>
-<small><a href="docs/press/first-space.md">The smiles came home</a></small></p>
+<table>
+<tr>
+<td width="50%"><a href="docs/press/first-space.md"><img src="screenshots/even-more-girders.png" alt="Valiant with a porch of girders, plume, Milky Way"></a></td>
+<td width="50%"><a href="docs/press/first-space.md"><img src="screenshots/farthest-flight-city.png" alt="Girder stack over night city lights"></a></td>
+</tr>
+<tr>
+<td><em>A porch of girders. The Milky Way. Because why not.</em></td>
+<td><em>Inland. City lights. There is not a tree in the window.</em></td>
+</tr>
+</table>
 
 ## RSI, and Kardashev III
 
@@ -246,19 +241,12 @@ ticket, not a Return novel.
 Kardashev III is creed. Joke in the TUI. Nobody preaches
 mid-burn. A Type III civilization harnesses a galaxy. We have a
 Stayputnik, a chute we had to stop deploying on the way up,
-girders like a space elevator, and **2.29 sci**. The Moon is a
-waypoint. Fifteen was a working goal; we paid **survivability**
-honest and hung the Mk16. Flying High paid; Mortimer paid
-**stability** honest. Do not spend crumbs on a stunt.
-`generalRocketry` still costs **20 sci**. RSI harder than the
-shear. Escape trajectory is creed, not a circularization.
-
-<p align="center">
-  <a href="docs/press/first-space.md"><img src="screenshots/we-are-radiating.png" alt="Kerbalism Radiation Scan 3.4 of 4.0 running"></a>
-</p>
-<p align="center"><em>Radiation Scan 3.4 / 4.0, running. Goo 1.7 / 6.0, running. The smiles went on the HardDrive.</em><br>
-<small><a href="docs/press/first-space.md">The smiles came home</a>
-· 24 Aug 2026</small></p>
+girders like a space elevator, and crumbs in the bank. The Moon
+is a waypoint. Fifteen was a working goal; we paid survivability
+honest and hung the Mk16. The High band paid; Mortimer paid
+stability honest. Do not spend crumbs on a stunt.
+generalRocketry still waits. RSI harder than the shear. Escape
+trajectory is creed, not a circularization.
 
 ## Agent checkout
 

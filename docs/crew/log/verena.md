@@ -1,5 +1,6 @@
 # Verena Grokman — log
 
+- 2026-08-25 — T-435 press voice: tables hold digits. Rewrote first-space as gold, then README + INDEX, then forest / can / potato / five / two-km / pad-goo. Captions visual. Did not invent orbit. Did not clobber first-mystery-goo.
 - 2026-08-25 — T-397 first-space still the 24 Aug High (~275 km, not orbit). README now **2.29 sci** (Geiger leftover home 06-36); tree stability; next generalRocketry 20. Did not invent a radio scoop. Did not recover the pad bird. Did not clobber first-mystery-goo.
 - 2026-08-24 — T-397 Os stills: first-space-black hero (not orbit); we-are-radiating 3.4/4.0; earth-is-round periapsis hole; chute-fail-silk-burn not a landing; farthest-flight-city inland; even-more-girders one porch. Did not use bigger-rocket. Did not clobber first-mystery-goo.
 - 2026-08-24 — T-397 stability paid: first-space + README now **18.19→0.19**; tree includes stability; next generalRocketry 20. Named load `rd-stability`. Did not clobber first-mystery-goo.

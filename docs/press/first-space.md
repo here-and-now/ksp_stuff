@@ -1,169 +1,156 @@
 # The smiles came home
 
 **We hung silk on a burning stack, put girders on rockets like a
-space elevator, and flew inland into the same Forest until the house
-actually went High. Then the Geiger smiled in the black, and the
-bank climbed to eighteen.**
+space elevator, and flew inland into the same Forest until the sky
+went black. Then the Geiger smiled, and the HardDrive came home.**
 
 Cape Canaveral, 24 August 2026, late afternoon. No kerbal on the
-stack. Gus's `kspstuff-hop-valiant-t7-pbc`: Probodobodyne Stayputnik,
-seven FL-T100s, an LV-T15 Valiant, a 2HOT, a can of Goo, a Geiger
-that had been waiting since engineering101. No Mk16 on this hang —
-the silk had already had its say. Gene said go. The pad let go.
+stack. A _Stayputnik_ — black probe core, no steering wheel of its
+own — on seven tanks and an LV-T15, the _Valiant seven-tank_. Gene
+said go. The pad let go.
 
-Flying High on RSS Earth is **fifty kilometers**. We lofted
-**two hundred and seventy-five**. Periapsis through the planet —
-ballistic, expected, *not orbit*. We have never flown orbit.
+Fifty kilometers and up is the first band that is actually
+space-ish on this Earth. We lofted **two hundred and seventy-five
+kilometers**. Ballistic. Suborbital. We have never flown orbit.
 
-![Stayputnik, seven tanks, thin blue limb](../../screenshots/first-space-black.png)
+<p align="center">
+  <img src="../../screenshots/first-space-black.png" alt="Stayputnik and seven tanks over a thin blue limb, stars">
+</p>
+<p align="center"><em>A Stayputnik and seven tanks over a thin blue limb. Stars. Not a circle.</em></p>
 
-*24 August 2026, 21:59 UTC. Stayputnik, seven tanks, no Mk16, no
-plume. Stars. A thin blue limb. This is the hang that lofted
-**~275 km**. Suborbital. Not a circle. Periapsis is still a hole
-through the planet.*
+The High band over the Forest had been a lid we kept starting
+under. A _2HOT_ thermometer, a can of _Mystery Goo_, a _Geiger_
+radiation counter waiting since the workshop. Linus had bound
+leftover telemetry, the Goo, and the Geiger since the morning the
+stack finally cleared the lid. The afternoon hop ran the
+thermometer and came home wet. The evening hop lit the Goo and the
+Geiger together, dwelled in the High band, and the smiles went on
+the HardDrive.
 
-The chalkboard went **9.47 sci → 18.19 sci**. Linus had bound Forest
-Flying High TELEMETRY leftover, Flying High Goo, Flying High Geiger
-since the morning the hang finally cleared fifty. 18:34 UTC the
-Valiant peaked apo **274.5 km**, splashed, recovered — and the card
-still thought the 2HOT was the news. 20:16 UTC the same hang lit
-the Goo and the Geiger together, dwelled in Flying High, and the
-smiles went on the HardDrive.
+The stack sat in the black like it had all the time in the world,
+because for a few minutes, it did. A radiation counter does not
+know it is a first. It just ticks.
 
-![Radiation Scan 3.4 of 4.0, running](../../screenshots/we-are-radiating.png)
+<table>
+<tr>
+<td width="50%"><img src="../../screenshots/we-are-radiating.png" alt="Kerbalism Module Devices, Radiation Scan and Goo running"></td>
+<td width="50%"><img src="../../screenshots/first-flying-high.png" alt="Cape empty, kRPC idle, no vessels"></td>
+</tr>
+<tr>
+<td><em>The Geiger is running. The Goo is running. The smiles are in the can.</em></td>
+<td><em>The Cape is empty. kRPC is idle. The ships came home.</em></td>
+</tr>
+</table>
 
-*24 August 2026, 22:20 UTC. Kerbalism Module Devices. Radiation
-Scan **3.4 / 4.0**, T−1m 20s, **running**. Mystery Goo Observation
-**1.7 / 6.0**, T−9m 27s, **running**. Temperature Scan **3.0 / 3.0**,
-stopped. Telemetry Report **0.0 / 2.0**, stopped. This is the
-smiles-in-the-black number. Not a portrait of a person.*
-
-The Geiger still holds **1.45 of 3.60**. Forest TELEMETRY leftover
-**0.29 of 1.80**. Then Mortimer Grokman, CEO paid `stability`
-(**18 sci**): named load `rd-stability` (do not `load persistent`
-— F-014). **18.19 sci → 0.19 sci**. Tree now **start,
-engineering101, basicRocketry, survivability, stability**. Next
-CTT `generalRocketry` (**20 sci**).
-
-![Cape empty, bank 18.2](../../screenshots/first-flying-high.png)
-
-*Cape Canaveral after the ships came home. Toolbar **18.2**. kRPC
-idle. No vessels. Then Mortimer paid stability. This is the bank,
-not a circularization.*
-
-Three days earlier the house had already *been*. 21 August, 13:31
-UTC, this same t7, apo **88.8 km**, splash recover, MET **440.5**,
-EC to zero — and the card Toggle'd at a hundred meters. Kerbalism
-filed Flying Low crumbs. **+0 sci**. Space was a lid we kept
+Three days earlier the house had already *been*. This same
+seven-tank lofted past the lid, splashed, recovered — and the card
+Toggle'd at the grass. Kerbalism filed crumbs from air that was
+still weather. Earth paid nothing. Space was a rumor we kept
 starting under.
 
-Then we invented latitude, hung silk, and spent a day in a Forest
-with no trees.
+Then we invented latitude, hung a parachute, and spent a day in a
+Forest with no trees.
 
-![Girder stack over night city](../../screenshots/farthest-flight-city.png)
-
-*24 August 2026, 11:00 UTC. Girder hang over night city lights.
-Inland. Dark. This is the Forest campaign, heading **270°**. It is
-not Flying High. There is not a tree in the window. There is a
-city.*
-
-![Forest, the silk, no trees](../../screenshots/forest-first-touchdown.png)
-
-*Dark grass, a pond, a red-and-white Mk16. Kerbalism said Forest.
-We landed here until leftover thermo and TELEMETRY could not pay
-another Cape. 090 is Water, and Water is still dead.*
+<table>
+<tr>
+<td width="50%"><img src="../../screenshots/farthest-flight-city.png" alt="Girder stack over night city lights"></td>
+<td width="50%"><img src="../../screenshots/forest-first-touchdown.png" alt="Red-and-white canopy over dark grass and a pond"></td>
+</tr>
+<tr>
+<td><em>Inland, over city lights. There is not a tree in the window.</em></td>
+<td><em>Dark grass, a pond, a red-and-white canopy. The lab said Forest.</em></td>
+</tr>
+</table>
 
 The wrecks, in the order the room survived them:
 
-- 21 August, 13:31 UTC — t7 apo **88.8 km**. First High. Science at
-  T+1, alt ~100 m. Splash recover. Bank **6.35 sci**, **+0**.
-- 23 August — chute, girders, lat/lon. Forest Flying Low **+2.10 sci**.
-  Bank **7.77 sci**. The forest forgave us. It did not loft us.
-- 24 August, morning — the same Forest, again. Land. Splash. Land.
-  Apo **~30 km**. Bank **9.47 sci**. High still a lid at fifty.
-- 10:49 UTC — Mk16 *open*, engine *still lit*, dark grass, smoke.
-  Silk-while-burn. This is not a landing.
-- 15:05 UTC — t7-chute inland. Apo **163.2 km**. OFFPLAN over a
-  **140 km** Space line. The hang could fly. The abort was the map.
-- 15:44 UTC — Mk16 *armed* at two kilometers, tanks still full.
-  Silk is a descent. Climbing with a canopy is a rumor that shears.
-- 17:26 UTC — physics **4×** in Q. Parts **28 → 1**. FAR does not
-  care that you are late for fifty.
-- 17:42 UTC — Mk16 *deployed* at **800 m** while the Valiant was
-  still waiting to burn. Shear **28 → 1**. Apo **802 m**.
-- 18:15 UTC — hold vertical until the lid. MET **28**, alt **389 m**,
-  pitch **−85°**, q **3598**. The silk and the slew had already
-  spoken. Rec=no.
-- 18:34 UTC — t7, no chute, hold vertical, then inland **270°**.
-  Apo **274.5 km**. Empty tanks. Splash recover. Bank **12.45 sci**.
-  2HOT ran. Goo and Geiger were not in the card.
-- 19:57 UTC — Goo and Geiger, at last. Apo **274.9 km**. Bank
-  **16.19 sci**. 4× after the dwell. Shear **20 → 9**.
-- 20:16 UTC — Goo and Geiger again. Apo **276.1 km**. Dwell in the
-  black. Bank **17.89 sci**. The stack did not walk home. The
-  HardDrive did.
+- We opened the parachute with the engine still talking.
+- We armed a canopy on the way up and called it a plan.
+- We asked physics for a hurry in Q, and the stack became a Stayputnik.
+- We drew a lid and kept lighting under it.
+- Then we held vertical, slew inland, and the sky went black.
 
-Fail, Learn, patch, fly again. That loop is the agency. RSI harder
-than the shear, harder than silk-while-burn, harder than a radio
-that is not the stick. Comms went deaf and we taught the house to
-sit still. The lid was altitude, not a predicted apo. Deploy is
-descent. 4× is for empty tanks and quiet air. Then the same command
-again, if the hang still lived.
+| When | What happened | Peak | End |
+|---|---|---|---|
+| 21 Aug, 13:31 UTC | First High; science at the grass | 88.8 km | splash, +0 |
+| 24 Aug, morning | Same Forest, still under the lid | ~30 km | land / splash, bank 9.47 |
+| 10:49 UTC | _Mk16_ open, engine lit | — | silk-while-burn |
+| 15:05 UTC | OFFPLAN over the Space line | 163.2 km | abort |
+| 15:44 UTC | Canopy armed, tanks full | — | shear |
+| 17:26 UTC | Physics 4× in Q | — | parts 28 → 1 |
+| 17:42 UTC | Canopy out, engine waiting | 802 m | parts 28 → 1 |
+| 18:15 UTC | Hold vertical after silk and slew | 389 m | rec=no |
+| 18:34 UTC | Inland, empty tanks, thermometer | 274.5 km | splash, bank 12.45 |
+| 19:57 UTC | Goo and Geiger; 4× after dwell | 274.9 km | bank 16.19, parts 20 → 9 |
+| 20:16 UTC | Goo and Geiger; dwell in the black | 276.1 km | leftover, bank 17.89 |
 
-| | |
+Fail, Learn, patch, fly again. That loop is the agency. Comms went
+deaf and we taught the house to sit still. The lid was altitude,
+not a predicted apoapsis. Deploy is a descent. Warp is for empty
+tanks and quiet air. Then the same command again, if the stack
+still lived.
+
+### This hop
+
+| Field | Value |
 |---|---|
-| Program | Grok Space Program · `letsgrok` · Earth, RSS, PBC |
-| Run | 24 August 2026, 18:34:09 UTC · `python main.py hop` (live); 20:16:38 UTC Goo+Geiger |
-| Kerbal | 3d 12:07:20 UT (18:34) · 3d 13:31:02 UT (20:16) · MET max **~599 s** |
-| Commander | Jebediah Grokman (stack uncrewed) |
-| Flight Director | Gene Grokman |
-| Stack | `kspstuff-hop-valiant-t7-pbc` — Stayputnik, 7×FL-T100, Valiant, 2HOT, Goo, Geiger |
-| Envelope | apo **~275 km** · peri through the planet · splash recover 18:34 · heading command **270°** inland |
-| Sci | **9.47 sci → 18.19 sci** (Flying High 2HOT, then Goo and Geiger in the black). Then Mortimer paid **stability** (**18 sci**): bank **0.19 sci**. Geiger leftover **1.45 / 3.60**. Forest High TELEMETRY leftover **0.29 / 1.80**. |
-| Tree | **start, engineering101, basicRocketry, survivability, stability** — sasModule / PresMat **Available**. Next `generalRocketry` **20 sci**. |
+| Date | 24 August 2026, 20:16 UTC |
+| Craft | _Valiant seven-tank_ `kspstuff-hop-valiant-t7-pbc` |
+| Peak apoapsis | 276.1 km, suborbital |
+| Landing | leftover wreck; HardDrive recovered |
+| Science | 16.19 → 18.19 |
+| Sit | Flying High @ Forest |
+| Kerbal UT | 3d 13:31:02 UT |
+| MET | 599.4 s |
+| Tree | start, engineering101, basicRocketry, survivability, stability |
+| Paid node | stability (18 sci) |
+| Load | `rd-stability` |
+| Next node cost | generalRocketry 20 sci |
+| Leftover | Geiger 1.45 / 3.60; Forest High TELEMETRY 0.29 / 1.80 |
 
-![Mk16 open, engine still lit](../../screenshots/chute-fail-silk-burn.png)
+### Campaign records
 
-*24 August 2026, 10:49 UTC. Mk16 **open**. Engine **still lit**.
-Smoke over dark grass. This is silk-while-burn. It is not a
-landing. Deploy is a descent. We learned that with the Valiant
-still talking.*
+| Record | Value |
+|---|---|
+| Highest apoapsis | 276.1 km, 24 Aug 20:16 UTC, suborbital |
+| Peak science bank | 18.19, then paid |
+| First High | 21 Aug 13:31 UTC, 88.8 km, +0 |
+| First Goo + Geiger in the High band | 24 Aug 20:16 UTC |
 
-![Valiant, porch of girders, Milky Way](../../screenshots/even-more-girders.png)
+<table>
+<tr>
+<td width="50%"><img src="../../screenshots/chute-fail-silk-burn.png" alt="Parachute open, engine still lit, smoke over dark grass"></td>
+<td width="50%"><img src="../../screenshots/even-more-girders.png" alt="Valiant with a porch of girders, plume, Milky Way"></td>
+</tr>
+<tr>
+<td><em>The parachute is open. The engine is still talking. This is not a landing.</em></td>
+<td><em>A porch of girders climbing past the Milky Way, because why not.</em></td>
+</tr>
+</table>
 
-*24 August 2026, 16:23 UTC. Valiant lit. Girders like a space
-elevator that had not left the Cape. Milky Way behind the plume.
-Because why not. The hang that paid High was seven tanks and no
-porch — the elevator was the week we survived to light it.*
+<p align="center">
+  <img src="../../screenshots/earth-is-round.png" alt="Seven-tank over turquoise shallows, fat blue limb, stars">
+</p>
+<p align="center"><em>Earth is round, and pretty enough to lie about. Not a circle.</em></p>
 
-![Earth is round. Periapsis is a hole](../../screenshots/earth-is-round.png)
+kRPC will not sell a node. Mortimer Grokman, CEO paid stability: he
+edits the bank and loads a named copy — never the live save. Load
+the live save and the spend vanishes. That trap is `F-014`. The
+potato around the Sun is `F-015`: an asteroid we did not fly,
+seated because the window was honest. Do not rewind the clock. The
+crash window is not a time machine.
 
-*24 August 2026, 22:20 UTC. Same t7 over turquoise shallows and
-islands. Fat blue limb. Stars. Pretty enough to lie about.
-Periapsis is still a hole through the planet. We will not caption
-this as a circularization.*
+The _Geiger_ leftover from that High came home the next morning.
+We have never orbited Earth.
 
-Mortimer does not spend crumbs on a stunt. **stability** is paid
-(**18 sci**): named load `rd-stability`, 24 August 2026, 20:49 UTC,
-**18.19 sci → 0.19 sci**. Next honest spend is `generalRocketry`
-(**20 sci**). The Moon is a waypoint. Escape trajectory is creed,
-not a circularization.
+The frontier was a lid we had drawn ourselves. We took the long
+way. The black does not clap. The HardDrive does.
 
-The Geiger leftover from that High came home the next morning.
-25 August 2026, 06:36 UTC — t7-wheel, apo **226 km**, splash
-recover, desk **2.29 sci**. Periapsis is still a hole through the
-planet. We have never orbited Earth.
-
-The frontier was fifty kilometers and a Forest with no trees. We
-took the long way: silk, girders, the same grass, RSI until the
-house actually flew High. Then the Geiger smiled, and Earth paid.
-Ad astra. We will be insufferable the whole way.
-
-- [18:34 hop, 275 km splash](../archive/reviews/2026-08-24T18-34-09Z-hop-review.md)
+- [18:34 hop](../archive/reviews/2026-08-24T18-34-09Z-hop-review.md)
   · [20:16 Goo+Geiger](../archive/reviews/2026-08-24T20-16-38Z-hop-review.md)
   · [20:49 `rd-stability`](../archive/reviews/2026-08-24T20-49-30Z-load-review.md)
-  · [06:36 Geiger leftover home](../archive/reviews/2026-08-25T06-36-38Z-hop-review.md)
-  · [13:31, 88.8 km, +0](../archive/2026-08-23-md-cutover/missions/jebediah/logs/2026-08-21T13-31-03Z-hop-review.md)
+  · [06:36 Geiger leftover](../archive/reviews/2026-08-25T06-36-38Z-hop-review.md)
+  · [13:31 first High, +0](../archive/2026-08-23-md-cutover/missions/jebediah/logs/2026-08-21T13-31-03Z-hop-review.md)
   · [17:42 silk-while-burn](../archive/reviews/2026-08-24T17-42-28Z-hop-review.md)
 - Before: [The forest forgave us](forest-for-the-trees.md)
 - House still: [Two kilometers](first-hop.md)

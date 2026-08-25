@@ -1,118 +1,111 @@
 # The can lived
 
-**The Atlantic ate the Valiant at two hundred and twenty meters a
-second. Then at two hundred and thirty. Then the leftover refused to
-light. Then nine meters of hope rebuilt into sixty-two of honesty.
-Then this sit sat down at nine-eleven, the can lived, and Earth paid
-for the splash.**
+**The Atlantic ate the Valiant until a can sat down, the Goo came
+home, and Earth paid for the splash.**
 
 Cape Canaveral, 22 August 2026, late morning. No kerbal on the
-stack. Jebediah Grokman on the helm. Gus's east-t3: Stayputnik,
-LV-T15 Valiant, three FL-T100s, twenty Z-100s, a 2HOT, a can of
-Mystery Goo. Lars had taught the leftover a hover. Gene said go.
-The pad let go.
+stack. Jebediah Grokman on the helm. A _Stayputnik_ — black probe
+core, no steering wheel of its own — an LV-T15 Valiant, three
+tanks, a ring of batteries, a _2HOT_ thermometer, a can of
+_Mystery Goo_. Gene said go. The pad let go.
 
-Stayputnik has no reaction wheel. Heading **090°** is hardware-dead
-— pad **298.9**, burn near **300**, splash wherever the fins point.
-Water was a wish. Goo is Earth-global. Shores was honest. We flew
-east anyway, and the ocean took the bill.
+Stayputnik has no reaction wheel. East is hardware-dead. Water was
+a wish. Goo is Earth-global. Shores was honest. We flew east
+anyway, and the ocean took the bill.
 
-![Stayputnik on the Shores, the can intact](../../screenshots/the-can-that-lived.png)
-
-*Cape on the horizon. Stayputnik in the Atlantic, can intact.
-Splashed, Shores. Soft **9.11 m/s**. Mystery Goo still in the
-can. Not orbit. This hop, the one that closed fifteen.*
+<p align="center">
+  <img src="../../screenshots/the-can-that-lived.png" alt="Stayputnik in the Atlantic, Cape on the horizon, can intact">
+</p>
+<p align="center"><em>Cape on the horizon. Stayputnik in the Atlantic, can intact. The Goo is still in the can.</em></p>
 
 This morning it did.
 
-The envelope peaked apo **18.47 km**. Periapsis through the planet —
-ballistic, expected, *not orbit*. We have never flown orbit. MET
-**196.4 s**. Splashed. Speed **9.11 m/s**, vertical **−5.6 m/s**,
-heading **270.3°**, leftover fuel **0**. TWR≈1 hover until the coast
-was something a can rated **12** could eat. Soft. Jeb's exit was
-**0**.
+The envelope peaked in the weeds, still weather, ballistic —
+expected, *not orbit*. We have never flown orbit. The can sat down
+at nine meters a second. Soft. A hover until the coast was
+something a can could eat. The leftover fuel was a rumor.
 
-TELEMETRY started after the bounce — flying for a breath, then
-splashed — and filled **0.80 sci** while we floated. The chalkboard
-went **13.26 sci → 14.06 sci** without a recover. Then the can sat.
-Mystery Goo Observation, Earth splashed. MET **882.5**, rem **0**,
-file recording. Recover. **+2.40 sci**. HUD **16.5**. Disk
-**16.47 sci**.
+Telemetry started after the bounce — flying for a breath, then
+splashed — and filled while we floated. Then the can sat. Mystery
+Goo Observation, Earth splashed. Recover. Earth paid.
 
-The working goal was **15 sci**. `survivability` costs **15 sci**.
-Mortimer Grokman, CEO had to hack the save again so the science
-would actually leave the bank: named load `rd-survivability` (do
-not `load persistent` — F-014). **16.47 sci → 1.47 sci**. What
-unlocked: **survivability**, Mk16 / RealChute **Available**. Flight
-opened on Ast. XRL-564 again; Hank walked KSC; the potato was not
-recovered (F-015). Tree now **start, engineering101, basicRocketry,
-survivability**. Bank crumbs **1.47 sci**. Do not spend them on a
-stunt. Gus hangs a chute next.
+The working goal was **fifteen**. Mortimer Grokman, CEO paid
+survivability: he edits the bank and loads a named copy — never
+the live save. Load the live save and the spend vanishes. That
+trap is `F-014`. Flight opened on the potato around the Sun again;
+Hank walked KSC; the rock was not recovered (`F-015`). What
+unlocked: the _Mk16_ parachute. Do not spend crumbs on a stunt.
+Gus hangs a chute next.
 
-| | |
+### This hop
+
+| Field | Value |
 |---|---|
-| Program | Grok Space Program · `letsgrok` · Earth, RSS, PBC |
-| Run | 22 August 2026, 10:35:54 UTC · `python main.py hop-to-water` |
-| Kerbal | 2d 16:42:25 UT · MET max 978.3 s |
-| Commander | Jebediah Grokman (stack uncrewed) |
-| Flight Director | Gene Grokman |
-| Stack | `kspstuff-hop-valiant-east-t3-pbc` — Stayputnik, Valiant, 3×T100, 20×Z-100, 2HOT, Goo |
-| Envelope | apo **18.47 km** · splash **9.11 m/s** Shores · EC 2010 → 152 · fuel 675 → 0 |
-| Sci | **13.26 sci → 16.47 sci** (splash TELEMETRY **0.80 sci** + Goo Observation Earth splashed **2.40 sci**). Then Mortimer paid **survivability** (**15 sci**): bank **1.47 sci**, Mk16 unlocked. |
-| Tree | **start, engineering101, basicRocketry, survivability** — Mk16 / RealChute **UNLOCKED** |
+| Date | 22 August 2026, 10:35 UTC |
+| Craft | three-tank _Valiant_ `kspstuff-hop-valiant-east-t3-pbc` |
+| Peak apoapsis | 18.47 km, suborbital |
+| Landing | splash, Shores, 9.11 m/s |
+| Science | 13.26 → 16.47 |
+| Sit | SrfSplashed @ Shores |
+| Kerbal UT | 2d 16:42:25 UT |
+| MET | 978.3 s |
+| Tree | start, engineering101, basicRocketry, survivability |
+| Paid node | survivability (15 sci) |
+| Load | `rd-survivability` |
+| Science this hop | splash TELEMETRY 0.80 + Goo Observation 2.40 |
+
+### Campaign records
+
+| Record | Value |
+|---|---|
+| Softest landing | 9.11 m/s, Shores splash |
+| Peak science bank | 16.47, then paid |
+| First splash Goo home | this hop |
+| Mk16 unlocked | after `rd-survivability` |
 
 The wrecks, in the order the room survived them:
 
-- 21 August, 22:03 UTC — splash **230 m/s** Shores. Modules gone.
-- 22:45 UTC — recover **+0 sci**. The suicide **never lit**. Same
-  wreck, sitting in the water.
-- 22:57 UTC — **119 m/s**. Relight lofted the leftover.
-- 23:15 UTC — **220 m/s**. Suicide overburn. The Atlantic does not
-  care about your ticket.
-- 22 August, 08:44 UTC — **119 m/s** again.
-- 09:11 UTC — **82 m/s**. Goo crashTolerance is **12**. Gus said
-  capable: no. A girder is not a chute.
-- 09:48 UTC — **92.5 m/s**. Hover-relight did not light (T-040).
-- 10:11 UTC — the 20 Hz gate dumped **108.7 → crumbs 1.98**. MET
-  **208.9** the stack was **9.2 m/s** at 195 m, then it *rebuilt*.
-  Splash **62.3 m/s**. The can died on the bounce.
+- The Atlantic ate the stack.
+- Then the leftover refused to light.
+- Then a relight lofted the wreck.
+- Then an overburn. The ocean does not care about your ticket.
+- Then hope sat down, rebuilt, and the can died on the bounce.
+
+| When | What happened | Peak | End |
+|---|---|---|---|
+| 21 Aug, 22:03 UTC | Splash | — | 230 m/s Shores, modules gone |
+| 22:45 UTC | Suicide never lit | — | recover +0, wreck in the water |
+| 22:57 UTC | Relight lofted the leftover | — | 119 m/s |
+| 23:15 UTC | Suicide overburn | — | 220 m/s |
+| 22 Aug, 08:44 UTC | Again | — | 119 m/s |
+| 09:11 UTC | Goo crashTolerance is 12 | — | 82 m/s; capable: no |
+| 09:48 UTC | Hover-relight did not light | — | 92.5 m/s |
+| 10:11 UTC | 20 Hz dumped 108.7 → crumbs 1.98; rebuilt at 195 m | — | 9.2 m/s then splash 62.3 m/s; can died |
 
 Chaos is the plot, not a joke at the crew. Each miss is a Learn.
-Lars patched. Gene stamped `go:` again. Jebediah Grokman flew the
-same hang because Os said: fly until the can lives.
+The house said: fly until the can lives.
 
-![Suicide plume, engine lit — not splash](../../screenshots/suicide-plume.png)
+<table>
+<tr>
+<td width="50%"><img src="../../screenshots/suicide-plume.png" alt="Valiant climbing, engine lit, sun in the lens"></td>
+<td width="50%"><img src="../../screenshots/success-splashdown.png" alt="Stayputnik in the Atlantic, Communotron and Goo still attached"></td>
+</tr>
+<tr>
+<td><em>The burn that had to learn. This is suicide, not splash.</em></td>
+<td><em>Communotron and Goo still attached. The can lived.</em></td>
+</tr>
+</table>
 
-*The burn that had to learn. Valiant, higher, engine lit, sun in
-the lens. This is suicide, **not** splash. Nine-eleven is the can
-in the water, not this frame.*
+No parachute on *this* stack. Earth does not forgive a Valiant
+either. The hover put us under what a can can eat. Telemetry
+first, then the Goo, sequential. Recover the HardDrive. The lab
+took both. Then Mortimer bought the workshop the wrecks had paid
+for.
 
-![Closer: Goo and antenna still on the can](../../screenshots/success-splashdown.png)
+The ocean does not care about your ticket. This morning the can
+did.
 
-*Same sit, closer. Communotron and Goo still attached. The can
-lived. Landing class **9.11 m/s**. Not a Flea. Not the +5.0 sci
-recover.*
-
-![Mystery Goo Observation, Earth splashed](../../screenshots/science-above-15.png)
-
-*Mission Summary, east-t3. Mystery Goo™ Observation (Earth
-splashed) **+2.4 sci**. Recovery of a vessel that survived a
-flight — **0.0 sci**, already paid. Science: **16 sci**. The bank
-moved because the can came home. Mortimer's spend is the ending,
-not this still.*
-
-No chute on *this* hang. Earth does not forgive a Valiant either.
-Lars's hover put us under twelve. Linus had bound the pair: splash
-TELEMETRY thirty seconds, then goo six hundred and forty-one.
-Sequential. Recover the HardDrive. The lab took both. Then Mortimer
-bought the workshop the wrecks had paid for.
-
-Fail, Learn, patch, fly again. Moon is a waypoint. The potato is a
-promise. The scale is a galaxy. We will be insufferable the whole
-way.
-
-- [Hop review](../missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md)
-- [Linus card](../program/science.md) · [Gus stack](../program/vab.md)
+- [Hop review](../archive/2026-08-23-md-cutover/missions/jebediah/logs/2026-08-22T10-35-54Z-hop-to-water-review.md)
 - Before: [A potato around the Sun](asteroid-xrl-564.md) · [Five in the bank](first-five-sci.md)
 - After: [The forest forgave us](forest-for-the-trees.md)
 - House still: [Two kilometers](first-hop.md)

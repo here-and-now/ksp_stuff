@@ -15,14 +15,14 @@ are copied here under honest slugs when the photo is the right event.
 
 | Date | Story | Sci | Shot |
 |---|---|---|---|
-| 2026-08-24 | [The smiles came home](first-space.md) — silk-while-burn, girders, the same Forest, RSI until Flying High; Goo and Geiger in the black; apo **~275 km**, not orbit. Mortimer paid **stability**. Geiger leftover home; now **2.29 sci** | **9.47 sci → 18.19 sci** | [thin blue limb](../../screenshots/first-space-black.png) |
-| 2026-08-23 | [The forest forgave us](forest-for-the-trees.md) — chute, girders, lat/lon, Forest Flying Low; no trees in the window | **5.67 sci → 7.77 sci** (**+2.10 sci**) | [Forest, silk](../../screenshots/forest-first-touchdown.png) |
-| 2026-08-22 | [The can lived](first-fifteen-sci.md) — splash Goo **+2.40 sci** + TELEMETRY **+0.80 sci** at **9.11 m/s** Shores | **13.26 sci → 16.47 sci** | [the can, floating](../../screenshots/the-can-that-lived.png) |
-| 2026-08-20 | [A potato around the Sun](asteroid-xrl-564.md) — first unlock; accidental first look at Ast. XRL-564 | **+5 sci** spent on engineering101 after **8.90 sci** banked | [the rock](../../screenshots/asteroid-xrl-564.png) |
-| 2026-08-20 | [Five in the bank](first-five-sci.md) — first surviving-flight recovery; Earth paid **5.00 sci** for a Flea that lithobraked | **3.70 sci → 8.90 sci** | [this hop, +5.0 sci](../../screenshots/first-five-recover.png) |
-| 2026-08-20 | [Two kilometers](first-hop.md) — first hop; the log went quiet; Os's still, motor lit | **2.22 sci → 3.20 sci** | [T+7 s](../../screenshots/rocket-flea.png) |
-| 2026-08-20 | [Stayputnik on the Cape](pad-goo.md) — first samples home, after empty recovers and a Toggle that stops a sample | **0.80 sci → 2.22 sci** | [Goo](../../screenshots/first-mystery-goo.png) |
+| 2026-08-24 | [The smiles came home](first-space.md) — silk on a burning stack, then the Geiger smiled in the black | 9.47 → 18.19 | [thin blue limb](../../screenshots/first-space-black.png) |
+| 2026-08-23 | [The forest forgave us](forest-for-the-trees.md) — a parachute, a porch of girders, and a Forest with no trees | 5.67 → 7.77 | [Forest, silk](../../screenshots/forest-first-touchdown.png) |
+| 2026-08-22 | [The can lived](first-fifteen-sci.md) — the Atlantic ate the stack until a can sat down soft | 13.26 → 16.47 | [the can, floating](../../screenshots/the-can-that-lived.png) |
+| 2026-08-20 | [A potato around the Sun](asteroid-xrl-564.md) — we bought a workshop; the window was a rock we have never flown | engineering101 paid | [the rock](../../screenshots/asteroid-xrl-564.png) |
+| 2026-08-20 | [Five in the bank](first-five-sci.md) — the Flea came home in pieces; Earth paid for the flight | 3.70 → 8.90 | [this hop](../../screenshots/first-five-recover.png) |
+| 2026-08-20 | [Two kilometers](first-hop.md) — the log went quiet; the motor was still burning | 2.22 → 3.20 | [the hop](../../screenshots/rocket-flea.png) |
+| 2026-08-20 | [Stayputnik on the Cape](pad-goo.md) — you observe the Goo after you remember to leave it running | 0.80 → 2.22 | [Goo](../../screenshots/first-mystery-goo.png) |
 
 Mortimer's CTT spends (engineering101, survivability, stability) are
 named-load scenes at the *end* of those stories. The news is the
-**sci** that came home. The unlock is the ending.
+science that came home. The unlock is the ending.

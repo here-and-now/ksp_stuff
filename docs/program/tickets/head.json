@@ -13895,6 +13895,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "_hold_lid already in hop_factory: throttle 1 + SAS vertical until lid. Lars stack: ok, no .py this hire.",
       "created": "2026-08-24T18:17:19Z",
       "desk": "lars",
       "evidence": [],
@@ -13934,11 +13935,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "vertical lid-hold lithobraked t7 MET28 alt389 \u2014 13-31-03Z lofted 88.8 km same hang",
       "type": "control",
-      "updated": "2026-08-25T06:40:33Z"
+      "updated": "2026-08-25T06:44:07Z"
     },
     "T-387": {
       "assignee": "",
@@ -14131,6 +14132,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "_offplan_apo_lid already honors expect_apo_max above sit lid. Lars stack: ok.",
       "created": "2026-08-24T19:02:17Z",
       "desk": "lars",
       "evidence": [],
@@ -14170,16 +14172,17 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "OffPlan apo 163km > 140km killed FlyingHigh loft; plan expect_apo_max is 400km",
       "type": "control",
-      "updated": "2026-08-25T06:40:33Z"
+      "updated": "2026-08-25T06:44:07Z"
     },
     "T-392": {
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "skip-latch is FlyingLow cannot-pay only; High waits the lid. Lars stack: ok.",
       "created": "2026-08-24T19:34:47Z",
       "desk": "lars",
       "evidence": [],
@@ -14219,11 +14222,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "science skip cannot-pay skipped FlyingHigh trio on 275 km splash",
       "type": "control",
-      "updated": "2026-08-25T06:40:33Z"
+      "updated": "2026-08-25T06:44:07Z"
     },
     "T-393": {
       "assignee": "",
@@ -14264,6 +14267,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "_high_dwell_sit 1x after FlyingHigh lid until down. Lars stack: ok.",
       "created": "2026-08-24T20:06:24Z",
       "desk": "lars",
       "evidence": [],
@@ -14303,11 +14307,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "4x coast after goo/geiger dwell sheared t7-pbc 20->9",
       "type": "control",
-      "updated": "2026-08-25T06:40:33Z"
+      "updated": "2026-08-25T06:44:07Z"
     },
     "T-395": {
       "assignee": "",
@@ -14755,5 +14759,5 @@
       "updated": "2026-08-25T06:42:35Z"
     }
   },
-  "updated": "2026-08-25T06:42:59Z"
+  "updated": "2026-08-25T06:44:08Z"
 }

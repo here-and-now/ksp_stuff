@@ -1264,6 +1264,65 @@ class TestHouseDump(unittest.TestCase):
         self.assertIn("cli: python main.py hop", out)
         self.assertIn("hop_apo: 18000", out)
 
+    def test_next_ctt_skips_spent_stability(self):
+        from house_dump import next_ctt, format_science_dump, render_slate
+        from world import TechNode
+
+        tree = {
+            "start": TechNode(id="start", title="Start", cost=0, parents=()),
+            "basicRocketry": TechNode(
+                id="basicRocketry", title="Basic Rocketry", cost=5, parents=("start",)
+            ),
+            "engineering101": TechNode(
+                id="engineering101", title="Engineering 101", cost=5, parents=("start",)
+            ),
+            "survivability": TechNode(
+                id="survivability", title="Survivability", cost=15, parents=("engineering101",)
+            ),
+            "stability": TechNode(
+                id="stability",
+                title="Stability",
+                cost=18,
+                parents=("engineering101", "basicRocketry"),
+            ),
+            "generalRocketry": TechNode(
+                id="generalRocketry",
+                title="General Rocketry",
+                cost=20,
+                parents=("basicRocketry",),
+            ),
+            "aviation": TechNode(
+                id="aviation", title="Aviation", cost=45, parents=("stability",)
+            ),
+        }
+        spent = {
+            "sci": "1.9902",
+            "craft": "t7-wheel-pbc",
+            "unlocked": "start,engineering101,basicRocketry,survivability,stability",
+        }
+        node, cost, parents = next_ctt(spent, tree=tree)
+        self.assertEqual(node, "generalRocketry")
+        self.assertEqual(cost, 20.0)
+        self.assertEqual(parents, ("basicRocketry",))
+        dump = format_science_dump(desk=spent, tree=tree)
+        self.assertIn("`generalRocketry` 20", dump)
+        self.assertIn("need ~**18.01**", dump)
+        self.assertNotIn("`stability` 18", dump)
+        slate = render_slate(
+            "**Bank:** stale\n**Aero:** FAR\n",
+            desk=spent,
+            tree=tree,
+        )
+        self.assertIn("`generalRocketry` (20) LOCKED", slate)
+        self.assertNotIn("`stability` (18) LOCKED", slate)
+        early = {"sci": "1.00", "unlocked": "start"}
+        node, cost, _ = next_ctt(early, tree=tree)
+        self.assertEqual(node, "basicRocketry")
+        self.assertEqual(cost, 5.0)
+        node, cost, _ = next_ctt(spent, tree={})
+        self.assertEqual(node, "generalRocketry")
+        self.assertEqual(cost, 20.0)
+
 
 class TestMigrateSecondBus(unittest.TestCase):
     def setUp(self):

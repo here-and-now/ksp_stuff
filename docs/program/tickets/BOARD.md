@@ -1,16 +1,12 @@
 # Ticket board
 
-open: 67 / 405
+open: 63 / 405
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
-| T-386 | control | bug | S2 | P1 | medium | inbox | lars |  | vertical lid-hold lithobraked t7 MET28 alt389 — 13-31-03Z lofted 88.8 km same hang |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
-| T-391 | control | bug | S2 | P1 | medium | inbox | lars |  | OffPlan apo 163km > 140km killed FlyingHigh loft; plan expect_apo_max is 400km |
-| T-392 | control | bug | S2 | P1 | medium | inbox | lars |  | science skip cannot-pay skipped FlyingHigh trio on 275 km splash |
-| T-394 | control | bug | S2 | P1 | medium | inbox | lars |  | 4x coast after goo/geiger dwell sheared t7-pbc 20->9 |
 | T-069 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,leftover,flyinghigh,bound | Forest FlyingHigh TELEMETRY leftover 1.51 |
 | T-368 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,goo,bound | FlyingHigh goo unstarted 5.40 wait t7+Mk16 |
 | T-369 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,geiger,f013,bound | FlyingHigh geiger leftover 0.85 |

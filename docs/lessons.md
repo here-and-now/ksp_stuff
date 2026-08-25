@@ -21,6 +21,16 @@ python main.py pad
 
 ---
 
+## 2026-08-25 — ctt-stability
+
+- **When:** T-399. After Mortimer paid `stability`. Desk tree lists it.
+- **Symptom:** `house_dump` still priced next CTT as `stability` 18 LOCKED.
+- **Cause:** `STABILITY_COST = 18` hardcoded. Dump did not read owned nodes.
+- **Fix:** `next_ctt` cheapest locked RDNode whose parents are owned
+  (GameData tree, not persistent.sfs). Fallback `generalRocketry` 20
+  when `stability` is owned. Never load the save while a hop is flying.
+- **Modules:** `house_dump.py`. Not hop.py.
+
 ## 2026-08-25 — Close is Tracking, then KSC
 
 - **When:** After IL dump of `FlightResultsDialog` / `StartWithNewLaunch`.

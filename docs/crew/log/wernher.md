@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-25 — T-399 next CTT from owned tree (`generalRocketry` 20). T-396 Close persist→Tracking→KSC done; rewind is Hangar veto, not leftover-air. T-388/T-389 leftover GUID/crash-UI/wait-land stands. T-346 waste latch living +0 only. No hop.py. Never revert.
+
 - 2026-08-24 — T-396 leftover-ksc: Flight→KSC `save("persistent")` then `game_scene`. Setter loads last SaveGame unless RAM was written first. Save fail stays Flight. Rewind is Close failure, not Hangar. Air leftover is not a veto. Never load_space_center. Never leftover-ksc. Never revert.
 
 - 2026-08-24 — T-388 leftover-prelaunch-ghost: kRPC Vessel has no .id; persist _object_id to unrecoverable.last immediately. leftover_ships reads disk so the next process skips rec=0 crash-UI. No hop.py. Never revert.

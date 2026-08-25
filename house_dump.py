@@ -12,6 +12,7 @@ from tickets import (
     seated_fly_ticket,
     show_ticket,
 )
+from world import TechNode, parse_tech_tree
 
 DESK = Path("docs/program/desk.md")
 SLATE = Path("docs/program/slate.md")
@@ -19,7 +20,13 @@ SCIENCE = Path("docs/program/science.md")
 SEATED_SCIENCE = Path("docs/missions/jebediah/science.md")
 PLAN = Path("docs/missions/jebediah/plan.md")
 BRIEFING = Path("docs/missions/jebediah/briefing.md")
-STABILITY_COST = 18.0
+_FALLBACK_STABILITY = ("stability", 18.0, ("engineering101", "basicRocketry"))
+_FALLBACK_GENERAL = ("generalRocketry", 20.0, ("basicRocketry",))
+_TREE_CANDIDATES = (
+    Path("GameData") / "HideEmptyTechTreeNodes" / "Resources" / "HETTN.TechTree",
+    Path("GameData") / "ModuleManager.TechTree",
+    Path("GameData") / "Squad" / "Resources" / "TechTree.cfg",
+)
 
 
 def desk_kv(text: str | None = None) -> dict[str, str]:
@@ -35,6 +42,82 @@ def desk_kv(text: str | None = None) -> dict[str, str]:
         if key:
             out[key] = v.strip()
     return out
+
+
+def _unlocked_set(desk: dict[str, str]) -> set[str]:
+    owned = {"start"}
+    for tok in (desk.get("unlocked") or "").split(","):
+        nid = tok.strip()
+        if nid and nid not in {"?", "(none)"}:
+            owned.add(nid)
+    return owned
+
+
+def _game_tree() -> dict[str, TechNode]:
+    """GameData RDNode list. Not persistent.sfs (hop may be flying)."""
+    try:
+        from hangar import discover_ksp
+
+        root = discover_ksp()
+    except Exception:
+        return {}
+    if root is None:
+        return {}
+    for rel in _TREE_CANDIDATES:
+        path = root / rel
+        try:
+            if path.is_file():
+                return parse_tech_tree(path)
+        except Exception:
+            continue
+    return {}
+
+
+def _cost_s(cost: float) -> str:
+    if cost == int(cost):
+        return str(int(cost))
+    return f"{cost:g}"
+
+
+def next_ctt(
+    desk: dict[str, str] | None = None,
+    *,
+    tree: dict[str, TechNode] | None = None,
+) -> tuple[str, float, tuple[str, ...]]:
+    """Cheapest locked node whose parents are owned. Disk tree, not kRPC."""
+    d = desk if desk is not None else desk_kv()
+    owned = _unlocked_set(d)
+    nodes = tree if tree is not None else _game_tree()
+    best: tuple[str, float, tuple[str, ...]] | None = None
+    for node in nodes.values():
+        nid = (getattr(node, "id", None) or "").strip()
+        if not nid or nid in owned:
+            continue
+        try:
+            cost = float(getattr(node, "cost", 0) or 0)
+        except (TypeError, ValueError):
+            continue
+        if cost <= 0:
+            continue
+        parents = tuple(p for p in (getattr(node, "parents", ()) or ()) if p)
+        if parents and not all(p in owned for p in parents):
+            continue
+        cand = (nid, cost, parents)
+        if best is None or (cost, nid) < (best[1], best[0]):
+            best = cand
+    if best is not None:
+        return best
+    if "stability" in owned:
+        return _FALLBACK_GENERAL
+    return _FALLBACK_STABILITY
+
+
+def _ctt_need(desk: dict[str, str], cost: float) -> str:
+    try:
+        bank = float(desk.get("sci") or "")
+    except ValueError:
+        return "?"
+    return f"{max(0.0, cost - bank):.2f}"
 
 
 def _open_science() -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
@@ -66,18 +149,18 @@ def _sci_row(t: dict[str, Any]) -> str:
     )
 
 
-def format_science_dump(*, desk: dict[str, str] | None = None) -> str:
+def format_science_dump(
+    *,
+    desk: dict[str, str] | None = None,
+    tree: dict[str, TechNode] | None = None,
+) -> str:
     d = desk if desk is not None else desk_kv()
     bound, catalog = _open_science()
     sci = d.get("sci") or "?"
     craft = d.get("craft") or "?"
     unlocked = d.get("unlocked") or "?"
-    try:
-        bank = float(sci)
-        need = max(0.0, STABILITY_COST - bank)
-        need_s = f"{need:.2f}"
-    except ValueError:
-        need_s = "?"
+    node, cost, _parents = next_ctt(d, tree=tree)
+    need_s = _ctt_need(d, cost)
     lines = [
         "# Linus board — science dump",
         "",
@@ -85,7 +168,7 @@ def format_science_dump(*, desk: dict[str, str] | None = None) -> str:
         "Catalog (`unbound`) is the shelf. This-hop work is **bound**.",
         "",
         f"Craft `{craft}`. Tree `{unlocked}`. Bank **{sci}**. Next CTT",
-        f"`stability` 18 → need ~**{need_s}**. Recover banks for hops; "
+        f"`{node}` {_cost_s(cost)} → need ~**{need_s}**. Recover banks for hops; "
         "transmit is a radio (rate on `comms`), not the hop path. F-013:",
         "instrument part, never Stayputnik PAW as Geiger.",
         "",
@@ -273,7 +356,12 @@ def render_briefing(*, desk: dict[str, str] | None = None) -> str:
     )
 
 
-def render_slate(text: str | None = None, *, desk: dict[str, str] | None = None) -> str:
+def render_slate(
+    text: str | None = None,
+    *,
+    desk: dict[str, str] | None = None,
+    tree: dict[str, TechNode] | None = None,
+) -> str:
     raw = text if text is not None else (
         SLATE.read_text(encoding="utf-8") if SLATE.is_file() else "# Slate\n"
     )
@@ -281,13 +369,9 @@ def render_slate(text: str | None = None, *, desk: dict[str, str] | None = None)
     sci = d.get("sci") or "0"
     unlocked = d.get("unlocked") or "start"
     last = d.get("last") or ""
-    try:
-        bank = float(sci)
-        need = max(0.0, STABILITY_COST - bank)
-        need_s = f"{need:.2f}"
-    except ValueError:
-        bank = 0.0
-        need_s = "?"
+    node, cost, parents = next_ctt(d, tree=tree)
+    need_s = _ctt_need(d, cost)
+    parent_s = "+".join(parents) if parents else "start"
     fly = seated_fly_ticket() or {}
     run = ((fly.get("payload") or {}).get("landing") or {}).get("run") or ""
     biome = ((fly.get("payload") or {}).get("landing") or {}).get("biome") or ""
@@ -299,7 +383,7 @@ def render_slate(text: str | None = None, *, desk: dict[str, str] | None = None)
         if line.startswith("**Bank:**"):
             out.append(
                 f"**Bank:** desk **sci {sci}**. Tree **{unlocked}**. "
-                f"`stability` (18) LOCKED — need ~**{need_s}**. "
+                f"`{node}` ({_cost_s(cost)}) LOCKED — need ~**{need_s}**. "
                 f"`load persistent` is forbidden (F-014)."
             )
             i += 1
@@ -308,8 +392,8 @@ def render_slate(text: str | None = None, *, desk: dict[str, str] | None = None)
             continue
         if line.startswith("**Next (Os"):
             out.append(
-                f"**Next:** bank `stability` **18** (need **~{need_s}**; "
-                "parents engineering101+basicRocketry owned). Pad occupancy until then. "
+                f"**Next:** bank `{node}` **{_cost_s(cost)}** (need **~{need_s}**; "
+                f"parents {parent_s} owned). Pad occupancy until then. "
                 f"Last hop `{run or last}` biome **{biome or '?'}**. "
                 "`campaign: uncrewed`. Idle pad is a sin."
             )

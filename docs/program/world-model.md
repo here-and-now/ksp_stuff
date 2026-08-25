@@ -397,7 +397,8 @@ story this fly. Dead kRPC GUID is not leftover.
   clamp `hop_apo` to 18 km). Shelf stays
   unbound catalog. Do not gather a subject this stack cannot reach.
   Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`; never
-  rails / WarpTo). Do not sit 1× waiting a chute. Do not replan
+  rails / WarpTo). High dwell is not a burn; `chute_arm_sit` 1× is
+  Arm, not apo. Do not sit 1× waiting a chute. Do not replan
   15 min. Conference-then-+0 hops are the anti-pattern. After sci
   unchanged, rebind from the envelope or pick the next signed hang
   that can bank.
@@ -596,6 +597,21 @@ story this fly. Dead kRPC GUID is not leftover.
   (TELEMETRY, 2HOT, PresMat) still pays; sample rem=0 (goo) still skips.
   Code T-436 `science.py`. Do not Hangar. Never revert. An RSI letter
   does not empty the pad.
+- **2026-08-25 hop-coast-phys-warp (T-439, ×3, stem count 5):**
+  Warp is a clock on sits. Thick air ≤18 km is 1× (`thick_air_sit`;
+  unknown q fail-closed — T-426). High dwell is **not** a burn — quiet
+  loft after lid honors Hank `phys-warp` (`burning=burning_now` only,
+  T-438). `chute_arm_sit` 1× is Arm / deploy / silk, **not** any
+  descent at apo ~200 km (08-40-14Z 4× then 1×). Code T-442 Wernher
+  `physics_warp.py`. Do not Hangar. Never revert. An RSI letter does
+  not empty the pad.
+- **2026-08-25 hold-ground-card (T-441, ×9, stem count 10):**
+  Airborne cannot-pay is not card-done. After High dwell, splash
+  leftover still Toggles on splash sit **before** recover (08-40-14Z
+  skipped TELEMETRY/thermo/PresMat cannot-pay then recovered Water
+  splash unpaid). Wrong sit is cannot-pay (T-437); splash sit still
+  pays T-028/T-422/T-423. File rem=0 still the card. Code T-440 Lars.
+  Do not Hangar. Never revert. An RSI letter does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

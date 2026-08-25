@@ -29,8 +29,10 @@ does not pay 20). `campaign: uncrewed`.
 
 **How today:** pad occupancy on **t7-wheel** that can **pay** FlyingHigh
 ≥50 km, not another living +0. Throttle 1 + SAS vertical until lid;
-inland slew after. Thick air ≤18 km is 1×. 1× after High dwell until
-down. Skip-latch is FlyingLow cannot-pay only. 163 km is not OffPlan
+inland slew after. Thick air ≤18 km is 1×. Quiet loft after lid honors
+Hank `phys-warp`. `chute_arm_sit` 1× is Arm/silk, not apo. Splash leftover
+Toggles after airborne dwell — do not recover unpaid. Skip-latch is
+FlyingLow cannot-pay only. 163 km is not OffPlan
 when `expect_apo_max` is 400 km. Do **not** Hangar 4t / dv5 / girderless
 lite / a 4×-sheared t7 / T-409 as silk (`far-shear`). Idle pad is a
 sin; a living recover that cannot pay is waste. Warp the coast. Thin

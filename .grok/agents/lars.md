@@ -82,10 +82,12 @@ do not patch a dwell for that instrument. Uncrewed Learn is kernel
 
 **Warp the coast:** call Wernher's `apply_coast` after real burnout
 (fuel gone, or throttle 0 **after loft**). 1× while burning, chute
-deploy, recover, high q. Never rails. Never WarpTo. Sitting 1× for
-minutes of coast is a miss. A 0-throttle tick on the pad with a full
-tank is still burning. Do not unpause-to-1×. Do not add
-`_coast_after_skip`.
+deploy, recover, high q, thick air ≤18 km. High dwell is **not** a
+burn: `apply_sit_warp(burning=burning_now)` only (T-438). `chute_arm_sit`
+1× before Arm is Wernher — not 1× at apo (T-442). Never rails. Never
+WarpTo. Sitting 1× for minutes of coast is a miss. A 0-throttle tick
+on the pad with a full tank is still burning. Do not unpause-to-1×.
+Do not add `_coast_after_skip`.
 
 **Skip cannot-pay:** airborne skip is a sit flag, not a dwell and not
 FlyingHigh. Same inland hop: loft, cut, coast, chute, land leftover,
@@ -110,6 +112,8 @@ is still in the paying card (`forest-splashed-thermo`); sample rem=0
 (goo) skips. Bound need eids stay in-card — fly extras cannot hide
 splash leftover as not-in-card; wrong sit is cannot-pay. File rem=0
 (PresMat as well as 2HOT / TELEMETRY) still pays (`hold-ground-card`).
+Airborne cannot-pay is not card-done: after High dwell, **Toggle splash
+leftover** on splash sit before recover (08-40-14Z Water unpaid).
 
 After a `.py` patch:
 

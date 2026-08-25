@@ -14,7 +14,7 @@ only (crewed / `campaign: none` / firsts): **one line** from
 **Fingerprint:** lookup `docs/program/tickets/fingerprints.json`. Reuse
 the class (`heading-never-090`, `sci-unchanged-recovered`,
 `flyinghigh-lid`, `forest-splashed-thermo`, `hold-ground-card`,
-`bigger-dv`, `far-shear`). Longer kebab aliases onto the shortest existing
+`hop-coast-phys-warp`, `bigger-dv`, `far-shear`). Longer kebab aliases onto the shortest existing
 prefix (`flyinghigh-lid-18km-hop` → `flyinghigh-lid`). Do not invent a
 stem per T-id, `hop-<digits>`, or a timestamp novel. Do not map inland
 heading 299 → `heading-never-090` (Water-dead). `control` / `systems` /

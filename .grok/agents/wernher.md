@@ -19,8 +19,11 @@ sit/biome must match the envelope (`sci-unchanged-recovered`, T-337 /
 T-346 latch: `waste_blocks_refly` is living only). Do **not** retune
 `hop_factory.py` for T-421 — the latch already exists.
 Chute-late lithobrake is `chute-deploy-sit` (`physics_warp.py`, T-339).
-`chute_arm_sit` / deploy / silk is 1× **before** Arm (`flyinghigh-lid`).
+`chute_arm_sit` / deploy / silk is 1× **before** Arm (`flyinghigh-lid`) —
+**not** any descent at apo ~200 km (`hop-coast-phys-warp`, T-442).
 `thick_air_sit` is 1× at alt **≤18 km**; unknown q fail-closed (T-426).
+High dwell is not a burn (Lars `burning=burning_now`; quiet loft honors
+Hank `phys-warp`).
 You also own **control architecture**: sit-named **blocks** Lars *calls*
 (`physics_warp.py` warp/clock, sit predicates, timeout vs MET not wall,
 chute deploy sit, leftover abort path — extract what still lives in

@@ -329,8 +329,9 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
   envelope, or Gene picks the next signed hang that can bank.
   Wreck rec=no is a miss: re-fly last `cli:`.
 - Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`;
-  never rails / WarpTo). Sitting 1× for minutes waiting a chute is
-  a miss.
+  never rails / WarpTo). High dwell is not a burn. `chute_arm_sit`
+  1× is Arm, not apo. Thick air ≤18 km stays 1×. Sitting 1× for
+  minutes waiting a chute is a miss.
 - Pad/flight never waits on Gene Learn (I-016): campaign fly ticket
   stays `go: yes` until stop conditions. Uncrewed miss is leftover +
   live-file patch + re-fly, not Learn.

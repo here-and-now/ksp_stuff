@@ -157,8 +157,10 @@ wait is loft live-alt ≥50 km / Toggle / cut / chute / land leftover —
 not a sit at 800 m apo, not wait-then-pitch in the first km, not
 throttle-0 at light, not silk, not abort-at-lid, not skip-chute, not
 OffPlan under `expect_apo_max`. Throttle 1 + SAS vertical until lid;
-inland slew after. **1× after FlyingHigh lid latch until down** (4×
-after High dwell shears t7). Do not Hangar FAR-sheared 4t / dv5 /
+inland slew after. Thick air ≤18 km is 1×. 4× silk / chute Arm shears
+t7 — `chute_arm_sit` 1× is Arm, **not** apo (`hop-coast-phys-warp`).
+Quiet loft after lid honors Hank `phys-warp` (High dwell is not a
+burn). Do not Hangar FAR-sheared 4t / dv5 /
 girderless lite / a 4×-sheared t7 this sit. Do not Hangar
 **t7-wheel-nose** (T-409) as silk. Signed next loft is
 **t7-wheel-proc** (T-406, same length, more kero) — Hangar after
@@ -192,7 +194,9 @@ Not one thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is
 still the card — skip not-in-card is a miss when the part is on_craft
 and the envelope sit can pay (`hold-ground-card`). Bound leftover
 stays in the card — fly extras cannot hide splash leftover as
-not-in-card; wrong sit is cannot-pay.
+not-in-card; wrong sit is cannot-pay. Airborne cannot-pay is not
+card-done: after High dwell, splash leftover still Toggles on splash
+sit before recover.
 
 **Live watch (Os 2026-08-23):** Someone looks at the hop **while it
 flies**. The Commander watches telem/gates. Unusual →
@@ -237,7 +241,8 @@ light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
 re-flies last `cli:`. Miss (nonzero / ABORT / `science (none)` / `science skip`):
 spawn **Lars** on the named **pulse** file (`hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
-still loft, cut, coast, chute, land leftover. Skip-latch is
+still loft, cut, coast, chute, land leftover, **then Toggle splash
+leftover**. Skip-latch is
 **FlyingLow cannot-pay only** — bound FlyingHigh waits the lid, then
 Toggle. Splash / missing flying card still waits the High lid
 (≥50 km); bound FlyingLow flying card is airborne Toggle. Do not

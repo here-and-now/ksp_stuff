@@ -31,7 +31,7 @@ patch house docs, or `tickets open --type systems --fingerprint
 <stem>`. Close items you settled. Lookup
 `docs/program/tickets/fingerprints.json`. Reuse stems
 (`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`,
-`science-skip-timeout`);
+`science-skip-timeout`, `hold-ground-card`, `hop-coast-phys-warp`);
 do not invent a stem per T-id. Empty `--fingerprint` on `control` /
 `systems` / `ops --tag feedback` is kernel-refused. You may rewrite
 PROTOCOL, job cards (`.grok/agents/*.md`), portraits (voice only — not

@@ -56,8 +56,10 @@ keep the trio. 2HOT **and PresMat** are file duration: unstarted rem=0 is still 
 card (`hold-ground-card` / `forest-splashed-thermo`), not not-in-card. Sample rem=0 (goo)
 is spent. Do not gather a subject
 this stack cannot reach. Airborne `science skip (situation cannot
-pay)` on a **landed** bind is expected **only if the hang will land**
-— do not unbind then. Recovered splash of a land bind **is** a rebind. **15 sci is spent.** Keep a **shelf** of
+pay)` on a splash or land bind is expected during High dwell — do
+not unbind then. Recovered splash **without Toggle** of splash leftover
+is the miss (`hold-ground-card`), not a rebind. Recovered splash of a
+**land** bind **is** a rebind. **15 sci is spent.** Keep a **shelf** of
 remaining subjects (biomes, situations, durations, honest f013) —
 unbound catalog, not one bind that “closes 15.” Cape Shores is
 capped. Forest / Grasslands / Tropics / Savanna FlyingLow still pay
@@ -74,7 +76,8 @@ vehicle` or skip. Working goal **15 is spent** — bind what still pays **on thi
 (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape). Not one
 thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is still the
 card — skip not-in-card is a miss when on_craft and the envelope sit
-can pay. After sci unchanged, rebind from the envelope
+can pay. Airborne cannot-pay then recover splash without Toggle is
+still unpaid leftover — not a rebind. After sci unchanged, rebind from the envelope
 **before** the next light — a living recover that cannot pay is waste. Thin tape / 9-column skim:
 `--type systems --fingerprint <stem>` (or `ops --tag feedback
 --fingerprint <stem>`) — cite it like `f013`.

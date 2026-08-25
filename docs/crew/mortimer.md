@@ -44,14 +44,15 @@ not a Forest leftover grind. FlyingHigh leftover is t7-wheel / t7-pbc
 ≥50 km — throttle 1 vertical until lid, not silk / abort-at-lid / a
 30 km stiff / wait-at-800 m then pitch / t7-chute this sit. Splash
 Water bind does not drop that lid to 18 km. Skip-latch is FlyingLow
-cannot-pay only. Thick air ≤18 km is 1×. 1× after High dwell until
-down. Wreck rec=no re-flies last cli; living +0 is waste. Do not Hangar
+cannot-pay only. Thick air ≤18 km is 1×. High dwell is not a burn;
+quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
+(T-442). Wreck rec=no re-flies last cli; living +0 is waste. Do not Hangar
 4t / dv5 / girderless lite / a 4×-sheared t7. OX-STAT is dwell EC, not
 the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
 Next CTT is `generalRocketry` 20 (need ~17.71; bank 2.29 does not
 pay 20). `survivability` 15 is spent. Do not spend crumbs. Signed next
 loft is t7-wheel-proc (T-406) — Hangar after leftover. T-409 / T-433
-nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. VAB helpers
+nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). VAB helpers
 T-413–T-420 are Wernher; pad does not wait. Live Cape path is 64 bps.
 Procedural Parts on Gus’s shelf when unlocked — not a
 GameData edit, not a pad tutorial.

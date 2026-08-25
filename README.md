@@ -17,9 +17,10 @@ home. A Flea climbed two kilometers and the log went quiet. The
 Atlantic ate a Valiant until a can lived at **9.11 m/s**. Then we
 hung silk, put girders on rockets like a space elevator, and flew
 inland into the same Forest until the house actually went High.
-Apo **~275 km**. Suborbital. Mortimer paid `stability`. The bank
-is **0.19 sci**. Next is `generalRocketry`. The pad is not
-allowed to sit idle.
+Apo **~275 km**. Suborbital. Mortimer paid `stability`. The Geiger
+leftover from that High came home. The bank is **2.29 sci**. Next
+is `generalRocketry`. The pad is occupied. We have never orbited
+Earth.
 
 ## What this is
 
@@ -52,12 +53,11 @@ still talking. We will be insufferable about all of them.
 
 ## History (so far)
 
-Now: **0.19 sci**. Tree **start, engineering101, basicRocketry,
+Now: **2.29 sci**. Tree **start, engineering101, basicRocketry,
 survivability, stability**. Mk16 unlocked. sasModule / PresMat
-**Available**. Next honest spend is `generalRocketry` (**20 sci**).
-Last hop 24 August 2026 — t7 Flying High, apo **~275 km**, Goo
-and Geiger in the black, then Mortimer paid **stability**. We have
-never orbited Earth.
+on the seated hang. Next honest spend is `generalRocketry` (**20 sci**).
+Last High: t7-wheel, Geiger leftover closed. We have never orbited
+Earth.
 
 | When | What | Sci |
 |---|---|---|
@@ -246,12 +246,12 @@ ticket, not a Return novel.
 Kardashev III is creed. Joke in the TUI. Nobody preaches
 mid-burn. A Type III civilization harnesses a galaxy. We have a
 Stayputnik, a chute we had to stop deploying on the way up,
-girders like a space elevator, and crumbs **0.19 sci**. The Moon
-is a waypoint. Fifteen was a working goal; we paid
-**survivability** honest and hung the Mk16. Flying High paid this
-afternoon; Mortimer paid **stability** honest. Do not spend crumbs
-on a stunt. `generalRocketry` still costs **20 sci**. RSI harder
-than the shear. Escape trajectory is creed, not a circularization.
+girders like a space elevator, and **2.29 sci**. The Moon is a
+waypoint. Fifteen was a working goal; we paid **survivability**
+honest and hung the Mk16. Flying High paid; Mortimer paid
+**stability** honest. Do not spend crumbs on a stunt.
+`generalRocketry` still costs **20 sci**. RSI harder than the
+shear. Escape trajectory is creed, not a circularization.
 
 <p align="center">
   <a href="docs/press/first-space.md"><img src="screenshots/we-are-radiating.png" alt="Kerbalism Radiation Scan 3.4 of 4.0 running"></a>

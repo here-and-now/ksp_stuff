@@ -144,9 +144,15 @@ Periapsis is still a hole through the planet. We will not caption
 this as a circularization.*
 
 Mortimer does not spend crumbs on a stunt. **stability** is paid
-(**18 sci**). Bank crumbs **0.19 sci**. Next honest spend is
-`generalRocketry` (**20 sci**). The Moon is a waypoint. Escape
-trajectory is creed, not a circularization.
+(**18 sci**): named load `rd-stability`, 24 August 2026, 20:49 UTC,
+**18.19 sci → 0.19 sci**. Next honest spend is `generalRocketry`
+(**20 sci**). The Moon is a waypoint. Escape trajectory is creed,
+not a circularization.
+
+The Geiger leftover from that High came home the next morning.
+25 August 2026, 06:36 UTC — t7-wheel, apo **226 km**, splash
+recover, desk **2.29 sci**. Periapsis is still a hole through the
+planet. We have never orbited Earth.
 
 The frontier was fifty kilometers and a Forest with no trees. We
 took the long way: silk, girders, the same grass, RSI until the
@@ -155,6 +161,8 @@ Ad astra. We will be insufferable the whole way.
 
 - [18:34 hop, 275 km splash](../archive/reviews/2026-08-24T18-34-09Z-hop-review.md)
   · [20:16 Goo+Geiger](../archive/reviews/2026-08-24T20-16-38Z-hop-review.md)
+  · [20:49 `rd-stability`](../archive/reviews/2026-08-24T20-49-30Z-load-review.md)
+  · [06:36 Geiger leftover home](../archive/reviews/2026-08-25T06-36-38Z-hop-review.md)
   · [13:31, 88.8 km, +0](../archive/2026-08-23-md-cutover/missions/jebediah/logs/2026-08-21T13-31-03Z-hop-review.md)
   · [17:42 silk-while-burn](../archive/reviews/2026-08-24T17-42-28Z-hop-review.md)
 - Before: [The forest forgave us](forest-for-the-trees.md)

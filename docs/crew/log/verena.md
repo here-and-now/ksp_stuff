@@ -1,5 +1,6 @@
 # Verena Grokman — log
 
+- 2026-08-25 — T-397 first-space still the 24 Aug High (~275 km, not orbit). README now **2.29 sci** (Geiger leftover home 06-36); tree stability; next generalRocketry 20. Did not invent a radio scoop. Did not recover the pad bird. Did not clobber first-mystery-goo.
 - 2026-08-24 — T-397 Os stills: first-space-black hero (not orbit); we-are-radiating 3.4/4.0; earth-is-round periapsis hole; chute-fail-silk-burn not a landing; farthest-flight-city inland; even-more-girders one porch. Did not use bigger-rocket. Did not clobber first-mystery-goo.
 - 2026-08-24 — T-397 stability paid: first-space + README now **18.19→0.19**; tree includes stability; next generalRocketry 20. Named load `rd-stability`. Did not clobber first-mystery-goo.
 - 2026-08-24 — T-397 first space: `first-space` from 13-31 88.8 km +0 / Forest silk / silk-while-burn / t7 apo **~275 km** 18-34 splash + 20-16 Goo+Geiger. Bank **18.19 sci**. Still `first-flying-high` (parent). README hero Cape empty. Not orbit. Did not clobber first-mystery-goo.

@@ -21,6 +21,25 @@ python main.py pad
 
 ---
 
+## 2026-08-25T08-20-54Z-hop — hop-coast-phys-warp
+
+- **When:** T-438. t7-wheel-pbc. T-081. Hank `uplink phys-warp 4` after
+  50 km lid. f013 TELEMETRY Stayputnik on_craft=yes; 2HOT start
+  on_craft=yes; PresMat stability on_craft=yes; geiger e101
+  on_craft=yes; goo start on_craft=yes. Tree start,engineering101,
+  basicRocketry,survivability,stability. Do not Hangar. Never revert.
+- **Symptom:** phys-warp 4 taken at MET~109 / 79 km quiet loft; clock
+  stayed 1× through ~178 km sub_orbital (wall≈MET). No `hop coast
+  physics 4x`.
+- **Cause:** After lid, `_high_dwell_sit` was passed as `burning=` into
+  `apply_sit_warp`, so `want_coast` was always False until down. Hank's
+  clock never applied.
+- **Fix:** High dwell is not a burn. Pass `burning=burning_now` only.
+  Wernher `want_coast` already 1× on thick air ≤18 km / high q / silk /
+  burn. Quiet loft honors uplink `phys-warp`. Forest / Grasslands: same.
+  Never revert. Do not Hangar.
+- **Modules:** `hop_factory.py`. Not `physics_warp.py` this hire (XOR).
+
 ## 2026-08-25T07-51-42Z-hop — hold-ground-card
 
 - **When:** T-436. t7-wheel-pbc. Bound splash Water T-028 TELEMETRY /

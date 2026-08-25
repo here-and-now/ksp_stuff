@@ -469,3 +469,6 @@ def test_source_sit_blocks_not_stamp_helpers():
     arm_at = factory.find("H.arm_chutes")
     assert warp_at != -1 and arm_at != -1
     assert warp_at < arm_at
+    warp_chunk = factory[warp_at : warp_at + 280]
+    assert "burning=burning_now" in warp_chunk
+    assert "_high_dwell_sit" not in warp_chunk

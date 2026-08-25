@@ -817,6 +817,9 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertGreater(arm_at, warp_at)
         self.assertGreater(wait_lid_at, arm_at)
         self.assertGreater(wait_lid_at, deploy_at)
+        warp_chunk = text[warp_at : warp_at + 280]
+        self.assertIn("burning=burning_now", warp_chunk)
+        self.assertNotIn("_high_dwell_sit", warp_chunk)
         self.assertGreater(wait_lid_at, warp_at)
         self.assertGreater(offplan_at, hold_at)
         self.assertLess(text.count("\n") + 1, 1100)
@@ -2777,12 +2780,64 @@ class TestHopSequence(unittest.TestCase):
         self.assertFalse(any("science wait FlyingHigh" in line for line in logs))
 
     def test_high_dwell_sit_1x_after_lid(self):
-        """far-shear: 19-57-33Z 4× after High dwell sheared 20→9. 1× after lid."""
+        """T-438: High dwell is lid-until-down, not a burn. Quiet loft 4×."""
         from hop_factory import _high_dwell_sit
+        from physics_warp import apply_sit_warp, want_coast
 
         self.assertFalse(_high_dwell_sit(reached_lid=False, down=False))
         self.assertTrue(_high_dwell_sit(reached_lid=True, down=False))
         self.assertFalse(_high_dwell_sit(reached_lid=True, down=True))
+        quiet = type(
+            "S",
+            (),
+            {
+                "alt": 178_000.0,
+                "q": 0.0,
+                "v_vert": 941.0,
+                "chute": "none",
+                "in_atmo": False,
+            },
+        )()
+        self.assertTrue(
+            want_coast(quiet, left_pad=True, down=False, burning=False)
+        )
+        self.assertFalse(
+            want_coast(quiet, left_pad=True, down=False, burning=True)
+        )
+        sc = type(
+            "SC", (), {"rails_warp_factor": 0, "physics_warp_factor": 0}
+        )()
+        krpc = type("K", (), {"paused": False})()
+        sess = type(
+            "Sess",
+            (),
+            {"space_center": sc, "conn": type("C", (), {"krpc": krpc})()},
+        )()
+        last = [""]
+        n = apply_sit_warp(
+            sess,
+            quiet,
+            left_pad=True,
+            down=False,
+            burning=False,
+            last=last,
+            uplink_rate=4,
+        )
+        self.assertEqual(n, 3)
+        self.assertEqual(sc.physics_warp_factor, 3)
+        self.assertEqual(sc.rails_warp_factor, 0)
+        self.assertEqual(last[0], "4x")
+        n_burn = apply_sit_warp(
+            sess,
+            quiet,
+            left_pad=True,
+            down=False,
+            burning=True,
+            last=last,
+            uplink_rate=4,
+        )
+        self.assertEqual(n_burn, 0)
+        self.assertEqual(sc.physics_warp_factor, 0)
 
     def test_lid_burn_sit_leftover_before_lid(self):
         """far-shear: leftover LF before lid is still burn. Not 4×."""

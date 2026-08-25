@@ -5,8 +5,9 @@ at 1 km. Lid hold is throttle 1 + SAS vertical until lid; inland slew
 after. Splash bind is not FlyingLow — factory inland still waits the
 High lid. Airborne cannot-pay: FlyingLow skip still lofts — High waits
 the lid, then Toggle; skip-latch does not drop a bound High card. After
-High lid, 1× (dwell / reentry). FlyingLow skip may still 4×. Then
-coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
+High lid, High dwell is not a burn; quiet loft honors uplink phys-warp.
+Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
+4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
 sit=landed at pad alt with fuel is still burning. Parked water/splash
 CLIs stay in hop.py. This module must not name those flags. Helpers live
 on the hop module so test patches of hop.* still bind.
@@ -99,7 +100,7 @@ def _lid_burn_sit(
 
     FlyingHigh wait at ~1 km is not FlyingHigh. Throttle 0 with leftover
     LF is not 4×. Crumbs before lid may coast if q is actually low.
-    After lid, ``_high_dwell_sit`` is 1×.
+    After lid, leftover LF is not this sit. High dwell is not a burn.
     """
     if not flying_high:
         return False
@@ -110,10 +111,10 @@ def _lid_burn_sit(
 
 
 def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
-    """After FlyingHigh lid, 1×. Skip FlyingLow may still 4×.
+    """After FlyingHigh lid, until down. Not a burn.
 
-    Paying High dwell and High descent are not lofted burnout.
-    Forest / Grasslands: same.
+    Wernher ``want_coast`` already 1× on thick air / high q / silk / burn.
+    Quiet loft honors uplink ``phys-warp``. Forest / Grasslands: same.
     """
     return bool(reached_lid) and not down
 
@@ -640,8 +641,7 @@ def run_factory_vessel(
                 snap,
                 left_pad=left_pad,
                 down=down,
-                burning=burning_now
-                or _high_dwell_sit(reached_lid=reached_lid, down=down),
+                burning=burning_now,
                 on_log=on_log,
                 last=said_coast,
                 uplink_rate=H.phys_warp_rate(),

@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 79 / 421
+open: 79 / 423
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -12,13 +12,12 @@ open: 79 / 421
 | T-412 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI hold-ground-card ×5 |
 | T-415 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI vab-helper ×3 |
 | T-421 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI sci-unchanged-recovered ×13 |
-| T-368 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,goo,bound | FlyingHigh goo unstarted 5.40 wait t7+Mk16 |
-| T-369 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,geiger,f013,bound | FlyingHigh geiger leftover 0.31 |
-| T-404 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,barometer,bound | FlyingHigh barometer unstarted 2.70 |
+| T-028 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,telemetry,splash,bound | splash TELEMETRY@Water 0.80 |
+| T-422 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,thermo,splash,bound | Water SrfSplashed thermo 0.90 |
+| T-423 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,barometer,splash,bound | Water SrfSplashed barometer 0.90 |
 | T-025 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,thermo,unbound | FlyingLow@Water thermo 2.10 wait heading 090 |
 | T-026 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingLow@Water TELEMETRY 1.40 wait heading 090 |
 | T-027 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingHigh@Water TELEMETRY 1.80 wait heading 090 |
-| T-028 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,splash,unbound | splash TELEMETRY@Water 0.80 wait heading 090 |
 | T-069 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,forest,telemetry,leftover,flyinghigh,unbound | Forest FlyingHigh TELEMETRY leftover 1.51 |
 | T-070 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,thermo,chute,unbound | Grasslands FlyingLow thermo 2.10 |
 | T-071 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,telemetry,unbound | Grasslands FlyingLow TELEMETRY 1.40 |
@@ -58,11 +57,12 @@ open: 79 / 421
 | T-313 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,forest,thermo,splash,unbound | Forest SrfSplashed thermo 0.90 chute splash |
 | T-351 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,thermo,splash,unbound | Grasslands SrfSplashed thermo 0.90 chute splash |
 | T-352 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,telemetry,splash,unbound | Grasslands SrfSplashed TELEMETRY 0.60 chute splash |
+| T-368 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,flyinghigh,goo,unbound | FlyingHigh goo unstarted 5.40 wait t7+Mk16 |
 | T-397 | press | press | S3 | P2 | medium | inbox | verena | press | First space: chutes, girders, the same Forest, RSI, radiation in the bank |
 | T-400 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover |
 | T-402 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk) |
 | T-403 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-cone: RC_cone 50m recover alt of t7-wheel — do not Hangar this sit |
-| T-405 | ops | improvement | S3 | P2 | medium | inbox | gus | feedback | Review hand-written .craft friction; file VAB helper asks at Wernher |
+| T-404 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,flyinghigh,barometer,unbound | FlyingHigh barometer unstarted 2.70 |
 | T-406 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel |
 | T-408 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC |
 | T-409 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk) |

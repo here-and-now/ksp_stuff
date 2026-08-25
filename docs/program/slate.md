@@ -8,7 +8,7 @@ that can bank FlyingHigh / a new biome are the work. Tape is the
 product. Save `letsgrok` / `~/Games/KSP-rss`. CTT+PBC. RO sandbox is
 the next tree, not this save.
 
-**Bank:** desk **sci 2.0903**. Tree **start,engineering101,basicRocketry,survivability,stability**. `generalRocketry` (20) LOCKED — need ~**17.91**. `load persistent` is forbidden (F-014).
+**Bank:** desk **sci 2.2905**. Tree **start,engineering101,basicRocketry,survivability,stability**. `generalRocketry` (20) LOCKED — need ~**17.71**. `load persistent` is forbidden (F-014).
 **Aero (2026-08-21):** FAR, RealChute, RealHeat **installed**. Kerbalism
 Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
 

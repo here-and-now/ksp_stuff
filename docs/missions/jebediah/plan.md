@@ -15,5 +15,5 @@ hop_apo: 50000
 go: yes
 cli: python main.py hop
 campaign: uncrewed
-science_ids: kerbalism_TELEMETRY,mysteryGoo,geigerCounter
+science_ids: barometerScan,geigerCounter,mysteryGoo
 emergencies: hold, cut, no_warp, stage, recover, science, abort_pad

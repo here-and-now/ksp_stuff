@@ -1217,50 +1217,64 @@
       "updated": "2026-08-22T22:17:57Z"
     },
     "T-028": {
-      "assignee": "",
+      "assignee": "linus",
       "blockers": [],
       "category": "science_opportunity",
       "created": "2026-08-22T08:13:16Z",
       "desk": "linus",
-      "evidence": [],
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
+      ],
       "fingerprint": "splash-telemetry-water",
       "id": "T-028",
       "payload": {
         "biome": "Water",
-        "bound": "no",
-        "craft": "",
+        "bound": "yes",
+        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 30,
         "ec_rate": 0.052,
         "est": 0.8,
         "experiment_id": "kerbalism_TELEMETRY",
-        "host": "probeCoreOcto_v2",
-        "instrument": "OKTO PAW (probeCoreOcto_v2, no Science-category part) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
-        "note": "T-020 is Shores only. Do not fake Water. 090 tape first. No experiment_id until bind. east-t3 retired. T-020 Shores splash TELEMETRY is now CAPPED. Water splash still unstarted. 090 first. No experiment_id.",
-        "on_craft": "wait chute capable",
-        "part": "probeCoreOcto_v2",
+        "findings": [
+          {
+            "at": "2026-08-25T06:55:51Z",
+            "claim": "Bound splash Water TELEMETRY 30/0.052/0.80 seq0 on Stayputnik PAW. Envelope 06-36-38Z sit=splashed biome=Water 40 km heading 297 rec=yes sci_run=0. Shores/Forest splash TELEMETRY capped; Water unstarted. Side-by-side T-422 thermo 138/0.002/0.90 seq1 + T-423 PresMat 305/0.05/0.90 seq2. Unbound FlyingHigh T-368 goo / T-404 PresMat; closed T-369 geiger High leftover 0. Forest High TELEMETRY 1.512 shelf. HD 2.5 vs 0.75+0.45+1.17. f013: TELEMETRY Stayputnik host on_craft=yes; 2HOT start on_craft=yes; PresMat stability on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
+          }
+        ],
+        "host": "probeCoreSphere_v2",
+        "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
+        "kind": "file",
+        "live_run": "2026-08-25T06-36-38Z-hop",
+        "note": "this-hop SrfSplashed@Water TELEMETRY seq0 on t7-wheel-pbc. Unstarted kerbalism_TELEMETRY@EarthSrfSplashedWater ~0.80. 30 s / 0.052 file. Shores/Forest splash TELEMETRY capped. 06-36-38Z recovered sit=splashed Water 40 km heading 297 rec=yes sci_run=0. Host Stayputnik PAW. Side-by-side splash thermo + PresMat. Forest FlyingHigh leftover 1.512 shelf until TELEMETRY in card over Forest \u226550 km. f013: kerbalism_TELEMETRY hosted probeCoreSphere_v2 no Science-category part unlocked=n/a on_craft=yes. Not Grasslands. Not Forest land. recover_banks yes.",
+        "on_craft": "yes",
+        "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
+        "seq": 0,
         "situation": "SrfSplashed@Water",
-        "tech": "start",
-        "unlocked": "yes",
-        "wait_experiment_id": "kerbalism_TELEMETRY"
+        "tech": "none",
+        "unlocked": "n/a"
       },
-      "priority": "P2",
+      "priority": "P1",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "science",
-      "sci_expect": null,
+      "sci_expect": 0.8,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
-        "heading-090",
+        "remaining",
         "water",
         "telemetry",
         "splash",
-        "unbound"
+        "bound"
       ],
-      "title": "splash TELEMETRY@Water 0.80 wait heading 090",
+      "title": "splash TELEMETRY@Water 0.80",
       "type": "science",
-      "updated": "2026-08-23T21:51:36Z"
+      "updated": "2026-08-25T06:55:51Z"
     },
     "T-029": {
       "assignee": "",
@@ -13286,7 +13300,7 @@
       "id": "T-368",
       "payload": {
         "biome": "global",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 641,
         "ec_rate": 0.18,
@@ -13300,17 +13314,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-25T06:55:27Z",
+            "claim": "Unbound FlyingHigh goo 641/0.18/5.40. Envelope 06-36-38Z sit=splashed biome=Water heading 297 rec=yes sci_run=0 bank 2.29. FlyingHigh cannot pay splash. Splash goo capped 2.40/2.40. Sample still unstarted in save. This-hop splash Water TELEMETRY+thermo+PresMat. f013 GooExperiment start unlocked=yes on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "Mystery Goo Containment Unit (GooExperiment) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "sample",
         "leftover": null,
-        "note": "this-hop FlyingHigh goo seq2 on t7-wheel-pbc. Unstarted mysteryGoo FlyingHigh ~5.40 (cap 6 \u00d7 0.9). 641 s / 0.18 sample \u2014 recover the can. 06-36-38Z started goo; scan still unstarted (sample incomplete). FlyingLow/splash/landed goo capped. Last envelope High Shores / last-flight recovered splash. 641 s may not finish; sample still pays on recover if complete. Side-by-side T-369 geiger leftover seq0 + T-404 PresMat seq1. f013: GooExperiment start unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
+        "note": "unbound catalog. FlyingHigh goo unstarted ~5.40 (641/0.18 sample). 06-36-38Z started; save still missing mysteryGoo@EarthFlyingHigh (sample incomplete). Envelope sit=splashed biome=Water \u2014 FlyingHigh cannot pay. Splash goo capped 2.40/2.40. Shelf until High loft with goo in card. f013 GooExperiment start unlocked=yes on_craft=yes. Not Grasslands. recover_banks yes.",
         "on_craft": "yes",
         "part": "GooExperiment",
         "recover_banks": "yes",
-        "seq": 2,
+        "seq": null,
         "situation": "FlyingHigh",
         "tech": "start",
         "unlocked": "yes"
@@ -13319,27 +13341,28 @@
       "payload.craft": "kspstuff-hop-valiant-t7-wheel-pbc",
       "payload.note": "this-hop FlyingHigh goo seq3 on t7-wheel-pbc. Unstarted mysteryGoo FlyingHigh ~5.40 (cap 6 \u00d7 0.9). 641 s / 0.18 sample \u2014 recover the can. 21-07-06Z started goo; scan still unstarted (sample incomplete). FlyingLow/splash/landed goo capped. 641 s may not finish; sample still pays on recover if complete. Side-by-side T-069 TELEMETRY leftover seq0 + T-404 PresMat seq1 + T-369 geiger leftover seq2. f013: GooExperiment start unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
       "payload.seq": "3",
-      "priority": "P1",
+      "priority": "P2",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "none",
       "sci_expect": 5.4,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "flyinghigh",
         "goo",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingHigh goo unstarted 5.40 wait t7+Mk16",
       "type": "science",
-      "updated": "2026-08-25T06:45:54Z"
+      "updated": "2026-08-25T06:55:27Z"
     },
     "T-369": {
       "assignee": "linus",
       "blockers": [],
       "category": "science_opportunity",
+      "close_why": "06-36-38Z file leftover banked. geigerCounter@EarthFlyingHigh 3.60/3.60 remaining=0. Pad sci 1.9902 \u2192 2.2905. Envelope splash Water; do not rebind FlyingHigh.",
       "created": "2026-08-24T14:59:47Z",
       "desk": "linus",
       "evidence": [
@@ -13351,11 +13374,11 @@
       "id": "T-369",
       "payload": {
         "biome": "",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 42,
         "ec_rate": 0.005,
-        "est": 0.307,
+        "est": 0,
         "experiment_id": "geigerCounter",
         "findings": [
           {
@@ -13365,17 +13388,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-25T06:55:27Z",
+            "claim": "Closed FlyingHigh geiger leftover. Save geigerCounter@EarthFlyingHigh 3.60/3.60. 06-36-38Z started; pad 1.99 \u2192 bank 2.29 (+0.30). Envelope sit=splashed Water \u2014 High cannot pay. f013 kerbalism-geigercounter engineering101 unlocked=yes on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "Geiger Counter (kerbalism-geigercounter) \u2014 tech engineering101 \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "leftover": 0.307,
-        "note": "this-hop FlyingHigh geiger leftover seq0 on t7-wheel-pbc. leftover geigerCounter@EarthFlyingHigh 3.293/3.600 left=0.307 \u2192 42 s / 0.005 file. 06-36-38Z started geiger on the Science part (not Stayputnik PAW); last-flight recovered splash. FlyingHigh global. Last envelope High Shores. T-316 FlyingLow crumbs unbound. Side-by-side T-404 PresMat 305/0.05/2.70 seq1 + T-368 goo 641/0.18/5.40 seq2. f013: kerbalism-geigercounter engineering101 unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
+        "leftover": 0,
+        "note": "BANKED 06-36-38Z remaining=0. geigerCounter@EarthFlyingHigh 3.60/3.60. Pad sci 1.9902 \u2192 recover 2.2905 (+0.30 leftover). Envelope splash Water \u2014 do not rebind High. f013 kerbalism-geigercounter engineering101 unlocked=yes on_craft=yes. Do not re-fly.",
         "on_craft": "yes",
         "part": "kerbalism-geigercounter",
         "recover_banks": "yes",
-        "seq": 0,
+        "seq": null,
         "situation": "FlyingHigh",
         "tech": "engineering101",
         "unlocked": "yes"
@@ -13394,17 +13425,17 @@
       "sci_expect": 0.307,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "done",
       "tags": [
         "remaining",
         "flyinghigh",
         "geiger",
         "f013",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingHigh geiger leftover 0.31",
       "type": "science",
-      "updated": "2026-08-25T06:45:54Z"
+      "updated": "2026-08-25T06:55:27Z"
     },
     "T-370": {
       "assignee": "",
@@ -14741,7 +14772,7 @@
       "id": "T-404",
       "payload": {
         "biome": "",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
@@ -14755,17 +14786,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-25T06:55:27Z",
+            "claim": "Unbound FlyingHigh PresMat 305/0.05/2.70. Envelope 06-36-38Z sit=splashed biome=Water. FlyingHigh cannot pay splash. Unstarted file rem=0 stays the High shelf. This-hop splash Water PresMat. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": null,
-        "note": "this-hop FlyingHigh PresMat seq1 on t7-wheel-pbc (capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). 305 s / 0.05 file. 06-36-38Z skip barometerScan on sensorBarometer (not in card) \u2014 unstarted file rem=0 still the card (hold-ground-card). Last envelope High Shores; FlyingHigh barometer is global. HD 2.5 vs file 1.17 + geiger 0.5. Surface/FlyingLow PresMat unbound (hang splashes; last Low Shores not 090). Side-by-side T-369 geiger leftover 42/0.005/0.307 seq0 + T-368 goo 641/0.18/5.40 seq2. f013: sensorBarometer stability unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
+        "note": "unbound catalog. FlyingHigh PresMat unstarted ~2.70 (305/0.05 file). 06-36-38Z skip not-in-card; save still missing barometerScan@EarthFlyingHigh. Envelope sit=splashed biome=Water \u2014 FlyingHigh cannot pay. This-hop splash Water PresMat sibling. f013 sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 1,
+        "seq": null,
         "situation": "FlyingHigh",
         "tech": "stability",
         "unlocked": "yes"
@@ -14788,22 +14827,22 @@
       "payload.situation": "FlyingHigh",
       "payload.tech": "stability",
       "payload.unlocked": "yes",
-      "priority": "P1",
+      "priority": "P2",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "none",
       "sci_expect": 2.7,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "flyinghigh",
         "barometer",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-25T06:45:54Z"
+      "updated": "2026-08-25T06:55:27Z"
     },
     "T-405": {
       "assignee": "",
@@ -15330,7 +15369,107 @@
       "title": "RSI sci-unchanged-recovered \u00d713",
       "type": "rsi",
       "updated": "2026-08-25T06:46:08Z"
+    },
+    "T-422": {
+      "assignee": "linus",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-25T06:55:27Z",
+      "desk": "linus",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
+      ],
+      "fingerprint": "",
+      "id": "T-422",
+      "payload": {
+        "biome": "Water",
+        "bound": "yes",
+        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
+        "duration_s": 138,
+        "ec_rate": 0.002,
+        "est": 0.9,
+        "experiment_id": "temperatureScan",
+        "host": "none",
+        "instrument": "2HOT Thermometer (sensorThermometer) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
+        "kind": "file",
+        "live_run": "2026-08-25T06-36-38Z-hop",
+        "note": "this-hop SrfSplashed@Water thermo seq1 on t7-wheel-pbc. Unstarted temperatureScan@EarthSrfSplashedWater ~0.90. 138 s / 0.002 file. Cape Shores Surface thermo capped. 06-36-38Z skip not-in-card. Envelope splash Water. Side-by-side T-028 TELEMETRY seq0 + splash PresMat seq2. f013: sensorThermometer start unlocked=yes on_craft=yes. Not Grasslands. recover_banks yes.",
+        "on_craft": "yes",
+        "part": "sensorThermometer",
+        "recover_banks": "yes",
+        "seq": 1,
+        "situation": "SrfSplashed@Water",
+        "tech": "start",
+        "unlocked": "yes"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "science",
+      "sci_expect": 0.9,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "ready",
+      "tags": [
+        "remaining",
+        "water",
+        "thermo",
+        "splash",
+        "bound"
+      ],
+      "title": "Water SrfSplashed thermo 0.90",
+      "type": "science",
+      "updated": "2026-08-25T06:55:27Z"
+    },
+    "T-423": {
+      "assignee": "linus",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-25T06:55:27Z",
+      "desk": "linus",
+      "evidence": [
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
+      ],
+      "fingerprint": "",
+      "id": "T-423",
+      "payload": {
+        "biome": "Water",
+        "bound": "yes",
+        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
+        "duration_s": 305,
+        "ec_rate": 0.05,
+        "est": 0.9,
+        "experiment_id": "barometerScan",
+        "host": "none",
+        "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
+        "kind": "file",
+        "live_run": "2026-08-25T06-36-38Z-hop",
+        "note": "this-hop SrfSplashed@Water PresMat seq2 on t7-wheel-pbc. Unstarted barometerScan Surface@Water ~0.90 (cap 3 \u00d7 0.3). 305 s / 0.05 file. FlyingHigh PresMat shelf T-404. HD 2.5 vs TELEMETRY 0.75 + thermo 0.45 + 1.17. 06-36-38Z skip not-in-card. Envelope splash Water. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "on_craft": "yes",
+        "part": "sensorBarometer",
+        "recover_banks": "yes",
+        "seq": 2,
+        "situation": "SrfSplashed@Water",
+        "tech": "stability",
+        "unlocked": "yes"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "science",
+      "sci_expect": 0.9,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "ready",
+      "tags": [
+        "remaining",
+        "water",
+        "barometer",
+        "splash",
+        "bound"
+      ],
+      "title": "Water SrfSplashed barometer 0.90",
+      "type": "science",
+      "updated": "2026-08-25T06:55:27Z"
     }
   },
-  "updated": "2026-08-25T06:47:26Z"
+  "updated": "2026-08-25T06:55:51Z"
 }

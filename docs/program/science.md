@@ -3,8 +3,8 @@
 Dump of **science tickets**, not dispatch. Bind is ticket payload.
 Catalog (`unbound`) is the shelf. This-hop work is **bound**.
 
-Craft `kspstuff-hop-valiant-t7-wheel-pbc`. Tree `start,engineering101,basicRocketry,survivability,stability`. Bank **2.0903**. Next CTT
-`generalRocketry` 20 → need ~**17.91**. Recover banks for hops; transmit is a radio (rate on `comms`), not the hop path. F-013:
+Craft `kspstuff-hop-valiant-t7-wheel-pbc`. Tree `start,engineering101,basicRocketry,survivability,stability`. Bank **2.2905**. Next CTT
+`generalRocketry` 20 → need ~**17.71**. Recover banks for hops; transmit is a radio (rate on `comms`), not the hop path. F-013:
 instrument part, never Stayputnik PAW as Geiger.
 
 ```bash
@@ -19,10 +19,9 @@ python main.py tickets list --type science
 
 | ticket | experiment_id | situation | biome | part | duration_s | ec_rate | est | recover_banks |
 |---|---|---|---|---|---|---|---|---|
-| **T-069** | `kerbalism_TELEMETRY` | FlyingHigh@Forest | Forest | `probeCoreSphere_v2` | 25 | 0.052 | 1.512 | yes |
-| **T-368** | `mysteryGoo` | FlyingHigh | global | `GooExperiment` | 641 | 0.18 | 5.4 | yes |
-| **T-369** | `geigerCounter` | FlyingHigh |  | `kerbalism-geigercounter` | 117 | 0.005 | 0.849 | yes |
-| **T-404** | `barometerScan` | FlyingHigh |  | `sensorBarometer` | 305 | 0.05 | 2.7 | yes |
+| **T-028** | `kerbalism_TELEMETRY` | SrfSplashed@Water | Water | `probeCoreSphere_v2` | 30 | 0.052 | 0.8 | yes |
+| **T-422** | `temperatureScan` | SrfSplashed@Water | Water | `sensorThermometer` | 138 | 0.002 | 0.9 | yes |
+| **T-423** | `barometerScan` | SrfSplashed@Water | Water | `sensorBarometer` | 305 | 0.05 | 0.9 | yes |
 
 ## Catalog (unbound shelf — not `ops next` / not hop bind)
 
@@ -31,7 +30,7 @@ python main.py tickets list --type science
 | **T-025** | `temperatureScan` | FlyingLow@Water | Water | `sensorThermometer` | 138 | 0.002 | 2.1 | yes |
 | **T-026** | `kerbalism_TELEMETRY` | FlyingLow@Water | Water | `probeCoreOcto_v2` | 30 | 0.052 | 1.4 | yes |
 | **T-027** | `` | FlyingHigh@Water | Water | `probeCoreOcto_v2` | 30 | 0.052 | 1.8 | yes |
-| **T-028** | `kerbalism_TELEMETRY` | SrfSplashed@Water | Water | `probeCoreOcto_v2` | 30 | 0.052 | 0.8 | yes |
+| **T-069** | `kerbalism_TELEMETRY` | FlyingHigh@Forest | Forest | `probeCoreSphere_v2` | 25 | 0.052 | 1.512 | yes |
 | **T-070** | `temperatureScan` | FlyingLow@Grasslands | Grasslands | `sensorThermometer` | 138 | 0.002 | 2.1 | yes |
 | **T-071** | `kerbalism_TELEMETRY` | FlyingLow@Grasslands | Grasslands | `probeCoreOcto_v2` | 30 | 0.052 | 1.4 | yes |
 | **T-072** | `temperatureScan` | FlyingLow@Tropics | Tropics | `sensorThermometer` | 138 | 0.002 | 2.1 | yes |
@@ -68,6 +67,8 @@ python main.py tickets list --type science
 | **T-313** | `temperatureScan` | SrfSplashed@Forest | Forest | `sensorThermometer` | 138 | 0.002 | 0.9 | yes |
 | **T-351** | `temperatureScan` | SrfSplashed@Grasslands | Grasslands | `sensorThermometer` | 138 | 0.002 | 0.9 | yes |
 | **T-352** | `kerbalism_TELEMETRY` | SrfSplashed@Grasslands | Grasslands | `probeCoreOcto_v2` | 30 | 0.052 | 0.6 | yes |
+| **T-368** | `mysteryGoo` | FlyingHigh | global | `GooExperiment` | 641 | 0.18 | 5.4 | yes |
+| **T-404** | `barometerScan` | FlyingHigh |  | `sensorBarometer` | 305 | 0.05 | 2.7 | yes |
 | **T-080** | `geigerCounter` | SrfLanded@Forest | Forest | `kerbalism-geigercounter` | 497 | 0.005 | 1.2 | yes |
 | **T-094** | `` | FlyingHigh@Tropics | Tropics | `probeCoreOcto_v2` | 30 | 0.052 | 1.8 | yes |
 | **T-095** | `` | FlyingHigh@Savanna | Savanna | `probeCoreOcto_v2` | 30 | 0.052 | 1.8 | yes |

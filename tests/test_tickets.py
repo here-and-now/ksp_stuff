@@ -45,18 +45,18 @@ class TestTickets(unittest.TestCase):
             priority="P1",
             fingerprint="flyinghigh-forest-telem",
         )
-        self.assertEqual(t["id"], "T-001")
+        self.assertEqual(t["id"], "S-001")
         self.assertEqual(t["desk"], "linus")
         self.assertEqual(t["status"], "inbox")
         rows = tickets.list_tickets()
         self.assertEqual(len(rows), 1)
         t2 = tickets.patch_ticket(
-            "T-001",
+            "S-001",
             {"desk": "linus", "status": "assigned"},
             who="hank",
         )
         self.assertEqual(t2["status"], "assigned")
-        t3 = tickets.patch_ticket("T-001", {"status": "done"}, who="linus")
+        t3 = tickets.patch_ticket("S-001", {"status": "done"}, who="linus")
         self.assertEqual(t3["status"], "done")
         self.assertEqual(tickets.list_tickets(), [])
 
@@ -126,8 +126,8 @@ class TestTickets(unittest.TestCase):
             desk="gene",
         )
         with self.assertRaises(tickets.TicketError):
-            tickets.patch_ticket("T-001", {"go": "yes"}, who="hank")
-        t = tickets.patch_ticket("T-001", {"go": "yes"}, who="gene")
+            tickets.patch_ticket("M-001", {"go": "yes"}, who="hank")
+        t = tickets.patch_ticket("M-001", {"go": "yes"}, who="gene")
         self.assertEqual(t["go"], "yes")
 
     def test_rsi_opens_at_three(self):
@@ -194,7 +194,52 @@ class TestTickets(unittest.TestCase):
         tickets.open_ticket(type="vehicle", title="a", reporter="Gus")
         tickets.open_ticket(type="vehicle", title="b", reporter="Gus")
         rows = tickets.list_tickets(desk="gus")
-        self.assertEqual([r["id"] for r in rows], ["T-001", "T-002"])
+        self.assertEqual([r["id"] for r in rows], ["C-001", "C-002"])
+
+    def test_id_prefix_by_type_global_n(self):
+        self.assertEqual(len(tickets.TYPES), 11)
+        self.assertEqual(
+            tickets.ID_PREFIX, {"science": "S", "fly": "M", "vehicle": "C"}
+        )
+        self.assertEqual(tickets._next_id({}, "science"), "S-001")
+        self.assertEqual(tickets._next_id({}, "fly"), "M-001")
+        self.assertEqual(tickets._next_id({}, "vehicle"), "C-001")
+        self.assertEqual(tickets._next_id({}, "systems"), "T-001")
+        self.assertEqual(tickets._next_id({}, "control"), "T-001")
+        hist = {
+            "T-081": {"type": "fly"},
+            "T-387": {"type": "vehicle"},
+            "T-404": {"type": "science"},
+            "T-466": {"type": "rsi"},
+        }
+        self.assertEqual(tickets._next_id(hist, "science"), "S-467")
+        self.assertEqual(tickets._next_id(hist, "fly"), "M-467")
+        self.assertEqual(tickets._next_id(hist, "vehicle"), "C-467")
+        self.assertEqual(tickets._next_id(hist, "systems"), "T-467")
+        mixed = {**hist, "S-467": {"type": "science"}, "M-468": {"type": "fly"}}
+        self.assertEqual(tickets._next_id(mixed, "vehicle"), "C-469")
+        self.assertEqual(tickets._next_id(mixed, "science"), "S-469")
+        sci = tickets.open_ticket(type="science", title="goo", reporter="Linus")
+        self.assertEqual(sci["id"], "S-001")
+        fly = tickets.open_ticket(
+            type="fly", title="hop", reporter="Hank", desk="gene"
+        )
+        self.assertEqual(fly["id"], "M-002")
+        veh = tickets.open_ticket(type="vehicle", title="t7", reporter="Gus")
+        self.assertEqual(veh["id"], "C-003")
+        ctrl = tickets.open_ticket(
+            type="control",
+            title="heading",
+            reporter="Lars",
+            fingerprint="heading-never-090",
+        )
+        self.assertEqual(ctrl["id"], "T-004")
+        self.assertTrue(tickets.is_ticket_id("S-467"))
+        self.assertTrue(tickets.is_ticket_id("M-081"))
+        self.assertTrue(tickets.is_ticket_id("C-418"))
+        self.assertTrue(tickets.is_ticket_id("T-466"))
+        self.assertFalse(tickets.is_ticket_id("I-012"))
+        self.assertFalse(tickets.is_ticket_id("docs/foo.jsonl"))
 
     def test_control_empty_fingerprint_refused(self):
         with self.assertRaises(tickets.TicketError) as ctx:
@@ -1026,7 +1071,7 @@ class TestPacketAndReasoning(unittest.TestCase):
             rc = tickets.cmd_tickets(["packet", t["id"]])
         out = buf.getvalue()
         self.assertEqual(rc, 0)
-        self.assertIn("ticket: T-001", out)
+        self.assertIn("ticket: M-001", out)
         self.assertIn("docs/program/desk.md", out)
         self.assertNotIn("BOARD.md", out)
         self.assertNotIn(".jsonl", out)
@@ -1057,6 +1102,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn(hire["reasoning"], tickets.REASONING)
         self.assertNotEqual(hire["reasoning"], "xhigh")
         self.assertIn("tickets packet", hire["packet"])
+        self.assertIn("M-001", hire["packet"])
         self.assertNotIn("--deep", hire["packet"])
         text = ops.format_next(act)
         self.assertIn("reasoning=", text)
@@ -1196,8 +1242,8 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("catastrophic", tickets.format_inbox("gene"))
         self.assertIn("S2 P0", tickets.format_list(tickets.list_tickets()))
         self.assertNotIn("S2P0", tickets.format_list(tickets.list_tickets()))
-        self.assertIn("S2 P0", tickets.format_packet("T-001", deep=False))
-        self.assertNotIn("S2P0", tickets.format_packet("T-001", deep=False))
+        self.assertIn("S2 P0", tickets.format_packet("M-001", deep=False))
+        self.assertNotIn("S2P0", tickets.format_packet("M-001", deep=False))
 
 
 class TestHouseDump(unittest.TestCase):
@@ -1253,7 +1299,7 @@ class TestHouseDump(unittest.TestCase):
             desk="gene",
             payload={"go": "yes", "cli": "python main.py hop", "campaign": "uncrewed", "phase": "hop"},
         )
-        tickets.patch_ticket("T-003", {"go": "yes"}, who="gene")
+        tickets.patch_ticket("M-003", {"go": "yes"}, who="gene")
         tmp = Path(tempfile.mkdtemp()) / "plan.md"
         tmp.write_text(
             "phase: hop\ngo: wait\nrecommended: python main.py hop-to-water\nhop_apo: 18000\n",
@@ -1524,6 +1570,24 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         self.assertIn("catastrophic", buf2.getvalue())
         self.assertIn("eyes:", buf2.getvalue())
         self.assertNotIn('"kind": "state"', buf2.getvalue())
+        sci = tickets.open_ticket(type="science", title="goo", reporter="Linus")
+        tickets.attach_run(sci["id"], path, who="hank")
+        self.assertEqual(sci["id"], "S-002")
+        buf3 = StringIO()
+        with redirect_stdout(buf3):
+            rc3 = tickets.cmd_tickets(["landing", sci["id"]])
+        self.assertEqual(rc3, 0)
+        self.assertIn("catastrophic", buf3.getvalue())
+        fly = tickets.open_ticket(
+            type="fly", title="hop", reporter="Hank", desk="gene"
+        )
+        tickets.attach_run(fly["id"], path, who="hank")
+        buf4 = StringIO()
+        with redirect_stdout(buf4):
+            rc4 = tickets.cmd_tickets(["landing", fly["id"]])
+        self.assertEqual(rc4, 0)
+        self.assertEqual(fly["id"], "M-003")
+        self.assertIn("catastrophic", buf4.getvalue())
 
     def test_packet_prints_learn(self):
         t = tickets.open_ticket(
@@ -1708,7 +1772,7 @@ class TestPacketAttachAndInbox(unittest.TestCase):
                 "waste": {
                     "bind": [
                         {
-                            "id": "T-001",
+                            "id": "S-001",
                             "eid": "temperatureScan",
                             "situation": "SrfLanded@Forest",
                             "biome": "Forest",

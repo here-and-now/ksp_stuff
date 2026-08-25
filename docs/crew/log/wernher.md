@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-25 — T-467 id-prefix: `_next_id` prefix-by-type (science S-, fly M-, vehicle C-, else T-). Global N. History keeps T-. landing parse S/M/C. TYPES unchanged. No hop_factory. Never revert.
+
 - 2026-08-25 — T-449 tape helpers closed (sit_mismatch, landing synth, sci rem vs bank, thick-air skip, kind=recover). T-458 harvest ×15: latch already T-346; no hop_factory. No Hangar. No hop. Never revert.
 
 - 2026-08-25 — T-453 thin-tape: jsonl hz is 1/wall-dt, not requested 5–20. T-454 kspstuff-read GET Session (stream.remove; no Control/scene/jsonl/ship.md); kind=recover sit/rec at recover(). status/leftover_ships while lock live are readers. No Hangar. No hop. Never revert.

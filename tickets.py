@@ -55,6 +55,13 @@ TYPE_CATEGORY = {
     "press": "press",
     "ops": "ops",
 }
+# Prefix is the id, not a TYPE. Global N; existing T- science/fly/vehicle keep history.
+ID_PREFIX = {
+    "science": "S",
+    "fly": "M",
+    "vehicle": "C",
+}
+_TID_RE = re.compile(r"^([TSMC])-(\d+)$")
 SEVERITY = ("S1", "S2", "S3", "S4")
 PRIORITY = ("P0", "P1", "P2", "P3")
 STATUS = (
@@ -303,15 +310,28 @@ def load_head() -> dict[str, Any]:
     return _rebuild()
 
 
-def _next_id(tickets: dict[str, Any]) -> str:
+def parse_ticket_id(tid: str) -> tuple[str, int] | None:
+    m = _TID_RE.match(str(tid or "").strip())
+    if not m:
+        return None
+    return m.group(1), int(m.group(2))
+
+
+def is_ticket_id(tid: str) -> bool:
+    return parse_ticket_id(tid) is not None
+
+
+def id_prefix_for(typ: str) -> str:
+    return ID_PREFIX.get(typ, "T")
+
+
+def _next_id(tickets: dict[str, Any], typ: str = "") -> str:
     n = 0
     for tid in tickets:
-        if tid.startswith("T-"):
-            try:
-                n = max(n, int(tid[2:]))
-            except ValueError:
-                continue
-    return f"T-{n + 1:03d}"
+        got = parse_ticket_id(tid)
+        if got is not None:
+            n = max(n, got[1])
+    return f"{id_prefix_for(typ)}-{n + 1:03d}"
 
 
 def reasoning_for(ticket: dict[str, Any], desk: str | None = None) -> str:
@@ -746,7 +766,7 @@ def open_ticket(
         raise TicketError(f"bad priority {priority}")
     head = load_head()
     tickets = head.get("tickets") or {}
-    tid = _next_id(tickets)
+    tid = _next_id(tickets, type)
     now = _now()
     tags_n = _norm_tags(tags)
     fp = alias_fingerprint(fingerprint, head.get("fingerprints") or {})
@@ -1850,7 +1870,8 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
         if args.act == "landing":
             target = args.target
             path = target
-            if target.startswith("T-"):
+            # T/S/M/C-NNN is a ticket; anything else is a jsonl path.
+            if is_ticket_id(target):
                 cur = show_ticket(target)
                 path = (cur.get("payload") or {}).get("telem_run") or ""
                 if not path:

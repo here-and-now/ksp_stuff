@@ -16,6 +16,7 @@ from hangar import (
     dismiss_flight_results,
     go_ksc,
     go_space_center,
+    hold_prelaunch,
     install_signed,
     ksc_ready,
     leftover_ship,
@@ -731,7 +732,12 @@ class _FakeHangar:
 
     def launch(self, session, name, *, recover=True, uncrewed=False, **_kwargs):
         self.calls.append(name)
-        session.active_vessel = type("V", (), {"name": name})()
+        control = type("C", (), {"throttle": 1.0, "activate_next_stage": lambda self: (_ for _ in ()).throw(AssertionError("light"))})()
+        session.active_vessel = type(
+            "V",
+            (),
+            {"name": name, "situation": "pre_launch", "control": control},
+        )()
 
 
 class TestHangarRefuse(unittest.TestCase):
@@ -781,6 +787,47 @@ class TestHangarRefuse(unittest.TestCase):
         self.assertIn("refused", str(ctx.exception))
         self.assertIn("kspstuff-geiger-pbc", str(ctx.exception))
         self.assertEqual(fake.calls, [])
+
+    def test_hold_prelaunch_throttle_zero_no_light(self):
+        session = _Session()
+        with tempfile.TemporaryDirectory() as raw:
+            fake = _FakeHangar(Path(raw))
+            root = Path(raw)
+            (root / "kspstuff-hop-valiant-t7-wheel-pbc.craft").write_text(
+                "ship", encoding="utf-8"
+            )
+            with patch("hangar.REPO_CRAFTS", root):
+                msg = hold_prelaunch(
+                    session,
+                    hangar=fake,
+                    name="kspstuff-hop-valiant-t7-wheel-pbc",
+                )
+        self.assertIn("pre_launch", msg)
+        self.assertIn("throttle=0", msg)
+        self.assertEqual(fake.calls, ["kspstuff-hop-valiant-t7-wheel-pbc"])
+        self.assertEqual(session.active_vessel.control.throttle, 0.0)
+
+    def test_hold_prelaunch_accepts_enum_sit_and_skips_second_launch(self):
+        session = _Session()
+        control = type("C", (), {"throttle": 0.4})()
+        session.active_vessel = type(
+            "V",
+            (),
+            {
+                "name": "kspstuff-hop-valiant-t7-wheel-pbc",
+                "situation": "VesselSituation.pre_launch",
+                "control": control,
+            },
+        )()
+        fake = _FakeHangar(Path("/tmp"))
+        msg = hold_prelaunch(
+            session,
+            hangar=fake,
+            name="kspstuff-hop-valiant-t7-wheel-pbc",
+        )
+        self.assertEqual(fake.calls, [])
+        self.assertIn("pre_launch", msg)
+        self.assertEqual(control.throttle, 0.0)
 
 
 if __name__ == "__main__":

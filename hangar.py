@@ -427,6 +427,63 @@ def install_signed(
     return token
 
 
+def hold_prelaunch(
+    session: Any,
+    *,
+    hangar: Any | None = None,
+    name: str | None = None,
+    recover: bool = True,
+) -> str:
+    """Cape occupancy: Hangar the seated craft, throttle 0, stay PRELAUNCH.
+
+    Does not light, stage, or start a phase. Os radio prove sits here.
+    """
+    from missions import hangar_craft_name
+
+    token = (name or "").strip() or hangar_craft_name()
+    yard = hangar if hangar is not None else discover_hangar()
+    if yard is None:
+        raise SessionError("KSP install not found (KSPSTUFF_KSP or ~/Games/KSP-rss)")
+    def _sit_of(v: Any) -> str:
+        raw = str(getattr(v, "situation", "") or "").lower().replace("-", "_")
+        return raw.rsplit(".", 1)[-1]
+
+    vessel = None
+    try:
+        vessel = getattr(session, "active_vessel", None)
+    except Exception:
+        vessel = None
+    already = False
+    if vessel is not None:
+        try:
+            already = (
+                _sit_of(vessel) in {"pre_launch", "prelaunch"}
+                and craft_basename(str(getattr(vessel, "name", "") or ""))
+                == craft_basename(token)
+            )
+        except Exception:
+            already = False
+    if not already:
+        install_signed(session, token, hangar=yard, recover=recover, uncrewed=True)
+        try:
+            vessel = getattr(session, "active_vessel", None)
+        except Exception as exc:
+            raise SessionError(f"Hangar hold: no active vessel ({exc})") from exc
+    if vessel is None:
+        raise SessionError("Hangar hold: no active vessel")
+    try:
+        control = vessel.control
+        control.throttle = 0.0
+    except Exception as exc:
+        raise SessionError(f"Hangar hold: throttle 0 ({exc})") from exc
+    sit = _sit_of(vessel)
+    if sit not in {"pre_launch", "prelaunch"}:
+        raise SessionError(f"Hangar hold wanted pre_launch, sit={sit}")
+    msg = f"hangar hold {token} sit={sit} throttle=0"
+    log.info(msg)
+    return msg
+
+
 OVERLAY_LAST = Path(__file__).resolve().parent / "docs" / "program" / "overlay.last"
 UNRECOVERABLE_LAST = (
     Path(__file__).resolve().parent / "docs" / "program" / "unrecoverable.last"

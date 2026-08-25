@@ -5,6 +5,7 @@
     python main.py parts --unlocked
     python main.py status
     python main.py pad
+    python main.py hangar
     python main.py hop
     python main.py tech-unlock engineering101
     python main.py screenshot
@@ -215,6 +216,41 @@ def cmd_warp_batch(session: Session, args: argparse.Namespace) -> int:
     except WriterLockError as exc:
         _log(f"SESSION {exc}")
         return 1
+    finally:
+        release_lock()
+
+
+def cmd_hangar(session: Session, args: argparse.Namespace) -> int:
+    """Cape occupancy for Os radio prove. No light, no phase, no last-flight."""
+    from flightlog import WriterLockError, release_lock, start
+    from hangar import hold_prelaunch
+
+    t0 = time.monotonic()
+    try:
+        start("hangar", crew="", session=session)
+        msg = hold_prelaunch(session)
+        _log(msg)
+        budget = float(getattr(args, "timeout", 0.0) or 0.0)
+        while True:
+            if budget > 0 and time.monotonic() - t0 > budget:
+                _log("hangar hold timeout")
+                return 0
+            try:
+                vessel = session.active_vessel
+                if vessel is not None:
+                    vessel.control.throttle = 0.0
+            except Exception:
+                pass
+            time.sleep(2.0)
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except KeyboardInterrupt:
+        _log("hangar hold stop")
+        return 0
     finally:
         release_lock()
 
@@ -566,6 +602,16 @@ def main(argv: list[str] | None = None) -> int:
     )
     sub = parser.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status", help="Heartbeat line for the active vessel")
+    hangar_p = sub.add_parser(
+        "hangar",
+        help="Hangar seated craft to Cape; hold prelaunch; do not light",
+    )
+    hangar_p.add_argument(
+        "--timeout",
+        type=float,
+        default=0.0,
+        help="Hold wall-clock (seconds). 0 = until killed (default).",
+    )
     pad_p = sub.add_parser(
         "pad",
         help="Pad compose: PBC probe + Kerbalism experiments (not hop)",
@@ -1087,6 +1133,8 @@ def main(argv: list[str] | None = None) -> int:
             )
         if args.cmd == "pad":
             return cmd_pad(session, args)
+        if args.cmd == "hangar":
+            return cmd_hangar(session, args)
         if args.cmd == "hop":
             return cmd_hop(session, args)
         if args.cmd == "warp-batch":

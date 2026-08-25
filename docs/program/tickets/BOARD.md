@@ -1,13 +1,12 @@
 # Ticket board
 
-open: 74 / 434
+open: 74 / 435
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
-| T-424 | control | bug | S2 | P1 | medium | inbox | lars |  | Splash bind dropped lid to 18 km; pitch 25 + 4x at 3 km crash UI rec=no |
 | T-425 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI flyinghigh-lid ×15 |
 | T-429 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI bigger-dv ×16 |
 | T-432 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI ec=0-after-loft ×3 |
@@ -69,6 +68,7 @@ open: 74 / 434
 | T-430 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc — do not Hangar this sit |
 | T-431 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-proc-oxstat: 4x OX-STAT on t7-wheel-proc for Goo 641 s dwell EC |
 | T-433 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk) |
+| T-435 | press | press | S3 | P2 | medium | inbox | verena | press | Press voice: tables hold digits; rewrite corpus from first-space |
 | T-080 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,forest,geiger,f013,unbound | Forest SrfLanded geiger 1.20 wait Geiger part |
 | T-094 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-095 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingHigh TELEMETRY 1.80 wait ≥50 km |

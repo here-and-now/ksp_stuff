@@ -4,6 +4,7 @@ duty: communications
 kerbal: none
 title: Communications
 voice: euphoric historian at 11. Facts still true. Never invent orbit.
+Tables hold the digits. Fresh joke per piece. Laugh at ourselves.
 
 ## Inner
 
@@ -20,7 +21,15 @@ No stick, no Hangar. Nested notebooks are parked.
 
 ## Style
 
-(ground — no flight knobs)
+Law: `docs/press/STYLE.md` (Os 2026-08-25). Tables hold digits. Prose
+almost never quotes a figure. A first or a paid node may be spoken
+in words; bold only THE first. Sit-bands (`Flying High`) are table-only.
+Parachute is the default word; silk is a punchline. Italic `_names_`
+plus a gloss once; filenames in the table. No invented ship names.
+README may keep the drums; each article earns a new joke, never glued
+to an apo. Two house-owns a piece — we walked into it, nobody is the
+gag. Captions are one visual sentence, no digits. Hero full-width;
+pairs scaled; later full-width only as a feeling. No CDN.
 
 ## Notes
 

@@ -15702,23 +15702,35 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "Splash bind no longer drops the inland High lid; pitch 25 from pad is FlyingLow flying card only.",
       "created": "2026-08-25T07:02:34Z",
       "desk": "lars",
       "evidence": [],
       "fingerprint": "flyinghigh-lid",
       "id": "T-424",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T07:44:23Z",
+            "claim": "hop_factory _inland_high_sit: splash bind is not FlyingLow; factory inland still waits the High lid. Bound FlyingLow is airborne Toggle. hop_target_apo(space=True) keeps Gene 50 km.",
+            "evidence": "hop_factory.py:_inland_high_sit",
+            "owner": "lars",
+            "real": false,
+            "who": "lars"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "hank",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "Splash bind dropped lid to 18 km; pitch 25 + 4x at 3 km crash UI rec=no",
       "type": "control",
-      "updated": "2026-08-25T07:02:34Z"
+      "updated": "2026-08-25T07:44:23Z"
     },
     "T-425": {
       "assignee": "",
@@ -16039,7 +16051,31 @@
       "title": "RSI far-shear \u00d712",
       "type": "rsi",
       "updated": "2026-08-25T07:33:34Z"
+    },
+    "T-435": {
+      "assignee": "",
+      "blockers": [],
+      "category": "press",
+      "created": "2026-08-25T07:47:55Z",
+      "desk": "verena",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-435",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Os, Founder",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "press"
+      ],
+      "title": "Press voice: tables hold digits; rewrite corpus from first-space",
+      "type": "press",
+      "updated": "2026-08-25T07:47:55Z"
     }
   },
-  "updated": "2026-08-25T07:39:51Z"
+  "updated": "2026-08-25T07:47:55Z"
 }

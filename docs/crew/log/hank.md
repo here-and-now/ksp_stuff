@@ -1,5 +1,7 @@
 # Hank Grokman — log
 
+- 2026-08-25 — Os locked Verena press voice (`docs/press/STYLE.md`): tables hold digits, firsts in words, sit-bands table-only, fresh joke per article, two house-owns, no CDN. Ticket for corpus rewrite from first-space.
+
 - 2026-08-25 — Os: C# first on RA rate. GSTL=2 real; 64 bps table; Cape RateToHome 31500 / Kerbalism 3.94 kB/s. Packet `docs/program/ra-rate.md` T-427. Pad does not hop. 18 km crash still T-424/T-426 (separate).
 - 2026-08-25 — Os: Gus reviews his own VAB process; files helper asks at Wernher (`vab-helper`). Gus does not write `.py`. Hop T-081 live (t7-wheel-pbc).
 - 2026-08-25 — Os: RealAntennas kRPC live (`conn.real_antennas`). Briefed Gene/Lars/Gus/Katherine/Hank in `krpc.md` + job cards. Do not cheat a link; discover when a hop goes deaf. Git: desks commit their own checkout changes. Pad was KSC empty (stale overlay leftover was a lie). Bank ~1.99. Next CTT generalRocketry 20.

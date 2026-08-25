@@ -8,7 +8,7 @@ Gene Grokman, Flight Director chairs **flight** layers. Mortimer chairs
 | **Facts** | disk | `docs/program/desk.md` / `python main.py world` |
 | **Meaning** | Gene | Learn from `tickets landing` envelope |
 | **Horizon** | Linus | remaining subjects, what a node buys |
-| **Story** | Verena | `docs/press/`, README — never invent orbit |
+| **Story** | Verena | `docs/press/` + `docs/press/STYLE.md`, README — never invent orbit |
 | **Practice** | Mortimer | pitfalls, house, QOL |
 | **Dynamics** | Katherine | `telem --window` / landing envelope — atmosphere, Q, FAR, burnout |
 
@@ -264,9 +264,10 @@ advExploration locked). Chute still 15. **Visit Ast. XRL-564** someday.
 
 ## Story (Verena)
 
-`docs/press/first-hop.md` — the still that shattered 72 m. Cape pad
-sci 2.22 is on the hangar wall. Pad geiger is not a headline. First
-FAR living recover is ops, not a bank-first.
+`docs/press/STYLE.md` — Os 2026-08-25. Tables hold digits. Fresh joke
+per piece. `docs/press/first-hop.md` — the still that shattered 72 m.
+Cape pad science is on the hangar wall. Pad geiger is not a headline.
+First FAR living recover is ops, not a bank-first.
 
 ---
 

@@ -78,6 +78,7 @@ from hop import (
     bound_card_is_flying_high,
     bound_science_need,
     hop_landed_science_ids,
+    _live_sit,
     _met_still,
     hop_craft_name,
     hop_craft_path,
@@ -884,11 +885,17 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertNotIn("Deploy chute", chute.triggered)
 
     def test_uplink_verbs(self):
+        from hop import _UPLINK_SKIP
         from uplink import _VERBS
 
         self.assertIn("phys-warp", _VERBS)
         self.assertIn("warp", _VERBS)
         self.assertIn("no_warp", _VERBS)
+        self.assertIn("science", _VERBS)
+        self.assertIn("transmit", _VERBS)
+        self.assertEqual(_UPLINK_SKIP, frozenset({"stage"}))
+        self.assertNotIn("science", _UPLINK_SKIP)
+        self.assertNotIn("transmit", _UPLINK_SKIP)
 
 
 class TestCardIds(unittest.TestCase):
@@ -1315,6 +1322,16 @@ class TestStackShear(unittest.TestCase):
 
 
 class TestLandOrSplashNeed(unittest.TestCase):
+    def test_live_sit_ground_snap_beats_flying_vessel(self):
+        """Splash leftover sit-matches when snap is splashed and vessel still flying."""
+        vessel = _Vessel([], sit="flying")
+        snap = type("S", (), {"situation": "splashed", "biome": "Water"})()
+        self.assertEqual(_live_sit(vessel, snap), "splashed")
+        land = type("S", (), {"situation": "landed", "biome": "Forest"})()
+        self.assertEqual(_live_sit(vessel, land), "landed")
+        air = type("S", (), {"situation": "flying", "biome": "Water"})()
+        self.assertEqual(_live_sit(vessel, air), "flying")
+
     def test_live_sit_picks_splash_not_first_seq(self):
         with patch("tickets.list_tickets", return_value=_LAND_OR_SPLASH):
             splash = bound_science_need(live_sit="splashed", live_biome="Forest")
@@ -3734,6 +3751,175 @@ class TestHopSequence(unittest.TestCase):
         tel.fields["remaining"] = 0
         self.assertFalse(_hold_ground_card(vessel, ["kerbalism_TELEMETRY"], ids, land))
 
+    def test_hold_ground_card_idle_leftover_after_airborne_dwell(self):
+        """hold-ground-card: airborne goo rem=0 is not splash leftover done."""
+        goo = _Mod("Experiment", "mysteryGoo")
+        goo.fields["remaining"] = 0
+        goo.fields["status"] = "Done"
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 0
+        baro = _Mod("Experiment", "barometerScan")
+        baro.fields["remaining"] = 0
+        vessel = _Vessel([goo], sit="splashed")
+        vessel.parts = _Parts(
+            [
+                _Part("GooExperiment", [goo]),
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("sensorThermometer", [thermo]),
+                _Part("sensorBarometer", [baro]),
+            ]
+        )
+        vessel.biome = "Water"
+        snap = type("S", (), {"situation": "splashed", "wreck": False, "biome": "Water"})()
+        leftover = ("kerbalism_TELEMETRY", "temperatureScan", "barometerScan")
+        with patch("hop.hop_landed_science_ids", return_value=leftover):
+            self.assertTrue(
+                _hold_ground_card(vessel, ["mysteryGoo"], leftover, snap)
+            )
+        tel.fields["status"] = "Running"
+        tel.fields["remaining"] = 6
+        with patch("hop.hop_landed_science_ids", return_value=leftover):
+            self.assertTrue(
+                _hold_ground_card(
+                    vessel, ["mysteryGoo", "kerbalism_TELEMETRY"], leftover, snap
+                )
+            )
+
+    def test_airborne_cannot_pay_dwell_then_splash_leftover(self):
+        """hold-ground-card: goo+geiger dwell then Toggle splash leftover."""
+        tel = _Mod("Experiment", "kerbalism_TELEMETRY")
+        tel.fields["remaining"] = 0
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 0
+        baro = _Mod("Experiment", "barometerScan")
+        baro.fields["remaining"] = 0
+        geiger = _Mod("Experiment", "geigerCounter")
+        geiger.fields["remaining"] = 6
+        goo = _Mod("Experiment", "mysteryGoo")
+        goo.fields["remaining"] = 1.0
+        vessel = _Vessel([goo], recoverable=False)
+        vessel.parts = _Parts(
+            [
+                _Part("probeCoreSphere.v2", [tel]),
+                _Part("sensorThermometer", [thermo]),
+                _Part("sensorBarometer", [baro]),
+                _Part("kerbalism-geigercounter", [geiger]),
+                _Part("GooExperiment", [goo]),
+            ]
+        )
+        vessel.biome = "Shores"
+        now, sleep, t = _fast_clock()
+        sits: list[str] = []
+        logs: list[str] = []
+
+        def bind(mod):
+            def trigger_event(name):
+                sits.append(vessel.situation)
+                mod.triggered.append(name)
+                mod.fields["status"] = "Running"
+
+            mod.trigger_event = trigger_event
+
+        for mod in (tel, thermo, baro, geiger, goo):
+            bind(mod)
+        phase = ["pad"]
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 54_000.0
+                vessel._speed = 80.0
+                vessel.orbit.apoapsis_altitude = 80_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                vessel.biome = "Shores"
+                vessel.resources.fuel = 0.2
+                vessel.control.throttle = 0.0
+                phase[0] = "coast"
+            elif vessel.situation == "flying" and phase[0] == "coast":
+                if geiger.triggered:
+                    geiger.fields["remaining"] = 0
+                    geiger.fields["status"] = "Done"
+                if goo.triggered:
+                    goo.fields["remaining"] = 0
+                    goo.fields["status"] = "Done"
+                vessel._alt = 6.0
+                vessel.situation = "splashed"
+                vessel.biome = "Water"
+                vessel._speed = 5.0
+                vessel.recoverable = True
+                phase[0] = "splash"
+            elif vessel.situation == "splashed":
+                for mod in (tel, thermo, baro):
+                    if mod.triggered:
+                        mod.fields["remaining"] = 0
+                        mod.fields["status"] = "Done"
+            t[0] += dt if dt else 0.01
+
+        tickets = (
+            {
+                "id": "T-028",
+                "type": "science",
+                "payload": {
+                    "experiment_id": "kerbalism_TELEMETRY",
+                    "situation": "SrfSplashed@Water",
+                    "biome": "Water",
+                    "seq": 0,
+                },
+            },
+            {
+                "id": "T-422",
+                "type": "science",
+                "payload": {
+                    "experiment_id": "temperatureScan",
+                    "situation": "SrfSplashed@Water",
+                    "biome": "Water",
+                    "seq": 1,
+                },
+            },
+            {
+                "id": "T-423",
+                "type": "science",
+                "payload": {
+                    "experiment_id": "barometerScan",
+                    "situation": "SrfSplashed@Water",
+                    "biome": "Water",
+                    "seq": 2,
+                },
+            },
+        )
+        with patch("hop.hop_wants_flying_high", return_value=True):
+            with patch("hop_factory._inland_high_sit", return_value=True):
+                with patch("tickets.list_tickets", return_value=tickets):
+                    result = run_on_vessel(
+                        _Session(vessel),
+                        vessel,
+                        science_ids=(
+                            "barometerScan",
+                            "geigerCounter",
+                            "mysteryGoo",
+                        ),
+                        on_log=logs.append,
+                        now=now,
+                        sleep=nap,
+                        timeout=30.0,
+                        pulse=1.0,
+                    )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(vessel.recovered)
+        self.assertEqual(geiger.triggered, ["Start Experiment"])
+        self.assertEqual(goo.triggered, ["Start Experiment"])
+        self.assertEqual(tel.triggered, ["Start Experiment"])
+        self.assertEqual(thermo.triggered, ["Start Experiment"])
+        self.assertEqual(baro.triggered, ["Start Experiment"])
+        self.assertIn("splashed", sits)
+        self.assertTrue(any("cannot pay" in line for line in logs))
+        self.assertTrue(
+            any("kerbalism_TELEMETRY" in line and "science start" in line for line in logs)
+            or tel.triggered
+        )
+
     def test_splash_telemetry_rem_zero_recovers(self):
         """hold-ground-card: splash file rem=0 still running recovers, no uplink abort."""
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -5252,6 +5438,48 @@ class TestHopSequence(unittest.TestCase):
             )
         self.assertEqual(result, "recovered")
         self.assertEqual(mod.triggered, ["Start Experiment"])
+
+    def test_transmit_uplink_fires_kerbalism_event_not_toggle(self):
+        class _TxMod(_Mod):
+            def trigger_event(self, name):
+                self.triggered.append(name)
+                low = str(name).lower()
+                if "start" in low or low == "toggle":
+                    self.fields["status"] = "Running"
+
+        mod = _TxMod(
+            "Experiment",
+            "temperatureScan",
+            events=["Start Experiment", "Toggle", "Dump", "Reset", "Transmit"],
+        )
+        vessel = _Vessel([mod], sit="flying")
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        vessel._alt = 3_000.0
+        vessel.orbit.apoapsis_altitude = 12_000.0
+        now, sleep, t = _fast_clock()
+        cmds = [_Uplink("transmit")]
+
+        def take_once():
+            return cmds.pop(0) if cmds else None
+
+        def nap(dt):
+            if "Start Experiment" in mod.triggered:
+                vessel.situation = "landed"
+                vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("hop.take", side_effect=take_once):
+            result = run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("temperatureScan",),
+                now=now,
+                sleep=nap,
+                timeout=30.0,
+                pulse=1.0,
+            )
+        self.assertEqual(result, "recovered")
+        self.assertEqual(mod.triggered, ["Transmit", "Start Experiment"])
 
     def test_cut_throttle_at_hop_apo(self):
         mod = _Mod("Experiment", "mysteryGoo")

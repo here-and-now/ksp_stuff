@@ -21,6 +21,40 @@ python main.py pad
 
 ---
 
+## 2026-08-25T08-20-54Z-hop — hold-ground-card
+
+- **When:** T-440. t7-wheel-pbc. Bound splash Water T-028 TELEMETRY /
+  T-422 2HOT / T-423 PresMat. Fly extras goo+geiger. f013 TELEMETRY
+  Stayputnik on_craft=yes; 2HOT start on_craft=yes; PresMat stability
+  on_craft=yes. Tree start,engineering101,basicRocketry,survivability,stability.
+  Do not Hangar. Never revert.
+- **Symptom:** airborne skip leftover cannot-pay (T-436 good), start
+  goo+geiger, dwell rem=0, recover sit=splashed Water rec=yes without
+  Toggle TELEMETRY/thermo/PresMat. Bank 2.29 +0. Tape rec=no sci=run=0
+  impact 227 m/s.
+- **Cause:** Idle file rem=0 was dwell-done. Airborne rem=0 recovered
+  before sit-matched splash leftover. Ground snap can lag a flying
+  vessel sit, so leftover matching emptied and recover ran.
+- **Fix:** File rem=0 idle (never Toggled) is not done; sample rem=0
+  still is. Hold sit-matched leftover on splash/land. `_live_sit`
+  prefers ground snap. Leftover Toggle/wait keys off sit, not wreck-down.
+  Forest / Grasslands / Water: same. Never revert. Do not Hangar.
+- **Modules:** `science.py`, `hop.py`, `hop_factory.py`.
+
+## 2026-08-25 — ra-rate
+
+- **When:** T-445. Cape RateToHome 64 bps. Lock live; this pid will not
+  reload. Do not Hangar. Never revert.
+- **Symptom:** hop `_UPLINK_SKIP` dropped `science`; no `transmit` verb.
+  never-transmit is outdated.
+- **Cause:** Kerbalism TX is an Experiment event, not stock
+  `Experiment.transmit()` dump. Toggle starts *and* stops.
+- **Fix:** hop/splash take `science` and `transmit`. `emergencies.transmit`
+  fires Transmit/TransmitEvent. Never Toggle/dump/reset. Never stock
+  transmit(). Cape 64 bps.
+- **Modules:** `hop.py`, `splash.py`, `uplink.py`, `emergencies.py`. Not
+  `science.py` (T-440 XOR). Not `hop_factory.py`.
+
 ## 2026-08-25 — hop-coast-phys-warp
 
 - **When:** T-442. t7-wheel-pbc. Quiet loft after lid. No chute on hang.

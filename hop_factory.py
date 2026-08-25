@@ -751,13 +751,14 @@ def run_factory_vessel(
             live_biome = H._snap_biome(snap, vessel)
             live_l = str(live_now or "").lower()
             wreck_now = bool(getattr(snap, "wreck", False))
-            ground_now = down or "landed" in live_l or "splash" in live_l
+            sit_ground = "landed" in live_l or "splash" in live_l
+            ground_now = down or sit_ground
             leftover_ids = H.hop_landed_science_ids()
             matching_ids = H.hop_landed_science_ids(
                 live_sit=live_now, live_biome=live_biome
             )
             started_ground: list[str] = []
-            if left_pad and ground_now and not waiting_hd and lofted:
+            if left_pad and sit_ground and not waiting_hd and lofted:
                 need = H.bound_science_need(
                     live_sit=live_now,
                     live_biome=live_biome,
@@ -808,7 +809,7 @@ def run_factory_vessel(
                 and not waiting_hd
                 and (
                     bool(unpaid_match)
-                    if ground_now
+                    if sit_ground
                     else bool(unpaid_any)
                 )
             )

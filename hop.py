@@ -116,7 +116,8 @@ _GROUND = frozenset({"landed", "splashed", "wrecked", "wreck"})
 _PAD_SIT = frozenset({"pre_launch", "prelaunch"})
 _LIGHT_SIT = frozenset({"pre_launch", "prelaunch", "landed"})
 _ABORT_UPLINK = frozenset({"abort_pad", "abort", "hold", "freeze", "recover"})
-_UPLINK_SKIP = frozenset({"science", "stage"})
+# Extra-stage is hop's. Science/transmit are Gene radio (Kerbalism events).
+_UPLINK_SKIP = frozenset({"stage"})
 # After left_pad: yaw 10° off zenith heading 270, then 25° inland.
 # Do not slam 65 at light. Point set_direction_and_up (north up).
 # Engage once off zenith. Re-point if flipped while burning; write
@@ -429,11 +430,22 @@ def _snap_biome(snap: object, vessel: object | None) -> str:
 
 
 def _live_sit(vessel: object, snap: object) -> str:
-    """kRPC vessel sit wins over snap (land vs splash)."""
+    """kRPC vessel sit wins over snap (land vs splash).
+
+    Ground snap beats a lagging flying vessel so splash leftover still
+    sit-matches before recover.
+    """
     sit = _vessel_sit(vessel)
+    snap_sit = str(getattr(snap, "situation", "") or "")
+    snap_l = snap_sit.lower()
+    sit_l = sit.lower()
+    snap_ground = "landed" in snap_l or "splash" in snap_l
+    sit_ground = "landed" in sit_l or "splash" in sit_l
+    if snap_ground and not sit_ground:
+        return snap_sit
     if sit not in {"", "?"}:
         return sit
-    return str(getattr(snap, "situation", "") or "")
+    return snap_sit
 
 
 def _start_paying(
@@ -1104,15 +1116,29 @@ def _hold_ground_card(
     *,
     wait_splash: bool = False,
 ) -> bool:
-    """Living landed dwell: leftover rem still recording. Wreck recovers now."""
-    if wait_splash or not started:
+    """Living landed dwell: leftover rem still recording. Wreck recovers now.
+
+    Sit-matched leftover stays in the card: airborne rem=0 (goo/geiger dwell)
+    is not splash leftover done. File rem=0 idle still holds.
+    """
+    if wait_splash:
         return False
     if bool(getattr(snap, "wreck", False)):
         return False
-    sit = str(getattr(snap, "situation", "") or "").lower()
-    if sit not in {"landed", "splashed"}:
+    sit = _live_sit(vessel, snap)
+    sit_l = sit.lower()
+    if "landed" not in sit_l and "splash" not in sit_l:
         return False
-    names = tuple(started) if started else ids
+    biome = _snap_biome(snap, vessel)
+    try:
+        leftover = hop_landed_science_ids(live_sit=sit, live_biome=biome)
+    except Exception:
+        leftover = ()
+    names = tuple(dict.fromkeys([*(started or ()), *leftover]))
+    if not names:
+        names = tuple(ids)
+    if not names:
+        return False
     try:
         return not ground_card_done(vessel, names)
     except Exception:
@@ -1349,7 +1375,7 @@ def _finish_hd(
 
 
 def _uplink_tick(ctx: Ctx) -> None:
-    """Abort-class raises. Do not Toggle or extra-stage."""
+    """Abort-class raises. Science/transmit run. Do not extra-stage."""
     cmd = take()
     if cmd is None:
         return

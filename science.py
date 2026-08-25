@@ -1079,7 +1079,8 @@ def ground_card_done(vessel: Any, names: Iterable[str]) -> bool:
 
     Kerbalism file remaining=0 is done even if still running. Sample rem=0
     running is spent — stop and recover. Duration with no rem field still
-    recording is not done.
+    recording is not done. Idle file rem=0 that never Toggled is not dwell-done
+    — airborne rem=0 does not skip splash leftover.
     """
     slots = _best_slots(vessel, names)
     if not slots:
@@ -1094,7 +1095,7 @@ def ground_card_done(vessel: Any, names: Iterable[str]) -> bool:
             if rem > 0.0:
                 return False
             continue
-        if not experiment_done(module):
+        if not experiment_done(module, eid=eid):
             return False
     return True
 
@@ -1197,14 +1198,27 @@ def _reset_ready(module: Any) -> bool:
     return False
 
 
-def experiment_done(module: Any, *, saw_running: bool = False) -> bool:
-    """Kerbalism Experiment finished this subject. Does not Toggle."""
+def experiment_done(
+    module: Any, *, saw_running: bool = False, eid: str = ""
+) -> bool:
+    """Kerbalism Experiment finished this subject. Does not Toggle.
+
+    Sample rem=0 is spent. File duration rem=0 idle (never Toggled, no Has
+    Data) still pays this sit — airborne rem=0 is not splash leftover done.
+    """
     if status_running(module):
         return False
     if _has_data_field(module):
         return True
     if _remaining_zero(module):
-        return True
+        if _is_sample(module, eid):
+            return True
+        if saw_running:
+            return True
+        low = _status_text(module)
+        if low and any(w in low for w in _DONE_STATUS):
+            return True
+        return False
     low = _status_text(module)
     if low and any(w in low for w in _DONE_STATUS):
         return True
@@ -1237,7 +1251,7 @@ def card_complete(
             seen[key] = True
             done = False
             continue
-        if experiment_done(module, saw_running=seen.get(key, False)):
+        if experiment_done(module, saw_running=seen.get(key, False), eid=eid):
             continue
         done = False
     return done

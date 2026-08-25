@@ -1348,6 +1348,27 @@ class TestSituationCanPay(unittest.TestCase):
         self.assertTrue(ground_card_done(iv, ("temperatureScan",)))
         self.assertTrue(experiment_can_pay(idle, "temperatureScan"))
 
+    def test_ground_card_idle_file_rem_zero_not_done(self):
+        """hold-ground-card: unstarted file rem=0 is not splash leftover done."""
+        thermo = _Mod("Experiment", "temperatureScan")
+        thermo.fields["remaining"] = 0
+        vessel = _Vessel([thermo])
+        vessel.parts = _Parts([_Part("sensorThermometer", [thermo])])
+        self.assertFalse(ground_card_done(vessel, ("temperatureScan",)))
+        self.assertFalse(experiment_done(thermo, eid="temperatureScan"))
+        self.assertTrue(experiment_can_pay(thermo, "temperatureScan"))
+        baro = _Mod("Experiment", "barometerScan")
+        baro.fields["remaining"] = 0
+        bv = _Vessel([baro])
+        bv.parts = _Parts([_Part("sensorBarometer", [baro])])
+        self.assertFalse(ground_card_done(bv, ("barometerScan",)))
+        goo = _Mod("Experiment", "mysteryGoo")
+        goo.fields["remaining"] = 0
+        gv = _Vessel([goo])
+        gv.parts = _Parts([_Part("GooExperiment", [goo])])
+        self.assertTrue(ground_card_done(gv, ("mysteryGoo",)))
+        self.assertTrue(experiment_done(goo, eid="mysteryGoo"))
+
 
 class _Uplink:
     def __init__(self, verb: str):

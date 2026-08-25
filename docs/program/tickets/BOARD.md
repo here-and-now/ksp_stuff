@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 76 / 434
+open: 74 / 434
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -9,8 +9,6 @@ open: 76 / 434
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
 | T-424 | control | bug | S2 | P1 | medium | inbox | lars |  | Splash bind dropped lid to 18 km; pitch 25 + 4x at 3 km crash UI rec=no |
 | T-425 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI flyinghigh-lid ×15 |
-| T-426 | systems | bug | S2 | P1 | medium | inbox | wernher |  | 4x physics coast while still in thick air after 18 km lid |
-| T-427 | systems | bug | S2 | P1 | medium | inbox | wernher |  | Harmony-clamp RateBoundaries/FwdDataRate to TechLevelInfo.MaxDataRate (TL2 64 is table; live Cape is 31.5 kbps) |
 | T-429 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI bigger-dv ×16 |
 | T-432 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI ec=0-after-loft ×3 |
 | T-434 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI far-shear ×12 |

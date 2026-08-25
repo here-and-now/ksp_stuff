@@ -154,7 +154,7 @@
   "savanna-flyinglow-thermo": 1,
   "savanna-landed-telemetry": 1,
   "savanna-landed-thermo": 1,
-  "sci-unchanged-recovered": 12,
+  "sci-unchanged-recovered": 14,
   "science skip (no Experiment modules) ABORT no science (wanted mysteryGoo) after splash MET 226.3 EC=0": 1,
   "science-skip-no-modules": 2,
   "science-skip-timeout": 6,
@@ -204,6 +204,6 @@
   "tundra-landed-telemetry": 1,
   "tundra-landed-thermo": 1,
   "unstarted-splash-telemetry": 1,
-  "vab-helper": 1,
+  "vab-helper": 9,
   "z200-vs-z100-chute": 1
 }

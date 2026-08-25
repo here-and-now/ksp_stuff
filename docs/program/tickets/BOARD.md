@@ -1,12 +1,19 @@
 # Ticket board
 
-open: 67 / 423
+open: 76 / 434
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
+| T-424 | control | bug | S2 | P1 | medium | inbox | lars |  | Splash bind dropped lid to 18 km; pitch 25 + 4x at 3 km crash UI rec=no |
+| T-425 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI flyinghigh-lid ×15 |
+| T-426 | systems | bug | S2 | P1 | medium | inbox | wernher |  | 4x physics coast while still in thick air after 18 km lid |
+| T-427 | systems | bug | S2 | P1 | medium | inbox | wernher |  | Harmony-clamp RateBoundaries/FwdDataRate to TechLevelInfo.MaxDataRate (TL2 64 is table; live Cape is 31.5 kbps) |
+| T-429 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI bigger-dv ×16 |
+| T-432 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI ec=0-after-loft ×3 |
+| T-434 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI far-shear ×12 |
 | T-028 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,telemetry,splash,bound | splash TELEMETRY@Water 0.80 |
 | T-422 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,thermo,splash,bound | Water SrfSplashed thermo 0.90 |
 | T-423 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,barometer,splash,bound | Water SrfSplashed barometer 0.90 |
@@ -53,7 +60,6 @@ open: 67 / 423
 | T-351 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,thermo,splash,unbound | Grasslands SrfSplashed thermo 0.90 chute splash |
 | T-352 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,grasslands,telemetry,splash,unbound | Grasslands SrfSplashed TELEMETRY 0.60 chute splash |
 | T-368 | science | science_opportunity | S3 | P2 | medium | inbox | linus | remaining,flyinghigh,goo,unbound | FlyingHigh goo unstarted 5.40 wait t7+Mk16 |
-| T-397 | press | press | S3 | P2 | medium | inbox | verena | press | First space: chutes, girders, the same Forest, RSI, radiation in the bank |
 | T-400 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover |
 | T-402 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk) |
 | T-403 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-cone: RC_cone 50m recover alt of t7-wheel — do not Hangar this sit |
@@ -61,7 +67,10 @@ open: 67 / 423
 | T-406 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel |
 | T-408 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC |
 | T-409 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk) |
-| T-411 | ops | ops | S3 | P2 | medium | inbox | linus | feedback | PresMat FlyingHigh rem=0 skipped not-in-card |
+| T-428 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk) |
+| T-430 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc — do not Hangar this sit |
+| T-431 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-proc-oxstat: 4x OX-STAT on t7-wheel-proc for Goo 641 s dwell EC |
+| T-433 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk) |
 | T-080 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,forest,geiger,f013,unbound | Forest SrfLanded geiger 1.20 wait Geiger part |
 | T-094 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-095 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingHigh TELEMETRY 1.80 wait ≥50 km |

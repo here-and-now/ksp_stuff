@@ -40,7 +40,7 @@ exit **ends** the hop — Commander does not review.
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
 | Gene (between exits) or Commander (**during hop**) | KSP window | stuck | `screenshot --name stuck-<stem>` then read PNG | scene — not a postmortem |
 | Commander | radio | unusual **during hop** | `note` / hold / abort | in-flight — not a review |
-| Hank | `python main.py ship` | lock live, from time to time | disk envelope (no jsonl) | uplink or hire if off-nominal. Reader `status` after Wernher `session.py` — not today |
+| Hank | `python main.py ship` | lock live, from time to time | disk envelope (no jsonl) | uplink or hire if off-nominal. Reader `status` is `kspstuff-read` (T-454) |
 | Hank | Gene | off-nominal, plan/`go` must change | `ship.md` + fly ticket | uplink / `go: wait` / tickets — **not stick** |
 
 Linus ↛ Commander. Gus ↛ Hangar. Commander ↛ `.py`/`.craft`. Commander ↛ leftover recover / Close crash UI. Commander ↛ after-flight review / jsonl / attach-run / landing. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
@@ -226,8 +226,9 @@ flies**. The Commander watches telem/gates. Unusual →
 `python main.py note <Name> "…"` and/or hold/abort per emergencies
 (in-flight radio, not a review after recover). **Hank** (parent)
 periodically runs **`python main.py ship`** (disk envelope from
-`ship.md`). A lock-live reader Session is legal after Wernher lands
-it — until then no `status` (it appends jsonl). Do not `read_file`
+`ship.md`). Lock-live `status` / leftover GET is a reader Session
+(`kspstuff-read`, T-454). Writer `Telem.read` still owns jsonl /
+`ship.md`. Do not `read_file`
 the growing jsonl. Off-nominal (wreck
 flags, lithobrake, empty tanks + still flying, heading never moving,
 EC=0 before dwell, crash UI): **do something** — `uplink abort|hold`
@@ -312,7 +313,7 @@ Uncrewed Learn is already on the ticket from `attach-run`.
 | Ground `ops --tag ask` tickets | addressee’s next spawn (lock free) |
 | Hank `attach-run` uncrewed `learn` | every hop-exit (kernel overwrite) |
 | Gene `payload.learn` stamp | campaign-stop / crewed / firsts; never mid-phase; never uncrewed |
-| Hank `python main.py ship` (lock live) | never eat the jsonl; `status` only as a GET reader after Wernher `session.py` |
+| Hank `python main.py ship` (lock live) | never eat the jsonl; `status` is a GET reader (`kspstuff-read`, T-454) |
 
 Not parallel: two Commanders; Lars on a clean 0. Gene **+** flight is
 legal **only** off-nominal (Gene no stick). Uncrewed campaign hops

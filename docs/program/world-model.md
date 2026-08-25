@@ -359,9 +359,9 @@ story this fly. Dead kRPC GUID is not leftover.
   `krpc.md`.
 - **Live watch:** Commander watches telem in-flight (`note` / hold /
   abort if unusual). Hank periodically reads `docs/program/ship.md`
-  (disk). A lock-live `status` / leftover GET is a **reader** after
-  Wernher lands `session.py` reader mode — until then, no `status`
-  (today it appends jsonl). Do not eat the jsonl. Nominal: no Gene.
+  (disk). Lock-live `status` / leftover GET is a **reader**
+  (`kspstuff-read`, T-454). Writer `Telem.read` still owns jsonl /
+  `ship.md`. Do not eat the jsonl. Nominal: no Gene.
 - **Tape (Os 2026-08-25, Mortie / T-448 / T-452):** last-flight 40
   lines is abort/exit, not the vessel. **Do not reason a Learn from
   it.** Question jsonl / `telem --window` / science-scan whenever you
@@ -679,6 +679,12 @@ story this fly. Dead kRPC GUID is not leftover.
   sit. File rem=0 still the card. Capped splash TELEMETRY is
   science-scan, not last-flight skip. Code T-446 Lars. Tape T-449.
   Do not Hangar. Never revert. An RSI letter does not empty the pad.
+- **2026-08-25 telem-eyes-library (T-455 RSI ×3, stem count 4):**
+  Harvest only. Law already T-452 (one control writer; GET readers
+  legal). Reader Session landed T-454 (`kspstuff-read`;
+  `kind=recover` sit at recover()). T-449 still owns query helpers.
+  Do not rewrite GET-reader law. Never revert. An RSI letter does
+  not empty the pad.
 - **2026-08-25 rf-ignition-ullage (T-456 org / T-457, stem count 1):**
   ReStockPlus liquids are RF: ullage + finite ignitions. Pad 1 g
   still lights. Throttle 0 then 1 is a **restart** (spends an

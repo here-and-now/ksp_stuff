@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-25 — T-455 harvest: telem-eyes-library RSI ×3 (stem count 4). Law already T-452; T-454 landed; T-449 still owns query helpers. Dropped PROTOCOL “status not today.” Do not rewrite GET-reader or RF-ullage law. Pad still flies.
 - 2026-08-25 — Practice last-write T-456: ReStockPlus liquids RF ullage + finite ignitions; pad 1g lights; throttle 0 then 1 is a restart. Verify per hang, no part→N table. Failed relight with fuel is engine physics until ignitions/ullage/EC checked — not systems. Lars T-457 hop_factory. Do not raise ignitions. Pad still flies.
 - 2026-08-25 — T-452: one control writer; kRPC GET readers legal. One-writer protected Control and tape files, not GET. 09-01Z 27/251s; last-flight splash rec=yes vs jsonl flying 6 km rec=no. T-453 thin-tape telem.py; T-454 session.py+flightlog.py. T-451: 09-01Z 4× 55 km q=937 → 6 km q=17510; T-450 owns it. Pad still flies.
 - 2026-08-25 — Practice last-write T-448/T-447: last-flight 40 lines is not the vessel; do not Learn from it. 09-01Z splash rec=yes vs jsonl flying 6 km rec=no q=17510; landing synthesized; sci_rem=0; splash TELEMETRY capped. Helpers T-449. Hold-ground-card ×11 still Toggle-at-sit (T-446). Idle pad is not a religion of last-cli. Pad still flies.

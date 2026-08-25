@@ -21,6 +21,25 @@ python main.py pad
 
 ---
 
+## 2026-08-25T21-57-33Z-hop — rf-ignition-ullage
+
+- **When:** T-469. T-465 live miss. Valiant 1-start RF. Pad 1 g, ullage
+  Very Stable, EC ~492, Kero 1575. Do not Hangar. Never revert.
+- **Symptom:** `hop light` then GET sit=pre_launch MET 0 kRPC throttle
+  1, Ignitions Remaining 0, engine Current Throttle 0, thrust 0,
+  Kero 1574.74 frozen. Tape: pulse 1 throttle 1 stage 1; pulse 2
+  stage 0, 0.26 Kero, then 18 pad rows thrust 0. Uplink abort.
+- **Cause:** Independent-until-thrusting is a chicken-egg. Live was
+  independent True, not Current Throttle. `_apply_pad_throttle`
+  re-set independent every pulse (zeros Current Throttle this tick)
+  then staged / held. RF spent the only ignition at throttle 0.
+  T-465 release-after-thrust never ran — thrust never came.
+- **Fix:** `hop_factory_pad.py`: live is engine Current Throttle.
+  Enable independent once. Stage without re-apply. Pad hold writes
+  throttle 1 without toggling independent. Not hop.py. Do not
+  raise ignitions.
+- **Modules:** `hop_factory_pad.py`.
+
 ## 2026-08-25T20-36-06Z-hop — rf-ignition-ullage
 
 - **When:** Factory inland Valiant 1-start RF. Pad lit (MET 0.3 thrust

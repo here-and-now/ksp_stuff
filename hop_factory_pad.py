@@ -1,8 +1,9 @@
 """RF pad sit: throttle 1 on the engine, then stage, keep that start.
 
-Pad 1 g still lights. Independent throttle is the ignition meet.
-After the engine is thrusting, MainThrottle 1 is the burn —
-independent after light starves stack tanks. Release once thrusting.
+Pad 1 g still lights. Independent throttle is the ignition meet —
+enable once. Re-enabling zeros Current Throttle; stage then spends
+the only ignition at 0. Live is engine Current Throttle, not
+independent True. After thrusting, MainThrottle 1 is the burn.
 Commanded throttle 0 after loft is MECO. Throttle 0 then 1 is a
 restart. Forest / Grasslands: same.
 """
@@ -44,10 +45,11 @@ def _engine_throttle(engine: object) -> float:
 
 
 def _pad_engine_live(vessel: object) -> bool | None:
-    """Throttle already on a live engine. None if this hang has no engine.
+    """Current Throttle already on a live engine. None if no engine.
 
-    kRPC control.throttle is not the burn. RF Current Throttle /
-    independent throttle is. Forest / Grasslands: same.
+    kRPC control.throttle is not the burn. Independent True with
+    Current Throttle 0 is not live — re-enable zeros the meet.
+    Forest / Grasslands: same.
     """
     engines = _pad_engines(vessel)
     if not engines:
@@ -56,16 +58,11 @@ def _pad_engine_live(vessel: object) -> bool | None:
         thr = _engine_throttle(eng)
         if math.isfinite(thr) and thr > 0.05:
             return True
-        try:
-            if bool(getattr(eng, "independent_throttle", False)):
-                return True
-        except Exception:
-            pass
     return False
 
 
 def _apply_pad_throttle(vessel: object) -> None:
-    """Throttle 1 on control and on the engines. Pad 1 g still lights."""
+    """Throttle 1 on control and on the engines. Enable independent once."""
     try:
         control = vessel.control
         control.sas = True
@@ -73,10 +70,16 @@ def _apply_pad_throttle(vessel: object) -> None:
     except Exception:
         pass
     for eng in _pad_engines(vessel):
+        already = False
         try:
-            eng.independent_throttle = True
+            already = bool(getattr(eng, "independent_throttle", False))
         except Exception:
-            pass
+            already = False
+        if not already:
+            try:
+                eng.independent_throttle = True
+            except Exception:
+                pass
         try:
             eng.throttle = 1.0
         except Exception:
@@ -123,13 +126,12 @@ def _pad_light(
 ) -> bool:
     """Pad light: throttle 1 on the engine, then stage. One start.
 
-    RF spends the only ignition when stage fires. kRPC control.throttle
-    is not the burn — ignition meets throttle on the engine. Throttle 0
-    then 1 is a restart. Pad 1 g still lights when the engine throttle
-    is 1 at ignition. ``_light`` writes throttle then stages in one call
-    — too late for the game tick. hop light is not the burn —
-    ``_pad_hold`` keeps MainThrottle 1 after thrusting. Forest /
-    Grasslands: same.
+    RF spends the only ignition when stage fires. Live is engine
+    Current Throttle, not independent True and not kRPC throttle.
+    Re-apply on the stage pulse zeros Current Throttle this tick.
+    Throttle 0 then 1 is a restart. Pad 1 g still lights when the
+    engine throttle is 1 at ignition. hop light is not the burn.
+    Forest / Grasslands: same.
     """
     if deaf:
         H._light(vessel, on_log, snap)
@@ -145,8 +147,8 @@ def _pad_light(
         except (TypeError, ValueError):
             throttle = 0.0
         live = bool(math.isfinite(throttle) and throttle > 0.05)
-    _apply_pad_throttle(vessel)
     if not live:
+        _apply_pad_throttle(vessel)
         return False
     try:
         control.sas = True
@@ -168,13 +170,13 @@ def _pad_hold(
     left_pad: bool,
     deaf: bool,
 ) -> bool:
-    """After pad light, MainThrottle 1 until MECO. Independent is not the burn.
+    """After pad light, keep the start. Independent is enabled once.
 
-    hop light is not the burn. Independent is the ignition meet. Once
-    thrusting, independent starves stack tanks — MainThrottle 1 is the
-    same start. Pad sit throttle 0 is a drop: write 1 (meet if not
-    thrusting). Commanded throttle 0 after loft is MECO. Pad 1 g still
-    lights. Forest / Grasslands: same.
+    hop light is not the burn. Re-enabling independent zeros Current
+    Throttle — wait-for-thrust then never thrusts. Pad sit throttle 0
+    is a drop: write 1 without toggling independent. Once thrusting,
+    MainThrottle 1 is the burn. Commanded throttle 0 after loft is
+    MECO. Pad 1 g still lights. Forest / Grasslands: same.
     """
     if not lit or deaf:
         return False

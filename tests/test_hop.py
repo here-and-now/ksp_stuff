@@ -1586,7 +1586,7 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertEqual(
             vessel.control.ops,
-            [("throttle", 1.0), ("throttle", 1.0), ("stage", 1.0)],
+            [("throttle", 1.0), ("stage", 1.0)],
         )
         self.assertTrue(any("hop light" in line for line in logs))
         already = _Vessel([])
@@ -1594,9 +1594,7 @@ class TestHopSequence(unittest.TestCase):
         already.control.throttle = 1.0
         already.control.ops.clear()
         self.assertTrue(_pad_light(already, logs.append, snap, deaf=False))
-        self.assertEqual(
-            already.control.ops, [("throttle", 1.0), ("stage", 1.0)]
-        )
+        self.assertEqual(already.control.ops, [("stage", 1.0)])
         deaf_v = _Vessel([])
         deaf_v.control.sas = True
         deaf_v.control.throttle = 0.4

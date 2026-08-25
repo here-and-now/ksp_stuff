@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-25 — T-469 rf-ignition-ullage: hop_factory_pad live is engine Current Throttle; enable independent once. 21-57-33Z hop light then GET ignitions 0 Current Throttle 0 thrust 0 Kero full — re-enable zeros the meet, T-465 release-after-thrust never ran. Do not Hangar.
 - 2026-08-25 — T-465 rf-ignition-ullage: hop_factory_pad `_pad_hold` independent is the ignition meet only; once thrusting, MainThrottle 1 until MECO. 20-36-06Z lit 89 kN then flameout MET10 Kero 1396 LOx 1707 throttle 1 — independent after light starves stack tanks. last-flight rec=yes is the postcard. Do not Hangar.
 - 2026-08-25 — T-464 rf-ignition-ullage: hop_factory `_pad_light` throttle 1 on the engine then stage; 11-22-32Z kRPC throttle 1 engine Current Throttle 0 ignitions 0 sit=pre_launch. kRPC throttle is not the burn. Do not Hangar.
 - 2026-08-25 — T-462 rf-ignition-ullage: hop_factory `_pad_hold` keeps throttle 1 after hop light until MET>0 / flying / left_pad; 11-11-44Z lit then GET throttle 0 ignitions 0 sit=pre_launch. hop light is not the burn. Do not Hangar.

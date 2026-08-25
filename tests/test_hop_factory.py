@@ -20,11 +20,24 @@ class _Control:
 
 
 class _Engine:
-    """kRPC Engine: Current Throttle is independent, not control.throttle."""
+    """kRPC Engine: re-enabling independent zeros Current Throttle."""
 
     def __init__(self):
-        self.independent_throttle = False
+        self._independent = False
         self._throttle = 0.0
+        self.independent_sets = 0
+
+    @property
+    def independent_throttle(self):
+        return self._independent
+
+    @independent_throttle.setter
+    def independent_throttle(self, value):
+        self.independent_sets += 1
+        value = bool(value)
+        if value:
+            self._throttle = 0.0
+        self._independent = value
 
     @property
     def throttle(self):
@@ -32,7 +45,7 @@ class _Engine:
 
     @throttle.setter
     def throttle(self, value):
-        if self.independent_throttle:
+        if self._independent:
             self._throttle = float(value)
 
 
@@ -106,9 +119,27 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertEqual(vessel.control.staged, 0)
         self.assertTrue(engine.independent_throttle)
         self.assertGreater(engine.throttle, 0.05)
+        self.assertEqual(engine.independent_sets, 1)
         self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
         self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(engine.independent_sets, 1)
+        self.assertGreater(engine.throttle, 0.05)
         self.assertTrue(any("hop light" in line for line in logs))
+
+    def test_pad_light_does_not_stage_on_independent_with_throttle_zero(self):
+        """rf-ignition-ullage: 21-57-33Z independent True Current Throttle 0."""
+        vessel = _Vessel()
+        engine = _Engine()
+        engine.independent_throttle = True
+        self.assertEqual(engine.throttle, 0.0)
+        vessel.parts.engines = [engine]
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(logs, [])
+        self.assertGreater(engine.throttle, 0.05)
+        self.assertEqual(engine.independent_sets, 1)
 
     def test_pad_hold_keeps_start_airborne_until_meco(self):
         """rf-ignition-ullage: thrusting hands stack to MainThrottle 1."""
@@ -129,6 +160,12 @@ class TestHopFactoryPad(unittest.TestCase):
             _pad_hold(vessel, pad, lit=True, left_pad=False, deaf=False)
         )
         self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.throttle, 0.05)
+        sets = engine.independent_sets
+        self.assertTrue(
+            _pad_hold(vessel, pad, lit=True, left_pad=False, deaf=False)
+        )
+        self.assertEqual(engine.independent_sets, sets)
         self.assertGreater(engine.throttle, 0.05)
         self.assertTrue(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)

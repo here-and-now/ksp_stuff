@@ -4,7 +4,7 @@ science: tickets
 flight: jebediah
 craft: kspstuff-hop-valiant-t7-wheel-pbc
 recover_banks: yes
-notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not live.
+notes: dump of bound tickets + fly `science_ids`. Splash Water bind. Files recover HD this hop — TX @ 64 bps is 26/16/41 h (TELEMETRY/thermo/PresMat). Goo sample recover can. Retired splash hang is not live.
   fly: T-081 cli=python main.py hop
   science_ids: barometerScan,geigerCounter,mysteryGoo
 

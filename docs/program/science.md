@@ -4,8 +4,39 @@ Dump of **science tickets**, not dispatch. Bind is ticket payload.
 Catalog (`unbound`) is the shelf. This-hop work is **bound**.
 
 Craft `kspstuff-hop-valiant-t7-wheel-pbc`. Tree `start,engineering101,basicRocketry,survivability,stability`. Bank **2.2905**. Next CTT
-`generalRocketry` 20 → need ~**17.71**. Recover banks for hops; transmit is a radio (rate on `comms`), not the hop path. F-013:
-instrument part, never Stayputnik PAW as Geiger.
+`generalRocketry` 20 → need ~**17.71**. F-013: instrument part, never
+Stayputnik PAW as Geiger.
+
+## Policy — TX vs recover (Cape 64 bps)
+
+House **never transmit / recover HD only** is outdated. Live MM `kind`
+(`science-scan`): **sample** = recover the can (no radio). **file** =
+credits while recording onto HD; bank via recover HD **or** TX.
+Wall-time = `size_MB × 1000 / 0.008` s at live Cape path **64 bps**
+(Kerbalism 0.008 kB/s, T-427). Size it. Do not guess goo-sized.
+
+| eid | kind | size_MB | t_s | tx @ 64 bps | this-hop bank |
+|---|---|---|---|---|---|
+| `kerbalism_TELEMETRY` | file | 0.75 | 30 | **26 h** | recover HD |
+| `temperatureScan` | file | 0.45 | 138 | **16 h** | recover HD |
+| `barometerScan` | file | 1.17 | 305 | **41 h** | recover HD |
+| `geigerCounter` | file | 0.50 | 497 | **17 h** | recover HD (not bound) |
+| `mysteryGoo` | sample | 429 | 641 | **621 d** | recover can (not bound) |
+
+**tx:** none of the bound leftover. Hang is minutes; radio is hours.
+**recover:** `kerbalism_TELEMETRY` `temperatureScan` `barometerScan`.
+Goo is a can — never a 64 bps dump.
+
+Splash-Water bind stays (T-028 / T-422 / T-423). Toggle at splash;
+recover HD. Bank stuck **2.29** after recover() is airborne cannot-pay
+then recover with **empty HD** — splash leftover never Toggled — not
+proof recover() is dead.
+
+Forest High TELEMETRY leftover **1.512** (T-069) shelf until a Forest
+loft — same 0.75 MB file, still recover at 64 bps. Not this-hop bind.
+
+TX becomes hop-scale when RateToHome covers size in the hang
+(TELEMETRY 0.75 MB in ~5 min needs ~20 kbps — not TL2).
 
 ```bash
 python main.py science-scan
@@ -80,3 +111,4 @@ python main.py tickets list --type science
 | **T-316** | `geigerCounter` | FlyingLow |  | `kerbalism-geigercounter` | 56 | 0.005 | 0.316 | yes |
 
 Desk leftover vessels n=1. Query desk leftover-science.
+`kerbalism_TELEMETRY@EarthFlyingHighForest` sci=0.288/1.800 left=1.512 (T-069 shelf).

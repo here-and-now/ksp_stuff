@@ -1266,13 +1266,16 @@
         "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "live_run": "2026-08-25T06-36-38Z-hop",
-        "note": "this-hop SrfSplashed@Water TELEMETRY seq0 on t7-wheel-pbc. Unstarted kerbalism_TELEMETRY@EarthSrfSplashedWater ~0.80. 30 s / 0.052 file. Shores/Forest splash TELEMETRY capped. 06-36-38Z recovered sit=splashed Water 40 km heading 297 rec=yes sci_run=0. Last hop 18 km inland wreck rec=no sit=flying \u2014 not a rebind; FlyingHigh waits loft lid T-424/T-426. Cape path 64 bps; files credit on HD while recording (recover_banks yes), not TX hours from old 31.5 kbps. Host Stayputnik PAW. Side-by-side splash thermo + PresMat. Forest FlyingHigh leftover 1.512 shelf. f013: kerbalism_TELEMETRY hosted probeCoreSphere_v2 no Science-category part unlocked=n/a on_craft=yes. Not Grasslands. Not Forest land.",
+        "note": "this-hop SrfSplashed@Water TELEMETRY seq0 on t7-wheel-pbc. Unstarted kerbalism_TELEMETRY@EarthSrfSplashedWater ~0.80. file 0.75 MB / 30 s / 0.052. TX @ 64 bps = 93750 s (26 h) \u2014 recover HD this hop, not radio. Never-transmit is outdated religion; size TX vs RateToHome. Shores/Forest splash TELEMETRY capped. Envelope 06-36-38Z sit=splashed Water rec=yes. Forest FlyingHigh leftover 1.512 T-069 shelf until Forest loft. f013: kerbalism_TELEMETRY hosted probeCoreSphere_v2 no Science-category part unlocked=n/a on_craft=yes. Not Grasslands. Not Forest land.",
         "on_craft": "yes",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
         "seq": 0,
         "situation": "SrfSplashed@Water",
+        "size_mb": 0.75,
         "tech": "none",
+        "tx": "no",
+        "tx_s": 93750,
         "unlocked": "n/a"
       },
       "priority": "P1",
@@ -1291,7 +1294,7 @@
       ],
       "title": "splash TELEMETRY@Water 0.80",
       "type": "science",
-      "updated": "2026-08-25T08:25:32Z"
+      "updated": "2026-08-25T08:57:35Z"
     },
     "T-029": {
       "assignee": "",
@@ -2657,14 +2660,18 @@
         ],
         "host": "probeCoreSphere_v2",
         "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
+        "kind": "file",
         "leftover": 1.512,
-        "note": "unbound catalog. leftover kerbalism_TELEMETRY@EarthFlyingHighForest 0.288/1.800 left=1.512 \u2192 25 s / 0.052. Last envelope 06-36-38Z High Shores (tape biome Shores apo 226 km) / last-flight recovered splash heading 270. Forest pin cannot pay Shores High (paying_eids drop \u2192 skip not in card). This-hop hang dwells High over Cape. Shelf until High over Forest. Not Water heading 270. recover_banks yes.",
+        "note": "unbound catalog. leftover kerbalism_TELEMETRY@EarthFlyingHighForest 0.288/1.800 left=1.512 \u2192 25 s / 0.052. Last envelope 06-36-38Z High Shores (tape biome Shores apo 226 km) / last-flight recovered splash heading 270. Forest pin cannot pay Shores High (paying_eids drop \u2192 skip not in card). This-hop hang dwells High over Cape. Shelf until High over Forest. Not Water heading 270. recover_banks yes. Unbound shelf until Forest FlyingHigh loft. file 0.75 MB leftover 1.512. TX @ 64 bps = 26 h \u2014 recover HD when lofted, not radio this hop. Not a splash-Water rebind.",
         "on_craft": "yes",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
         "seq": null,
         "situation": "FlyingHigh@Forest",
+        "size_mb": 0.75,
         "tech": "none",
+        "tx": "no",
+        "tx_s": 93750,
         "unlocked": "n/a"
       },
       "payload.bound": "yes",
@@ -2688,7 +2695,7 @@
       ],
       "title": "Forest FlyingHigh TELEMETRY leftover 1.51",
       "type": "science",
-      "updated": "2026-08-25T06:45:54Z"
+      "updated": "2026-08-25T08:57:35Z"
     },
     "T-070": {
       "assignee": "linus",
@@ -15711,13 +15718,16 @@
         "instrument": "2HOT Thermometer (sensorThermometer) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "live_run": "2026-08-25T06-36-38Z-hop",
-        "note": "this-hop SrfSplashed@Water thermo seq1 on t7-wheel-pbc. Unstarted temperatureScan@EarthSrfSplashedWater ~0.90. 138 s / 0.002 file. Cape Shores Surface thermo capped. File rem=0 is still the card. 06-36-38Z skip not-in-card. Envelope splash Water. Last hop 18 km wreck skip not-in-card is airborne vs splash bind \u2014 do not unbind. Loft lid waits T-424/T-426. Cape path 64 bps; files credit on HD. Side-by-side T-028 TELEMETRY seq0 + splash PresMat seq2. f013: sensorThermometer start unlocked=yes on_craft=yes. Not Grasslands. recover_banks yes.",
+        "note": "this-hop SrfSplashed@Water thermo seq1 on t7-wheel-pbc. Unstarted temperatureScan@EarthSrfSplashedWater ~0.90. file 0.45 MB / 138 s / 0.002. TX @ 64 bps = 56250 s (16 h) \u2014 recover HD this hop. File rem=0 is still the card. Cape Shores Surface thermo capped. f013: sensorThermometer start unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorThermometer",
         "recover_banks": "yes",
         "seq": 1,
         "situation": "SrfSplashed@Water",
+        "size_mb": 0.45,
         "tech": "start",
+        "tx": "no",
+        "tx_s": 56250,
         "unlocked": "yes"
       },
       "priority": "P1",
@@ -15736,7 +15746,7 @@
       ],
       "title": "Water SrfSplashed thermo 0.90",
       "type": "science",
-      "updated": "2026-08-25T08:25:33Z"
+      "updated": "2026-08-25T08:57:35Z"
     },
     "T-423": {
       "assignee": "linus",
@@ -15779,13 +15789,16 @@
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "live_run": "2026-08-25T06-36-38Z-hop",
-        "note": "this-hop SrfSplashed@Water PresMat seq2 on t7-wheel-pbc. Unstarted barometerScan Surface@Water ~0.90 (cap 3 \u00d7 0.3). 305 s / 0.05 file. File rem=0 is still the card (T-411 hold-ground-card). FlyingHigh PresMat shelf T-404 until loft lid. HD 2.5 vs TELEMETRY 0.75 + thermo 0.45 + 1.17. 06-36-38Z skip not-in-card. Envelope splash Water. Last hop 18 km wreck skip not-in-card is airborne vs splash bind \u2014 do not unbind. Cape path 64 bps; files credit on HD. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop SrfSplashed@Water PresMat seq2 on t7-wheel-pbc. Unstarted barometerScan Surface@Water ~0.90. file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. FlyingHigh PresMat shelf T-404 until loft lid. HD 2.5 vs TELEMETRY 0.75 + thermo 0.45 + 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
         "seq": 2,
         "situation": "SrfSplashed@Water",
+        "size_mb": 1.17,
         "tech": "stability",
+        "tx": "no",
+        "tx_s": 145833,
         "unlocked": "yes"
       },
       "priority": "P1",
@@ -15804,7 +15817,7 @@
       ],
       "title": "Water SrfSplashed barometer 0.90",
       "type": "science",
-      "updated": "2026-08-25T08:25:33Z"
+      "updated": "2026-08-25T08:57:35Z"
     },
     "T-424": {
       "assignee": "",
@@ -16517,23 +16530,35 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Policy rewritten: sample recover can; file size TX vs 64 bps. Bound leftover all recover HD (26/16/41 h). Splash Water bind kept. Forest High TELEMETRY 1.512 shelf.",
       "created": "2026-08-25T08:52:12Z",
       "desk": "linus",
       "evidence": [],
       "fingerprint": "",
       "id": "T-443",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T08:58:40Z",
+            "claim": "Cape 64 bps (0.008 kB/s). sample=recover can (goo 429 MB = 621 d TX). file=HD credit while recording; TX wall-time = size_MB\u00d7125000 s. Bound leftover all recover HD: TELEMETRY 0.75 MB 26 h, thermo 0.45 MB 16 h, PresMat 1.17 MB 41 h. tx: none. Kept splash Water T-028/T-422/T-423. Forest High TELEMETRY 1.512 T-069 shelf. Bank 2.29 is splash never Toggled (empty HD), not recover() dead. Never-transmit is religion not physics.",
+            "evidence": "docs/program/science.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "os",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "TX vs recover: never-transmit is outdated; 64 bps Cape; sample vs file",
       "type": "science",
-      "updated": "2026-08-25T08:52:12Z"
+      "updated": "2026-08-25T08:58:44Z"
     },
     "T-444": {
       "assignee": "",
@@ -16592,5 +16617,5 @@
       "updated": "2026-08-25T08:52:12Z"
     }
   },
-  "updated": "2026-08-25T08:56:36Z"
+  "updated": "2026-08-25T08:58:44Z"
 }

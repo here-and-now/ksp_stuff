@@ -18,7 +18,7 @@ Parked org novels are not dispatch.
 |---|---|---|---|
 | **Os** | Founder | Goal ratification, talk-by-name | Click crash UI, fly |
 | **Mortimer Grokman** | CEO / Administrator | Slate *objective*, org RSI, CTT spend, CHARTER/PROTOCOL mutation | Day-to-day dispatch, fly, Hangar, `.py` |
-| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, leftover/KSC, **after-flight tape** (`desk` / `attach-run` / `landing`), time, parallel ground vs flight | `go:` (Gene), mission CLI, Hangar, `.craft` (Gus), science bind (Linus), control.*, `.py` on a fly turn, hiring Commander to debrief |
+| **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, leftover/KSC, **after-flight tape**, **this-hop clock** (`uplink phys-warp 1–4` / `no_warp` from `ship.md`; never rails / WarpTo) | `go:` (Gene), mission CLI, Hangar, `.craft` (Gus), science bind (Linus), control.*, `.py` on a fly turn, hiring Commander to debrief |
 | **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, ticket routing, **stick** (Commander writes) |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets. Hand-typed PART blocks are last resort — file `vab-helper` at Wernher | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |

@@ -3547,7 +3547,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-25T06:46:08Z"
+      "updated": "2026-08-25T06:47:12Z"
     },
     "T-082": {
       "assignee": "",
@@ -15049,7 +15049,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-413",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:53Z",
+            "claim": "Every capable hang since east-pbc was a hand-copy: rename ship=, change tank count (2\u00d7T100 east / 3\u00d7T100 stiff / 7\u00d7T100 t7 / 3\u00d7\u20135\u00d7 proc). Craft.load/save exist; no CLI clone; no replace-tank that retargets link/attN and shifts pos. StackBuilder only builds from scratch. Need: clone crafts/<signed>.craft --name <new>, then swap N FL-T100 \u2194 proc or change count without rewriting PART blocks.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15060,7 +15071,7 @@
       "tags": [],
       "title": "VAB helper: clone a signed hang and swap tank count / FL-T100\u2194proc",
       "type": "systems",
-      "updated": "2026-08-25T06:45:55Z"
+      "updated": "2026-08-25T06:46:53Z"
     },
     "T-414": {
       "assignee": "",
@@ -15071,7 +15082,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-414",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:53Z",
+            "claim": "T-144 empty ProceduralChute was 91 m/s on 1.6 t. T-153 minIsPressure 0.01 popped at 13 km apo. Setter must write RealChuteModule+ProceduralChute: Nylon; Mk16 pre 5 / deployed 35 or RC_cone 50 m / pre 2.5 m; minIsPressure false; minDeployment 2500; deployAlt 700; mustGoDown; chute istg=0 engine istg=1. Stayputnik has no top node \u2014 Mk16 hang must be OKTO. craft.py has no chute MODULE.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15082,7 +15104,7 @@
       "tags": [],
       "title": "VAB helper: chute MODULE Nylon 5/35 (Mk16) or 50m (RC_cone) \u2014 not empty PARACHUTE",
       "type": "systems",
-      "updated": "2026-08-25T06:45:55Z"
+      "updated": "2026-08-25T06:46:53Z"
     },
     "T-415": {
       "assignee": "",
@@ -15117,7 +15139,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-416",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:53Z",
+            "claim": "T-089 3\u00d7 trussPiece1x, T-165 3\u00d7 on proc-stiff, T-318 6\u00d7 on proc-4t. Even azimuth on a 1.25 tank: (0.7,0,0) / (-0.35,0,\u00b10.606). autostrut Heaviest, rigidAttachment True, srfAttach to the named tank. srf_attach exists; N-around-tank ring does not.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15128,7 +15161,7 @@
       "tags": [],
       "title": "VAB helper: girder ring N\u00d7 trussPiece1x Heaviest/rigid around a tank",
       "type": "systems",
-      "updated": "2026-08-25T06:45:56Z"
+      "updated": "2026-08-25T06:46:53Z"
     },
     "T-417": {
       "assignee": "",
@@ -15139,7 +15172,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-417",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:53Z",
+            "claim": "T-400 t7-pbc \u2192 t7-wheel-pbc: splice sasModule between Stayputnik and first FL-T100 (wheel attN top=probe bottom=tank; retarget both ends), shift everything below ~0.366 m, srf_attach PresMat on the core. StackBuilder.attach only appends at _bottom. Need insert-inline.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15150,7 +15194,7 @@
       "tags": [],
       "title": "VAB helper: insert sasModule inline + PresMat radial on a cloned hang",
       "type": "systems",
-      "updated": "2026-08-25T06:45:56Z"
+      "updated": "2026-08-25T06:46:53Z"
     },
     "T-418": {
       "assignee": "",
@@ -15161,7 +15205,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-418",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:54Z",
+            "claim": "T-097/T-165/T-353 replaced FL-T100 with proceduralTankRealFuels 1.25\u00d70.65 or 1.427\u00d70.5, ModuleFuelTanks type=Default volume=800 TANK Kerosene 360 / LqdOxygen 440, volumeMax 0.8 kL lengthMin 0.5. craft.py procedural_cylinder writes type=SolidFuel (pad_pbc SRB) \u2014 do not reuse that for Valiant liquid tanks. Need: take an existing hang, replace the tank stack, keep radials/engine/fins.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15172,7 +15227,7 @@
       "tags": [],
       "title": "VAB helper: proc cylinder from an existing hang \u2014 Kero/LOx Default, not SolidFuel",
       "type": "systems",
-      "updated": "2026-08-25T06:45:56Z"
+      "updated": "2026-08-25T06:46:54Z"
     },
     "T-419": {
       "assignee": "",
@@ -15183,7 +15238,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-419",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:54Z",
+            "claim": "T-155 patched 10 empty Mk16 templates that inherited 0.04 atm / 0.8 m. T-156 empty RC_cone PARACHUTE same inherit. Distinct from T-414 setter: copy PARACHUTE+ProceduralChute from a known-good hang (chute-stiff-pbc / t7-chute-pbc) onto the target chute part so a clone never starts empty. Donor copy is how those 10 should have been born.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15194,7 +15260,7 @@
       "tags": [],
       "title": "VAB helper: copy Nylon 5/35 PARACHUTE from a known-good hang \u2014 do not inherit 0.04 atm / 0.8 m",
       "type": "systems",
-      "updated": "2026-08-25T06:45:56Z"
+      "updated": "2026-08-25T06:46:54Z"
     },
     "T-420": {
       "assignee": "",
@@ -15205,7 +15271,18 @@
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-420",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:46:54Z",
+            "claim": "T-402 t7-wheel-hs 1.25\u00d70.2 Ablative Smooth Cone disc 80 Ablator between last T100 and Valiant. T-356/T-320 1.427-to-1.25 adapter. Splice proceduralHeatshield, retarget tank\u2194engine attN, shift engine. No silk. Recover-alt pattern I keep hand-building. craft.py has no HS MODULE.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
@@ -15216,7 +15293,7 @@
       "tags": [],
       "title": "VAB helper: insert proc heatshield disc or 1.427-to-1.25 adapter between last tank and engine",
       "type": "systems",
-      "updated": "2026-08-25T06:45:56Z"
+      "updated": "2026-08-25T06:46:54Z"
     },
     "T-421": {
       "assignee": "",
@@ -15243,5 +15320,5 @@
       "updated": "2026-08-25T06:46:08Z"
     }
   },
-  "updated": "2026-08-25T06:46:08Z"
+  "updated": "2026-08-25T06:47:12Z"
 }

@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 79 / 423
+open: 71 / 423
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -11,7 +11,6 @@ open: 79 / 423
 | T-410 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI far-shear ×10 |
 | T-412 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI hold-ground-card ×5 |
 | T-415 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI vab-helper ×3 |
-| T-421 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI sci-unchanged-recovered ×13 |
 | T-028 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,telemetry,splash,bound | splash TELEMETRY@Water 0.80 |
 | T-422 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,thermo,splash,bound | Water SrfSplashed thermo 0.90 |
 | T-423 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,barometer,splash,bound | Water SrfSplashed barometer 0.90 |
@@ -67,13 +66,6 @@ open: 79 / 423
 | T-408 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC |
 | T-409 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk) |
 | T-411 | ops | ops | S3 | P2 | medium | inbox | linus | feedback | PresMat FlyingHigh rem=0 skipped not-in-card |
-| T-413 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: clone a signed hang and swap tank count / FL-T100↔proc |
-| T-414 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: chute MODULE Nylon 5/35 (Mk16) or 50m (RC_cone) — not empty PARACHUTE |
-| T-416 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: girder ring N× trussPiece1x Heaviest/rigid around a tank |
-| T-417 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: insert sasModule inline + PresMat radial on a cloned hang |
-| T-418 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: proc cylinder from an existing hang — Kero/LOx Default, not SolidFuel |
-| T-419 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: copy Nylon 5/35 PARACHUTE from a known-good hang — do not inherit 0.04 atm / 0.8 m |
-| T-420 | systems | improvement | S3 | P2 | medium | inbox | wernher |  | VAB helper: insert proc heatshield disc or 1.427-to-1.25 adapter between last tank and engine |
 | T-080 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,forest,geiger,f013,unbound | Forest SrfLanded geiger 1.20 wait Geiger part |
 | T-094 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-095 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingHigh TELEMETRY 1.80 wait ≥50 km |

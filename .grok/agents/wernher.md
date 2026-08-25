@@ -62,7 +62,7 @@ until the patch.
 
 ```bash
 python main.py tickets inbox --desk wernher
-python main.py tickets packet T-NNN
+python main.py tickets packet T-NNN   # also S-/M-/C-; systems stay T-
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +

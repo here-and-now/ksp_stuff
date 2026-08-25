@@ -20,13 +20,14 @@ patch `.py` — `tickets open --type systems --title "<file>" --fingerprint
 
 ```bash
 python main.py tickets inbox --desk mortimer
-python main.py tickets packet T-NNN
+python main.py tickets packet T-NNN   # also S-/M-/C-; rsi/org/ctt stay T-
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
 `docs/program/tickets/BRIEF.md`. Do not re-run `world` / `tech` / `parts`.
 Org RSI is `type=rsi` / `type=org`. `ops next` hires you lock-free on
-those tickets (pad still flies; lock live skips you). One of: hold,
+those tickets (pad still flies; lock live skips you). New science/fly/
+vehicle mint S-/M-/C-; rsi/org/ctt stay T-. One of: hold,
 patch house docs, or `tickets open --type systems --fingerprint
 <stem>`. Close items you settled. Lookup
 `docs/program/tickets/fingerprints.json`. Reuse stems

@@ -1,8 +1,11 @@
 # Tickets — spawn brief
 
-Packet is `docs/program/desk.md` + `tickets packet T-NNN` stdout + this
-page. Not BOARD.md. Not a jsonl novel. Not parked archive / niche /
-gym queues. First command is inbox, then the stamp or CLI on the packet.
+Packet is `docs/program/desk.md` + `tickets packet T-NNN` (also S-/M-/C-)
+stdout + this page. Not BOARD.md. Not a jsonl novel. Not parked archive /
+niche / gym queues. First command is inbox, then the stamp or CLI on the
+packet. **Id prefix is not a TYPE:** new science `S-`, fly `M-`, vehicle
+`C-`; control / systems / ops / rsi / org / ctt / recover / press stay
+`T-`. Global N. Live T- science/fly/vehicle ids stay.
 
 **Learn (uncrewed):** Hank `attach-run` overwrites `payload.learn` every
 hop (`who=hank`) — one line from the landing envelope (`format_landing`
@@ -32,7 +35,7 @@ No new TYPE. No `need_*` / `good:` as Return keys.
 python main.py science-scan                      # Linus: live MM caps (not tweak cfg)
 python main.py comms                             # Gus: RA + HD + ground last-write
 python main.py tickets inbox --desk <you>
-python main.py tickets packet T-NNN            # skim (envelope + this-hop learn)
+python main.py tickets packet T-NNN            # skim; also S-/M-/C-
 python main.py tickets packet T-NNN --deep     # tape CLI / PNG / craft
 python main.py tickets landing T-NNN           # envelope (pad/last/apo/hz)
 python main.py telem <run.jsonl>               # same eyes; --window pad|airborne|apex|burnout|descent|impact
@@ -43,6 +46,11 @@ python main.py telem <run.jsonl>               # same eyes; --window pad|airborn
 python main.py ship                            # live eyes from ship.md (no jsonl). Lock-live status is a GET reader (kspstuff-read); writer Telem.read still owns jsonl/ship.md.
 python main.py tickets open --type science --category science_opportunity \
   --title "…" --severity S3 --priority P1 --desk linus --tag splash --tag goo
+  # new science mints S-; live T- science ids stay
+python main.py tickets open --type fly --title "…" --desk gene
+  # new fly mints M-
+python main.py tickets open --type vehicle --title "…" --desk gus
+  # new vehicle mints C-
 python main.py tickets open --type control --category bug --title "…" \
   --severity S2 --priority P1 --desk lars --fingerprint heading-never-090
 python main.py tickets open --type ops --tag feedback --title "…" \
@@ -64,13 +72,15 @@ python main.py tickets feedback T-NNN --claim "…"
 **Tags:** free lowercase (`hard-splash`, `heading-090`, `east-t3`).
 `ops --tag ask|feedback|explore`. At most tag `learn` — no new TYPE.
 Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q`.
-Lars packet `read:` third path is the **named pulse file**
-(`hop_factory.py` inland, or the living rocket's compose, `pad.py`
-pad, `science.py` sit-match). Not `hop.py` for a factory miss. Warp /
-sit / timeout / leftover-abort / chute-sit **blocks** are Wernher
-(`physics_warp.py`). Tests lock those blocks, not dead-hang envelopes
-in `test_hop.py`. Lars `lessons.md` heading **names** the reusable
-fingerprint.
+Lars packet `read:` third path is the **named helper file**
+(`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland compose,
+`pad.py` pad dwell, `science.py` sit-match). Not the immortal factory
+for a pad miss. Not `hop.py` for a factory miss. RF pad is **one sit**
+— no `_pad_*` per stamp. Warp / sit / timeout / leftover-abort /
+chute-sit **blocks** are Wernher (`physics_warp.py`). Tests lock those
+blocks, not dead-hang envelopes in `test_hop.py`. Lars first pytest is
+`tests/test_hop_factory.py` (`-k pad` pad-RF), not house `test_hop.py`
+(231). Lars `lessons.md` heading **names** the reusable fingerprint.
 
 Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
 Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.

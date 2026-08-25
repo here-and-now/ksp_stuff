@@ -19,11 +19,12 @@ not edit `.py` or `.craft`. `science.md` is a board dump, not the bind.
 
 ```bash
 python main.py tickets inbox --desk linus
-python main.py tickets packet T-NNN
+python main.py tickets packet S-NNN
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
-`docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Desk leftover-science
+`docs/program/tickets/BRIEF.md`. New science mints **S-**. Live T-
+science ids (T-404) stay — packet that id. Skim unless `--deep`. Desk leftover-science
 + `f013` + `bind:` is pad sit. **Live experiment table** (MM last write,
 including `zzzzkspstuffScience`):
 

@@ -61,10 +61,12 @@ file while the patch is unfinished. A long hire (many turns) is
 batches him in `needing_go`; a kRPC trap is not required). Warp /
 timeout-clock / sit-predicate (`physics_warp.py`, fingerprint
 `control-blocks`) → Wernher, not another Lars `_after_skip`. Living
-pulse miss → Lars (`hop_factory.py` or the rocket's compose). Failed
-relight with fuel left is engine physics (`rf-ignition-ullage`,
-Lars `hop_factory.py`) — not Wernher, not `type=systems` — until
-ignitions remaining / ullage / EC ignitor are checked on this hang.
+pulse miss → Lars (`hop_factory_pad.py` pad-RF, else `hop_factory.py`
+or the rocket's compose). Failed relight with fuel left is engine
+physics (`rf-ignition-ullage`, Lars pad-RF / compose) — not Wernher,
+not `type=systems` — until ignitions remaining / ullage / EC ignitor
+are checked on this hang. Packet T-NNN also S-/M-/C-; new science/fly/
+vehicle mint those prefixes; control/systems/ops/rsi stay T-.
 Do not paste a part→N table. Never
 both on the same `.py`. One immortal factory that remembers Flea /
 Hammer / 4t / splash-090 is not the way (T-376).

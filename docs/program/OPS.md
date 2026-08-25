@@ -23,7 +23,7 @@ Parked org novels are not dispatch.
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets. Hand-typed PART blocks are last resort — file `vab-helper` at Wernher | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
 | **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol; **control blocks** (sit, warp, timeout, leftover abort, chute sits) | this-hop pulse, `.craft` |
-| **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown this sit*: **one living rocket's pulse** composed from Wernher blocks (`hop_factory.py` or a t7-only file), pad/splash, this-hop splash HD | Leftover recover-then-Hangar (Hank/Wernher), warp *law*, stamp-named helpers, immortal `hop.py` factory, org, Hangar from Gene |
+| **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown this sit*: **one living rocket's pulse** composed from Wernher blocks (`hop_factory.py` inland or a t7-only file; **pad-RF** is `hop_factory_pad.py` — one sit, no `_pad_*` per stamp), pad/splash, this-hop splash HD | Leftover recover-then-Hangar (Hank/Wernher), warp *law*, stamp-named helpers, immortal `hop.py` factory, org, Hangar from Gene |
 | **Seated Commander** | Abort officer | Starts `cli:` when `commander: jebediah`; `note` / hold / abort / one stuck PNG. Hop **pid** is the control writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review; uncrewed start (parent does) |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
@@ -93,6 +93,7 @@ token. Not `ask:` as a table Hank never reads on the next hire.
 
 ```
 python main.py tickets open --type science --title "…" --severity S2 --priority P1 --desk linus
+  # new science S- / fly M- / vehicle C-; else T-; live T- ids stay
 python main.py tickets list [--status ready] [--desk gus] [--open]
 python main.py tickets show T-014
 python main.py tickets assign T-014 --desk gus
@@ -108,7 +109,7 @@ python main.py ops next     # Hank dispatch: who to hire, which tickets, why
 
 Every ticket:
 
-- `id` — `T-NNN`
+- `id` — `T-NNN` / `S-NNN` / `M-NNN` / `C-NNN` (prefix by type, not a TYPE; live T- stay)
 - `type` — `fly` | `science` | `vehicle` | `control` | `systems` | `org` | `rsi` | `ctt` | `recover` | `press` | `ops`
 - `title` — one line
 - `reporter` — name+title
@@ -146,7 +147,7 @@ briefing prose; `hop_apo` / `expect_*` stay on the plan).
 `python main.py protocol fly` reads `head.json` **with plan+card
 fallback**. `ops fly` is occupancy only (do not retarget AGENTS).
 
-**Control ticket:** Lars, named `.py`, lesson heading, miss `live_run`.
+**Control ticket:** Lars, named `.py`, lesson heading, miss `live_run`. Packet third path is that helper (`hop_factory_pad.py` pad-RF, else inland compose). First pytest `tests/test_hop_factory.py` (`-k pad` pad-RF), not house `test_hop.py` (231).
 
 **Systems ticket:** Wernher, world-interface (desk leftover, hangar
 scene, telem reference frame, kRPC connect).
@@ -375,8 +376,8 @@ it). `python main.py protocol fly` reads `head.json` with plan+card
 fallback so a missing fly ticket does not brick.
 
 **Commander packet `read:`:** skim from
-`python main.py tickets packet T-NNN` (desk + BRIEF + this ticket +
-landing envelope — **no BOARD.md**, **no jsonl rows**). `--deep` is
+`python main.py tickets packet T-NNN` (also S-/M-/C-; desk + BRIEF + this
+ticket + landing envelope — **no BOARD.md**, **no jsonl rows**). `--deep` is
 opt-in (PNG, craft, last-flight, `tape: python main.py telem …`).
 Hank does **not** auto-`--deep`. Never xhigh. **low** is Walt and S4
 hygiene (one-liners). **high** is Mortimer, rsi/org/ctt, and S1.

@@ -70,8 +70,8 @@ ops / hangar scenes / telem schema (Wernher). Not Gus. Not Linus bind.
 
 ```bash
 python main.py tickets inbox --desk lars
-python main.py tickets packet T-NNN
-python -m pytest tests/test_hop_factory.py -q
+python main.py tickets packet T-NNN   # also S-/M-/C-; control stays T-
+python -m pytest tests/test_hop_factory.py -k pad -q
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +

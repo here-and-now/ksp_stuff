@@ -138,7 +138,8 @@ Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 without waiting for a miss. `physics_warp.py` is Wernher. Lars
 **composes one living rocket's pulse** from those blocks
 (`hop_factory.py` inland, or a file that only flies t7-chute —
-legal). `pad.py` / `splash.py` / `blocks.md` stay pulse/phase.
+legal). RF pad is **one sit** in `hop_factory_pad.py` — not a
+`_pad_*` per stamp. `pad.py` / `splash.py` / `blocks.md` stay pulse/phase.
 `hop.py` is parked water/splash + **shared** helpers that are
 actually shared. One immortal factory that remembers Flea, Hammer,
 4t, and splash-090 is not the way. Tests lock the **blocks**, not
@@ -149,9 +150,11 @@ ullage + finite ignitions. Pad 1 g still lights. Throttle 0 then 1
 is a restart. Desks verify **this hang** (cfg / ConfigCache / live
 module). Do **not** paste a part→N ignition table here or in spawn
 prompts. Failed coast/suicide relight with fuel left is **engine
-physics** (`rf-ignition-ullage`, Lars `hop_factory.py`) until a desk
-has read that engine. Do not open `type=systems` / kRPC for “engine
-did not light” first. Do not raise ignitions. Never GameData.
+physics** (`rf-ignition-ullage`, Lars `hop_factory_pad.py` pad-RF /
+`hop_factory.py` compose) until a desk has read that engine. RF pad
+is one sit — not a `_pad_*` per stamp. Do not open `type=systems` /
+kRPC for “engine did not light” first. Do not raise ignitions. Never
+GameData.
 
 **Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
 is a sin**. Do **not** idle the pad as a religion: a **living recover
@@ -265,9 +268,9 @@ pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
 ≥50 km). Living recover + `sci_run=0` is **not** that path — do not
 light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
 re-flies last `cli:`. Miss (nonzero / ABORT / `science (none)` / `science skip`):
-spawn **Lars** on the named **pulse** file (`hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
+spawn **Lars** on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
 Failed coast/suicide relight with fuel left is engine physics
-(`rf-ignition-ullage`, Lars `hop_factory.py`) — not Wernher, not
+(`rf-ignition-ullage`, Lars `hop_factory_pad.py`) — not Wernher, not
 `type=systems` — until ignitions remaining, ullage, and EC ignitor
 are checked on **this hang**.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
@@ -335,8 +338,10 @@ return: ## Return (this job)
 ```
 
 Packet is **`docs/program/desk.md`** (parent just wrote it) +
-`python main.py tickets packet T-NNN` stdout + BRIEF. No BOARD.md
-novel. `read:` is desk plus at most two role paths. Tickets how-to is
+`python main.py tickets packet T-NNN` (also S-/M-/C-) stdout + BRIEF. No
+BOARD.md novel. New science/fly/vehicle mint `S-`/`M-`/`C-`; control /
+systems / ops / rsi stay `T-`. Global N. Live T- ids stay. `read:` is
+desk plus at most two role paths. Tickets how-to is
 always skim: `docs/program/tickets/BRIEF.md`. First command is
 `tickets inbox --desk <you>`. PNG / craft / last-flight only on `--deep`.
 Jsonl is **disk**: `python main.py telem <jsonl>` or `tickets landing`.
@@ -349,9 +354,10 @@ is a skim block on the fly ticket after `tickets attach-run`
 `cli:` is fly `payload.cli`
 **copied verbatim** (F-004) from `python main.py protocol fly` — not
 Gene `recommended:`, not seated `plan.md`. Lars `read:` third path is
-the **named pulse file** (`hop_factory.py` inland, or the living
-rocket's compose, `pad.py` pad, `science.py` sit-match) — not
-`hop.py` for a factory miss, not `physics_warp.py` (Wernher blocks). Lars first command is inbox,
+the **named helper file** (`hop_factory_pad.py` pad-RF, else
+`hop_factory.py` inland compose, `pad.py` pad, `science.py` sit-match)
+— not the immortal factory for a pad miss, not `hop.py` for a factory
+miss, not `physics_warp.py` (Wernher blocks). Lars first command is inbox,
 skim, not a named jsonl. Parent copies **f013**
 from desk. Do not send parked campaign notes. Children do
 not re-run `world`/`tech`/`parts` if desk is this sit.

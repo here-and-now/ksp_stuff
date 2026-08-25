@@ -349,6 +349,10 @@ story this fly. Dead kRPC GUID is not leftover.
 - **Git (Os 2026-08-25):** a desk that changes the checkout commits
   it (`git add` those paths, `git commit` a sentence). Do not wait
   for Hank. Do not commit gitignored tape.
+- **Id prefix (T-466 / T-467):** science `S-`, fly `M-`, vehicle `C-`,
+  else `T-`. Global N. Live T- science/fly/vehicle keep history.
+  TYPES unchanged. RF pad is **one sit** (`hop_factory_pad.py`); no
+  `_pad_*` per stamp. Last-flight 40 lines is still the postcard.
 - **VAB helpers (Os 2026-08-25):** Gus does not default to
   hand-writing `.craft`. He files `type=systems --fingerprint
   vab-helper` at Wernher. Wernher writes the script. Gus runs it.
@@ -704,6 +708,16 @@ story this fly. Dead kRPC GUID is not leftover.
   ignitions). Live miss is Lars T-464 `hop_factory.py` — not
   Wernher, not GameData. Do not rewrite RF-ullage law. An RSI
   letter does not empty the pad.
+- **2026-08-25 id-prefix / pad-RF sit (T-466 RSI harvest, stem count 7):**
+  Prefix is the **id**, not a TYPE: science `S-`, fly `M-`, vehicle
+  `C-`; else `T-`. Global N. Live T- science/fly/vehicle stay
+  (T-081 / T-404 / T-387). Kernel T-467. RF pad is **one sit** in
+  `hop_factory_pad.py` — not a `_pad_*` per stamp. Compose stays
+  `hop_factory.py`. Four `rf-ignition-ullage` hires stacked seven
+  helpers because the card paid a function per stamp. T-465 owns
+  the flameout. Do not raise ignitions. Law still T-456.
+  Last-flight 40 lines is still the postcard, not the vessel.
+  An RSI letter does not empty the pad.
 - **2026-08-25 sci-unchanged-recovered (T-458 RSI ×15, stem count 18):**
   Harvest only. Waste is still **living** rec=yes + `sci_run=0`.
   Latch already T-346 (`waste_blocks_refly` is `_sci_unchanged_waste`

@@ -28,12 +28,13 @@ novel. Not Learn mid-phase.
 
 ```bash
 python main.py tickets inbox --desk gene
-python main.py tickets packet T-NNN
-python main.py tickets stamp T-NNN --field go --value yes --who gene
+python main.py tickets packet M-NNN
+python main.py tickets stamp M-NNN --field go --value yes --who gene
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
-`docs/program/tickets/BRIEF.md`. Jsonl only `--deep` (S1). Do not re-run
+`docs/program/tickets/BRIEF.md`. New fly mints **M-**. Live T- fly ids
+(T-081) stay — packet that id. Jsonl only `--deep` (S1). Do not re-run
 `world` / `tech` / `parts`. Do not read BOARD.md. `hangar:` on desk is
 Hangar. Leftover honesty: `go: wait` if hangar is `recover` / `blocked`
 (Hank cleans). `f013` locked or not on craft → `go: wait`. No Gus
@@ -69,8 +70,9 @@ a hang that is still capable without hiring you. Do not `go: yes` as
 “same Flea until 15” — 15 is spent. Remaining subjects cannot finish on
 this hang → next alt on disk, or `campaign: none` and open
 vehicle/science tickets. Failed relight with fuel left is Lars `rf-ignition-ullage` on
-`hop_factory.py` (T-457) — not `type=systems`, not a cartoon
-MECO/suicide `go:`. Missing block → `--type control --fingerprint <stem>`. Missing rocket
+`hop_factory_pad.py` (pad-RF) / `hop_factory.py` compose (T-457) — not
+`type=systems`, not a cartoon MECO/suicide `go:`. Missing block →
+`--type control --fingerprint <stem>`. Missing rocket
 → `--type vehicle`. Science bind → `--type science` (`experiment_id`).
 Firsts → `--type press`. Paid node → `--type ctt`. Friction → `--type ops
 --tag feedback --fingerprint <stem>`. Lookup

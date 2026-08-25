@@ -39,12 +39,13 @@ OX-STAT T-408/T-431 is dwell EC, not the loft.
 
 ```bash
 python main.py tickets inbox --desk gus
-python main.py tickets packet T-NNN
-python main.py tickets stamp T-NNN --field capable --value yes --who gus
+python main.py tickets packet C-NNN
+python main.py tickets stamp C-NNN --field capable --value yes --who gus
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
-`docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Desk hangar /
+`docs/program/tickets/BRIEF.md`. New vehicle mints **C-**. Live T-
+vehicle ids stay — packet that id. Skim unless `--deep`. Desk hangar /
 `f013` / stack is the sit. **Live antennas + probe HD** (MM cache):
 
 ```bash

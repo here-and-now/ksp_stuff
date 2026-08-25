@@ -206,3 +206,4 @@
 - 2026-08-25T10-57-36Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-25T10-57-36Z-hop.md review=docs/archive/reviews/2026-08-25T10-57-36Z-hop-review.md
 - 2026-08-25T11-11-44Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-25T11-11-44Z-hop.md review=docs/archive/reviews/2026-08-25T11-11-44Z-hop-review.md
 - 2026-08-25T11-22-32Z hop exit=2 abort=abort → docs/missions/jebediah/logs/2026-08-25T11-22-32Z-hop.md review=docs/archive/reviews/2026-08-25T11-22-32Z-hop-review.md
+- 2026-08-25T20-36-06Z hop exit=0 → docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.md review=docs/archive/reviews/2026-08-25T20-36-06Z-hop-review.md

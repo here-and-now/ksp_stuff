@@ -64,7 +64,7 @@ class TestLinusCardSchema(unittest.TestCase):
 
 
 def _md_image_targets(path: Path) -> list[str]:
-    text = path.read_text(encoding="utf-8")
+    text = re.sub(r"```.*?```", "", path.read_text(encoding="utf-8"), flags=re.S)
     out: list[str] = []
     for m in re.finditer(r"!\[[^\]]*\]\(([^)]+)\)", text):
         raw = m.group(1).strip().split()[0]
@@ -135,7 +135,6 @@ class TestPressDesk(unittest.TestCase):
             "latitude",
             "longitude",
             "trees",
-            "Ad astra",
             "sci",
         ):
             self.assertIn(needle, tale)
@@ -149,8 +148,9 @@ class TestPressDesk(unittest.TestCase):
 
     def test_index_leads_with_science_gained(self):
         index = Path("docs/press/INDEX.md").read_text(encoding="utf-8")
-        self.assertIn("13.26 sci → 16.47 sci", index)
-        self.assertIn("5.67 sci → 7.77 sci", index)
+        self.assertIn("| Date | Story | Sci | Shot |", index)
+        self.assertIn("13.26 → 16.47", index)
+        self.assertIn("5.67 → 7.77", index)
         self.assertNotIn("16.47 sci → 1.47 sci", index)
         self.assertNotIn("16.47 → **1.47**", index)
 

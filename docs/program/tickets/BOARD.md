@@ -1,10 +1,10 @@
 # Ticket board
 
-open: 72 / 464
+open: 72 / 467
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
-| T-464 | control | bug | S1 | P1 | high | inbox | lars |  | T-462 live: control throttle 1 ignitions 0 engine Current Throttle 0 still pre_launch |
+| T-465 | control | bug | S1 | P1 | high | inbox | lars |  | RF lit then flameout MET10 fuel 1396 throttle 1 apo 1.2 km |
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |

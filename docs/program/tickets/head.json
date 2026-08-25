@@ -16901,6 +16901,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "jsonl hz is actual wall dt; cheap pulse streams on the fast path. Cadence stays the control pid.",
       "created": "2026-08-25T09:36:37Z",
       "desk": "wernher",
       "evidence": [],
@@ -16915,6 +16916,14 @@
             "owner": "none",
             "real": false,
             "who": "mortimer"
+          },
+          {
+            "at": "2026-08-25T09:52:25Z",
+            "claim": "telem.py: jsonl hz is 1/wall-dt since the previous pulse (first row nan), not requested 5-20. Fast path streams rec/biome/thrust/stage and caches chute; sci/broken/parts.all stay the slow walk. pulse_s is still the hop nap. 09-01Z 27/251s is honest hz now.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -16924,19 +16933,20 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "tape",
         "telem"
       ],
       "title": "telem.py cheap pulse: jsonl hz is actual dt (09-01Z 27 states/251s)",
       "type": "systems",
-      "updated": "2026-08-25T09:37:12Z"
+      "updated": "2026-08-25T09:52:25Z"
     },
     "T-454": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "kspstuff-read GET Session; kind=recover sit/rec at recover(); status/leftover_ships while lock live are readers.",
       "created": "2026-08-25T09:36:38Z",
       "desk": "wernher",
       "evidence": [],
@@ -16951,6 +16961,14 @@
             "owner": "none",
             "real": false,
             "who": "mortimer"
+          },
+          {
+            "at": "2026-08-25T09:52:25Z",
+            "claim": "session.py: Session(readonly=True) name=kspstuff-read GET-only; Control/scene/active_vessel/recover raise ReadOnlyError; stream.remove on close. Reader Telem does not append jsonl or ship.md. status and lock-live leftover_ships use it. flightlog kind=recover sit/rec at recover(); Tape envelope prefers that sit over last snap.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -16960,14 +16978,14 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "telem",
         "krpc"
       ],
       "title": "session.py read-only Session; flightlog.py kind=recover sit at recover()",
       "type": "systems",
-      "updated": "2026-08-25T09:37:12Z"
+      "updated": "2026-08-25T09:52:25Z"
     },
     "T-455": {
       "assignee": "",
@@ -17004,5 +17022,5 @@
       "updated": "2026-08-25T09:37:35Z"
     }
   },
-  "updated": "2026-08-25T09:37:35Z"
+  "updated": "2026-08-25T09:52:25Z"
 }

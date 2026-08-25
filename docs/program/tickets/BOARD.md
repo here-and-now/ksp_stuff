@@ -1,6 +1,6 @@
 # Ticket board
 
-open: 73 / 455
+open: 71 / 455
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
@@ -8,8 +8,6 @@ open: 73 / 455
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
 | T-449 | systems | bug | S2 | P1 | medium | inbox | wernher |  | jsonl helpers: last-state vs recover sit, sci_rem vs bank, 4x q skip (09-01Z) |
-| T-453 | systems | bug | S2 | P1 | medium | inbox | wernher | tape,telem | telem.py cheap pulse: jsonl hz is actual dt (09-01Z 27 states/251s) |
-| T-454 | systems | improvement | S2 | P1 | medium | inbox | wernher | telem,krpc | session.py read-only Session; flightlog.py kind=recover sit at recover() |
 | T-455 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI telem-eyes-library ×3 |
 | T-028 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,telemetry,splash,bound | splash TELEMETRY@Water 0.80 |
 | T-422 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,thermo,splash,bound | Water SrfSplashed thermo 0.90 |

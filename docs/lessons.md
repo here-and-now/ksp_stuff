@@ -21,6 +21,19 @@ python main.py pad
 
 ---
 
+## 2026-08-25 — Valiant RF ullage + one ignition
+
+- **When:** Kerosene/LOX names only; RF `simulateUllage` on, engine still
+  `ModuleEnginesFX`.
+- **Fix:** `zzzzkspstuffEngines` FINAL on all ReStockPlus *liquids*:
+  `ModuleEnginesRF` + Configs, ullage, ignitions 1/2/4/8 by role,
+  `%engineID = basicEngine`. Skip SRB/LES. Pad 1 g still lights.
+  Not ROEngines. MM: `@name` and `%engineID` must be separate
+  lines — one-line `{ @name = ModuleEnginesRF %engineID = … }`
+  concatenates into a bogus module name and PartLoader drops the
+  engine (`Cannot find a PartModule of typename 'ModuleEnginesRF %engineID = basicEngine'`).
+- **Modules:** `patches/kspstuffEngines/kspstuffEngines.cfg`.
+
 ## 2026-08-25T09-01-24Z-hop — thin-tape
 
 - **When:** T-453. t7-wheel-pbc. Query Tape, not jsonl. Do not Hangar.

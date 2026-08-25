@@ -13880,6 +13880,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:06Z",
+            "claim": "_hold_lid keeps throttle 1 + SAS vertical until lid alt or crumbs; no inland slew that sit. After lid, slew. Forest/Grasslands same. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:33Z",
+            "claim": "hop_factory _hold_lid: throttle 1 + SAS vertical until lid alt or crumbs; no inland slew that sit. After lid, slew.",
+            "evidence": "",
+            "owner": "lars",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -13893,7 +13909,7 @@
       "tags": [],
       "title": "vertical lid-hold lithobraked t7 MET28 alt389 \u2014 13-31-03Z lofted 88.8 km same hang",
       "type": "control",
-      "updated": "2026-08-24T18:33:20Z"
+      "updated": "2026-08-25T06:40:33Z"
     },
     "T-387": {
       "assignee": "",
@@ -14072,6 +14088,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:06Z",
+            "claim": "_offplan_apo_lid honors plan expect_apo_max when above the sit lid. 163 km under 400 km is a paying FlyingHigh loft, not Space. hop_apo stays the cut. FlyingLow stays >=50 km.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:33Z",
+            "claim": "hop_factory _offplan_apo_lid honors expect_apo_max above sit lid; hop_apo stays the cut. FlyingLow stays >=50 km.",
+            "evidence": "",
+            "owner": "lars",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -14085,7 +14117,7 @@
       "tags": [],
       "title": "OffPlan apo 163km > 140km killed FlyingHigh loft; plan expect_apo_max is 400km",
       "type": "control",
-      "updated": "2026-08-24T19:08:31Z"
+      "updated": "2026-08-25T06:40:33Z"
     },
     "T-392": {
       "assignee": "",
@@ -14105,6 +14137,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:06Z",
+            "claim": "sit_matches High is alt >=50 km (sub_orbital still High); biome global/none/any is not a biome; geiger idle rem=0 still pays. Factory skip-latch is FlyingLow cannot-pay only \u2014 bound High waits the lid, then Toggle.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:33Z",
+            "claim": "Factory skip-latch is FlyingLow cannot-pay only. sit_matches High is alt >=50 km; biome global is not a biome; geiger idle rem=0 still pays.",
+            "evidence": "",
+            "owner": "lars",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -14118,7 +14166,7 @@
       "tags": [],
       "title": "science skip cannot-pay skipped FlyingHigh trio on 275 km splash",
       "type": "control",
-      "updated": "2026-08-24T19:57:04Z"
+      "updated": "2026-08-25T06:40:33Z"
     },
     "T-393": {
       "assignee": "",
@@ -14162,6 +14210,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:06Z",
+            "claim": "_high_dwell_sit 1x after FlyingHigh lid latch until down. Skip FlyingLow may still 4x. want_coast q gate never saw 4x at High descent (already 1x on chute_arm). Do not Hangar.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:40:33Z",
+            "claim": "hop_factory _high_dwell_sit 1x after FlyingHigh lid latch until down. Skip FlyingLow may still 4x.",
+            "evidence": "",
+            "owner": "lars",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -14175,7 +14239,7 @@
       "tags": [],
       "title": "4x coast after goo/geiger dwell sheared t7-pbc 20->9",
       "type": "control",
-      "updated": "2026-08-24T20:15:19Z"
+      "updated": "2026-08-25T06:40:33Z"
     },
     "T-395": {
       "assignee": "",
@@ -14556,5 +14620,5 @@
       "updated": "2026-08-24T21:29:56Z"
     }
   },
-  "updated": "2026-08-24T21:50:20Z"
+  "updated": "2026-08-25T06:40:33Z"
 }

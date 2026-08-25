@@ -4,7 +4,8 @@ World/tree stay disk. Banked ``sci:`` and leftover *ships* are live
 kRPC when a Session can speak (``SpaceCenter.science`` /
 ``leftover_ships``). ``persistent.sfs`` lags after splash recover —
 disk SUB_ORBITAL is not leftover when tracking is empty. No
-leftover-ksc. No revert. No ``status`` while ``flight.lock`` is live.
+leftover-ksc. No revert. Lock-live ``status`` / leftover_ships are
+GET readers (``kspstuff-read``); they do not write Control or tape.
 """
 
 from __future__ import annotations
@@ -244,30 +245,34 @@ def pick_banked_science(
 
 
 def probe_live_desk() -> tuple[float | None, tuple[tuple[str, str], ...] | None]:
-    """RAM RD sci and leftover_ships. None leftover → fall back to disk ships."""
-    if lock_state() == "live":
-        return None, None
+    """RAM RD sci and leftover_ships. None leftover → fall back to disk ships.
+
+    Lock live: GET reader (no Control / scene / align). Lock free: may
+    ``ra_align`` then GET.
+    """
     try:
         from flightlog import live_records, writer_lock_live
 
-        if not live_records() or writer_lock_live():
+        if not live_records():
             return None, None
+        lock_live = writer_lock_live()
     except Exception:
-        return None, None
+        lock_live = lock_state() == "live"
     try:
         from career import space_center_science
         from hangar import leftover_pad_ships
         from session import Session
 
-        session = Session()
+        session = Session(readonly=True if lock_live else False)
         session.connect()
         try:
-            try:
-                from ra_align import align_live
+            if not lock_live:
+                try:
+                    from ra_align import align_live
 
-                align_live(session)
-            except Exception:
-                pass
+                    align_live(session)
+                except Exception:
+                    pass
             sci = space_center_science(session)
             rows: list[tuple[str, str]] = []
             for vessel in leftover_pad_ships(session):

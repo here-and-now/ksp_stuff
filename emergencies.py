@@ -167,6 +167,12 @@ def recover(ctx: Ctx) -> str:
                 stop_experiments(vessel)
             except Exception:
                 log.debug("science stop before recover failed", exc_info=True)
+            try:
+                from flightlog import record_recover_vessel
+
+                record_recover_vessel(vessel)
+            except Exception:
+                log.debug("kind=recover tape failed", exc_info=True)
             vessel.recover()
             _emit(ctx, "call", name="recover", ok=1)
             return "recovered"

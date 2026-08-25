@@ -466,8 +466,10 @@ story this fly. Dead kRPC GUID is not leftover.
   last-flight / `active_vessel`. Cadence is the writer’s duty (09-01Z
   27/251 s). Not a dedicated telem pid this sit. Code: `thin-tape`
   (`telem.py`), `telem-eyes-library` (`session.py`, `flightlog.py`).
-  T-449 still owns query flags. Until reader mode lands, Hank still
-  reads `ship.md` — `status` today appends jsonl.
+  T-449 still owns query flags. Reader mode landed (T-454): `status`
+  / leftover_ships while lock live are `kspstuff-read`. Writer
+  `Telem.read` still owns jsonl / `ship.md`. Hank may still read
+  `ship.md`.
 - **2026-08-24 leftover-prelaunch-ghost (T-389, ×5, stem count 6):**
   Crash-UI rec=0 MET frozen is **not** pad occupancy (Os will not
   click Recover). Living SUB_ORBITAL leftover: wait land on MET then

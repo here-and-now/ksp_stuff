@@ -21,6 +21,39 @@ python main.py pad
 
 ---
 
+## 2026-08-25T09-01-24Z-hop — thin-tape
+
+- **When:** T-453. t7-wheel-pbc. Query Tape, not jsonl. Do not Hangar.
+  Never revert.
+- **Symptom:** 27 states / 251 s wall. Requested 5–20 Hz on the row
+  was a lie. Last gap 7.7 s wall / MET +43 s. Pulse starved by the
+  sci/broken walk and grim ticks.
+- **Cause:** `snap.hz` was `1/pulse_s` (requested). Slow walks on the
+  fast path re-armed cadence. Cadence is the control pid.
+- **Fix:** jsonl `hz` is 1 / wall dt since the previous pulse. First
+  row is nan. Fast path stays streams (rec/biome/thrust/stage) plus
+  cached chute; sci/broken/parts.all stay the slow walk. `pulse_s`
+  is still the hop nap. Not a dedicated telem pid.
+- **Modules:** `telem.py`. Not `hop_factory.py`.
+
+## 2026-08-25T09-01-24Z-hop — telem-eyes-library (reader)
+
+- **When:** T-454. Same hop. Query Tape, not last-flight. Do not
+  Hangar. Never revert.
+- **Symptom:** last-flight splash rec=yes vs jsonl last snap flying
+  6 km rec=no. `status` / leftover_ships refused under lock because
+  any Session was treated as a writer.
+- **Cause:** one-writer protected Control and tape files, then banned
+  GET. Close synthesized landing. recover() sit never had a jsonl
+  kind.
+- **Fix:** `Session(readonly=True)` `kspstuff-read`; refuse Control /
+  scene / active_vessel; `stream.remove` on close. Reader Telem does
+  not append jsonl or `ship.md`. `kind=recover` sit/rec at recover().
+  Tape envelope prefers that sit over last snap. `status` is that
+  reader while lock live.
+- **Modules:** `session.py`, `flightlog.py`, `tape.py`. Not
+  `hop_factory.py`.
+
 ## 2026-08-25T09-01-24Z-hop — hop-coast-phys-warp
 
 - **When:** T-450. t7-wheel-pbc. Query Tape, not jsonl. Do not Hangar.

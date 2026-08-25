@@ -31,7 +31,8 @@ Jsonl helpers (`telem-eyes-library`, T-449): last-snap sit vs recover
 sit, `sci_rem` vs bank, rec, 4× q skip. Last-flight 40 lines is not
 the vessel (09-01Z). Explore unused surfaces. Thin tape / 9-column
 skim is his miss.
-Live watch is `ship.md` (disk). XOR with Lars on a miss patch of the
+Live watch is `ship.md` (disk); lock-live `status` is a GET reader
+(`kspstuff-read`) after T-454. XOR with Lars on a miss patch of the
 same `.py`. `ksc_ready` with vessels n=0 + `can_revert` true is a lie
 while Revert is painted. RealAntennas kRPC is live — do not cheat a
 link. **VAB helpers** when Gus files `vab-helper` (`craft.py` / CLI;

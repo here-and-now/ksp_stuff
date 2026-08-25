@@ -301,6 +301,86 @@ def event(kind: str, msg: str, **extra: Any) -> None:
     _write(row)
 
 
+def record_recover(
+    *,
+    sit: str = "",
+    recoverable: bool | None = True,
+    met: float | None = None,
+    alt: float | None = None,
+    biome: str = "",
+    q: float | None = None,
+    heading: float | None = None,
+    vessel: str = "",
+    **extra: Any,
+) -> None:
+    """``kind=recover`` sit/rec at recover(). Last snap is not this row."""
+    rec_s = "yes" if recoverable else ("no" if recoverable is False else "?")
+    sit_s = str(sit or "").strip()
+    event(
+        "recover",
+        f"recover sit={sit_s or '?'} rec={rec_s}",
+        sit=sit_s or None,
+        situation=sit_s or None,
+        recoverable=recoverable,
+        rec=rec_s,
+        met=_jsonable(met),
+        alt=_jsonable(alt),
+        biome=biome or None,
+        q=_jsonable(q),
+        heading=_jsonable(heading),
+        vessel=vessel or None,
+        **extra,
+    )
+
+
+def record_recover_vessel(vessel: Any) -> None:
+    """Snapshot sit/rec from a live vessel immediately before recover()."""
+    sit = ""
+    try:
+        raw = getattr(vessel, "situation", None)
+        tag = getattr(raw, "name", None)
+        sit = str(tag if isinstance(tag, str) else raw or "").lower().replace("-", "_")
+    except Exception:
+        sit = ""
+    rec: bool | None
+    try:
+        rec = bool(getattr(vessel, "recoverable", False))
+    except Exception:
+        rec = None
+    met = alt = q = heading = None
+    biome = ""
+    name = ""
+    try:
+        name = str(getattr(vessel, "name", "") or "")
+    except Exception:
+        name = ""
+    try:
+        met = float(getattr(vessel, "met"))
+    except Exception:
+        met = None
+    try:
+        biome = str(getattr(vessel, "biome", "") or "")
+    except Exception:
+        biome = ""
+    try:
+        flight = vessel.flight()
+        alt = float(getattr(flight, "mean_altitude", float("nan")))
+        q = float(getattr(flight, "dynamic_pressure", float("nan")))
+        heading = float(getattr(flight, "heading", float("nan")))
+    except Exception:
+        pass
+    record_recover(
+        sit=sit,
+        recoverable=rec,
+        met=met,
+        alt=alt,
+        biome=biome,
+        q=q,
+        heading=heading,
+        vessel=name,
+    )
+
+
 def record(state: Any, tag: str = "", *, ut: float | None = None, force: bool = False) -> None:
     """Snapshots. ``force=True`` (Telem.read) writes every pulse."""
     global _last_flags, _last_write, _last_state, _wrote_landing

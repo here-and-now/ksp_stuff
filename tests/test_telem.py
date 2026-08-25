@@ -529,13 +529,44 @@ class TestLandingTape(unittest.TestCase):
         self.assertNotIn("kind=state", block)
         self.assertNotIn('"kind": "state"', block)
 
-    def test_read_records_requested_hz(self):
+    def test_read_records_actual_hz(self):
         vessel = _Vessel(alt=40_000.0, sit="flying", speed=200.0)
-        snap = read_snapshot(_Session(vessel))
-        self.assertAlmostEqual(snap.hz, 5.0)
-        near = _Vessel(alt=400.0, sit="flying", speed=200.0)
-        near._flight.vertical_speed = -200.0
-        self.assertAlmostEqual(read_snapshot(_Session(near)).hz, 20.0)
+        clock = {"t": 1000.0}
+
+        def monotonic() -> float:
+            return clock["t"]
+
+        with patch("telem.time.monotonic", monotonic):
+            with Telem(_Session(vessel)) as telem:
+                first = telem.read()
+                clock["t"] += 0.2
+                cruise = telem.read()
+                clock["t"] += 0.05
+                near = telem.read()
+        self.assertFalse(math.isfinite(first.hz))
+        self.assertAlmostEqual(cruise.hz, 5.0)
+        self.assertAlmostEqual(near.hz, 20.0)
+
+    def test_readonly_read_does_not_write_jsonl(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        tmp.write_text("", encoding="utf-8")
+        _bind_run_jsonl(self, tmp)
+        vessel = _Vessel(alt=400.0, sit="flying", speed=200.0)
+        session = _Session(vessel)
+        session.readonly = True
+        with Telem(session, scene="flight") as telem:
+            telem.read()
+        self.assertEqual(tmp.read_text(encoding="utf-8").strip(), "")
+        dest = Path(tempfile.mkdtemp()) / "ship.md"
+        import flightlog
+
+        with (
+            patch.object(flightlog, "live_records", return_value=True),
+            patch.object(flightlog, "SHIP", dest),
+        ):
+            with Telem(session, scene="flight") as telem:
+                telem.read()
+        self.assertFalse(dest.is_file())
 
 
 class TestTapeEyes(unittest.TestCase):
@@ -943,6 +974,64 @@ class TestTapeEyes(unittest.TestCase):
         tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
         env = envelope(tmp)
         self.assertAlmostEqual(env["hz_median"], 1.0)
+
+    def test_kind_recover_sit_wins_over_last_snap(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "alt": 84.0,
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+                "recoverable": True,
+            },
+            {
+                "kind": "state",
+                "t": 240.0,
+                "met": 525.0,
+                "situation": "flying",
+                "heading": 298.0,
+                "horiz": 98.0,
+                "pitch": 65.0,
+                "alt": 6054.0,
+                "v_vert": -214.0,
+                "q": 17510.0,
+                "recoverable": False,
+            },
+            {
+                "kind": "recover",
+                "t": 248.0,
+                "met": 540.0,
+                "sit": "splashed",
+                "situation": "splashed",
+                "rec": "yes",
+                "recoverable": True,
+                "biome": "Water",
+            },
+            {
+                "kind": "landing",
+                "t": 249.0,
+                "met": 525.0,
+                "landing": "catastrophic",
+                "sit": "flying",
+                "synthesized": True,
+            },
+            {"kind": "end", "t": 249.1},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        self.assertEqual(env["last"]["sit"], "flying")
+        self.assertFalse(env["last"]["recoverable"])
+        self.assertEqual(env["sit"], "splashed")
+        self.assertTrue(env["recoverable"])
+        self.assertTrue(env["sit_mismatch"])
+        text = format_envelope(env)
+        self.assertIn("recover=splashed", text)
+        self.assertIn("rec=no", text)
 
 
 class _Field:

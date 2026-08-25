@@ -561,6 +561,15 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-25** — T-454: `Session(readonly=True)` connects
+  `name=kspstuff-read`. GET only: Control / `game_scene` /
+  `active_vessel` / `recover()` raise `ReadOnlyError`.
+  `add_stream` is tracked; `close()` `stream.remove()` then
+  `conn.close()` (5 s). Writer `Telem.read()` still writes jsonl /
+  `ship.md`. Reader Telem does not. `status` and lock-live desk
+  leftover_ships use the reader. `kind=recover` sit/rec is a jsonl
+  row at `recover()` — last snap is not recover sit (T-453 `hz` is
+  actual wall dt, not requested 5–20).
 - **2026-08-25** — T-427 prove passed. GSTL/PAW/diff_max=2 (Align real).
   Harmony prefix `RACommLink` Fwd/Rev + postfix `MaxDataRateToHome`
   caps to `TechLevelInfo.MaxDataRate`. Cape `RateToHome` **64 bps**

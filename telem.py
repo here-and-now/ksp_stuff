@@ -17,9 +17,11 @@ timed pulse) or requested Hz is a lie — 16-47-21Z wrote 0.07 Hz
 (26 samples / 380 s) because an expensive sci/broken walk *or* a 10 s
 grim tick made every pulse >10 s, which re-armed both. Skip those
 walks after an expensive read; skip tape ticks if grim was slow.
-Each state row may carry requested ``hz``. Agents query ``tape.Tape``
+Each state row carries actual ``hz`` (1 / wall dt since the previous
+pulse), not requested 5–20. Agents query ``tape.Tape``
 / ``python main.py telem``; packet skim is the envelope. Jsonl stays
-on disk.
+on disk. A read-only Session does not append jsonl or publish
+``ship.md``.
 """
 
 from __future__ import annotations
@@ -729,10 +731,15 @@ class Telem:
         *,
         events: EventLog | None = None,
         scene: str = "?",
+        record: bool | None = None,
     ) -> None:
         self.session = session
         self.events = events if events is not None else EventLog()
         self.scene = scene
+        if record is None:
+            self._record = not bool(getattr(session, "readonly", False))
+        else:
+            self._record = bool(record)
         self._flight: Any = None
         self._kin: Any = None
         self._orbit: Any = None
@@ -772,6 +779,7 @@ class Telem:
         self._slow_rate_bps: float = float("nan")
         self._pad_ll: tuple[float, float] | None = None
         self._body_r: float = float("nan")
+        self._pulse_at: float = 0.0
 
     def _drop_streams(self) -> None:
         for stream in self._streams.values():
@@ -795,6 +803,7 @@ class Telem:
         self._slow_at = 0.0
         self._slow_cost_s = 0.0
         self._last_read_s = 0.0
+        self._pulse_at = 0.0
         self._slow_chute = ""
         self._slow_parts = None
         self._slow_root = ""
@@ -846,7 +855,14 @@ class Telem:
             self._streams[f"kin.{prop}"] = add_stream(getattr, self._kin, prop)
         for prop in ("pitch", "angle_of_attack"):
             self._streams[f"att.{prop}"] = add_stream(getattr, self._flight, prop)
-        for prop in ("mass", "met"):
+        for prop in (
+            "mass",
+            "met",
+            "recoverable",
+            "biome",
+            "thrust",
+            "available_thrust",
+        ):
             try:
                 self._streams[f"vessel.{prop}"] = add_stream(getattr, vessel, prop)
             except Exception:
@@ -855,6 +871,12 @@ class Telem:
             ctrl = getattr(vessel, "control", None)
             if ctrl is not None:
                 self._streams["ctrl.throttle"] = add_stream(getattr, ctrl, "throttle")
+                try:
+                    self._streams["ctrl.current_stage"] = add_stream(
+                        getattr, ctrl, "current_stage"
+                    )
+                except Exception:
+                    pass
         except Exception:
             pass
         try:
@@ -889,6 +911,15 @@ class Telem:
             return None
         return bool(val)
 
+    def _stream_raw(self, key: str, fallback: Any = None) -> Any:
+        stream = self._streams.get(key)
+        if stream is None:
+            return fallback
+        try:
+            return stream()
+        except Exception:
+            return fallback
+
     def _downrange_km(self, lat: float, lon: float) -> float:
         if not math.isfinite(lat) or not math.isfinite(lon):
             return float("nan")
@@ -920,7 +951,11 @@ class Telem:
         finally:
             self._last_read_s = time.monotonic() - t0
             # grim ticks must not live inside the timed pulse (16-47-21Z).
-            if snap is not None and self._last_read_s < CHEAP_READ_S:
+            if (
+                snap is not None
+                and self._should_record()
+                and self._last_read_s < CHEAP_READ_S
+            ):
                 _maybe_shot(snap)
 
     def _read_body(self) -> Snapshot:
@@ -931,7 +966,8 @@ class Telem:
         if vessel is None:
             snap = Snapshot(scene=self.scene, vessel=None)
             self.events.emit("snapshot", **snap.as_dict())
-            _record_run(self.session, snap)
+            if self._should_record():
+                _record_run(self.session, snap)
             return snap
         self._bind(vessel)
         body = self._body
@@ -980,18 +1016,20 @@ class Telem:
         )
         link = self._stream_bool("comms.can_communicate")
         snr = self._stream("comms.signal_strength")
-        thrust = float("nan")
-        try:
-            thrust = float(vessel.thrust)
-        except Exception:
-            pass
+        thrust = self._stream(
+            "vessel.thrust", getattr(vessel, "thrust", float("nan"))
+        )
         speed = self._stream("kin.speed")
         horiz = self._stream("kin.horizontal_speed")
         v_vert = self._stream("kin.vertical_speed")
         heading = self._stream("kin.heading")
         pitch = self._stream("att.pitch")
         aoa = self._stream("att.angle_of_attack")
-        biome = str(getattr(vessel, "biome", "") or "")
+        biome_raw = self._stream_raw("vessel.biome", None)
+        if biome_raw is None:
+            biome = str(getattr(vessel, "biome", "") or "")
+        else:
+            biome = str(biome_raw or "")
         lat = self._stream("flight.latitude")
         lon = self._stream("flight.longitude")
         downrange = self._downrange_km(lat, lon)
@@ -1031,11 +1069,12 @@ class Telem:
         if math.isfinite(v_vert) and math.isfinite(met):
             self._prev_v_vert = v_vert
             self._prev_met_g = met
-        rec: bool | None
-        try:
-            rec = bool(getattr(vessel, "recoverable", False))
-        except Exception:
-            rec = None
+        rec = self._stream_bool("vessel.recoverable")
+        if rec is None:
+            try:
+                rec = bool(getattr(vessel, "recoverable", False))
+            except Exception:
+                rec = None
         rec_edge = False
         if rec is not None:
             if self._prev_recoverable is None:
@@ -1050,7 +1089,15 @@ class Telem:
                 sit=sit,
                 met=met,
             )
-        chute = chute_state(vessel, deep=slow)
+        if slow:
+            chute = chute_state(vessel, deep=True)
+            self._slow_chute = chute
+        else:
+            chute = self._slow_chute
+            if chute in {"", "none"}:
+                chute = chute_state(vessel, deep=False)
+                if chute not in {"", "none"}:
+                    self._slow_chute = chute
         mass = self._stream("vessel.mass", getattr(vessel, "mass", float("nan")))
         mass_drop = (
             self._prev_mass is not None
@@ -1105,7 +1152,10 @@ class Telem:
         debris_n = self._slow_debris
         via = self._slow_via
         rate_bps = self._slow_rate_bps
-        avail = _finite(getattr(vessel, "available_thrust", float("nan")))
+        avail = self._stream(
+            "vessel.available_thrust",
+            getattr(vessel, "available_thrust", float("nan")),
+        )
         landing = ""
         downish = sit in _DOWN or wreck
         if downish and not self._landed:
@@ -1138,10 +1188,17 @@ class Telem:
             self._landed = False
         broken = self._slow_broken
         stage = None
-        try:
-            stage = int(getattr(vessel.control, "current_stage"))
-        except (TypeError, ValueError, AttributeError):
-            stage = None
+        raw_stage = self._stream_raw("ctrl.current_stage")
+        if raw_stage is not None:
+            try:
+                stage = int(raw_stage)
+            except (TypeError, ValueError):
+                stage = None
+        if stage is None:
+            try:
+                stage = int(getattr(vessel.control, "current_stage"))
+            except (TypeError, ValueError, AttributeError):
+                stage = None
         sheared = bool(self._sheared)
         prev_stack = {
             "mass": self._prev_mass,
@@ -1211,10 +1268,13 @@ class Telem:
         )
         reasons = gates(snap)
         snap.flags = tuple(reasons)
-        try:
-            snap.hz = round(1.0 / max(pulse_s(snap), 1e-9), 2)
-        except Exception:
+        now_hz = time.monotonic()
+        if self._pulse_at > 0.0:
+            dt = now_hz - self._pulse_at
+            snap.hz = round(1.0 / dt, 2) if dt > 1e-9 else float("nan")
+        else:
             snap.hz = float("nan")
+        self._pulse_at = now_hz
         shear_edge = bool(sheared) and not self._shear_emitted
         if shear_edge:
             self._shear_emitted = True
@@ -1249,10 +1309,16 @@ class Telem:
         self._prev_fuel = fuel
         self._prev_parts = parts_n
         self._prev_stage = stage
-        _record_run(
-            self.session, snap, rec_edge=rec_edge, shear_edge=shear_edge
-        )
+        if self._should_record():
+            _record_run(
+                self.session, snap, rec_edge=rec_edge, shear_edge=shear_edge
+            )
         return snap
+
+    def _should_record(self) -> bool:
+        if not self._record:
+            return False
+        return not bool(getattr(self.session, "readonly", False))
 
 
 def _maybe_shot(snap: Snapshot) -> None:

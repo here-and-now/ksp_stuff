@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-25 — T-453 thin-tape: jsonl hz is 1/wall-dt, not requested 5–20. T-454 kspstuff-read GET Session (stream.remove; no Control/scene/jsonl/ship.md); kind=recover sit/rec at recover(). status/leftover_ships while lock live are readers. No Hangar. No hop. Never revert.
+
 - 2026-08-25 — T-450 hop-coast-phys-warp: `thick_air_cross_sit` 1× when 4× this pulse would skip the 18 km lid (09-01Z 55 km q=937 → 6 km q=17510). Quiet 200 km still 4×. No hop_factory. Never revert.
 
 - 2026-08-25 — T-449 telem-eyes-library: Tape last snap sit/alt/q/rec vs recover sit; landing synth; sci rem vs bank +0; 4× thick-air skip. last-flight 40 lines is not the vessel. No Hangar. No hop. Never revert.

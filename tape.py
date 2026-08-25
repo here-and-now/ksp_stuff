@@ -480,6 +480,10 @@ class Tape:
                 if seen_apex and _sit(r) in _AIR:
                     descent_rows.append(r)
         landing_row = next((r for r in rows if r.get("kind") == "landing"), None)
+        recover_row = next(
+            (r for r in reversed(rows) if str(r.get("kind") or "") == "recover"),
+            None,
+        )
         start = next((r for r in rows if r.get("kind") == "start"), None)
         last = states[-1] if states else None
         air = last_air or {}
@@ -523,8 +527,14 @@ class Tape:
         if not shear:
             shear = any(bool(r.get("shear")) for r in states)
         silk = _recovered_silk(last, landing_row)
+        rec_sit = ""
+        if recover_row:
+            rec_sit = str(
+                recover_row.get("sit") or recover_row.get("situation") or ""
+            )
         sit = (
-            hit.get("situation")
+            rec_sit
+            or hit.get("situation")
             or silk
             or (landing_row or {}).get("sit")
             or (last or {}).get("situation")
@@ -601,6 +611,13 @@ class Tape:
             "broken": broken,
             "recoverable": (
                 True
+                if recover_row
+                and (
+                    recover_row.get("recoverable") is True
+                    or str(recover_row.get("rec") or "").lower()
+                    in {"yes", "true", "1"}
+                )
+                else True
                 if silk
                 else (hit.get("recoverable") if hit else (last or {}).get("recoverable"))
             ),

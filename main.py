@@ -121,13 +121,14 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
         log.debug("could not write %s", HANDOFF, exc_info=True)
 
 
-def _connect(args: argparse.Namespace) -> Session:
+def _connect(args: argparse.Namespace, *, readonly: bool = False) -> Session:
     session = Session(
         ConnectionSettings(
             address=args.host,
             rpc_port=args.rpc_port,
             stream_port=args.stream_port,
-        )
+        ),
+        readonly=readonly,
     )
     session.connect(profile=args.profile)
     return session
@@ -1110,19 +1111,21 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.cmd == "status":
-        from flightlog import writer_lock_live
-
-        if writer_lock_live():
-            print("SESSION flight.lock live — no second Session", file=sys.stderr)
+        try:
+            session = _connect(args, readonly=True)
+        except SessionError as exc:
+            print(exc, file=sys.stderr)
             return 1
+        try:
+            return cmd_status(session)
+        finally:
+            session.close()
     try:
         session = _connect(args)
     except SessionError as exc:
         print(exc, file=sys.stderr)
         return 1
     try:
-        if args.cmd == "status":
-            return cmd_status(session)
         if args.cmd == "recover-probe":
             from recover_probe import cmd_recover_probe
 

@@ -22,6 +22,8 @@ from flightlog import (
     parse_as_of,
     parse_ship,
     publish_hangar_radio,
+    record_recover,
+    record_recover_vessel,
     ship_stale,
 )
 
@@ -470,3 +472,89 @@ class TestShipEnvelope(unittest.TestCase):
         self.assertIn("as_of:", text)
         self.assertIn("wreck: no", text)
         self.assertNotIn("sit: landed", text)
+
+
+class TestRecoverKind(unittest.TestCase):
+    def test_record_recover_writes_sit_and_rec(self):
+        import flightlog
+
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        old = (
+            flightlog._path,
+            flightlog._t0,
+            flightlog._count,
+            flightlog._last_write,
+        )
+        flightlog._path = tmp
+        flightlog._t0 = time.monotonic()
+        flightlog._count = 0
+        flightlog._last_write = 0.0
+        try:
+            record_recover(
+                sit="splashed",
+                recoverable=True,
+                met=225.0,
+                alt=0.0,
+                biome="Water",
+            )
+        finally:
+            (
+                flightlog._path,
+                flightlog._t0,
+                flightlog._count,
+                flightlog._last_write,
+            ) = old
+        rows = [
+            json.loads(line)
+            for line in tmp.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        self.assertEqual(len(rows), 1)
+        row = rows[0]
+        self.assertEqual(row["kind"], "recover")
+        self.assertEqual(row["sit"], "splashed")
+        self.assertEqual(row["rec"], "yes")
+        self.assertTrue(row["recoverable"])
+        self.assertAlmostEqual(row["met"], 225.0)
+        self.assertEqual(row["biome"], "Water")
+
+    def test_record_recover_vessel_before_recover(self):
+        import flightlog
+
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        old = (flightlog._path, flightlog._t0, flightlog._count, flightlog._last_write)
+        flightlog._path = tmp
+        flightlog._t0 = time.monotonic()
+        flightlog._count = 0
+        flightlog._last_write = 0.0
+        flight = type(
+            "F",
+            (),
+            {"mean_altitude": 2.0, "dynamic_pressure": 0.0, "heading": 303.0},
+        )()
+        vessel = type(
+            "V",
+            (),
+            {
+                "situation": "splashed",
+                "recoverable": True,
+                "met": 210.0,
+                "biome": "Water",
+                "name": "probe",
+                "flight": lambda self=None: flight,
+            },
+        )()
+        try:
+            record_recover_vessel(vessel)
+        finally:
+            (
+                flightlog._path,
+                flightlog._t0,
+                flightlog._count,
+                flightlog._last_write,
+            ) = old
+        row = json.loads(tmp.read_text(encoding="utf-8").splitlines()[0])
+        self.assertEqual(row["kind"], "recover")
+        self.assertEqual(row["sit"], "splashed")
+        self.assertEqual(row["rec"], "yes")
+        self.assertEqual(row["biome"], "Water")

@@ -1179,6 +1179,12 @@ def _try_recover(
         log.debug("science stop before recover failed", exc_info=True)
     mission_event("recover", beauty=True, pose="recover")
     try:
+        from flightlog import record_recover_vessel
+
+        record_recover_vessel(vessel)
+    except Exception:
+        log.debug("kind=recover tape failed", exc_info=True)
+    try:
         getattr(vessel, "recover")()
     except Exception as exc:
         log.debug("hop recover() sit=%s: %s", sit, exc)
@@ -1203,6 +1209,12 @@ def _force_recover(
     except Exception:
         log.debug("science stop before recover failed", exc_info=True)
     mission_event("recover", beauty=True, pose="recover")
+    try:
+        from flightlog import record_recover_vessel
+
+        record_recover_vessel(vessel)
+    except Exception:
+        log.debug("kind=recover tape failed", exc_info=True)
     try:
         getattr(vessel, "recover")()
     except Exception as exc:

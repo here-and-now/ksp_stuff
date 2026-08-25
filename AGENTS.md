@@ -77,7 +77,8 @@ inject niche notebooks.
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
 **phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN). Speak as
 **Walt** on those edges (name + title). Mid-phase: **read
-`docs/program/ship.md`** from time to time (disk). No `status` Session.
+`docs/program/ship.md`** from time to time (disk). Lock-live `status`
+is a GET reader (`kspstuff-read`); it must not write Control or tape.
 Do not `read_file` the growing jsonl. Nominal hop: no Gene, no 15 s
 narration. Off-nominal (wreck flags, lithobrake, empty tanks + flying,
 heading stuck, EC=0 before dwell, crash UI): `python main.py uplink
@@ -109,9 +110,9 @@ the matching `.grok/agents/*.md` as the prompt body.
 
 **kRPC:** one Flight **writer** — the hop/pad pid (`flight.lock`).
 Throttle/AP/stage stay in that process. Abort officer writes
-`uplink.md` (disk), not a second Session. `status` is a second
-`Session` — forbidden while lock live. Never two `phase`/`pad`
-processes.
+`uplink.md` (disk), not a second Control Session. `status` / desk
+leftover GET while lock live is `kspstuff-read` (no Control / jsonl /
+`ship.md` / last-flight). Never two `phase`/`pad` processes.
 
 Portrait kv is only the header (before the first `##`). Style numbers
 are not applied to flight. Telem gates always win. Logs:

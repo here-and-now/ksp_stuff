@@ -283,6 +283,12 @@ def _recover_one(session: Session, vessel: Any) -> bool:
         return False
     try:
         log.info("recover pad occupant %s", name)
+        try:
+            from flightlog import record_recover_vessel
+
+            record_recover_vessel(vessel)
+        except Exception:
+            log.debug("kind=recover tape failed", exc_info=True)
         vessel.recover()
         time.sleep(1.0)
         return True
@@ -774,6 +780,12 @@ def _recover_wait(session: Session, vessel: Any, name: str) -> bool:
         pass
     try:
         log.info("walk home recover() %s sit=%s", name, _vessel_sit(vessel))
+        try:
+            from flightlog import record_recover_vessel
+
+            record_recover_vessel(vessel)
+        except Exception:
+            log.debug("kind=recover tape failed", exc_info=True)
         vessel.recover()
     except Exception as exc:
         log.warning("walk home recover %s: %s", name, exc)

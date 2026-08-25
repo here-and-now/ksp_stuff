@@ -14,15 +14,14 @@ may uplink. Disk queries (`python main.py world|tech|parts|telem|ship`
 and `science-scan`) never open a client.
 
 kRPC **readers are legal**. A second process may `Session.connect`
-(`name=kspstuff-read`) and GET. It must not write Control, scene,
-jsonl, `ship.md`, or last-flight. It must `stream.remove()` on close.
-It must not switch `active_vessel`. One Session **per process** stays
-(old repo `krpc.connect()` in every class fought RemoteTech and leaked
-streams). A Session is not a writer. `status` / career `science` /
-desk leftover_ships while lock live are readers **after** Wernher
-lands reader mode (`session.py`) — today `status` calls `Telem.read()`
-which appends jsonl and publishes `ship.md`, so the CLI still refuses.
-Until that patch, Hank’s live eyes are `python main.py ship` (disk).
+(`name=kspstuff-read`, `readonly=True`) and GET. It must not write
+Control, scene, jsonl, `ship.md`, or last-flight. It must
+`stream.remove()` on close. It must not switch `active_vessel`.
+One Session **per process** stays (old repo `krpc.connect()` in every
+class fought RemoteTech and leaked streams). A Session is not a writer.
+`status` and desk leftover_ships while lock live use that reader.
+Writer `Telem.read()` still appends jsonl / `ship.md` — only the
+control pid. Hank may still read `python main.py ship` (disk).
 
 There is **no Kerbalism kRPC service**. There is **no FAR kRPC** in
 this client. Science is `MODULE Experiment` via `part.modules`. Bundled
@@ -57,8 +56,9 @@ many vessels — leftover_ships is a reader; recoverable is writer
 tape; science leftover vs jsonl `sci_rem` is desk vs tape. Readers
 never take the stick.
 
-**Code (Wernher):** `telem.py` cheap pulse (`thin-tape`);
-`session.py` + `flightlog.py` reader Session + recover row
+**Code (Wernher):** `telem.py` cheap pulse (`thin-tape`) — jsonl `hz`
+is 1/wall-dt, not requested 5–20. `session.py` + `flightlog.py`
+reader Session + `kind=recover` sit/rec at `recover()`
 (`telem-eyes-library`). T-449 still owns query helpers
 (`sit_mismatch`, `landing_synthesized`, `sci_delta` / `sci_paid`,
 `thick_air_skip`).

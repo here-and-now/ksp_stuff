@@ -3,6 +3,12 @@
 The old repo opened a new ``krpc.connect()`` in almost every class. That
 fought RemoteTech and leaked streams. Call :meth:`Session.connect`
 explicitly. One Session per process.
+
+One **control** writer (``name=kspstuff``). GET readers
+(``name=kspstuff-read``, ``readonly=True``) are legal while
+``flight.lock`` is live. Readers must not write Control, scene,
+``active_vessel``, jsonl, ``ship.md``, or last-flight. They
+``stream.remove()`` on close.
 """
 
 from __future__ import annotations
@@ -17,9 +23,91 @@ from profile import STOCK, GameProfile, detect_profile
 
 log = logging.getLogger("kspstuff")
 
+WRITE_CLIENT = "kspstuff"
+READ_CLIENT = "kspstuff-read"
+_SC_WRITE_METHODS = frozenset(
+    {
+        "launch_vessel",
+        "save",
+        "load",
+        "warp_to",
+        "create_kerbal",
+        "transfer_crew",
+        "launch_vessel_from_vab",
+        "launch_vessel_from_sph",
+    }
+)
+_SC_WRITE_ATTRS = frozenset(
+    {
+        "active_vessel",
+        "rails_warp_factor",
+        "physics_warp_factor",
+        "target_body",
+        "target_vessel",
+        "target_docking_port",
+        "ut",
+    }
+)
+_CTRL_WRITE_METHODS = frozenset(
+    {
+        "activate_next_stage",
+        "set_action_group",
+        "toggle_action_group",
+        "set_throttle",
+    }
+)
+_CTRL_WRITE_ATTRS = frozenset(
+    {
+        "throttle",
+        "sas",
+        "rcs",
+        "gear",
+        "lights",
+        "brakes",
+        "abort",
+        "pitch",
+        "yaw",
+        "roll",
+        "forward",
+        "up",
+        "right",
+        "wheel_steer",
+        "wheel_throttle",
+        "current_stage",
+        "input_mode",
+        "sas_mode",
+        "speed_mode",
+    }
+)
+_AP_WRITE_METHODS = frozenset({"engage", "disengage", "wait", "target_pitch_and_heading"})
+_AP_WRITE_ATTRS = frozenset(
+    {
+        "engaged",
+        "target_pitch",
+        "target_heading",
+        "target_roll",
+        "target_direction",
+        "target_pitch_and_heading",
+        "reference_frame",
+        "stopping_time",
+        "deceleration_time",
+        "attenuation_angle",
+        "auto_tune",
+        "time_to_peak",
+        "overshoot",
+        "pitch_pid_gains",
+        "roll_pid_gains",
+        "yaw_pid_gains",
+    }
+)
+
 
 class SessionError(RuntimeError):
     """Connection, missing service, or wrong-scene failure."""
+
+
+class ReadOnlyError(SessionError):
+    """Reader Session refused a Control / scene / active_vessel write."""
 
 
 def _krpc_service_names(conn: Any) -> tuple[str, ...]:
@@ -43,9 +131,115 @@ def _krpc_service_names(conn: Any) -> tuple[str, ...]:
     return tuple(names)
 
 
+def _refuse(what: str) -> None:
+    raise ReadOnlyError(f"read-only Session refused {what}")
+
+
+class _ReadProxy:
+    """GET-through proxy. Setters and named write methods raise."""
+
+    __slots__ = ("_inner", "_methods", "_setters", "_label")
+
+    def __init__(
+        self,
+        inner: Any,
+        *,
+        methods: frozenset[str],
+        setters: frozenset[str],
+        label: str,
+    ) -> None:
+        object.__setattr__(self, "_inner", inner)
+        object.__setattr__(self, "_methods", methods)
+        object.__setattr__(self, "_setters", setters)
+        object.__setattr__(self, "_label", label)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in object.__getattribute__(self, "_methods"):
+            label = object.__getattribute__(self, "_label")
+
+            def _blocked(*_a: Any, **_k: Any) -> Any:
+                _refuse(f"{label}.{name}")
+
+            return _blocked
+        return getattr(object.__getattribute__(self, "_inner"), name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in object.__getattribute__(self, "_setters"):
+            _refuse(f"{object.__getattribute__(self, '_label')}.{name}")
+        setattr(object.__getattribute__(self, "_inner"), name, value)
+
+
+class _ReadOnlyControl(_ReadProxy):
+    def __init__(self, inner: Any) -> None:
+        super().__init__(
+            inner, methods=_CTRL_WRITE_METHODS, setters=_CTRL_WRITE_ATTRS, label="control"
+        )
+
+
+class _ReadOnlyAutopilot(_ReadProxy):
+    def __init__(self, inner: Any) -> None:
+        super().__init__(
+            inner, methods=_AP_WRITE_METHODS, setters=_AP_WRITE_ATTRS, label="auto_pilot"
+        )
+
+
+class _ReadOnlyVessel:
+    __slots__ = ("_inner",)
+
+    def __init__(self, inner: Any) -> None:
+        object.__setattr__(self, "_inner", inner)
+
+    def __getattr__(self, name: str) -> Any:
+        if name == "control":
+            return _ReadOnlyControl(getattr(object.__getattribute__(self, "_inner"), "control"))
+        if name == "auto_pilot":
+            return _ReadOnlyAutopilot(
+                getattr(object.__getattribute__(self, "_inner"), "auto_pilot")
+            )
+        if name == "recover":
+
+            def _blocked(*_a: Any, **_k: Any) -> Any:
+                _refuse("vessel.recover")
+
+            return _blocked
+        return getattr(object.__getattribute__(self, "_inner"), name)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        _refuse(f"vessel.{name}")
+
+
+class _ReadOnlySpaceCenter(_ReadProxy):
+    def __init__(self, inner: Any) -> None:
+        super().__init__(
+            inner, methods=_SC_WRITE_METHODS, setters=_SC_WRITE_ATTRS, label="space_center"
+        )
+
+    def __getattr__(self, name: str) -> Any:
+        if name == "vessels":
+            raw = getattr(object.__getattribute__(self, "_inner"), "vessels")
+            try:
+                return [_ReadOnlyVessel(v) for v in (raw or [])]
+            except TypeError:
+                return raw
+        if name == "active_vessel":
+            raw = getattr(object.__getattribute__(self, "_inner"), "active_vessel")
+            return None if raw is None else _ReadOnlyVessel(raw)
+        return super().__getattr__(name)
+
+
+class _ReadOnlyKrpc(_ReadProxy):
+    def __init__(self, inner: Any) -> None:
+        super().__init__(
+            inner,
+            methods=frozenset(),
+            setters=frozenset({"game_scene", "paused"}),
+            label="krpc",
+        )
+
+
 @dataclass(slots=True)
 class ConnectionSettings:
-    name: str = "kspstuff"
+    name: str = WRITE_CLIENT
     address: str = "127.0.0.1"
     rpc_port: int = 50000
     stream_port: int = 50001
@@ -69,8 +263,20 @@ class Session:
         self,
         settings: ConnectionSettings | None = None,
         profile: GameProfile | None = None,
+        *,
+        readonly: bool = False,
     ) -> None:
-        self.settings = settings or ConnectionSettings()
+        self.readonly = bool(readonly)
+        base = settings or ConnectionSettings()
+        if self.readonly:
+            self.settings = ConnectionSettings(
+                name=READ_CLIENT,
+                address=base.address,
+                rpc_port=base.rpc_port,
+                stream_port=base.stream_port,
+            )
+        else:
+            self.settings = base
         self._profile_explicit = profile is not None
         self.profile = profile or STOCK
         self.conn: Any = None
@@ -79,6 +285,7 @@ class Session:
         self.remote_tech: Any = None
         self.status = ServiceStatus()
         self._lock = threading.RLock()
+        self._streams: list[Any] = []
         self.switch_settle_s = 1.5
 
     @property
@@ -111,6 +318,8 @@ class Session:
             ) from exc
 
         self.space_center = self.conn.space_center
+        if self.readonly:
+            self._wrap_readonly()
         try:
             self._probe_services()
             if profile is not None:
@@ -138,15 +347,24 @@ class Session:
 
     def close(self) -> None:
         conn = self.conn
+        streams = list(self._streams)
+        self._streams.clear()
         self.conn = None
         self.space_center = None
         self.mech_jeb = None
         self.remote_tech = None
         self.status = ServiceStatus()
-        if conn is None:
+        if conn is None and not streams:
             return
 
         def _close() -> None:
+            for stream in streams:
+                try:
+                    stream.remove()
+                except Exception:
+                    log.debug("kRPC stream.remove failed", exc_info=True)
+            if conn is None:
+                return
             try:
                 conn.close()
             except Exception:
@@ -170,10 +388,29 @@ class Session:
         if self.conn is None or self.space_center is None:
             raise SessionError("Not connected to kRPC.")
 
+    def require_write(self, what: str = "control") -> None:
+        if self.readonly:
+            _refuse(what)
+
+    def _wrap_readonly(self) -> None:
+        sc = self.space_center
+        if sc is not None and not isinstance(sc, _ReadOnlySpaceCenter):
+            self.space_center = _ReadOnlySpaceCenter(sc)
+        conn = self.conn
+        krpc = getattr(conn, "krpc", None) if conn is not None else None
+        if krpc is not None and not isinstance(krpc, _ReadOnlyKrpc):
+            try:
+                conn.krpc = _ReadOnlyKrpc(krpc)
+            except Exception:
+                log.debug("could not wrap krpc for read-only", exc_info=True)
+
     @property
     def active_vessel(self) -> Any:
         self.require_connected()
-        return self.space_center.active_vessel
+        vessel = self.space_center.active_vessel
+        if self.readonly and vessel is not None and not isinstance(vessel, _ReadOnlyVessel):
+            return _ReadOnlyVessel(vessel)
+        return vessel
 
     @property
     def bodies(self) -> dict:
@@ -186,11 +423,13 @@ class Session:
 
     def switch_to(self, vessel: Any, settle: float | None = None) -> None:
         """Make ``vessel`` active and wait for KSP to load it."""
+        self.require_write("active_vessel")
         self.require_connected()
         sc = self.space_center
+        inner = getattr(vessel, "_inner", vessel)
         with self._lock:
-            if sc.active_vessel != vessel:
-                sc.active_vessel = vessel
+            if sc.active_vessel != inner and sc.active_vessel != vessel:
+                sc.active_vessel = inner
                 time.sleep(self.switch_settle_s if settle is None else settle)
 
     def add_stream(self, func: Any, *args: Any, **kwargs: Any) -> Any:
@@ -202,7 +441,9 @@ class Session:
         object alive until ``stream.remove()``.
         """
         self.require_connected()
-        return self.conn.add_stream(func, *args, **kwargs)
+        stream = self.conn.add_stream(func, *args, **kwargs)
+        self._streams.append(stream)
+        return stream
 
     def _probe_services(self) -> None:
         conn = self.conn

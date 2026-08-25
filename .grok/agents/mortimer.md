@@ -50,11 +50,11 @@ and `python main.py load rd-<node>`. **Never** `load persistent`. Asteroid
 in Flight after load: `python main.py ksc`. Do not ask Os.
 
 Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
-out. Ad astra. Next CTT is still `stability` **18** when the bank
-pays (need ~8.53 more; 9.47 does not pay 18). `survivability` spent. Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
+out. Ad astra. `stability` spent. Next CTT is `generalRocketry` **20**
+(need ~17.91; bank 2.09 does not pay 20). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +
 `sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
-bound tickets (T-337). Time is scarce:
+bound tickets (T-346). Wreck rec=no re-flies last `cli:`. Time is scarce:
 plan / bind / warp so hops pay. Stumble → ticket (RSI). Thin tape →
 `--type systems --fingerprint <stem>`. Side-by-side science /
 envelope bind → Linus. “Build a new stack” / keep alts signed →

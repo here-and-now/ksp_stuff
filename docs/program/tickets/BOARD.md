@@ -1,28 +1,19 @@
 # Ticket board
 
-open: 75 / 404
+open: 67 / 405
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
-| T-346 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI sci-unchanged-recovered ×6 |
-| T-385 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI flyinghigh-lid ×11 |
 | T-386 | control | bug | S2 | P1 | medium | inbox | lars |  | vertical lid-hold lithobraked t7 MET28 alt389 — 13-31-03Z lofted 88.8 km same hang |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
-| T-388 | systems | bug | S2 | P1 | medium | inbox | wernher |  | leftover t7-pbc sub_orbital ghost at KSC after splash recover |
-| T-389 | rsi | improvement | S2 | P1 | high | inbox | wernher |  | RSI leftover-prelaunch-ghost ×5 |
 | T-391 | control | bug | S2 | P1 | medium | inbox | lars |  | OffPlan apo 163km > 140km killed FlyingHigh loft; plan expect_apo_max is 400km |
 | T-392 | control | bug | S2 | P1 | medium | inbox | lars |  | science skip cannot-pay skipped FlyingHigh trio on 275 km splash |
-| T-393 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI science-skip-timeout ×5 |
 | T-394 | control | bug | S2 | P1 | medium | inbox | lars |  | 4x coast after goo/geiger dwell sheared t7-pbc 20->9 |
-| T-395 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI far-shear ×8 |
-| T-401 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI bigger-dv ×10 |
-| T-396 | systems | bug | S2 | P2 | medium | inbox | wernher |  | Close/walk-home must never rewind UT; entropy is one-way |
 | T-069 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,forest,telemetry,leftover,flyinghigh,bound | Forest FlyingHigh TELEMETRY leftover 1.51 |
 | T-368 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,goo,bound | FlyingHigh goo unstarted 5.40 wait t7+Mk16 |
 | T-369 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,geiger,f013,bound | FlyingHigh geiger leftover 0.85 |
-| T-399 | systems | improvement | S3 | P1 | medium | inbox | wernher |  | house_dump still prices next CTT as stability 18 |
 | T-404 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,flyinghigh,barometer,bound | FlyingHigh barometer unstarted 2.70 |
 | T-025 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,thermo,unbound | FlyingLow@Water thermo 2.10 wait heading 090 |
 | T-026 | science | science_opportunity | S3 | P2 | medium | inbox | linus | heading-090,water,telemetry,unbound | FlyingLow@Water TELEMETRY 1.40 wait heading 090 |
@@ -70,6 +61,7 @@ open: 75 / 404
 | T-400 | vehicle | craft | S3 | P2 | medium | inbox | gus |  | Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover |
 | T-402 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk) |
 | T-403 | vehicle | craft | S3 | P2 | medium | inbox | gus | recover | t7-wheel-cone: RC_cone 50m recover alt of t7-wheel — do not Hangar this sit |
+| T-405 | ops | improvement | S3 | P2 | medium | inbox | gus | feedback | Review hand-written .craft friction; file VAB helper asks at Wernher |
 | T-080 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,forest,geiger,f013,unbound | Forest SrfLanded geiger 1.20 wait Geiger part |
 | T-094 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,tropics,telemetry,unbound | Tropics FlyingHigh TELEMETRY 1.80 wait ≥50 km |
 | T-095 | science | science_opportunity | S3 | P3 | medium | inbox | linus | remaining,savanna,telemetry,unbound | Savanna FlyingHigh TELEMETRY 1.80 wait ≥50 km |

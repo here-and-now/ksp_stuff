@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-25 — Practice last-write T-346/T-385/T-389/T-393/T-395/T-401: waste is living +0 not wreck; FlyingHigh throttle 1 to lid, 163 km not OffPlan; skip-latch FlyingLow only; 1× after High dwell; leftover Close-while-flying is a ghost; fly t7-wheel. Pad still flies.
 - 2026-08-24 — T-398 paid stability: sci 18.1882801→0.1882801. Backup persistent.sfs.bak-stability. `load rd-stability` seated Ast. XRL-564; `ksc` (F-015). Rock not recovered. Spend kept. sasModule/PresMat Available. Next CTT generalRocketry 20. Do not spend crumbs.
 - 2026-08-24 — T-383 flyinghigh-lid ×9: wait is not a sit at 800 m apo (17-50-46Z pitch 25 lithobrake 339 m). Loft live-alt ≥50 km then Toggle/cut/chute. Code T-382. Pad still flies.
 - 2026-08-24 — Practice last-write T-345/T-349/T-355/T-358/T-364: 2HOT idle rem=0 still in card; ground card sit-matches leftover; fly signed t7-chute ≥50 km; FlyingHigh is loft/cut/chute not silk/abort; do not Hangar 4t/dv5/lite. Pad still flies.

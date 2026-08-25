@@ -346,6 +346,9 @@ story this fly. Dead kRPC GUID is not leftover.
 - **Git (Os 2026-08-25):** a desk that changes the checkout commits
   it (`git add` those paths, `git commit` a sentence). Do not wait
   for Hank. Do not commit gitignored tape.
+- **VAB helpers (Os 2026-08-25):** Gus does not default to
+  hand-writing `.craft`. He files `type=systems --fingerprint
+  vab-helper` at Wernher. Wernher writes the script. Gus runs it.
 - **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live.
   House stamps owned comms TL (not MaxTL). Do not cheat a link.
   Discover targeting when a hop goes deaf. Brief: `krpc.md`.
@@ -359,15 +362,17 @@ story this fly. Dead kRPC GUID is not leftover.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
 - Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
   out. Ad astra. `stability` **spent**. Next CTT is `generalRocketry`
-  **20**. Bank crumbs **0.19** do not pay 20. `sasModule` Available
-  (Water heading 090 is no longer a locked-node wait). Cape Shores is
+  **20**. Bank **2.09** does not pay 20 (need ~**17.91**). `sasModule` /
+  PresMat Available. Cape Shores is
   capped. Forest leftover
   that already returned **+0** is not the factory. FlyingHigh Forest
-  waits **≥50 km** (wait is not a sit at 800 m apo). New biome waits envelope. Forest / Grasslands /
+  waits **≥50 km** on **t7-wheel** / **t7-pbc** (wait is not a sit at
+  800 m apo; t7-chute is not the loft this sit). New biome waits envelope. Forest / Grasslands /
   Tropics / Savanna FlyingLow still pay **when the envelope shows
   them**. Do not slam east-t3. Same
   lithobrake Flea is still not the campaign. Stayputnik is not a
   Geiger. A living recover with sci unchanged is **waste**, not rest.
+  Wreck `rec=no` is a miss: re-fly last `cli:`.
 - **Pad occupancy:** Tape is the product. An **idle pad is a sin**.
   A **living recover that cannot pay is also a waste**. Linus always
   has a **shelf** of `science_opportunity` and **this-hop binds**
@@ -382,8 +387,8 @@ story this fly. Dead kRPC GUID is not leftover.
 - **Time is the scarce resource (Os 2026-08-23):** plan / bind / warp
   so hops pay. **This-hop bind** is last-envelope biome/sit (Forest
   tape is Forest; Grasslands waits Grasslands; SrfLanded vs splash
-  match the hang; FlyingHigh Forest waits ≥50 km — wait is not a
-  sit at 800 m apo). Shelf stays
+  match the hang; FlyingHigh Forest waits ≥50 km on t7-wheel /
+  t7-pbc — wait is not a sit at 800 m apo). Shelf stays
   unbound catalog. Do not gather a subject this stack cannot reach.
   Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`; never
   rails / WarpTo). Do not sit 1× waiting a chute. Do not replan
@@ -416,14 +421,24 @@ story this fly. Dead kRPC GUID is not leftover.
   campaign-stop only (crewed / `campaign: none` / firsts). Do not
   restore Batch Learn. Do not flip `needs_learn`. Do not hire Gene
   as a merge. Applied: `docs/program/learn-rsi.md`.
-- **2026-08-24 science-skip-timeout (T-331, ×3 hops T-328–T-330,
-  stem count 4):** airborne `science skip (situation cannot pay)` is
-  **not** a dwell, not FlyingHigh wait, not `go: wait`. Bound sit is
-  landed: still loft, cut at `hop_apo`, coast, chute, land leftover,
-  then start landed ids. Skip latch must not freeze hop-down / chute
-  / coast. Timeout while flying: `recover()` if recoverable, else
-  `ksc leftover`. Never revert. Sitting 1× for 600–785 s after skip
-  is waste of the scarce resource.
+- **2026-08-24 leftover-prelaunch-ghost (T-389, ×5, stem count 6):**
+  Crash-UI rec=0 MET frozen is **not** pad occupancy (Os will not
+  click Recover). Living SUB_ORBITAL leftover: wait land on MET then
+  `recover()`; Close while flying does not drop it. kRPC Vessel has
+  no `.id` — persist `_object_id` to unrecoverable.last; leftover_ships
+  skips that GUID. Walk home still enters Flight first. Code T-388.
+  Never leftover-ksc load. Never revert.
+- **2026-08-24 science-skip-timeout (T-393, ×5, stem count 6):**
+  Airborne `science skip (situation cannot pay)` is **not** a dwell,
+  not FlyingHigh wait, not `go: wait`. Skip-latch is **FlyingLow
+  cannot-pay only** — bound FlyingHigh waits the lid, then Toggle.
+  sit_matches High is alt ≥50 km (sub_orbital still High). Biome
+  global/none/any is not a biome. Geiger idle rem=0 still pays.
+  19-23-00Z 54 km Shores splash +0 does **not** drop T-069/T-368/T-369.
+  275 km splash still starts High ids. Bound sit landed: still loft,
+  cut, coast, chute, land leftover, then start landed ids. Timeout
+  while flying: `recover()` if recoverable, else `ksc leftover`.
+  Code T-392. Never revert.
 - **2026-08-24 control-blocks (T-333/T-334, then T-376/T-377 ×5, Os):**
   Warp is a **clock on sits**, not a new flight. 1× profile already
   worked; 4× then broke skip (unpause killed warp), timeout (wall vs
@@ -453,18 +468,16 @@ story this fly. Dead kRPC GUID is not leftover.
   `parse_return` keys. No `from-feedback` leftover shim. No child
   ticket per hire. No new TYPE. During-work stumble still
   `ops --tag feedback --fingerprint`. Pad still flies.
-- **2026-08-24 sci-unchanged-recovered (T-337, ×3, stem count 4):**
-  Living recover + `sci_run=0` is **not** clean-0 re-fly. Parent does
-  not light last `cli:` until bound sit/biome matches the envelope.
-  T-115 00-10-20Z 154 m/s Shores chute none (Lars). **08-44-03Z**
-  soft land Shores 7 m/s chute deployed apo 831 m — Forest SrfLanded
-  leftover cannot pay Shores. **10-57-33Z** soft splash Forest 5 m/s
-  rec=yes chute cut — unstarted SrfSplashed thermo 0.90; land
-  T-077/T-287 cannot pay a splash hang. Linus this-hop is T-313
-  thermo + T-288 TELEMETRY leftover (`SrfSplashed@Forest`). Airborne
-  skip “do not unbind” only if the hang will match that sit. Chute-late
-  lithobrake (11-07 / 11-11, T-339) is `chute-deploy-sit`, not this
-  stem. Never revert. An RSI letter does not empty the pad.
+- **2026-08-24 sci-unchanged-recovered (T-346, ×6, stem count 12):**
+  Waste is **living** recover (`rec=yes`) + `sci_run=0` — **not** wreck
+  `rec=no`. Wreck re-flies last `cli:` (17-26-04Z shear apo=917). Living
+  +0 still waits envelope sit/biome/apo match (FlyingHigh ≥50 km).
+  16-02-25Z apo=2574 Shores rec=no was a miss, not waste — do not brick
+  `protocol fly` on wreck +0. Code unbrick T-346 (Wernher):
+  `waste_blocks_refly` is `_sci_unchanged_waste` only. T-337 envelope
+  match still holds (08-44 Shores land ≠ Forest leftover; 10-57 Forest
+  splash ≠ SrfLanded). Never revert. An RSI letter does not empty the
+  pad.
 - **2026-08-24 forest-splashed-thermo (T-345, ×3, stem count 4):**
   2HOT is a **file duration**. Unstarted / idle rem=0 is still in
   the paying card (`temperatureScan`). Sample rem=0 (goo) still
@@ -478,30 +491,34 @@ story this fly. Dead kRPC GUID is not leftover.
   transmitted → recover; rem=0 idle **before** start is still the
   card (T-345). Do not recover on the Toggle pulse. Code is
   T-342/T-347/T-348. Never revert.
-- **2026-08-24 bigger-dv (T-355, ×3, stem count 9):**
-  Ad astra is **fly the signed hang that already lofted 88.8 km**
-  (`kspstuff-hop-valiant-t7-chute-pbc`, T-366). stiff-dv ~33 km is
-  not FlyingHigh. Do not RSI Gus for another unsigned stack while
-  t7 sits capable. Shelf stays signed alts, not a 4t after every
-  miss. Never revert.
-- **2026-08-24 flyinghigh-lid (T-383, ×9, stem count 10):**
+- **2026-08-24 bigger-dv (T-401, ×10, stem count 13):**
+  Ad astra this sit is **t7-wheel-pbc** (Stayputnik + sasModule +
+  PresMat). 88.8 km proof is t7-pbc 13-31-03Z. Recover alts
+  t7-wheel-hs / t7-wheel-cone are **recover**, not the loft sit —
+  do not Hangar the cone this sit. Do not Hangar t7-chute /
+  lite / dv5 / 4t. stiff-dv ~33 km is not FlyingHigh. Shelf stays
+  signed alts, not a 4t after every miss. Gus T-400/T-402/T-403.
+  Never revert.
+- **2026-08-24 flyinghigh-lid (T-385, ×11, stem count 14):**
   FlyingHigh leftover waits **≥50 km loft**, then Toggle, cut,
-  chute, land leftover — **not** abort-at-lid, not skip-chute, not
-  silk at 2 km wait-burn, not OffPlan Space. **FlyingHigh wait is
-  not a sit at 800 m apo** (17-50-46Z: wait FlyingHigh then pitch 25
-  lithobrake 339 m, apo max 782 m, MET 27 s). Loft live-alt first;
-  do not wait-then-pitch in the first km. Cut `hop_apo` on **live
-  altitude**. Predicted apo is not the latch. Arm after lid alt or
-  crumb burnout. `chute_arm_sit` / deploy / silk is **1× before
-  Arm**. Waiting the lid is a sit flag, not a dwell. t7-chute is
-  the hang (88.8 km proof). 30 km stiff is not this bind. Code is
-  T-382 (Lars). Never revert.
-- **2026-08-24 far-shear (T-364, ×3, stem count 6):**
-  FAR shear at 4× coast / pitch is a **vehicle** fingerprint. Do
-  **not** Hangar proc-4t (40→8), swivel-dv5 (44→8 at pitch), or
-  girderless lite (34→28). Girders stay. t7 Valiant + Nylon Mk16
-  is the 50 km proof at low dry. Hang is Gus T-332/T-362/T-366.
-  Never Hangar the sheared stack. Never revert.
+  chute, land leftover. Wait is loft to lid alt — **not** a dwell at
+  1 km, not skip-latch / throttle 0 at light (T-384 28→1), not pitch
+  25 in the first km (17-50-46Z lithobrake 339 m), not silk, not
+  abort-at-lid, not OffPlan Space. **Throttle 1 + SAS vertical until
+  lid** — inland slew after lid, not at zenith of the first km
+  (T-386 18-15-43Z MET 8.6 thr 0 alt 422). **163 km is not OffPlan**
+  when `expect_apo_max` is 400 km (T-391); `hop_apo` is the cut.
+  t7-wheel / t7-pbc is the hang this sit. Do not Hangar t7-chute
+  this sit (silk/4×/pitch wrecks). Code T-382/T-384 done; T-386/T-391
+  Lars. Never revert.
+- **2026-08-24 far-shear (T-395, ×8, stem count 9):**
+  FAR shear at 4× is vehicle **and** warp. Do **not** Hangar proc-4t
+  (40→8), swivel-dv5 (44→8 at pitch), or girderless lite (34→28).
+  **Also do not Hangar t7 after a 4× shear of the same hang**
+  (19-57-33Z t7-pbc 20→9 after goo/geiger dwell). `_high_dwell_sit`
+  is **1× after FlyingHigh lid latch until down**. Skip FlyingLow
+  may still 4×. 4× only lofted burnout AND q ≤1 kPa (T-380). Girders
+  stay. Code T-394 Lars. Never revert.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

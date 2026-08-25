@@ -151,12 +151,15 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
-splash match the hang; FlyingHigh waits ≥50 km on **t7-chute**, not
-a 30 km stiff loft). FlyingHigh wait is loft live-alt ≥50 km /
-Toggle / cut / chute / land leftover — not a sit at 800 m apo, not
-wait-then-pitch in the first km, not silk, not abort-at-lid, not
-skip-chute. Do not Hangar
-FAR-sheared 4t / dv5 / girderless lite. Do not gather a
+splash match the hang; FlyingHigh waits ≥50 km on **t7-wheel** /
+**t7-pbc**, not a 30 km stiff loft, not t7-chute this sit). FlyingHigh
+wait is loft live-alt ≥50 km / Toggle / cut / chute / land leftover —
+not a sit at 800 m apo, not wait-then-pitch in the first km, not
+throttle-0 at light, not silk, not abort-at-lid, not skip-chute, not
+OffPlan under `expect_apo_max`. Throttle 1 + SAS vertical until lid;
+inland slew after. **1× after FlyingHigh lid latch until down** (4×
+after High dwell shears t7). Do not Hangar FAR-sheared 4t / dv5 /
+girderless lite / a 4×-sheared t7 this sit. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;
 uplink `phys-warp` / `no_warp`; never rails / WarpTo). Ground fills
 the shelf **during** flight (lock live, other files). Wernher **logs
@@ -216,7 +219,10 @@ false. Do not restore Batch Learn.
 After a hop: **Hank leftover first.** Walk home: `recover()` the ship
 and **Close** to KSC (`recover-probe --recover` if recoverable). Os
 disabled reverting flights. Never revert. Never leftover-ksc save/load
-(that looked like a reload / return to pre-launch).
+(that looked like a reload / return to pre-launch). Crash-UI rec=0
+MET frozen is **not** pad occupancy (Os will not click Recover).
+Living SUB_ORBITAL leftover: wait land on MET then `recover()`; Close
+while flying does not drop it (`leftover-prelaunch-ghost`).
 Then: clean 0 → re-fly last `cli:` **only if that bind can still
 pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
 ≥50 km). Living recover + `sci_run=0` is **not** that path — do not
@@ -224,7 +230,9 @@ light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
 re-flies last `cli:`. Miss (nonzero / ABORT / `science (none)` / `science skip`):
 spawn **Lars** on the named **pulse** file (`hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
-still loft, cut, coast, chute, land leftover. Timeout while flying:
+still loft, cut, coast, chute, land leftover. Skip-latch is
+**FlyingLow cannot-pay only** — bound FlyingHigh waits the lid, then
+Toggle. Timeout while flying:
 Hank `recover()` if recoverable, else Close / `ksc leftover`. Never
 revert. **sci unchanged** on a living recover:
 Linus rebinds last-envelope biome/sit **before** the next light — not Lars unless the live

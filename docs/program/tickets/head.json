@@ -205,6 +205,7 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
+    "vab-helper": 1,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
@@ -12580,6 +12581,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write sci-unchanged-recovered \u00d76: waste is living rec=yes + sci_run=0 only. Wreck rec=no re-flies last cli. Pad flies.",
       "created": "2026-08-24T12:20:20Z",
       "desk": "wernher",
       "evidence": [],
@@ -12603,6 +12605,22 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-25T06:42:17Z",
+            "claim": "RSI sci-unchanged-recovered \u00d76 harvested: waste_blocks_refly is living recover rec=yes + sci_run=0 until bound sit/biome/apo can pay (FlyingHigh \u226550 km) or hang/bind changed. Wreck rec=no re-flies last cli. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          },
+          {
+            "at": "2026-08-25T06:42:51Z",
+            "claim": "Practice last-write sci-unchanged-recovered \u00d76 (stem 12): waste is rec=yes + sci_run=0 only. Wreck rec=no re-flies last cli (17-26-04Z shear). Do not brick protocol fly on wreck +0. Code unbrick already Wernher. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -12612,11 +12630,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI sci-unchanged-recovered \u00d76",
       "type": "rsi",
-      "updated": "2026-08-24T17:42:11Z"
+      "updated": "2026-08-25T06:42:59Z"
     },
     "T-347": {
       "assignee": "",
@@ -13842,13 +13860,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write flyinghigh-lid \u00d711: throttle 1 vertical until lid; 163 km not OffPlan; hang t7-wheel not t7-chute. Code T-386/T-391. Pad flies.",
       "created": "2026-08-24T18:00:55Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "flyinghigh-lid",
       "id": "T-385",
       "payload": {
-        "count": 11
+        "count": 11,
+        "findings": [
+          {
+            "at": "2026-08-25T06:42:51Z",
+            "claim": "Practice last-write flyinghigh-lid \u00d711 (stem 14): throttle 1 + SAS vertical until lid; 163 km not OffPlan when expect_apo_max is 400; wait is loft not dwell/skip-latch. Hang t7-wheel/t7-pbc not t7-chute this sit. Code T-386/T-391 Lars. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -13856,11 +13885,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI flyinghigh-lid \u00d711",
       "type": "rsi",
-      "updated": "2026-08-24T18:00:55Z"
+      "updated": "2026-08-25T06:42:59Z"
     },
     "T-386": {
       "assignee": "",
@@ -13949,6 +13978,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "leftover GUID/crash-UI/wait-land kernel; rec=0 at KSC never go_flight.",
       "created": "2026-08-24T18:42:49Z",
       "desk": "wernher",
       "evidence": [],
@@ -13995,6 +14025,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:42:16Z",
+            "claim": "leftover-prelaunch-ghost kernel stands: leftover_ships skip unrecoverable GUID (_object_id on disk); rec=0 at KSC never go_flight; crash-UI rec=0 is not pad occupancy; living SUB_ORBITAL waits MET land then recover(). Close persist\u2192Tracking\u2192KSC. Never leftover-ksc. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -14004,23 +14042,42 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "leftover t7-pbc sub_orbital ghost at KSC after splash recover",
       "type": "systems",
-      "updated": "2026-08-24T20:11:38Z"
+      "updated": "2026-08-25T06:42:22Z"
     },
     "T-389": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write leftover-prelaunch-ghost \u00d75: crash-UI rec=0 is not pad occupancy; Close while flying does not drop living leftover. Code T-388. Pad flies.",
       "created": "2026-08-24T18:42:49Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "leftover-prelaunch-ghost",
       "id": "T-389",
       "payload": {
-        "count": 5
+        "count": 5,
+        "findings": [
+          {
+            "at": "2026-08-25T06:42:16Z",
+            "claim": "RSI leftover-prelaunch-ghost \u00d75 harvested: GUID persist, crash-UI skip, wait-land, no go_flight rec=0 at KSC, Close Tracking. T-388 kernel. Do not re-open leftover-air as this stem. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          },
+          {
+            "at": "2026-08-25T06:42:51Z",
+            "claim": "Practice last-write leftover-prelaunch-ghost \u00d75 (stem 6): crash-UI rec=0 is not pad occupancy; Close while flying does not drop living SUB_ORBITAL leftover. Code T-388. Never leftover-ksc. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -14028,11 +14085,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI leftover-prelaunch-ghost \u00d75",
       "type": "rsi",
-      "updated": "2026-08-24T18:42:49Z"
+      "updated": "2026-08-25T06:42:59Z"
     },
     "T-390": {
       "assignee": "",
@@ -14172,13 +14229,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write science-skip-timeout \u00d75: skip-latch is FlyingLow cannot-pay only; bound High waits the lid. Code T-392. Pad flies.",
       "created": "2026-08-24T19:34:47Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "science-skip-timeout",
       "id": "T-393",
       "payload": {
-        "count": 5
+        "count": 5,
+        "findings": [
+          {
+            "at": "2026-08-25T06:42:52Z",
+            "claim": "Practice last-write science-skip-timeout \u00d75 (stem 6): skip-latch is FlyingLow cannot-pay only; bound High waits the lid. 19-23-00Z Shores splash +0 does not drop T-069/T-368/T-369. Code T-392. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -14186,11 +14254,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI science-skip-timeout \u00d75",
       "type": "rsi",
-      "updated": "2026-08-24T19:34:47Z"
+      "updated": "2026-08-25T06:42:59Z"
     },
     "T-394": {
       "assignee": "",
@@ -14245,13 +14313,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write far-shear \u00d78: 1\u00d7 after High lid until down; do not Hangar t7 after 4\u00d7 shear of same hang. Code T-394. Pad flies.",
       "created": "2026-08-24T20:06:24Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "far-shear",
       "id": "T-395",
       "payload": {
-        "count": 8
+        "count": 8,
+        "findings": [
+          {
+            "at": "2026-08-25T06:42:52Z",
+            "claim": "Practice last-write far-shear \u00d78 (stem 9): 1\u00d7 after FlyingHigh lid latch until down; do not Hangar t7 after 4\u00d7 shear of the same hang (19-57-33Z 20\u21929). Still no 4t/dv5/lite. Code T-394. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -14259,16 +14338,17 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI far-shear \u00d78",
       "type": "rsi",
-      "updated": "2026-08-24T20:06:24Z"
+      "updated": "2026-08-25T06:42:59Z"
     },
     "T-396": {
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "Close persist\u2192Tracking\u2192KSC; rewind is Hangar veto; not leftover-air. KSC empty this sit.",
       "created": "2026-08-24T20:32:49Z",
       "desk": "wernher",
       "evidence": [],
@@ -14291,6 +14371,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-25T06:42:16Z",
+            "claim": "Close is persist RAM then Tracking then KSC (hangar._close_to_ksc). UT rewind is Hangar veto. Air leftover is not this fire and not a pad veto. Live leftover this sit was KSC empty (overlay stale). Do not re-open leftover-air. Never leftover-ksc. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -14301,12 +14389,12 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "summary": "Never rewind UT on recover/Close. Do not treat other flying vessels as a pad veto. Next spawn, not immediate.",
       "tags": [],
       "title": "Close/walk-home must never rewind UT; entropy is one-way",
       "type": "systems",
-      "updated": "2026-08-24T21:50:20Z"
+      "updated": "2026-08-25T06:42:22Z"
     },
     "T-397": {
       "assignee": "",
@@ -14405,23 +14493,35 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "next_ctt from owned tree; generalRocketry 20 after stability spent.",
       "created": "2026-08-24T20:52:21Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "ctt-stability",
       "id": "T-399",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:42:16Z",
+            "claim": "house_dump next_ctt is cheapest locked RDNode whose parents are owned (GameData tree, not persistent.sfs). stability spent \u2192 generalRocketry 20 need ~17.91. STABILITY_COST 18 gone. Never load the save while a hop is flying.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "Mortimer Grokman, CEO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "house_dump still prices next CTT as stability 18",
       "type": "systems",
-      "updated": "2026-08-24T20:52:21Z"
+      "updated": "2026-08-25T06:42:22Z"
     },
     "T-400": {
       "assignee": "",
@@ -14461,13 +14561,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write bigger-dv \u00d710: fly t7-wheel-pbc. Recover alts are recover. Do not Hangar t7-chute/lite/dv5/4t. Pad flies.",
       "created": "2026-08-24T20:53:06Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "bigger-dv",
       "id": "T-401",
       "payload": {
-        "count": 10
+        "count": 10,
+        "findings": [
+          {
+            "at": "2026-08-25T06:42:52Z",
+            "claim": "Practice last-write bigger-dv \u00d710 (stem 13): fly seated t7-wheel-pbc (sas+PresMat). Recover alts hs/cone are recover not loft. Do not Hangar t7-chute/lite/dv5/4t this sit. Gus T-400/T-402/T-403. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -14475,11 +14586,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI bigger-dv \u00d710",
       "type": "rsi",
-      "updated": "2026-08-24T20:53:06Z"
+      "updated": "2026-08-25T06:42:59Z"
     },
     "T-402": {
       "assignee": "",
@@ -14618,7 +14729,31 @@
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
       "updated": "2026-08-24T21:29:56Z"
+    },
+    "T-405": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-25T06:42:35Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-405",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "os",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "feedback"
+      ],
+      "title": "Review hand-written .craft friction; file VAB helper asks at Wernher",
+      "type": "ops",
+      "updated": "2026-08-25T06:42:35Z"
     }
   },
-  "updated": "2026-08-25T06:40:33Z"
+  "updated": "2026-08-25T06:42:59Z"
 }

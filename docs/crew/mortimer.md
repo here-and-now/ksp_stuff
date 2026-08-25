@@ -51,7 +51,7 @@ the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
 Next CTT is `generalRocketry` 20 (need ~17.71; bank 2.29 does not
 pay 20). `survivability` 15 is spent. Do not spend crumbs. Signed next
 loft is t7-wheel-proc (T-406) — Hangar after leftover. T-409 / T-433
-nose is aero, not silk. PresMat idle rem=0 is still the card. VAB helpers
+nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. VAB helpers
 T-413–T-420 are Wernher; pad does not wait. Live Cape path is 64 bps.
 Procedural Parts on Gus’s shelf when unlocked — not a
 GameData edit, not a pad tutorial.

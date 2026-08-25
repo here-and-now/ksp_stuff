@@ -589,6 +589,13 @@ story this fly. Dead kRPC GUID is not leftover.
   (same as T-409). Still 1× after High lid until down. Still no
   4t / dv5 / lite / chute / 4×-sheared t7. Wreck rec=no re-flies
   last `cli:`. Do not Hangar t7-wheel. Never revert.
+- **2026-08-25 hold-ground-card (T-437, ×7, stem count 8):**
+  Bound leftover stays in-card. Fly extras cannot hide splash leftover
+  as not-in-card (07-51-42Z skipped TELEMETRY/thermo/PresMat then
+  recovered Water splash unpaid). Wrong sit is cannot-pay. File rem=0
+  (TELEMETRY, 2HOT, PresMat) still pays; sample rem=0 (goo) still skips.
+  Code T-436 `science.py`. Do not Hangar. Never revert. An RSI letter
+  does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

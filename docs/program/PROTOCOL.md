@@ -190,7 +190,9 @@ during lock live. Query **Tape**, never raw jsonl.
 share a hop (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape).
 Not one thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is
 still the card — skip not-in-card is a miss when the part is on_craft
-and the envelope sit can pay (`hold-ground-card`).
+and the envelope sit can pay (`hold-ground-card`). Bound leftover
+stays in the card — fly extras cannot hide splash leftover as
+not-in-card; wrong sit is cannot-pay.
 
 **Live watch (Os 2026-08-23):** Someone looks at the hop **while it
 flies**. The Commander watches telem/gates. Unusual →

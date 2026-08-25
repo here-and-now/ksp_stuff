@@ -107,7 +107,9 @@ crumb burnout. `apply_sit_warp` 1× on `chute_arm_sit` **before** Arm.
 **Ground card:** sit-match landed leftover before recover. Airborne
 rem=0 is not dwell-done. rem=0 after dwell recovers. 2HOT idle rem=0
 is still in the paying card (`forest-splashed-thermo`); sample rem=0
-(goo) skips.
+(goo) skips. Bound need eids stay in-card — fly extras cannot hide
+splash leftover as not-in-card; wrong sit is cannot-pay. File rem=0
+(PresMat as well as 2HOT / TELEMETRY) still pays (`hold-ground-card`).
 
 After a `.py` patch:
 

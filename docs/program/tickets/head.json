@@ -16174,13 +16174,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write hold-ground-card \u00d77: bound leftover stays in-card. Fly extras cannot hide splash leftover. Pad flies.",
       "created": "2026-08-25T08:02:31Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "hold-ground-card",
       "id": "T-437",
       "payload": {
-        "count": 7
+        "count": 7,
+        "findings": [
+          {
+            "at": "2026-08-25T08:23:06Z",
+            "claim": "Practice last-write hold-ground-card \u00d77 (stem 8): bound leftover stays in-card; fly extras cannot hide splash leftover as not-in-card. Wrong sit is cannot-pay. File rem=0 still pays. Code T-436. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -16188,12 +16199,12 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI hold-ground-card \u00d77",
       "type": "rsi",
-      "updated": "2026-08-25T08:02:31Z"
+      "updated": "2026-08-25T08:23:07Z"
     }
   },
-  "updated": "2026-08-25T08:18:05Z"
+  "updated": "2026-08-25T08:23:07Z"
 }

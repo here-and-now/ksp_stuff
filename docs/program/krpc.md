@@ -141,7 +141,7 @@ Program facts, not knobs:
 | Client | kRPC **0.6.0**, sockets 50000/50001, `autoAcceptConnections = True`. |
 | Auto-start | Disk `PluginData/settings.cfg`: **`autoStartServers = False`**. Zip ships empty cfg. Without Start, nothing binds. **Do not edit GameData to “fix” this.** |
 | Pause | `pauseServerWithGame = False`. Server can live while MET is frozen. |
-| Comms | Unmanned command needs a CommNet path (`vessel.comms.can_communicate`). kRPC Control does **not** honor that; the hop process does. **RealAntennas kRPC is live** (`conn.real_antennas`) — see below. Early probes stay omni. Recover the HD; transmit is a radio, not the hop science path. |
+| Comms | Unmanned command needs a CommNet path (`vessel.comms.can_communicate`). kRPC Control does **not** honor that; the hop process does. **RealAntennas kRPC is live** (`conn.real_antennas`) — see below. Early probes stay omni. Cape **64 bps** is honest radio — TX is a tool, not a cheat, not the only path. Recover still banks the HD when `recover()` works. |
 | Writer | One `phase`/`pad` process. `flight.lock` is the wall. |
 | Honesty | No revert / quickload / rewind. Crash UI is not a time machine. |
 
@@ -200,8 +200,10 @@ Stayputnik. Hosted geiger is still `geigerCounter` on Stayputnik.
 
 **Credit.** File experiments (`kerbalism_TELEMETRY`, `temperatureScan`,
 `geigerCounter`) credit R&D **while recording** — MET must move, EC
-must last. Goo is a **sample**; that slot still wants recover. Do not
-transmit. Do not `dump`/`reset`. Duration is ScienceDefs size /
+must last. Goo is a **sample**; leftover is the can (Goo ~429 MB does
+not TX at TL2). Cape **64 bps** is honest radio — TX is a tool, not a
+cheat, not the only path. Recover still banks the HD when `recover()`
+works. Do not `dump`/`reset`. Duration is ScienceDefs size /
 `data_rate`, not `sample_amount`. Card lines: `experiment_id`, **part**,
 `duration_s`, `ec_rate`, `recover_banks`.
 

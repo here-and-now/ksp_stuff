@@ -352,7 +352,9 @@ story this fly. Dead kRPC GUID is not leftover.
   vab-helper` at Wernher. Wernher writes the script. Gus runs it.
 - **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live.
   House stamps owned comms TL (not MaxTL). Do not cheat a link.
-  Discover targeting when a hop goes deaf. Brief: `krpc.md`.
+  Discover targeting when a hop goes deaf. Cape **64 bps** is table
+  and path — TX is a tool, not a cheat, not the only path. Brief:
+  `krpc.md`.
 - **Live watch:** Commander watches telem in-flight (`note` / hold /
   abort if unusual). Hank periodically reads `docs/program/ship.md`
   (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.
@@ -612,6 +614,16 @@ story this fly. Dead kRPC GUID is not leftover.
   splash unpaid). Wrong sit is cannot-pay (T-437); splash sit still
   pays T-028/T-422/T-423. File rem=0 still the card. Code T-440 Lars.
   Do not Hangar. Never revert. An RSI letter does not empty the pad.
+- **2026-08-25 recover-HD-only (T-444, org):**
+  Never-transmit / recover-HD-only is outdated. Kerbalism **file**
+  leftover credits **while recording**; **sample** leftover is the
+  can. Cape **64 bps** is honest radio — TX is a tool, not a cheat,
+  not the only path. Recover still banks the HD when `recover()`
+  works. Goo ~429 MB does **not** TX at TL2. Splash leftover unpaid
+  is a Toggle-at-sit miss (`hold-ground-card`), not a reason to
+  forbid TX. Linus T-443 sizes TX vs recover. Wernher T-445 uplink.
+  Do not edit `science.py` this letter. Next CTT `generalRocketry`
+  **20**. Never revert. An RSI letter does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

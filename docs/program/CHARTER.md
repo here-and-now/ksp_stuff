@@ -6,9 +6,10 @@ An Earth program (**RSS + Kerbalism Default**, science sandbox, PBC
 probes first). FAR, RealChute, and RealHeat are on this install (2026-08-21).
 Not Realism Overhaul. `~/Games/KSP-RO` is parked. Agents are the staff.
 **Working goal (Os 2026-08-24):** bigger rockets, more Δv, farther
-out. Ad astra. `stability` **spent**. Next CTT is `generalRocketry`
-(20). Bank crumbs **0.19** do not pay 20. Do not spend crumbs. Chute hops
-that cannot bank FlyingHigh / a new biome are not the factory.
+out. Ad astra. `stability` **spent**. Next CTT is `generalRocketry` **20**.
+Bank **2.29** does not pay 20 (need ~**17.71**). Cape **64 bps** is honest
+radio — TX is a tool, not a cheat, not the only path. Do not spend crumbs.
+Chute hops that cannot bank FlyingHigh / a new biome are not the factory.
 Pad occupancy: inventory (many science, many crafts), Gene picks, fly.
 Tape is the product. Creed is still Kardashev III. Do not spend crumbs.
 **Recursive self-improvement is an imperative:** every hire

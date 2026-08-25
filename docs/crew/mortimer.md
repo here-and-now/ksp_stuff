@@ -53,7 +53,10 @@ Next CTT is `generalRocketry` 20 (need ~17.71; bank 2.29 does not
 pay 20). `survivability` 15 is spent. Do not spend crumbs. Signed next
 loft is t7-wheel-proc (T-406) — Hangar after leftover. T-409 / T-433
 nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). VAB helpers
-T-413–T-420 are Wernher; pad does not wait. Live Cape path is 64 bps.
+T-413–T-420 are Wernher; pad does not wait. Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
+path. File leftover credits while recording; sample leftover is the
+can. Goo ~429 MB does not TX at TL2. Recover still banks the HD when
+recover() works.
 Procedural Parts on Gus’s shelf when unlocked — not a
 GameData edit, not a pad tutorial.
 Os is Founder — `need_os` if CHARTER creed or a roster seat moves.

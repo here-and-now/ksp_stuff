@@ -34,7 +34,10 @@ python main.py comms
 
 Do not read `KerbalismConfig/.../StockExperiments.cfg` as gospel. Caps
 there are pre-house-patch. `science-scan` is ConfigCache: `kind=sample`
-(recover the can, no radio) vs `file` (credits while recording onto HD).
+(leftover is the can; Goo ~429 MB does not TX at TL2) vs `file` (credits
+while recording onto HD). Cape **64 bps** is honest radio — TX is a
+tool, not a cheat, not the only path. Recover still banks the HD when
+`recover()` works. T-443 sizes TX vs recover.
 `est` = `cap` × Earth sit scale (landed 0.3, FL 0.7, LEO 1.0). Open **many**
 `category=science_opportunity` tickets (`experiment_id`, `situation`,
 `duration_s`, `ec_rate`, `est` from the scan). If you still think

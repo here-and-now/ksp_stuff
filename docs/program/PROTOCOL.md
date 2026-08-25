@@ -196,7 +196,11 @@ and the envelope sit can pay (`hold-ground-card`). Bound leftover
 stays in the card — fly extras cannot hide splash leftover as
 not-in-card; wrong sit is cannot-pay. Airborne cannot-pay is not
 card-done: after High dwell, splash leftover still Toggles on splash
-sit before recover.
+sit before recover. Cape **64 bps** is honest radio — TX is a tool,
+not a cheat, not the only path; recover still banks the HD when
+`recover()` works; file leftover credits while recording; sample
+leftover is the can (Goo ~429 MB does not TX at TL2); splash leftover
+unpaid is Toggle-at-sit, not a reason to forbid TX.
 
 **Live watch (Os 2026-08-23):** Someone looks at the hop **while it
 flies**. The Commander watches telem/gates. Unusual →

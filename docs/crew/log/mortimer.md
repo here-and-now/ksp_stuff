@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-25 — Practice last-write T-444: never-transmit / recover-HD-only is outdated. File leftover credits while recording; sample leftover is the can. Cape 64 bps is honest radio — TX is a tool, not a cheat, not the only path. Recover still banks HD. Goo ~429 MB does not TX at TL2. Splash leftover unpaid is Toggle-at-sit. Linus T-443 / Wernher T-445. Next CTT generalRocketry 20. Pad still flies.
 - 2026-08-25 — Practice last-write T-439/T-441: High dwell is not a burn; chute_arm_sit 1× is Arm not apo (T-442). Airborne cannot-pay then recover splash without Toggle is waste (T-440). Pad still flies.
 - 2026-08-25 — Practice last-write T-437: bound leftover stays in-card; fly extras cannot hide splash leftover as not-in-card. Wrong sit is cannot-pay. File rem=0 still pays. Code T-436. Pad still flies.
 - 2026-08-25 — Practice last-write T-425/T-429/T-432/T-434: splash bind does not drop High lid (T-424); seated t7-wheel-pbc, next loft T-406; OX-STAT is dwell EC not loft; thick air ≤18 km is 1× (T-426); T-433 nose is aero. Pad still flies.

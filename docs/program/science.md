@@ -79,4 +79,4 @@ python main.py tickets list --type science
 | **T-303** | `` | FlyingHigh@Taiga | Taiga | `probeCoreOcto_v2` | 30 | 0.052 | 1.8 | yes |
 | **T-316** | `geigerCounter` | FlyingLow |  | `kerbalism-geigercounter` | 56 | 0.005 | 0.316 | yes |
 
-Desk leftover vessels n=0. Query desk leftover-science.
+Desk leftover vessels n=1. Query desk leftover-science.

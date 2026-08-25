@@ -16140,23 +16140,35 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "Bound leftover stays in-card; PresMat idle rem=0 still pays on splash sit-match. Pad flies.",
       "created": "2026-08-25T08:02:31Z",
       "desk": "lars",
       "evidence": [],
       "fingerprint": "hold-ground-card",
       "id": "T-436",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T08:18:05Z",
+            "claim": "science.py sit-match: bound need eids stay in the card (cannot-pay, not not-in-card); file rem=0 including PresMat still pays; sample rem=0 skips. 07-51-42Z skipped TELEMETRY/thermo/PresMat not-in-card then recovered Water splash unpaid.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "lars"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "hank",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "TELEMETRY/PresMat/thermo skip not in card while card lists them; splash bind unpaid",
       "type": "control",
-      "updated": "2026-08-25T08:02:31Z"
+      "updated": "2026-08-25T08:18:05Z"
     },
     "T-437": {
       "assignee": "",
@@ -16183,5 +16195,5 @@
       "updated": "2026-08-25T08:02:31Z"
     }
   },
-  "updated": "2026-08-25T08:12:47Z"
+  "updated": "2026-08-25T08:18:05Z"
 }

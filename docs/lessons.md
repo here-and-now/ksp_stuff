@@ -21,6 +21,24 @@ python main.py pad
 
 ---
 
+## 2026-08-25T11-22-32Z-hop — rf-ignition-ullage
+
+- **When:** T-464. T-462 live miss. Valiant 1-start RF ullage. Factory
+  inland `_pad_light` two-pulse then `_pad_hold` kRPC throttle 1. Pad
+  1 g, ullage Very Stable 100%, ignitions remaining 0 after stage.
+  Do not Hangar. Never revert.
+- **Symptom:** `hop light` then GET kRPC throttle 1, ModuleEnginesRF
+  Current Throttle 0, ignitions 0, thrust 0, sit=pre_launch MET 0.
+  Fuel 1575. Tape one pad row. Abort.
+- **Cause:** `_pad_hold` wrote kRPC `control.throttle`. RF spends the
+  start on the engine. Stage with engine Current Throttle 0 spends the
+  only ignition. kRPC throttle is not the burn.
+- **Fix:** `_pad_light` / `_pad_hold`: throttle 1 on the engine
+  (independent / Current Throttle), then stage. Do not stage on kRPC
+  throttle alone. Pad 1 g still lights when ignition and throttle
+  meet on the engine. Not hop.py. Do not raise ignitions.
+- **Modules:** `hop_factory.py`.
+
 ## 2026-08-25T11-11-44Z-hop — rf-ignition-ullage
 
 - **When:** T-462. T-459 live miss. Valiant 1-start RF ullage. Factory

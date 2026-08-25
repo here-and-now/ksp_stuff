@@ -210,10 +210,29 @@ class _Part:
 class _Parts:
     def __init__(self, parts):
         self.all = parts
+        self.engines: list = []
 
     @property
     def experiments(self):
         raise AssertionError("must not use vessel.parts.experiments")
+
+
+class _Engine:
+    """kRPC Engine: Current Throttle is independent, not control.throttle."""
+
+    def __init__(self):
+        self.independent_throttle = False
+        self._throttle = 0.0
+        self.active = False
+
+    @property
+    def throttle(self):
+        return self._throttle
+
+    @throttle.setter
+    def throttle(self, value):
+        if self.independent_throttle:
+            self._throttle = float(value)
 
 
 class _Control:
@@ -801,6 +820,8 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertIn("def _inland_high_sit", text)
         self.assertIn("def _pad_light", text)
         self.assertIn("def _pad_hold", text)
+        self.assertIn("def _apply_pad_throttle", text)
+        self.assertIn("def _pad_engine_live", text)
         arm_at = text.find("H.arm_chutes")
         arm_sit_at = text.find("chute_arm_sit(snap)")
         deploy_at = text.find("H.deploy_chutes")
@@ -829,7 +850,7 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertIn("brake=False", hold_chunk)
         self.assertNotIn("brake=True", hold_chunk)
         self.assertIn("lofted_lid=reached_lid", text)
-        self.assertLess(text.count("\n") + 1, 1150)
+        self.assertLess(text.count("\n") + 1, 1250)
 
     def test_run_on_vessel_coasts_3x_then_1x(self):
         thermo = _Mod("Experiment", "temperatureScan")
@@ -1469,6 +1490,58 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(vessel.control.staged, 0)
         self.assertEqual(vessel.control.throttle, 0.0)
 
+    def test_pad_light_does_not_stage_on_krpc_throttle_alone(self):
+        """rf-ignition-ullage: kRPC throttle 1 with engine Current Throttle 0 does not stage."""
+        from hop_factory import _pad_light
+
+        class _ColdEngine:
+            def __init__(self):
+                self._throttle = 0.0
+
+            @property
+            def independent_throttle(self):
+                return False
+
+            @independent_throttle.setter
+            def independent_throttle(self, value):
+                return
+
+            @property
+            def throttle(self):
+                return self._throttle
+
+            @throttle.setter
+            def throttle(self, value):
+                return
+
+        vessel = _Vessel([])
+        vessel.parts.engines = [_ColdEngine()]
+        vessel.control.throttle = 1.0
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(logs, [])
+
+    def test_pad_light_stages_when_engine_throttle_live(self):
+        """rf-ignition-ullage: independent throttle 1 on the engine, then stage."""
+        from hop_factory import _pad_light
+
+        vessel = _Vessel([])
+        engine = _Engine()
+        vessel.parts.engines = [engine]
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.throttle, 0.05)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(logs, [])
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertTrue(any("hop light" in line for line in logs))
+
     def test_pad_light_throttles_before_stage(self):
         """rf-ignition-ullage: throttle 1 live, then stage. Not stage then throttle."""
         from hop_factory import _pad_light
@@ -1506,7 +1579,8 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(vessel.control.staged, 1)
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertEqual(
-            vessel.control.ops, [("throttle", 1.0), ("stage", 1.0)]
+            vessel.control.ops,
+            [("throttle", 1.0), ("throttle", 1.0), ("stage", 1.0)],
         )
         self.assertTrue(any("hop light" in line for line in logs))
         already = _Vessel([])
@@ -1514,7 +1588,9 @@ class TestHopSequence(unittest.TestCase):
         already.control.throttle = 1.0
         already.control.ops.clear()
         self.assertTrue(_pad_light(already, logs.append, snap, deaf=False))
-        self.assertEqual(already.control.ops, [("stage", 1.0)])
+        self.assertEqual(
+            already.control.ops, [("throttle", 1.0), ("stage", 1.0)]
+        )
         deaf_v = _Vessel([])
         deaf_v.control.sas = True
         deaf_v.control.throttle = 0.4
@@ -1575,6 +1651,19 @@ class TestHopSequence(unittest.TestCase):
             _pad_hold(vessel, still, lit=True, left_pad=False, deaf=False)
         )
         self.assertEqual(vessel.control.throttle, 1.0)
+        engine = _Engine()
+        vessel.parts.engines = [engine]
+        vessel.control.throttle = 0.0
+        self.assertTrue(
+            _pad_hold(vessel, pad, lit=True, left_pad=False, deaf=False)
+        )
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.throttle, 0.05)
+        self.assertFalse(
+            _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
+        )
+        self.assertFalse(engine.independent_throttle)
 
     def test_factory_pad_hold_rewrites_throttle_after_hop_light(self):
         """rf-ignition-ullage: 11-11-44Z hop light then GET throttle 0 ignitions 0."""
@@ -1603,6 +1692,51 @@ class TestHopSequence(unittest.TestCase):
         self.assertGreaterEqual(vessel.control.staged, 1)
         self.assertGreaterEqual(len(after_light), 2)
         self.assertTrue(all(thr > 0.05 for thr in after_light))
+
+    def test_factory_pad_light_does_not_stage_cold_engine(self):
+        """rf-ignition-ullage: 11-22-32Z kRPC throttle 1 engine Current Throttle 0."""
+
+        class _ColdEngine:
+            def __init__(self):
+                self._throttle = 0.0
+
+            @property
+            def independent_throttle(self):
+                return False
+
+            @independent_throttle.setter
+            def independent_throttle(self, value):
+                return
+
+            @property
+            def throttle(self):
+                return self._throttle
+
+            @throttle.setter
+            def throttle(self, value):
+                return
+
+        vessel = _Vessel([])
+        vessel.parts.engines = [_ColdEngine()]
+        vessel.resources.fuel = 1575.0
+        now, sleep, t = _fast_clock()
+
+        def nap(dt):
+            vessel.control.throttle = 1.0
+            t[0] += dt if dt else 0.01
+
+        with self.assertRaises(MissionAbort) as ctx:
+            run_on_vessel(
+                _Session(vessel),
+                vessel,
+                science_ids=("temperatureScan",),
+                now=now,
+                sleep=nap,
+                timeout=4.0,
+                pulse=1.0,
+            )
+        self.assertIn("timeout", str(ctx.exception).lower())
+        self.assertEqual(vessel.control.staged, 0)
 
     def test_deaf_after_pad_recovers_does_not_abort_lid(self):
         thermo = _Mod("Experiment", "temperatureScan")

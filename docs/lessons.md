@@ -32,6 +32,9 @@ python main.py pad
   lines — one-line `{ @name = ModuleEnginesRF %engineID = … }`
   concatenates into a bogus module name and PartLoader drops the
   engine (`Cannot find a PartModule of typename 'ModuleEnginesRF %engineID = basicEngine'`).
+  Same trap on one-line `PROPELLANT` / `atmosphereCurve` /
+  `IGNITOR_RESOURCE`: MM glues keys onto `name`, RF `GetInfo()`
+  NREs, loading-failed on Torch. Every key=value on its own line.
 - **Modules:** `patches/kspstuffEngines/kspstuffEngines.cfg`.
 
 ## 2026-08-25T09-01-24Z-hop — thin-tape

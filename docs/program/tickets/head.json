@@ -3,7 +3,7 @@
     "23-15-52Z hop-to-water: hop_apo latch MET 79.1 thr 0 apo 18.7 km fuel 111.1; suicide MET 171 thr 1 vz -194 held through vz -65 (no TTI recut at -72); still thr 1 at vz +24.5 fuel 47; recut MET 176.5 vz +140 leftover 16.6; relight MET 208.9 vz -126 fuel 11.5; splash MET 225 sit=splashed heading 303.7 horiz 24.3 speed 221 landing catastrophic 220 m/s biome Shores EC 0 science skip no Experiment modules wanted mysteryGoo": 1,
     "ad-astra": 1,
     "aero-stiff-chute": 2,
-    "bigger-dv": 13,
+    "bigger-dv": 15,
     "bigger-dv-cone": 1,
     "bigger-dv-hs": 1,
     "burn-cutoff-minpitch": 1,
@@ -27,9 +27,9 @@
     "desk-leftover-vs-krpc": 1,
     "east-t3-suicide-test-hang": 1,
     "east-valiant-water": 1,
-    "ec=0-after-loft": 1,
+    "ec=0-after-loft": 2,
     "extra-t100-not-82-goo": 1,
-    "far-shear": 9,
+    "far-shear": 11,
     "feedback-return": 2,
     "flea-chute-not-this": 1,
     "flea-not-suicide-goo": 1,
@@ -67,7 +67,7 @@
     "hangar-hang": 1,
     "heading-never-090": 2,
     "heatshield0-skip-splash": 1,
-    "hold-ground-card": 4,
+    "hold-ground-card": 6,
     "hop-20hz-crash-ui-close": 1,
     "hop-apo-recut-descent": 1,
     "hop-coast-phys-early": 1,
@@ -2585,13 +2585,14 @@
         "docs/missions/jebediah/logs/2026-08-24T14-22-29Z-hop.jsonl",
         "docs/missions/jebediah/logs/2026-08-24T17-26-04Z-hop.jsonl",
         "docs/missions/jebediah/logs/2026-08-24T18-34-09Z-hop.jsonl",
-        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
       ],
       "fingerprint": "forest-flyinghigh-telemetry-leftover",
       "id": "T-069",
       "payload": {
         "biome": "Forest",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 25,
         "ec_rate": 0.052,
@@ -2618,11 +2619,11 @@
         "host": "probeCoreSphere_v2",
         "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "leftover": 1.512,
-        "note": "PRIMARY this-hop FlyingHigh leftover seq0 on t7-wheel-pbc (capable yes). leftover kerbalism_TELEMETRY@EarthFlyingHighForest 0.288/1.800 left=1.512 \u2192 25 s / 0.052. 21-07-06Z apo 238 km rec=yes splash skipped TELEMETRY on Stayputnik (not in card) \u2014 paying_eids drops Forest pin over Shores High. Host probeCoreSphere_v2 PAW. Side-by-side T-404 PresMat 305/0.05/2.70 seq1 + T-369 geiger leftover 117/0.005/0.849 seq2 + T-368 goo 641/0.18/5.40 seq3. Last High biome Shores; Forest leftover still the only TELEMETRY that pays. Not Water heading 297. recover_banks yes.",
+        "note": "unbound catalog. leftover kerbalism_TELEMETRY@EarthFlyingHighForest 0.288/1.800 left=1.512 \u2192 25 s / 0.052. Last envelope 06-36-38Z High Shores (tape biome Shores apo 226 km) / last-flight recovered splash heading 270. Forest pin cannot pay Shores High (paying_eids drop \u2192 skip not in card). This-hop hang dwells High over Cape. Shelf until High over Forest. Not Water heading 270. recover_banks yes.",
         "on_craft": "yes",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
-        "seq": 0,
+        "seq": null,
         "situation": "FlyingHigh@Forest",
         "tech": "none",
         "unlocked": "n/a"
@@ -2631,24 +2632,24 @@
       "payload.craft": "kspstuff-hop-valiant-t7-wheel-pbc",
       "payload.note": "PRIMARY this-hop FlyingHigh leftover seq0 on t7-wheel-pbc (capable yes). leftover kerbalism_TELEMETRY@EarthFlyingHighForest 0.288/1.800 left=1.512 \u2192 25 s / 0.052. 21-07-06Z apo 238 km rec=yes splash skipped TELEMETRY on Stayputnik (not in card) \u2014 paying_eids drops Forest pin over Shores High. Host probeCoreSphere_v2 PAW. Side-by-side T-404 PresMat 305/0.05/2.70 seq1 + T-369 geiger leftover 117/0.005/0.849 seq2 + T-368 goo 641/0.18/5.40 seq3. Last High biome Shores; Forest leftover still the only TELEMETRY that pays. Not Water heading 297. recover_banks yes.",
       "payload.seq": "0",
-      "priority": "P1",
+      "priority": "P2",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "none",
       "sci_expect": 1.512,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "forest",
         "telemetry",
         "leftover",
         "flyinghigh",
-        "bound"
+        "unbound"
       ],
       "title": "Forest FlyingHigh TELEMETRY leftover 1.51",
       "type": "science",
-      "updated": "2026-08-24T21:30:24Z"
+      "updated": "2026-08-25T06:45:25Z"
     },
     "T-070": {
       "assignee": "linus",
@@ -3488,9 +3489,9 @@
         "learn": "landing: catastrophic impact=224 m/s heading=297 horiz=95 pitch=65 sit=flying apo=238849 biome=Water rec=yes sci=run=0 bank=2.09",
         "phase": "hop",
         "science_ids": [
-          "kerbalism_TELEMETRY",
-          "mysteryGoo",
-          "geigerCounter"
+          "barometerScan",
+          "geigerCounter",
+          "mysteryGoo"
         ],
         "telem_run": "docs/missions/jebediah/logs/2026-08-24T21-21-27Z-hop.jsonl",
         "waste": {
@@ -3543,7 +3544,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-24T21:32:16Z"
+      "updated": "2026-08-25T06:45:02Z"
     },
     "T-082": {
       "assignee": "",
@@ -13275,7 +13276,8 @@
       "desk": "linus",
       "evidence": [
         "docs/missions/jebediah/logs/2026-08-24T18-34-09Z-hop.jsonl",
-        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
       ],
       "fingerprint": "flyinghigh-goo",
       "id": "T-368",
@@ -13290,11 +13292,12 @@
         "host": "none",
         "instrument": "Mystery Goo Containment Unit (GooExperiment) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "sample",
-        "note": "this-hop FlyingHigh goo seq3 on t7-wheel-pbc. Unstarted mysteryGoo FlyingHigh ~5.40 (cap 6 \u00d7 0.9). 641 s / 0.18 sample \u2014 recover the can. 21-07-06Z started goo; scan still unstarted (sample incomplete). FlyingLow/splash/landed goo capped. 641 s may not finish; sample still pays on recover if complete. Side-by-side T-069 TELEMETRY leftover seq0 + T-404 PresMat seq1 + T-369 geiger leftover seq2. f013: GooExperiment start unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
+        "leftover": null,
+        "note": "this-hop FlyingHigh goo seq2 on t7-wheel-pbc. Unstarted mysteryGoo FlyingHigh ~5.40 (cap 6 \u00d7 0.9). 641 s / 0.18 sample \u2014 recover the can. 06-36-38Z started goo; scan still unstarted (sample incomplete). FlyingLow/splash/landed goo capped. Last envelope High Shores / last-flight recovered splash. 641 s may not finish; sample still pays on recover if complete. Side-by-side T-369 geiger leftover seq0 + T-404 PresMat seq1. f013: GooExperiment start unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
         "on_craft": "yes",
         "part": "GooExperiment",
         "recover_banks": "yes",
-        "seq": 3,
+        "seq": 2,
         "situation": "FlyingHigh",
         "tech": "start",
         "unlocked": "yes"
@@ -13318,7 +13321,7 @@
       ],
       "title": "FlyingHigh goo unstarted 5.40 wait t7+Mk16",
       "type": "science",
-      "updated": "2026-08-24T21:29:56Z"
+      "updated": "2026-08-25T06:45:25Z"
     },
     "T-369": {
       "assignee": "linus",
@@ -13328,7 +13331,8 @@
       "desk": "linus",
       "evidence": [
         "docs/missions/jebediah/logs/2026-08-24T18-34-09Z-hop.jsonl",
-        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
       ],
       "fingerprint": "flyinghigh-geiger",
       "id": "T-369",
@@ -13336,19 +13340,19 @@
         "biome": "",
         "bound": "yes",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
-        "duration_s": 117,
+        "duration_s": 42,
         "ec_rate": 0.005,
-        "est": 0.849,
+        "est": 0.307,
         "experiment_id": "geigerCounter",
         "host": "none",
         "instrument": "Geiger Counter (kerbalism-geigercounter) \u2014 tech engineering101 \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "leftover": 0.849,
-        "note": "this-hop FlyingHigh geiger leftover seq2 on t7-wheel-pbc. leftover geigerCounter@EarthFlyingHigh 2.751/3.600 left=0.849 \u2192 117 s / 0.005 file. 21-07-06Z started geiger on the Science part (not Stayputnik PAW). FlyingHigh not biome-tagged. T-316 FlyingLow 0.32 crumbs unbound. Side-by-side T-069 TELEMETRY leftover seq0 + T-404 PresMat seq1 + T-368 goo seq3. f013: kerbalism-geigercounter engineering101 unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
+        "leftover": 0.307,
+        "note": "this-hop FlyingHigh geiger leftover seq0 on t7-wheel-pbc. leftover geigerCounter@EarthFlyingHigh 3.293/3.600 left=0.307 \u2192 42 s / 0.005 file. 06-36-38Z started geiger on the Science part (not Stayputnik PAW); last-flight recovered splash. FlyingHigh global. Last envelope High Shores. T-316 FlyingLow crumbs unbound. Side-by-side T-404 PresMat 305/0.05/2.70 seq1 + T-368 goo 641/0.18/5.40 seq2. f013: kerbalism-geigercounter engineering101 unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
         "on_craft": "yes",
         "part": "kerbalism-geigercounter",
         "recover_banks": "yes",
-        "seq": 2,
+        "seq": 0,
         "situation": "FlyingHigh",
         "tech": "engineering101",
         "unlocked": "yes"
@@ -13364,7 +13368,7 @@
       "priority": "P1",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "none",
-      "sci_expect": 3.6,
+      "sci_expect": 0.307,
       "severity": "S3",
       "sla_s": null,
       "status": "ready",
@@ -13375,9 +13379,9 @@
         "f013",
         "bound"
       ],
-      "title": "FlyingHigh geiger leftover 0.85",
+      "title": "FlyingHigh geiger leftover 0.31",
       "type": "science",
-      "updated": "2026-08-24T21:29:57Z"
+      "updated": "2026-08-25T06:45:25Z"
     },
     "T-370": {
       "assignee": "",
@@ -13960,6 +13964,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-25T06:45:22Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-pbc. 13-31-03Z apo 88.8 km shear=no is still the >=50 km proof (Stayputnik, no chute, 7xFL-T100 Valiant). Seated hang is now t7-wheel-pbc (T-400). Do not Hangar t7-chute / t7-chute-cone this sit. f013 2HOT+Goo+geiger on_craft TELEMETRY Stayputnik HD=0.5. Thin tape T-284. fingerprint aero-stiff-chute. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -13973,7 +13985,7 @@
       "tags": [],
       "title": "Seat t7-pbc (88.8 km proof) \u2014 Mk16 t7-chute is not lofting",
       "type": "vehicle",
-      "updated": "2026-08-24T18:23:57Z"
+      "updated": "2026-08-25T06:45:22Z"
     },
     "T-388": {
       "assignee": "",
@@ -14546,6 +14558,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:45:23Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-pbc. t7-pbc + sasModule + PresMat + 4xEngineer7500 HD=2.5 (comms Engineer7500 HD=0.5 x4 + Stayputnik HD=0.5) + 5xZ-100. Omni SurfAntenna gain=2. Alts T-402 hs / T-403 cone (do not Hangar cone) / T-406 proc 2415 kero / T-408 OX-STAT / T-409 nose. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14559,7 +14579,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-24T21:06:07Z"
+      "updated": "2026-08-25T06:45:23Z"
     },
     "T-401": {
       "assignee": "",
@@ -14615,6 +14635,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:45:23Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-hs-pbc. proceduralHeatshield 1.25x0.2 Ablative 80 ablator between last T100 and Valiant. No silk. Recover alt of t7-wheel, not the loft sit. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv-hs. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14630,7 +14658,7 @@
       ],
       "title": "t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-24T21:06:07Z"
+      "updated": "2026-08-25T06:45:23Z"
     },
     "T-403": {
       "assignee": "",
@@ -14651,6 +14679,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T06:45:23Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-cone-pbc. OKTO+RC_cone Nylon 50m minDeployment 2500 deployAlt 700. Do not Hangar this sit (silk/4x/pitch). Recover alt after a living loft. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO HD=1. Thin tape T-284. fingerprint bigger-dv-cone. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14666,7 +14702,7 @@
       ],
       "title": "t7-wheel-cone: RC_cone 50m recover alt of t7-wheel \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-24T21:06:07Z"
+      "updated": "2026-08-25T06:45:23Z"
     },
     "T-404": {
       "assignee": "",
@@ -14675,7 +14711,8 @@
       "created": "2026-08-24T21:28:22Z",
       "desk": "linus",
       "evidence": [
-        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
       ],
       "fingerprint": "flyinghigh-barometer",
       "id": "T-404",
@@ -14690,7 +14727,8 @@
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "note": "this-hop FlyingHigh PresMat seq1 on t7-wheel-pbc (capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). 305 s / 0.05 file. 21-07-06Z apo 238 km rec=yes splash skipped barometerScan on sensorBarometer (not in card). Last High biome Shores; FlyingHigh barometer is global. Surface/FlyingLow PresMat unbound (hang splashes; last FlyingLow Water heading 297 not 090). Side-by-side T-069 TELEMETRY leftover Forest 25/0.052/1.512 seq0 + T-369 geiger leftover 117/0.005/0.849 seq2 + T-368 goo 641/0.18/5.40 seq3. Files 1.17+0.75+0.5 vs HD 2.5. f013: sensorBarometer stability unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
+        "leftover": null,
+        "note": "this-hop FlyingHigh PresMat seq1 on t7-wheel-pbc (capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). 305 s / 0.05 file. 06-36-38Z skip barometerScan on sensorBarometer (not in card) \u2014 unstarted file rem=0 still the card (hold-ground-card). Last envelope High Shores; FlyingHigh barometer is global. HD 2.5 vs file 1.17 + geiger 0.5. Surface/FlyingLow PresMat unbound (hang splashes; last Low Shores not 090). Side-by-side T-369 geiger leftover 42/0.005/0.307 seq0 + T-368 goo 641/0.18/5.40 seq2. f013: sensorBarometer stability unlocked=yes on_craft=yes. Not Water. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
@@ -14720,7 +14758,7 @@
       "priority": "P1",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "none",
-      "sci_expect": null,
+      "sci_expect": 2.7,
       "severity": "S3",
       "sla_s": null,
       "status": "ready",
@@ -14732,7 +14770,7 @@
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-24T21:29:56Z"
+      "updated": "2026-08-25T06:45:25Z"
     },
     "T-405": {
       "assignee": "",
@@ -14757,7 +14795,207 @@
       "title": "Review hand-written .craft friction; file VAB helper asks at Wernher",
       "type": "ops",
       "updated": "2026-08-25T06:42:35Z"
+    },
+    "T-406": {
+      "assignee": "",
+      "blockers": [],
+      "capable": "yes",
+      "category": "craft",
+      "created": "2026-08-25T06:44:18Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "bigger-dv",
+      "id": "T-406",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:45:23Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. 7x proceduralTankRealFuels 1.25x0.625 Cylinder 767 L / 345 kero (volumeMax 0.8 kL lengthMin 0.5 diameterMax 1.5) vs 7xT100 500 L / 225. Same 4.375 m stack as 88.8 km proof; 2415 kero vs 1575. Same Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant. Not girderless lite / dv5 1.427x0.5 / 4t 1.25x0.65. No chute, no silk. Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "recover"
+      ],
+      "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
+      "type": "vehicle",
+      "updated": "2026-08-25T06:45:23Z"
+    },
+    "T-407": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-25T06:44:18Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "bigger-dv",
+      "id": "T-407",
+      "payload": {
+        "count": 14
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI bigger-dv \u00d714",
+      "type": "rsi",
+      "updated": "2026-08-25T06:44:18Z"
+    },
+    "T-408": {
+      "assignee": "",
+      "blockers": [],
+      "capable": "yes",
+      "category": "craft",
+      "created": "2026-08-25T06:44:18Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "ec=0-after-loft",
+      "id": "T-408",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:45:23Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-oxstat-pbc. Same t7-wheel + 4x solarPanels5 survivability on tank 2. t7 3xZ-100 EC=0 MET 440; Goo 641x0.18=115 plus command. 4x0.35 EC/s sun. Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik HD=2.5 with 4xEngineer7500. Thin tape T-284. fingerprint ec=0-after-loft. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC",
+      "type": "vehicle",
+      "updated": "2026-08-25T06:45:23Z"
+    },
+    "T-409": {
+      "assignee": "",
+      "blockers": [],
+      "capable": "yes",
+      "category": "craft",
+      "created": "2026-08-25T06:44:18Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "far-shear",
+      "id": "T-409",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:45:23Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-nose-pbc. OKTO + proceduralNoseCone stability Smooth Cone 1.25-to-0 x0.625 (lengthMax 0.625 until upgrade). Stayputnik has no top node. No silk. Same 7xFL-T100 Valiant + sasModule + PresMat + 3xEngineer7500 HD=2.5 (OKTO HD=1 + 3x0.5). Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk)",
+      "type": "vehicle",
+      "updated": "2026-08-25T06:45:23Z"
+    },
+    "T-410": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-25T06:44:18Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "far-shear",
+      "id": "T-410",
+      "payload": {
+        "count": 10
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI far-shear \u00d710",
+      "type": "rsi",
+      "updated": "2026-08-25T06:44:18Z"
+    },
+    "T-411": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-25T06:45:25Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "hold-ground-card",
+      "id": "T-411",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "feedback"
+      ],
+      "title": "PresMat FlyingHigh rem=0 skipped not-in-card",
+      "type": "ops",
+      "updated": "2026-08-25T06:45:25Z"
+    },
+    "T-412": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-25T06:45:25Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "hold-ground-card",
+      "id": "T-412",
+      "payload": {
+        "count": 5
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI hold-ground-card \u00d75",
+      "type": "rsi",
+      "updated": "2026-08-25T06:45:25Z"
     }
   },
-  "updated": "2026-08-25T06:44:08Z"
+  "updated": "2026-08-25T06:45:25Z"
 }

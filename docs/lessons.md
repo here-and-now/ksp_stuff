@@ -21,6 +21,22 @@ python main.py pad
 
 ---
 
+## 2026-08-25T20-36-06Z-hop — rf-ignition-ullage
+
+- **When:** Factory inland Valiant 1-start RF. Pad lit (MET 0.3 thrust
+  89 kN). Do not Hangar. Never revert.
+- **Symptom:** MET 10.66 throttle 1 fuel 1396 (Kero+LOx left) apo 1.2 km
+  `available_thrust` 0. Then ballistic, shear, catastrophic. Tape
+  airborne window.
+- **Cause:** `_pad_hold` dropped independent throttle at airborne.
+  Independent is the start. Hand-off to MainThrottle is a restart with
+  0 remaining. Airborne is still this sit. Pad throttle 0 is a drop
+  (write 1). Commanded throttle 0 after loft is MECO.
+- **Fix:** `hop_factory_pad.py` is the pad-RF sit. `_pad_hold` keeps
+  engine throttle 1 until MECO / down. Compose still calls it. Not
+  hop.py. Do not raise ignitions.
+- **Modules:** `hop_factory_pad.py`, `hop_factory.py` (import).
+
 ## 2026-08-25T11-22-32Z-hop — rf-ignition-ullage
 
 - **When:** T-464. T-462 live miss. Valiant 1-start RF ullage. Factory

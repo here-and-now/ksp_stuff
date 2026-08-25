@@ -818,10 +818,16 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertIn("def _hold_lid", text)
         self.assertIn("def _offplan_apo_lid", text)
         self.assertIn("def _inland_high_sit", text)
-        self.assertIn("def _pad_light", text)
-        self.assertIn("def _pad_hold", text)
-        self.assertIn("def _apply_pad_throttle", text)
-        self.assertIn("def _pad_engine_live", text)
+        self.assertIn("from hop_factory_pad import", text)
+        self.assertIn("_pad_light(", text)
+        self.assertIn("_pad_hold(", text)
+        self.assertNotIn("def _pad_light", text)
+        self.assertNotIn("def _pad_hold", text)
+        pad = Path("hop_factory_pad.py").read_text(encoding="utf-8")
+        self.assertIn("def _pad_light", pad)
+        self.assertIn("def _pad_hold", pad)
+        self.assertIn("def _apply_pad_throttle", pad)
+        self.assertIn("def _pad_engine_live", pad)
         arm_at = text.find("H.arm_chutes")
         arm_sit_at = text.find("chute_arm_sit(snap)")
         deploy_at = text.find("H.deploy_chutes")
@@ -1492,7 +1498,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_pad_light_does_not_stage_on_krpc_throttle_alone(self):
         """rf-ignition-ullage: kRPC throttle 1 with engine Current Throttle 0 does not stage."""
-        from hop_factory import _pad_light
+        from hop_factory_pad import _pad_light
 
         class _ColdEngine:
             def __init__(self):
@@ -1525,7 +1531,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_pad_light_stages_when_engine_throttle_live(self):
         """rf-ignition-ullage: independent throttle 1 on the engine, then stage."""
-        from hop_factory import _pad_light
+        from hop_factory_pad import _pad_light
 
         vessel = _Vessel([])
         engine = _Engine()
@@ -1544,7 +1550,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_pad_light_throttles_before_stage(self):
         """rf-ignition-ullage: throttle 1 live, then stage. Not stage then throttle."""
-        from hop_factory import _pad_light
+        from hop_factory_pad import _pad_light
 
         class _OrderControl(_Control):
             def __init__(self):
@@ -1603,7 +1609,7 @@ class TestHopSequence(unittest.TestCase):
 
     def test_pad_hold_keeps_throttle_until_left_pad(self):
         """rf-ignition-ullage: hop light is not the burn. Keep throttle 1 on the pad."""
-        from hop_factory import _pad_hold
+        from hop_factory_pad import _pad_hold
 
         vessel = _Vessel([])
         pad = type(
@@ -1660,6 +1666,12 @@ class TestHopSequence(unittest.TestCase):
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertTrue(engine.independent_throttle)
         self.assertGreater(engine.throttle, 0.05)
+        self.assertTrue(
+            _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
+        )
+        self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.throttle, 0.05)
+        vessel.control.throttle = 0.0
         self.assertFalse(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )

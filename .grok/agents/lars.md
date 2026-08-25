@@ -31,6 +31,7 @@ dead-hang envelopes.
 | Sit | File | Not |
 |---|---|---|
 | Factory inland (`python main.py hop`): slew, chute, sit-matched science, recover, pad-boost | `hop_factory.py` **or the living rocket's compose** | `hop.py` pulse; dead Flea/Hammer/4t/splash-090 branches |
+| RF pad light/hold (ullage, finite ignitions, engine throttle) | `hop_factory_pad.py` — **one pad-RF block** | a new `_pad_*` per stamp; `hop.py` |
 | Coast / pad physics warp (2–4×, rails 0, uplink `phys-warp` / `no_warp`) | `physics_warp.py` — **Wernher** | a warp `if` or `_coast_after_skip` in the pulse |
 | Sit/biome can-pay / Toggle | `science.py` | hop sequencing a ghost sit |
 | Pad dwell | `pad.py` | hop |
@@ -43,9 +44,10 @@ then 1 is a restart (spends an ignition, needs settle). Verify
 **this hang** (cfg / ConfigCache / live module) — do not memorize a
 part→N table. Failed coast/suicide relight with fuel left is engine
 physics (`rf-ignition-ullage`) until you have read that engine.
-Cartoon MECO / lid / `_hold_or_cut` suicide relight is false. Pulse
-is `hop_factory.py` this sit — not `hop.py`, not Wernher. Do not
-raise ignitions. Do not open `type=systems` for “engine did not
+Cartoon MECO / lid / `_hold_or_cut` suicide relight is false. RF pad
+is **one sit** in `hop_factory_pad.py` — do not add a `_pad_*` per
+stamp. Compose stays `hop_factory.py`. Not `hop.py`, not Wernher. Do
+not raise ignitions. Do not open `type=systems` for “engine did not
 light” until ignitions remaining, ullage, and EC ignitor are
 checked.
 
@@ -69,16 +71,19 @@ ops / hangar scenes / telem schema (Wernher). Not Gus. Not Linus bind.
 ```bash
 python main.py tickets inbox --desk lars
 python main.py tickets packet T-NNN
-python -m pytest tests/test_physics_warp.py tests/test_hop.py -q
+python -m pytest tests/test_hop_factory.py -q
 ```
 
 Packet is `docs/program/desk.md` + inbox + this ticket +
 `docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Cite
 `tickets landing T-NNN` — not last-flight prose, not jsonl. Query
-**Tape**. Open **many** control fingerprints in one hire. Thin tape /
-leftover overlay → `--type systems --fingerprint <stem>` (Wernher). `need_stack` →
-`tickets from-need`, never in Return. Pad waits **only the live
-control file**.
+**Tape**. Packet third path is the **named helper file**
+(`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland compose,
+`pad.py` pad dwell, `science.py` sit-match) — not the immortal factory
+for a pad miss, not `hop.py`. Open **many** control fingerprints in
+one hire. Thin tape / leftover overlay → `--type systems --fingerprint
+<stem>` (Wernher). `need_stack` → `tickets from-need`, never in Return.
+Pad waits **only the live control file**.
 
 You go **first after a miss** (nonzero, ABORT, empty science), or on
 a **control** ticket. Skip a clean exit 0 unless asked. **sci
@@ -131,11 +136,12 @@ leftover** on splash sit before recover (08-40-14Z Water unpaid).
 After a `.py` patch:
 
 ```bash
-python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q
+python -m pytest tests/test_hop_factory.py tests/test_physics_warp.py tests/test_pad_science.py -q
 ```
 
-Factory inland: also `-k factory` / `-k pad_boost` if that is the
-sit. `-k` is legal.
+Pad-RF: `tests/test_hop_factory.py` (`-k pad` is legal). Factory inland
+compose: also `-k factory` / `-k pad_boost`. Do not start with the
+house `test_hop.py` (231).
 
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Hop
 still keys off `vessel.comms.can_communicate`. Do **not** cheat a
@@ -158,11 +164,12 @@ Always `tickets feedback --claim`.
 
 Append `## <run> — <fingerprint>` to `docs/lessons.md`. The heading
 **must** name the reusable fingerprint (the stem on the control
-ticket). Patch the **named file above**, smallest close. Prefer a
-helper that still holds on another biome/sit/heading. Update
-`blocks.md` only if you add a phase name. Do not re-fly. Do not
-patch leftover Hangar into hop. Never revert, quickload, or rewind
-UT. Splash HD of **this** hop stays yours.
+ticket) — not a T-id. Patch the **named file above**, smallest close.
+Prefer a helper that still holds on another biome/sit/heading. RF pad
+is already one block — do not mint `_pad_light2`. Update `blocks.md`
+only if you add a phase name. Do not re-fly. Do not patch leftover
+Hangar into hop. Never revert, quickload, or rewind UT. Splash HD of
+**this** hop stays yours.
 
 ## Return
 

@@ -30,11 +30,15 @@ Not Gus's rockets. Nested notebooks are parked.
 ## Notes
 
 Misses only (or open `type=control`). Writes a dated heading in
-`docs/lessons.md` and patches the **named** control file
-(`hop_factory.py` inland, `physics_warp.py` coast/pad warp, `hop.py`
-shared helpers + parked water/splash). The pad waits that file, not a
-Gene conference. Not a tour of the tree. Not after a clean recover.
-Not Wernher. Not Gus. Uncrewed miss is leftover + this patch + re-fly.
+`docs/lessons.md` (fingerprint stem, not a T-id) and patches the
+**named** control file (`hop_factory_pad.py` RF pad sit,
+`hop_factory.py` inland compose, `physics_warp.py` coast/pad warp,
+`hop.py` shared helpers + parked water/splash). Packet third path is
+that helper. First pytest is `tests/test_hop_factory.py`, not the
+house. RF pad is one block — not a `_pad_*` per stamp. The pad waits
+that file, not a Gene conference. Not a tour of the tree. Not after a
+clean recover. Not Wernher. Not Gus. Uncrewed miss is leftover + this
+patch + re-fly.
 
 Last-flight 40 lines is not sit (09-01Z splash rec=yes vs jsonl flying
 6 km rec=no) — query `telem --window` on a miss.

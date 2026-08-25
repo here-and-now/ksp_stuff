@@ -8,11 +8,13 @@ Sits:
 
 - 1×: burn, chute_arm_sit, chute_deploy_sit, silk, recover, high q,
   thick air (≤18 km lid).
-- Arm: descending (vz<0 / pitch down), lofted. Not light, not only 2 km.
-  Clock is already 1× (15-10-47Z silk at 4× sheared 28→18).
+- Arm: descending (vz<0 / pitch down), lofted, thick air (≤18 km).
+  Not light, not only 2 km, not 200 km vacuum (silk ~15 km). Clock is
+  already 1× in thick air (15-10-47Z silk at 4× sheared 28→18).
 - Deploy canopy: still ≤2 km or already semi.
 - 4×: lofted coast after real burnout AND q actually low (≤1 kPa) AND
-  not thick air. Not arm sit. Not silk.
+  not thick air. Quiet descent above thick air honors uplink. Not arm
+  sit. Not silk.
 - Never rails. Never WarpTo.
 - Timeout budget is MET / down, not wall seconds while 1×.
 - Airborne cannot-pay is a sit flag, not a dwell.
@@ -209,13 +211,16 @@ def _descending(snap: object) -> bool:
 
 
 def chute_arm_sit(snap: object) -> bool:
-    """Arm on descent after loft. Not light. Not only below 2 km.
+    """Arm on descent after loft in thick air. Not light. Not only 2 km.
 
     11-11-37Z lithobrake 2.9 km q=5.7 kPa still stowed: deploy sit is
     2 km, so Arm never ran. T-338 whoosh is first-airborne Arm.
+    T-442 200 km vacuum descent is not Arm (silk ~15 km).
     """
     alt = _finite(snap, "alt")
     if not math.isfinite(alt) or alt <= LOFT_ALT_M:
+        return False
+    if not thick_air_sit(snap):
         return False
     return _descending(snap)
 
@@ -266,7 +271,8 @@ def want_coast(
 
     1×: pad, burn, chute_arm_sit, chute_deploy_sit, silk, recover,
     high q, thick air. Unknown q is not coast-safe. 18 km lid is still
-    thick. Climbing armed may still 4× above thick air. Never rails.
+    thick. Climbing armed may still 4× above thick air. Quiet descent
+    above thick air honors uplink (T-442). Never rails.
     """
     if not left_pad or down or burning:
         return False

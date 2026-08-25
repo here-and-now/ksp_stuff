@@ -21,6 +21,20 @@ python main.py pad
 
 ---
 
+## 2026-08-25 — hop-coast-phys-warp
+
+- **When:** T-442. t7-wheel-pbc. Quiet loft after lid. No chute on hang.
+  Do not Hangar. Never revert.
+- **Symptom:** `hop coast physics 4x` then Hank `phys-warp 4`; `hop
+  physics 1x` as soon as descent starts (~200 km). Not Hank uplink.
+- **Cause:** `chute_arm_sit` was lofted `_descending` at any alt, so
+  `want_coast` was false from apo to splash. Arm was silk shear ~15 km,
+  not 200 km vacuum.
+- **Fix:** `chute_arm_sit` is lofted descent in thick air (≤18 km). Quiet
+  descent above thick air honors `uplink_rate`. 1× stays thick air /
+  high q / silk / burn. This pid will not reload.
+- **Modules:** `physics_warp.py`. Not `hop_factory.py` this hire (XOR).
+
 ## 2026-08-25T08-20-54Z-hop — hop-coast-phys-warp
 
 - **When:** T-438. t7-wheel-pbc. T-081. Hank `uplink phys-warp 4` after

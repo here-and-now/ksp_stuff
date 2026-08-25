@@ -237,6 +237,11 @@ def test_chute_arm_sit_descent_not_only_2km():
     assert chute_arm_sit(deploy)
     assert chute_deploy_sit(deploy)
 
+    vac = _snap(v_vert=-40.0, alt=200_000.0, q=0.0, chute="stowed")
+    assert not thick_air_sit(vac)
+    assert not chute_arm_sit(vac)
+    assert not chute_arm_sit(_snap(alt=200_000.0, pitch=-20.0, q=0.0))
+
 
 def test_airborne_cannot_pay_is_sit_flag():
     kw = dict(
@@ -341,6 +346,25 @@ def test_want_coast_1x_on_chute_arm_sit_before_silk():
     assert want_coast(climb_armed, left_pad=True, down=False, burning=False)
 
 
+def test_want_coast_quiet_descent_above_thick_air():
+    """T-442: 4× died at apo ~200 km because Arm was any vz<0. Not silk."""
+    vac = _snap(v_vert=-40.0, alt=200_000.0, q=0.0, chute="stowed")
+    assert not thick_air_sit(vac)
+    assert not chute_arm_sit(vac)
+    assert want_coast(vac, left_pad=True, down=False, burning=False)
+    armed = _snap(v_vert=-40.0, alt=200_000.0, q=0.0, chute="armed")
+    assert not chute_arm_sit(armed)
+    assert want_coast(armed, left_pad=True, down=False, burning=False)
+    just = _snap(v_vert=-40.0, alt=18_000.1, q=400.0, chute="stowed")
+    assert not thick_air_sit(just)
+    assert not chute_arm_sit(just)
+    assert want_coast(just, left_pad=True, down=False, burning=False)
+    lid_down = _snap(v_vert=-40.0, alt=18_000.0, q=400.0, chute="stowed")
+    assert thick_air_sit(lid_down)
+    assert chute_arm_sit(lid_down)
+    assert not want_coast(lid_down, left_pad=True, down=False, burning=False)
+
+
 def test_apply_sit_warp_arm_sit_is_1x():
     sc = _sc(phys=3, rails=1)
     krpc = type("K", (), {"paused": True})()
@@ -360,6 +384,33 @@ def test_apply_sit_warp_arm_sit_is_1x():
     assert sc.rails_warp_factor == 0
     assert krpc.paused is False
     assert last[0] == "1x"
+
+
+def test_apply_sit_warp_quiet_descent_200km_is_4x():
+    sc = _sc(phys=3, rails=1)
+    krpc = type("K", (), {"paused": True})()
+    sess = type(
+        "S",
+        (),
+        {"space_center": sc, "conn": type("C", (), {"krpc": krpc})()},
+    )()
+    sc.paused = True
+    snap = _snap(v_vert=-40.0, alt=200_000.0, q=0.0, chute="stowed")
+    last = ["4x"]
+    n = apply_sit_warp(
+        sess,
+        snap,
+        left_pad=True,
+        down=False,
+        burning=False,
+        last=last,
+        uplink_rate=4,
+    )
+    assert n == 3
+    assert sc.physics_warp_factor == 3
+    assert sc.rails_warp_factor == 0
+    assert krpc.paused is False
+    assert last[0] == "4x"
 
 
 def test_apply_sit_warp_high_q_is_1x_clock_runs():

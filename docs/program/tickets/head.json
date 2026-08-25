@@ -14809,25 +14809,37 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "VAB helper asks filed at Wernher: T-413 clone+swap tank, T-414 chute MODULE, T-416 girder ring, T-417 wheel/PresMat splice, T-418 proc cylinder Kero/LOx, T-419 Nylon donor copy, T-420 proc HS insert. Process, not a hang.",
       "created": "2026-08-25T06:42:35Z",
       "desk": "gus",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-405",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T06:47:26Z",
+            "claim": "Reviewed own spawns (gus.md, crafts/*.craft, vab.md, T-387/T-400/T-402/T-403). Did not hand-write a .craft. Filed Wernher vab-helper T-413 clone+swap tank, T-414 chute MODULE Nylon 5/35, T-416 girder ring, T-417 sasModule/PresMat insert-inline, T-418 proc cylinder Kero/LOx Default (not SolidFuel pad_pbc), T-419 copy Nylon from donor (no 0.04 atm inherit), T-420 proc HS splice. StackBuilder/attach/pad_pbc already exist \u2014 those are the gaps. Did not Hangar. Did not stamp capable on T-405.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "os",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "feedback"
       ],
       "title": "Review hand-written .craft friction; file VAB helper asks at Wernher",
       "type": "ops",
-      "updated": "2026-08-25T06:42:35Z"
+      "updated": "2026-08-25T06:47:26Z"
     },
     "T-406": {
       "assignee": "",
@@ -15320,5 +15332,5 @@
       "updated": "2026-08-25T06:46:08Z"
     }
   },
-  "updated": "2026-08-25T06:47:12Z"
+  "updated": "2026-08-25T06:47:26Z"
 }

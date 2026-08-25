@@ -98,8 +98,11 @@ Toggle, cut, chute, land leftover. FlyingHigh wait is **not a sit
 at 800 m apo** (17-50-46Z wait then pitch 25 lithobrake 339 m). Do
 not wait-then-pitch in the first km. Not abort-at-lid, not
 skip-chute, not silk at 2 km wait-burn, not OffPlan Space.
-Predicted apo is not the latch. Arm after lid alt or crumb
-burnout. `apply_sit_warp` 1× on `chute_arm_sit` **before** Arm.
+Predicted apo is not the latch. Splash / missing flying card still
+waits the High lid (`_inland_high_sit`); bound FlyingLow flying card
+is airborne Toggle. Do not clamp `hop_apo` to 18 km (06-57-16Z).
+`hop_target_apo(space=True)` keeps Gene 50 km. Arm after lid alt or
+crumb burnout. `apply_sit_warp` 1× on `chute_arm_sit` **before** Arm.
 
 **Ground card:** sit-match landed leftover before recover. Airborne
 rem=0 is not dwell-done. rem=0 after dwell recovers. 2HOT idle rem=0

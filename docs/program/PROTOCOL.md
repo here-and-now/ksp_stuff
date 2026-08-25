@@ -237,7 +237,9 @@ spawn **Lars** on the named **pulse** file (`hop_factory.py` inland, or the livi
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
 still loft, cut, coast, chute, land leftover. Skip-latch is
 **FlyingLow cannot-pay only** — bound FlyingHigh waits the lid, then
-Toggle. Timeout while flying:
+Toggle. Splash / missing flying card still waits the High lid
+(≥50 km); bound FlyingLow flying card is airborne Toggle. Do not
+clamp `hop_apo` to 18 km. Timeout while flying:
 Hank `recover()` if recoverable, else Close / `ksc leftover`. Never
 revert. **sci unchanged** on a living recover:
 Linus rebinds last-envelope biome/sit **before** the next light — not Lars unless the live

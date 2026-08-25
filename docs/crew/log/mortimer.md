@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-25 — Practice last-write T-425/T-429/T-432/T-434: splash bind does not drop High lid (T-424); seated t7-wheel-pbc, next loft T-406; OX-STAT is dwell EC not loft; thick air ≤18 km is 1× (T-426); T-433 nose is aero. Pad still flies.
 - 2026-08-25 — Practice last-write T-407/T-410/T-412/T-415/T-421: t7-wheel-proc next loft (T-406); T-409 nose is aero not silk; PresMat idle rem=0 still the card; VAB helpers T-413–T-420 Wernher (pad does not wait); living +0 latch already T-346 — do not retune hop_factory. Pad still flies.
 - 2026-08-25 — Practice last-write T-346/T-385/T-389/T-393/T-395/T-401: waste is living +0 not wreck; FlyingHigh throttle 1 to lid, 163 km not OffPlan; skip-latch FlyingLow only; 1× after High dwell; leftover Close-while-flying is a ghost; fly t7-wheel. Pad still flies.
 - 2026-08-24 — T-398 paid stability: sci 18.1882801→0.1882801. Backup persistent.sfs.bak-stability. `load rd-stability` seated Ast. XRL-564; `ksc` (F-015). Rock not recovered. Spend kept. sasModule/PresMat Available. Next CTT generalRocketry 20. Do not spend crumbs.

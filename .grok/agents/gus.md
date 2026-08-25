@@ -32,7 +32,8 @@ sas/PresMat, T-418 proc cylinder Kero/LOx Default (not SolidFuel),
 T-419 Nylon donor copy, T-420 proc HS splice. Wernher owns the script.
 You run it and stamp `capable:`. Do not idle the pad for a helper.
 Seated loft is t7-wheel-pbc; T-406 t7-wheel-proc is the next loft
-(same length, more kero). T-409 nose is aero, not silk.
+(same length, more kero). T-409 / T-433 nose is aero, not silk.
+OX-STAT T-408/T-431 is dwell EC, not the loft.
 
 ## First command
 
@@ -62,15 +63,18 @@ disk — do not guess from Kerbalism tweak tables. Do not re-run
 `tickets from-need` — never in the Return fence.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
-**15 sci is spent.** Next honest node `stability` 18. Keep **many
-different crafts already signed on disk** (not one hang designed after
-a wreck). Fill the shelf **during** lock live. Today: Mk16 OKTO chute
-exists; RC_cone and 2×T100 alts stay hangs, not inbox-only. T+38 FAR
-shear of 3×T100 is a reason to have an **aero-stiff** alt already.
+**15 sci is spent.** Next honest node `generalRocketry` **20** (bank
+2.29 does not pay). Keep **many different crafts already signed on
+disk** (not one hang designed after a wreck). Fill the shelf **during**
+lock live. Today: Mk16 OKTO chute exists; RC_cone and 2×T100 alts stay
+hangs, not inbox-only. T+38 FAR shear of 3×T100 is a reason to have an
+**aero-stiff** alt already.
 Do **not** Hangar proc-4t / swivel-dv5 / girderless lite (`far-shear`).
-`kspstuff-hop-valiant-t7-chute-pbc` is the ≥50 km hang (`bigger-dv`,
-88.8 km proof). stiff-dv ~33 km is not FlyingHigh. Keep alts signed;
-do not design a 4t after a wreck.
+Seated hang is **t7-wheel-pbc**; 88.8 km proof is t7-pbc 13-31-03Z
+(`bigger-dv`). Next loft T-406 t7-wheel-proc. OX-STAT T-408/T-431 is
+dwell EC, not the loft. T-409/T-433 nose is aero, not silk. Do not
+Hangar t7-chute this sit. stiff-dv ~33 km is not FlyingHigh. Keep alts
+signed; do not design a 4t after a wreck.
 
 **Procedural Parts (Os 2026-08-23):** when a proc part is **unlocked**
 for the job, prefer it over stock. `proceduralTankRealFuels` (shapes

@@ -49,8 +49,9 @@ craft, empty shelf, or Os wait. `go: wait` **only** those. Do not take
 empty the pad. Do not re-fly a living +0 (any sit/biome) — not only
 a Forest loft. 08-44 Shores land is not Forest leftover; 10-57 Forest
 splash is not a land bind; stiff-pbc **splashes**. FlyingHigh leftover
-is t7-chute loft ≥50 km, not `go: wait`, not silk, not abort-at-lid,
-not wait-at-800 m then pitch.
+is t7-wheel / t7-pbc loft ≥50 km, not `go: wait`, not silk, not
+abort-at-lid, not wait-at-800 m then pitch. Splash Water bind does
+not clamp `hop_apo` to 18 km.
 Do not Hangar 4t / dv5 / girderless lite. Restamp from the
 envelope or the next signed alt. Thin tape: cite it like `f013` and open `--type systems --fingerprint
 <stem>` — still stamp `go: yes` if leftover clean and the hang lives. Bind

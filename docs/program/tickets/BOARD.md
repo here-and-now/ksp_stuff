@@ -1,16 +1,12 @@
 # Ticket board
 
-open: 74 / 435
+open: 70 / 435
 
 | id | type | cat | S | P | R | status | desk | tags | title |
 |---|---|---|---|---|---|---|---|---|---|
 | T-081 | fly | flight | S2 | P0 | medium | inbox | gene | chute,workshop,forest,catastrophic,landing,hard,unknown,soft,firm | chute workshop hop: living recover Forest/Grasslands FlyingLow |
 | T-184 | systems | bug | S2 | P1 | medium | verify | wernher | legacy-twin,f-014 | F-014 load persistent autosaves RAM first |
 | T-387 | vehicle | craft | S2 | P1 | medium | inbox | gus |  | Seat t7-pbc (88.8 km proof) — Mk16 t7-chute is not lofting |
-| T-425 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI flyinghigh-lid ×15 |
-| T-429 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI bigger-dv ×16 |
-| T-432 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI ec=0-after-loft ×3 |
-| T-434 | rsi | improvement | S2 | P1 | high | inbox | mortimer |  | RSI far-shear ×12 |
 | T-028 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,telemetry,splash,bound | splash TELEMETRY@Water 0.80 |
 | T-422 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,thermo,splash,bound | Water SrfSplashed thermo 0.90 |
 | T-423 | science | science_opportunity | S3 | P1 | medium | ready | linus | remaining,water,barometer,splash,bound | Water SrfSplashed barometer 0.90 |

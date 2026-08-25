@@ -20,6 +20,7 @@ T-346 latch: `waste_blocks_refly` is living only). Do **not** retune
 `hop_factory.py` for T-421 — the latch already exists.
 Chute-late lithobrake is `chute-deploy-sit` (`physics_warp.py`, T-339).
 `chute_arm_sit` / deploy / silk is 1× **before** Arm (`flyinghigh-lid`).
+`thick_air_sit` is 1× at alt **≤18 km**; unknown q fail-closed (T-426).
 You also own **control architecture**: sit-named **blocks** Lars *calls*
 (`physics_warp.py` warp/clock, sit predicates, timeout vs MET not wall,
 chute deploy sit, leftover abort path — extract what still lives in
@@ -97,7 +98,8 @@ the pad.
   **this sit**.
 - Cheat a RealAntennas link (MaxTL, fake `SetTarget*` / TxPower,
   ignore deaf). Service is live. **T-427 / `docs/program/ra-rate.md`:**
-  GSTL=2 is real; 64 bps is the table; live Cape is 31.5 kbps. Patch
+  GSTL=2 is real; **64 bps is table and live Cape path** (`RateToHome`).
+  Pre-clamp 31.5 kbps is not current. Patch
   `RateBoundaries`/`FwdDataRate` with Harmony (already in GameData).
   Do not MM TechLevel. Do not hop for this.
 

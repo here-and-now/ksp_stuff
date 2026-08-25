@@ -15736,13 +15736,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write flyinghigh-lid \u00d715: splash bind does not drop the High lid; factory inland still waits \u226550 km. Code T-424. Pad flies.",
       "created": "2026-08-25T07:02:34Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "flyinghigh-lid",
       "id": "T-425",
       "payload": {
-        "count": 15
+        "count": 15,
+        "findings": [
+          {
+            "at": "2026-08-25T07:55:50Z",
+            "claim": "Practice last-write flyinghigh-lid \u00d715 (stem 16): splash Water bind is not FlyingLow and does not drop the inland High lid (06-57-16Z 18 km). Factory inland still waits \u226550 km. Code T-424. Occupancy stays seated t7-wheel-pbc PRELAUNCH. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -15750,11 +15761,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI flyinghigh-lid \u00d715",
       "type": "rsi",
-      "updated": "2026-08-25T07:02:34Z"
+      "updated": "2026-08-25T07:55:50Z"
     },
     "T-426": {
       "assignee": "",
@@ -15880,13 +15891,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write bigger-dv \u00d716: seated t7-wheel-pbc; next loft T-406 after leftover. Recover alts stay recover. Pad flies.",
       "created": "2026-08-25T07:33:34Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "bigger-dv",
       "id": "T-429",
       "payload": {
-        "count": 16
+        "count": 16,
+        "findings": [
+          {
+            "at": "2026-08-25T07:55:50Z",
+            "claim": "Practice last-write bigger-dv \u00d716 (stem 18): seated t7-wheel-pbc while T-081 lights; next loft still T-406. Recover alts T-428/T-430 stay recover. Do not Hangar cone/chute/4t/dv5/lite. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -15894,11 +15916,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI bigger-dv \u00d716",
       "type": "rsi",
-      "updated": "2026-08-25T07:33:34Z"
+      "updated": "2026-08-25T07:55:50Z"
     },
     "T-430": {
       "assignee": "",
@@ -15974,13 +15996,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write ec=0-after-loft \u00d73: OX-STAT is dwell EC, not the loft hang. Pad flies t7-wheel.",
       "created": "2026-08-25T07:33:34Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "ec=0-after-loft",
       "id": "T-432",
       "payload": {
-        "count": 3
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-25T07:55:50Z",
+            "claim": "Practice last-write ec=0-after-loft \u00d73 (stem 4): OX-STAT T-408/T-431 is dwell EC, not the loft hang. Do not Hangar oxstat this sit. Pad flies t7-wheel.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -15988,11 +16021,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI ec=0-after-loft \u00d73",
       "type": "rsi",
-      "updated": "2026-08-25T07:33:34Z"
+      "updated": "2026-08-25T07:55:50Z"
     },
     "T-433": {
       "assignee": "",
@@ -16032,13 +16065,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write far-shear \u00d712: thick air \u226418 km is 1\u00d7; T-433 nose is aero not silk. Do not Hangar t7-wheel. Pad flies.",
       "created": "2026-08-25T07:33:34Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "far-shear",
       "id": "T-434",
       "payload": {
-        "count": 12
+        "count": 12,
+        "findings": [
+          {
+            "at": "2026-08-25T07:55:50Z",
+            "claim": "Practice last-write far-shear \u00d712 (stem 13): thick air \u226418 km is 1\u00d7 (T-426); T-433 proc-nose is aero not silk. Still no 4t/dv5/lite/chute/4\u00d7-sheared t7. Do not Hangar t7-wheel. Pad flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -16046,11 +16090,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI far-shear \u00d712",
       "type": "rsi",
-      "updated": "2026-08-25T07:33:34Z"
+      "updated": "2026-08-25T07:55:50Z"
     },
     "T-435": {
       "assignee": "",
@@ -16077,5 +16121,5 @@
       "updated": "2026-08-25T07:47:55Z"
     }
   },
-  "updated": "2026-08-25T07:47:55Z"
+  "updated": "2026-08-25T07:55:50Z"
 }

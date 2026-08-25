@@ -50,7 +50,8 @@ the reverse). First living envelope of a hang writes that sit:
 stiff-pbc **splashes** (10-57-33Z Forest 5 m/s, unstarted splash
 thermo 0.90) — bind T-313 + T-288, unbind land T-077/T-287. 08-44
 Shores land cannot pay Forest leftover. FlyingHigh waits ≥50 km on **t7-wheel** / **t7-pbc**, not a 30 km
-stiff loft, not t7-chute this sit. Wait FlyingHigh at 800 m apo is wreck, not a rebind —
+stiff loft, not t7-chute this sit. Splash Water bind is not FlyingLow and does **not** clamp `hop_apo` to 18 km.
+Wait FlyingHigh at 800 m apo is wreck, not a rebind —
 keep the trio. 2HOT **and PresMat** are file duration: unstarted rem=0 is still the
 card (`hold-ground-card` / `forest-splashed-thermo`), not not-in-card. Sample rem=0 (goo)
 is spent. Do not gather a subject

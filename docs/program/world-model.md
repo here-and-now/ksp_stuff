@@ -368,9 +368,11 @@ story this fly. Dead kRPC GUID is not leftover.
   capped. Forest leftover
   that already returned **+0** is not the factory. FlyingHigh waits
   **≥50 km** on seated **t7-wheel** / **t7-pbc** (wait is not a sit at
-  800 m apo; t7-chute is not the loft this sit). Signed next loft is
+  800 m apo; t7-chute is not the loft this sit). Splash Water bind
+  does **not** drop that lid to 18 km. Signed next loft is
   **t7-wheel-proc** (T-406: same 4.375 m, 2415 kero) — Hangar after
-  leftover, not this letter. New biome waits envelope. Forest / Grasslands /
+  leftover, not this letter. OX-STAT T-408/T-431 is dwell EC, not
+  the loft. New biome waits envelope. Forest / Grasslands /
   Tropics / Savanna FlyingLow still pay **when the envelope shows
   them**. Do not slam east-t3. Same
   lithobrake Flea is still not the campaign. Stayputnik is not a
@@ -391,7 +393,8 @@ story this fly. Dead kRPC GUID is not leftover.
   so hops pay. **This-hop bind** is last-envelope biome/sit (Forest
   tape is Forest; Grasslands waits Grasslands; SrfLanded vs splash
   match the hang; FlyingHigh Forest waits ≥50 km on t7-wheel /
-  t7-pbc — wait is not a sit at 800 m apo). Shelf stays
+  t7-pbc — wait is not a sit at 800 m apo; splash bind does not
+  clamp `hop_apo` to 18 km). Shelf stays
   unbound catalog. Do not gather a subject this stack cannot reach.
   Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`; never
   rails / WarpTo). Do not sit 1× waiting a chute. Do not replan
@@ -559,6 +562,33 @@ story this fly. Dead kRPC GUID is not leftover.
   T-346 (`waste_blocks_refly` is `_sci_unchanged_waste` only). Do
   **not** re-patch `hop_factory.py`. Never revert. An RSI letter
   does not empty the pad.
+- **2026-08-25 flyinghigh-lid (T-425, ×15, stem count 16):**
+  Splash Water bind is **not** FlyingLow and does **not** drop the
+  inland High lid (06-57-16Z hop_apo 18 km, pitch 25 from pad, 4×
+  at 3 km, crash UI rec=no). Factory inland still waits **≥50 km**
+  (`_inland_high_sit`). Bound FlyingLow flying card is airborne
+  Toggle. `hop_target_apo(space=True)` keeps Gene 50 km. Code
+  T-424 Lars. Occupancy stays seated **t7-wheel-pbc** PRELAUNCH —
+  not leftover recover of the pad craft. Never revert.
+- **2026-08-25 bigger-dv (T-429, ×16, stem count 18):**
+  Seated hang stays **t7-wheel-pbc** while T-081 lights. Signed
+  next loft is still **t7-wheel-proc** (T-406) — Hangar **after**
+  leftover, not this letter. Recover alts of that loft: T-428
+  proc-hs / T-430 proc-cone (do not Hangar cone). Still no
+  t7-chute / 4t / dv5 / lite. Gus T-400/T-406/T-428/T-430. Never
+  revert. An RSI letter does not empty the pad.
+- **2026-08-25 ec=0-after-loft (T-432, ×3, stem count 4):**
+  t7 3×Z-100 died EC=0 MET 440. **OX-STAT is dwell EC**, not the
+  loft hang — T-408 (t7-wheel-oxstat) / T-431 (proc-oxstat) stay
+  shelf for Goo 641 s after a living loft. Do not Hangar oxstat
+  this sit. Pad flies t7-wheel. Never revert.
+- **2026-08-25 far-shear (T-434, ×12, stem count 13):**
+  Thick air **≤18 km is 1×** (`thick_air_sit`; unknown q
+  fail-closed). 06-57-16Z 4× at 3 km q=2670 sheared after the 18 km
+  lid. Code T-426 Wernher. T-433 **proc-nose** is aero, not silk
+  (same as T-409). Still 1× after High lid until down. Still no
+  4t / dv5 / lite / chute / 4×-sheared t7. Wreck rec=no re-flies
+  last `cli:`. Do not Hangar t7-wheel. Never revert.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

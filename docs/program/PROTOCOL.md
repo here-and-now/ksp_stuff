@@ -356,6 +356,15 @@ A **run** is one Commander command. Filename Earth UTC with seconds
 (`2026-08-20T12-35-42Z-pad`). Review also has Kerbal UT + MET. Verena
 dates stories from those lines. Logs: `docs/missions/<id>/logs/`.
 
+## Git (Os 2026-08-25)
+
+Every desk **commits** when they change the checkout: `.py`, `.craft`,
+org (CHARTER / PROTOCOL / tickets / agents), tests, press. `git add`
+the paths they touched, `git commit` with a sentence of what changed.
+Do not wait for Hank or Os to harvest. Do not commit gitignored tape
+(`desk.md`, `last-flight.md`, jsonl, `overlay.last`). Push is Hank/Os
+unless they said otherwise.
+
 ## Return (this job)
 
 Open tickets. Do not emit `need_*`, `ask:`, `explore:`, `improve:`,

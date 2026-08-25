@@ -32,7 +32,7 @@ titles. Drop RAF/spy/radio-compact.
 | **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
 | **KSP-RO** | Parked Express RO tree. Do not seat. Live gym is `~/Games/KSP-rss` / letsgrok. |
 | **science-scan** | Linus. Live MM experiment defs + leftovers vs REACH. Samples recover; files credit while recording. |
-| **comms** | Gus/Linus. Live RA (TL rates, craft, ground LIVE/SILENT) from ConfigCache. |
+| **comms** | Gus/Linus. Disk dump is ConfigCache (TL rates, craft, ground LIVE/SILENT). Live RA kRPC is `conn.real_antennas` (Os 2026-08-25). Do not cheat a link. |
 | **Flight Dynamics** | Katherine. Tape windows (`telem --window`), not jsonl in the prompt. Relays by ticket. Not Linus bind, not Lars burns, not Wernher schema. |
 | **sit-card** | **Retired.** Sit is `python main.py desk` / `desk.md`. |
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |

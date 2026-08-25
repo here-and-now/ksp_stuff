@@ -343,6 +343,12 @@ story this fly. Dead kRPC GUID is not leftover.
   Packet skim is desk + BRIEF + this ticket (no BOARD.md).
 - `load rd-<node>` never `load persistent`. One kRPC writer. No rewind.
   Honest CTT spend only when the bank **pays**. No GameData. No UnlockTech.
+- **Git (Os 2026-08-25):** a desk that changes the checkout commits
+  it (`git add` those paths, `git commit` a sentence). Do not wait
+  for Hank. Do not commit gitignored tape.
+- **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live.
+  House stamps owned comms TL (not MaxTL). Do not cheat a link.
+  Discover targeting when a hop goes deaf. Brief: `krpc.md`.
 - **Live watch:** Commander watches telem in-flight (`note` / hold /
   abort if unusual). Hank periodically reads `docs/program/ship.md`
   (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.

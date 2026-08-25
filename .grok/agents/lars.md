@@ -115,6 +115,15 @@ python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_sci
 Factory inland: also `-k factory` / `-k pad_boost` if that is the
 sit. `-k` is legal.
 
+**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Hop
+still keys off `vessel.comms.can_communicate`. Do **not** cheat a
+link. Do not add targeting loops in `hop_factory.py` until a control
+miss. Discover when a hop goes deaf. Brief: `docs/program/krpc.md`.
+
+**Git (Os 2026-08-25):** after you patch `.py`, `git add` those paths
+and `git commit` a sentence. Do not wait for Hank. Do not commit
+gitignored tape.
+
 ## After a miss
 
 Append `## <run> — <fingerprint>` to `docs/lessons.md`. The heading

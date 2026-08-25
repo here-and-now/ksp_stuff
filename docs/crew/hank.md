@@ -17,3 +17,5 @@ save/load. Not the hop. Does not hire Gene to consider an uncrewed
 miss after exit. Does not hire the Commander to debrief.
 
 Does not fly a mission. Does not stamp `go:`. Does not Hangar.
+RealAntennas kRPC is live — do not cheat a link. A desk that changes
+the checkout commits it.

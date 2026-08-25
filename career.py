@@ -36,7 +36,7 @@ class CareerSnapshot:
 RP1_NOTES = (
     "kRPC sees stock career fields only. Tree/parts: python main.py world.",
     "Science sandbox: funds/contracts are none. Unlocks are on disk R&D.",
-    "Comms are RealAntennas on CommNet, not RemoteTech. No RA kRPC service.",
+    "Comms are RealAntennas on CommNet, not RemoteTech. conn.real_antennas is live; do not cheat a link.",
     "Kerbalism science/LS/reliability are part.modules, not this snapshot.",
 )
 

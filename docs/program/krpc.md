@@ -141,12 +141,43 @@ Program facts, not knobs:
 | Client | kRPC **0.6.0**, sockets 50000/50001, `autoAcceptConnections = True`. |
 | Auto-start | Disk `PluginData/settings.cfg`: **`autoStartServers = False`**. Zip ships empty cfg. Without Start, nothing binds. **Do not edit GameData to “fix” this.** |
 | Pause | `pauseServerWithGame = False`. Server can live while MET is frozen. |
-| Comms | Unmanned command needs a CommNet path (`vessel.comms.can_communicate`). kRPC Control does **not** honor that; the hop process does. **No RA kRPC service** — early probes stay omni. Recover the HD; transmit is a radio (rate on `comms`), not the hop science path. |
+| Comms | Unmanned command needs a CommNet path (`vessel.comms.can_communicate`). kRPC Control does **not** honor that; the hop process does. **RealAntennas kRPC is live** (`conn.real_antennas`) — see below. Early probes stay omni. Recover the HD; transmit is a radio, not the hop science path. |
 | Writer | One `phase`/`pad` process. `flight.lock` is the wall. |
 | Honesty | No revert / quickload / rewind. Crash UI is not a time machine. |
 
 CKAN lock: close the GUI before launching `KSP.x86_64`. First MM pass
 is slow; later boots ~70 s. First `Session.connect` ~30 s (schema).
+
+---
+
+## RealAntennas (Os 2026-08-25)
+
+Os dropped `KRPC.RealAntennas.dll` into `GameData/kRPC`. Live
+`get_services` lists `RealAntennas`. Client: `conn.real_antennas`
+(`available` in Flight / Tracking / SpaceCenter). Source:
+`krpc_realantennas/` (`build.sh` does **not** copy to GameData).
+
+**Honesty.** Sandbox RA defaults GSTL to MaxTL. House `ra_align`
+stamps **owned comms TL** on desk / Close (`AlignTechLevel`). That is
+not a cheat. Cheats: stamp MaxTL, raise TxPower to invent range,
+`SetTarget*` to fake a path, ignore deaf, write GameData. We
+**discover** targeting / rate / hops when a hop actually goes deaf.
+Do not put dishes on every hang “just in case.”
+
+**What exists (when we need it):** catalog `Bands` / `TechLevels` /
+`GroundStations` / GSTL / `MinRelayTechLevel`. Per vessel
+`Comms(vessel)`: `CanComm`, `RateToHome`, `HopsToHome`, `ControlPath`,
+`Antennas`. Per part `Antenna(part)`: deploy, RF band, TxPower,
+`CanTarget`, `SetTargetVessel` / Body / LatLonAlt (omni fails). Early
+hangs stay omni (`SurfAntenna` / Communotron 16-S).
+
+| Desk | Know | Do not |
+|---|---|---|
+| **Gene** | `link: no` before dwell is already off-nominal. RA can deaf a probe stock CommNet would keep. | `go: wait` for a dish we have not needed. |
+| **Lars** | Hop still keys off `vessel.comms.can_communicate`. RA `CanComm` exists. | Targeting loops in `hop_factory.py` until a control miss. |
+| **Gus** | Disk `python main.py comms`. Omni is the current hang. | Sign a dish until a ticket says the omni is the miss. |
+| **Katherine** | Radio windows may show on tape (`link` / `snr`). | kRPC writes. Invent a targeting loop. |
+| **Hank** | Close is persist → Tracking → KSC. `ra_align` on desk / Close. | Hangar on a rewound clock. Close without persist-first. |
 
 ---
 

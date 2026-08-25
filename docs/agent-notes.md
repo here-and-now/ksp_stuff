@@ -150,8 +150,10 @@ python main.py parts --unlocked|--node ID|--search TXT|--module Experiment
 Sources: `GameData/ModuleManager.ConfigCache` (post-MM PART), save
 `CAREER.TechTreeUrl` (letsgrok → HETTN.TechTree), `SCENARIO ResearchAndDevelopment`.
 Kerbalism science is `MODULE Experiment` + `HardDrive`. RealFuels is resource
-**names**. RealAntennas has no kRPC service — early probes stay omni. Encode
-*how to look*, not the solar system.
+**names**. RealAntennas kRPC is live (`conn.real_antennas`). Early
+probes stay omni until a hop goes deaf. Do not cheat a link
+(MaxTL / fake target / TxPower). Encode *how to look*, not the
+solar system.
 
 ---
 
@@ -212,7 +214,9 @@ excepts → `commnet=False`. Re-probe after spawn.
 kRPC 0.6 `PilotAddon.HasControlConnection` is RemoteTech-only (no RT →
 always true). House hop keys off `vessel.comms.can_communicate`. Live
 reads: `can_communicate`, `signal_strength`, `control_path` (slow pulse),
-`CommLink.Start` / `End`, `CommNode.Name` / `IsHome`. No RA targeting API.
+`CommLink.Start` / `End`, `CommNode.Name` / `IsHome`. RA targeting
+exists on `conn.real_antennas` (`Antenna.SetTarget*`); do not use it
+to cheat a link. Discover when a hop goes deaf.
 
 `conn.space_center` exists. `conn.mech_jeb` does not on this install.
 
@@ -554,9 +558,14 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-25** — Os: `KRPC.RealAntennas.dll` in GameData/kRPC.
+  `conn.real_antennas` live (Flight / Tracking / KSC). `ra_align`
+  stamps owned comms TL (anti-cheat vs sandbox MaxTL). Targeting /
+  rate / hops: discover when a hop goes deaf. Do not cheat a link.
 - **2026-08-24** — T-325: stream `comms.can_communicate` / `signal_strength`;
   `control_path` home `CommNode.Name` on the slow pulse. RT-only
-  `PilotAddon.HasControlConnection`. No RA targeting API.
+  `PilotAddon.HasControlConnection`. RA targeting is the 2026-08-25
+  service, not this hop gate.
 - **2026-08-23** — `Flight.latitude` / `Flight.longitude` are degrees on
   `vessel.flight()` (no-frame hold). `vessel.biome` is the RSS name.
   Downrange km is haversine from Cape (`sites.default_pad_ll`) with

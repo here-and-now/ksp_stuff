@@ -30,7 +30,8 @@ kRPC 0.6, desk, hangar, leftover overlay, telem, ops kernel. Open
 Explore unused surfaces. Thin tape / 9-column skim is his miss.
 Live watch is `ship.md` (disk). XOR with Lars on a miss patch of the
 same `.py`. `ksc_ready` with vessels n=0 + `can_revert` true is a lie
-while Revert is painted. Not sequencing. Not `.craft`. Stumble →
+while Revert is painted. RealAntennas kRPC is live — do not cheat a
+link. Commit the patch. Not sequencing. Not `.craft`. Stumble →
 ticket. Os is Founder.
 
 Logs: `docs/crew/log/wernher.md`.

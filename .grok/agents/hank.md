@@ -118,6 +118,17 @@ If they skipped it, nag — do not idle the pad (close/`attach-run`
 harvest writes), do not shim Return keys. Do not spawn the Commander
 to file it. Then leftover clean + `protocol fly` as the kernel says.
 
+**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do
+**not** cheat a link (MaxTL, fake target/TxPower, ignore deaf).
+Discover use when a hop goes deaf. Hop still keys off
+`vessel.comms.can_communicate`. Close is persist → Tracking → KSC.
+Brief: `docs/program/krpc.md`.
+
+**Git (Os 2026-08-25):** after you change the checkout, `git add`
+those paths and `git commit` a sentence. Do not wait. Do not commit
+gitignored tape (`desk.md`, last-flight, jsonl). Desks do the same
+on their own writes.
+
 Leftover (lock free, when `ops next` says leftover):
 
 ```

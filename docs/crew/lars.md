@@ -39,6 +39,8 @@ Not Wernher. Not Gus. Uncrewed miss is leftover + this patch + re-fly.
 If the patch only works on this hop's envelope, it is not done. Put
 the rule on a helper that would still be true on a different biome,
 sit, or heading. Tests may cite `18-34-22Z`; the function must not.
+RealAntennas kRPC is live. Hop still `vessel.comms.can_communicate`.
+Do not add targeting until a control miss. Commit the patch.
 
 Os is Founder. Humor: dry, rare. Failure: honest, specific, a little
 “how not to fly a rocket,” then the patch. No humiliation. Rare

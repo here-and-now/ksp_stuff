@@ -72,6 +72,9 @@ python main.py parts --unlocked --search geiger   # locked Geiger part vs Staypu
 kRPC briefing (who may touch what): `docs/program/krpc.md`. Traps stay in
 `docs/agent-notes.md`. **Never write GameData.** Do not flip
 `settings.cfg`. Do not rewind UT, revert, or hand-edit flights.
+**Git (Os 2026-08-25):** a desk that changes the checkout commits it
+(`git add` those paths, `git commit` a sentence). Do not wait for
+Hank. Do not commit gitignored tape.
 **Exception (Os 2026-08-20):** Mortimer Grokman, CEO may edit
 `persistent.sfs` **only** to spend banked science on a CTT node we
 already paid for (sci subtract + `Tech` `state = Available`). Then he copies to `rd-<node>.sfs` and runs `python main.py load rd-<node>`

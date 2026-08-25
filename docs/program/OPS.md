@@ -32,6 +32,15 @@ Parked org novels are not dispatch.
 **Os talks to Hank** (this session, default). Os talks to Mortimer
 when the *objective* or the *house constitution* changes.
 
+**Git (Os 2026-08-25):** every desk commits when they change the
+checkout. `git add` those paths, `git commit` a sentence. Do not wait
+for Hank. Do not commit gitignored tape. Push is Hank/Os unless they
+said otherwise.
+
+**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
+cheat a link. Discover use when a hop goes deaf. Brief:
+`docs/program/krpc.md` (Gene / Lars / Gus / Katherine / Hank).
+
 **The Grok parent process *is* Hank** for operations. Not an unnamed
 switchboard. `subagent_type: hank` exists for isolated ops writes;
 Os addressing “Hank” is this process. Children still do not spawn.

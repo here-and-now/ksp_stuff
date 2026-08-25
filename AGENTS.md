@@ -10,7 +10,9 @@ If `docs/last-flight.md` exists, read that before flying. Sit object:
 tickets (`type=ops` / `rsi`). Nested gym queues and niche notebooks
 are parked — not work. Stumble → `tickets open --fingerprint <stem>`.
 RSI ×3 → Mortimer (software → Wernher). Do not tell another desk in
-Return prose.
+Return prose. **Git (Os 2026-08-25):** a desk that changes the
+checkout commits it. Do not wait for Hank. Do not commit gitignored
+tape.
 
 This repo is an **agent-driven kRPC project**. Do not open the PyQt UI.
 Do not browse the web (`web_search`, `web_fetch`, `open_page`). kRPC facts

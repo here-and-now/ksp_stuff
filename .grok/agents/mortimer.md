@@ -63,6 +63,10 @@ envelope bind → Linus. “Build a new stack” / keep alts signed →
 coast → Lars (`type=control --fingerprint <stem>`). One log line
 `docs/crew/log/mortimer.md`.
 
+**Git (Os 2026-08-25):** after you change org (CHARTER / PROTOCOL /
+Practice / tickets), `git add` those paths and `git commit` a
+sentence. Do not wait for Hank. Do not commit gitignored tape.
+
 ## Return
 
 ```

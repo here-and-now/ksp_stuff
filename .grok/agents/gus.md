@@ -76,6 +76,15 @@ or pick a `.craft`. Update `docs/program/vab.md` **after** the stamp.
 One log line `docs/crew/log/gus.md`. Do not write GameData. Do not idle
 the pad.
 
+**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Omni
+(`SurfAntenna`) is the current hang. Do **not** cheat a link. Do not
+sign a dish until a ticket says the omni is the miss. Disk
+`python main.py comms`. Brief: `docs/program/krpc.md`.
+
+**Git (Os 2026-08-25):** after you change a `.craft` / `vab.md`,
+`git add` those paths and `git commit` a sentence. Do not wait for
+Hank. Do not commit gitignored tape.
+
 ## Return
 
 ```

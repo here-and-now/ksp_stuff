@@ -50,6 +50,15 @@ path. Do not re-run `world` / `tech` / `parts`.
    so `ops next` does not rehire you every pad.
 5. One line in `docs/crew/log/katherine.md`.
 
+**RealAntennas (Os 2026-08-25):** radio is live physics. `link` /
+`snr` on tape may go false. You are **not** a kRPC writer. Do not
+invent a targeting loop. Model a window from tape when we ask.
+Brief: `docs/program/krpc.md`.
+
+**Git (Os 2026-08-25):** after you change the checkout, `git add`
+those paths and `git commit` a sentence. Do not wait for Hank. Do
+not commit gitignored tape.
+
 ## Do not
 
 - Patch `.py` or `.craft`. Open a ticket for Lars/Gus/Wernher.

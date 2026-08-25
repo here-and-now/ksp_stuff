@@ -71,6 +71,14 @@ fingerprint.
 Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
 Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.
 
+**Git (Os 2026-08-25):** after you change the checkout, `git add` those
+paths and `git commit` a sentence. Do not wait for Hank. Do not commit
+gitignored tape (`desk.md`, last-flight, jsonl).
+
+**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
+cheat a link. Discover targeting / rate when a hop goes deaf. Brief:
+`docs/program/krpc.md`. Gene / Lars / Gus / Katherine / Hank.
+
 One hire may open **many** tickets (Linus: leftover subjects; Gus:
 alts; Lars: control fingerprints; Wernher: systems). Skim (envelope).
 `--deep` is PNG/craft/tape CLI, not jsonl rows. Never xhigh. **low**

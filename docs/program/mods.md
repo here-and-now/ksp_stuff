@@ -35,7 +35,7 @@ On the shelf when the node is unlocked. Not RO.
 | ProceduralParts | v2.8.0.0 | Tanks, SRB, decoupler, heatshield — Gus prefers these when the node exists. |
 | ProceduralFairings | v6.7.0.0 | Fairings. |
 | NearFuture Construction / Electrical / Exploration / Propulsion / Solar / Spacecraft | 1.3–2.0 | Later catalog. Do not bind as Start parts. |
-| RealAntennas | v2.12.0.0 | No kRPC service. Early probes stay omni. |
+| RealAntennas | v2.12.0.0 | kRPC service live (`conn.real_antennas`, Os 2026-08-25). Early probes stay omni. Do not cheat a link. |
 | KerbalJointReinforcementContinued | v3.8.7.0 | Joints. |
 | DynamicBatteryStorage | — | EC helper. |
 | SystemHeat | — | Present; not the hop physics we brief. |

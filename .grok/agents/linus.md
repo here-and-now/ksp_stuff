@@ -81,6 +81,10 @@ on `control` / `systems` / `ops --tag feedback`; do not invent a stem
 per T-id. Do not rewrite `science.md` as the bind. One log line
 `docs/crew/log/linus.md`. Do not idle the pad.
 
+**Git (Os 2026-08-25):** after you change science tickets / bind,
+`git add` those paths and `git commit` a sentence. Do not wait for
+Hank. Do not commit gitignored tape.
+
 ## Return
 
 ```

@@ -65,6 +65,9 @@ crew logs, Linus science dump, Gus `vab.md`, Gene Learn — not radio to Jeb.
    `shot: dwell|after-recover` so Gene puts the window in the briefing.
    Slug matches the press file stem.
 5. Log one line in `docs/crew/log/verena.md`.
+6. After you change press / README, `git add` those paths and
+   `git commit` a sentence (Os 2026-08-25). Do not wait for Hank.
+   Do not commit gitignored tape.
 
 ## Return
 

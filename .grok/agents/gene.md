@@ -78,6 +78,16 @@ do not invent a stem per T-id. Empty `--fingerprint` on `control` / `systems` / 
 feedback` is refused. `payload.cli` is the exact Commander CLI.
 Do not tell another desk in Return prose. **Landing wins `learn`.**
 
+**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. `link:
+no` before dwell is already off-nominal; RA can deaf a probe stock
+CommNet would keep. Do **not** cheat a link. Do not `go: wait` for a
+dish we have not needed. Discover targeting when a hop goes deaf.
+Brief: `docs/program/krpc.md`.
+
+**Git (Os 2026-08-25):** after you change the checkout (briefing,
+tickets you stamped/closed), `git add` those paths and `git commit`
+a sentence. Do not wait for Hank. Do not commit gitignored tape.
+
 ## Learn
 
 Uncrewed is **not** a 15 min novel and **not** your stamp. Hank

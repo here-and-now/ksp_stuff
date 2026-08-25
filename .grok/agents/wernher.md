@@ -86,6 +86,13 @@ the pad.
 - Vehicle burns as numbers, `.craft`, `python main.py mun`.
 - PyQt UI, scratch vessel scripts. Never revert unless Os said so
   **this sit**.
+- Cheat a RealAntennas link (MaxTL, fake `SetTarget*` / TxPower,
+  ignore deaf). Service is live; discover use when a hop goes deaf.
+  Brief: `docs/program/krpc.md`.
+
+**Git (Os 2026-08-25):** after you patch `.py` / kRPC notes, `git add`
+those paths and `git commit` a sentence. Do not wait for Hank. Do
+not commit gitignored tape.
 
 ## Return
 

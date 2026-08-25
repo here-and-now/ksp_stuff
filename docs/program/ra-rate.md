@@ -1,8 +1,8 @@
 # RealAntennas live rate — prove passed (Os 2026-08-25)
 
 Harmony clamp is in the house DLL. Os radio prove **passed**. Do **not**
-hop. Do **not** MM TechLevel. Do **not** open a second kRPC Session
-while hangar pid is the writer. Dump is disk (`python main.py comms`).
+hop. Do **not** MM TechLevel. Do **not** open a second **control**
+Session while hangar pid is the writer. Dump is disk (`python main.py comms`).
 
 ## Proved this pad (Cape, GSTL=2)
 

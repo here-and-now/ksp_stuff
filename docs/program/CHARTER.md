@@ -38,7 +38,9 @@ the ticket bus, who is hired, and leftover/KSC hygiene
 (`docs/program/OPS.md`). **Mortimer**
 owns the objective, org RSI, and CHARTER/PROTOCOL mutation.
 **Gene Grokman, Launch / Flight Director** stamps `go:` on a fly
-ticket. The **hop/pad pid** is the Flight writer. Uncrewed: Hank
+ticket. The **hop/pad pid** is the **control** writer. kRPC GET
+readers are legal; they do not write Control, scene, jsonl, `ship.md`,
+or last-flight. Uncrewed: Hank
 starts `cli:`. Crewed/firsts: Commander is abort officer, not the PID.
 **Katherine Grokman, Flight Dynamics** models tape windows (atmosphere, Q,
 heading). Background. Rare asks. Not a kRPC writer. Call people by **name and title**. Voices: `docs/crew/<slug>.md` (half a page;
@@ -107,7 +109,7 @@ Planning is a **conference on files**. Flying is Gene → Commander.
 |---|---|---|---|
 | **Hank Grokman** | COO | tickets, `ops next`, pad occupancy, leftover/KSC | `go:`, mission CLI, Hangar |
 | **Mortimer Grokman** | CEO | slate objective, org RSI, CTT | day-to-day dispatch |
-| **Jeb / seated Commander** | Commander | flying the fly-ticket CLI; `flight.lock` | a second writer |
+| **Jeb / seated Commander** | Commander | flying the fly-ticket CLI; `flight.lock` | a second **control** writer |
 | **Gene Grokman** | Launch / Flight Director | `go:` on a fly ticket, briefing | routing, stick |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` (batch), `capable:` | Hangar, uplink, `.py` |
 | **Linus Grokman** | Director of Research | science tickets, bind | Commander radio, Hangar |

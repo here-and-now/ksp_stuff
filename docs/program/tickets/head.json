@@ -71,7 +71,7 @@
     "hop-20hz-crash-ui-close": 1,
     "hop-apo-recut-descent": 1,
     "hop-coast-phys-early": 1,
-    "hop-coast-phys-warp": 5,
+    "hop-coast-phys-warp": 7,
     "hop-down-met-2": 1,
     "hop-ec0-recoverable-no": 1,
     "hop-hub-generalize": 1,
@@ -190,9 +190,9 @@
     "tape-landing-kind-missing": 1,
     "tape-skim-thin-9col": 1,
     "td12-two-stage-later": 1,
-    "telem-eyes-library": 2,
+    "telem-eyes-library": 4,
     "telem-hz": 1,
-    "thin-tape": 1,
+    "thin-tape": 2,
     "thin-tape-0721": 1,
     "thin-tape-hz": 1,
     "tropics-flyinghigh-telemetry": 1,
@@ -16669,6 +16669,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-25T09:27:10Z",
+            "claim": "tape last flying 6km q=17510 rec=no; last-flight splash rec=yes is after that snap; bank 2.29 is sci_rem=0 entire not missing Toggle; factory already calls apply_sit_warp every pulse",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16682,7 +16690,7 @@
       "tags": [],
       "title": "09-01Z T-440 live: still recovered splash without Toggle TELEMETRY/thermo/PresMat",
       "type": "control",
-      "updated": "2026-08-25T09:23:27Z"
+      "updated": "2026-08-25T09:27:10Z"
     },
     "T-447": {
       "assignee": "",
@@ -16762,7 +16770,18 @@
       "evidence": [],
       "fingerprint": "telem-eyes-library",
       "id": "T-449",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T09:26:47Z",
+            "claim": "Tape envelope: last snap sit/alt/q/rec vs recover sit (sit_mismatch); landing_synthesized (09-01Z last flying 6 km q=17510 rec=no, last-flight splash rec=yes is not the vessel); sci_rem vs bank sci_delta/sci_paid rem=0 is +0 leftover; thick_air_skip 4x 55 km q=937 to 6 km q=17510. telem --window comma names. Query Tape.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "mortimer",
       "rsi_loop": "none",
@@ -16773,8 +16792,217 @@
       "tags": [],
       "title": "jsonl helpers: last-state vs recover sit, sci_rem vs bank, 4x q skip (09-01Z)",
       "type": "systems",
-      "updated": "2026-08-25T09:17:35Z"
+      "updated": "2026-08-25T09:26:47Z"
+    },
+    "T-450": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "close_why": "4x cannot skip the 18 km lid: thick_air_cross_sit 1x when 4x x 12 s slack x |vz| would land at or below 18 km before the next snap.",
+      "created": "2026-08-25T09:28:31Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "hop-coast-phys-warp",
+      "id": "T-450",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T09:36:07Z",
+            "claim": "thick_air_cross_sit 1x when 4x this pulse would skip the 18 km lid (09-01Z 55 km q=937 to 6 km q=17510, 7.7 s wall). Quiet 200 km vz=-40 still 4x. Not hop_factory. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "hank",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [],
+      "title": "09-01Z 4x 55km q=937 to 6km q=17510: thick-air 1x did not hold",
+      "type": "systems",
+      "updated": "2026-08-25T09:36:07Z"
+    },
+    "T-451": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "close_why": "Practice last-write hop-coast-phys-warp \u00d76: 09-01Z 4\u00d7 thick-air skip. T-450 owns the block.",
+      "created": "2026-08-25T09:28:31Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "hop-coast-phys-warp",
+      "id": "T-451",
+      "payload": {
+        "count": 6,
+        "findings": [
+          {
+            "at": "2026-08-25T09:37:12Z",
+            "claim": "Practice last-write hop-coast-phys-warp \u00d76: 09-01Z 4\u00d7 55km q=937 \u2192 6km q=17510 (MET +43s in 7.7s wall). Thick-air 1\u00d7 did not hold. T-450 owns physics_warp. Pad still flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [],
+      "title": "RSI hop-coast-phys-warp \u00d76",
+      "type": "rsi",
+      "updated": "2026-08-25T09:37:12Z"
+    },
+    "T-452": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "close_why": "Practice/krpc.md last-write: one control writer; GET readers legal. T-453 cheap pulse. T-454 reader Session + recover row. T-449 query helpers.",
+      "created": "2026-08-25T09:29:11Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-452",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T09:37:11Z",
+            "claim": "Law: one control writer (flight.lock); kRPC GET readers legal \u2014 no Control/scene/jsonl/ship.md/last-flight. One-writer protected throttle/AP and tape files; it banned readers and starved the pulse (09-01Z 27 states/251s wall, last-flight splash rec=yes vs jsonl flying 6km rec=no q=17510). Cadence is the writer's duty. Not a dedicated telem pid this sit. Code: T-453 thin-tape telem.py; T-454 telem-eyes-library session.py+flightlog.py. T-449 still owns query helpers. Until reader mode lands, status still refused (it writes jsonl).",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "os",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "done",
+      "tags": [],
+      "title": "Challenge one-writer telem: readers, jsonl cadence, house law rewrite",
+      "type": "org",
+      "updated": "2026-08-25T09:37:12Z"
+    },
+    "T-453": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-25T09:36:37Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "thin-tape",
+      "id": "T-453",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T09:37:12Z",
+            "claim": "telem.py: requested 5-20 Hz is a lie when the pulse is expensive. 09-01Z 27 states / 251s wall; last gap 7.7s wall MET+43s 55km q=937 \u2192 6km q=17510. jsonl hz must be actual dt. Slow sci/broken walks off the fast path. Do not starve ship.md with the same pulse.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Mortimer Grokman, CEO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "tape",
+        "telem"
+      ],
+      "title": "telem.py cheap pulse: jsonl hz is actual dt (09-01Z 27 states/251s)",
+      "type": "systems",
+      "updated": "2026-08-25T09:37:12Z"
+    },
+    "T-454": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-25T09:36:38Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "telem-eyes-library",
+      "id": "T-454",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T09:37:12Z",
+            "claim": "session.py: connect name=kspstuff-read GET-only; stream.remove on close; no Control/scene/jsonl/ship.md/last-flight/active_vessel. status/desk leftover_ships while lock live use it. flightlog.py: kind=recover sit/rec at recover() so 09-01Z splash rec=yes is tape not last-flight. Keep CLI refuse on writer Telem.read until this lands.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Mortimer Grokman, CEO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "telem",
+        "krpc"
+      ],
+      "title": "session.py read-only Session; flightlog.py kind=recover sit at recover()",
+      "type": "systems",
+      "updated": "2026-08-25T09:37:12Z"
+    },
+    "T-455": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-25T09:36:38Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "telem-eyes-library",
+      "id": "T-455",
+      "payload": {
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-25T09:37:35Z",
+            "claim": "House law already T-452: one control writer; GET readers legal. This RSI is the software trip \u2014 land T-449 query helpers and T-454 session.py reader + flightlog recover row. Do not rewrite PROTOCOL.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "software",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI telem-eyes-library \u00d73",
+      "type": "rsi",
+      "updated": "2026-08-25T09:37:35Z"
     }
   },
-  "updated": "2026-08-25T09:23:28Z"
+  "updated": "2026-08-25T09:37:35Z"
 }

@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-25 — T-452: one control writer; kRPC GET readers legal. One-writer protected Control and tape files, not GET. 09-01Z 27/251s; last-flight splash rec=yes vs jsonl flying 6 km rec=no. T-453 thin-tape telem.py; T-454 session.py+flightlog.py. T-451: 09-01Z 4× 55 km q=937 → 6 km q=17510; T-450 owns it. Pad still flies.
 - 2026-08-25 — Practice last-write T-448/T-447: last-flight 40 lines is not the vessel; do not Learn from it. 09-01Z splash rec=yes vs jsonl flying 6 km rec=no q=17510; landing synthesized; sci_rem=0; splash TELEMETRY capped. Helpers T-449. Hold-ground-card ×11 still Toggle-at-sit (T-446). Idle pad is not a religion of last-cli. Pad still flies.
 - 2026-08-25 — Practice last-write T-444: never-transmit / recover-HD-only is outdated. File leftover credits while recording; sample leftover is the can. Cape 64 bps is honest radio — TX is a tool, not a cheat, not the only path. Recover still banks HD. Goo ~429 MB does not TX at TL2. Splash leftover unpaid is Toggle-at-sit. Linus T-443 / Wernher T-445. Next CTT generalRocketry 20. Pad still flies.
 - 2026-08-25 — Practice last-write T-439/T-441: High dwell is not a burn; chute_arm_sit 1× is Arm not apo (T-442). Airborne cannot-pay then recover splash without Toggle is waste (T-440). Pad still flies.

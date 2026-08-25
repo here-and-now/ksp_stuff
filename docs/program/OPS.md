@@ -19,12 +19,12 @@ Parked org novels are not dispatch.
 | **Os** | Founder | Goal ratification, talk-by-name | Click crash UI, fly |
 | **Mortimer Grokman** | CEO / Administrator | Slate *objective*, org RSI, CTT spend, CHARTER/PROTOCOL mutation | Day-to-day dispatch, fly, Hangar, `.py` |
 | **Hank Grokman** | COO | Ticket bus, who is hired, pad occupancy, leftover/KSC, **after-flight tape**, **this-hop clock** (`uplink phys-warp 1–4` / `no_warp` from `ship.md`; never rails / WarpTo) | `go:` (Gene), mission CLI, Hangar, `.craft` (Gus), science bind (Linus), control.*, `.py` on a fly turn, hiring Commander to debrief |
-| **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, ticket routing, **stick** (Commander writes) |
+| **Gene Grokman** | Launch / Flight Director | `go:` stamp on a **fly ticket**, briefing, leftover vs Hangar honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, ticket routing, **stick** (hop pid writes) |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` proposals (many per hire), `capable:` on vehicle tickets. Hand-typed PART blocks are last resort — file `vab-helper` at Wernher | Hangar, fly, `.py` |
 | **Linus Grokman** | Director of Research | Science tickets (many open, kept live), bind when vehicle capable | Commander radio, Hangar, `.craft` |
 | **Wernher Grokman** | Chief Systems Engineer | Software/world architecture: kRPC, desk, hangar scenes, telem schema, ops kernel, protocol; **control blocks** (sit, warp, timeout, leftover abort, chute sits) | this-hop pulse, `.craft` |
 | **Lars Grokman** | Vehicle Systems Engineer | How the vehicle is *flown this sit*: **one living rocket's pulse** composed from Wernher blocks (`hop_factory.py` or a t7-only file), pad/splash, this-hop splash HD | Leftover recover-then-Hangar (Hank/Wernher), warp *law*, stamp-named helpers, immortal `hop.py` factory, org, Hangar from Gene |
-| **Seated Commander** | Abort officer | Starts `cli:` when `commander: jebediah`; `note` / hold / abort / one stuck PNG. Hop **pid** is the writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review; uncrewed start (parent does) |
+| **Seated Commander** | Abort officer | Starts `cli:` when `commander: jebediah`; `note` / hold / abort / one stuck PNG. Hop **pid** is the control writer | leftover recover / Close crash UI; `.py`, `.craft`; after-flight review; uncrewed start (parent does) |
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
 | **Katherine Grokman** | Flight Dynamics | Tape windows, atmosphere / FAR / attitude; rare asks | kRPC, Hangar, `hop.py`, jsonl novels, every-turn pad occupancy |
@@ -215,7 +215,8 @@ hire:
 
 ```
 if lock live:
-    python main.py ship  (disk envelope). never status Session. never the jsonl.
+    python main.py ship  (disk envelope). never eat the jsonl.
+    status GET only after Wernher reader Session (today it writes jsonl).
     if off-nominal (wreck flags, lithobrake, empty tanks+flying,
                     heading dead, EC=0 before dwell, crash UI):
         uplink abort|hold if wreck-class
@@ -248,7 +249,7 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
 # hire Commander to explain. Then leftover (above) or fly_ready.
 
 if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in catalog:
-    hop pid is the writer (flight.lock)
+    hop pid is the control writer (flight.lock)
     if campaign uncrewed: parent starts T.cli (commander: none)
     else: hire abort officer with T.cli (commander: jebediah)
     if other desks have ready tickets on other files:
@@ -279,7 +280,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 
 | Condition | Hire | Tickets in packet |
 |---|---|---|
-| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse; Wernher kRPC/control-blocks — **no stick**, no `status` |
+| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse; Wernher kRPC/control-blocks — **no stick**. Eyes: `ship.md`; `status` GET after Wernher reader |
 | Lock live, nominal | ground desks (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time |
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
@@ -365,7 +366,7 @@ tickets/head.json ← source of truth
 jsonl envelope   ← evidence on fly/control tickets (heading, horiz, pitch, aoa, biome); Hank attach-run after CLI
 last-flight.md   ← abort/handoff only (I-020); can lie rec=yes while jsonl still flying (09-01Z); not a Learn
 lessons.md       ← VSE/CSE dated physics/API
-ship.md          ← radio, Walt
+ship.md          ← radio from the control writer, Walt
 ```
 
 **One sit object:** the fly ticket + desk snapshot. Seated `plan.md`
@@ -400,9 +401,10 @@ Hygiene reviews are not a Gene hire. After-flight attach-run is
 
 ## 6. Flight walls
 
-One kRPC writer. Depth 1. Never revert / quickload / rewind UT.
-Os disabled reverting flights. Lock live: Hank reads `ship.md`. No
-`status`. Off-nominal → hire.
+One **control** writer. kRPC GET readers legal (no Control / scene /
+jsonl / `ship.md` / last-flight). Depth 1. Never revert / quickload /
+rewind UT. Os disabled reverting flights. Lock live: Hank reads
+`ship.md`. `status` only after Wernher reader mode. Off-nominal → hire.
 Os does not click crash UI. Commander does not recover leftover or
 Close the crash dialog — hop abort `ksc leftover` is a handoff to
 Hank. Commander does not review after CLI exit. Hank leftover (lock

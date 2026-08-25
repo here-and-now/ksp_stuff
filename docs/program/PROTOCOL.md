@@ -22,7 +22,7 @@ exit **ends** the hop — Commander does not review.
 | Os | named desk | talk by name | — | voice only — **no spawn** |
 | Hank | desks | `ops next` | ticket ids | ticket patches |
 | Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
-| Hank | hop pid | `fly: yes` | exact `cli` (parent starts it when `commander: none`) | last-flight; lock on that pid |
+| Hank | hop pid | `fly: yes` | exact `cli` (parent starts it when `commander: none`) | last-flight; lock on that **control** pid |
 | Hank | Commander | `commander: jebediah` (crewed / firsts / `campaign: none`) | fly ticket + exact `cli`; abort officer | `result:` `exit:` `handoff:` |
 | Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load | pad clean |
 | Hank | tape | Commander CLI returned | `desk`, leftover, `attach-run`, `landing` | `ops next` — no Jeb debrief |
@@ -40,7 +40,7 @@ exit **ends** the hop — Commander does not review.
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
 | Gene (between exits) or Commander (**during hop**) | KSP window | stuck | `screenshot --name stuck-<stem>` then read PNG | scene — not a postmortem |
 | Commander | radio | unusual **during hop** | `note` / hold / abort | in-flight — not a review |
-| Hank | `python main.py ship` | lock live, from time to time | envelope (no `status`, no jsonl) | uplink or hire if off-nominal |
+| Hank | `python main.py ship` | lock live, from time to time | disk envelope (no jsonl) | uplink or hire if off-nominal. Reader `status` after Wernher `session.py` — not today |
 | Hank | Gene | off-nominal, plan/`go` must change | `ship.md` + fly ticket | uplink / `go: wait` / tickets — **not stick** |
 
 Linus ↛ Commander. Gus ↛ Hangar. Commander ↛ `.py`/`.craft`. Commander ↛ leftover recover / Close crash UI. Commander ↛ after-flight review / jsonl / attach-run / landing. Gene ↛ stick while lock live. Parent ↛ patch `.py` in the fly turn.
@@ -132,7 +132,7 @@ do not have. Parent copies that line into Lars’s packet so he is not
 sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`;
-one kRPC writer; Lars XOR Wernher on a **miss**. Open `type=systems` →
+one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 **control blocks**: sit, warp, timeout, leftover abort, chute sits)
 without waiting for a miss. `physics_warp.py` is Wernher. Lars
@@ -188,13 +188,15 @@ shrug. Every desk that stumbles on it opens `--type systems` (or
 `--type ops --tag feedback`). Cite it on capable / bind / `go:` the
 way `f013` is cited. Do **not** idle the pad for it — Wernher patches
 during lock live. Query **Tape**, never raw jsonl. Last-flight 40
-lines is abort/exit, not the vessel (Os 2026-08-25 Mortie / T-448).
-**Do not reason a Learn from it.** 09-01Z last-flight splash rec=yes
-vs jsonl last snap flying 6 km 214 m/s rec=no q=17510 (landing
-synthesized; `sci_rem=0`). Last-flight rec=yes is not rec. Desks
-that touch tape file `tickets feedback --claim` and missing helpers
-as `type=systems --fingerprint telem-eyes-library` (T-449 owns
-helpers).
+lines is abort/exit, not the vessel (Os 2026-08-25 Mortie / T-448 /
+T-452). **Do not reason a Learn from it.** 09-01Z last-flight splash
+rec=yes vs jsonl last snap flying 6 km 214 m/s rec=no q=17510
+(landing synthesized; `sci_rem=0`; 27 states / 251 s). Last-flight
+rec=yes is not rec. One **control** writer; kRPC GET readers are
+legal. Cadence is the writer’s duty. Desks that touch tape file
+`tickets feedback --claim` and missing helpers as `type=systems
+--fingerprint telem-eyes-library` (T-449 owns query helpers). Thin
+pulse → `thin-tape`.
 
 **Science side-by-side:** Linus binds every honest instrument that can
 share a hop (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape).
@@ -215,22 +217,24 @@ flies**. The Commander watches telem/gates. Unusual →
 `python main.py note <Name> "…"` and/or hold/abort per emergencies
 (in-flight radio, not a review after recover). **Hank** (parent)
 periodically runs **`python main.py ship`** (disk envelope from
-`ship.md`). No `status` Session. Do not `read_file` the growing jsonl. Off-nominal (wreck
+`ship.md`). A lock-live reader Session is legal after Wernher lands
+it — until then no `status` (it appends jsonl). Do not `read_file`
+the growing jsonl. Off-nominal (wreck
 flags, lithobrake, empty tanks + still flying, heading never moving,
 EC=0 before dwell, crash UI): **do something** — `uplink abort|hold`
 if wreck-class; spawn **Gene** if the plan/`go` must change
 mid-sortie; spawn **Lars** if the living pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks (`physics_warp.py`). Issue-clear → that desk, not a Gene novel.
 **Nominal** hop: no Gene, no 15 s narration, no heartbeat swallow.
 “Do not spawn Gene during the phase” is **repealed for off-nominal
-only**. Depth 1. Gene does **not** take the stick (Commander is the
-writer); Gene may uplink / stamp `go: wait` / open tickets. After
+only**. Depth 1. Gene does **not** take the stick (hop pid is the
+control writer); Gene may uplink / stamp `go: wait` / open tickets. After
 CLI exit, tape is still Hank (T-101).
 
 **Uncrewed campaign (I-016, amended):** Gene stamps
 `payload.campaign=uncrewed` on the first `go: yes` of a cheap probe
 sit. He renders seated `plan.md`. Parent, lock free, leftover clean:
 `python main.py desk` then `protocol fly`. `fly: yes` /
-`commander: none` → parent starts `cli:` (hop pid is the writer).
+`commander: none` → parent starts `cli:` (hop pid is the **control** writer).
 **Do not hire Gene between hops** on clean 0 **or** on a miss of a
 hang that is still capable. Do not hire Jeb. Pad does not idle for
 Learn or for “consideration.” Uncrewed `payload.learn` is **kernel**:
@@ -286,7 +290,7 @@ Uncrewed Learn is already on the ticket from `attach-run`.
 | Linus opportunities + Gus `capable` (not bind) | Linus bind to named craft |
 | Wernher systems/blocks + Lars pulse on **other files** | never both on the same `.py` |
 | Parent **re-desk** after Gus `capable: yes` (I-014) | Linus bind / Gene `go` on stale capable/f013 |
-| Disk `python main.py world` anytime | never a second writer |
+| Disk `python main.py world` anytime | never a second **control** writer |
 | Disk `python main.py science-scan` / `comms` (MM last write) | never Kerbalism tweak cfg as gospel |
 | Verena writing `docs/press/` + README from disk | Gene `shot:` before a grab |
 | Parent `python main.py screenshot --name <slug>` | Verena `shot: now` (or Gene `shot:` at dwell / after-recover). No kRPC. |
@@ -295,11 +299,11 @@ Uncrewed Learn is already on the ticket from `attach-run`.
 | Ground `ops --tag ask` tickets | addressee’s next spawn (lock free) |
 | Hank `attach-run` uncrewed `learn` | every hop-exit (kernel overwrite) |
 | Gene `payload.learn` stamp | campaign-stop / crewed / firsts; never mid-phase; never uncrewed |
-| Hank `python main.py ship` (lock live) | never `status` Session; never the jsonl |
+| Hank `python main.py ship` (lock live) | never eat the jsonl; `status` only as a GET reader after Wernher `session.py` |
 
 Not parallel: two Commanders; Lars on a clean 0. Gene **+** flight is
 legal **only** off-nominal (Gene no stick). Uncrewed campaign hops
-are **serial** re-flies after lock free, not two writers. Nominal
+are **serial** re-flies after lock free, not two control writers. Nominal
 dwell: no children; Walt silent unless unexpected. Off-nominal
 dwell: hire. No retro while lock live.
 

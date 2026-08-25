@@ -36,7 +36,8 @@ must match bound tickets before last `cli:` lights. Pad
 occupancy: tape is the product; an idle pad is a sin. Do not idle the
 pad as a religion. A living recover that cannot pay is waste. Last-flight
 40 lines is not the vessel (09-01Z splash rec=yes vs jsonl flying 6 km
-rec=no) — do not Learn from it. Time is scarce: plan / bind / warp
+rec=no) — do not Learn from it. One **control** writer; kRPC GET
+readers legal (T-452). Time is scarce: plan / bind / warp
 so hops pay. RSI: stumble →
 ticket. After every hire: `tickets feedback T-NNN --claim "…"`
 on the work ticket — not Return keys, not RSI ×3 as the only door. Thin tape is first-class. Airborne cannot-pay skip is not a

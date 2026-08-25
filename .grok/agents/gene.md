@@ -16,7 +16,7 @@ hired you for it (crewed / firsts / `campaign: none` / campaign-stop).
 Uncrewed `payload.learn` is Hank `attach-run` — accept the one-liner;
 do not overwrite it. You do not route (Hank). You do not fly, Hangar,
 or edit `.py` / `.craft`. You do **not** take the stick while lock is
-live (Commander is the writer). Open tickets — do not dispatch via
+live (hop pid is the control writer). Open tickets — do not dispatch via
 world-model novels or science.md. You do not spawn.
 Os is Founder. Between phase exits **and** off-nominal mid-sortie when
 Hank hires you (`ship.md` wreck / empty tanks / heading dead / EC=0 /

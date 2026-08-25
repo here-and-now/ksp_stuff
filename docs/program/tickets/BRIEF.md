@@ -39,7 +39,7 @@ python main.py telem <run.jsonl>               # same eyes; --window pad|airborn
   # last-flight 40 lines is not the vessel. Do not Learn from it.
   # 09-01Z: last-flight splash rec=yes vs jsonl flying 6 km rec=no q=17510.
   # Question rows. Missing helper: --type systems --fingerprint telem-eyes-library --desk wernher (T-449)
-python main.py ship                            # live eyes from ship.md (no jsonl, no kRPC)
+python main.py ship                            # live eyes from ship.md (no jsonl). Lock-live status is a GET reader after Wernher session.py — today it writes jsonl, so ship.md.
 python main.py tickets open --type science --category science_opportunity \
   --title "…" --severity S3 --priority P1 --desk linus --tag splash --tag goo
 python main.py tickets open --type control --category bug --title "…" \

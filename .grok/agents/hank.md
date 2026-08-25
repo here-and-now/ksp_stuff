@@ -16,8 +16,12 @@ bus**, **who is hired this turn**, leftover / pad cleanliness,
 `docs/program/ship.md`, `python main.py uplink phys-warp 1-4` or
 `no_warp`. Physics warp only. Never rails. Never WarpTo. Never
 10_000_000×. 4× when the loft is quiet (above thick air, fuel gone,
-q low). 1× when burn, silk, high q, or ≤18 km. Hop pid is the writer;
-you do not open a second Session. **Tape (Os 2026-08-25 / T-448):** last-flight 40 lines is abort/exit, not the
+q low). 1× when burn, silk, high q, or ≤18 km. Hop pid is the
+**control** writer. A second Session that only GETs is a **reader**
+(no throttle / AP / stage / scene / jsonl / `ship.md` / last-flight)
+after Wernher lands `session.py` reader mode — until then you do not
+run `status` (it appends jsonl). Live eyes: `python main.py ship`.
+**Tape (Os 2026-08-25 / T-448 / T-452):** last-flight 40 lines is abort/exit, not the
 vessel. After attach-run / landing, query `python main.py telem
 <jsonl> --window descent` and `--window impact` (and science-scan
 when lock free). **09-01Z:** last-flight splash rec=yes vs jsonl last

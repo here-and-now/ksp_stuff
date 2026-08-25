@@ -342,7 +342,9 @@ story this fly. Dead kRPC GUID is not leftover.
 - `agents_md: false`. Gene only when `ops next` names him. Open
   `type=systems` → Wernher **standing**. Lars miss only (control).
   Packet skim is desk + BRIEF + this ticket (no BOARD.md).
-- `load rd-<node>` never `load persistent`. One kRPC writer. No rewind.
+- `load rd-<node>` never `load persistent`. One **control** writer
+  (`flight.lock`). kRPC GET readers are legal; they do not write
+  Control / scene / jsonl / `ship.md` / last-flight. No rewind.
   Honest CTT spend only when the bank **pays**. No GameData. No UnlockTech.
 - **Git (Os 2026-08-25):** a desk that changes the checkout commits
   it (`git add` those paths, `git commit` a sentence). Do not wait
@@ -357,24 +359,31 @@ story this fly. Dead kRPC GUID is not leftover.
   `krpc.md`.
 - **Live watch:** Commander watches telem in-flight (`note` / hold /
   abort if unusual). Hank periodically reads `docs/program/ship.md`
-  (disk). No `status` Session. Do not eat the jsonl. Nominal: no Gene.
-- **Tape (Os 2026-08-25, Mortie / T-448):** last-flight 40 lines is
-  abort/exit, not the vessel. **Do not reason a Learn from it.**
-  Question jsonl / `telem --window` / science-scan whenever you bind,
-  patch, or learn. Update assumptions. Extend what we gather when a
-  row cannot answer (sit at recover vs last snap, `sci_rem` vs bank,
-  rec, q at 4×). **09-01Z:** last-flight said splash rec=yes; jsonl
-  last snap flying **6 km 214 m/s rec=no q=17510**; landing
-  synthesized; `sci_rem=0` whole flight; splash TELEMETRY capped.
-  Last-flight rec=yes is not rec. Desks that touch tape file
-  `tickets feedback --claim` and, if a helper is missing,
-  `type=systems --fingerprint telem-eyes-library` at Wernher
-  (T-449 owns helpers — do not invent a second stem). Query
+  (disk). A lock-live `status` / leftover GET is a **reader** after
+  Wernher lands `session.py` reader mode — until then, no `status`
+  (today it appends jsonl). Do not eat the jsonl. Nominal: no Gene.
+- **Tape (Os 2026-08-25, Mortie / T-448 / T-452):** last-flight 40
+  lines is abort/exit, not the vessel. **Do not reason a Learn from
+  it.** Question jsonl / `telem --window` / science-scan whenever you
+  bind, patch, or learn. Update assumptions. Extend what we gather
+  when a row cannot answer (sit at recover vs last snap, `sci_rem` vs
+  bank, rec, q at 4×). **09-01Z:** last-flight said splash rec=yes;
+  jsonl last snap flying **6 km 214 m/s rec=no q=17510**; landing
+  synthesized; `sci_rem=0` whole flight; splash TELEMETRY capped;
+  **27 states / 251 s wall** (requested 5–20 Hz is a lie); descent
+  55 km q=937 → 6 km q=17510 in one 7.7 s wall / MET +43 s sample.
+  Last-flight rec=yes is not rec. One-writer was protecting Control
+  and tape files; it was not a ban on GET. Cadence is the control
+  pid’s duty. Desks that touch tape file `tickets feedback --claim`
+  and, if a helper is missing, `type=systems --fingerprint
+  telem-eyes-library` at Wernher (T-449 owns query helpers; reader
+  Session is the same stem). Thin pulse → `thin-tape`. Query
   `tape.Tape` / `python main.py telem` — do not `read_file` jsonl.
   Off-nominal: uplink wreck-class; hire Gene if plan/`go` must change
   (no stick); Lars if the living pulse / control; Wernher if
-  kRPC/telem/control-blocks. After CLI exit, tape is still Hank (T-101). Os “how’s
-  it going?” on a nominal hop → `ship.md` as Walt. Wreck → Walt + hire.
+  kRPC/telem/control-blocks. After CLI exit, tape is still Hank
+  (T-101). Os “how’s it going?” on a nominal hop → `ship.md` as Walt.
+  Wreck → Walt + hire.
 - Seat **`~/Games/KSP-rss` / letsgrok**. `KSP-RO` is a parked tree.
 - Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
   out. Ad astra. `stability` **spent**. Next CTT is `generalRocketry`
@@ -415,17 +424,21 @@ story this fly. Dead kRPC GUID is not leftover.
   unbound catalog. Do not gather a subject this stack cannot reach.
   Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`; never
   rails / WarpTo). High dwell is not a burn; `chute_arm_sit` 1× is
-  Arm, not apo. Do not sit 1× waiting a chute. Do not replan
-  15 min. Conference-then-+0 hops are the anti-pattern. After sci
-  unchanged, rebind from the envelope or pick the next signed hang
-  that can bank.
+  Arm, not apo. Thick air ≤18 km stays 1× — **09-01Z proved it did
+  not hold** (4× 55 km q=937 → 6 km q=17510; T-450 owns the block;
+  stem `hop-coast-phys-warp` ×6). Do not sit 1× waiting a chute. Do
+  not replan 15 min. Conference-then-+0 hops are the anti-pattern.
+  After sci unchanged, rebind from the envelope or pick the next
+  signed hang that can bank.
 - **Thin tape / 9 columns** is a first-class problem. Stumble →
   `tickets open --type systems --fingerprint <stem>` (or
   `ops --tag feedback --fingerprint <stem>`). Cite it like `f013`.
   Query Tape, never raw jsonl. Do not shrug in a log.
   Wernher **logs more kRPC** (EC, q, recoverable, chute state, science
   rem/run, stage, broken, resources, g) into disk; all data is good
-  data if stored.
+  data if stored. Requested Hz in jsonl that is not actual dt is a
+  lie (`thin-tape`). Landing/recover sit is a jsonl row, not
+  last-flight synthesis (`telem-eyes-library`).
 - **RSI:** every hire leaves a sharper sit. Door is
   `tickets feedback T-NNN --claim "…"` on the **work ticket**.
   Not Return keys. Not a card. Not a child ticket per hire.
@@ -445,6 +458,16 @@ story this fly. Dead kRPC GUID is not leftover.
   campaign-stop only (crewed / `campaign: none` / firsts). Do not
   restore Batch Learn. Do not flip `needs_learn`. Do not hire Gene
   as a merge. Applied: `docs/program/learn-rsi.md`.
+- **2026-08-25 telem-readers (T-452):** One-writer protected Control
+  and tape files. It did not make GET illegal. kRPC 0.6 is
+  multi-client (`autoAcceptConnections`). Law: one **control** writer
+  (`flight.lock`); read-only Sessions GET and `stream.remove()`. They
+  do not write throttle / AP / stage / scene / jsonl / `ship.md` /
+  last-flight / `active_vessel`. Cadence is the writer’s duty (09-01Z
+  27/251 s). Not a dedicated telem pid this sit. Code: `thin-tape`
+  (`telem.py`), `telem-eyes-library` (`session.py`, `flightlog.py`).
+  T-449 still owns query flags. Until reader mode lands, Hank still
+  reads `ship.md` — `status` today appends jsonl.
 - **2026-08-24 leftover-prelaunch-ghost (T-389, ×5, stem count 6):**
   Crash-UI rec=0 MET frozen is **not** pad occupancy (Os will not
   click Recover). Living SUB_ORBITAL leftover: wait land on MET then

@@ -9,7 +9,7 @@ titles. Drop RAF/spy/radio-compact.
 | **1235Z** | **Retired** as speech. Earth UTC with seconds: `2026-08-20T12-35-42Z`. |
 | **mission** | Seated folder `docs/missions/jebediah/`. Not “dossier.” |
 | **handoff** | Shift-change. File is `last-flight.md`. |
-| **Commander** | Abort officer on crewed/firsts (`commander: jebediah`). The hop/pad **pid** is the Flight writer. Uncrewed: parent starts `cli:`. |
+| **Commander** | Abort officer on crewed/firsts (`commander: jebediah`). The hop/pad **pid** is the **control** writer. kRPC GET readers are other Sessions; they do not take the stick. Uncrewed: parent starts `cli:`. |
 | **uplink** | RF to a spacecraft. File is a stick note. Keep until it hurts. |
 | **slate** | Film. Mortimer’s board. Keep. |
 | **capable:** | Gus sign-off. Keep. |

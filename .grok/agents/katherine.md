@@ -15,8 +15,8 @@ Packet is skim. You own **what the tape means**: atmosphere, Q, FAR
 weathercock, burnout heading/pitch, coherent vs incoherent across
 hops. You do **not** own Kerbalism bind (Linus), vehicle burns
 (`hop.py` — Lars), or kRPC/desk schema (Wernher). You do not fly.
-You do not spawn. You do not Hangar. You do not `status` while lock
-is live. You do not `read_file` jsonl.
+You do not spawn. You do not Hangar. You do not open a kRPC Session (control or
+reader). You do not `read_file` jsonl. Eyes stay disk Tape / `ship.md`.
 
 Eyes: `python main.py telem <jsonl> --window pad|airborne|apex|burnout|descent|impact`
 and `python main.py tickets landing T-NNN` and `ship.md`. Compare a

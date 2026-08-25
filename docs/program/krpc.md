@@ -5,17 +5,63 @@ and client **0.6.0**. FAR / RealChute / RealHeat are **physics mods**,
 not kRPC services. Traps stay in [`docs/agent-notes.md`](../agent-notes.md).
 **Do not write GameData.**
 
-One **Flight writer**: the `hop`/`pad` pid (`flight.lock`). That process
-owns throttle, AP, stage. Not “Jeb the kerbal.” Uncrewed: parent starts
-`cli:`; Commander hire is `none`. Crewed/firsts: abort officer starts
-the same `cli:` and may uplink. Disk queries (`python main.py
-world|tech|parts`) never open a client. `status` and `python main.py
-science` (career line) **do** — they are a second Session. While
-`flight.lock` is live, do not run them.
+One **control writer**: the `hop`/`pad` pid (`flight.lock`). That
+process owns throttle, AP, SAS, stage, Hangar, load, recover,
+`game_scene`, `active_vessel`, the run jsonl, `ship.md`, last-flight.
+Not “Jeb the kerbal.” Uncrewed: parent starts `cli:`; Commander hire
+is `none`. Crewed/firsts: abort officer starts the same `cli:` and
+may uplink. Disk queries (`python main.py world|tech|parts|telem|ship`
+and `science-scan`) never open a client.
+
+kRPC **readers are legal**. A second process may `Session.connect`
+(`name=kspstuff-read`) and GET. It must not write Control, scene,
+jsonl, `ship.md`, or last-flight. It must `stream.remove()` on close.
+It must not switch `active_vessel`. One Session **per process** stays
+(old repo `krpc.connect()` in every class fought RemoteTech and leaked
+streams). A Session is not a writer. `status` / career `science` /
+desk leftover_ships while lock live are readers **after** Wernher
+lands reader mode (`session.py`) — today `status` calls `Telem.read()`
+which appends jsonl and publishes `ship.md`, so the CLI still refuses.
+Until that patch, Hank’s live eyes are `python main.py ship` (disk).
 
 There is **no Kerbalism kRPC service**. There is **no FAR kRPC** in
 this client. Science is `MODULE Experiment` via `part.modules`. Bundled
 `KRPC.RemoteTech.dll` is a stub. MechJeb is absent.
+
+---
+
+## Telemetry (T-452)
+
+**What one-writer protected:** two Control writers fight; stream leak
+from connect-in-every-class; jsonl / `ship.md` / last-flight clobber;
+scene writes (Hangar, load, recover). Those stay one pid.
+
+**What it cost:** the house treated *any* second Session as a writer.
+Hank mid-hop is blind except `ship.md`, and `ship.md` is the same
+starved pulse. Desk leftover_ships skip while lock live — occupancy
+vs wreck lags disk. `science-scan` was never kRPC (MM + save). Thin
+tape: `Telem.read()` lives in the control loop; expensive sci/broken
+walks make requested 5–20 Hz a lie. **09-01Z:** 27 states / 251 s
+wall; last snap flying **6 km 214 m/s rec=no q=17510**; last-flight
+splash rec=yes; landing synthesized; `sci_rem=0` whole flight; splash
+TELEMETRY capped. last-flight 40 lines is a postcard. `status` was
+banned because it wrote tape, not because GET is illegal.
+
+**Law:** one **control** writer. Optional **read-only** Sessions that
+do not write Control / scene / jsonl / `ship.md` / last-flight.
+Cadence is the writer’s duty: cheap streams on the fast path; jsonl
+`hz` is actual dt, not requested; `kind=recover` sit/rec at
+`recover()` so landing is tape. Not this sit: a dedicated telem pid
+(hop still needs streams for gates). Long horizon: Tracking lists
+many vessels — leftover_ships is a reader; recoverable is writer
+tape; science leftover vs jsonl `sci_rem` is desk vs tape. Readers
+never take the stick.
+
+**Code (Wernher):** `telem.py` cheap pulse (`thin-tape`);
+`session.py` + `flightlog.py` reader Session + recover row
+(`telem-eyes-library`). T-449 still owns query helpers
+(`sit_mismatch`, `landing_synthesized`, `sci_delta` / `sci_paid`,
+`thick_air_skip`).
 
 ---
 
@@ -142,7 +188,7 @@ Program facts, not knobs:
 | Auto-start | Disk `PluginData/settings.cfg`: **`autoStartServers = False`**. Zip ships empty cfg. Without Start, nothing binds. **Do not edit GameData to “fix” this.** |
 | Pause | `pauseServerWithGame = False`. Server can live while MET is frozen. |
 | Comms | Unmanned command needs a CommNet path (`vessel.comms.can_communicate`). kRPC Control does **not** honor that; the hop process does. **RealAntennas kRPC is live** (`conn.real_antennas`) — see below. Early probes stay omni. Cape **64 bps** is honest radio — TX is a tool, not a cheat, not the only path. Recover still banks the HD when `recover()` works. |
-| Writer | One `phase`/`pad` process. `flight.lock` is the wall. |
+| Writer | One control pid (`flight.lock`). Readers GET; they do not write Control/scene/jsonl/`ship.md`/last-flight. |
 | Honesty | No revert / quickload / rewind. Crash UI is not a time machine. |
 
 CKAN lock: close the GUI before launching `KSP.x86_64`. First MM pass

@@ -31,7 +31,8 @@ patch house docs, or `tickets open --type systems --fingerprint
 <stem>`. Close items you settled. Lookup
 `docs/program/tickets/fingerprints.json`. Reuse stems
 (`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`,
-`science-skip-timeout`, `hold-ground-card`, `hop-coast-phys-warp`);
+`science-skip-timeout`, `hold-ground-card`, `hop-coast-phys-warp`,
+`telem-eyes-library`, `thin-tape`);
 do not invent a stem per T-id. Empty `--fingerprint` on `control` /
 `systems` / `ops --tag feedback` is kernel-refused. You may rewrite
 PROTOCOL, job cards (`.grok/agents/*.md`), portraits (voice only — not
@@ -67,13 +68,14 @@ coast → Lars (`type=control --fingerprint <stem>`). One log line
 Practice / tickets), `git add` those paths and `git commit` a
 sentence. Do not wait for Hank. Do not commit gitignored tape.
 
-**Tape (Os 2026-08-25 / T-448):** last-flight 40 lines is not the vessel.
+**Tape (Os 2026-08-25 / T-448 / T-452):** last-flight 40 lines is not the vessel.
 Practice: desks question jsonl / telem / science-scan, update
 assumptions, extend gather. Missing helper → Wernher
-`telem-eyes-library` (T-449). Do not reason a Learn from last-flight
+`telem-eyes-library` (T-449). Thin pulse → `thin-tape`. Law: one
+**control** writer; kRPC GET readers legal. Do not reason a Learn from last-flight
 alone. **09-01Z:** last-flight splash rec=yes vs jsonl flying 6 km
 214 m/s rec=no q=17510; landing synthesized; `sci_rem=0`; splash
-TELEMETRY capped. Last-flight rec=yes is not rec. Hold-ground-card
+TELEMETRY capped; 27 states / 251 s. Last-flight rec=yes is not rec. Hold-ground-card
 ×11 (T-447): splash leftover still Toggles; last-flight splash is not sit.
 
 ## Return

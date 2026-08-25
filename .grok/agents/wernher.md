@@ -51,7 +51,12 @@ n=0 + `can_revert` true) — scene-only `ksc` is not enough. Live watch:
 Hank reads `ship.md` (disk). If hired mid-hop it is kRPC/telem/desk,
 not hop.py. A compact `python main.py ship` envelope from `ship.md`
 (heading/wreck/ec/alt/as_of — no jsonl, no kRPC) is yours when that
-ticket is open. Do not `status` while lock is live.
+ticket is open. Law (T-452): one **control** writer; GET readers
+legal. You land reader mode (`session.py`, name `kspstuff-read`,
+`stream.remove` on close, no jsonl/`ship.md`/last-flight/Control/scene)
+and cheap pulse (`telem.py`, actual dt). `status` while lock live is
+that reader — today it still writes jsonl, so keep the CLI refuse
+until the patch.
 
 ## First command
 
@@ -91,12 +96,14 @@ recover-then-Hangar *kernel* is yours; Hank runs the CLI. Stumble on
 thin tape → another `--type systems --fingerprint <stem>`. Do not idle
 the pad.
 
-**Tape (Os 2026-08-25, Mortie / T-448):** last-flight 40 lines is not the
+**Tape (Os 2026-08-25, Mortie / T-448 / T-452):** last-flight 40 lines is not the
 vessel. Own jsonl helpers (`telem-eyes-library`, T-449): last snap sit
-vs recover sit, `sci_rem` vs bank, rec, 4× q skip. **09-01Z:**
+vs recover sit, `sci_rem` vs bank, rec, 4× q skip. Reader Session +
+`kind=recover` row is the same stem (`session.py`, `flightlog.py`).
+Cheap pulse / actual dt is `thin-tape` (`telem.py`). **09-01Z:**
 last-flight splash rec=yes; jsonl last snap flying 6 km 214 m/s rec=no
-q=17510; landing synthesized; `sci_rem=0` whole flight. Desks file
-that fingerprint when a row cannot answer. Query `tape.Tape` — do not
+q=17510; landing synthesized; `sci_rem=0` whole flight; 27/251 s.
+Desks file that fingerprint when a row cannot answer. Query `tape.Tape` — do not
 `read_file` jsonl.
 
 ## Do not

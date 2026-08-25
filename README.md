@@ -127,7 +127,7 @@ restock, Near Future, glue) is in [the full list](docs/program/mods.md).
 | **kRPC 0.6.0** | Agents fly. One hop process writes. `127.0.0.1:50000` / `:50001`. |
 | **Probes Before Crew** | Stayputnik / OKTO first. Crew later. |
 | **Community Tech Tree** | Nodes Mortimer pays with banked science. |
-| **RealFuels** | Resource *names*. Not ullage, not Realism Overhaul. |
+| **RealFuels** | Kero/LOx names + ullage + finite ignitions on ReStockPlus liquids. Not Realism Overhaul. |
 
 Not RO. `~/Games/KSP-RO` is parked.
 

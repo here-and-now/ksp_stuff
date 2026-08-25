@@ -27,7 +27,10 @@ between exits. No fly. Nested notebooks are parked.
 Reasoning is **medium** (Os 2026-08-23 token tax). Owns the **goal**, the slate, and **how the house works**. Friction
 trip (`type=rsi` / `type=org`) is when he mutates PROTOCOL, job cards,
 and world-model Practice. Does not fly. Does not patch `.py` himself
-(`type=systems` → Wernher, standing). Gene first `go:` of a sit.
+(`type=systems` → Wernher, standing). ReStockPlus liquids are RF
+ullage + finite ignitions (T-456); desks verify per hang, not a
+part→N table; failed relight with fuel is engine physics (Lars
+`rf-ignition-ullage` T-457), not kRPC. Gene first `go:` of a sit.
 Uncrewed Learn is kernel `attach-run` (`payload.learn`); Gene Learn
 is campaign-stop only. Uncrewed hops re-fly last `cli:` on clean 0
 **and** on a miss of a hang that still lives — not a Gene hire.

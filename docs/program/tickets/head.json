@@ -150,6 +150,7 @@
     "rc-cone-okto-alt": 1,
     "recover-banks-rem0": 1,
     "remaining-after-survivability": 1,
+    "rf-ignition-ullage": 1,
     "rsi-data-pad": 1,
     "savanna-flyinghigh-telemetry": 1,
     "savanna-flyinglow-telemetry": 1,
@@ -17020,7 +17021,63 @@
       "title": "RSI telem-eyes-library \u00d73",
       "type": "rsi",
       "updated": "2026-08-25T09:37:35Z"
+    },
+    "T-456": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "close_why": "Practice last-write rf-ignition-ullage: verify per hang; restart is not free; pulse is Lars T-457 hop_factory, not Wernher, not a GameData raise.",
+      "created": "2026-08-25T10:47:02Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-456",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-25T10:50:55Z",
+            "claim": "Practice last-write: ReStockPlus liquids are RF ullage + finite ignitions; pad 1g lights; throttle 0 then 1 is a restart. Desks verify per hang (cfg/cache/live module) \u2014 no part\u2192N table in PROTOCOL or spawn prompts. Failed relight with fuel is engine physics until ignitions remaining, ullage, and EC ignitor are checked \u2014 not type=systems. Do not raise ignitions. Lars T-457 hop_factory.py.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "os",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [],
+      "title": "Practice: RF ullage + finite ignitions; pad 1g lights; restart not free",
+      "type": "org",
+      "updated": "2026-08-25T10:50:55Z"
+    },
+    "T-457": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-25T10:47:02Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "rf-ignition-ullage",
+      "id": "T-457",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "hank",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "Valiant 1-start: hop_factory still MECO+relight via _hold_or_cut suicide",
+      "type": "control",
+      "updated": "2026-08-25T10:47:02Z"
     }
   },
-  "updated": "2026-08-25T09:52:25Z"
+  "updated": "2026-08-25T10:50:55Z"
 }

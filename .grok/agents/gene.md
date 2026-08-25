@@ -68,7 +68,9 @@ first `go: yes` includes `campaign: uncrewed`. **Leave
 a hang that is still capable without hiring you. Do not `go: yes` as
 “same Flea until 15” — 15 is spent. Remaining subjects cannot finish on
 this hang → next alt on disk, or `campaign: none` and open
-vehicle/science tickets. Missing block → `--type control --fingerprint <stem>`. Missing rocket
+vehicle/science tickets. Failed relight with fuel left is Lars `rf-ignition-ullage` on
+`hop_factory.py` (T-457) — not `type=systems`, not a cartoon
+MECO/suicide `go:`. Missing block → `--type control --fingerprint <stem>`. Missing rocket
 → `--type vehicle`. Science bind → `--type science` (`experiment_id`).
 Firsts → `--type press`. Paid node → `--type ctt`. Friction → `--type ops
 --tag feedback --fingerprint <stem>`. Lookup

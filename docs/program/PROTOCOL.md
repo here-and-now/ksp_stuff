@@ -144,6 +144,15 @@ actually shared. One immortal factory that remembers Flea, Hammer,
 4t, and splash-090 is not the way. Tests lock the **blocks**, not
 dead-hang envelopes. No stamp-named `_after_skip`.
 
+**Engines (Os 2026-08-25 / T-456):** ReStockPlus liquids are RF
+ullage + finite ignitions. Pad 1 g still lights. Throttle 0 then 1
+is a restart. Desks verify **this hang** (cfg / ConfigCache / live
+module). Do **not** paste a part→N ignition table here or in spawn
+prompts. Failed coast/suicide relight with fuel left is **engine
+physics** (`rf-ignition-ullage`, Lars `hop_factory.py`) until a desk
+has read that engine. Do not open `type=systems` / kRPC for “engine
+did not light” first. Do not raise ignitions. Never GameData.
+
 **Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
 is a sin**. Do **not** idle the pad as a religion: a **living recover
 that cannot pay is also a waste**.
@@ -256,6 +265,10 @@ pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
 light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
 re-flies last `cli:`. Miss (nonzero / ABORT / `science (none)` / `science skip`):
 spawn **Lars** on the named **pulse** file (`hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
+Failed coast/suicide relight with fuel left is engine physics
+(`rf-ignition-ullage`, Lars `hop_factory.py`) — not Wernher, not
+`type=systems` — until ignitions remaining, ullage, and EC ignitor
+are checked on **this hang**.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
 still loft, cut, coast, chute, land leftover, **then Toggle splash
 leftover**. Skip-latch is

@@ -5,11 +5,15 @@ Disk, 2026-08-23. Save `letsgrok`. KSP **1.12.5**. CKAN
 `~/Games/KSP-RO` and is parked.
 
 The mods that change the world (RSS, Kerbalism, FAR, RealHeat,
-RealChute, kRPC, PBC, CTT, RealFuels-as-names) are on the
+RealChute, kRPC, PBC, CTT, RealFuels) are on the
 [README](../../README.md#the-world). This page is the rest of
 GameData: visuals, catalogs, HUD, glue.
 
 Do not write GameData. Live tree: `python main.py world`.
+2026-08-25: ReStockPlus liquids are `ModuleEnginesRF` + ullage +
+finite ignitions (`zzzzkspstuffEngines`). Pad 1 g still lights.
+Verify per hang (cfg / ConfigCache / live module). Do not paste a
+part→N table. Do not raise ignitions. Solids unchanged.
 
 ## Visual
 

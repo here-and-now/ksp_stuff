@@ -37,6 +37,18 @@ dead-hang envelopes.
 | Parked `hop-to-water` / `hop-splash` suicide-burn | `hop.py` | factory pulse |
 | New sit name / warp law / timeout clock | Wernher `ops --tag ask --desk wernher --fingerprint control-blocks` | a stamp helper |
 
+**RF liquids (Os 2026-08-25 / T-456 / T-457):** ReStockPlus liquids
+have RF ullage + finite ignitions. Pad 1 g still lights. Throttle 0
+then 1 is a restart (spends an ignition, needs settle). Verify
+**this hang** (cfg / ConfigCache / live module) — do not memorize a
+part→N table. Failed coast/suicide relight with fuel left is engine
+physics (`rf-ignition-ullage`) until you have read that engine.
+Cartoon MECO / lid / `_hold_or_cut` suicide relight is false. Pulse
+is `hop_factory.py` this sit — not `hop.py`, not Wernher. Do not
+raise ignitions. Do not open `type=systems` for “engine did not
+light” until ignitions remaining, ullage, and EC ignitor are
+checked.
+
 `hop.py` is **shared helpers that are actually shared + parked
 water/splash CLIs**. Do not add factory inland or warp branches there.
 Do not grow `hop_factory.py` with dead-hang memory. `run_factory_vessel`
@@ -81,7 +93,8 @@ do not patch a dwell for that instrument. Uncrewed Learn is kernel
 `--fingerprint`; do not map inland 299 onto `heading-never-090`.
 
 **Warp the coast:** call Wernher's `apply_coast` after real burnout
-(fuel gone, or throttle 0 **after loft**). 1× while burning, chute
+(fuel gone, or throttle 0 **after loft** — that shutdown is a spent
+start if the hang is one-ignition). 1× while burning, chute
 deploy, recover, high q, thick air ≤18 km. High dwell is **not** a
 burn: `apply_sit_warp(burning=burning_now)` only (T-438). `chute_arm_sit`
 1× before Arm is Wernher — not 1× at apo (T-442). Never rails. Never

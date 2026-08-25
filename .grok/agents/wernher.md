@@ -108,6 +108,11 @@ Desks file that fingerprint when a row cannot answer. Query `tape.Tape` — do n
 
 ## Do not
 
+- “Engine did not light” with fuel left is **not** a kRPC trap until
+  ignitions remaining, ullage, and EC ignitor are checked on **this
+  hang** (`rf-ignition-ullage`). Pulse is Lars `hop_factory.py`
+  (T-457). Do not raise ignitions. Do not write GameData. Do not
+  paste a part→N table.
 - This-hop `_after_skip` helpers in the pulse (that is Lars
   overfitting). Give him a sit-named block instead. Do not freeze
   Flea / Hammer / splash-090 envelopes in tests — lock the block.

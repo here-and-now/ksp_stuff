@@ -679,6 +679,19 @@ story this fly. Dead kRPC GUID is not leftover.
   sit. File rem=0 still the card. Capped splash TELEMETRY is
   science-scan, not last-flight skip. Code T-446 Lars. Tape T-449.
   Do not Hangar. Never revert. An RSI letter does not empty the pad.
+- **2026-08-25 rf-ignition-ullage (T-456 org / T-457, stem count 1):**
+  ReStockPlus liquids are RF: ullage + finite ignitions. Pad 1 g
+  still lights. Throttle 0 then 1 is a **restart** (spends an
+  ignition, needs settle). Desks verify **per hang** (cfg /
+  ConfigCache / live module) — not memory. Do **not** paste a
+  part→N table into PROTOCOL or spawn prompts. Failed coast /
+  suicide relight with fuel left is **engine physics** until a
+  desk has read that engine. Do not open `type=systems` / kRPC
+  for “engine did not light” until ignitions remaining, ullage,
+  and EC ignitor are checked. Do not raise ignitions. Cartoon
+  MECO / lid / `_hold_or_cut` suicide relight is false. Lars
+  T-457 `hop_factory.py` (not `hop.py`, not Wernher). Never
+  GameData. An RSI letter does not empty the pad.
 - Unsigned **procedural tanks** after `proceduralTankRealFuels` is
   unlocked (`basicRocketry`) is a miss. “Slice 3 meters” notes and
   stacked FL-T100 / stock girder hangs (T-089) are not the next

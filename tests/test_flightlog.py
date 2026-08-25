@@ -198,15 +198,18 @@ class TestRecordEnvelope(unittest.TestCase):
                 flightlog._last_state,
                 flightlog._wrote_landing,
             ) = old
-        kinds = [
-            json.loads(line)["kind"]
+        rows = [
+            json.loads(line)
             for line in tmp.read_text(encoding="utf-8").splitlines()
             if line.strip()
         ]
+        kinds = [r["kind"] for r in rows]
         self.assertIn("state", kinds)
         self.assertIn("landing", kinds)
         self.assertIn("end", kinds)
         self.assertGreater(kinds.index("landing"), kinds.index("state"))
+        land = next(r for r in rows if r.get("kind") == "landing")
+        self.assertTrue(land.get("synthesized"))
 
     def test_close_synthesizes_landed_on_silk_flying(self):
         import flightlog

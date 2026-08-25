@@ -64,6 +64,11 @@ _COMPACT = (
 )
 WINDOWS = ("pad", "airborne", "apex", "burnout", "descent", "impact", "events")
 _BURN_THROTTLE = 0.05
+# physics_warp.THICK_AIR_ALT_M — 4× through this lid is a 1× miss.
+_THICK_AIR_M = 18_000.0
+_WARP_RATE = 1.8
+_SKIP_ALT_M = 2_000.0
+_SCI_PAID_MIN = 0.01
 
 
 def _finite(value: Any, default: float = float("nan")) -> float:
@@ -208,6 +213,90 @@ def _gap_s(states: list[dict[str, Any]]) -> float | None:
             best = max(best, met - prev)
         prev = met
     return round(best, 2) if best > 0 else None
+
+
+def _sit_key(text: str) -> str:
+    return (text or "").strip().lower().replace(" ", "").replace("-", "").replace("_", "")
+
+
+def _landing_synthesized(
+    landing_row: dict[str, Any] | None,
+    last: dict[str, Any] | None,
+    down: dict[str, Any] | None,
+) -> bool:
+    """Close wrote kind=landing from last snap. Not a down state."""
+    if landing_row and landing_row.get("synthesized"):
+        return True
+    if not landing_row:
+        return False
+    if down is not None:
+        return False
+    return _sit(last or {}) in _AIR
+
+
+def _skips(states: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """4× q/alt jumps in thick air (≤18 km). Vacuum coast 4× is not this."""
+    out: list[dict[str, Any]] = []
+    prev: dict[str, Any] | None = None
+    for row in states:
+        if prev is None:
+            prev = row
+            continue
+        met_dt = float("nan")
+        t_dt = float("nan")
+        met_a = _finite(prev.get("met"))
+        met_b = _finite(row.get("met"))
+        if math.isfinite(met_a) and math.isfinite(met_b) and met_b > met_a:
+            met_dt = met_b - met_a
+        t_a = _finite(prev.get("t"))
+        t_b = _finite(row.get("t"))
+        if math.isfinite(t_a) and math.isfinite(t_b) and t_b > t_a:
+            t_dt = t_b - t_a
+        rate = float("nan")
+        if math.isfinite(met_dt) and math.isfinite(t_dt) and t_dt > 0.05:
+            rate = met_dt / t_dt
+        alt_a = _finite(prev.get("alt"))
+        alt_b = _finite(row.get("alt"))
+        drop = float("nan")
+        if math.isfinite(alt_a) and math.isfinite(alt_b):
+            drop = alt_a - alt_b
+        warped = math.isfinite(rate) and rate >= _WARP_RATE
+        gapped = (
+            not math.isfinite(rate)
+            and math.isfinite(met_dt)
+            and met_dt >= 15.0
+            and math.isfinite(drop)
+            and drop >= 10_000.0
+        )
+        thick = False
+        if math.isfinite(alt_a) and math.isfinite(alt_b):
+            thick = min(alt_a, alt_b) <= _THICK_AIR_M
+        q_a = _finite(prev.get("q"))
+        q_b = _finite(row.get("q"))
+        q_jump = (
+            math.isfinite(q_a)
+            and math.isfinite(q_b)
+            and q_b >= 1_000.0
+            and q_b > q_a * 1.5
+        )
+        big_drop = math.isfinite(drop) and drop >= _SKIP_ALT_M
+        if thick and (warped or gapped) and (big_drop or q_jump):
+            out.append(
+                {
+                    "alt_a": _round(alt_a),
+                    "alt_b": _round(alt_b),
+                    "q_a": _round(q_a),
+                    "q_b": _round(q_b),
+                    "met_dt": _round(met_dt, 2),
+                    "t_dt": _round(t_dt, 2),
+                    "rate": _round(rate, 1),
+                    "thick": True,
+                }
+            )
+            if len(out) >= 6:
+                break
+        prev = row
+    return out
 
 
 def _subsample(rows: list[dict[str, Any]], n: int) -> list[dict[str, Any]]:
@@ -441,6 +530,19 @@ class Tape:
             or (last or {}).get("situation")
             or ""
         )
+        synth = _landing_synthesized(landing_row, last, down)
+        skips = _skips(states)
+        bank = _sci_bank(rows, last)
+        pad_bank = _round((pad or {}).get("sci_bank"), 4)
+        sci_delta = None
+        if bank is not None and pad_bank is not None:
+            sci_delta = round(bank - pad_bank, 4)
+        sci_paid = (
+            None if sci_delta is None else abs(sci_delta) >= _SCI_PAID_MIN
+        )
+        sit_mismatch = _sit_key(str((last or {}).get("situation") or "")) != _sit_key(
+            sit
+        )
         pos = hit or air or last or {}
         lat = _round(pos.get("lat"), 4)
         lon = _round(pos.get("lon"), 4)
@@ -466,6 +568,8 @@ class Tape:
             "pitch": _round(air.get("pitch")),
             "alt_before": _round(air.get("alt")),
             "sit": sit,
+            "sit_mismatch": sit_mismatch,
+            "landing_synthesized": synth,
             "biome": (hit.get("biome") or air.get("biome") or (biomes[0] if biomes else "")),
             "biomes": biomes,
             "lat": lat,
@@ -480,6 +584,9 @@ class Tape:
             "apo_max": None if not math.isfinite(apo_max) or apo_max == float("-inf") else round(apo_max, 3),
             "alt_max": _round((apex or {}).get("alt")),
             "gap_s": _gap_s(states),
+            "skips": skips,
+            "skip_n": len(skips),
+            "thick_air_skip": bool(skips),
             "descent_n": len(descent_rows),
             "burnout_n": len(burn_rows),
             "pad": _kin(pad),
@@ -500,7 +607,9 @@ class Tape:
             "chute": (last or {}).get("chute") or "",
             "sci_run": (last or {}).get("sci_run"),
             "sci_rem": _round((last or {}).get("sci_rem")),
-            "sci_bank": _sci_bank(rows, last),
+            "sci_bank": bank,
+            "sci_delta": sci_delta,
+            "sci_paid": sci_paid,
             "mass": _round((last or {}).get("mass")),
             "mass_pad": _round((pad or {}).get("mass")),
             "parts_n": (last or {}).get("parts_n"),
@@ -627,10 +736,22 @@ def format_envelope(row: dict[str, Any]) -> str:
             f"pitch={_fmt(pad.get('pitch'))}"
         )
     if last and any(last.get(k) is not None for k in ("heading", "horiz", "pitch")):
+        rec = last.get("recoverable")
+        rec_s = "yes" if rec is True else ("no" if rec is False else "?")
+        extra = ""
+        if last.get("sit") or last.get("alt") is not None:
+            extra += f" sit={last.get('sit') or '?'}"
+        if last.get("alt") is not None:
+            extra += f" alt={_fmt(last.get('alt'))}"
+        if last.get("q") is not None:
+            extra += f" q={_fmt(last.get('q'))}"
+        extra += f" rec={rec_s}"
+        if row.get("sit_mismatch"):
+            extra += f" recover={row.get('sit') or '?'}"
         lines.append(
             f"last: heading={_fmt(last.get('heading'))} "
             f"horiz={_fmt(last.get('horiz'), '.2f')} "
-            f"pitch={_fmt(last.get('pitch'))}"
+            f"pitch={_fmt(last.get('pitch'))}{extra}"
         )
     burn = row.get("burnout") if isinstance(row.get("burnout"), dict) else {}
     if burn and any(burn.get(k) is not None for k in ("heading", "horiz", "pitch")):
@@ -680,6 +801,17 @@ def format_envelope(row: dict[str, Any]) -> str:
             f"descent: {_fmt(peak)}→{_fmt(last_alt)} m "
             f"n={row.get('descent_n') or 0}{gap_s}"
         )
+    skips = row.get("skips") or []
+    if row.get("thick_air_skip") or skips:
+        s0 = skips[0] if skips else {}
+        rate = s0.get("rate")
+        rate_s = f"{_fmt(rate, '.0f')}×" if rate is not None else "skip"
+        n = row.get("skip_n") or len(skips)
+        thick_s = " thick" if (s0.get("thick") or row.get("thick_air_skip")) else ""
+        lines.append(
+            f"skip: {rate_s} {_fmt(s0.get('alt_a'))}→{_fmt(s0.get('alt_b'))} m "
+            f"q={_fmt(s0.get('q_a'))}→{_fmt(s0.get('q_b'))} n={n}{thick_s}"
+        )
     rec = row.get("recoverable")
     if rec is True:
         rec_s = "yes"
@@ -691,12 +823,21 @@ def format_envelope(row: dict[str, Any]) -> str:
     run_s = "?" if sci_run is None else ("1" if sci_run else "0")
     bank = row.get("sci_bank")
     bank_s = _fmt(bank, ".2f") if bank is not None else "?"
+    delta = row.get("sci_delta")
+    if delta is None:
+        delta_s = " +0" if row.get("sci_paid") is False else ""
+    else:
+        try:
+            d = float(delta)
+            delta_s = " +0" if abs(d) < 0.005 else f" {d:+.2f}"
+        except (TypeError, ValueError):
+            delta_s = ""
     lines.append(
         f"tape: q={_fmt(row.get('q_max'))} g={_fmt(row.get('g_max'), '.2f')} "
         f"ec={_fmt(row.get('ec'))} stage={row.get('stage') if row.get('stage') is not None else '?'} "
         f"broken={row.get('broken') or 'none'} rec={rec_s} "
         f"chute={row.get('chute') or 'none'} sci=run={run_s} rem={_fmt(row.get('sci_rem'), 'g')} "
-        f"bank={bank_s}"
+        f"bank={bank_s}{delta_s}"
     )
     mass_pad = row.get("mass_pad")
     mass_last = row.get("mass")
@@ -719,7 +860,7 @@ def cmd_telem(argv: list[str] | None = None) -> int:
     p.add_argument(
         "--window",
         default="",
-        help="pad|airborne|apex|burnout|descent|impact|events",
+        help="pad|airborne|apex|burnout|descent|impact|events (comma ok)",
     )
     p.add_argument("--kind", default="", help="non-state kind filter (start, landing, end)")
     p.add_argument("--around-met", type=float, default=None, dest="around_met")
@@ -731,7 +872,27 @@ def cmd_telem(argv: list[str] | None = None) -> int:
         return 1
     tape = Tape(src)
     if args.window:
-        print(json.dumps(tape.window(args.window, before_s=args.before), indent=2, sort_keys=True))
+        names = [n.strip() for n in str(args.window).split(",") if n.strip()]
+        if len(names) == 1:
+            print(
+                json.dumps(
+                    tape.window(names[0], before_s=args.before),
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        else:
+            print(
+                json.dumps(
+                    {
+                        "windows": [
+                            tape.window(n, before_s=args.before) for n in names
+                        ]
+                    },
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
         return 0
     if args.kind:
         rows = [_compact(r) for r in tape.events(args.kind)]

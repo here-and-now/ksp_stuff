@@ -21,6 +21,23 @@ python main.py pad
 
 ---
 
+## 2026-08-25T09-01-24Z-hop — telem-eyes-library
+
+- **When:** T-449. t7-wheel-pbc. Query Tape, not jsonl. Do not Hangar.
+  Never revert.
+- **Symptom:** last-flight 40 lines said recovered splash rec=yes. Tape
+  last snap flying 6.05 km 214 m/s q=17510 rec=no. Landing synthesized.
+  sci_rem=0 entire flight; sci_bank 2.29 +0. 4× skip 55 km q=937 → 6 km
+  q=17510 through the 18 km lid.
+- **Cause:** Close synthesizes kind=landing from last airborne snap.
+  last-flight is abort/exit, not the vessel. rem=0 is not leftover on
+  the vessel. Vacuum 4× coast is legal; thick-air 4× is the 1× miss.
+- **Fix:** Tape envelope: last snap sit/alt/q/rec vs recover sit
+  (`sit_mismatch`), `landing_synthesized`, `sci_delta`/`sci_paid`,
+  `thick_air_skip`. Skim prints `synth`, `skip: … thick`, sci `+0`.
+  `telem --window` takes comma names. Query Tape.
+- **Modules:** `tape.py`, `telem.py`, `tickets.py`. Not hop.py.
+
 ## 2026-08-25T09-01-24Z-hop — hold-ground-card
 
 - **When:** T-446. t7-wheel-pbc. Bound splash Water T-028 TELEMETRY /

@@ -7,10 +7,12 @@ import math
 import tempfile
 import time
 import unittest
+from io import StringIO
 from pathlib import Path
+from unittest.mock import patch
 
 from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold, transmit
-from tape import Tape, envelope, format_envelope
+from tape import Tape, cmd_telem, envelope, format_envelope
 from telem import (
     EventLog,
     Telem,
@@ -728,8 +730,208 @@ class TestTapeEyes(unittest.TestCase):
         self.assertEqual(env["sit"], "landed")
         self.assertTrue(env["recoverable"])
         self.assertEqual(env["landing"], "soft")
-        self.assertIn("sit=landed", format_envelope(env))
-        self.assertIn("rec=yes", format_envelope(env))
+        self.assertEqual(env["last"]["sit"], "flying")
+        self.assertTrue(env["sit_mismatch"])
+        self.assertTrue(env["landing_synthesized"])
+        text = format_envelope(env)
+        self.assertIn("sit=landed", text)
+        self.assertIn("rec=yes", text)
+        self.assertIn("synth", text)
+        self.assertIn("recover=landed", text)
+
+    def test_synthesized_landing_and_sci_idle(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+                "alt": 84.0,
+                "q": 0.0,
+                "recoverable": True,
+                "sci_run": False,
+                "sci_rem": 0.0,
+                "sci_bank": 2.2905,
+            },
+            {
+                "kind": "state",
+                "t": 240.0,
+                "met": 482.0,
+                "situation": "flying",
+                "heading": 297.0,
+                "horiz": 87.0,
+                "pitch": 65.0,
+                "alt": 55125.0,
+                "v_vert": -1790.0,
+                "q": 937.0,
+                "recoverable": False,
+                "sci_run": True,
+                "sci_rem": 0.0,
+                "sci_bank": 2.2905,
+            },
+            {
+                "kind": "state",
+                "t": 248.0,
+                "met": 525.0,
+                "situation": "flying",
+                "heading": 298.0,
+                "horiz": 98.0,
+                "pitch": 65.0,
+                "alt": 6054.0,
+                "v_vert": -214.0,
+                "speed": 235.0,
+                "q": 17510.0,
+                "recoverable": False,
+                "sci_run": True,
+                "sci_rem": 0.0,
+                "sci_bank": 2.2905,
+            },
+            {
+                "kind": "landing",
+                "t": 249.0,
+                "met": 525.0,
+                "landing": "catastrophic",
+                "sit": "flying",
+                "impact_ms": 214.0,
+                "synthesized": True,
+            },
+            {"kind": "end", "t": 249.1},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        self.assertEqual(env["last"]["sit"], "flying")
+        self.assertGreater(env["last"]["alt"], 5000)
+        self.assertGreater(env["last"]["q"], 10_000)
+        self.assertFalse(env["last"]["recoverable"])
+        self.assertEqual(env["sit"], "flying")
+        self.assertFalse(env["sit_mismatch"])
+        self.assertTrue(env["landing_synthesized"])
+        self.assertFalse(env["sci_paid"])
+        self.assertAlmostEqual(env["sci_delta"], 0.0)
+        self.assertAlmostEqual(env["sci_rem"], 0.0)
+        self.assertTrue(env["thick_air_skip"])
+        self.assertGreaterEqual(env["skip_n"], 1)
+        skip = env["skips"][0]
+        self.assertTrue(skip["thick"])
+        self.assertGreater(skip["alt_a"], 18_000)
+        self.assertLess(skip["alt_b"], 18_000)
+        text = format_envelope(env)
+        self.assertIn("synth", text)
+        self.assertIn("skip:", text)
+        self.assertIn("thick", text)
+        self.assertIn("+0", text)
+        self.assertIn("sit=flying", text)
+        self.assertIn("rec=no", text)
+        self.assertIn("landing: catastrophic", format_landing(env))
+        self.assertIn("synth", format_landing(env))
+
+    def test_vacuum_coast_4x_is_not_thick_skip(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 1.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "alt": 84.0,
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+            },
+            {
+                "kind": "state",
+                "t": 100.0,
+                "met": 200.0,
+                "situation": "sub_orbital",
+                "alt": 210_000.0,
+                "q": 0.0,
+                "heading": 297.0,
+                "horiz": 70.0,
+                "pitch": 65.0,
+            },
+            {
+                "kind": "state",
+                "t": 108.0,
+                "met": 232.0,
+                "situation": "sub_orbital",
+                "alt": 200_000.0,
+                "q": 0.0,
+                "heading": 297.0,
+                "horiz": 70.0,
+                "pitch": 65.0,
+            },
+            {"kind": "end", "t": 109.0},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        env = envelope(tmp)
+        self.assertFalse(env["thick_air_skip"])
+        self.assertEqual(env["skip_n"], 0)
+        self.assertNotIn("skip:", format_envelope(env))
+
+    def test_window_accepts_comma_names(self):
+        tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"
+        rows = [
+            {
+                "kind": "state",
+                "t": 0.0,
+                "met": 0.0,
+                "situation": "pre_launch",
+                "alt": 84.0,
+                "heading": 299.0,
+                "horiz": 0.0,
+                "pitch": 90.0,
+            },
+            {
+                "kind": "state",
+                "t": 10.0,
+                "met": 10.0,
+                "situation": "flying",
+                "alt": 400.0,
+                "heading": 299.0,
+                "horiz": 1.0,
+                "pitch": 80.0,
+            },
+            {"kind": "end", "t": 11.0},
+        ]
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        tape = Tape(tmp)
+        pad = tape.window("pad")
+        air = tape.window("airborne")
+        self.assertEqual(pad["window"], "pad")
+        self.assertEqual(air["window"], "airborne")
+        buf = StringIO()
+        with patch("sys.stdout", buf):
+            rc = cmd_telem([str(tmp), "--window", "pad,airborne"])
+        self.assertEqual(rc, 0)
+        payload = json.loads(buf.getvalue())
+        self.assertEqual(len(payload["windows"]), 2)
+        self.assertEqual(payload["windows"][0]["window"], "pad")
+        self.assertEqual(payload["windows"][1]["window"], "airborne")
+
+    def test_0901_tape_eyes_not_last_flight(self):
+        path = Path("docs/missions/jebediah/logs/2026-08-25T09-01-24Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        last = env["last"]
+        self.assertEqual(last["sit"], "flying")
+        self.assertGreater(last["alt"], 5000)
+        self.assertGreater(last["q"], 10_000)
+        self.assertFalse(last["recoverable"])
+        self.assertTrue(env["landing_synthesized"])
+        self.assertFalse(env["sci_paid"])
+        self.assertAlmostEqual(env["sci_rem"] or 0.0, 0.0)
+        self.assertTrue(env["thick_air_skip"])
+        text = format_envelope(env)
+        self.assertIn("synth", text)
+        self.assertIn("skip:", text)
+        self.assertIn("thick", text)
+        self.assertIn("+0", text)
+        self.assertLessEqual(len(text), 1100)
 
     def test_hz_median_prefers_met(self):
         tmp = Path(tempfile.mkdtemp()) / "hop.jsonl"

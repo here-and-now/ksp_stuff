@@ -1075,9 +1075,25 @@ def format_learn_line(row: dict[str, Any] | None) -> str:
         bank_s = f"{float(bank):.2f}" if bank is not None else "?"
     except (TypeError, ValueError):
         bank_s = "?"
+    rem = row.get("sci_rem")
+    rem_s = ""
+    if rem is not None:
+        try:
+            rem_s = f" rem={float(rem):g}"
+        except (TypeError, ValueError):
+            rem_s = ""
+    delta = row.get("sci_delta")
+    if delta is None:
+        delta_s = " +0" if row.get("sci_paid") is False else ""
+    else:
+        try:
+            d = float(delta)
+            delta_s = " +0" if abs(d) < 0.005 else f" {d:+.2f}"
+        except (TypeError, ValueError):
+            delta_s = ""
     return (
         f"{landing} apo={apo_s} biome={biome} rec={rec_s} "
-        f"sci=run={run_s} bank={bank_s}"
+        f"sci=run={run_s}{rem_s} bank={bank_s}{delta_s}"
     )
 
 

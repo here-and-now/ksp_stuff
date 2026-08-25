@@ -687,11 +687,14 @@ def _fmt_num(val: Any, spec: str = ".0f") -> str:
 def format_landing(row: dict[str, Any]) -> str:
     landing = row.get("landing") or "unknown"
     sit = row.get("sit") or row.get("situation") or "?"
+    synth = ""
+    if row.get("landing_synthesized") or row.get("synthesized"):
+        synth = " synth"
     return (
         f"landing: {landing} impact={_fmt_num(row.get('impact_ms'))} m/s "
         f"heading={_fmt_num(row.get('heading'))} "
         f"horiz={_fmt_num(row.get('horiz'))} "
-        f"pitch={_fmt_num(row.get('pitch'))} sit={sit}"
+        f"pitch={_fmt_num(row.get('pitch'))} sit={sit}{synth}"
     )
 
 

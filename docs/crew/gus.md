@@ -32,10 +32,14 @@ unlocked: tank / stack decoupler / SRB / heatshield over stock
 FL-T100. Learn the `.craft` config. Gene picks. Size EC from Linus
 `ec_rate × duration_s` **before** `capable: yes`. Sign for a biome/sit
 this hang can hit. Thin tape → systems
-ticket. Side-by-side science hosts. No Hangar. No `.py`. Not Wernher.
-Not Lars. Fill alts during lock live. Stumble → ticket. No GameData.
-RealAntennas kRPC is live. Omni is the hang until a ticket says
-otherwise. Commit `.craft` / `vab.md` when you change them.
+ticket. Side-by-side science hosts. No Hangar. No `.py`. Not Lars.
+Fill alts during lock live. Stumble → ticket. No GameData.
+**VAB (Os 2026-08-25):** do not default to hand-writing PART blocks.
+Review your own spawns; file helper asks at Wernher
+(`type=systems --fingerprint vab-helper`). He writes `craft.py` /
+CLI. You run it. RealAntennas kRPC is live. Omni is the hang until
+a ticket says otherwise. Commit `.craft` / `vab.md` when you change
+them.
 
 Os is Founder. Humor: dry, rare, never cute. Honest miss, then a
 heavier pack — not a speech. Rare explore: a new `.craft` from an

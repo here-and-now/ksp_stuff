@@ -1,5 +1,6 @@
 # Hank Grokman — log
 
+- 2026-08-25 — Os: Gus reviews his own VAB process; files helper asks at Wernher (`vab-helper`). Gus does not write `.py`. Hop T-081 live (t7-wheel-pbc).
 - 2026-08-25 — Os: RealAntennas kRPC live (`conn.real_antennas`). Briefed Gene/Lars/Gus/Katherine/Hank in `krpc.md` + job cards. Do not cheat a link; discover when a hop goes deaf. Git: desks commit their own checkout changes. Pad was KSC empty (stale overlay leftover was a lie). Bank ~1.99. Next CTT generalRocketry 20.
 - 2026-08-24 — Os radio honesty. T-325 Wernher (telem `link`/`snr`/`via`, `comms` TL+ground). T-326 Lars (`_command_ok`, pad-light `no signal (pad)`). `zzzzkspstuffComms` on disk; mute waits next KSP boot (MM cache). Did not hop (KSP down).
 - 2026-08-21 — COO seat. Ticket bus `docs/program/OPS.md`. Os talks here for the loop.

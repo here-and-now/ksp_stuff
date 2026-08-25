@@ -68,7 +68,10 @@ fence.
 
 Patch the `.py` named on the ticket (smallest close). Control-block
 tickets: `physics_warp.py` (and sit helpers Lars will call) — sit
-names, not stamp names. Extract leftover abort / chute sits still
+names, not stamp names. **VAB helpers (Os 2026-08-25):** when Gus
+files `type=systems --fingerprint vab-helper`, you write the craft
+builder (`craft.py` / a CLI Gus can run). He does not edit `.py`.
+Do not place parts in the live VAB (kRPC cannot). Extract leftover abort / chute sits still
 living in `hop.py` into blocks. **Log more
 kRPC** into jsonl / Tape windows / `python main.py telem` skim — not
 just a parser over 9 columns. On a miss, one `docs/lessons.md` heading

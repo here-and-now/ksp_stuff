@@ -75,6 +75,11 @@ Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.
 paths and `git commit` a sentence. Do not wait for Hank. Do not commit
 gitignored tape (`desk.md`, last-flight, jsonl).
 
+**VAB helpers (Os 2026-08-25):** Gus does not default to hand-writing
+`.craft`. He reviews his own spawns and files
+`type=systems --desk wernher --fingerprint vab-helper`. Wernher writes
+the helper (`craft.py` / CLI). Gus does not edit `.py`.
+
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
 cheat a link. Discover targeting / rate when a hop goes deaf. Brief:
 `docs/program/krpc.md`. Gene / Lars / Gus / Katherine / Hank.

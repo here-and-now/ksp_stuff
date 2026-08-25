@@ -21,6 +21,22 @@ python main.py pad
 
 ---
 
+## 2026-08-25T11-11-44Z-hop — rf-ignition-ullage
+
+- **When:** T-462. T-459 live miss. Valiant 1-start RF ullage. Factory
+  inland `_pad_light` two-pulse then `hop light`. Pad 1 g, ullage Very
+  Stable, ignitions remaining 0 after stage. Do not Hangar. Never revert.
+- **Symptom:** `hop light` then GET sit=pre_launch MET 0 throttle 0
+  ignitions 0 thrust 0. Fuel 1575. Tape one pad row. Abort.
+- **Cause:** `_pad_light` throttle 1 then stage did run. `lit` latched.
+  Same loop never writes throttle 1 again (`if not lit` skips). RF
+  spent the start; throttle dropped; engine dead on the pad. hop light
+  is not the burn.
+- **Fix:** `_pad_hold`: keep throttle 1 every pulse until MET>0 /
+  flying / left_pad. Pad sit MET>0 still holds. Pad 1 g still lights.
+  Not hop.py. Do not raise ignitions.
+- **Modules:** `hop_factory.py`.
+
 ## 2026-08-25T10-57-36Z-hop — rf-ignition-ullage
 
 - **When:** T-459. Valiant 1-start RF ullage. Factory inland pad

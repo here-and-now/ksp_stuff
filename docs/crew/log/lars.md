@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-25 — T-462 rf-ignition-ullage: hop_factory `_pad_hold` keeps throttle 1 after hop light until MET>0 / flying / left_pad; 11-11-44Z lit then GET throttle 0 ignitions 0 sit=pre_launch. hop light is not the burn. Do not Hangar.
 - 2026-08-25 — T-459 rf-ignition-ullage: hop_factory `_pad_light` throttle 1 live then stage; 10-57-36Z spent the Valiant ignition at throttle 0 and the after-light throttle 1 was a restart with 0 remaining. Pad 1 g still lights. Do not Hangar.
 - 2026-08-25 — T-457 rf-ignition-ullage: hop_factory `_lid_burn_sit` latches lofted_lid; descent leftover after lid MECO is not throttle 1 on a 1-start Valiant. Pad 1 g light stays. Fuel-out coast stays. Do not Hangar.
 - 2026-08-25 — T-446 hold-ground-card: Tape 09-01-24Z last flying 6 km q=17510 rec=no; last-flight splash rec=yes is after that snap. Bank 2.29 is sci_rem=0 entire (capped), not missing Toggle. Factory already calls apply_sit_warp; leftover Toggle when down still if splash 1× rec=yes. Do not Hangar.

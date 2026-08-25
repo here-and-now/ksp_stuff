@@ -2,8 +2,10 @@
 
 Flying card after loft. Pad light is throttle 1 live, then stage — RF
 1-start at throttle 0 is spent, and throttle 0 then 1 is a restart.
-FlyingHigh wait is loft to lid alt, not a dwell at 1 km. Lid hold is
-throttle 1 + SAS vertical until lid; inland slew after. Splash bind is
+hop light is not the burn: ``_pad_hold`` keeps throttle 1 on the pad
+until MET>0 / flying / left_pad. FlyingHigh wait is loft to lid alt,
+not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
+inland slew after. Splash bind is
 not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
 Toggle; skip-latch does not drop a bound High card. After High lid,
@@ -205,7 +207,8 @@ def _pad_light(
     RF spends the only ignition when stage fires. Throttle 0 then 1 is a
     restart. Pad 1 g still lights when throttle is 1 at ignition.
     ``_light`` writes throttle then stages in one call — too late for
-    the game tick. Forest / Grasslands: same.
+    the game tick. hop light is not the burn — ``_pad_hold`` keeps
+    throttle 1 until MET>0 / flying / left_pad. Forest / Grasslands: same.
     """
     if deaf:
         H._light(vessel, on_log, snap)
@@ -237,6 +240,35 @@ def _pad_light(
     except Exception as exc:
         raise MissionAbort(f"light failed: {exc}") from exc
     H._say("hop light", on_log)
+    return True
+
+
+def _pad_hold(
+    vessel: object,
+    snap: object,
+    *,
+    lit: bool,
+    left_pad: bool,
+    deaf: bool,
+) -> bool:
+    """After pad light, keep throttle 1 until MET>0 / flying / left_pad.
+
+    hop light is not the burn. RF spent the start on stage; a throttle
+    drop on the pad is a restart with 0 remaining. Pad 1 g still lights.
+    Forest / Grasslands: same.
+    """
+    if not lit or left_pad or deaf:
+        return False
+    if H._airborne(snap) or H._down(snap, flown=left_pad):
+        return False
+    try:
+        control = vessel.control
+    except Exception:
+        return False
+    try:
+        control.throttle = 1.0
+    except Exception:
+        pass
     return True
 
 
@@ -639,6 +671,13 @@ def run_factory_vessel(
                                 pose="pad-plume",
                                 session=session,
                             )
+            _pad_hold(
+                vessel,
+                snap,
+                lit=lit,
+                left_pad=left_pad,
+                deaf=deaf,
+            )
 
             burning_now = H._burning(vessel, snap, lofted=lofted) or _lid_burn_sit(
                 snap,

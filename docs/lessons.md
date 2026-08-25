@@ -21,6 +21,22 @@ python main.py pad
 
 ---
 
+## 2026-08-25T10-57-36Z-hop — rf-ignition-ullage
+
+- **When:** T-459. Valiant 1-start RF ullage. Factory inland pad
+  `_light` then `throttle = 1.0`. Pad 1 g, ullage Very Stable 100%,
+  EC not empty. Do not Hangar. Never revert.
+- **Symptom:** `hop light` then stuck on pad ~4 min. GET sit=pre_launch
+  MET 0 throttle 0. Ignitions Remaining 0. Thrust 0. Fuel 1575. Tape
+  apo 86 m. Uplink abort T+250s.
+- **Cause:** RF spends the only ignition when stage fires. Stage at
+  throttle 0, then throttle 1 is a restart with 0 remaining. Same-call
+  throttle-then-stage is the next physics tick — too late.
+- **Fix:** `_pad_light`: throttle 1 this pulse, stage the next. Do not
+  throttle up after stage. Pad 1 g still lights when throttle is 1 at
+  ignition. Not hop.py. Do not raise ignitions.
+- **Modules:** `hop_factory.py`.
+
 ## 2026-08-25 — rf-ignition-ullage
 
 - **When:** T-457. Valiant 1-start RF ullage. Factory inland `_hold_lid`

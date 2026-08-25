@@ -1,11 +1,13 @@
 """Factory inland hop pulse: light, slew 270, chute, sit-matched science, recover.
 
-Flying card after loft. FlyingHigh wait is loft to lid alt, not a dwell
-at 1 km. Lid hold is throttle 1 + SAS vertical until lid; inland slew
-after. Splash bind is not FlyingLow — factory inland still waits the
-High lid. Airborne cannot-pay: FlyingLow skip still lofts — High waits
-the lid, then Toggle; skip-latch does not drop a bound High card. After
-High lid, High dwell is not a burn; quiet loft honors uplink phys-warp.
+Flying card after loft. Pad light is throttle 1 live, then stage — RF
+1-start at throttle 0 is spent, and throttle 0 then 1 is a restart.
+FlyingHigh wait is loft to lid alt, not a dwell at 1 km. Lid hold is
+throttle 1 + SAS vertical until lid; inland slew after. Splash bind is
+not FlyingLow — factory inland still waits the High lid. Airborne
+cannot-pay: FlyingLow skip still lofts — High waits the lid, then
+Toggle; skip-latch does not drop a bound High card. After High lid,
+High dwell is not a burn; quiet loft honors uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
 sit=landed at pad alt with fuel is still burning. Parked water/splash
@@ -188,6 +190,53 @@ def _hold_lid(
             control.sas = True
         except Exception:
             pass
+    return True
+
+
+def _pad_light(
+    vessel: object,
+    on_log: Callable[[str], None] | None,
+    snap: object | None,
+    *,
+    deaf: bool,
+) -> bool:
+    """Pad light: throttle 1 live, then stage. One start.
+
+    RF spends the only ignition when stage fires. Throttle 0 then 1 is a
+    restart. Pad 1 g still lights when throttle is 1 at ignition.
+    ``_light`` writes throttle then stages in one call — too late for
+    the game tick. Forest / Grasslands: same.
+    """
+    if deaf:
+        H._light(vessel, on_log, snap)
+        return True
+    try:
+        control = vessel.control
+    except Exception as exc:
+        raise MissionAbort(f"light failed: {exc}") from exc
+    try:
+        throttle = float(getattr(control, "throttle", 0.0) or 0.0)
+    except (TypeError, ValueError):
+        throttle = 0.0
+    if not math.isfinite(throttle) or throttle <= 0.05:
+        try:
+            control.sas = True
+        except Exception:
+            pass
+        try:
+            control.throttle = 1.0
+        except Exception:
+            pass
+        return False
+    try:
+        control.sas = True
+    except Exception:
+        pass
+    try:
+        control.activate_next_stage()
+    except Exception as exc:
+        raise MissionAbort(f"light failed: {exc}") from exc
+    H._say("hop light", on_log)
     return True
 
 
@@ -578,23 +627,18 @@ def run_factory_vessel(
                 if airborne:
                     lit = True
                 elif not left_pad and str(snap.situation) in H._LIGHT_SIT:
-                    H._light(vessel, on_log, snap)
-                    if not deaf:
-                        try:
-                            vessel.control.throttle = 1.0
-                        except Exception:
-                            pass
-                    lit = True
-                    did_light = True
-                    log_events.emit("hop", result="light")
-                    if lofted:
-                        mission_event(
-                            "light",
-                            snap,
-                            beauty=True,
-                            pose="pad-plume",
-                            session=session,
-                        )
+                    if _pad_light(vessel, on_log, snap, deaf=deaf):
+                        lit = True
+                        did_light = True
+                        log_events.emit("hop", result="light")
+                        if lofted:
+                            mission_event(
+                                "light",
+                                snap,
+                                beauty=True,
+                                pose="pad-plume",
+                                session=session,
+                            )
 
             burning_now = H._burning(vessel, snap, lofted=lofted) or _lid_burn_sit(
                 snap,

@@ -799,6 +799,7 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertIn("def _hold_lid", text)
         self.assertIn("def _offplan_apo_lid", text)
         self.assertIn("def _inland_high_sit", text)
+        self.assertIn("def _pad_light", text)
         arm_at = text.find("H.arm_chutes")
         arm_sit_at = text.find("chute_arm_sit(snap)")
         deploy_at = text.find("H.deploy_chutes")
@@ -1466,6 +1467,62 @@ class TestHopSequence(unittest.TestCase):
         self.assertIn("no signal (pad)", str(ctx.exception))
         self.assertEqual(vessel.control.staged, 0)
         self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_pad_light_throttles_before_stage(self):
+        """rf-ignition-ullage: throttle 1 live, then stage. Not stage then throttle."""
+        from hop_factory import _pad_light
+
+        class _OrderControl(_Control):
+            def __init__(self):
+                self.ops: list[tuple] = []
+                self._throttle = 0.0
+                super().__init__()
+                self.ops.clear()
+
+            @property
+            def throttle(self):
+                return self._throttle
+
+            @throttle.setter
+            def throttle(self, value):
+                self.ops.append(("throttle", float(value)))
+                self._throttle = float(value)
+
+            def activate_next_stage(self):
+                self.ops.append(("stage", float(self._throttle)))
+                self.staged += 1
+
+        vessel = _Vessel([])
+        vessel.control = _OrderControl()
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(vessel.control.ops, [("throttle", 1.0)])
+        self.assertEqual(logs, [])
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(
+            vessel.control.ops, [("throttle", 1.0), ("stage", 1.0)]
+        )
+        self.assertTrue(any("hop light" in line for line in logs))
+        already = _Vessel([])
+        already.control = _OrderControl()
+        already.control.throttle = 1.0
+        already.control.ops.clear()
+        self.assertTrue(_pad_light(already, logs.append, snap, deaf=False))
+        self.assertEqual(already.control.ops, [("stage", 1.0)])
+        deaf_v = _Vessel([])
+        deaf_v.control.sas = True
+        deaf_v.control.throttle = 0.4
+        deaf_snap = type("S", (), {"link": False})()
+        with self.assertRaises(MissionAbort) as ctx:
+            _pad_light(deaf_v, None, deaf_snap, deaf=True)
+        self.assertIn("no signal (pad)", str(ctx.exception))
+        self.assertEqual(deaf_v.control.staged, 0)
+        self.assertEqual(deaf_v.control.throttle, 0.0)
 
     def test_deaf_after_pad_recovers_does_not_abort_lid(self):
         thermo = _Mod("Experiment", "temperatureScan")

@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-25 — T-457 rf-ignition-ullage: hop_factory `_lid_burn_sit` latches lofted_lid; descent leftover after lid MECO is not throttle 1 on a 1-start Valiant. Pad 1 g light stays. Fuel-out coast stays. Do not Hangar.
 - 2026-08-25 — T-446 hold-ground-card: Tape 09-01-24Z last flying 6 km q=17510 rec=no; last-flight splash rec=yes is after that snap. Bank 2.29 is sci_rem=0 entire (capped), not missing Toggle. Factory already calls apply_sit_warp; leftover Toggle when down still if splash 1× rec=yes. Do not Hangar.
 - 2026-08-25 — T-440 hold-ground-card: idle file rem=0 is not dwell-done; sit-matched splash leftover still Toggles after airborne goo+geiger cannot-pay (08-20-54Z Water rec=yes bank +0). Do not Hangar.
 - 2026-08-25 — T-438 hop-coast-phys-warp: hop_factory High dwell is not a burn; `apply_sit_warp` `burning=burning_now` only so Hank `phys-warp 4` after 50 km lid is honored (08-20-54Z stayed 1×). Do not Hangar.

@@ -94,15 +94,21 @@ def _lid_alt_reached(
 
 
 def _lid_burn_sit(
-    snap: object, *, hop_apo: float, flying_high: bool
+    snap: object,
+    *,
+    hop_apo: float,
+    flying_high: bool,
+    lofted_lid: bool = False,
 ) -> bool:
     """Leftover LF before lid alt is still the burn sit. Not lofted burnout.
 
     FlyingHigh wait at ~1 km is not FlyingHigh. Throttle 0 with leftover
     LF is not 4×. Crumbs before lid may coast if q is actually low.
-    After lid, leftover LF is not this sit. High dwell is not a burn.
+    After lid, leftover LF is not this sit — descent below hop_apo is
+    not a 1-start relight. High dwell is not a burn. Forest /
+    Grasslands: same.
     """
-    if not flying_high:
+    if not flying_high or lofted_lid:
         return False
     if _lid_alt_reached(snap, hop_apo, flying_high=flying_high):
         return False
@@ -157,9 +163,12 @@ def _hold_lid(
 
     AP engage at zenith has no heading. Inland slew clears SAS and does
     not hold vertical. SAS from light holds the loft until lid alt or
-    crumbs. Forest / Grasslands: same.
+    crumbs. After lid, leftover LF is not throttle 1. Forest /
+    Grasslands: same.
     """
-    burn = _lid_burn_sit(snap, hop_apo=hop_apo, flying_high=flying_high)
+    burn = _lid_burn_sit(
+        snap, hop_apo=hop_apo, flying_high=flying_high, lofted_lid=lofted_lid
+    )
     vertical = _lid_vertical_sit(
         snap, hop_apo=hop_apo, flying_high=flying_high, lofted_lid=lofted_lid
     )
@@ -520,7 +529,10 @@ def run_factory_vessel(
                     apo_cut=apo_cut,
                 )
                 lid_burn = _lid_burn_sit(
-                    snap, hop_apo=hop_apo, flying_high=flying_high
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=flying_high,
+                    lofted_lid=reached_lid,
                 )
                 if lid_burn:
                     apo_cut = False
@@ -588,6 +600,7 @@ def run_factory_vessel(
                 snap,
                 hop_apo=hop_apo,
                 flying_high=flying_high,
+                lofted_lid=reached_lid,
             )
             if lit and not down and left_pad and not deaf:
                 flown_p = H._snap_pitch(snap)

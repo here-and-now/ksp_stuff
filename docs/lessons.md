@@ -21,6 +21,22 @@ python main.py pad
 
 ---
 
+## 2026-08-25 — rf-ignition-ullage
+
+- **When:** T-457. Valiant 1-start RF ullage. Factory inland `_hold_lid`
+  throttle 1 until lid, `_hold_or_cut` MECO, leftover LF on the way
+  down.
+- **Symptom:** throttle 0 at lid with fuel left, then throttle 1 below
+  50 km. One ignition already spent; ullage unsettle. Failed relight
+  with fuel left is engine physics, not kRPC.
+- **Cause:** `_lid_burn_sit` keyed live alt, not the lid this hop.
+  Descent leftover looked like the burn sit. `_hold_lid` relit.
+- **Fix:** `_lid_burn_sit(..., lofted_lid=)` same latch as
+  `_lid_vertical_sit`. After lid, leftover is coast / High dwell, not
+  a relight. Pad 1 g light stays. Fuel-out coast stays. Not hop.py
+  suicide. Do not raise ignitions.
+- **Modules:** `hop_factory.py`.
+
 ## 2026-08-25 — Valiant RF ullage + one ignition
 
 - **When:** Kerosene/LOX names only; RF `simulateUllage` on, engine still

@@ -823,6 +823,10 @@ class TestHopCoastPhysics(unittest.TestCase):
         self.assertNotIn("_high_dwell_sit", warp_chunk)
         self.assertGreater(wait_lid_at, warp_at)
         self.assertGreater(offplan_at, hold_at)
+        hold_chunk = text[hold_at : hold_at + 280]
+        self.assertIn("brake=False", hold_chunk)
+        self.assertNotIn("brake=True", hold_chunk)
+        self.assertIn("lofted_lid=reached_lid", text)
         self.assertLess(text.count("\n") + 1, 1100)
 
     def test_run_on_vessel_coasts_3x_then_1x(self):
@@ -2877,6 +2881,36 @@ class TestHopSequence(unittest.TestCase):
                 _lid_burn_sit(wait, hop_apo=50_000.0, flying_high=False)
             )
 
+    def test_lid_burn_sit_leftover_after_lid_is_not_a_relight(self):
+        """rf-ignition-ullage: descent leftover after lid is not a burn. Stay cut."""
+        from hop_factory import _hold_lid, _lid_burn_sit
+
+        descent = type("S", (), {"alt": 2_000.0, "fuel": 1413.0})()
+        wait = type("S", (), {"alt": 904.0, "fuel": 1413.0})()
+        with patch("hop.hop_wants_flying_high", return_value=True):
+            self.assertFalse(
+                _lid_burn_sit(
+                    descent, hop_apo=50_000.0, flying_high=True, lofted_lid=True
+                )
+            )
+            self.assertTrue(
+                _lid_burn_sit(
+                    wait, hop_apo=50_000.0, flying_high=True, lofted_lid=False
+                )
+            )
+            vessel = _Vessel([])
+            vessel.control.throttle = 0.0
+            self.assertFalse(
+                _hold_lid(
+                    vessel,
+                    descent,
+                    hop_apo=50_000.0,
+                    flying_high=True,
+                    lofted_lid=True,
+                )
+            )
+            self.assertEqual(vessel.control.throttle, 0.0)
+
     def test_lid_vertical_sit_before_lid(self):
         """flyinghigh-lid: 17-50-46Z pitch 25 at 1 km. Hold vertical until lid alt."""
         from hop_factory import _lid_vertical_sit
@@ -2956,6 +2990,62 @@ class TestHopSequence(unittest.TestCase):
         self.assertTrue(all(thr > 0.05 for thr in low_thr))
         self.assertTrue(any("hold vertical until lid 50000" in line for line in logs))
         self.assertFalse(any("pitch 25" in line for line in logs))
+
+    def test_factory_lid_meco_does_not_relight_leftover(self):
+        """rf-ignition-ullage: lid MECO leftover stays throttle 0 on descent."""
+        mod = _Mod("Experiment", "temperatureScan")
+        vessel = _Vessel([mod], recoverable=False)
+        vessel.parts = _Parts([_Part("sensorThermometer", [mod])])
+        vessel.resources.fuel = 350.0
+        now, sleep, t = _fast_clock()
+        descent_thr: list[float] = []
+        phase = [0]
+
+        def nap(dt):
+            if vessel.control.staged and vessel.situation == "pre_launch":
+                vessel.situation = "flying"
+                vessel._alt = 50_400.0
+                vessel._speed = 200.0
+                vessel._vz = 50.0
+                vessel.control.throttle = 1.0
+                vessel.resources.fuel = 350.0
+                vessel.orbit.apoapsis_altitude = 80_000.0
+                vessel.orbit.periapsis_altitude = -6_000_000.0
+                phase[0] = 1
+            elif vessel.situation == "flying" and phase[0] == 1:
+                if vessel.control.throttle <= 0.05:
+                    vessel._alt = 2_000.0
+                    vessel._vz = -80.0
+                    vessel._speed = 90.0
+                    vessel.orbit.apoapsis_altitude = 2_100.0
+                    phase[0] = 2
+            elif vessel.situation == "flying" and phase[0] >= 2:
+                descent_thr.append(vessel.control.throttle)
+                phase[0] += 1
+                if phase[0] >= 4:
+                    vessel.situation = "landed"
+                    vessel._alt = 80.0
+                    vessel._speed = 5.0
+                    vessel._vz = 0.0
+                    vessel.recoverable = True
+            t[0] += dt if dt else 0.01
+
+        with patch("hop.hop_wants_flying_high", return_value=True):
+            with patch("phases._kv", return_value={"hop_apo": "50000"}):
+                result = run_on_vessel(
+                    _Session(vessel),
+                    vessel,
+                    science_ids=("temperatureScan",),
+                    now=now,
+                    sleep=nap,
+                    timeout=30.0,
+                    pulse=1.0,
+                )
+        self.assertEqual(result, "recovered")
+        self.assertTrue(descent_thr)
+        self.assertTrue(all(thr <= 0.05 for thr in descent_thr))
+        self.assertGreater(vessel.resources.fuel, 2.0)
+        self.assertLessEqual(vessel.control.throttle, 0.05)
 
     def test_hold_lid_throttle_and_sas_before_lid(self):
         """flyinghigh-lid: 18-15-43Z thr 0 at MET 8.6 with leftover LF. Hold 1 + SAS."""

@@ -35,6 +35,24 @@ STOCK_NODES: dict[str, dict[str, tuple[float, float, float]]] = {
     "Decoupler_2": {"top": (0.0, 0.1, 0.0), "bottom": (0.0, -0.1, 0.0)},
     "probeCoreHex_v2": {"top": (0.0, 0.1875, 0.0), "bottom": (0.0, -0.1875, 0.0)},
     "probeCoreSphere_v2": {"bottom": (0.0, -0.27448, 0.0)},
+    "probeCoreOcto_v2": {
+        "top": (0.0, 0.0785, 0.0),
+        "bottom": (0.0, -0.27448, 0.0),
+    },
+    "sasModule": {
+        "top": (0.0, 0.09111, 0.0),
+        "bottom": (0.0, -0.09111, 0.0),
+    },
+    "proceduralTankRealFuels": {
+        "top": (0.0, 0.3125, 0.0),
+        "bottom": (0.0, -0.3125, 0.0),
+    },
+    "proceduralHeatshield": {
+        "top": (0.0, 0.1, 0.0),
+        "bottom": (0.0, -0.1, 0.0),
+    },
+    "restock-engine-125-valiant": {"top": (0.0, 0.45, 0.0)},
+    "RC_cone": {"bottom": (0.0, -0.1963, 0.0)},
     "proceduralSRBRealFuels": {
         "top": (0.0, 0.5, 0.0),
         "bottom": (0.0, -0.5, 0.0),

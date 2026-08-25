@@ -670,6 +670,11 @@ def main(argv: list[str] | None = None) -> int:
     )
     tk = sub.add_parser("tickets", help="Hank ticket bus (no kRPC)")
     tk.add_argument("rest", nargs=argparse.REMAINDER, help="open|list|show|…")
+    cr = sub.add_parser(
+        "craft",
+        help="VAB helpers on crafts/*.craft (no kRPC, no Hangar)",
+    )
+    cr.add_argument("rest", nargs=argparse.REMAINDER, help="clone|tanks|chute|…")
     telem_p = sub.add_parser(
         "telem",
         help="Jsonl envelope/windows (no kRPC; do not read the tape)",
@@ -912,6 +917,10 @@ def main(argv: list[str] | None = None) -> int:
         from tickets import cmd_tickets
 
         return cmd_tickets(list(args.rest))
+    if args.cmd == "craft":
+        from craft import cmd_craft
+
+        return cmd_craft(list(args.rest))
     if args.cmd == "telem":
         from tape import cmd_telem
 

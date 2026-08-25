@@ -1,9 +1,10 @@
 """RF pad sit: throttle 1 on the engine, then stage, keep that start.
 
-Pad 1 g still lights. kRPC ``control.throttle`` is not the burn.
-Independent throttle is the ignition meet. Airborne is still this start
-— dropping independent throttle is a restart. Release only at MECO
-(commanded throttle 0 after loft) or down. Forest / Grasslands: same.
+Pad 1 g still lights. Independent throttle is the ignition meet.
+After the engine is thrusting, MainThrottle 1 is the burn —
+independent after light starves stack tanks. Release once thrusting.
+Commanded throttle 0 after loft is MECO. Throttle 0 then 1 is a
+restart. Forest / Grasslands: same.
 """
 
 from __future__ import annotations
@@ -83,12 +84,34 @@ def _apply_pad_throttle(vessel: object) -> None:
 
 
 def _release_pad_throttle(vessel: object) -> None:
-    """MECO hands the engine to MainThrottle 0. Not an airborne handoff."""
+    """MainThrottle drives stack feed. Independent was the ignition meet."""
     for eng in _pad_engines(vessel):
         try:
             eng.independent_throttle = False
         except Exception:
             pass
+
+
+def _pad_thrusting(vessel: object, snap: object) -> bool:
+    """Engine is producing thrust. Independent is not this."""
+    for obj in (vessel, snap):
+        if obj is None:
+            continue
+        for key in ("thrust", "available_thrust"):
+            try:
+                value = float(getattr(obj, key, 0.0) or 0.0)
+            except (TypeError, ValueError):
+                continue
+            if math.isfinite(value) and value > 1.0:
+                return True
+    for eng in _pad_engines(vessel):
+        try:
+            value = float(getattr(eng, "thrust", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(value) and value > 1.0:
+            return True
+    return False
 
 
 def _pad_light(
@@ -105,7 +128,7 @@ def _pad_light(
     then 1 is a restart. Pad 1 g still lights when the engine throttle
     is 1 at ignition. ``_light`` writes throttle then stages in one call
     — too late for the game tick. hop light is not the burn —
-    ``_pad_hold`` keeps throttle 1 on the engine until MECO. Forest /
+    ``_pad_hold`` keeps MainThrottle 1 after thrusting. Forest /
     Grasslands: same.
     """
     if deaf:
@@ -145,25 +168,33 @@ def _pad_hold(
     left_pad: bool,
     deaf: bool,
 ) -> bool:
-    """After pad light, keep throttle 1 on the engine until MECO.
+    """After pad light, MainThrottle 1 until MECO. Independent is not the burn.
 
-    hop light is not the burn. kRPC control.throttle is not the burn.
-    Independent throttle is the start. Airborne is still that start —
-    dropping independent throttle is a restart with 0 remaining.
-    Commanded throttle 0 after loft is MECO, not a restoke. Pad sit
-    throttle 0 is a drop: write 1. Pad 1 g still lights. Forest /
-    Grasslands: same.
+    hop light is not the burn. Independent is the ignition meet. Once
+    thrusting, independent starves stack tanks — MainThrottle 1 is the
+    same start. Pad sit throttle 0 is a drop: write 1 (meet if not
+    thrusting). Commanded throttle 0 after loft is MECO. Pad 1 g still
+    lights. Forest / Grasslands: same.
     """
     if not lit or deaf:
         return False
-    left = left_pad or H._airborne(snap) or H._down(snap, flown=left_pad)
-    if left:
+    down = H._down(snap, flown=left_pad)
+    left = left_pad or H._airborne(snap) or down
+    try:
+        throttle = float(getattr(vessel.control, "throttle", 0.0) or 0.0)
+    except Exception:
+        throttle = 0.0
+    if down or (left and throttle <= 0.05):
+        _release_pad_throttle(vessel)
+        return False
+    if left or _pad_thrusting(vessel, snap):
+        _release_pad_throttle(vessel)
         try:
-            throttle = float(getattr(vessel.control, "throttle", 0.0) or 0.0)
+            control = vessel.control
+            control.sas = True
+            control.throttle = 1.0
         except Exception:
-            throttle = 0.0
-        if H._down(snap, flown=left_pad) or throttle <= 0.05:
-            _release_pad_throttle(vessel)
-            return False
+            pass
+        return True
     _apply_pad_throttle(vessel)
     return True

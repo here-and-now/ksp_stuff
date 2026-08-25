@@ -1,6 +1,6 @@
 # Lars Grokman — log
 
-- 2026-08-25 — T-465 rf-ignition-ullage: hop_factory_pad is the pad-RF sit; `_pad_hold` keeps independent throttle 1 until MECO. 20-36-06Z lit then flameout MET10 fuel 1396 throttle 1 apo 1.2 km — airborne hand-off is a restart. Do not Hangar.
+- 2026-08-25 — T-465 rf-ignition-ullage: hop_factory_pad `_pad_hold` independent is the ignition meet only; once thrusting, MainThrottle 1 until MECO. 20-36-06Z lit 89 kN then flameout MET10 Kero 1396 LOx 1707 throttle 1 — independent after light starves stack tanks. last-flight rec=yes is the postcard. Do not Hangar.
 - 2026-08-25 — T-464 rf-ignition-ullage: hop_factory `_pad_light` throttle 1 on the engine then stage; 11-22-32Z kRPC throttle 1 engine Current Throttle 0 ignitions 0 sit=pre_launch. kRPC throttle is not the burn. Do not Hangar.
 - 2026-08-25 — T-462 rf-ignition-ullage: hop_factory `_pad_hold` keeps throttle 1 after hop light until MET>0 / flying / left_pad; 11-11-44Z lit then GET throttle 0 ignitions 0 sit=pre_launch. hop light is not the burn. Do not Hangar.
 - 2026-08-25 — T-459 rf-ignition-ullage: hop_factory `_pad_light` throttle 1 live then stage; 10-57-36Z spent the Valiant ignition at throttle 0 and the after-light throttle 1 was a restart with 0 remaining. Pad 1 g still lights. Do not Hangar.

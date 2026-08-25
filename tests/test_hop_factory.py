@@ -82,6 +82,7 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _engine_throttle", pad)
         self.assertIn("def _pad_engine_live", pad)
         self.assertIn("def _release_pad_throttle", pad)
+        self.assertIn("def _pad_thrusting", pad)
         self.assertNotIn("wait_water", factory)
         self.assertNotIn("wait_splash", factory)
 
@@ -110,7 +111,7 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertTrue(any("hop light" in line for line in logs))
 
     def test_pad_hold_keeps_start_airborne_until_meco(self):
-        """rf-ignition-ullage: airborne is still the start. Independent stays."""
+        """rf-ignition-ullage: thrusting hands stack to MainThrottle 1."""
         vessel = _Vessel()
         engine = _Engine()
         vessel.parts.engines = [engine]
@@ -133,12 +134,41 @@ class TestHopFactoryPad(unittest.TestCase):
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
         self.assertEqual(vessel.control.throttle, 1.0)
-        self.assertTrue(engine.independent_throttle)
-        self.assertGreater(engine.throttle, 0.05)
+        self.assertFalse(engine.independent_throttle)
+        self.assertTrue(
+            _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
+        )
+        self.assertFalse(engine.independent_throttle)
+        self.assertEqual(vessel.control.throttle, 1.0)
         vessel.control.throttle = 0.0
         self.assertFalse(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
+        self.assertFalse(engine.independent_throttle)
+
+    def test_pad_hold_releases_independent_when_thrusting_on_pad(self):
+        """rf-ignition-ullage: 20-36-06Z independent after light starves stack."""
+        vessel = _Vessel()
+        engine = _Engine()
+        vessel.parts.engines = [engine]
+        vessel.thrust = 89019.0
+        vessel.available_thrust = 89766.0
+        pad = type(
+            "S",
+            (),
+            {
+                "situation": "pre_launch",
+                "met": 0.3,
+                "link": True,
+                "alt": 86.0,
+                "thrust": 89019.0,
+                "available_thrust": 89766.0,
+            },
+        )()
+        self.assertTrue(
+            _pad_hold(vessel, pad, lit=True, left_pad=False, deaf=False)
+        )
+        self.assertEqual(vessel.control.throttle, 1.0)
         self.assertFalse(engine.independent_throttle)
 
     def test_pad_hold_restokes_pad_throttle_drop(self):

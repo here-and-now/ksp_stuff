@@ -532,6 +532,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T20:13:20Z",
+            "claim": "Kept this-hop S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc OKTO PAW. science-scan still unstarted ~2.00 (file 0.25 MB / 10 s / 0.03). C-534 loft-through apo 249-300 km sits InSpaceLow; LITE 10 s finishes; recover HD. Lid-MECO 137 km High cannot pay \u2014 do not unbind; do not re-pin High 305 s. S-516 InSpaceLow goo stays closed (scan capped/paid; sample rem=0 spent). S-515 TELEMETRY InSpaceLow capped. High/Forest/splash shelf: T-368 FlyingHigh goo leftover 1.57, T-069 Forest High TELEMETRY leftover 1.512, T-404 High PresMat 2.70. Bank 7.02 need ~37.98 for advRocketry 45. Pulse Toggle in space. f013 LITE hosted OKTO PAW on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "probeCoreOcto_v2",
@@ -564,7 +572,7 @@
       ],
       "title": "InSpaceLow LITE unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T20:13:06Z"
+      "updated": "2026-08-26T20:13:20Z"
     },
     "S-515": {
       "assignee": "linus",
@@ -13954,6 +13962,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T20:13:20Z",
+            "claim": "Unbound shelf leftover now 1.57 \u2014 science-scan mysteryGoo@EarthFlyingHigh sci=3.830/5.400 left=1.57. Not this-hop (641 s cannot finish loft High window). InSpaceLow goo S-516 stays closed (capped). This-hop S-514 LITE seq0. recover the can when a hang holds High. f013 Goo start on_craft=yes is not this-hop.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
@@ -13990,7 +14006,7 @@
       ],
       "title": "FlyingHigh goo leftover 1.57",
       "type": "science",
-      "updated": "2026-08-26T20:13:07Z"
+      "updated": "2026-08-26T20:13:20Z"
     },
     "T-369": {
       "assignee": "linus",
@@ -21369,6 +21385,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "Keep S-514 InSpaceLow LITE on C-534 loft-through (apo>140 km). Lid-MECO 137 km High cannot pay; do not unbind; do not re-pin High 305 s.",
       "created": "2026-08-26T19:30:41Z",
       "desk": "linus",
       "evidence": [],
@@ -21383,6 +21400,14 @@
             "owner": "none",
             "real": false,
             "who": "katherine"
+          },
+          {
+            "at": "2026-08-26T20:13:20Z",
+            "claim": "Keep S-514. C-534 loft-through apo 249-300 km is InSpaceLow (same family as C-504 249-270 km). Lid-MECO 137 km is High \u2014 cannot pay LITE; do not unbind S-514 for that; do not re-pin High 305 s. LITE 10 s finishes once sit is space. Pulse Toggle in space after loft-through (apo>140 km). S-516 InSpaceLow goo capped (paid) \u2014 not this-hop. High leftover shelf. recover_banks yes.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "to": "linus"
@@ -21393,13 +21418,13 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "S-514 InSpaceLow pays loft-through apo 268 km, not lid-MECO apo 137 km",
       "type": "ops",
-      "updated": "2026-08-26T19:30:41Z"
+      "updated": "2026-08-26T20:13:20Z"
     },
     "T-535": {
       "assignee": "",
@@ -21689,5 +21714,5 @@
       "updated": "2026-08-26T20:12:38Z"
     }
   },
-  "updated": "2026-08-26T20:13:08Z"
+  "updated": "2026-08-26T20:13:20Z"
 }

@@ -31,12 +31,13 @@ A hang you cannot prove is **FED** is not capable. Run
 `python main.py craft fuel <craft>` before `capable: yes`. BLOCKED /
 starved / Ablator-only on the engine path is `capable: no`. C-477
 is that exhibit — do not restamp it. Do not Hangar it. FED is not
-enough: Hangar-detonating HS splice is `capable: no` (T-500). C-504
-loft is **no-HS** — a helper that writes a loft hang must autostrut
+enough: Hangar-detonating HS splice is `capable: no` (T-500). C-534
+loft is **no-HS** (C-504 shelf) — a helper that writes a loft hang must autostrut
 Heaviest/rigid + stage-engine `sqor=0` without requiring HS
 (T-506). Recover silk: `craft chute --kind cone` **INSERT**s `RC_cone`
 stacked on the payload core (OKTO top; Stayputnik has no top; cone
-`srfAttach=0`); engine first fire, chute last (T-512). A helper that writes a hang must leave the **engine in the
+`srfAttach=0`); engine first fire, chute last (T-512). `craft liquid`
+still hardcodes PlainWhite / volumeMax 0.8 — T-537 / T-539. A helper that writes a hang must leave the **engine in the
 first fire list** (`sqor=0`, not only `istg=1`), HS a **VAB dish**
 (`bottomDiameter=0`) when the hang *has* an HS, not a filled puck, a
 **fed** engine (`insert_heatshield` refuses `fuelCrossFeed=False`;
@@ -74,22 +75,22 @@ Open **many** `category=craft` tickets.
 `## Hang` on `docs/program/agree.md` (craft, FED, capable, recover
 hang vs loft), `tickets feedback --claim "hang: …"`, then stamp
 `capable:` / open vehicle tickets that **match** that hang. Do **not**
-replace C-504 because the last hop sheared when `agree.md` still
+replace C-534 because the last hop sheared when `agree.md` still
 names it. Do not tell Lars or Linus in Return — they have the same
 ticket. Katherine: `ops --tag ask --desk katherine` or `--tag
 dynamics` when FAR / Q is the fight.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** `generalRocketry` **spent**. Next honest node `advRocketry` **45** (Terrier; bank
-~5.13 does not pay). First orbit waits that node. Pad this sit
-belongs to **C-504** `kspstuff-hop-valiant-proc-loft-pbc` (FED, no
-HS; recover silk) until then. 268 km loft is not orbit. Reliant /
+~7.02 does not pay). First orbit waits that node. Pad this sit
+belongs to **C-534** `kspstuff-hop-valiant-proc-redstone-pbc` (FED, no
+HS, no girders; recover silk; C-504 loft-pbc shelf) until then. 268 km loft is not orbit. Reliant /
 Thumper / TD-06 / FL-T200 / proc 1500 L are Available now — a two-stage
 loft is an alt, not a pad empty. Do **not** Hangar a Terrier stack
 before `advRocketry`. C-477 is `capable: no` (blob). Do **not** restamp
 t7-wheel-pbc or C-477 `capable: yes` — lithobrake is not recover;
-blob is not capable. 16-23-52Z apo 268 km rec=no — iterate **this**
-hang. Keep **many different
+blob is not capable. C-504 tape 16-23-52Z apo 268 km rec=no — C-534
+iterates that family. Keep **many different
 crafts already signed on disk** (not one hang designed after a wreck).
 Fill the shelf **during** lock live. Do **not** Hangar proc-4t /
 swivel-dv5 / girderless lite / t7-chute Mk16 / C-477 (`far-shear`). Keep alts

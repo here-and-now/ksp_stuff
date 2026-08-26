@@ -111,12 +111,15 @@ gitignored tape (`desk.md`, last-flight, jsonl).
 the helper (`craft.py` / CLI). Gus does not edit `.py`. Pad flies a
 **fed** hang — do not idle for helpers. A hang you cannot prove is
 FED is not capable. FED is not enough: HS splice must leave **collider
-clearance** (T-500). C-504 loft is **no-HS** — a helper that writes a
-loft hang must autostrut Heaviest/rigid + stage-engine `sqor=0`
-**without** requiring HS (T-506). Recover silk: `craft chute --kind cone`
-**INSERT**s `RC_cone` stacked on the payload core (OKTO top; Stayputnik
-has no top; cone `srfAttach=0`); Nylon 50 m; engine first fire, chute
-last (T-512). `python main.py craft fuel <craft>` dumps attach
+clearance** (T-500). C-534 loft is **no-HS** (C-504 shelf) — a helper
+that writes a loft hang must autostrut Heaviest/rigid + stage-engine
+`sqor=0` **without** requiring HS (T-506). Recover silk: `craft chute
+--kind cone` **INSERT**s `RC_cone` stacked on the payload core (OKTO
+top; Stayputnik has no top; cone `srfAttach=0`); Nylon 50 m; engine
+first fire, chute last (T-512). `craft liquid` still hardcodes
+PlainWhite and comments volumeMax 0.8 kL — 1500 L is legal; need
+`--texture` and `girders -n 0` strip (T-537 / T-539). `python main.py
+craft fuel <craft>` dumps attach
 + `fuelCrossFeed` (BLOCKED = starved). A helper that writes a hang
 must leave the **engine in the first fire list** (`sqor=0`, not only
 `istg=1`), the heatshield a **VAB dish** (`bottomDiameter=0`) when the
@@ -124,7 +127,7 @@ hang *has* an HS, not a filled puck, a **fed** engine (`insert_heatshield` refus
 `fuelCrossFeed=False`; T-495 dump / T-497 gate; `--payload` SAS-first
 tank T-498), and collider half `max(length/2+0.179, catalog MODEL
 ±0.5)` not `length*0.5`. Hangar detonation is not capable. Do not write
-GameData. Pad flies C-504 — do not idle for helpers.
+GameData. Pad flies C-534 — do not idle for helpers.
 
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
 cheat a link. T-427 prove **passed**: TL2 **64 bps is table and Cape

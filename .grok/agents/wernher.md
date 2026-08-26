@@ -81,18 +81,21 @@ parts in the live VAB (kRPC cannot). Pad still flies a **fed** hang.
 A hang-writing helper must leave the **engine in the first fire list**
 (`sqor=0`, not only `istg=1`), the heatshield a **VAB dish**
 (`bottomDiameter=0`) when the hang *has* an HS, not a filled puck, a
-**fed** engine, and **collider clearance**. C-504 loft is **no-HS** —
+**fed** engine, and **collider clearance**. C-534 loft is **no-HS**
+(C-504 shelf) —
 autostrut Heaviest/rigid + stage-engine without requiring HS
 (T-506). Recover silk: `craft chute --kind cone` **INSERT**s `RC_cone`
 on the payload core (OKTO top; Stayputnik has no top; cone
-`srfAttach=0`); engine first fire, chute last (T-512). Sit-match:
+`srfAttach=0`); engine first fire, chute last (T-512). `craft liquid`
+still hardcodes PlainWhite / volumeMax 0.8 — `--texture`, 1500 L,
+`girders -n 0` strip (T-537 / T-539). Sit-match:
 flying-card Toggle at High lid is High, not InSpaceLow (T-517).
 `insert_heatshield` refuses `fuelCrossFeed=False`. `--payload`
 splices SAS-first tank (T-498). HS splice half is
 `max(length/2+0.179, catalog MODEL ±0.5)` not `length*0.5` (T-500).
 `craft fuel` dumps attach + `fuelCrossFeed` (T-495 / T-497). Do not
 write GameData. Node offset is catalog, not tank-half. Pad flies
-C-504 — do not idle for helpers.
+C-534 — do not idle for helpers.
 Extract leftover abort / chute sits still living in `hop.py` into
 blocks. **Log more kRPC** into jsonl / Tape windows /
 `python main.py telem` skim — not just a parser over 9 columns. On a

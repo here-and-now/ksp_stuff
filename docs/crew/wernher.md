@@ -45,8 +45,9 @@ puck; node offset is catalog), T-495 (`craft fuel` dump), T-497
 (HS collider half, not length/2; `--payload` SAS-tank FED), T-506
 (no-HS loft autostrut), T-512 (`craft chute` INSERT RC_cone on OKTO
 top; Stayputnik has no top; cone `srfAttach=0`; engine first fire,
-chute last). Sit-match flying vs InSpaceLow is T-517 (`control-blocks`).
-Pad flies a **fed** hang. Do not write GameData. Pad-RF
+chute last), T-537 / T-539 (`craft liquid --texture`; volumeMax 1.5;
+`girders -n 0` strip). Sit-match flying vs InSpaceLow is T-517 (`control-blocks`).
+Pad flies a **fed** hang (C-534). Do not write GameData. Pad-RF
 pulse is Lars `hop_factory_pad.py` (T-471) — hop light is plume, not
 ignitions 1→0. T-421 latch already living — do not retune
 `hop_factory.py`. Commit the patch. Not sequencing. Stumble

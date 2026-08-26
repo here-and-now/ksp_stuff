@@ -50,7 +50,7 @@ while parts intact is **unexpected** — not last-flight shear
 dwell — loft, cut, chute, land leftover; timeout is leftover not
 Gene. Today is **first orbit** (phased). Leftover science later — keep an
 eye out; do not unbind the shelf; do not make it this-hop. 268 km loft
-is not orbit. FlyingHigh leftover is **C-504**
+is not orbit. FlyingHigh leftover waits loft
 ≥50 km when a hang can pay it — throttle 1 vertical until lid, not
 abort-at-lid / a 30 km stiff / wait-at-800 m then pitch / t7-chute
 Mk16. C-477 is blob (`capable: no`) — Hangar 15-52-38Z parts=397.
@@ -62,17 +62,17 @@ quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
 4t / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / C-477. Do not
 fly t7-wheel-pbc (lithobrake is not recover). OX-STAT is dwell EC, not
 the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent. `generalRocketry` 20 is spent.
-Next CTT is `advRocketry` 45 (Terrier; bank ~5.13 does not
+Next CTT is `advRocketry` 45 (Terrier; bank ~7.02 does not
 pay 45). Do not spend the next 45 on aviation while Terrier is the
 orbit engine. `survivability` 15 is spent. Do not
-spend crumbs. Pad this sit belongs to **C-504** (FED, no HS; recover silk;
-16-23-52Z apo 268 km rec=no — iterate this hang). First orbit waits
+spend crumbs. Pad this sit belongs to **C-534** (FED, no HS, no girders;
+recover silk; C-504 loft-pbc shelf). First orbit waits
 Terrier. A plan conference does not empty the pad. Honest MECO leftover
 fuel is not engine-dead. T-428 / T-430 stay alts.
 T-409 / T-433
 nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). Persist must survive a split wreck; skip-dup is persist not the broom; recoverable ground Debris is leftover (T-501). VAB helpers
-T-413–T-420 plus T-480/T-482/T-483/T-495/T-497/T-498/T-500/T-506/T-512 are Wernher; a hang you
-cannot prove is FED is not capable; FED is not enough without collider clearance; recover silk INSERT RC_cone on OKTO (T-512); pad does not wait. Flying-card Toggle at High lid is High, not InSpaceLow (T-517). Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
+T-413–T-420 plus T-480/T-482/T-483/T-495/T-497/T-498/T-500/T-506/T-512/T-537/T-539 are Wernher; a hang you
+cannot prove is FED is not capable; FED is not enough without collider clearance; recover silk INSERT RC_cone on OKTO (T-512); liquid `--texture` / volumeMax 1.5 / girders strip (T-537/T-539); pad does not wait. Flying-card Toggle at High lid is High, not InSpaceLow (T-517). Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
 path. File leftover credits while recording; sample leftover is the
 can. Goo ~429 MB does not TX at TL2. Recover still banks the HD when
 recover() works.

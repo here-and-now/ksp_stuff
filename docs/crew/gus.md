@@ -42,8 +42,9 @@ Review your own spawns; file helper asks at Wernher
 T-416–T-420, T-480 (HS node), T-482 (VAB dish not puck), T-483 (engine
 `sqor=0` first fire), T-495 (`craft fuel` dump), T-497 (`insert_heatshield`
 refuses `fuelCrossFeed=False`), T-506 (no-HS loft autostrut), T-512
-(`craft chute` INSERT RC_cone on OKTO). He writes `craft.py` / CLI. You run it.
-Pad flies **C-504** (FED, no HS; recover silk) until `advRocketry` 45.
+(`craft chute` INSERT RC_cone on OKTO), T-537 / T-539 (`craft liquid
+--texture`; volumeMax 1.5; `girders -n 0` strip). He writes `craft.py` / CLI. You run it.
+Pad flies **C-534** (FED, no HS, no girders; recover silk) until `advRocketry` 45. C-504 loft-pbc stays shelf.
 268 km loft is not orbit. First orbit waits Terrier. Reliant / TD-06
 are Available now — a two-stage loft is an alt, not a pad empty. Do
 not Hangar a Terrier stack before the node. C-477 is `capable: no` (blob). Do not

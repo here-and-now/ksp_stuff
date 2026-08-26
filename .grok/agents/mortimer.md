@@ -54,8 +54,8 @@ in Flight after load: `python main.py ksc`. Do not ask Os.
 Working goal (Os 2026-08-26): first orbit. Leftover science later —
 keep an eye out; do not unbind the shelf; do not make it this-hop.
 Split by the tree. Ad astra. `generalRocketry` spent. Next CTT is
-`advRocketry` **45** (Terrier; bank ~5.13 does not pay 45). Pad belongs
-to **C-504** (FED, no HS; recover silk) until that node — 268 km loft
+`advRocketry` **45** (Terrier; bank ~7.02 does not pay 45). Pad belongs
+to **C-534** (FED, no HS, no girders; recover silk; C-504 shelf) until that node — 268 km loft
 is not orbit. C-477 is blob (`capable: no`). Do not spend crumbs. Do
 not spend the next 45 on aviation while Terrier is the orbit engine. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +

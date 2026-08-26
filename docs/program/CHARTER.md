@@ -9,7 +9,7 @@ Not Realism Overhaul. `~/Games/KSP-RO` is parked. Agents are the staff.
 keep an eye out; do not unbind the shelf; do not make it this-hop.
 Split into phases the tree can actually fly. Ad astra.
 `generalRocketry` **spent**. Next CTT is `advRocketry` **45** (Terrier;
-bank ~5.13 does not pay 45). Pad this sit belongs to **C-504** until
+bank ~7.02 does not pay 45). Pad this sit belongs to **C-534** until
 that node. 268 km loft is not orbit. Do not spend the next 45 on
 aviation / basicScience while Terrier is the orbit engine.
 Cape **64 bps** is honest

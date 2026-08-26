@@ -174,7 +174,7 @@ sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`
 (**FED** + f013 + EC; collider-clear HS only when the hang *has* an HS —
-C-504 loft is no-HS, recover silk); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
+C-534 loft is no-HS, recover silk; C-504 shelf); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 **control blocks**: sit, warp, timeout, leftover abort, chute sits, sit-match)
 without waiting for a miss. Flying-card Toggle at High lid is High, not InSpaceLow (T-517). `physics_warp.py` is Wernher. Lars
@@ -213,8 +213,9 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
-splash match the hang; FlyingHigh waits ≥50 km on **C-504**
-`kspstuff-hop-valiant-proc-loft-pbc` (FED, no HS; recover silk), not C-477
+splash match the hang; FlyingHigh waits ≥50 km on **C-534**
+`kspstuff-hop-valiant-proc-redstone-pbc` (FED, no HS, no girders;
+recover silk; C-504 loft-pbc shelf), not C-477
 (`capable: no` — Hangar 15-52-38Z blob even after T-500 dish), not t7-wheel-pbc
 (T-400 `capable: no` — lithobrake is not recover), not a 30 km stiff
 loft, not t7-chute Mk16). FlyingHigh wait is loft live-alt ≥50 km /
@@ -228,8 +229,9 @@ chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
 `phys-warp` (High dwell is not a burn). Do not Hangar FAR-sheared 4t
 / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / **C-477**
 this sit. Do not Hangar **t7-wheel-nose** (T-409) as silk. Pad this
-sit belongs to **C-504** until `advRocketry` 45.
-16-23-52Z held through burnout apo 268 km rec=no — iterate this hang.
+sit belongs to **C-534** until `advRocketry` 45.
+C-504 tape 16-23-52Z held through burnout apo 268 km rec=no — C-534
+iterates that family.
 268 km loft is not orbit. Today is **first orbit** (phased): pay
 Terrier this tree, circularize after `advRocketry` 45, leftover
 science on the way later. Leftover High / Forest / splash stays

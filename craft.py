@@ -16,7 +16,7 @@ import random
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from catalog import Catalog
+from catalog import Catalog, load_catalog
 from cfg import CfgNode, dump, load, loads
 
 
@@ -1148,6 +1148,119 @@ def _pick_tank(tanks: list[CraftPart], on: str) -> CraftPart:
     return tanks[idx]
 
 
+def _resource_names(part: CraftPart) -> list[str]:
+    names: list[str] = []
+    for res in part.resources:
+        n = res.get("name")
+        if n and n not in names:
+            names.append(n)
+    fuel = _mod(part, "ModuleFuelTanks")
+    if fuel is not None:
+        for tank in fuel.of("TANK"):
+            n = tank.get("name")
+            if n and n not in names:
+                names.append(n)
+    return names
+
+
+def _catalog_for_feed(
+    catalog: Catalog | None = None,
+    ksp_root: Path | None = None,
+) -> Catalog:
+    if catalog is not None:
+        return catalog
+    root = ksp_root
+    if root is None:
+        from hangar import discover_ksp
+
+        root = discover_ksp()
+    if root is not None:
+        return load_catalog(root)
+    return Catalog.stock()
+
+
+def part_fuel_cross_feed(part_name: str, catalog: Catalog | None = None) -> bool | None:
+    """PART fuelCrossFeed from catalog/cfg. None if the field is absent (KSP default True)."""
+    cat = catalog or Catalog.stock()
+    part = cat.get(part_name)
+    if part is None:
+        return None
+    return part.fuel_cross_feed
+
+
+def _cross_feed_label(part_name: str, catalog: Catalog | None) -> str:
+    val = part_fuel_cross_feed(part_name, catalog)
+    if val is True:
+        return "fuelCrossFeed=True"
+    if val is False:
+        return "fuelCrossFeed=False"
+    return "fuelCrossFeed=default"
+
+
+def dump_attach_fuel(
+    craft: Craft,
+    *,
+    catalog: Catalog | None = None,
+    ksp_root: Path | None = None,
+) -> str:
+    """Attach tree + fuelCrossFeed path tank→engine from .craft+cfg. No Hangar.
+
+    proceduralHeatshield and stock HeatShield* are fuelCrossFeed=False, so an
+    inline dish between last tank and engine starves the engine (Ablator only).
+    """
+    cat = _catalog_for_feed(catalog, ksp_root)
+    lines = [f"ship: {craft.name}", f"cfg: {cat.source or 'stock-nodes'}", "attach:"]
+    by = _by_token(craft)
+    for p in craft.parts:
+        att = " ".join(f"{k}={v}" for k, v in p.att_n.items()) or "-"
+        res = ",".join(_resource_names(p)) or "-"
+        cfg_bit = ""
+        part_def = cat.get(p.name)
+        if (
+            part_fuel_cross_feed(p.name, cat) is False
+            and part_def is not None
+            and part_def.cfg_path
+        ):
+            cfg_bit = f"  cfg={part_def.cfg_path}"
+        extra = f"  srfN {p.srf_n}" if p.srf_n else ""
+        lines.append(
+            f"  {p.token}  {_cross_feed_label(p.name, cat)}  res={res}  "
+            f"attN {att}{cfg_bit}{extra}"
+        )
+    tanks = axial_tanks(craft)
+    engine = find_engine(craft)
+    lines.append("fuel:")
+    if not tanks or engine is None:
+        lines.append("  (no tank/engine)")
+        return "\n".join(lines) + "\n"
+    last = tanks[-1]
+    path: list[CraftPart] = []
+    seen: set[str] = set()
+    cur: CraftPart | None = last
+    while cur is not None and cur.token not in seen:
+        seen.add(cur.token)
+        path.append(cur)
+        if cur.token == engine.token:
+            break
+        nxt = cur.att_n.get("bottom") or ""
+        cur = by.get(nxt)
+    lines.append("  " + " -> ".join(p.token for p in path))
+    for p in path:
+        res = ",".join(_resource_names(p)) or "-"
+        lines.append(f"  {p.token}  {_cross_feed_label(p.name, cat)}  res={res}")
+    blocked = [p for p in path if part_fuel_cross_feed(p.name, cat) is False]
+    if engine.token not in {p.token for p in path}:
+        lines.append("  (engine not on attN bottom chain from last tank)")
+    if blocked:
+        names = " ".join(p.name for p in blocked)
+        lines.append(
+            f"BLOCKED  {names} fuelCrossFeed=False  Ablator only; engine starved"
+        )
+    else:
+        lines.append("FED  last tank reaches engine")
+    return "\n".join(lines) + "\n"
+
+
 def insert_wheel(craft: Craft, *, catalog: Catalog | None = None) -> Craft:
     """sasModule between core and first tank; PresMat radial on the core."""
     cat = catalog or Catalog.stock()
@@ -1180,6 +1293,10 @@ def insert_heatshield(
 
     Disc is a VAB dish (bottomDiameter=0), not a 1.25 puck. Engine child
     uses catalog top (Valiant 0.45), not tank half 0.3125.
+
+    Refuse fuelCrossFeed=False (PP HS / stock HeatShield*). An inline
+    dish starves the engine (Ablator only; pad Δv 0/0). Tank stays on
+    the engine. Do not write GameData to flip the part.
     """
     if kind not in {"disc", "adapter"}:
         raise CraftError("heatshield kind must be disc or adapter")
@@ -1188,6 +1305,13 @@ def insert_heatshield(
     if not tanks or engine is None:
         raise CraftError("need last tank and engine to insert a heatshield")
     last = tanks[-1]
+    cat = catalog or _catalog_for_feed(None)
+    if part_fuel_cross_feed("proceduralHeatshield", cat) is not True:
+        raise CraftError(
+            "refusing fuelCrossFeed=False splice: proceduralHeatshield "
+            "would starve the engine (Ablator only). Tank stays on engine. "
+            "Do not write GameData."
+        )
     if last.att_n.get("bottom") != engine.token and engine.att_n.get("top") != last.token:
         if any(p.name == "proceduralHeatshield" for p in craft.parts):
             raise CraftError("heatshield already between tank and engine")
@@ -1207,7 +1331,7 @@ def insert_heatshield(
         last,
         engine,
         hs,
-        catalog=catalog or Catalog.stock(),
+        catalog=cat,
         new_half=length * 0.5,
     )
     stage_engine_first(craft)
@@ -1226,7 +1350,7 @@ def _load_named(src: str) -> tuple[Craft, Path]:
 
 
 def cmd_craft(argv: list[str] | None = None) -> int:
-    """Gus CLI: clone / tanks / chute / girders / wheel / heatshield. No Hangar."""
+    """Gus CLI: clone / tanks / chute / girders / wheel / heatshield / fuel. No Hangar."""
     p = argparse.ArgumentParser(
         prog="craft",
         description="VAB helpers on crafts/*.craft. kRPC cannot place parts.",
@@ -1280,6 +1404,11 @@ def cmd_craft(argv: list[str] | None = None) -> int:
     hs.add_argument("--length", type=float, default=0.2)
     hs.add_argument("--ablator", type=int, default=80)
     hs.add_argument("--out", default="")
+    fu = sub.add_parser(
+        "fuel",
+        help="Dump attach tree + fuelCrossFeed path through an inline HS (disk)",
+    )
+    fu.add_argument("src")
     args = p.parse_args(argv)
     try:
         if args.act == "clone":
@@ -1288,6 +1417,10 @@ def cmd_craft(argv: list[str] | None = None) -> int:
             print(f"wrote {out}  {craft.summary()}")
             return 0
         craft, src_path = _load_named(args.src)
+        if args.act == "fuel":
+            text = dump_attach_fuel(craft)
+            print(text, end="")
+            return 2 if "BLOCKED" in text else 0
         out = Path(args.out) if args.out else src_path
         if args.act == "tanks":
             replace_tanks(

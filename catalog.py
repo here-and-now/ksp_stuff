@@ -96,6 +96,7 @@ class PartDef:
     antenna_gain: float | None = None
     antenna_diameter: float | None = None
     antenna_band: str = ""
+    fuel_cross_feed: bool | None = None
 
 
 @dataclass(slots=True)
@@ -225,7 +226,14 @@ class Catalog:
     def stock(cls) -> Catalog:
         cat = cls(source="stock-nodes")
         for name, nodes in STOCK_NODES.items():
-            cat.parts[name] = PartDef(name=name, title=name, nodes=dict(nodes))
+            # PP/stock heatshields do not cross-feed (Heatshield.cfg).
+            cf = False if name == "proceduralHeatshield" else None
+            cat.parts[name] = PartDef(
+                name=name,
+                title=name,
+                nodes=dict(nodes),
+                fuel_cross_feed=cf,
+            )
         return cat
 
 
@@ -240,6 +248,15 @@ def _parse_mass(value: str) -> float | None:
         return float(raw)
     except ValueError:
         return None
+
+
+def _parse_bool(value: str) -> bool | None:
+    raw = value.split("//", 1)[0].strip().lower()
+    if raw in {"true", "1", "yes"}:
+        return True
+    if raw in {"false", "0", "no"}:
+        return False
+    return None
 
 
 def _part_from_fields(
@@ -260,6 +277,7 @@ def _part_from_fields(
     antenna_gain: float | None = None,
     antenna_diameter: float | None = None,
     antenna_band: str = "",
+    fuel_cross_feed: bool | None = None,
 ) -> PartDef:
     mods = tuple(modules)
     return PartDef(
@@ -280,6 +298,7 @@ def _part_from_fields(
         antenna_gain=antenna_gain,
         antenna_diameter=antenna_diameter,
         antenna_band=antenna_band,
+        fuel_cross_feed=fuel_cross_feed,
     )
 
 
@@ -301,6 +320,7 @@ def scan_config_cache(path: str | Path) -> Catalog:
     modules: list[str] = []
     resources: list[str] = []
     experiments: list[str] = []
+    fuel_cf: bool | None = None
     module_name = ""
     module_eid = ""
     url = ""
@@ -325,7 +345,7 @@ def scan_config_cache(path: str | Path) -> Catalog:
 
     def _commit() -> None:
         nonlocal name, title, tech, category, mass, author, nodes
-        nonlocal modules, resources, experiments, url
+        nonlocal modules, resources, experiments, url, fuel_cf
         nonlocal part_hd_data, part_hd_samples, part_ra_gain, part_ra_diam, part_ra_band
         if name:
             cat.parts[name] = _part_from_fields(
@@ -345,12 +365,13 @@ def scan_config_cache(path: str | Path) -> Catalog:
                 antenna_gain=part_ra_gain,
                 antenna_diameter=part_ra_diam,
                 antenna_band=part_ra_band,
+                fuel_cross_feed=fuel_cf,
             )
 
     def _reset() -> None:
         nonlocal name, title, tech, category, mass, author, nodes
         nonlocal modules, resources, experiments, module_name, module_eid
-        nonlocal kind, kind_depth
+        nonlocal kind, kind_depth, fuel_cf
         nonlocal hd_eid, hd_data, hd_samples, ra_gain, ra_diam, ra_band
         nonlocal part_hd_data, part_hd_samples, part_ra_gain, part_ra_diam, part_ra_band
         name = title = tech = category = mass = author = ""
@@ -358,6 +379,7 @@ def scan_config_cache(path: str | Path) -> Catalog:
         modules = []
         resources = []
         experiments = []
+        fuel_cf = None
         module_name = ""
         module_eid = ""
         hd_eid = ""
@@ -505,6 +527,10 @@ def scan_config_cache(path: str | Path) -> Catalog:
                         nodes[nname] = _parse_node_stack(value)
                     except (ValueError, IndexError):
                         pass
+                elif key == "fuelCrossFeed":
+                    parsed = _parse_bool(value)
+                    if parsed is not None:
+                        fuel_cf = parsed
                 continue
             if kind == "MODULE" and depth == kind_depth:
                 if key == "name" and not module_name:
@@ -615,6 +641,7 @@ def scan_gamedata(ksp_root: str | Path) -> Catalog:
                 rname = res.get("name") or ""
                 if rname and rname not in resources:
                     resources.append(rname)
+            raw_cf = part.get("fuelCrossFeed")
             cat.parts[name] = _part_from_fields(
                 name=name,
                 title=title,
@@ -627,6 +654,7 @@ def scan_gamedata(ksp_root: str | Path) -> Catalog:
                 experiments=experiments,
                 cfg_path=str(path),
                 author=part.get("author") or "",
+                fuel_cross_feed=_parse_bool(raw_cf) if raw_cf else None,
             )
     log.debug("Catalog: %d parts from %s", len(cat.parts), root)
     return cat

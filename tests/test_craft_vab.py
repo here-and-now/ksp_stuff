@@ -5,17 +5,21 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
+from catalog import Catalog, scan_config_cache, scan_gamedata
 from craft import (
     Craft,
+    CraftError,
     axial_tanks,
     chute_is_nylon_good,
     clone_craft,
     cmd_craft,
     copy_chute,
+    dump_attach_fuel,
     find_chutes,
     find_core,
     find_engine,
     girder_ring,
+    heatshield_modules,
     insert_heatshield,
     insert_wheel,
     liquid_cylinder,
@@ -32,6 +36,7 @@ T7 = CRAFTS / "kspstuff-hop-valiant-t7-pbc.craft"
 T7_WHEEL = CRAFTS / "kspstuff-hop-valiant-t7-wheel-pbc.craft"
 T7_CHUTE = CRAFTS / "kspstuff-hop-valiant-t7-chute-pbc.craft"
 T7_CONE = CRAFTS / "kspstuff-hop-valiant-t7-chute-cone-pbc.craft"
+T7_HS_CONE = CRAFTS / "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc.craft"
 STIFF = CRAFTS / "kspstuff-hop-valiant-proc-stiff-pbc.craft"
 
 
@@ -224,36 +229,54 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertEqual(len(pres), 1)
         self.assertEqual(pres[0].srf_n, f"srfAttach,{core.token}")
 
-    def test_insert_hs_disc_between_tank_and_engine(self):
+    def test_heatshield_modules_disc_is_vab_dish(self):
+        mods, res = heatshield_modules(top=1.25, bottom=0.0, length=0.2, ablator=80)
+        cone = next(m for m in mods if m.get("name") == "ProceduralShapeBezierCone")
+        self.assertEqual(cone.get("topDiameter"), "1.25")
+        self.assertEqual(cone.get("bottomDiameter"), "0")
+        self.assertEqual(res[0].get("name"), "Ablator")
+        self.assertEqual(res[0].get("amount"), "80")
+        adapter, _ = heatshield_modules(top=1.427, bottom=1.25, length=0.2)
+        cone = next(m for m in adapter if m.get("name") == "ProceduralShapeBezierCone")
+        self.assertEqual(cone.get("topDiameter"), "1.427")
+        self.assertEqual(cone.get("bottomDiameter"), "1.25")
+
+    def test_insert_hs_refuses_false_cross_feed_leaves_fed_engine(self):
         craft = Craft.load(T7_WHEEL)
         last = axial_tanks(craft)[-1]
         engine = find_engine(craft)
-        engine_y = engine.pos[1]
-        hs = insert_heatshield(craft, kind="disc")
-        self.assertEqual(hs.name, "proceduralHeatshield")
+        last_tok = last.token
+        engine_tok = engine.token
+        n_parts = len(craft.parts)
+        with self.assertRaises(CraftError) as ctx:
+            insert_heatshield(craft, kind="disc")
+        self.assertIn("fuelCrossFeed=False", str(ctx.exception))
+        self.assertIn("starve", str(ctx.exception).lower())
         last = axial_tanks(craft)[-1]
+        engine = find_engine(craft)
+        self.assertEqual(last.token, last_tok)
+        self.assertEqual(engine.token, engine_tok)
+        self.assertEqual(last.att_n.get("bottom"), engine.token)
+        self.assertEqual(engine.att_n.get("top"), last.token)
+        self.assertEqual(len(craft.parts), n_parts)
+        self.assertFalse(any(p.name == "proceduralHeatshield" for p in craft.parts))
+
+    def test_c477_fuel_dump_blocked_through_inline_hs(self):
+        craft = Craft.load(T7_HS_CONE)
+        last = axial_tanks(craft)[-1]
+        engine = find_engine(craft)
+        hs = next(p for p in craft.parts if p.name == "proceduralHeatshield")
         self.assertEqual(last.att_n.get("bottom"), hs.token)
         self.assertEqual(hs.att_n.get("top"), last.token)
         self.assertEqual(hs.att_n.get("bottom"), engine.token)
         self.assertEqual(engine.att_n.get("top"), hs.token)
-        self.assertLess(engine.pos[1], engine_y)
-        self.assertEqual(engine.istg, 0)
-        self.assertEqual(engine.sqor, 0)
-        hs_half = float(_mod(hs, "ProceduralShapeBezierCone").get("length") or "0.2") * 0.5
-        self.assertAlmostEqual(hs.pos[1] - hs_half - engine.pos[1], 0.45, places=3)
-        ablator = [r for r in hs.resources if r.get("name") == "Ablator"]
-        self.assertEqual(ablator[0].get("amount"), "80")
-        cone = _mod(hs, "ProceduralShapeBezierCone")
-        self.assertEqual(cone.get("topDiameter"), "1.25")
-        self.assertEqual(cone.get("bottomDiameter"), "0")
-        self.assertFalse(any(p.name in {"parachuteSingle", "RC_cone"} for p in craft.parts))
-
-    def test_adapter_1_427_to_1_25(self):
-        craft = Craft.load(T7_WHEEL)
-        hs = insert_heatshield(craft, kind="adapter")
-        cone = _mod(hs, "ProceduralShapeBezierCone")
-        self.assertEqual(cone.get("topDiameter"), "1.427")
-        self.assertEqual(cone.get("bottomDiameter"), "1.25")
+        text = dump_attach_fuel(craft, catalog=Catalog.stock())
+        self.assertIn(f"{last.token} -> {hs.token} -> {engine.token}", text)
+        self.assertIn("fuelCrossFeed=False", text)
+        self.assertIn("res=Ablator", text)
+        self.assertIn("Kerosene", text)
+        self.assertIn("BLOCKED  proceduralHeatshield fuelCrossFeed=False", text)
+        self.assertIn("engine starved", text)
 
 
 class TestLiquidNotSolidFuel(unittest.TestCase):
@@ -297,3 +320,73 @@ class TestCli(unittest.TestCase):
             self.assertEqual(len(tanks), 3)
             self.assertEqual(tanks[0].name, "proceduralTankRealFuels")
             self.assertEqual(_mod(tanks[0], "ModuleFuelTanks").get("type"), "Default")
+
+    def test_fuel_cli_c477_blocked(self):
+        import io
+        from contextlib import redirect_stdout
+
+        buf = io.StringIO()
+        with redirect_stdout(buf):
+            rc = cmd_craft(["fuel", str(T7_HS_CONE)])
+        text = buf.getvalue()
+        self.assertEqual(rc, 2)
+        self.assertIn("BLOCKED  proceduralHeatshield fuelCrossFeed=False", text)
+        self.assertIn("res=Ablator", text)
+        self.assertIn("attN ", text)
+
+
+class TestFuelCrossFeedCfg(unittest.TestCase):
+    def test_cache_parses_fuel_cross_feed_false(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "ModuleManager.ConfigCache"
+            cache.write_text(
+                "url = ProceduralParts/Parts/Structural/Heatshield\n"
+                "PART\n{\n"
+                "name = proceduralHeatshield\n"
+                "fuelCrossFeed = False\n"
+                "}\n",
+                encoding="utf-8",
+            )
+            cat = scan_config_cache(cache)
+            part = cat.get("proceduralHeatshield")
+            self.assertIsNotNone(part)
+            self.assertIs(part.fuel_cross_feed, False)
+            self.assertIn("Heatshield", part.cfg_path)
+
+    def test_gamedata_cfg_parses_fuel_cross_feed_false(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cfg = (
+                root
+                / "GameData"
+                / "ProceduralParts"
+                / "Parts"
+                / "Structural"
+                / "Heatshield.cfg"
+            )
+            cfg.parent.mkdir(parents=True)
+            cfg.write_text(
+                "PART\n{\n"
+                "name = proceduralHeatshield\n"
+                "fuelCrossFeed = False\n"
+                "}\n",
+                encoding="utf-8",
+            )
+            cat = scan_gamedata(root)
+            part = cat.get("proceduralHeatshield")
+            self.assertIs(part.fuel_cross_feed, False)
+            self.assertEqual(part.cfg_path, str(cfg))
+            text = dump_attach_fuel(Craft.load(T7_HS_CONE), catalog=cat)
+            self.assertIn("BLOCKED", text)
+            self.assertIn("fuelCrossFeed=False", text)
+            self.assertIn("Heatshield.cfg", text)
+
+    def test_stock_hs_is_false_without_gamedata(self):
+        hs = Catalog.stock().get("proceduralHeatshield")
+        self.assertIs(hs.fuel_cross_feed, False)
+        tank = Catalog.stock().get("proceduralTankRealFuels")
+        self.assertIsNone(tank.fuel_cross_feed)

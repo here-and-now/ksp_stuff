@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-26 — T-471 rf-ignition-ullage: hop_factory_pad hop light logs ignitions remaining, independent setpoint, currentThrottle; RF pad aborts after confirmed light (do not loft). 09-16-23Z never staged (GET currentThrottle 0). 09-30-17Z / 09-33-21Z hop light stage 1→0 MainThrottle 1 fuel 1575→1574.9 EC ignitor ~2, still pre_launch MET 0. Cfg Valiant ignitions=1. Do not Hangar.
 - 2026-08-26 — T-471 rf-ignition-ullage: hop_factory_pad live is the independent setpoint, not kRPC Engine.throttle GET. 22-06-37Z / 09-16-23Z never hop light, MainThrottle 1, stage 1, currentThrottle 0 until lit — T-469 wait-for-GET never staged. Do not Hangar.
 - 2026-08-25 — T-469 rf-ignition-ullage: hop_factory_pad live is engine Current Throttle; enable independent once. 21-57-33Z hop light then GET ignitions 0 Current Throttle 0 thrust 0 Kero full — re-enable zeros the meet, T-465 release-after-thrust never ran. Do not Hangar.
 - 2026-08-25 — T-465 rf-ignition-ullage: hop_factory_pad `_pad_hold` independent is the ignition meet only; once thrusting, MainThrottle 1 until MECO. 20-36-06Z lit 89 kN then flameout MET10 Kero 1396 LOx 1707 throttle 1 — independent after light starves stack tanks. last-flight rec=yes is the postcard. Do not Hangar.

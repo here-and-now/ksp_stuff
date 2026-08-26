@@ -5,7 +5,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from hop_factory_pad import _pad_hold, _pad_light
+from hop_factory_pad import _pad_hold, _pad_light, _pad_rf_snap, _rf_pad_sit
 from telem import MissionAbort
 
 
@@ -134,6 +134,43 @@ class _CurrentThrottleEngine:
             self.pct = float(value) * 100.0
 
 
+class _RfMod:
+    """Live ModuleEnginesRF: ignitions remaining + independent setpoint."""
+
+    def __init__(self, engine: "_RfEngine"):
+        self.name = "ModuleEnginesRF"
+        self._engine = engine
+
+    def get_field_by_id(self, key: str):
+        if key == "independentThrottlePercentage":
+            return self._engine.pct
+        if key == "ignitions":
+            return self._engine.ignitions
+        if key == "currentThrottle":
+            return self._engine.actual
+        raise ValueError(key)
+
+    def set_field_float_by_id(self, key: str, value: float):
+        if key != "independentThrottlePercentage":
+            raise ValueError(key)
+        self._engine.pct = float(value)
+
+
+class _RfPart:
+    def __init__(self, engine: "_RfEngine"):
+        self.modules = [_RfMod(engine)]
+
+
+class _RfEngine(_CurrentThrottleEngine):
+    """Valiant 1-start: cfg ignitions=1. Stage may spend it."""
+
+    def __init__(self):
+        self.ignitions = 1
+        self.actual = 0.0
+        super().__init__()
+        self.part = _RfPart(self)
+
+
 class TestHopFactoryPad(unittest.TestCase):
     def test_pad_module_is_the_rf_sit(self):
         factory = Path("hop_factory.py").read_text(encoding="utf-8")
@@ -150,6 +187,9 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _pad_engine_live", pad)
         self.assertIn("def _release_pad_throttle", pad)
         self.assertIn("def _pad_thrusting", pad)
+        self.assertIn("def _pad_rf_snap", pad)
+        self.assertIn("def _rf_pad_sit", pad)
+        self.assertIn("def _abort_rf_light", pad)
         self.assertNotIn("wait_water", factory)
         self.assertNotIn("wait_splash", factory)
 
@@ -213,6 +253,50 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertEqual(engine.independent_sets, 1)
         self.assertEqual(engine.throttle, 0.0)
         self.assertTrue(any("hop light" in line for line in logs))
+        lit = " ".join(logs)
+        self.assertIn("currentThrottle=0.00", lit)
+        self.assertIn("setpoint=1.00", lit)
+        self.assertIn("ignitions=?", lit)
+
+    def test_pad_light_aborts_rf_after_confirmed_light(self):
+        """rf-ignition-ullage: hop light is the product. Do not loft."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        vessel.parts.engines = [engine]
+        vessel.recoverable = True
+        vessel.recovered = 0
+
+        def recover():
+            vessel.recovered += 1
+
+        vessel.recover = recover
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(_rf_pad_sit(vessel))
+        rf = _pad_rf_snap(vessel)
+        self.assertEqual(rf["ignitions"], 1)
+        self.assertGreater(float(rf["setpoint"]), 0.05)
+        self.assertEqual(rf["currentThrottle"], 0.0)
+
+        def stage():
+            engine.ignitions = 0
+            vessel.control.staged += 1
+
+        vessel.control.activate_next_stage = stage
+        with self.assertRaises(MissionAbort) as ctx:
+            _pad_light(vessel, logs.append, snap, deaf=False)
+        self.assertIn("rf-light-test", str(ctx.exception))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(vessel.recovered, 1)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        lit = " ".join(logs)
+        self.assertIn("hop light", lit)
+        self.assertIn("ignitions=1→0", lit)
+        self.assertIn("setpoint=1.00", lit)
+        self.assertIn("currentThrottle=0.00", lit)
+        self.assertIn("hop abort rf-light-test", lit)
 
     def test_pad_hold_keeps_start_airborne_until_meco(self):
         """rf-ignition-ullage: thrusting hands stack to MainThrottle 1."""

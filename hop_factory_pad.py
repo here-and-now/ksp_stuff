@@ -7,7 +7,10 @@ Throttle / independentThrottlePercentage), not kRPC Engine.throttle
 GET (currentThrottle is 0 until lit — wait-for-GET never stages)
 and not independent True with setpoint 0. After thrusting,
 MainThrottle 1 is the burn. Commanded throttle 0 after loft is MECO.
-Throttle 0 then 1 is a restart. Forest / Grasslands: same.
+Throttle 0 then 1 is a restart. Do not gate stage on GET
+currentThrottle. hop light logs ignitions remaining, independent
+setpoint, and currentThrottle. RF pad: hop light is the product —
+abort after confirmed light. Do not loft. Forest / Grasslands: same.
 """
 
 from __future__ import annotations
@@ -56,6 +59,69 @@ def _engine_modules(engine: object) -> list[object]:
         return []
 
 
+def _module_field(module: object, *keys: str) -> object | None:
+    """One PAW / KSPField value. Never ``Module.fields`` (duplicate gui)."""
+    if not keys:
+        return None
+    want = {str(k).lower() for k in keys}
+    getter_id = getattr(module, "get_field_by_id", None)
+    if callable(getter_id):
+        for key in keys:
+            try:
+                val = getter_id(key)
+            except Exception:
+                continue
+            if val is None or val == "":
+                continue
+            return val
+    try:
+        flist = list(getattr(module, "field_list", None) or [])
+    except Exception:
+        flist = []
+    for field in flist:
+        try:
+            fname = str(getattr(field, "name", "") or "")
+        except Exception:
+            continue
+        if fname.lower() not in want:
+            continue
+        try:
+            val = getattr(field, "value", None)
+        except Exception:
+            continue
+        if val is None or val == "":
+            continue
+        return val
+    try:
+        by_id = getattr(module, "fields_by_id", None)
+    except Exception:
+        by_id = None
+    if isinstance(by_id, dict):
+        for key in keys:
+            if key in by_id and by_id[key] not in (None, ""):
+                return by_id[key]
+    return None
+
+
+def _parse_count(raw: object) -> float:
+    """Ignitions remaining. 0 is spent. Unlimited is not a number."""
+    if isinstance(raw, bool) or raw is None:
+        return float("nan")
+    text = str(raw).strip().replace("%", "")
+    if not text:
+        return float("nan")
+    head = text.split()[0]
+    if head.lower() in {"unlimited", "n/a", "none", "?"}:
+        return float("nan")
+    try:
+        value = float(head)
+    except (TypeError, ValueError):
+        return float("nan")
+    if not math.isfinite(value):
+        return float("nan")
+    return value
+
+
 def _engine_setpoint(engine: object) -> float:
     """Independent command. Not kRPC Engine.throttle GET (currentThrottle).
 
@@ -64,35 +130,143 @@ def _engine_setpoint(engine: object) -> float:
     Grasslands: same.
     """
     for mod in _engine_modules(engine):
-        getter_id = getattr(mod, "get_field_by_id", None)
-        if callable(getter_id):
-            try:
-                value = _parse_throttle(getter_id("independentThrottlePercentage"))
-            except Exception:
-                value = float("nan")
-            if math.isfinite(value):
-                return value
-        try:
-            flist = list(getattr(mod, "field_list", None) or [])
-        except Exception:
-            flist = []
-        for field in flist:
-            try:
-                fname = str(getattr(field, "name", "") or "")
-            except Exception:
-                continue
-            if fname not in (
-                "independentThrottlePercentage",
-                "Current Throttle",
-            ):
-                continue
-            try:
-                value = _parse_throttle(getattr(field, "value", None))
-            except Exception:
-                value = float("nan")
-            if math.isfinite(value):
-                return value
+        value = _parse_throttle(
+            _module_field(
+                mod, "independentThrottlePercentage", "Current Throttle"
+            )
+        )
+        if math.isfinite(value):
+            return value
     return float("nan")
+
+
+def _engine_current_throttle(engine: object) -> float:
+    """kRPC Engine.throttle GET / currentThrottle. 0 until lit."""
+    try:
+        raw = getattr(engine, "throttle", None)
+    except Exception:
+        raw = None
+    value = _parse_throttle(raw)
+    if math.isfinite(value):
+        return value
+    for mod in _engine_modules(engine):
+        value = _parse_throttle(_module_field(mod, "currentThrottle"))
+        if math.isfinite(value):
+            return value
+    return float("nan")
+
+
+def _engine_ignitions(engine: object) -> float:
+    """RF ignitions remaining. Cfg is not live remaining."""
+    for mod in _engine_modules(engine):
+        value = _parse_count(
+            _module_field(
+                mod,
+                "ignitions",
+                "ignitionsRemaining",
+                "Ignitions Remaining",
+            )
+        )
+        if math.isfinite(value):
+            return value
+    return float("nan")
+
+
+def _pad_rf_snap(vessel: object) -> dict[str, object]:
+    """Ignitions remaining, independent setpoint, currentThrottle."""
+    row: dict[str, object] = {
+        "ignitions": float("nan"),
+        "setpoint": float("nan"),
+        "currentThrottle": float("nan"),
+        "independent": False,
+    }
+    for eng in _pad_engines(vessel):
+        try:
+            independent = bool(getattr(eng, "independent_throttle", False))
+        except Exception:
+            independent = False
+        row = {
+            "ignitions": _engine_ignitions(eng),
+            "setpoint": _engine_setpoint(eng),
+            "currentThrottle": _engine_current_throttle(eng),
+            "independent": independent,
+        }
+        ign = row["ignitions"]
+        if isinstance(ign, (int, float)) and math.isfinite(float(ign)):
+            return row
+        sp = row["setpoint"]
+        if isinstance(sp, (int, float)) and math.isfinite(float(sp)):
+            return row
+    return row
+
+
+def _fmt_rf_snap(
+    after: dict[str, object],
+    *,
+    before: dict[str, object] | None = None,
+) -> str:
+    """hop-light tape: ignitions remaining, setpoint, currentThrottle."""
+    parts: list[str] = []
+    specs = (("ignitions", 0), ("setpoint", 2), ("currentThrottle", 2))
+    for key, digits in specs:
+        a = after.get(key, float("nan"))
+        try:
+            a_f = float(a) if not isinstance(a, bool) else float("nan")
+        except (TypeError, ValueError):
+            a_f = float("nan")
+        b_f = float("nan")
+        if before is not None:
+            b = before.get(key, float("nan"))
+            try:
+                b_f = float(b) if not isinstance(b, bool) else float("nan")
+            except (TypeError, ValueError):
+                b_f = float("nan")
+        if (
+            math.isfinite(b_f)
+            and math.isfinite(a_f)
+            and abs(a_f - b_f) > 1e-6
+        ):
+            parts.append(f"{key}={H._fmt(b_f, digits)}→{H._fmt(a_f, digits)}")
+        else:
+            parts.append(f"{key}={H._fmt(a_f, digits)}")
+    indep = after.get("independent")
+    parts.append("independent=yes" if indep else "independent=no")
+    return " ".join(parts)
+
+
+def _rf_pad_sit(vessel: object) -> bool:
+    """This hang is RF: ModuleEnginesRF or finite ignitions remaining."""
+    for eng in _pad_engines(vessel):
+        ign = _engine_ignitions(eng)
+        if math.isfinite(ign):
+            return True
+        for mod in _engine_modules(eng):
+            try:
+                name = str(getattr(mod, "name", "") or "")
+            except Exception:
+                name = ""
+            if "moduleenginesrf" in name.lower():
+                return True
+    return False
+
+
+def _abort_rf_light(
+    vessel: object, on_log: Callable[[str], None] | None
+) -> None:
+    """RF pad: hop light is the product. Cut, recover, abort. Do not loft."""
+    from emergencies import Ctx, call
+
+    H._say("hop abort rf-light-test", on_log)
+    try:
+        call("abort_pad", Ctx(session=None, vessel=vessel))
+    except Exception:
+        try:
+            control = getattr(vessel, "control", None)
+            if control is not None:
+                control.throttle = 0.0
+        except Exception:
+            pass
+    raise MissionAbort("rf-light-test")
 
 
 def _write_engine_setpoint(engine: object) -> None:
@@ -218,8 +392,10 @@ def _pad_light(
     and not Engine.throttle GET (currentThrottle is 0 until lit).
     Re-apply on the stage pulse zeros the setpoint this tick.
     Throttle 0 then 1 is a restart. Pad 1 g still lights when the
-    command is 1 at ignition. hop light is not the burn. Forest /
-    Grasslands: same.
+    command is 1 at ignition. hop light logs ignitions remaining,
+    setpoint, currentThrottle. RF pad: hop light is the product —
+    abort after confirmed light. Do not loft. Forest / Grasslands:
+    same.
     """
     if deaf:
         H._light(vessel, on_log, snap)
@@ -242,11 +418,15 @@ def _pad_light(
         control.sas = True
     except Exception:
         pass
+    before = _pad_rf_snap(vessel)
     try:
         control.activate_next_stage()
     except Exception as exc:
         raise MissionAbort(f"light failed: {exc}") from exc
-    H._say("hop light", on_log)
+    after = _pad_rf_snap(vessel)
+    H._say("hop light " + _fmt_rf_snap(after, before=before), on_log)
+    if _rf_pad_sit(vessel):
+        _abort_rf_light(vessel, on_log)
     return True
 
 

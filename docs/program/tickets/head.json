@@ -14115,6 +14115,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:02Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-pbc. Disk re-verified 7xFL-T100 Stayputnik 2HOT+Goo+geiger SurfAntenna Engineer7500 3xZ-100 Valiant no chute no PresMat. 13-31-03Z apo 88.8 km shear=no is still the >=50 km proof. Hang stays t7-wheel-pbc until leftover. Next loft T-406 t7-wheel-proc. Do not Hangar t7-chute / t7-chute-cone this sit. Omni SurfAntenna. Cape 64 bps. f013 2HOT+Goo+geiger on_craft TELEMETRY Stayputnik HD=0.5. Thin tape T-284. fingerprint aero-stiff-chute. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14129,7 +14137,7 @@
       "tags": [],
       "title": "Seat t7-pbc (88.8 km proof) \u2014 Mk16 t7-chute is not lofting",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:39Z"
+      "updated": "2026-08-26T09:19:02Z"
     },
     "T-388": {
       "assignee": "",
@@ -14753,6 +14761,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:02Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-pbc (hang until leftover). Disk re-verified t7-pbc + sasModule + PresMat + 4xEngineer7500 HD=2.5 + 5xZ-100. 7xFL-T100 Valiant 1575 kero 1-start. No chute, no silk. Next loft T-406 proc 2415 kero. Alts T-402 hs / T-403 cone (do not Hangar) / T-408 OX-STAT dwell EC / T-409 nose aero. Omni SurfAntenna gain=2. Cape 64 bps. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14767,7 +14783,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:39Z"
+      "updated": "2026-08-26T09:19:02Z"
     },
     "T-401": {
       "assignee": "",
@@ -14865,6 +14881,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:02Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-hs-pbc. Disk re-verified proceduralHeatshield Ablative 80 length 0.2 between last T100 and Valiant. No silk. Recover alt of hang, not the loft sit. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14881,7 +14905,7 @@
       ],
       "title": "t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:39Z"
+      "updated": "2026-08-26T09:19:02Z"
     },
     "T-403": {
       "assignee": "",
@@ -14944,6 +14968,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-cone-pbc. Disk re-verified OKTO+RC_cone Nylon 50m minDeployment 2500 pre 2.5m. Do not Hangar this sit (silk/4x/pitch). Recover alt after a living loft. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO HD=1. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14960,7 +14992,7 @@
       ],
       "title": "t7-wheel-cone: RC_cone 50m recover alt of t7-wheel \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:39Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-404": {
       "assignee": "linus",
@@ -15173,6 +15205,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. Next loft after leftover. Hang stays t7-wheel-pbc. Disk re-verified 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 767 L / 345 kero / 422 LOx vs 7xT100 1575 kero. Same 4.375 m stack as 88.8 km proof; 2415 kero. Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant 1-start. No chute, no silk. Omni SurfAntenna. Alts T-428 hs / T-430 cone (do not Hangar) / T-431 OX-STAT dwell EC / T-433 nose aero. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15189,7 +15229,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-407": {
       "assignee": "",
@@ -15279,6 +15319,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-oxstat-pbc. Disk re-verified same t7-wheel + 4x solarPanels5 survivability. t7 3xZ-100 EC=0 MET 440; Goo 641x0.18=115 plus command. 4x0.35 EC/s sun. Dwell EC, not the loft. Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik HD=2.5. Thin tape T-284. fingerprint ec=0-after-loft. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15293,7 +15341,7 @@
       "tags": [],
       "title": "t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-409": {
       "assignee": "",
@@ -15348,6 +15396,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-nose-pbc. Disk re-verified OKTO + proceduralNoseCone stability Smooth Cone length 0.625. Aero, not silk. Stayputnik has no top node. Same 7xFL-T100 Valiant + sasModule + PresMat. Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15362,7 +15418,7 @@
       "tags": [],
       "title": "t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-410": {
       "assignee": "",
@@ -16206,6 +16262,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. Disk re-verified proceduralHeatshield Ablative 80 length 0.2 + 7x proc 1.25x0.625 Default 2415 kero. No silk. Recover alt of next loft, not the loft sit. Do not Hangar lite/dv5/4t. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16222,7 +16286,7 @@
       ],
       "title": "t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-429": {
       "assignee": "",
@@ -16304,6 +16368,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. Disk re-verified OKTO+RC_cone Nylon 50m minDeployment 2500 + 7x proc 1.25x0.625 Default 2415 kero. Do not Hangar this sit (silk/4x/pitch). Recover alt after a living loft. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16320,7 +16392,7 @@
       ],
       "title": "t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-431": {
       "assignee": "",
@@ -16367,6 +16439,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-oxstat-pbc. Disk re-verified 4x solarPanels5 + 7x proc 1.25x0.625 Default 2415 kero. Goo 641x0.18 plus command vs t7 3xZ-100 EC=0 MET 440. Dwell EC, not the loft. No chute, no silk. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint ec=0-after-loft. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16381,7 +16461,7 @@
       "tags": [],
       "title": "t7-wheel-proc-oxstat: 4x OX-STAT on t7-wheel-proc for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-432": {
       "assignee": "",
@@ -16463,6 +16543,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T09:19:03Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-nose-pbc. Disk re-verified OKTO+proceduralNoseCone Smooth Cone length 0.625 + 7x proc 1.25x0.625 Default 2415 kero. Aero, not silk. Stayputnik has no top node. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16477,7 +16565,7 @@
       "tags": [],
       "title": "t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-25T21:46:40Z"
+      "updated": "2026-08-26T09:19:03Z"
     },
     "T-434": {
       "assignee": "",
@@ -17563,13 +17651,21 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T09:20:16Z",
+            "claim": "Kept Surface@Shores PresMat 305/0.05/0.90 seq0 on t7-wheel-pbc. Live hop ship.md sit=pre_launch biome=Shores alt=85 heading=299 wreck=no. Packet landing wreck rec=no is not a splash rebind. Scan Surface@Biomes REACH 0.90. File rem=0 is still the card. Thermo/TELEMETRY/goo/geiger Surface capped \u2014 PresMat only. Unbound T-404 High + T-460 Low. Water stays unbound (never 090). recover HD 1.17 MB not TX 41 h. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/ship.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop SrfSplashed@Shores PresMat seq2 on t7-wheel-pbc. Unstarted barometerScan Surface@Shores ~0.90 (cap 3 \u00d7 0.3). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Hang splashes \u2014 not SrfLanded. 20-36-06Z sit=flying rec=no apo 1.2 km is wreck not splash \u2014 keep splash for the hop that flies. Water splash PresMat T-423 shelf (never 090). Side-by-side T-404 FlyingHigh seq0 + T-460 FlyingLow seq1. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop Surface@Shores PresMat seq0 on t7-wheel-pbc. Unstarted barometerScan Surface@Shores ~0.90 (cap 3 \u00d7 0.3). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Live hop sit=pre_launch Shores \u2014 Surface pays pad; splash cannot. Packet landing wreck rec=no is not a splash rebind. Thermo/TELEMETRY/goo/geiger Surface capped \u2014 PresMat only. Water splash PresMat T-423 shelf (never 090). Unbound T-404 FlyingHigh + T-460 FlyingLow. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
@@ -17597,7 +17693,7 @@
       ],
       "title": "Shores Surface barometer 0.90",
       "type": "science",
-      "updated": "2026-08-26T09:12:51Z"
+      "updated": "2026-08-26T09:20:16Z"
     },
     "T-462": {
       "assignee": "",
@@ -17945,5 +18041,5 @@
       "updated": "2026-08-25T22:10:10Z"
     }
   },
-  "updated": "2026-08-26T09:14:58Z"
+  "updated": "2026-08-26T09:20:16Z"
 }

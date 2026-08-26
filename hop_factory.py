@@ -19,9 +19,10 @@ not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
 inland slew after. Splash bind is
 not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
-Toggle; skip-latch does not drop a bound High card. After High lid, commanded throttle 0 is MECO
-(independent setpoint 0 + MainThrottle 0) — not dropping independent.
-High dwell is not a burn; do not loft out of atmo. Quiet loft honors
+Toggle; skip-latch does not drop a bound High card. After High lid, MECO is MainThrottle 0, setpoint 0, then independent
+off — independent 1 ignores MainThrottle GET 0 (16-49-02Z thrust 100
+at 54 km). Do not re-enable. High dwell is not a burn; plume still
+up is still the burn. Do not loft out of atmo. Quiet loft honors
 uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
@@ -193,9 +194,8 @@ def _hold_start(
     """Keep MainThrottle 1 + independent until MECO.
 
     Airborne GET throttle 0 is not MECO — independent still burns.
-    MECO is commanded throttle 0 (setpoint 0 + MainThrottle 0), not
-    dropping independent. Pad sit still ``_pad_hold``. Forest /
-    Grasslands: same.
+    MECO is MainThrottle 0, setpoint 0, then independent off. Do not
+    re-enable. Pad sit still ``_pad_hold``. Forest / Grasslands: same.
     """
     if not left_pad:
         return _pad_hold(vessel, snap, lit=lit, left_pad=False, deaf=deaf)
@@ -235,8 +235,9 @@ def _flameout_sit(
 def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
     """After FlyingHigh lid, until down. Not a burn.
 
-    16-23-52Z lid 50 km then throttle 1 through 88 km / apo 268 left
-    the band in ~42 s. MECO at the lid; do not loft out of atmo.
+    16-49-02Z lid 54 km still independent 1 thrust 100 then 4× into
+    Space. MECO at the lid (independent off after MainThrottle 0);
+    plume still up is still the burn. Do not loft out of atmo.
     Wernher ``want_coast`` already 1× on thick air / high q / silk / burn.
     Quiet loft honors uplink ``phys-warp``. Forest / Grasslands: same.
     """
@@ -737,11 +738,15 @@ def run_factory_vessel(
                 deaf=deaf,
             )
 
-            burning_now = H._burning(vessel, snap, lofted=lofted) or _lid_burn_sit(
-                snap,
-                hop_apo=hop_apo,
-                flying_high=flying_high,
-                lofted_lid=reached_lid,
+            burning_now = (
+                H._burning(vessel, snap, lofted=lofted)
+                or _lid_burn_sit(
+                    snap,
+                    hop_apo=hop_apo,
+                    flying_high=flying_high,
+                    lofted_lid=reached_lid,
+                )
+                or _pad_plume(vessel, snap)
             )
             if lit and not down and left_pad and not deaf:
                 flown_p = H._snap_pitch(snap)

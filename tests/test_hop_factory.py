@@ -212,6 +212,7 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _flameout_sit", factory)
         self.assertIn("_apply_pad_throttle(vessel)", factory)
         self.assertIn("_release_pad_throttle(vessel)", factory)
+        self.assertIn("or _pad_plume(vessel, snap)", factory)
         self.assertIn('OffPlan("thrust 0 with fuel left")', factory)
 
     def test_pad_light_does_not_stage_on_krpc_throttle_alone(self):
@@ -517,7 +518,7 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertFalse(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertTrue(engine.independent_throttle)
+        self.assertFalse(engine.independent_throttle)
         self.assertLessEqual(engine.throttle, 0.05)
         self.assertEqual(vessel.control.throttle, 0.0)
 
@@ -678,19 +679,18 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertFalse(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertTrue(engine.independent_throttle)
+        self.assertFalse(engine.independent_throttle)
         self.assertLessEqual(engine.throttle, 0.05)
         self.assertEqual(vessel.control.throttle, 0.0)
 
     def test_hold_start_meco_commands_throttle_zero(self):
-        """flyinghigh-lid: 16-23-52Z MECO is setpoint 0, not dropping independent."""
+        """flyinghigh-lid: 16-49-02Z MECO is independent off after MainThrottle 0."""
         vessel = _Vessel()
         engine = _Engine()
         vessel.parts.engines = [engine]
         engine.independent_throttle = True
         engine.throttle = 1.0
         vessel.control.throttle = 1.0
-        sets = engine.independent_sets
         fly = type(
             "S",
             (),
@@ -706,13 +706,12 @@ class TestHopFactoryPad(unittest.TestCase):
                 deaf=False,
             )
         )
-        self.assertTrue(engine.independent_throttle)
-        self.assertEqual(engine.independent_sets, sets)
+        self.assertFalse(engine.independent_throttle)
         self.assertLessEqual(engine.throttle, 0.05)
         self.assertEqual(vessel.control.throttle, 0.0)
 
     def test_hold_start_rf_meco_zeros_setpoint(self):
-        """flyinghigh-lid: 16-23-52Z independent 1 MainThrottle 0 still burned."""
+        """flyinghigh-lid: 16-49-02Z independent 1 MainThrottle 0 still burned."""
         vessel = _Vessel()
         engine = _RfEngine()
         vessel.parts.engines = [engine]
@@ -720,11 +719,10 @@ class TestHopFactoryPad(unittest.TestCase):
         engine.pct = 100.0
         engine.actual = 1.0
         vessel.control.throttle = 1.0
-        sets = engine.independent_sets
         lid = type(
             "S",
             (),
-            {"situation": "flying", "alt": 54_000.0, "fuel": 216.0, "link": True},
+            {"situation": "flying", "alt": 54_000.0, "fuel": 227.0, "link": True},
         )()
         self.assertFalse(
             _keep_start_sit(
@@ -747,8 +745,7 @@ class TestHopFactoryPad(unittest.TestCase):
                 deaf=False,
             )
         )
-        self.assertTrue(engine.independent_throttle)
-        self.assertEqual(engine.independent_sets, sets)
+        self.assertFalse(engine.independent_throttle)
         self.assertLessEqual(engine.pct, 5.0)
         self.assertEqual(vessel.control.throttle, 0.0)
 

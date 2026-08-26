@@ -268,13 +268,23 @@ def _rf_pad_sit(vessel: object) -> bool:
 
 def _write_engine_setpoint(engine: object, percent: float = 100.0) -> None:
     """Write independentThrottlePercentage. 100 is the ignition meet."""
+    keys = ("independentThrottlePercentage", "Current Throttle")
+    value = float(percent)
     for mod in _engine_modules(engine):
-        setter = getattr(mod, "set_field_float_by_id", None)
+        setter_id = getattr(mod, "set_field_float_by_id", None)
+        if callable(setter_id):
+            for key in keys:
+                try:
+                    setter_id(key, value)
+                except Exception:
+                    pass
+        setter = getattr(mod, "set_field_float", None)
         if callable(setter):
-            try:
-                setter("independentThrottlePercentage", float(percent))
-            except Exception:
-                pass
+            for key in keys:
+                try:
+                    setter(key, value)
+                except Exception:
+                    pass
 
 
 def _cut_pad_engine(vessel: object) -> None:
@@ -385,11 +395,13 @@ def _apply_pad_throttle(vessel: object) -> None:
 
 
 def _release_pad_throttle(vessel: object) -> None:
-    """MECO after loft: commanded throttle 0. Do not toggle independent.
+    """MECO after loft: MainThrottle 0, setpoint 0, then independent off.
 
     Independent still burns when MainThrottle GET is 0. Dropping
-    independent is a restart with 0 remaining. High dwell is this
-    MECO — leftover LF after lid is not a relight. Forest /
+    independent then re-enabling is a restart with 0 remaining. After
+    lid we do not re-enable. 16-49-02Z setpoint 0 with independent 1
+    left thrust 100 kN at 54 km. Independent off after MainThrottle 0
+    is MECO. Do not set engine active False (abort only). Forest /
     Grasslands: same.
     """
     try:
@@ -404,6 +416,10 @@ def _release_pad_throttle(vessel: object) -> None:
         except Exception:
             pass
         _write_engine_setpoint(eng, 0.0)
+        try:
+            eng.independent_throttle = False
+        except Exception:
+            pass
 
 
 def _pad_thrusting(vessel: object, snap: object) -> bool:
@@ -571,8 +587,8 @@ def _pad_hold(
     Airborne is still that start: MainThrottle 1 and independent
     setpoint 1 stay until loft/MECO at the lid. Pad thrusting is
     not a handoff. Pad sit throttle 0 is a drop: write 1 without
-    toggling independent. Commanded throttle 0 after loft is MECO
-    (setpoint 0 + MainThrottle 0), not dropping independent.
+    toggling independent. MECO after loft is MainThrottle 0,
+    setpoint 0, then independent off — do not re-enable.
     ``_cut_pad_engine`` only on abort. Pad 1 g still lights.
     Forest / Grasslands: same.
     """

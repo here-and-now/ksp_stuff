@@ -80,8 +80,8 @@ ticket. Katherine: `ops --tag ask --desk katherine` or `--tag
 dynamics` when FAR / Q is the fight.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
-**15 sci is spent.** Next honest node `generalRocketry` **20** (bank
-13.62 does not pay; need ~6.38) then **one node after**. Pad this sit
+**15 sci is spent.** `generalRocketry` **spent**. Next honest node `advRocketry` **45** (bank
+0.16 does not pay; need ~44.84). Pad this sit
 belongs to **C-504** `kspstuff-hop-valiant-proc-loft-pbc` (FED, no
 HS; recover silk). C-477 is `capable: no` (blob). Do **not** restamp
 t7-wheel-pbc or C-477 `capable: yes` — lithobrake is not recover;

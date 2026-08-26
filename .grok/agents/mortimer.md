@@ -52,9 +52,9 @@ and `python main.py load rd-<node>`. **Never** `load persistent`. Asteroid
 in Flight after load: `python main.py ksc`. Do not ask Os.
 
 Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
-out. Ad astra. `stability` spent. Next CTT is `generalRocketry` **20**
-(need ~6.38; bank 13.62 does not pay 20). Pad belongs to **C-504**
-(FED, no HS; recover silk) until that node then one node after —
+out. Ad astra. `generalRocketry` spent. Next CTT is `advRocketry` **45**
+(need ~44.84; bank 0.16 does not pay 45). Pad belongs to **C-504**
+(FED, no HS; recover silk) until that node —
 C-477 is blob (`capable: no`). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +
 `sci_run=0` is not clean-0 re-fly — envelope sit/biome must match

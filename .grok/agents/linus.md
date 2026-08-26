@@ -62,8 +62,8 @@ Keep a **shelf** of remaining subjects (biomes, situations, durations,
 honest f013) — unbound catalog, not one bind that “closes 15.” Cape
 Shores is capped. Forest / Grasslands / Tropics / Savanna FlyingLow
 still pay **when the envelope shows them**. Water waits heading 090.
-Inventory stays live during lock. Next honest node `generalRocketry` 20
-(bank does not pay).
+Inventory stays live during lock. Next honest node `advRocketry` 45
+(bank 0.16 does not pay; need ~44.84).
 
 **Inner circle:** packet `ops --tag plan` → last-write **only**
 `## Bind` on `docs/program/agree.md` (experiment_ids, sit/biome,

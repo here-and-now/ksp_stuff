@@ -2,21 +2,21 @@
 
 **Goal:** Kardashev III or bust. Moon is a waypoint. Probes first.
 **Today (Os 2026-08-24):** bigger rockets, more Δv, farther out. Ad
-astra. `stability` **spent**. Next CTT is `generalRocketry` **20**,
-then **one node after**. Pad this sit belongs to **C-504**.
-Bank **13.62** does not pay 20 (need ~**6.38**). Do not spend crumbs.
+astra. `generalRocketry` **spent**. Next CTT is `advRocketry` **45**
+(need ~**44.84**; bank 0.16 does not pay 45). Pad this sit belongs to **C-504**.
+Do not spend crumbs.
 Farther hops that can bank FlyingHigh / a new biome are the work.
 Tape is the product. Save `letsgrok` / `~/Games/KSP-rss`. CTT+PBC.
 RO sandbox is the next tree, not this save.
 
-**Bank:** desk **sci 13.6243**. Tree **start,engineering101,basicRocketry,survivability,stability**. `generalRocketry` (20) LOCKED — need ~**6.38**. `load persistent` is forbidden (F-014).
+**Bank:** desk **sci 0.1576**. Tree **start,engineering101,basicRocketry,survivability,stability,generalRocketry**. `advRocketry` (45) LOCKED — need ~**44.84**. `load persistent` is forbidden (F-014).
 **Aero (2026-08-21):** FAR, RealChute, RealHeat **installed**. Kerbalism
 Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
 
 **Next:** Pad this-hop is **C-504** `kspstuff-hop-valiant-proc-loft-pbc`
 (FED, no HS; recover silk). This-hop bind is **none** — T-404 FlyingHigh
 PresMat 305 s cannot pay MECO-at-lid High (~260 s FAR). Pad belongs to
-C-504 until `generalRocketry` **20** then **one node after**. C-477 is
+C-504 until `advRocketry` **45**. C-477 is
 the blob exhibit (`capable: no` —
 Hangar 15-52-38Z parts=397 even after T-500 dish). Forest T-069
 TELEMETRY cannot pay a Shores splash — do not re-pin it.
@@ -29,8 +29,8 @@ silk-only are alts, not a Hangar from this letter. T-409 / T-433 nose
 is aero, not silk. OX-STAT T-408/T-431 is dwell EC, not the loft hang.
 Forest SrfLanded leftover waits a hang that lands. Splash T-313/T-288
 waits a splash hang. Do not re-fly living +0 binds. Next CTT is
-`generalRocketry` **20** (`sasModule` / PresMat Available; bank 13.62
-does not pay 20). `campaign: uncrewed`.
+`advRocketry` **45** (Reliant / FL-T200 / proc 1500 L Available; bank 0.16
+does not pay 45). `campaign: uncrewed`.
 
 **How today:** pad occupancy on **C-504** that can **pay** FlyingHigh
 ≥50 km, not C-477 blob, not another living +0, not t7-wheel-pbc lithobrake. Throttle 1 + SAS vertical until lid;

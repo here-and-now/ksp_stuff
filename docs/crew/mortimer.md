@@ -60,9 +60,9 @@ quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
 (T-442). Wreck rec=no re-flies last cli; living +0 is waste. Do not Hangar
 4t / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / C-477. Do not
 fly t7-wheel-pbc (lithobrake is not recover). OX-STAT is dwell EC, not
-the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
-Next CTT is `generalRocketry` 20 (need ~6.38; bank 13.62 does not
-pay 20) then **one node after**. `survivability` 15 is spent. Do not
+the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent. `generalRocketry` 20 is spent.
+Next CTT is `advRocketry` 45 (need ~44.84; bank 0.16 does not
+pay 45). `survivability` 15 is spent. Do not
 spend crumbs. Pad this sit belongs to **C-504** (FED, no HS; recover silk;
 16-23-52Z apo 268 km rec=no — iterate this hang). Honest MECO leftover
 fuel is not engine-dead. T-428 / T-430 stay alts.

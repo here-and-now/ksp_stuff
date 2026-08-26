@@ -27,7 +27,7 @@ C-504 `kspstuff-hop-valiant-proc-loft-pbc`. FED. Nylon `RC_cone` 50 m
 payload-side on OKTO (Stayputnik has no top; cone `srfAttach=0`).
 Engine `istg=0` `sqor=0` first fire; chute `istg=1` `sqor=0` last.
 No HS (C-477 blob). Recover: silk. `capable: yes`. Iterate this hang
-until `generalRocketry` 20 then one node after. C-477 blob is not
+until `advRocketry` 45. C-477 blob is not
 capable. t7-wheel-pbc lithobrake is not recover. T-428 / T-430 stay
 alts, not this hang. Do not replace C-504 because the last hop sheared.
 

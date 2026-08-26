@@ -222,7 +222,7 @@ chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
 `phys-warp` (High dwell is not a burn). Do not Hangar FAR-sheared 4t
 / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / **C-477**
 this sit. Do not Hangar **t7-wheel-nose** (T-409) as silk. Pad this
-sit belongs to **C-504** until `generalRocketry` 20 then one node after.
+sit belongs to **C-504** until `advRocketry` 45.
 16-23-52Z held through burnout apo 268 km rec=no — iterate this hang.
 T-428 HS-only / T-430 silk-only stay alts — not a Hangar from this
 letter. Do not gather a

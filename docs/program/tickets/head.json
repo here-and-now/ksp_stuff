@@ -20814,6 +20814,14 @@
             "owner": "none",
             "real": false,
             "who": "katherine"
+          },
+          {
+            "at": "2026-08-26T17:49:39Z",
+            "claim": "Pulse stays lid MECO (50 km live, independent off) + High dwell coast. Do not chase earlier MECO for High time \u2014 42 km is 216 s, worse. 271 s vac / ~260 s FAR is the lid-coast window; T-404 305 s cannot pay that sit. meco: unchanged.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "lars"
           }
         ],
         "to": "lars"
@@ -20830,7 +20838,7 @@
       ],
       "title": "MECO at 50 km coast is ~271 s in 50-140; T-404 305 s does not pay",
       "type": "ops",
-      "updated": "2026-08-26T17:48:08Z"
+      "updated": "2026-08-26T17:49:39Z"
     },
     "T-525": {
       "assignee": "",
@@ -20869,5 +20877,5 @@
       "updated": "2026-08-26T17:48:08Z"
     }
   },
-  "updated": "2026-08-26T17:48:16Z"
+  "updated": "2026-08-26T17:49:39Z"
 }

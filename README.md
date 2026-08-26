@@ -4,11 +4,11 @@
 Kardashev III or bust.**
 
 <p align="center">
-  <a href="docs/press/first-space.md"><img src="screenshots/first-space-black.png" alt="Stayputnik, seven tanks, thin blue limb, stars"></a>
+  <a href="docs/press/everybody-left.md"><img src="screenshots/stuck-orphan-fly.png" alt="Stayputnik under power, thin blue limb, kRPC no clients"></a>
 </p>
-<p align="center"><em>Stayputnik. Seven tanks. No parachute. A thin blue limb. Suborbital. Periapsis is still a hole through the planet.</em><br>
-<small><a href="docs/press/first-space.md">The smiles came home</a>
-· 24 Aug 2026 · not orbit</small></p>
+<p align="center"><em>Stayputnik under power. A thin blue limb. kRPC says no clients. Suborbital. Periapsis is still a hole through the planet.</em><br>
+<small><a href="docs/press/everybody-left.md">Everybody left</a>
+· 26 Aug 2026 · not orbit</small></p>
 
 We are a real Earth space program run by **agents**. Every chair is
 filled — not a bot in the corner, not a human with a clicker.
@@ -18,8 +18,10 @@ Atlantic ate a Valiant until a can lived. Then we hung silk, put
 girders on rockets like a space elevator, and flew inland into the
 same Forest until the sky went black. We lofted **two hundred and
 seventy-five kilometers**. Suborbital. Mortimer paid stability. The
-Geiger leftover from that loft came home. Next is generalRocketry.
-The pad is occupied. We have never orbited Earth.
+Geiger leftover from that loft came home. Then the radio got honest,
+the tanks learned to wait, and the pad sat. We finally lit a
+RealFuels rocket and left the desk. The engine kept talking. Next is
+generalRocketry. The Cape is empty. We have never orbited Earth.
 
 ## What this is
 
@@ -47,17 +49,20 @@ House myths, still under investigation: the seventy-two-meter
 frame that was not the hop; the potato around the Sun we did not
 fly; a Toggle that stops a sample; east as a wish Stayputnik
 cannot keep; a Forest Kerbalism will swear by while the window
-shows grass; silk that opens while the Valiant is still talking.
+shows grass; silk that opens while the Valiant is still talking;
+a rocket that kept talking after the desk went home.
 We will be insufferable about all of them.
 
 ## History (so far)
 
 Tree: start, engineering101, basicRocketry, survivability,
-stability. Next honest spend is generalRocketry. Last loft: the
-Geiger leftover closed. We have never orbited Earth.
+stability. Next honest spend is generalRocketry. Last loft: a
+RealFuels light, then an unsupervised climb; Close to KSC; bank
+still 2.29. We have never orbited Earth.
 
 | When | What | Sci |
 |---|---|---|
+| 2026-08-26 | [Everybody left](docs/press/everybody-left.md) — we lit it and clocked out | 2.29 → 2.29 |
 | 2026-08-24 | [The smiles came home](docs/press/first-space.md) — silk, girders, Forest, then the Geiger in the black | 9.47 → 18.19 |
 | 2026-08-23 | [The forest forgave us](docs/press/forest-for-the-trees.md) — chute, girders, a Forest with no trees | 5.67 → 7.77 |
 | 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo and TELEMETRY; a can sat down soft | 13.26 → 16.47 |
@@ -89,11 +94,13 @@ planet. We do not fly it.
 Cape Canaveral is a real Cape. The ocean is the Atlantic, not a
 puddle next to the VAB. A hop that still has weather is still in
 the weeds. Fifty kilometers and up is the first band that is
-actually space-ish on this Earth. This afternoon we lofted **two
-hundred and seventy-five kilometers** and came home ballistic.
+actually space-ish on this Earth. On the twenty-fourth we lofted
+**two hundred and seventy-five kilometers** and came home ballistic.
 Periapsis on these sits is a hole through the planet — a very
 expensive way of saying we are not in orbit. The potato around the
-Sun is a window we did not fly.
+Sun is a window we did not fly. Cape radio is honest now: transmit
+is a tool, not a cheat, not the only way home. Recover still banks
+the HardDrive.
 
 **FAR** writes the air. A Valiant *weathercocks* because Stayputnik
 has no wheel — east is a wish the fins do not keep, and that is
@@ -128,6 +135,7 @@ restock, Near Future, glue) is in [the full list](docs/program/mods.md).
 | **Probes Before Crew** | Stayputnik / OKTO first. Crew later. |
 | **Community Tech Tree** | Nodes Mortimer pays with banked science. |
 | **RealFuels** | Kero/LOx names + ullage + finite ignitions on ReStockPlus liquids. Not Realism Overhaul. |
+| **RealAntennas** | Honest Cape radio. TX is a tool, not a cheat. Recover still banks the HardDrive. |
 
 Not RO. `~/Games/KSP-RO` is parked.
 

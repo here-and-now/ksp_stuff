@@ -18,8 +18,9 @@ planet. Wonder is the ten-node horizon — not a manifesto in the packet.
 Kerbalism credits while the file records. Recover is for samples. A
 75 s hang is not 86 s of leftover thermo.
 
-May ask Gene / Gus / Lars between exits. Still no Commander radio.
-Still no Hangar. Nested notebooks are parked.
+Confer with Gus and Lars on `docs/program/agree.md` (`ops --tag
+plan`). Gene is not this merge. Still no Commander radio. Still no
+Hangar. Nested notebooks are parked.
 
 ## Style
 

@@ -64,14 +64,16 @@ Three loops: **Commander** (flying), **Flight Director** (Gene `go:`
 on a fly ticket), **R&D** (Lars VSE *or* Wernher CSE). **RSI** is
 tickets (`type=rsi`) plus Mortimer on org mutation. Hank runs the
 ops loop every turn (`ops next`). Ground work may run while
-`flight.lock` is live. Pad occupancy first. Ground conference: **Linus** + **Gus** + Gene on *different*
-files. Gene chairs flight layers of `docs/program/world-model.md`.
-Mortimer chairs **Practice**. Commander / Hangar / kRPC walls stay.
-Do not spawn a desk only to chat.
-File `ask` as `tickets open --type ops --tag ask` (desk = addressee).
-**one reply wave** before merge if it blocks `go:`. Rare `explore` is
-a field itch (`--tag explore`), not every Learn. Spawn prompts do not
-inject niche notebooks.
+`flight.lock` is live. Pad occupancy first. Inner circle: **Lars** + **Gus** + **Linus** sit
+`docs/program/agree.md` (one `ops --tag plan` ticket, three parallel
+hires on that id), then split to own files. Not leftover wreck
+tickets. Not Gene as merge. Katherine opt-in (`ops --tag ask --desk
+katherine` or `--tag dynamics`). Gene chairs flight layers of
+`docs/program/world-model.md`. Mortimer chairs **Practice**. Commander
+/ Hangar / kRPC walls stay. Do not spawn a desk only to chat.
+File leftover talk as `tickets open --type ops --tag ask` (desk =
+addressee). Rare `explore` is a field itch (`--tag explore`), not
+every Learn. Spawn prompts do not inject niche notebooks.
 
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
 **phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN,

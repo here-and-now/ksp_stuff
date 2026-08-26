@@ -15,8 +15,10 @@ on burnout pitch — not a third guess.
 Tape windows, not jsonl novels. Incoherent Q is a ticket to Lars or
 Gus — not a new planet in markdown.
 
-Background. Rare asks. Gene still stamps `go:`. No stick, no Hangar,
-no kRPC. Nested notebooks are parked.
+Background. Opt-in when inner circle needs High-band / FAR / tape
+windows (`ops --tag ask --desk katherine` or `--tag dynamics`) — not
+every `ops next`. Last-write `## Dynamics` on `agree.md`. Gene still
+stamps `go:`. No stick, no Hangar, no kRPC. Nested notebooks are parked.
 RealAntennas is live radio. `link` / `snr` on tape may go false.
 Model a window from tape when asked. Commit if you change the
 checkout.

@@ -8,7 +8,10 @@ ticket (`go` / `cli` / `campaign`). Missing ticket = wait.
 
 Eleven types: `fly` `science` `vehicle` `control` `systems` `org`
 `rsi` `ctt` `recover` `press` `ops`. Ask / itch / friction:
-`--type ops --tag ask|feedback|explore`. Paid node: `--type ctt`.
+`--type ops --tag ask|feedback|explore`. Inner-circle plan:
+`--type ops --tag plan` (Lars + Gus + Linus on that ticket;
+`docs/program/agree.md`). Katherine: `--tag dynamics` or
+`ops --tag ask --desk katherine`. Paid node: `--type ctt`.
 Press: `--type press`. Desks `tickets open --type …`. Do not emit
 `need_*` / `card:` / `recommended:` / `ask:` / `feedback:` / `good:` as
 return keys. After the hire: `tickets feedback T-NNN --claim "…"`.
@@ -42,4 +45,5 @@ Mortimer/rsi/org/S1; Lars and Jeb **medium**; else **medium**.
 
 Categories replace cards: `craft`, `science_opportunity`, `bug`,
 `improvement`, plus `flight` / `recover` / `org`. Tags are free.
-`ops --tag ask|feedback|explore`. Commander `cli` is fly `payload.cli`.
+`ops --tag ask|feedback|explore|plan`. `--tag plan` is inner circle
+on `agree.md`. Commander `cli` is fly `payload.cli`.

@@ -1,9 +1,9 @@
 # Tickets — spawn brief
 
 Packet is `docs/program/desk.md` + `tickets packet T-NNN` (also S-/M-/C-)
-stdout + this page. Not BOARD.md. Not jsonl. Not parked lessons. Not
-`science.md` / `vab.md` / `blocks.md`. Not parked archive / niche / gym
-queues. First command is **`tickets packet <Hank-named id>`** (live T-
+stdout + this page. `--tag plan`: also `docs/program/agree.md`. Not
+BOARD.md. Not jsonl. Not parked lessons. Not `science.md` / `vab.md` /
+`blocks.md`. Not parked archive / niche / gym queues. First command is **`tickets packet <Hank-named id>`** (live T-
 stay; new science/fly/vehicle mint S-/M-/C-), then the stamp or CLI on
 the packet. **Id prefix is not a TYPE:** new science `S-`, fly `M-`,
 vehicle `C-`; control / systems / ops / rsi / org / ctt / recover /
@@ -54,6 +54,8 @@ python main.py tickets open --type control --category bug --title "…" \
   --severity S2 --priority P1 --desk lars --fingerprint heading-never-090
 python main.py tickets open --type ops --tag feedback --title "…" \
   --fingerprint sci-unchanged-recovered
+python main.py tickets open --type ops --tag plan --title "sit hang bind recover meco" --desk hank
+python main.py tickets open --type ops --tag ask --desk katherine --title "High-band / FAR window"
 python main.py tickets stamp T-NNN --field go --value yes --who gene
 python main.py tickets stamp T-NNN --field learn --value "…" --who gene
   # campaign-stop / crewed / firsts only — uncrewed is attach-run
@@ -69,7 +71,11 @@ python main.py tickets feedback T-NNN --claim "…"
 `flight` `recover` `org` `control` `systems` `press` `ops`.
 
 **Tags:** free lowercase (`hard-splash`, `heading-090`, `east-t3`).
-`ops --tag ask|feedback|explore`. At most tag `learn` — no new TYPE.
+`ops --tag ask|feedback|explore|plan`. `--tag plan` is the inner-circle
+hire (Lars + Gus + Linus on **that** ticket; `docs/program/agree.md`).
+`--tag dynamics` / `ops --tag ask --desk katherine` pulls Katherine.
+At most tag `learn` — no new TYPE. Plan is not feedback (no
+`--fingerprint` required).
 Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q`.
 Lars packet `read:` third path is the **named helper file**
 (`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland compose,
@@ -83,7 +89,9 @@ blocks, not dead-hang envelopes in `test_hop.py`. Lars first pytest is
 --claim`. Warp law is Wernher.
 
 Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
-Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.
+Opt-in: `ops --tag ask --desk katherine` or `--tag dynamics` when
+`agree.md` needs High-band / FAR. Stamp `verify` when waiting for more
+hops. Not every `ops next`.
 
 **Git (Os 2026-08-25):** after you change the checkout, `git add` those
 paths and `git commit` a sentence. Do not wait for Hank. Do not commit

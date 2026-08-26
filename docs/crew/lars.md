@@ -20,8 +20,9 @@ not a scrapbook of stamps. Helpers name **sit** (lofted, burning,
 landed, splashed, recoverable) — they do not name a ticket. Forest
 today, Grasslands tomorrow: same function.
 
-May ask Gene / Gus / Linus between exits. Not Wernher's traps.
-Not Gus's rockets. Nested notebooks are parked.
+Confer with Gus and Linus on `docs/program/agree.md` (`ops --tag
+plan`). Gene is not this merge. Not Wernher's traps. Not Gus's
+rockets. Nested notebooks are parked.
 
 ## Style
 

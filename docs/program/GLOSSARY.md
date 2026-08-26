@@ -25,6 +25,8 @@ titles. Drop RAF/spy/radio-compact.
 | **need_*** | Do not emit. Open `--type control|vehicle|science|…`. Not a hire token. |
 | **world model** | `docs/program/world-model.md`. Gene chairs flight layers. Mortimer chairs **Practice**. |
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
+| **agree.md** | Shared achievable plan (`docs/program/agree.md`): sit, hang, bind duration vs High window, recover yes/no, MECO. Inner circle last-writes by section. Not seated `plan.md`. |
+| **inner circle** | Lars + Gus + Linus. Confer on `agree.md` (`ops --tag plan`), then split. Gene is not this merge. Katherine opt-in. |
 | **improve:** | Leftover blob. After the hire: `tickets feedback T-NNN --claim "…"` on the work ticket. Stumble *during* work: `type=ops --tag feedback` or `type=rsi`. `I-NNN` twins are tickets. |
 | **tickets feedback** | Mandatory after every hire. `--claim` required; `--evidence` `--owner` `--real` optional. Appends `payload.findings` on the packet T-id. Close harvests `close_why` if empty. Not Return keys. Not a child ticket per hire. |
 | **ask:** | Leftover. Open `type=ops --tag ask` (desk = addressee). P1 if it blocks `go`. |

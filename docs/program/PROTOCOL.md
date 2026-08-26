@@ -29,6 +29,7 @@ exit **ends** the hop — Commander does not review.
 | Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
 | Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
 | Hank | Linus, Director of Research | open science tickets | ids (batch) | payload bind (blocked until vehicle `capable`) |
+| Hank | Lars + Gus + Linus | open `ops --tag plan` (unsigned, or hang/bind/pulse would change `agree.md`) | **that plan ticket** (three hires, same id) | section last-write on `docs/program/agree.md`, then split to own files |
 | Hank | Lars, Vehicle Systems Engineer | control **pulse** miss | ticket + `live_run` | `stack:` close |
 | Hank | Wernher, Chief Systems Engineer | systems / kRPC world / **control sit/warp blocks** | ticket | systems close |
 | Commander | ticket bus | miss **during hop** (still connected) | `tickets open --type control --fingerprint <stem>` | Hank after exit |
@@ -71,11 +72,28 @@ Gene / Lars / Wernher is parent TUI reading `ship.md`, not `ops next`.
 Lock-live `ops next` is ground batch only. After CLI: `telem --window`,
 not last-flight 40.
 
-**Ground talk (between exits, lock free):** Gene, Linus, Gus, Lars,
-Wernher, Mortimer, Verena may address each other by name. Still not
-the stick. Nominal hop: still not mid-phase hire of Gene. Off-nominal
-`ship.md`: parent TUI may hire. Still different files in one turn. They
-do not spawn each other.
+**Inner circle (Lars / Gus / Linus):** they sit **one** achievable
+plan (`docs/program/agree.md`: sit, hang, bind duration vs High
+window, recover yes/no, MECO), then split to implement. Not a chat
+spawn. Not Gene as merge. Not leftover `ops --tag ask`. One
+`ops --tag plan` ticket is the hire packet. Hank hires the three in
+**parallel on that id** — not leftover wreck tickets from the last
+miss. Each last-writes **only their section** (Hang Gus, Bind Linus,
+Pulse Lars), files `tickets feedback --claim`, then does their part
+on their own files the same hire (`.craft` / science payload / pulse
+`.py`). Katherine is **opt-in** (`ops --tag ask --desk katherine` or
+`--tag dynamics`) when the plan needs tape windows / FAR / High-band
+time — not every `ops next`. Do **not** reopen the plan because the
+last hop sheared: wreck rec=no re-flies last `cli:`. Change hang /
+bind / recover / MECO only by rewriting `agree.md` together. Fly
+ready that still pays `agree.md` still flies — a conference does
+**not** empty the pad.
+
+**Ground talk (between exits, lock free):** leftover `ops --tag ask`
+is mail, not the shared goal. Gene, Wernher, Mortimer, Verena may
+address by name. Still not the stick. Nominal hop: still not
+mid-phase hire of Gene. Off-nominal `ship.md`: parent TUI may hire.
+Still different files in one turn. They do not spawn each other.
 
 ## World model
 
@@ -107,6 +125,8 @@ bus. Open tickets (`payload.to` = addressee on `ask`):
 ```
 python main.py tickets open --type ops --tag ask --title "…" --desk <addressee>
 python main.py tickets open --type ops --tag explore --priority P3 --title "…"
+python main.py tickets open --type ops --tag plan --title "sit hang bind recover meco" --desk hank
+python main.py tickets open --type ops --tag ask --desk katherine --title "High-band / FAR window"
 python main.py tickets open --type ops --tag feedback --title "…" --fingerprint <stem>
 python main.py tickets open --type control --title "…" --fingerprint <stem>
 python main.py tickets open --type systems --title "…" --fingerprint <stem>
@@ -371,7 +391,8 @@ Uncrewed Learn is already on the ticket from `attach-run`.
 
 | Together | Wait for |
 |---|---|
-| Linus opportunities + Gus `capable` (not bind) | Linus bind to named craft |
+| Inner circle on `ops --tag plan` (same ticket; Hang / Bind / Pulse sections + own files) | Gene merge; leftover wreck tickets that contradict `agree.md` |
+| Linus opportunities + Gus `capable` (not bind) | Linus bind to named craft; **and** `agree.md` hang/bind |
 | Wernher systems/blocks + Lars pulse on **other files** | never both on the same `.py` |
 | Parent **re-desk** after Gus `capable: yes` (I-014) | Linus bind / Gene `go` on stale capable/f013 |
 | Disk `python main.py world` anytime | never a second **control** writer |
@@ -385,7 +406,9 @@ Uncrewed Learn is already on the ticket from `attach-run`.
 | Gene `payload.learn` stamp | campaign-stop / crewed / firsts; never mid-phase; never uncrewed |
 | Hank `python main.py ship` (lock live) | never eat the jsonl; `status` is a GET reader (`kspstuff-read`, T-454) |
 
-Not parallel: two Commanders; Lars on a clean 0. Gene **+** flight is
+Not parallel: two Commanders; Lars on a clean 0; leftover wreck
+tickets **with** an unsigned `--tag plan` (plan first, then split).
+Gene **+** flight is
 legal **only** off-nominal (Gene no stick). Uncrewed campaign hops
 are **serial** re-flies after lock free, not two control writers. Nominal
 dwell: no children; Walt silent unless unexpected. Off-nominal
@@ -409,7 +432,8 @@ Packet is **`docs/program/desk.md`** (parent just wrote it) +
 Not BOARD.md. Not jsonl. Not `docs/lessons.md`. Not `science.md` /
 `vab.md` / `blocks.md`. New science/fly/vehicle mint `S-`/`M-`/`C-`;
 control / systems / ops / rsi stay `T-`. Global N. Live T- ids stay.
-`read:` is desk plus at most two role paths (Lars: **named helper**).
+`read:` is desk plus at most two role paths (Lars: **named helper**;
+`--tag plan`: `docs/program/agree.md`).
 Tickets how-to is always skim: `docs/program/tickets/BRIEF.md`. First
 command is `tickets packet <Hank-named id>` (live T- stay). PNG /
 craft / last-flight only on `--deep`. Jsonl is **disk**:
@@ -574,13 +598,17 @@ Gene last-writes **briefing prose + seated plan.md envelope** (`hop_apo` /
 `phase` / `learn` live on the fly ticket — do not copy them onto seated
 plan. Flight-layer facts on
 `world-model.md` may update between exits — that is not a hire.
-Mortimer last-writes **Practice**,
+**Inner circle** last-writes `docs/program/agree.md` by section (Hang
+Gus, Bind Linus, Pulse Lars). That file is the shared goal — not
+seated envelope, not last-flight. Gene **reads** it when stamping
+`go:`; he does not chair it. Mortimer last-writes **Practice**,
 PROTOCOL, and job cards on an org hire. Gus last-writes `.craft` and
 vehicle-ticket payload. Linus last-writes science **payload**. Do not
 rewrite `vab.md` / `science.md` dumps. Bind source is science-ticket
 payload. Verena last-writes `README.md` (portrait) and `docs/press/`
 (story layer). The Commander takes `uplink.md`. `loop.md` is talk, not
-stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
+stick. Disagreement on hang/bind/pulse → `--tag plan`, not Gene
+`go: wait`. Missing `go:` = wait.
 
 Milestone stills. Press: Verena picks from `screenshots/runs/` after the hop (beauty beats already hid HUD). Parent `--name` / `--beauty` between exits. **Stuck:** parent mid-hop (sit/MET/log disagree), Gene (between exits), or the seated Commander **during the hop** may grab **one** HUD-on still when logs cannot explain the scene. Read the PNG. Not a postmortem after CLI exit. Not a heartbeat. Not press.
 

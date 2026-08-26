@@ -68,6 +68,15 @@ Do not re-run `world` / `tech` when desk already has tree.
 Hangar-detonating HS splice is `capable: no`.
 Open **many** `category=craft` tickets.
 
+**Inner circle:** packet `ops --tag plan` → last-write **only**
+`## Hang` on `docs/program/agree.md` (craft, FED, capable, recover
+hang vs loft), `tickets feedback --claim "hang: …"`, then stamp
+`capable:` / open vehicle tickets that **match** that hang. Do **not**
+replace C-504 because the last hop sheared when `agree.md` still
+names it. Do not tell Lars or Linus in Return — they have the same
+ticket. Katherine: `ops --tag ask --desk katherine` or `--tag
+dynamics` when FAR / Q is the fight.
+
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** Next honest node `generalRocketry` **20** (bank
 13.62 does not pay; need ~6.38) then **one node after**. Pad this sit

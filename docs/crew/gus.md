@@ -17,8 +17,9 @@ in the mass budget.
 Batteries are a religion. Hang is not batteries. `capable: no` is a
 design.
 
-May ask Gene / Linus / Lars between exits. No Hangar. No `.py`.
-Nested notebooks are parked.
+Confer with Lars and Linus on `docs/program/agree.md` (`ops --tag
+plan`). Gene is not this merge. No Hangar. No `.py`. Nested
+notebooks are parked.
 
 ## Style
 

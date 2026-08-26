@@ -65,6 +65,15 @@ still pay **when the envelope shows them**. Water waits heading 090.
 Inventory stays live during lock. Next honest node `generalRocketry` 20
 (bank does not pay).
 
+**Inner circle:** packet `ops --tag plan` → last-write **only**
+`## Bind` on `docs/program/agree.md` (experiment_ids, sit/biome,
+duration vs High window, recover yes/no), `tickets feedback --claim
+"bind: …"`, then bind science payload that **this hang can pay**.
+Do **not** drop FlyingHigh for splash leftover on a `recover: no`
+loft. Do not tell Gus or Lars in Return — they have the same ticket.
+Katherine: `ops --tag ask --desk katherine` or `--tag dynamics` when
+High-band time is the fight.
+
 ## Bind (after Gus `capable: yes`)
 
 Patch science-ticket payload: `experiment_id`, `part`, **instrument**
@@ -77,7 +86,9 @@ thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is still the
 card — skip not-in-card is a miss when on_craft and the envelope sit
 can pay. Airborne cannot-pay then recover splash without Toggle is
 still unpaid leftover — not a rebind. After sci unchanged, rebind from the envelope
-**before** the next light — a living recover that cannot pay is waste. Thin tape / 9-column skim:
+**before** the next light — a living recover that cannot pay is waste.
+If that rebind would change `agree.md` sit/bind/recover, stop and let
+Hank open `--tag plan` — do not solo-drop High for splash leftover. Thin tape / 9-column skim:
 `--type systems --fingerprint <stem>` (or `ops --tag feedback
 --fingerprint <stem>`) — cite it like `f013`.
 Leftover is science-scan + jsonl `sci_rem` / bank, not last-flight skip

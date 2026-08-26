@@ -75,6 +75,15 @@ that only flies the living rocket.
 Not leftover recover-then-Hangar (Hank/Wernher). Not desk / tickets /
 ops / hangar scenes / telem schema (Wernher). Not Gus. Not Linus bind.
 
+**Inner circle:** packet `ops --tag plan` → last-write **only**
+`## Pulse` on `docs/program/agree.md` (MECO, recover yes/no, helper
+file), `tickets feedback --claim "pulse: …"`, then patch the named
+helper if the plan is achievable. Do **not** retune MECO / lid / silk
+to the last shear when `agree.md` still says loft-to-lid recover no.
+Do not tell Gus or Linus in Return — they have the same ticket.
+Katherine: `ops --tag ask --desk katherine` or `--tag dynamics` when
+High-band / FAR is the fight.
+
 ## First command
 
 ```bash

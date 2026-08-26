@@ -49,6 +49,26 @@ Wernher. Living pulse miss → Lars (`hop_factory_pad.py` pad-RF, else
 is engine physics (`rf-ignition-ullage`, Lars) until this hang is
 checked. Never both on the same `.py`.
 
+**Inner circle hire shape** (house law; kernel emit is Wernher
+`ops.py` / `inner-circle-plan`). When an open `ops --tag plan` is
+unsigned, or hang/bind/pulse would change `docs/program/agree.md`:
+
+```
+hire: gus <plan-id> reasoning=medium
+hire: linus <plan-id> reasoning=medium
+hire: lars <plan-id> reasoning=medium
+packet: python main.py tickets packet <plan-id>
+why: inner-circle plan — not leftover wreck tickets
+```
+
+Do **not** also hire leftover vehicle/science/control from the last
+wreck that turn. Katherine only if `agree.md` `dynamics:` is set, or
+`--tag dynamics`, or `ops --tag ask --desk katherine`. Gene is **not**
+this merge. Fly ready that still pays `agree.md` still flies — do not
+empty the pad for a conference. Wreck rec=no re-flies last `cli:`;
+do not open `--tag plan` for that. Open `--tag plan` when the three
+would otherwise "fix" last miss by changing hang or bind or pulse.
+
 Never revert unless Os said so **this sit**. Do **not** hire Gene as a
 merge bus after Gus/Linus/Lars. Gene only when `ops next` says so (`go`
 stamp or campaign-stop Learn). Commander iff `ops next` fly_ready /
@@ -60,7 +80,9 @@ Kernel is the law (`docs/program/OPS.md`). **Pad occupancy:** leftover/KSC
 first (you). Then lock free + hangar none + `go: yes` → fly. An **idle
 pad is a sin**. A **living recover that cannot pay is also a waste.**
 After `attach-run` bumps `sci-unchanged-recovered`, do **not** start last
-`cli:` — hire Linus to rebind from the envelope. Do **not** hire Gene to
+`cli:` — if the rebind would change `agree.md` sit/bind/recover, open
+`--tag plan` (three in parallel); else Linus rebinds from the envelope
+**inside** that plan. Do **not** hire Gene to
 consider an uncrewed miss. Do **not** hire Jeb to debrief. Uncrewed Learn
 is hop-exit `attach-run`. Lookup `fingerprints.json`; never omit
 `--fingerprint` on control / systems / `ops --tag feedback`.
@@ -140,5 +162,8 @@ pad: idle|flight
 why: <one line>
 rsi: none | T-id
 ```
+
+Inner-circle plan (when `--tag plan` is the work): three hire lines,
+same packet id, why `inner-circle plan — not leftover wreck tickets`.
 
 Then `python main.py tickets feedback T-NNN --claim "…"`.

@@ -166,6 +166,15 @@ scene, telem reference frame, kRPC connect).
 
 **Press ticket:** Verena, `shot:`.
 
+**Plan ticket (`ops --tag plan`):** shared goal for the inner
+circle. Payload / `docs/program/agree.md`: `sit`, `hang`, `bind`
+(duration vs High window), `recover` yes/no, `meco`, `dynamics`
+(`none` or Katherine T-id), `agreed` yes/wait, `blocker`. Desk
+`hank`. Hank hires **Lars + Gus + Linus in parallel on that id**.
+Not leftover wreck tickets. Katherine only if `dynamics` is set or
+`--tag dynamics` / `ops --tag ask --desk katherine`. Gene does not
+merge. Fly ready that still pays `agree.md` still flies.
+
 **RSI ticket:** fingerprint, count, assigned loop.
 
 ### 3.2 Who may write which field
@@ -175,10 +184,12 @@ Enforced in `tickets.py`, not job-card prose:
 - Anyone spawned (and Hank, and Os) may **open**.
 - Hank may **route** (`desk`, `priority` within policy) and **assign**.
 - Gene may stamp `go` on `type=fly` only.
-- Gus may last-write `capable` / `craft` on `type=vehicle`.
-- Linus may last-write science payload.
-- Lars may close `type=control` with a finding (`tickets feedback --claim`).
+- Gus may last-write `capable` / `craft` on `type=vehicle`, and **Hang** on `docs/program/agree.md`.
+- Linus may last-write science payload, and **Bind** on `agree.md`.
+- Lars may close `type=control` with a finding (`tickets feedback --claim`), and last-write **Pulse** on `agree.md`.
+- Katherine may last-write **Dynamics** on `agree.md` when pulled (`--tag dynamics` / `ops --tag ask --desk katherine`).
 - Wernher may close `type=systems`.
+- Hank may close `ops --tag plan` after `agreed: yes` (conference turn done; file stays the goal).
 - Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open --type control`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
 - Hank may close `type=recover` after leftover/KSC CLI.
 - Mortimer may close `type=org|ctt|rsi`.
@@ -265,6 +276,15 @@ if fly ticket T with go=yes, blockers empty, f013 ok, hangar none, phase in cata
         also hire those (parallel, they must not Hangar)
     return
 
+if open ops --tag plan unsigned (agreed wait, or hang/bind/pulse
+would change agree.md) and lock free:
+    hire lars + gus + linus IN PARALLEL on THAT plan ticket
+    do not also hire leftover vehicle/science/control wreck tickets
+    katherine only if dynamics set or --tag dynamics / ask desk=katherine
+    # Gene is not this merge. Fly ready that still pays agree.md
+    # still flies (plan does not empty the pad).
+    return
+
 if fly ticket T with go empty or wait:
     hire Gene ONCE (go stamp, or campaign-stop Learn if
     campaign != uncrewed and payload.learn empty)
@@ -275,6 +295,7 @@ if fly ticket T with go empty or wait:
     # not a merge bus after every Gus line
     # bind after capable is still serial honesty: Linus tickets stay
     # blocked on vehicle.capable until Gus returns
+    # skip leftover wreck tickets that contradict agree.md
     return
 
 if only ground (control miss, systems, org):
@@ -294,11 +315,12 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP that sit. Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
 | Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
-| Fly needs `go` | Gene | that fly ticket; batch vehicle/science/control/**systems** |
+| Open `ops --tag plan` (unsigned, or hang/bind/pulse would change `agree.md`) | **Lars + Gus + Linus** (parallel, same ticket) | that plan ticket — **not** leftover wreck tickets. Katherine only if `dynamics` / `--tag ask --desk katherine` / `--tag dynamics`. Gene is not this merge. Fly ready that still pays `agree.md` still flies |
+| Fly needs `go` | Gene | that fly ticket; batch vehicle/science/control/**systems** that **match** `agree.md` |
 | Campaign-stop Learn (not uncrewed, empty `payload.learn`) | Gene | that fly ticket |
 | Tree unlocked, no crafts | Gus | all open vehicle tickets for that node |
 | Unstarted REACH / leftover science | Linus | all open science tickets |
-| Miss abort / control fingerprint | Lars | control ticket + live_run |
+| Miss abort / control fingerprint | Lars | control ticket + live_run — do **not** rewrite `agree.md` MECO/lid from last shear |
 | Open `type=systems` / unused kRPC / leftover overlay / telem frame | **Wernher** (standing; not miss-only) | systems tickets (also lock-live and `needing_go`) |
 | CTT payable | Mortimer | ctt ticket |
 | First sci/orbit/unlock | Verena | press ticket |
@@ -358,6 +380,11 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
 
 ### 4.4 Parallelism that is actually parallel
 
+**Inner circle (lock free, `--tag plan`):** three hires, **one**
+ticket. Gus Hang section + `.craft`. Linus Bind section + science
+payload. Lars Pulse section + named helper. Not leftover wreck
+tickets that turn. Katherine only if the plan names her.
+
 While Jeb flies T-fly:
 
 - Gus may write T-vehicle-next for the *next* tree node.
@@ -368,6 +395,8 @@ While Jeb flies T-fly:
 
 Bind of the *current* fly’s science card still waits `capable: yes`
 on its vehicle ticket (F-013). That serial is honesty, not ritual.
+A hang/bind/pulse that **contradicts** `agree.md` waits `--tag plan`,
+not a solo leftover ticket.
 
 ---
 

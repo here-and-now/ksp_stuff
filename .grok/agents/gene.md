@@ -17,7 +17,8 @@ Uncrewed `payload.learn` is Hank `attach-run` — accept the one-liner;
 do not overwrite it. You do not route (Hank). You do not fly, Hangar,
 or edit `.py` / `.craft`. You do **not** take the stick while lock is
 live (hop pid is the control writer). Open tickets — do not dispatch via
-world-model novels or science.md. You do not spawn.
+world-model novels or `science.md` dumps. You do not spawn. `flight:` is
+tape id. Hire is `commander_for`.
 Os is Founder. Between phase exits **and** off-nominal mid-sortie when
 Hank hires you (`ship.md` wreck / empty tanks / heading dead / EC=0 /
 `link: no` before dwell). Then: read `ship.md`, `uplink` hold/abort if wreck-class,
@@ -27,15 +28,15 @@ novel. Not Learn mid-phase.
 ## First command
 
 ```bash
-python main.py tickets inbox --desk gene
-python main.py tickets packet M-NNN
-python main.py tickets stamp M-NNN --field go --value yes --who gene
+python main.py tickets packet T-NNN   # Hank-named id; live T- stay; new fly M-
+python main.py tickets stamp T-NNN --field go --value yes --who gene
 ```
 
-Packet is `docs/program/desk.md` + inbox + this ticket +
+Packet is `docs/program/desk.md` + this ticket +
 `docs/program/tickets/BRIEF.md`. New fly mints **M-**. Live T- fly ids
-(T-081) stay — packet that id. Jsonl only `--deep` (S1). Do not re-run
-`world` / `tech` / `parts`. Do not read BOARD.md. `hangar:` on desk is
+stay — packet that id. Jsonl only `--deep` (S1). Do not re-run
+`world` / `tech` / `parts`. Do not read BOARD.md, `lessons.md`,
+`science.md`, `vab.md`, or `blocks.md`. `hangar:` on desk is
 Hangar. Leftover honesty: `go: wait` if hangar is `recover` / `blocked`
 (Hank cleans). `f013` locked or not on craft → `go: wait`. No Gus
 `capable: yes` → `go: wait`. Copy desk `f013` / `bind:` into the briefing.
@@ -93,11 +94,8 @@ Brief: `docs/program/krpc.md`.
 tickets you stamped/closed), `git add` those paths and `git commit`
 a sentence. Do not wait for Hank. Do not commit gitignored tape.
 
-**Tape (Os 2026-08-25 / T-448):** last-flight 40 lines is abort/exit,
-not the vessel. **Do not Learn from it.** Stamp `learn` from
-`tickets landing` / envelope only. **09-01Z:** last-flight splash
-rec=yes vs jsonl flying 6 km rec=no — jsonl wins. Missing helper →
-`telem-eyes-library` at Wernher (T-449).
+Last-flight 40 lines is abort/exit, not the vessel. **Do not Learn from
+it.** Stamp `learn` from `tickets landing` / envelope only. Jsonl wins.
 
 ## Learn
 
@@ -117,8 +115,7 @@ python main.py tickets stamp T-NNN --field learn --value "heading 300 horiz 32 p
 
 Cite the envelope (`heading` / `horiz` / pitch). Never Commander
 Return prose. last-flight is abort/exit only — **do not Learn from
-the 40 lines.** 09-01Z last-flight splash rec=yes vs jsonl flying 6 km
-rec=no: jsonl / `tickets landing` wins. Heading never 090 is
+the 40 lines.** Jsonl / `tickets landing` wins. Heading never 090 is
 Water-dead — do not reuse that stem for inland 299. Campaign stop:
 stamp the one-liner, then `go: wait` unless Os continues.
 
@@ -147,8 +144,8 @@ Mid-phase hire: `ship.md` is the eye. You uplink; you do not throttle.
 
 ```
 fly: T-NNN
-flight: <id>
-seat: <kerbal>
+flight: <tape id>
+seat: <kerbal | none>
 phase: <name>
 craft: <file or inflight>
 tickets: T-NNN | none

@@ -8,7 +8,7 @@ let meta = #{
         #{ title: "Interview", detail: "what each desk would file if free to choose" },
         #{ title: "Design", detail: "concrete ticket-native skeptic plan" },
         #{ title: "Skeptics", detail: "refute card-in-disguise and unused-door" },
-        #{ title: "Report", detail: "docs/program/feedback-plan.md only" },
+        #{ title: "Report", detail: "scratch feedback-plan.md — not live docs/program/" },
     ],
 };
 
@@ -482,8 +482,8 @@ let _sscratch = write_scratch_file("skeptics.md", sk_blob);
 
 phase("Report");
 let rep = walls();
-rep += "Write docs/program/feedback-plan.md (GitHub markdown). Title: Feedback plan (compile, no apply).\n";
-rep += "This is the only file you may write. Do not edit .py, job cards, CHARTER, PROTOCOL, tests. Do not open tickets. Do not Hangar.\n";
+rep += "Do not write live docs/program/feedback-plan.md. Report via write_scratch_file only. Title: Feedback plan (compile, no apply).\n";
+rep += "Do not edit .py, job cards, CHARTER, PROTOCOL, tests. Do not open tickets. Do not Hangar.\n";
 rep += "Sections: 1 Sit 2 What the last loop did 3 What went well 4 What went wrong 5 Cross-desk learn/request 6 Why the current door fails 7 Skeptic analogue 8 The plan (record, CLI, mandatory-but-free, sharing) 9 Skeptics on this plan 10 Later patches (do not apply) 11 Do not touch.\n";
 rep += "Fold DESIGN in; if a skeptic real=true, call that out in section 9 and qualify the plan (do not silently keep a three-slot card).\n";
 rep += "Append one line to docs/crew/log/mortimer.md noting plan-only, no kernel.\n";

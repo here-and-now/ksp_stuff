@@ -4,8 +4,8 @@ This is the house **operations kernel**. It is not a retrofit of
 `I-NNN` / `F-NNN` / leftover `ask:` / `need_*`. Those are archive and
 shims. The board is the source of truth. Seated `plan.md` is a
 **render** of the fly ticket — not a second live plan, and not a
-delete. `python main.py protocol fly` reads `head.json` **with
-plan+card fallback**.
+delete. `python main.py protocol fly` reads the fly ticket. Missing
+ticket = wait (no plan.go fallback).
 
 **Read first:** `python main.py tickets list` and this file.
 Parked org novels are not dispatch.
@@ -86,8 +86,8 @@ Not markdown `I-NNN` as the live system. Not `need_*` as a chat
 token. Not `ask:` as a table Hank never reads on the next hire.
 
 **Store:** `docs/program/tickets/board.jsonl` (append-only events)
-+ `docs/program/tickets/head.json` (current snapshot). Human dump:
-`python main.py tickets board` → `docs/program/tickets/BOARD.md`.
++ `docs/program/tickets/head.json` (current snapshot). Human view:
+`python main.py tickets list` / `tickets show`. Not BOARD.md.
 
 **CLI (disk, no kRPC):**
 
@@ -124,7 +124,7 @@ Every ticket:
 - `tags` — free list (`hard-splash`, `heading-090`, `east-t3`)
 - `rsi_loop` — `org` | `ops` | `software` | `vehicle` | `science` | `none`
 - `payload` — type-specific (see below)
-- `evidence` — paths (jsonl, PNG, lesson heading)
+- `evidence` — paths (jsonl, PNG, finding)
 - `sci_expect` — float or null
 - `created` / `updated` — ISO
 - `sla_s` — optional wall budget for a hire
@@ -144,10 +144,10 @@ hire** when a node unlocks.
 `leftover_policy`. Gene stamps `go` **on this ticket only**. Seated
 `plan.md` is a **render** of the fly ticket (Gene may still write
 briefing prose; `hop_apo` / `expect_*` stay on the plan).
-`python main.py protocol fly` reads `head.json` **with plan+card
-fallback**. `ops fly` is occupancy only (do not retarget AGENTS).
+`python main.py protocol fly` reads the fly ticket. Missing ticket =
+wait. `ops fly` is occupancy only (do not retarget AGENTS).
 
-**Control ticket:** Lars, named `.py`, lesson heading, miss `live_run`. Packet third path is that helper (`hop_factory_pad.py` pad-RF, else inland compose). First pytest `tests/test_hop_factory.py` (`-k pad` pad-RF), not house `test_hop.py` (231).
+**Control ticket:** Lars, named `.py`, finding, miss `live_run`. Packet third path is that helper (`hop_factory_pad.py` pad-RF, else inland compose). First pytest `tests/test_hop_factory.py` (`-k pad` pad-RF), not house `test_hop.py` (231). Warp law is Wernher.
 
 **Systems ticket:** Wernher, world-interface (desk leftover, hangar
 scene, telem reference frame, kRPC connect).
@@ -170,7 +170,7 @@ Enforced in `tickets.py`, not job-card prose:
 - Gene may stamp `go` on `type=fly` only.
 - Gus may last-write `capable` / `craft` on `type=vehicle`.
 - Linus may last-write science payload.
-- Lars may close `type=control` with `lesson`.
+- Lars may close `type=control` with a finding (`tickets feedback --claim`).
 - Wernher may close `type=systems`.
 - Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open --type control`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
 - Hank may close `type=recover` after leftover/KSC CLI.
@@ -341,8 +341,8 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
 - Ground work **during** `flight.lock` (Gus/Linus/CSE on other
   files — inventory). Legal because they do not Hangar.
 - Spawn tax is paid only when the kernel emits `hire:`.
-- SLA on a control ticket: one `.py` + one lesson heading, then
-  stop (Lars wall).
+- SLA on a control ticket: one `.py` + one finding, then
+  stop (Lars wall). Warp law is Wernher.
 
 ### 4.4 Parallelism that is actually parallel
 
@@ -365,15 +365,14 @@ on its vehicle ticket (F-013). That serial is honesty, not ritual.
 desk.md          ← python main.py desk (snapshot, not the board)
 tickets/head.json ← source of truth
 jsonl envelope   ← evidence on fly/control tickets (heading, horiz, pitch, aoa, biome); Hank attach-run after CLI
-last-flight.md   ← abort/handoff only (I-020); can lie rec=yes while jsonl still flying (09-01Z); not a Learn
-lessons.md       ← VSE/CSE dated physics/API
+last-flight.md   ← abort/handoff only; not a Learn
 ship.md          ← radio from the control writer, Walt
 ```
 
 **One sit object:** the fly ticket + desk snapshot. Seated `plan.md`
 is a **render** of the fly ticket (not a second source; do not delete
-it). `python main.py protocol fly` reads `head.json` with plan+card
-fallback so a missing fly ticket does not brick.
+it). `python main.py protocol fly` reads the fly ticket. Missing
+ticket = wait (no plan.go fallback).
 
 **Commander packet `read:`:** skim from
 `python main.py tickets packet T-NNN` (also S-/M-/C-; desk + BRIEF + this
@@ -390,8 +389,7 @@ unfinished patch on the same file.
 Gene is not that writer; `needs_learn` stays false. Crewed /
 `campaign: none` / firsts: Gene stamps from `tickets landing` / tape
 envelope when `ops next` hires him — never Commander Return prose,
-**never last-flight 40 lines** (09-01Z splash rec=yes vs jsonl flying
-6 km rec=no).
+**never last-flight 40 lines**.
 Review auto-fills heading/horiz/pitch; uncrewed review does not nag
 “Stamp payload.learn”. `ksc`/`load`/`recover-probe` skip the Gene
 blank. `needs_learn` is campaign not `uncrewed` and learn empty.
@@ -431,7 +429,7 @@ not Lars vehicle control.
 5. Gus title Vehicle Engineering Lead; Gene Launch/Flight Director.
 6. Mortimer stays CEO; CHARTER/PROTOCOL rewritten around the bus.
 7. Seed board from open I-/F- items as *import*, then stop using them live.
-8. `protocol fly` prefers the fly ticket; plan+card remain fallback.
+8. `protocol fly` is tickets-only; missing ticket = wait.
 9. Fingerprint counter + auto RSI tickets.
 
 Do not Hangar or fly as part of this construction.

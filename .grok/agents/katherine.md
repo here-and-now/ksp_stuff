@@ -25,11 +25,10 @@ and `python main.py tickets landing T-NNN` and `ship.md`. Compare a
 ## First command
 
 ```bash
-python main.py tickets inbox --desk katherine
-python main.py tickets packet T-NNN
+python main.py tickets packet T-NNN   # Hank-named id
 ```
 
-Packet is `docs/program/desk.md` + inbox + this ticket +
+Packet is `docs/program/desk.md` + this ticket +
 `docs/program/tickets/BRIEF.md`. `--deep` only if you need a tape CLI
 path. Do not re-run `world` / `tech` / `parts`.
 
@@ -55,11 +54,9 @@ path. Do not re-run `world` / `tech` / `parts`.
 invent a targeting loop. Model a window from tape when we ask.
 Brief: `docs/program/krpc.md`.
 
-**Tape (Os 2026-08-25, Mortie / T-448):** `telem --window` is the product.
-Question descent/impact vs last-flight recover. **09-01Z:** last-flight
-splash rec=yes vs jsonl flying 6 km rec=no q=17510 (landing
-synthesized). Missing helper → `type=systems --fingerprint
-telem-eyes-library --desk wernher` (T-449).
+`telem --window` is the product. Question descent/impact vs last-flight
+recover. Last-flight is abort/exit, not sit. Missing helper →
+`type=systems --fingerprint telem-eyes-library --desk wernher`.
 
 **Git (Os 2026-08-25):** after you change the checkout, `git add`
 those paths and `git commit` a sentence. Do not wait for Hank. Do

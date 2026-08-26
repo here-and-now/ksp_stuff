@@ -69,12 +69,11 @@ ops / hangar scenes / telem schema (Wernher). Not Gus. Not Linus bind.
 ## First command
 
 ```bash
-python main.py tickets inbox --desk lars
-python main.py tickets packet T-NNN   # also S-/M-/C-; control stays T-
+python main.py tickets packet T-NNN   # Hank-named id; control stays T-
 python -m pytest tests/test_hop_factory.py -k pad -q
 ```
 
-Packet is `docs/program/desk.md` + inbox + this ticket +
+Packet is `docs/program/desk.md` + this ticket +
 `docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Cite
 `tickets landing T-NNN` — not last-flight prose, not jsonl. Query
 **Tape**. Packet third path is the **named helper file**
@@ -82,8 +81,7 @@ Packet is `docs/program/desk.md` + inbox + this ticket +
 `pad.py` pad dwell, `science.py` sit-match) — not the immortal factory
 for a pad miss, not `hop.py`. Open **many** control fingerprints in
 one hire. Thin tape / leftover overlay → `--type systems --fingerprint
-<stem>` (Wernher). `need_stack` → `tickets from-need`, never in Return.
-Pad waits **only the live control file**.
+<stem>` (Wernher). Pad waits **only the live control file**.
 
 You go **first after a miss** (nonzero, ABORT, empty science), or on
 a **control** ticket. Skip a clean exit 0 unless asked. **sci
@@ -152,24 +150,18 @@ miss. Discover when a hop goes deaf. Brief: `docs/program/krpc.md`.
 and `git commit` a sentence. Do not wait for Hank. Do not commit
 gitignored tape.
 
-**Tape (Os 2026-08-25, Mortie / T-448):** last-flight 40 lines is not the
-vessel. Query `python main.py telem <jsonl> --window descent` and
-`--window impact` on a miss. **09-01Z:** last-flight recovered splash
-rec=yes vs jsonl last snap flying 6 km 214 m/s rec=no q=17510.
-Last-flight rec=yes is not sit. Update assumptions. Missing helper →
-`type=systems --fingerprint telem-eyes-library --desk wernher` (T-449).
-Always `tickets feedback --claim`.
+Last-flight 40 lines is abort/exit, not the vessel. Query
+`python main.py telem <jsonl> --window descent` and `--window impact`
+on a miss. Always `tickets feedback --claim`.
 
 ## After a miss
 
-Append `## <run> — <fingerprint>` to `docs/lessons.md`. The heading
-**must** name the reusable fingerprint (the stem on the control
-ticket) — not a T-id. Patch the **named file above**, smallest close.
-Prefer a helper that still holds on another biome/sit/heading. RF pad
-is already one block — do not mint `_pad_light2`. Update `blocks.md`
-only if you add a phase name. Do not re-fly. Do not patch leftover
-Hangar into hop. Never revert, quickload, or rewind UT. Splash HD of
-**this** hop stays yours.
+Patch the **named file above**, smallest close. Miss physics lives on
+the helper docstring + `tickets feedback --claim` (fingerprint stem,
+not a T-id). Prefer a helper that still holds on another biome/sit/heading.
+RF pad is already one block — do not mint `_pad_light2`. Warp law is
+Wernher. Do not re-fly. Do not patch leftover Hangar into hop. Never
+revert, quickload, or rewind UT. Splash HD of **this** hop stays yours.
 
 ## Return
 

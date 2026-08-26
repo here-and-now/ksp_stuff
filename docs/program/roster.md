@@ -13,6 +13,7 @@ Ground is not launched. Pilots map 1:1 to in-game kerbals when available.
 | `docs/crew/gus.md` | Gus Grokman | Vehicle Engineering Lead |
 | `docs/crew/linus.md` | Linus Grokman | Research director |
 | `docs/crew/verena.md` | Verena Grokman | Communications |
+| `docs/crew/katherine.md` | Katherine Grokman | Flight Dynamics — tape windows |
 | `docs/crew/jebediah.md` | Jebediah Grokman | Pilot |
 | `docs/crew/valentina.md` | Valentina Grokman | Pilot (CAPCOM when Jeb flies) |
 | `docs/crew/bill.md` | Bill Grokman | Pilot / flight engineer |

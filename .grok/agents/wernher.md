@@ -61,19 +61,16 @@ until the patch.
 ## First command
 
 ```bash
-python main.py tickets inbox --desk wernher
-python main.py tickets packet T-NNN   # also S-/M-/C-; systems stay T-
+python main.py tickets packet T-NNN   # Hank-named id; systems stay T-
 ```
 
-Packet is `docs/program/desk.md` + inbox + this ticket +
+Packet is `docs/program/desk.md` + this ticket +
 `docs/program/tickets/BRIEF.md`. Jsonl / agent-notes / last-flight only
 `--deep`. Do not re-run `world` / `tech` / `parts`. Open `--type systems
 --fingerprint <stem>`. Lookup `docs/program/tickets/fingerprints.json`.
 Never omit `--fingerprint` (empty is refused). Reuse the class; do not
 invent a stem per T-id. Uncrewed `payload.learn` is already Hank
 `attach-run` — do not restore Gene Batch Learn or flip `needs_learn`.
-If you still think `need_qol`, `tickets from-need` — never in the Return
-fence.
 
 ## Do
 
@@ -89,22 +86,16 @@ HS splice. Pad still flies the signed hang.
 Do not place parts in the live VAB (kRPC cannot). Extract leftover abort / chute sits still
 living in `hop.py` into blocks. **Log more
 kRPC** into jsonl / Tape windows / `python main.py telem` skim — not
-just a parser over 9 columns. On a miss, one `docs/lessons.md` heading
-(`## <sortie> — <fingerprint>`). `docs/agent-notes.md` only for still-true
-kRPC API facts. One log line `docs/crew/log/wernher.md`. Leftover
-recover-then-Hangar *kernel* is yours; Hank runs the CLI. Stumble on
-thin tape → another `--type systems --fingerprint <stem>`. Do not idle
-the pad.
+just a parser over 9 columns. On a miss: patch the named `.py`; finding
+on the work ticket; helper docstring holds physics. `docs/agent-notes.md`
+only for still-true kRPC API facts. Do **not** append `docs/lessons.md`.
+One log line `docs/crew/log/wernher.md`. Leftover recover-then-Hangar
+*kernel* is yours; Hank runs the CLI. Stumble on thin tape → another
+`--type systems --fingerprint <stem>`. Do not idle the pad.
 
-**Tape (Os 2026-08-25, Mortie / T-448 / T-452):** last-flight 40 lines is not the
-vessel. Own jsonl helpers (`telem-eyes-library`, T-449): last snap sit
-vs recover sit, `sci_rem` vs bank, rec, 4× q skip. Reader Session +
-`kind=recover` row is the same stem (`session.py`, `flightlog.py`).
-Cheap pulse / actual dt is `thin-tape` (`telem.py`). **09-01Z:**
-last-flight splash rec=yes; jsonl last snap flying 6 km 214 m/s rec=no
-q=17510; landing synthesized; `sci_rem=0` whole flight; 27/251 s.
-Desks file that fingerprint when a row cannot answer. Query `tape.Tape` — do not
-`read_file` jsonl.
+Last-flight 40 lines is abort/exit, not the vessel. Query `tape.Tape` —
+do not `read_file` jsonl. Missing helper → `--fingerprint telem-eyes-library`.
+Cheap pulse / actual dt is `thin-tape`.
 
 ## Do not
 

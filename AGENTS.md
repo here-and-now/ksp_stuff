@@ -1,22 +1,21 @@
 # Agent workflow (no UI)
 
 Read **`docs/program/CHARTER.md`**, then **`docs/program/PROTOCOL.md`**.
-If `docs/last-flight.md` exists, read that before flying. Sit object:
-**`python main.py desk`** → `docs/program/desk.md`. Seat and slate:
-`docs/program/current.md` (`flight:`), `docs/program/slate.md`,
-`docs/missions/INDEX.md`. Children do **not** receive this file
-(`.grok/agents/*.md` has `agents_md: false`). kRPC traps:
-`docs/agent-notes.md`. Miss physics: `docs/lessons.md`. House friction:
-tickets (`type=ops` / `rsi`). Nested gym queues and niche notebooks
-are parked — not work. Stumble → `tickets open --fingerprint <stem>`.
-RSI ×3 → Mortimer (software → Wernher). Do not tell another desk in
-Return prose. **Git (Os 2026-08-25):** a desk that changes the
-checkout commits it. Do not wait for Hank. Do not commit gitignored
-tape.
+Sit object: **`python main.py desk`** → `docs/program/desk.md`. Seat and
+slate: `docs/program/current.md` (`flight:` is tape id),
+`docs/program/slate.md`, `docs/missions/INDEX.md`. Children do **not**
+receive this file (`.grok/agents/*.md` has `agents_md: false`). kRPC
+traps: `docs/agent-notes.md`. Miss physics: named helper docstring +
+ticket `findings` / `close_why`. House friction: tickets (`type=ops` /
+`rsi`). Nested gym queues and niche notebooks are parked — not work.
+Stumble → `tickets open --fingerprint <stem>`. RSI ×3 → Mortimer
+(software → Wernher). Do not tell another desk in Return prose.
+**Git (Os 2026-08-25):** a desk that changes the checkout commits it.
+Do not wait for Hank. Do not commit gitignored tape.
 
 This repo is an **agent-driven kRPC project**. Do not open the PyQt UI.
 Do not browse the web (`web_search`, `web_fetch`, `open_page`). kRPC facts
-are in `docs/agent-notes.md`; mission facts in `docs/lessons.md` and a live
+are in `docs/agent-notes.md`; mission facts in `desk.md` and a live
 `status`/`phase` probe. Tree and parts: `python main.py world|tech|parts`
 (disk, no kRPC).
 Do not ship mission logic as a heredoc. Put it in a `.py` next to `main.py`
@@ -57,9 +56,9 @@ name. Not a second Gene. Ticket bus: `docs/program/OPS.md`,
 `python main.py ops next`, `python main.py tickets`. **Os** (Founder)
 talks to Hank for the loop, Mortimer for the goal. Os may still
 address anyone by name (Jeb, Gene, Gus, Lars, Hank, Verena, Walt,
-Mortimer, Wernher, Linus, Val, Bill, Bob). Call them by **name and
-title**. For talk: load `docs/crew/<slug>.md`. Do not spawn a child
-just to chat.
+Mortimer, Wernher, Linus, Katherine, Val, Bill, Bob). Call them by
+**name and title**. For talk: load `docs/crew/<slug>.md`. Do not spawn
+a child just to chat.
 
 Three loops: **Commander** (flying), **Flight Director** (Gene `go:`
 on a fly ticket), **R&D** (Lars VSE *or* Wernher CSE). **RSI** is
@@ -103,7 +102,6 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI; watch telem; note/hold/abort if unusual; one stuck PNG **during hop** | `.py`, `.craft`, after-flight review, 15 s narration |
 | **Communications** | `verena` | Verena Grokman | Press tickets | Commander, Hangar, uplink, `.py` |
 | **Flight Dynamics** | `katherine` (else `general-purpose` + `.grok/agents/katherine.md`) | Katherine Grokman | Tape windows, atmosphere/FAR/attitude models; rare asks to Lars/Gus/Linus/Gene | kRPC, Hangar, `hop.py`, jsonl in prompt, every-turn pad occupancy |
-| **Spotter** | — | — | **Do not spawn** | — |
 
 If the named type is missing this session, spawn `general-purpose` with
 the matching `.grok/agents/*.md` as the prompt body.
@@ -134,35 +132,36 @@ patch `.py` in the same turn — spawn R&D.
 Hank: **`python main.py desk`** then **`python main.py ops next`**.
 Hire exactly those desks with those ticket ids. Copy `reasoning=`
 (never **xhigh**). **low** is Walt (speech) and S4 hygiene. **high**
-is Mortimer / rsi / org / ctt / S1. Everyone else **medium** — Lars
-patches and abort officers are not cheap seats. Packet is **skim**;
-`--deep` is opt-in. Hank is the TUI session. **Fresh
-spawn** for Commander, a new ticket, and after CLI exit. `resume_from`
-only the same ticket / same file while a patch is unfinished — not a
-7-turn 200k transcript. Tickets
-how-to: `docs/program/tickets/BRIEF.md`. **Id prefix:** science `S-`, fly
+is Mortimer / rsi / org / ctt / S1. Lars and Jeb **medium**. Everyone
+else **medium**. Packet is **skim**; `--deep` is opt-in. Hank is the
+TUI session. First command for a hire is **`tickets packet <id>`**
+(the Hank-named id; live T- stay; new science/fly/vehicle mint S-/M-/C-).
+**Fresh spawn** for Commander, a new ticket, and after CLI exit.
+`resume_from` only the same ticket / same file while a patch is
+unfinished — not a 7-turn 200k transcript. Tickets how-to:
+`docs/program/tickets/BRIEF.md`. **Id prefix:** science `S-`, fly
 `M-`, vehicle `C-`, else `T-`. Global N. Live T- science/fly/vehicle stay.
 TYPES unchanged. **Missing Gene `go` on a fly
-ticket = wait**. The **hop/pad pid** is the Flight writer (`flight.lock`).
-Never a second control process. **Commander** is abort officer, not
-the PID. Spawn Commander iff `protocol fly` prints `fly: yes` **and**
-`commander: jebediah` (crewed / `campaign: none` / firsts). Uncrewed
-(`commander: none`): **parent starts `cli:`**; watch `ship.md`; uplink
-abort. Lock live → no second Commander. Ground desks may still run
-on other files. **Nominal:** no Gene. **Off-nominal** (`ship.md`):
-hire Gene / Lars / Wernher as the issue is clear — Commander as abort
-officer if already flying, else Gene. Do
-not wait for `ops next` to name Gene. `need_*` in a return → `tickets from-need`
-(shim only — desks must not emit those keys). Spawn specialists from
-**open ticket types**, not `need_stack` tokens.
+ticket = wait** (no plan.go fallback). The **hop/pad pid** is the Flight
+writer (`flight.lock`). Never a second control process. **Commander** is
+abort officer, not the PID. Hire is `commander_for`. Spawn Commander
+iff `protocol fly` prints `fly: yes` **and** `commander: jebediah`
+(crewed / `campaign: none` / firsts). Uncrewed (`commander: none`):
+**parent starts `cli:`**; watch `ship.md`; uplink abort. Lock live → no
+second Commander. Ground desks may still run on other files.
+**Nominal:** no Gene. **Off-nominal** (`ship.md`): hire Gene / Lars /
+Wernher as the issue is clear — Commander as abort officer if already
+flying, else Gene. Do not wait for `ops next` to name Gene. Do not emit
+`need_*`. Spawn specialists from **open ticket types**.
 
 Parent runs **`python main.py desk`** once per conference turn (disk,
 no kRPC). That **writes `docs/program/desk.md`**. After Gus
 `capable: yes`, **desk again** before Linus bind or Gene `go`
 (I-014). Packet is that file + `tickets packet <id>` + BRIEF (no
-BOARD.md). `read:` ≤2 role paths. Children do not re-run
-`world`/`tech`/`parts` if desk is this sit. `hangar:` is the Hangar
-call. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
+BOARD.md, no jsonl, no `lessons.md`, no `science.md` / `vab.md` /
+`blocks.md`). `read:` ≤2 role paths (Lars: named helper). Children do
+not re-run `world`/`tech`/`parts` if desk is this sit. `hangar:` is the
+Hangar call. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
 Gene when **`ops next` names him** (unstamped `go`, or campaign-stop
 Learn), **or** lock live and `ship.md` is off-nominal and plan/`go`
 must change. Uncrewed hops **between** (lock free) are not Gene hires.
@@ -173,10 +172,10 @@ Do not hire Gene as a merge after specialists.
 Spawn the Commander only if **`python main.py protocol fly`** prints
 `fly: yes` **and** `commander: jebediah`. Copy `cli:` verbatim.
 `commander: none` (uncrewed): parent runs that `cli:` (hop pid is
-the writer). Missing `go:` on the fly ticket (plan fallback) is wait
-in code, not only in this file. Uncrewed continue is **that print**,
-not seated plan. Pre-light veto: leftover / f013 / capable (already
-the gate). Crewed Commander may refuse a bad cli / SESSION.
+the writer). Missing `go:` on the fly ticket is wait in code (no
+plan.go fallback). Uncrewed continue is **that print**, not seated
+plan. Pre-light veto: leftover / f013 / capable (already the gate).
+Crewed Commander may refuse a bad cli / SESSION.
 
 Every spawn is a **packet** (`docs/program/PROTOCOL.md`): `to` name+title,
 `task` one sentence, `read` ≤3 paths, `cli` exact or none, `live_run`
@@ -187,8 +186,8 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   open `type=control|vehicle|science|systems` already names the work
   and desk sci/tree/craft is unchanged, spawn those desks (do not hire
   Gene first). Spawn **Gene** only if `ops next` names gene. Gene
-  return must include `flight:` matching `current.md`. Leftover
-  `need_gene` → unstamped `type=fly` (`ops next` already hires Gene).
+  return `flight:` is tape id (`current.md`). Hire is `commander_for`.
+  Unstamped `type=fly` → `ops next` hires Gene.
 - Open `type=control` / `vehicle` / `science` / `systems` already on
   the board → spawn those specialists **without Gene between them**.
   Legal parallel: Linus opportunities ∥ Gus `capable:` (not bind);
@@ -207,9 +206,8 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   Off-nominal `ship.md`: spawn Gene / Lars / Wernher as above — Gene
   no stick. Abort officer may uplink. Do not auto-continue onto a
   different Grok.
-- Open `type=vehicle` (or leftover `need_builder`) → spawn Gus (not
-  Wernher).
-- Open `type=systems` (or leftover `need_qol`) → spawn **Wernher**.
+- Open `type=vehicle` → spawn Gus (not Wernher).
+- Open `type=systems` → spawn **Wernher**.
   `ops next` batches systems in `needing_go` and lock-live.
 - Open ticket `desk=katherine` or `--tag dynamics` → spawn **Katherine**
   (Flight Dynamics). Lock free or lock live on other files. **Not**
@@ -217,11 +215,11 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   `telem --window` / `tickets landing`. She files `ops --tag ask`;
   Gene still stamps `go:`. Stamp `verify` when waiting for more hops.
 - Open `type=ctt` (paid node: bank ≥ cost, parents owned, kRPC has no
-  UnlockTech) → spawn **Mortimer**. Leftover paid `need_mortimer` →
-  `type=ctt` (do not dump paid unlocks onto `org`). Org mutation stays
-  `type=org`. He edits `persistent.sfs` ResearchAndDevelopment only,
-  then `python main.py load rd-<node>`. Do not `load persistent`
-  (F-014). Do not ask Os. Then Gene only if `ops next` names him.
+  UnlockTech) → spawn **Mortimer**. Do not dump paid unlocks onto
+  `org`. Org mutation stays `type=org`. He edits `persistent.sfs`
+  ResearchAndDevelopment only, then `python main.py load rd-<node>`.
+  Do not `load persistent` (F-014). Do not ask Os. Then Gene only if
+  `ops next` names him.
 - Pilot returns **0** or miss (**2** / **1** / ABORT / SESSION):
   **Hank leftover + tape** — `desk`, `recover-probe --recover` if
   recoverable then Close, `tickets attach-run` on the fly ticket
@@ -255,7 +253,7 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   and a Gus alt is already `capable: yes` → Gene only if that fly
   ticket has no `go:`. No alt → Gus while leftover cleans. Lithobrake
   freeze keeps throttle 1.
-- Open `type=control` (or leftover `need_stack`) → spawn **Lars**
+- Open `type=control` → spawn **Lars**
   immediately. Do not auto-Gene after. Never a heredoc. Packet
   `read:` ≤3: desk + BRIEF + **the named helper `.py`** (`hop_factory_pad.py`
   pad-RF, `hop_factory.py` inland or the living compose / `pad.py` /
@@ -266,12 +264,11 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   Science instrument is unlocked (F-013). Do not send him to patch a
   Geiger dwell at Start. Do not send him `hop.py` for an inland-slew
   or coast-warp miss.
-- Fly next only if `protocol fly` prints `fly: yes` **and** `phase:`
-  is in `blocks.md` (uncrewed campaign continue counts; no new Gene
-  `go:` between hops).
+- Fly next only if `protocol fly` prints `fly: yes` (uncrewed campaign
+  continue counts; no new Gene `go:` between hops).
 - Os says PR / press / README / article / funding → spawn **Verena
-  Grokman, Communications**. Open `type=press` (or leftover `need_pr`
-  / `pr: <slug>`) → same. First sci in the bank / first orbit / first
+  Grokman, Communications**. Open `type=press` → same. First sci in the
+  bank / first orbit / first
   unlock / first crewed on a **clean** Learn → spawn Verena **once**
   with that `live_run`. Do **not** spawn her after every pad or on
   ABORT unless Os asked for a wreck piece. She writes from disk. On
@@ -296,7 +293,7 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   ops --tag ask|feedback|explore` (or hire `type=rsi` if repeating house
   friction). Spawn **Mortimer** iff lock free and **3+ open**
   `type=rsi` or `type=org`, or Os says org/RSI, or a Practice pitfall
-  repeats. Leftover `need_qol` → Wernher / `type=systems`. `need_os`
+  repeats. Open `type=systems` → Wernher. `need_os`
   only for CHARTER creed or roster seats.
 - Gym twins live on the ticket board as **T-ids** (parked MD is not work). Speech is T-184, not F-014.
 - Retro is the Mortimer friction trip (not a second bus). Lock live →
@@ -323,9 +320,10 @@ last:
   <up to 40 heartbeat / ABORT lines>
 ```
 
-R&D contract: one new dated heading in `docs/lessons.md` (run —
-title). Lars **or** Wernher, not both, on a miss patch of the **same**
-`.py`. Patch the named `.py`, then stop. Uncrewed hang still capable
+R&D contract: patch the named `.py`, then stop. Finding on the work
+ticket (`tickets feedback --claim`). Helper docstring holds miss
+physics. Do **not** append `docs/lessons.md`. Lars **or** Wernher, not
+both, on a miss patch of the **same** `.py`. Uncrewed hang still capable
 and fly ticket `go: yes` → parent re-flies last `cli:` (no Gene).
 Hang died → next already-signed alt; Gene only if that fly ticket
 has no `go:`.
@@ -341,9 +339,11 @@ tanks, pre-flight fail):
 2. Hank leftover first (`recover()` + Close; never leftover-ksc load).
 3. Spawn **Lars** on the named control file. Wernher on open
    `type=systems` or if Lars said `stack: ok` **and** the abort is a
-   kRPC trap. XOR on the same `.py`.
-4. They append `docs/lessons.md` and patch the named `.py`.
-   `docs/agent-notes.md` only for still-current API facts.
+   kRPC trap. XOR on the same `.py`. Warp law is Wernher
+   (`physics_warp.py`).
+4. They patch the named `.py`. Finding on the work ticket. Helper
+   docstring holds miss physics. `docs/agent-notes.md` only for
+   still-current API facts. Do **not** append `docs/lessons.md`.
 5. **Do not hire Gene to consider.** Re-fly last `cli:` if the hang
    still lives, or the next already-signed alt — through
    `python main.py protocol fly`, not a scratch script.

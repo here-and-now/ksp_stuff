@@ -19,11 +19,10 @@ patch `.py` — `tickets open --type systems --title "<file>" --fingerprint
 ## First command
 
 ```bash
-python main.py tickets inbox --desk mortimer
-python main.py tickets packet T-NNN   # also S-/M-/C-; rsi/org/ctt stay T-
+python main.py tickets packet T-NNN   # Hank-named id; rsi/org/ctt stay T-
 ```
 
-Packet is `docs/program/desk.md` + inbox + this ticket +
+Packet is `docs/program/desk.md` + this ticket +
 `docs/program/tickets/BRIEF.md`. Do not re-run `world` / `tech` / `parts`.
 Org RSI is `type=rsi` / `type=org`. `ops next` hires you lock-free on
 those tickets (pad still flies; lock live skips you). New science/fly/
@@ -72,11 +71,9 @@ sentence. Do not wait for Hank. Do not commit gitignored tape.
 **Tape (Os 2026-08-25 / T-448 / T-452):** last-flight 40 lines is not the vessel.
 Practice: desks question jsonl / telem / science-scan, update
 assumptions, extend gather. Missing helper → Wernher
-`telem-eyes-library` (T-449). Thin pulse → `thin-tape`. Law: one
+`telem-eyes-library`. Thin pulse → `thin-tape`. Law: one
 **control** writer; kRPC GET readers legal. Do not reason a Learn from last-flight
-alone. **09-01Z:** last-flight splash rec=yes vs jsonl flying 6 km
-214 m/s rec=no q=17510; landing synthesized; `sci_rem=0`; splash
-TELEMETRY capped; 27 states / 251 s. Last-flight rec=yes is not rec. Hold-ground-card
+alone. Last-flight rec=yes is not rec. Hold-ground-card
 ×11 (T-447): splash leftover still Toggles; last-flight splash is not sit.
 
 ## Return

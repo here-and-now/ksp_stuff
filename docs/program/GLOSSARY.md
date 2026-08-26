@@ -7,7 +7,7 @@ titles. Drop RAF/spy/radio-compact.
 |---|---|
 | **sortie** | **Retired.** RAF/USAF. We say **run** (one `python main.py pad`). Folder `logs/`. |
 | **1235Z** | **Retired** as speech. Earth UTC with seconds: `2026-08-20T12-35-42Z`. |
-| **mission** | Seated folder `docs/missions/jebediah/`. Not “dossier.” |
+| **mission** | Tape id folder `docs/missions/<id>/`. Uncrewed tape id is `uncrewed`, not a kerbal seat. Crewed Commander dossier stays `jebediah`. |
 | **handoff** | Shift-change. File is `last-flight.md`. |
 | **Commander** | Abort officer on crewed/firsts (`commander: jebediah`). The hop/pad **pid** is the **control** writer. kRPC GET readers are other Sessions; they do not take the stick. Uncrewed: parent starts `cli:`. |
 | **uplink** | RF to a spacecraft. File is a stick note. Keep until it hurts. |
@@ -21,7 +21,7 @@ titles. Drop RAF/spy/radio-compact.
 | **leftover-ksc** | **Retired.** Named save/load of the overlay looked like a reload / return to pre-launch. Os disabled reverting flights. Overlay dismiss is `recover()` + Close. Never that load. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
 | **F-014 / I-012** | Gym ids live only inside a ticket **title**. Speech is the twin **T-id** (F-014 → T-184). |
-| **need_*** | Do not emit. Open `--type control|vehicle|science|…`. Parent may still shim a leftover token. |
+| **need_*** | Do not emit. Open `--type control|vehicle|science|…`. Not a hire token. |
 | **world model** | `docs/program/world-model.md`. Gene chairs flight layers. Mortimer chairs **Practice**. |
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
 | **improve:** | Leftover blob. After the hire: `tickets feedback T-NNN --claim "…"` on the work ticket. Stumble *during* work: `type=ops --tag feedback` or `type=rsi`. `I-NNN` twins are tickets. |
@@ -38,6 +38,6 @@ titles. Drop RAF/spy/radio-compact.
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |
 | **tech-unlock** | Catalog CLI (kRPC). 0.6 has no purchase RPC — aborts. Paid node: Mortimer edits the save then `python main.py load rd-<node>`. **Never** `load persistent` (F-014 / I-010). |
 | **Kerman** | **Retired house name.** We are **Grokman**. Stock KSP roster may still say Kerman; Hangar aliases it. |
-| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`. Shared writer: `pilot.md`. Spawn types match those names. |
+| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`, `katherine.md`. Shared writer: `pilot.md`. Spawn types match those names. |
 
 Packet field is `live_run:`, path `docs/missions/<id>/logs/`.

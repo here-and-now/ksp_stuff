@@ -9,7 +9,7 @@ let meta = #{
         #{ title: "Design", detail: "bounded patches" },
         #{ title: "Apply", detail: "kernel prefixes, lars card, optional pad extract" },
         #{ title: "Verify", detail: "tests plus skeptics" },
-        #{ title: "Report", detail: "lars-rsi.md" },
+        #{ title: "Report", detail: "scratch lars-rsi.md — not live docs/program/" },
     ],
 };
 
@@ -272,7 +272,7 @@ if apply_edits == true {
 if apply_edits != true {
     phase("Report");
     let rep = walls();
-    rep += "Write docs/program/lars-rsi.md. Title: Lars RSI (compile, no apply).\n";
+    rep += "Do not write live docs/program/lars-rsi.md. Report via write_scratch_file only. Title: Lars RSI (compile, no apply).\n";
     rep += "DESIGN:\n" + design_json + "\nCOMPILE:\n" + compile_digest + "\nFRICTION:\n" + friction_digest + "\nTALKS:\n" + talk_digest;
     let report_r = agent(rep, #{
         label: "report-audit",
@@ -353,7 +353,7 @@ let skeptics = parallel([
 
 phase("Report");
 let rep2 = walls();
-rep2 += "Write docs/program/lars-rsi.md. Title: Lars RSI (applied).\n";
+rep2 += "Do not write live docs/program/lars-rsi.md. Report via write_scratch_file only. Title: Lars RSI (applied).\n";
 rep2 += "Sections: 1 Sit 2 Why slow 3 Why unmaintainable 4 Prefix map 5 Files 6 Tests 7 Skeptics 8 Tickets 9 Open risks.\n";
 rep2 += "Open leftover tickets if Design named them (systems/rsi). Log docs/crew/log/mortimer.md.\n";
 rep2 += "DESIGN:\n" + design_json + "\nKERNEL:\n" + k_text;

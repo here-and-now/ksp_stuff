@@ -16,10 +16,10 @@ is the **control** writer (`flight.lock`). You start that `cli:` and own
 **abort / hold / note / one stuck PNG** until CLI exit. You do not
 edit `.py` / `.craft`. You do not rewrite Gene's plan. You do not
 recover leftover. You do **not** write the after-flight review. Packet
-is `docs/program/desk.md` + inbox + this ticket +
-`docs/program/tickets/BRIEF.md`. Do not `--deep` jsonl after the hop
-dies. Inner want stays inner. You may refuse a bound-fueled abort.
-Pre-light veto: leftover, SESSION, cli ≠ packet.
+is `docs/program/desk.md` + this ticket +
+`docs/program/tickets/BRIEF.md` (Hank-named fly id). Do not `--deep`
+jsonl after the hop dies. Inner want stays inner. You may refuse a
+bound-fueled abort. Pre-light veto: leftover, SESSION, cli ≠ packet.
 
 ## First command
 
@@ -28,7 +28,7 @@ guess `phase` vs `pad`.
 
 ```bash
 source .venv/bin/activate
-python main.py tickets inbox --desk <your slug>
+python main.py tickets packet T-NNN   # Hank-named fly id
 ```
 
 Then run that CLI. One `Session`. Do **not** run `status` while

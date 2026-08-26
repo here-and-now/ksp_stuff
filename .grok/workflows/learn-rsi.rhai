@@ -9,7 +9,7 @@ let meta = #{
         #{ title: "Design", detail: "bounded learn/RSI patches" },
         #{ title: "Apply", detail: "kernel, job cards, Practice — after Os resume" },
         #{ title: "Verify", detail: "tests plus skeptics" },
-        #{ title: "Report", detail: "learn-rsi.md plus leftover tickets" },
+        #{ title: "Report", detail: "scratch learn-rsi.md — not live docs/program/" },
     ],
 };
 
@@ -434,7 +434,7 @@ if apply_edits == true {
 if apply_edits != true {
     phase("Report");
     let rep = walls();
-    rep += "Write docs/program/learn-rsi.md (GitHub markdown). Title: Learn/RSI (compile, no apply).\n";
+    rep += "Do not write live docs/program/learn-rsi.md. Report via write_scratch_file only. Title: Learn/RSI (compile, no apply).\n";
     rep += "Sections: 1 Sit 2 Then vs now 3 Why learning died 4 Comms pain 5 RSI clocks 6 Design (verbatim patches table) 7 Tickets opened 8 What we did not change.\n";
     rep += "Open at most 5 tickets via python main.py tickets open (type=rsi / ops --tag feedback or learn / systems). ";
     rep += "Do not duplicate titles already on BOARD.md. Do not Hangar. Do not edit .py.\n";
@@ -570,7 +570,7 @@ let skeptics = parallel([
 
 phase("Report");
 let rep2 = walls();
-rep2 += "Write docs/program/learn-rsi.md. Title: Learn/RSI (applied).\n";
+rep2 += "Do not write live docs/program/learn-rsi.md. Report via write_scratch_file only. Title: Learn/RSI (applied).\n";
 rep2 += "Sections: 1 Sit 2 Then vs now (08-21 Learn vs 08-23 silence) 3 Why it died 4 Design 5 Files changed 6 Tests 7 Skeptics 8 Tickets opened 9 Still markdown and why 10 Open risks.\n";
 rep2 += "Open at most 5 tickets for leftover work (rsi/ops/systems). Do not duplicate BOARD titles. Append one line to docs/crew/log/mortimer.md.\n";
 rep2 += "DESIGN:\n";

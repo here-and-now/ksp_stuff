@@ -19491,6 +19491,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "craft fuel dumps C-477 attach tree and tank\u2192HS\u2192Valiant fuelCrossFeed=False path from .craft+cfg; BLOCKED rc=2. No Hangar.",
       "created": "2026-08-26T14:53:09Z",
       "desk": "wernher",
       "evidence": [],
@@ -19505,6 +19506,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:03:45Z",
+            "claim": "craft fuel dumps attach tree + fuelCrossFeed path from .craft+cfg (no Hangar). C-477 last tank attN bottom=proceduralHeatshield, HS attN bottom=Valiant, HS res=Ablator, fuelCrossFeed=False from GameData/ConfigCache. Prints BLOCKED engine starved; rc=2.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19514,11 +19523,11 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "VAB helper: dump attach tree + fuelCrossFeed path through an inline HS (disk, no Hangar)",
       "type": "systems",
-      "updated": "2026-08-26T14:53:33Z"
+      "updated": "2026-08-26T15:04:01Z"
     },
     "T-496": {
       "assignee": "",
@@ -19548,6 +19557,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "insert_heatshield refuses fuelCrossFeed=False splice; tank stays on engine. Do not write GameData.",
       "created": "2026-08-26T14:53:09Z",
       "desk": "wernher",
       "evidence": [],
@@ -19562,6 +19572,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:03:45Z",
+            "claim": "insert_heatshield refuses fuelCrossFeed=False splice before insert_inline. proceduralHeatshield stays False (stock+cfg+cache). Tank remains on engine; no HS part added. Do not write GameData. heatshield_modules still a VAB dish (bottomDiameter=0).",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19571,12 +19589,12 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "insert_heatshield must refuse fuelCrossFeed=False splice \u2014 leave a fed engine",
       "type": "systems",
-      "updated": "2026-08-26T14:53:33Z"
+      "updated": "2026-08-26T15:04:01Z"
     }
   },
-  "updated": "2026-08-26T14:59:55Z"
+  "updated": "2026-08-26T15:04:01Z"
 }

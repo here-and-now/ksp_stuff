@@ -22202,6 +22202,22 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T21:33:09Z",
+            "claim": "pulse: python main.py ascent; C-534 vacuum_stage_sit false; RF live until 50 km lid MECO + independent off; Toggle InSpaceLow after lid; chute_arm_sit silk; recover yes; hop.py parked",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T21:34:23Z",
+            "claim": "This-hop loft-only yes. C-534 python main.py ascent is Valiant lid MECO (apo ~118-140 km High leftover ~450-530 horiz ~15 m/s) not circularize. Hop tape five hops still loft-through apo 213-276 km apex horiz 17-30 m/s vs circular 7.75-7.82 km/s; 50 km live still throttle 1. Terrier later = east gravity turn after 45. Ask T-553 Linus: S-514 InSpaceLow cannot pay lid High. Last-write Dynamics on agree.md.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
           }
         ]
       },
@@ -22217,8 +22233,44 @@
       ],
       "title": "ascent profile now \u2014 sit hang bind recover meco for python main.py ascent",
       "type": "ops",
-      "updated": "2026-08-26T21:30:55Z"
+      "updated": "2026-08-26T21:34:23Z"
+    },
+    "T-553": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T21:34:15Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-553",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T21:34:22Z",
+            "claim": "Commanded python main.py ascent on C-534 is Valiant lid MECO. Tape at 50 km live still thrusting: 21-10-50Z 51.7 km leftover 458 vz 1.30 km/s apo 140 km; 20-18-43Z 49.1 km leftover 493 vz 1.24 km/s apo 129 km. Cut there is High ~118-140 km, leftover ~450-530, horiz ~15 m/s. S-514 InSpaceLow cannot pay that sit (T-533 loft-through 249-300 km was the bind). Hop tape still loft-through 213-276 km \u2014 that is hop_factory, not ascent. Last-write Dynamics on agree.md.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ]
+      },
+      "payload.to": "linus",
+      "priority": "P1",
+      "reporter": "Katherine Grokman, Flight Dynamics",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "T-552 ascent lid-MECO apo ~118-140 km High; S-514 InSpaceLow cannot pay",
+      "type": "ops",
+      "updated": "2026-08-26T21:34:22Z"
     }
   },
-  "updated": "2026-08-26T21:30:55Z"
+  "updated": "2026-08-26T21:34:23Z"
 }

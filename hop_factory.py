@@ -4,10 +4,12 @@ Flying card after loft. Pad light is throttle 1 on the engine, then
 stage — RF 1-start at engine throttle 0 is spent. kRPC
 ``control.throttle`` is not the burn. Throttle 0 then 1 is a restart.
 hop light is not the burn: ``_pad_hold`` (``hop_factory_pad``) keeps
-the start. After confirmed light, loft. Uplink abort / MissionAbort
-``_cut_pad_engine`` first — abort_pad cut is MainThrottle only.
-Independent is enabled once — re-enable zeros Current
-Throttle and stage spends the ignition at 0.
+the start. After confirmed light, MainThrottle 1 and independent
+setpoint 1 stay until loft/MECO at the lid — not a pad MECO.
+Uplink abort / MissionAbort ``_cut_pad_engine`` first — abort_pad
+cut is MainThrottle only. Independent is enabled once — re-enable
+zeros Current Throttle and stage spends the ignition at 0. Dropping
+independent after light is a restart with 0 remaining.
 FlyingHigh wait is loft to lid alt,
 not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
 inland slew after. Splash bind is

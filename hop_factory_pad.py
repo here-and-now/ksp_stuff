@@ -5,15 +5,17 @@ enable once. Re-enabling zeros the setpoint; stage then spends the
 only ignition at 0. Live is the independent setpoint (PAW Current
 Throttle / independentThrottlePercentage), not kRPC Engine.throttle
 GET (currentThrottle is 0 until lit — wait-for-GET never stages)
-and not independent True with setpoint 0. After thrusting,
-MainThrottle 1 is the burn. Commanded throttle 0 after loft is MECO.
-Throttle 0 then 1 is a restart. Do not gate stage on GET
-currentThrottle. hop light logs ignitions remaining, independent
-setpoint, and currentThrottle. After confirmed light, loft — hold
-vertical until lid then inland. abort_pad cut is MainThrottle only;
-``_cut_pad_engine`` zeros independent setpoint and engine active
-before process exit. Do not abort after light. Forest / Grasslands:
-same.
+and not independent True with setpoint 0. After confirmed light,
+MainThrottle 1 and independent setpoint 1 stay until loft/MECO at
+the lid — not a pad MECO, not a thrusting handoff. Dropping
+independent is a restart with 0 remaining. Commanded throttle 0
+after loft is MECO. Throttle 0 then 1 is a restart. Do not gate
+stage on GET currentThrottle. hop light logs ignitions remaining,
+independent setpoint, and currentThrottle. After confirmed light,
+loft — hold vertical until lid then inland. abort_pad cut is
+MainThrottle only; ``_cut_pad_engine`` zeros independent setpoint
+and engine active before process exit. Do not abort after light.
+Forest / Grasslands: same.
 """
 
 from __future__ import annotations
@@ -362,7 +364,7 @@ def _apply_pad_throttle(vessel: object) -> None:
 
 
 def _release_pad_throttle(vessel: object) -> None:
-    """MainThrottle drives stack feed. Independent was the ignition meet."""
+    """MECO after loft. Not a pad thrusting handoff, not airborne keep."""
     for eng in _pad_engines(vessel):
         try:
             eng.independent_throttle = False
@@ -451,13 +453,16 @@ def _pad_hold(
     left_pad: bool,
     deaf: bool,
 ) -> bool:
-    """After pad light, keep the start. Independent is enabled once.
+    """After pad light, keep the start until loft MECO.
 
-    hop light is not the burn. Re-enabling independent zeros the
-    setpoint — wait-for-GET then never stages. Pad sit throttle 0
-    is a drop: write 1 without toggling independent. Once thrusting,
-    MainThrottle 1 is the burn. Commanded throttle 0 after loft is
-    MECO. Pad 1 g still lights. Forest / Grasslands: same.
+    hop light is not the burn. Independent is enabled once.
+    Re-enabling zeros the setpoint — a restart with 0 remaining.
+    Airborne is still that start: MainThrottle 1 and independent
+    setpoint 1 stay until loft/MECO at the lid. Pad thrusting is
+    not a handoff. Pad sit throttle 0 is a drop: write 1 without
+    toggling independent. Commanded throttle 0 after loft is MECO.
+    ``_cut_pad_engine`` only on abort. Pad 1 g still lights.
+    Forest / Grasslands: same.
     """
     if not lit or deaf:
         return False
@@ -470,14 +475,5 @@ def _pad_hold(
     if down or (left and throttle <= 0.05):
         _release_pad_throttle(vessel)
         return False
-    if left or _pad_thrusting(vessel, snap):
-        _release_pad_throttle(vessel)
-        try:
-            control = vessel.control
-            control.sas = True
-            control.throttle = 1.0
-        except Exception:
-            pass
-        return True
     _apply_pad_throttle(vessel)
     return True

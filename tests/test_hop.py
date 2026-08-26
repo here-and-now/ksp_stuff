@@ -1664,7 +1664,7 @@ class TestHopSequence(unittest.TestCase):
         self.assertTrue(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertFalse(engine.independent_throttle)
+        self.assertTrue(engine.independent_throttle)
         self.assertEqual(vessel.control.throttle, 1.0)
         vessel.control.throttle = 0.0
         self.assertFalse(

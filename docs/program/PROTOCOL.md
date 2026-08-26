@@ -139,8 +139,8 @@ If the instrument is LOCKED: Linus does not bind it as hardware; Gus
 do not have. Parent copies that line into Lars’s packet so he is not
 sequencing a ghost instrument.
 
-**Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`;
-one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
+**Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`
+(**FED** + f013 + EC); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 **control blocks**: sit, warp, timeout, leftover abort, chute sits)
 without waiting for a miss. `physics_warp.py` is Wernher. Lars
@@ -161,8 +161,11 @@ prompts. Confirmed pad light is **plume** / currentThrottle rising
 after the engine fires — not ignitions remaining 1→0, not kRPC
 `Engine.throttle` GET. Independent setpoint is the RF live. Staging
 a chute (or any empty-of-engine stage) is not hop light.
-Pad-dead-no-plume is Lars `hop_factory_pad.py` (`rf-ignition-ullage`)
-— not loft, not Wernher, not a GameData raise. Failed coast/suicide
+Pad-dead-no-plume with a **fed** engine is Lars `hop_factory_pad.py`
+(`rf-ignition-ullage`) — not loft, not Wernher, not a GameData raise.
+Tanks full and pad Δv 0/0 is **starved** (`craft fuel` BLOCKED) —
+Gus `capable: no`, not RF, not Lars, not a GameData `fuelCrossFeed`
+flip (C-477 dish HS). Failed coast/suicide
 relight with fuel left is **engine physics** until a desk has read
 that engine. RF pad is one sit — not a `_pad_*` per stamp. Do not
 open `type=systems` / kRPC for “engine did not light” first. Do not
@@ -176,22 +179,24 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
-splash match the hang; FlyingHigh waits ≥50 km on seated
-**t7-wheel-proc-hs-cone-pbc** (C-477, silk+HS), not t7-wheel-pbc
+splash match the hang; FlyingHigh waits ≥50 km on a **fed** hang,
+not C-477 t7-wheel-proc-hs-cone-pbc (`capable: no` — dish HS
+`fuelCrossFeed=False` starved the Valiant), not t7-wheel-pbc
 (T-400 `capable: no` — lithobrake is not recover), not a 30 km stiff
 loft, not t7-chute Mk16). FlyingHigh wait is loft live-alt ≥50 km /
 Toggle / cut / chute / land leftover — not a sit at 800 m apo, not
 wait-then-pitch in the first km, not throttle-0 at light, not
 abort-at-lid, not skip-chute, not OffPlan under `expect_apo_max`.
-Silk on C-477 is recover, not the wait. Throttle 1 + SAS vertical
+Silk is recover, not the wait. Throttle 1 + SAS vertical
 until lid; inland slew after. Thick air ≤18 km is 1×. 4× silk /
 chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
 (`hop-coast-phys-warp`). Quiet loft after lid honors Hank
 `phys-warp` (High dwell is not a burn). Do not Hangar FAR-sheared 4t
-/ dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 this sit.
-Do not Hangar **t7-wheel-nose** (T-409) as silk. Loft hang this sit
-is **C-477** (already seated). T-406 proc no-silk and T-428 HS-only
-/ T-430 silk-only stay alts — not a second Hangar from this letter. Do not gather a
+/ dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / **C-477**
+this sit. Do not Hangar **t7-wheel-nose** (T-409) as silk. Pad this
+sit belongs to a **fed** hang (Gus rebuilding after T-406 shear).
+T-428 HS-only / T-430 silk-only stay alts — not a Hangar from this
+letter. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;
 uplink `phys-warp` / `no_warp`; never rails / WarpTo). Ground fills
 the shelf **during** flight (lock live, other files). Wernher **logs
@@ -515,7 +520,7 @@ Bind = patch science payload (`experiment_id` / `part` / `duration_s` /
 `ec_rate` / `recover_banks`). Do not rewrite `science.md`. Idle on open
 science tickets, not `need_science`.
 
-**Gus** — `capable:` `craft:` `f013:` `tickets:` `blocker:` (if no). Then `tickets feedback`.
+**Gus** — `capable:` `craft:` `f013:` FED (`craft fuel`) `tickets:` `blocker:` (if no). Then `tickets feedback`.
 
 **Lars** — `tickets:` `stack:` `f013:` `blocks:`. Then `tickets feedback`.
 
@@ -568,7 +573,9 @@ Science-ticket payload:
 experiment_id / part / duration_s / ec_rate / recover_banks: yes|no
 ```
 
-Gus sizes EC from `ec_rate × duration_s` **before** `capable: yes`. If `world` sci does not move after a briefed recover → Linus, then Gene.
+Gus sizes EC from `ec_rate × duration_s` **and** proves **FED**
+(`python main.py craft fuel <craft>`) **before** `capable: yes`.
+Starved / BLOCKED is `capable: no`. If `world` sci does not move after a briefed recover → Linus, then Gene.
 
 ## Feedback (T-375 amended; findings)
 

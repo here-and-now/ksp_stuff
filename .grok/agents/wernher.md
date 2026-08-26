@@ -78,11 +78,13 @@ tickets: `physics_warp.py` (and sit helpers Lars will call) — sit
 names, not stamp names. **VAB helpers:** when Gus files
 `type=systems --fingerprint vab-helper`, you write the craft builder
 (`craft.py` / a CLI Gus can run). He does not edit `.py`. Do not place
-parts in the live VAB (kRPC cannot). Pad still flies the signed hang.
+parts in the live VAB (kRPC cannot). Pad still flies a **fed** hang.
 A hang-writing helper must leave the **engine in the first fire list**
-(`sqor=0`, not only `istg=1`) and the heatshield a **VAB dish**
-(`bottomDiameter=0`), not a filled puck. Node offset is catalog, not
-tank-half. Live gaps T-480 / T-482 / T-483.
+(`sqor=0`, not only `istg=1`), the heatshield a **VAB dish**
+(`bottomDiameter=0`), not a filled puck, and a **fed** engine.
+`insert_heatshield` refuses `fuelCrossFeed=False`. `craft fuel` dumps
+attach + `fuelCrossFeed` (T-495 / T-497). Do not write GameData. Node
+offset is catalog, not tank-half.
 Extract leftover abort / chute sits still living in `hop.py` into
 blocks. **Log more kRPC** into jsonl / Tape windows /
 `python main.py telem` skim — not just a parser over 9 columns. On a

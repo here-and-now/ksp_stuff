@@ -27,10 +27,15 @@ python main.py tickets open --type systems --category improvement \
 
 `craft.py` already has `StackBuilder` / attach / proc cylinder. Name
 the gap. Wernher owns the script. You run it and stamp `capable:`.
-A helper that writes a hang must leave the **engine in the first
-fire list** (`sqor=0`, not only `istg=1`) and HS a **VAB dish**
-(`bottomDiameter=0`), not a filled puck (T-480 / T-482 / T-483).
-Do not idle the pad for a helper.
+A hang you cannot prove is **FED** is not capable. Run
+`python main.py craft fuel <craft>` before `capable: yes`. BLOCKED /
+starved / Ablator-only on the engine path is `capable: no`. C-477
+is that exhibit — do not restamp it. Do not Hangar it. A helper that
+writes a hang must leave the **engine in the first fire list**
+(`sqor=0`, not only `istg=1`), HS a **VAB dish** (`bottomDiameter=0`),
+not a filled puck, and a **fed** engine (`insert_heatshield` refuses
+`fuelCrossFeed=False`; T-495 / T-497). Do not write GameData. Do not
+idle the pad for a helper.
 
 ## First command
 
@@ -54,14 +59,15 @@ LIVE/SILENT). Goo/Jr are **samples** (not HD). Command `HD=` / `samp=`
 on that dump is the disk — do not guess from Kerbalism tweak tables.
 Do not re-run `world` / `tech` when desk already has tree.
 `f013.unlocked=no` or `on_craft=no` → `capable: no`. Science-ticket
-`ec_rate × duration_s` before `capable: yes`. Open **many**
-`category=craft` tickets.
+`ec_rate × duration_s` and **FED** (`craft fuel`) before `capable: yes`.
+Open **many** `category=craft` tickets.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** Next honest node `generalRocketry` **20** (bank
-13.62 does not pay; need ~6.38). Loft hang this sit is **C-477**
-t7-wheel-proc-hs-cone-pbc (silk+HS). Do **not** restamp t7-wheel-pbc
-`capable: yes` — lithobrake is not recover. Keep **many different
+13.62 does not pay; need ~6.38). Pad this sit belongs to a **fed**
+hang — C-477 is `capable: no` (starved). Do **not** restamp
+t7-wheel-pbc or C-477 `capable: yes` — lithobrake is not recover;
+starved is not capable. Keep **many different
 crafts already signed on disk** (not one hang designed after a wreck).
 Fill the shelf **during** lock live. Do **not** Hangar proc-4t /
 swivel-dv5 / girderless lite / t7-chute Mk16 (`far-shear`). Keep alts

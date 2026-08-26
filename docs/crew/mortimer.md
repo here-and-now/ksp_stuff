@@ -47,23 +47,25 @@ ticket. After every hire: `tickets feedback T-NNN --claim "…"`
 on the work ticket — not Return keys, not RSI ×3 as the only door. Thin tape is first-class. Airborne cannot-pay skip is not a
 dwell — loft, cut, chute, land leftover; timeout is leftover not
 Gene. Today is farther hops that pay,
-not a Forest leftover grind. FlyingHigh leftover is C-477
-t7-wheel-proc-hs-cone-pbc ≥50 km — throttle 1 vertical until lid, not
+not a Forest leftover grind. FlyingHigh leftover is a **fed** hang
+≥50 km — throttle 1 vertical until lid, not
 abort-at-lid / a 30 km stiff / wait-at-800 m then pitch / t7-chute
-Mk16. Silk on C-477 is recover, not the wait. Splash
+Mk16. C-477 is starved (`capable: no`) — dish HS
+`fuelCrossFeed=False`. Silk is recover, not the wait. Splash
 Water bind does not drop that lid to 18 km. Skip-latch is FlyingLow
 cannot-pay only. Thick air ≤18 km is 1×. High dwell is not a burn;
 quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
 (T-442). Wreck rec=no re-flies last cli; living +0 is waste. Do not Hangar
-4t / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16. Do not
+4t / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / C-477. Do not
 fly t7-wheel-pbc (lithobrake is not recover). OX-STAT is dwell EC, not
 the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
 Next CTT is `generalRocketry` 20 (need ~6.38; bank 13.62 does not
-pay 20). `survivability` 15 is spent. Do not spend crumbs. Loft hang
-this sit is C-477 (already seated). T-406 / T-428 / T-430 stay alts.
+pay 20). `survivability` 15 is spent. Do not spend crumbs. Pad this sit
+belongs to a **fed** hang (Gus rebuilding). T-428 / T-430 stay alts.
 T-409 / T-433
 nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). VAB helpers
-T-413–T-420 plus T-480/T-482/T-483 are Wernher; pad does not wait. Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
+T-413–T-420 plus T-480/T-482/T-483/T-495/T-497 are Wernher; a hang you
+cannot prove is FED is not capable; pad does not wait. Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
 path. File leftover credits while recording; sample leftover is the
 can. Goo ~429 MB does not TX at TL2. Recover still banks the HD when
 recover() works.

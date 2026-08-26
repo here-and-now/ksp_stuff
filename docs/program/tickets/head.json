@@ -19533,13 +19533,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write vab-helper \u00d714 (stem 16): FED proof is capable. C-477 starved capable no. Pad a fed hang. CHARTER/PROTOCOL/job cards hold the pitfall. Software stays T-495/T-497.",
       "created": "2026-08-26T14:53:09Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-496",
       "payload": {
-        "count": 14
+        "count": 14,
+        "findings": [
+          {
+            "at": "2026-08-26T15:09:52Z",
+            "claim": "Practice last-write vab-helper \u00d714 (stem 16): a hang you cannot prove is FED is not capable. craft fuel dumps attach+fuelCrossFeed (T-495). insert_heatshield refuses fuelCrossFeed=False (T-497). C-477 last-tank\u2192dish HS\u2192Valiant Ablator-only starved pad \u0394v 0/0. Engine first fire + HS dish still hold. Do not write GameData. Pad belongs to a fed hang \u2014 Gus rebuilding. Did not Hangar. Did not take software RSI.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19547,11 +19558,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI vab-helper \u00d714",
       "type": "rsi",
-      "updated": "2026-08-26T14:53:09Z"
+      "updated": "2026-08-26T15:09:52Z"
     },
     "T-497": {
       "assignee": "",
@@ -19596,5 +19607,5 @@
       "updated": "2026-08-26T15:04:01Z"
     }
   },
-  "updated": "2026-08-26T15:04:01Z"
+  "updated": "2026-08-26T15:09:52Z"
 }

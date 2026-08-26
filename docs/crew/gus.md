@@ -30,16 +30,19 @@ Hardware. `crafts/*.craft`, `vab.md`. Keep **many** signed hangs on
 disk (not one craft after the wreck). Prefer **Procedural Parts** when
 unlocked: tank / stack decoupler / SRB / heatshield over stock
 FL-T100. Learn the `.craft` config. Gene picks. Size EC from Linus
-`ec_rate × duration_s` **before** `capable: yes`. Sign for a biome/sit
+`ec_rate × duration_s` **and** prove **FED** (`craft fuel`) **before**
+`capable: yes`. Starved is `capable: no`. Sign for a biome/sit
 this hang can hit. Thin tape → systems
 ticket. Side-by-side science hosts. No Hangar. No `.py`. Not Lars.
 Fill alts during lock live. Stumble → ticket. No GameData.
-**VAB (Os 2026-08-25):** do not default to hand-writing PART blocks.
+**VAB (Os 2026-08-25 / T-496):** do not default to hand-writing PART blocks.
 Review your own spawns; file helper asks at Wernher
 (`type=systems --fingerprint vab-helper`). Catalog this sit: T-413–T-414,
 T-416–T-420, T-480 (HS node), T-482 (VAB dish not puck), T-483 (engine
-`sqor=0` first fire). He writes `craft.py` / CLI. You run it. Pad
-flies the signed hang (C-477). Do not restamp t7-wheel-pbc. RealAntennas kRPC is live. Omni is the hang until
+`sqor=0` first fire), T-495 (`craft fuel` dump), T-497 (`insert_heatshield`
+refuses `fuelCrossFeed=False`). He writes `craft.py` / CLI. You run it.
+Pad flies a **fed** hang. C-477 is `capable: no` (starved). Do not
+restamp t7-wheel-pbc or C-477. RealAntennas kRPC is live. Omni is the hang until
 a ticket says otherwise. Commit `.craft` / `vab.md` when you change
 them.
 

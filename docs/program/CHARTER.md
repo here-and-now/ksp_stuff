@@ -154,7 +154,8 @@ stay. Ask Os almost never (`need_os` for CHARTER creed / roster seats).
 Mortimer mutates PROTOCOL and job cards on an org hire without Os
 unless a title is added or removed.
 
-Pad needs VAB `capable: yes` and a real `craft:` file. PBC probes launch
+Pad needs VAB `capable: yes` (**FED**: `craft fuel` path to the
+engine; starved is `capable: no`) and a real `craft:` file. PBC probes launch
 **uncrewed**. Leftover crew flies `phase` on the vessel they have.
 
 Crew on the active vessel must match the seated pilot. Rails warp scans

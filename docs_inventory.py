@@ -14,7 +14,6 @@ from typing import Iterable, Iterator
 
 ROOT = Path(__file__).resolve().parent
 DOCS = ROOT / "docs"
-LESSONS = DOCS / "lessons.md"
 
 DOC_CLASSES = (
     "live_kernel",
@@ -29,6 +28,14 @@ FORBIDDEN_DISPATCH = (
     "docs/crew/niche/",
     "docs/program/improve/",
     "docs/archive/kerbin-lessons.md",
+    "docs/lessons.md",
+    "docs/program/lars-rsi.md",
+    "docs/program/learn-rsi.md",
+    "docs/program/feedback-plan.md",
+    "docs/program/tickets/BOARD.md",
+    "docs/program/sit-card.json",
+    "docs/program/org-flow/",
+    ".grok/agents/spotter.md",
 )
 
 GITIGNORED_OPTIONAL = frozenset(
@@ -56,6 +63,10 @@ _ORG_NOVEL_NAMES = frozenset(
         "rescue.md",
         "RSI-JUMP.md",
         "feedback.md",
+        "lars-rsi.md",
+        "learn-rsi.md",
+        "feedback-plan.md",
+        "lessons.md",
     }
 )
 
@@ -289,10 +300,8 @@ _SEEDED_IF_TOKENS = ("I-013", "I-017", "I-018", "I-019")
 
 
 def lesson_headings(text: str | None = None) -> list[str]:
-    """``##`` stems from docs/lessons.md (run — title). Not letter-codes."""
-    raw = text if text is not None else (
-        LESSONS.read_text(encoding="utf-8") if LESSONS.is_file() else ""
-    )
+    """Parked ``##`` parser. Not a live bus. Pass ``text``; default empty."""
+    raw = text or ""
     out: list[str] = []
     for line in raw.splitlines():
         if line.startswith("## "):
@@ -307,11 +316,11 @@ def _rel(path: Path, repo: Path) -> str:
 def classify(rel: str) -> str:
     """Return exactly one DOC_CLASSES member for a repo-relative path."""
     rel = rel.replace("\\", "/")
-    if _IF_ITEM.search(rel):
-        return "leftover_migrated"
     name = rel.rsplit("/", 1)[-1]
     if rel.startswith("docs/archive/"):
         return "parked_archive"
+    if _IF_ITEM.search(rel):
+        return "leftover_migrated"
     if "/niche/" in f"/{rel}" or rel.startswith("docs/crew/niche/"):
         return "parked_archive"
     if rel.startswith("docs/program/improve/"):
@@ -324,23 +333,19 @@ def classify(rel: str) -> str:
         return "parked_archive"
     if "/missions/" in rel and rel.endswith("/mission.md"):
         return "parked_archive"
-    if "/missions/" in rel and rel.endswith("/loop.md"):
-        return "parked_archive"
     if rel == "docs/program/log.md" or rel.endswith("/program/log.md"):
         return "parked_archive"
-    if rel.endswith(".jsonl") and rel != "docs/program/tickets/board.jsonl":
+    if rel.endswith(".jsonl"):
         return "live_tape"
     if rel.startswith("docs/crew/log/"):
         return "live_tape"
     if rel == "docs/last-flight.md":
         return "live_tape"
-    if rel.startswith("docs/flights/") and rel.endswith(".jsonl"):
-        return "live_tape"
     if "/missions/" in rel and "/logs/" in rel:
         return "live_tape"
     if "/missions/" in rel and rel.endswith("/craft.md"):
         return "live_tape"
-    if rel in {"docs/program/note-tech.md", "docs/program/loop.md"}:
+    if "/missions/" in rel and rel.endswith("/loop.md"):
         return "live_tape"
     return "live_kernel"
 

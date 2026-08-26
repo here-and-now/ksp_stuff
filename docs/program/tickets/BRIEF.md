@@ -1,7 +1,7 @@
 # Tickets — spawn brief
 
 Packet is `docs/program/desk.md` + `tickets packet T-NNN` (also S-/M-/C-)
-stdout + this page. Not BOARD.md. Not jsonl. Not `docs/lessons.md`. Not
+stdout + this page. Not BOARD.md. Not jsonl. Not parked lessons. Not
 `science.md` / `vab.md` / `blocks.md`. Not parked archive / niche / gym
 queues. First command is **`tickets packet <Hank-named id>`** (live T-
 stay; new science/fly/vehicle mint S-/M-/C-), then the stamp or CLI on

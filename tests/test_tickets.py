@@ -1525,24 +1525,40 @@ class TestLiveDocsInventory(unittest.TestCase):
         self.assertEqual(mapping["docs/program/tickets/BRIEF.md"], "live_kernel")
         self.assertEqual(mapping["docs/missions/jebediah/plan.md"], "live_kernel")
         self.assertEqual(mapping["docs/missions/jebediah/science.md"], "live_kernel")
-        self.assertIn(
-            mapping["docs/program/tickets/board.jsonl"],
-            ("live_tape", "live_kernel"),
+        self.assertEqual(mapping["docs/program/tickets/board.jsonl"], "live_tape")
+        self.assertEqual(mapping["docs/missions/jebediah/loop.md"], "live_tape")
+        self.assertEqual(mapping["docs/missions/uncrewed/loop.md"], "live_tape")
+        self.assertEqual(
+            mapping["docs/archive/2026-08-26-org-rsi/lessons.md"],
+            "parked_archive",
         )
         leftover = [r for r, c in mapping.items() if c == "leftover_migrated"]
         parked = [r for r, c in mapping.items() if c == "parked_archive"]
+        self.assertEqual(leftover, [])
         self.assertTrue(any(r.startswith("docs/archive/") for r in parked))
         for token in ("I-012.md", "F-014.md"):
             hits = [r for r in mapping if r.endswith("/" + token) or r.endswith(token)]
             self.assertTrue(hits, token)
             for rel in hits:
                 self.assertTrue(rel.startswith("docs/archive/"), rel)
-                self.assertIn(mapping[rel], ("parked_archive", "leftover_migrated"), rel)
-                self.assertNotEqual(mapping[rel], "live_kernel", rel)
-                self.assertNotEqual(mapping[rel], "live_tape", rel)
-            self.assertFalse(any(rel.endswith(token) for rel in leftover if not rel.startswith("docs/archive/")))
+                self.assertEqual(mapping[rel], "parked_archive", rel)
         self.assertFalse(Path("docs/program/improve/README.md").is_file())
         self.assertFalse(Path("docs/crew/niche/gene.md").is_file())
+        self.assertFalse(Path("docs/lessons.md").is_file())
+        self.assertFalse(Path("docs/program/tickets/BOARD.md").is_file())
+        self.assertFalse(Path("docs/program/sit-card.json").is_file())
+        self.assertFalse(Path("docs/program/lars-rsi.md").is_file())
+        self.assertFalse(Path("docs/program/org-flow/index.html").is_file())
+        from docs_inventory import classify
+
+        self.assertEqual(
+            classify("docs/archive/x/improve/I-012.md"),
+            "parked_archive",
+        )
+        self.assertEqual(classify("docs/program/tickets/board.jsonl"), "live_tape")
+        self.assertEqual(classify("docs/missions/uncrewed/loop.md"), "live_tape")
+        self.assertEqual(classify("docs/program/lars-rsi.md"), "parked_archive")
+        self.assertEqual(classify("docs/lessons.md"), "parked_archive")
 
     def test_live_trio_rows_read_as_findings(self):
         self.assertEqual(len(tickets.TYPES), 11)

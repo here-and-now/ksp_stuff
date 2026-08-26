@@ -12,4 +12,8 @@ org novels, review-md). Parked — not dispatch. Ticket twins are the bus.
 `2026-08-26-org-pristine/` is a parked census index (not dispatch).
 Live cutover work is the `org-pristine-cutover` workflow, not those notes.
 
+`2026-08-26-org-rsi/` is parked org-rsi novels (lessons, RSI letters,
+program shims, world-model dump, org-flow). Parked — not dispatch.
+Chair stub stays live at `docs/program/world-model.md`.
+
 Agents, kRPC traps (`docs/agent-notes.md`), and `.py` stay in the tree.

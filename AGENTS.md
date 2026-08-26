@@ -322,7 +322,7 @@ last:
 
 R&D contract: patch the named `.py`, then stop. Finding on the work
 ticket (`tickets feedback --claim`). Helper docstring holds miss
-physics. Do **not** append `docs/lessons.md`. Lars **or** Wernher, not
+physics. Lars **or** Wernher, not
 both, on a miss patch of the **same** `.py`. Uncrewed hang still capable
 and fly ticket `go: yes` → parent re-flies last `cli:` (no Gene).
 Hang died → next already-signed alt; Gene only if that fly ticket
@@ -343,7 +343,7 @@ tanks, pre-flight fail):
    (`physics_warp.py`).
 4. They patch the named `.py`. Finding on the work ticket. Helper
    docstring holds miss physics. `docs/agent-notes.md` only for
-   still-current API facts. Do **not** append `docs/lessons.md`.
+   still-current API facts.
 5. **Do not hire Gene to consider.** Re-fly last `cli:` if the hang
    still lives, or the next already-signed alt — through
    `python main.py protocol fly`, not a scratch script.

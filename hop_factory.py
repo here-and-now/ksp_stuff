@@ -4,8 +4,12 @@ Flying card after loft. Pad light is throttle 1 on the engine, then
 stage — RF 1-start at engine throttle 0 is spent. kRPC
 ``control.throttle`` is not the burn. Throttle 0 then 1 is a restart.
 hop light is not the burn: ``_pad_hold`` (``hop_factory_pad``) keeps
-the start. After confirmed light, MainThrottle 1 and independent
-setpoint 1 stay until loft/MECO at the lid — not a pad MECO.
+the start on the pad. After confirmed light, MainThrottle 1 and
+independent setpoint 1 stay until loft/MECO at the lid — not a pad
+MECO, not airborne GET throttle 0. Independent still burns when
+MainThrottle GET is 0 (16-05-34Z MET 9.7 thrust 89 kN). ``_pad_hold``
+GET 0 after loft drops independent — a restart at 0 remaining.
+Thrust 0 with fuel left and parts intact is OffPlan, not shear.
 Uplink abort / MissionAbort ``_cut_pad_engine`` first — abort_pad
 cut is MainThrottle only. Independent is enabled once — re-enable
 zeros Current Throttle and stage spends the ignition at 0. Dropping
@@ -32,7 +36,15 @@ from typing import Callable
 
 import hop as H
 from emergencies import Ctx, call
-from hop_factory_pad import _cut_pad_engine, _pad_hold, _pad_light
+from hop_factory_pad import (
+    _apply_pad_throttle,
+    _cut_pad_engine,
+    _pad_hold,
+    _pad_light,
+    _pad_plume,
+    _pad_thrusting,
+    _release_pad_throttle,
+)
 from phases import OffPlan, check_expect
 from physics_warp import (
     airborne_cannot_pay,
@@ -126,6 +138,93 @@ def _lid_burn_sit(
         return False
     fuel = H._snap_fuel(snap)
     return math.isfinite(fuel) and fuel > H.WATER_BRAKE_FUEL_MIN
+
+
+def _keep_start_sit(
+    snap: object,
+    *,
+    lit: bool,
+    left_pad: bool,
+    down: bool,
+    hop_apo: float,
+    flying_high: bool,
+    lofted_lid: bool = False,
+) -> bool:
+    """After hop light, keep throttle 1 + independent until MECO.
+
+    Airborne GET throttle 0 is not MECO — independent still burns.
+    Lid alt or crumbs is MECO. Pad sit after light is still the start.
+    Forest / Grasslands: same.
+    """
+    if not lit or down:
+        return False
+    if not left_pad:
+        return True
+    if flying_high:
+        return _lid_burn_sit(
+            snap, hop_apo=hop_apo, flying_high=True, lofted_lid=lofted_lid
+        )
+    fuel = H._snap_fuel(snap)
+    if not math.isfinite(fuel) or fuel <= H.WATER_BRAKE_FUEL_MIN:
+        return False
+    apo = getattr(snap, "apo", float("nan"))
+    try:
+        apo_f = float(apo)
+    except (TypeError, ValueError):
+        apo_f = float("nan")
+    if math.isfinite(apo_f) and apo_f >= hop_apo:
+        return False
+    return True
+
+
+def _hold_start(
+    vessel: object,
+    snap: object,
+    *,
+    keep_start: bool,
+    left_pad: bool,
+    lit: bool,
+    deaf: bool,
+) -> bool:
+    """Keep MainThrottle 1 + independent until MECO.
+
+    Airborne GET throttle 0 is not MECO — independent still burns.
+    ``_pad_hold`` GET 0 after loft drops independent — a restart at 0
+    remaining. Pad sit still ``_pad_hold``. Forest / Grasslands: same.
+    """
+    if not left_pad:
+        return _pad_hold(vessel, snap, lit=lit, left_pad=False, deaf=deaf)
+    if not lit or deaf:
+        return False
+    if keep_start:
+        _apply_pad_throttle(vessel)
+        return True
+    _release_pad_throttle(vessel)
+    return False
+
+
+def _flameout_sit(
+    snap: object,
+    vessel: object,
+    *,
+    keep_start: bool,
+) -> bool:
+    """Thrust 0 with fuel left and parts intact is OffPlan, not shear.
+
+    Independent drop is a restart at 0 remaining. Forest / Grasslands:
+    same.
+    """
+    if not keep_start:
+        return False
+    fuel = H._snap_fuel(snap)
+    if not math.isfinite(fuel) or fuel <= H.WATER_BRAKE_FUEL_MIN:
+        return False
+    n_parts = H._parts_n(vessel)
+    if n_parts is not None and n_parts <= 0:
+        return False
+    if _pad_thrusting(vessel, snap) or _pad_plume(vessel, snap):
+        return False
+    return True
 
 
 def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
@@ -607,11 +706,25 @@ def run_factory_vessel(
                                 pose="pad-plume",
                                 session=session,
                             )
-            _pad_hold(
-                vessel,
+            keep_start = _keep_start_sit(
                 snap,
                 lit=lit,
                 left_pad=left_pad,
+                down=down,
+                hop_apo=hop_apo,
+                flying_high=flying_high,
+                lofted_lid=reached_lid,
+            )
+            if left_pad and not down and _flameout_sit(
+                snap, vessel, keep_start=keep_start
+            ):
+                raise OffPlan("thrust 0 with fuel left")
+            _hold_start(
+                vessel,
+                snap,
+                keep_start=keep_start,
+                left_pad=left_pad,
+                lit=lit,
                 deaf=deaf,
             )
 

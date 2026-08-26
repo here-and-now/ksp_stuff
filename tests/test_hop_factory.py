@@ -5,6 +5,7 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
+from hop_factory import _flameout_sit, _hold_start, _keep_start_sit
 from hop_factory_pad import (
     _cut_pad_engine,
     _pad_engine_waiting,
@@ -206,6 +207,12 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertNotIn("rf-light-test", pad)
         self.assertNotIn("wait_water", factory)
         self.assertNotIn("wait_splash", factory)
+        self.assertIn("def _keep_start_sit", factory)
+        self.assertIn("def _hold_start", factory)
+        self.assertIn("def _flameout_sit", factory)
+        self.assertIn("_apply_pad_throttle(vessel)", factory)
+        self.assertIn("_release_pad_throttle(vessel)", factory)
+        self.assertIn('OffPlan("thrust 0 with fuel left")', factory)
 
     def test_pad_light_does_not_stage_on_krpc_throttle_alone(self):
         vessel = _Vessel()
@@ -564,6 +571,155 @@ class TestHopFactoryPad(unittest.TestCase):
             _pad_hold(vessel, pad, lit=True, left_pad=False, deaf=False)
         )
         self.assertEqual(vessel.control.throttle, 1.0)
+
+    def test_keep_start_sit_airborne_before_lid(self):
+        """rf-ignition-ullage: 16-05-34Z MET 9.7 GET throttle 0 is not MECO."""
+        fly = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 251.0,
+                "fuel": 2238.0,
+                "apo": 311.0,
+                "thrust": 89273.0,
+            },
+        )()
+        lid = type("S", (), {"alt": 50_400.0, "fuel": 2038.0, "apo": 51_000.0})()
+        crumbs = type("S", (), {"alt": 904.0, "fuel": 1.0, "apo": 1200.0})()
+        self.assertTrue(
+            _keep_start_sit(
+                fly,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+            )
+        )
+        self.assertFalse(
+            _keep_start_sit(
+                lid,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+            )
+        )
+        self.assertFalse(
+            _keep_start_sit(
+                crumbs,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+            )
+        )
+        self.assertTrue(
+            _keep_start_sit(
+                fly,
+                lit=True,
+                left_pad=False,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+            )
+        )
+
+    def test_hold_start_airborne_throttle_get_zero_keeps_independent(self):
+        """rf-ignition-ullage: independent stays 1 while GET MainThrottle is 0."""
+        vessel = _Vessel()
+        engine = _Engine()
+        vessel.parts.engines = [engine]
+        engine.independent_throttle = True
+        engine.throttle = 1.0
+        vessel.control.throttle = 0.0
+        fly = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 251.0,
+                "fuel": 2238.0,
+                "thrust": 89273.0,
+                "link": True,
+            },
+        )()
+        sets = engine.independent_sets
+        self.assertTrue(
+            _hold_start(
+                vessel,
+                fly,
+                keep_start=True,
+                left_pad=True,
+                lit=True,
+                deaf=False,
+            )
+        )
+        self.assertTrue(engine.independent_throttle)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(engine.independent_sets, sets)
+        vessel.control.throttle = 0.0
+        self.assertFalse(
+            _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
+        )
+        self.assertFalse(engine.independent_throttle)
+
+    def test_hold_start_releases_independent_at_meco(self):
+        vessel = _Vessel()
+        engine = _Engine()
+        vessel.parts.engines = [engine]
+        engine.independent_throttle = True
+        engine.throttle = 1.0
+        vessel.control.throttle = 1.0
+        fly = type(
+            "S",
+            (),
+            {"situation": "flying", "alt": 50_400.0, "fuel": 2038.0, "link": True},
+        )()
+        self.assertFalse(
+            _hold_start(
+                vessel,
+                fly,
+                keep_start=False,
+                left_pad=True,
+                lit=True,
+                deaf=False,
+            )
+        )
+        self.assertFalse(engine.independent_throttle)
+
+    def test_flameout_sit_thrust_zero_with_fuel_left(self):
+        """rf-ignition-ullage: 16-05-34Z MET 21 throttle 1 thrust 0 fuel 2038."""
+        vessel = _Vessel()
+        vessel.parts.all = [object()] * 30
+        live = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 251.0,
+                "fuel": 2238.0,
+                "thrust": 89273.0,
+                "available_thrust": 90196.0,
+            },
+        )()
+        dead = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 941.0,
+                "fuel": 2038.0,
+                "thrust": 0.0,
+                "available_thrust": 0.0,
+            },
+        )()
+        self.assertFalse(_flameout_sit(live, vessel, keep_start=True))
+        self.assertTrue(_flameout_sit(dead, vessel, keep_start=True))
+        self.assertFalse(_flameout_sit(dead, vessel, keep_start=False))
 
     def test_pad_light_deaf_aborts(self):
         vessel = _Vessel()

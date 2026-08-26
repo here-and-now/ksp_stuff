@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-26 — T-509 rf-ignition-ullage: hop_factory `_keep_start_sit` / `_hold_start` keep independent through the burn. 16-05-34Z MET 9.7 GET throttle 0 thrust 89 kN — `_pad_hold` airborne GET 0 dropped independent; MET 21 throttle 1 thrust 0 fuel 2038 parts 30. Thrust 0 with fuel left is OffPlan, not shear. Do not Hangar.
 - 2026-08-26 — T-471 rf-ignition-ullage: hop_factory_pad `_pad_engine_waiting` is current_stage < part.stage, not Engine.active. 12-18-51Z pad-dead-no-plume at STAGE 2 never hop light — active on the pad aborted before restage. `_apply_pad_throttle` commands Engine.active True with the live setpoint so a chute-only current stage does not spend the only ignition. Do not Hangar.
 - 2026-08-26 — T-471 rf-ignition-ullage: hop_factory_pad `_pad_light` returns True after hop light — loft, hold vertical until lid then inland. `_cut_pad_engine` stays for uplink abort / MissionAbort (independent 0 + engine active False before process exit). Do not abort-after-light. Do not Hangar.
 - 2026-08-26 — T-471 rf-ignition-ullage: hop_factory_pad `_cut_pad_engine` zeros MainThrottle, independent setpoint, engine active before abort_pad. 09-44-55Z hop light ignitions=1→0 independent=yes then abort rf-light-test; hop pid died, Valiant still lit, orphan loft apo 133 km rec=no. abort_pad cut is MainThrottle only. Do not Hangar.

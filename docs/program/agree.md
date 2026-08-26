@@ -8,8 +8,8 @@ katherine` or `--tag dynamics`) — not every pad.
 ```
 sit: FlyingHigh
 hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
-bind: T-404 barometerScan FlyingHigh 305/0.05; T-460 FlyingLow 305/0.05
-duration_vs_high: 305s file; loft ≥50 km then Toggle; High window is coast, not a burn
+bind: T-404 barometerScan FlyingHigh 305/0.05
+duration_vs_high: 305s file does not finish tens-of-seconds loft-through (~42s then InSpaceLow ~268 km, four hops +0); pays iff MECO/dwell ≥305s in 50–140 km
 recover: yes
 meco: lid then coast
 dynamics: none
@@ -33,13 +33,20 @@ alts, not this hang. Do not replace C-504 because the last hop sheared.
 
 ## Bind (Linus)
 
-This-hop: PresMat FlyingHigh 305/0.05 (T-404) + FlyingLow 305/0.05
-(T-460) + goo if honest/f013. Side-by-side. High waits ≥50 km.
-This hang does **not** recover — do not bind splash / SrfLanded /
-Shores leftover on C-504. Land/splash cards wait a recover alt.
-Do not drop High to a pad or Surface card because a short dud
-landed. 305s file vs High window: loft to lid, Toggle, coast;
-High dwell is not a burn.
+This-hop: T-404 PresMat FlyingHigh 305/0.05/2.70 only. File rem=0
+is still the card. Envelope Shores heading 297 — not Forest, not
+Water, not Grasslands. Four loft-throughs (16-23-52Z / 16-49-02Z /
+17-01-10Z / 17-13-14Z) spent High in tens of seconds then
+InSpaceLow ~268 km rec=no sci +0. **Nothing this hang finishes
+that High window:** T-404 305 s does not; T-069 Forest TELEMETRY
+25 s leftover cannot pay Shores High (capped); thermo/geiger High
+capped; T-368 goo 641 s sample rec=no loses the can. T-404 pays
+iff pulse MECO/dwells ≥305 s in 50–140 km. T-460 FlyingLow same
+eid one Toggle — stays unbound. InSpaceLow LITE S-514 10 s / 2.00
++ TELEMETRY S-515 30 s / 2.00 + goo leftover S-516 3.41 stay
+unbound shelf (flying Toggle at 50 km does not retry in space).
+Do not drop High for splash leftover. Not Surface. Not T-461.
+recover HD 1.17 MB not TX 41 h.
 
 ## Pulse (Lars)
 

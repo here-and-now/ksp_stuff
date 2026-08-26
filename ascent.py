@@ -274,6 +274,8 @@ def run_ascent_vessel(
     """Light, keep live, lid MECO or two-stage circularize, recover.
 
     Caller Hangars. Parked water/splash stay in hop.py.
+    Timeout leftover uses leftover_call (recover vs ksc leftover), not
+    emergencies.call — ``ksc leftover`` is not an emergency verb.
     """
     log_events = events if events is not None else EventLog()
     hop_apo = H.hop_target_apo(space=True)
@@ -439,8 +441,11 @@ def run_ascent_vessel(
             if timeout_hit(met=met, met0=met0, budget=budget, down=down):
                 why = leftover_call(recoverable=H._recoverable(vessel))
                 RF.cut(vessel, abort=True)
-                call(why, ctx)
-                raise MissionAbort(f"timeout leftover {why}")
+                if why == "recover":
+                    got = H._force_recover(vessel, on_log)
+                    if got is not None:
+                        return got
+                H.abort_ksc_leftover(vessel, on_log, why="timeout")
             if left_pad and down and H._recoverable(vessel):
                 if not said_down:
                     H._say("ascent down", on_log)

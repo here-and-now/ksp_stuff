@@ -266,3 +266,24 @@ def test_source_hop_parked_orbit_is_ascent():
     main = Path("main.py").read_text(encoding="utf-8")
     assert 'add_parser(\n        "ascent"' in main or '"ascent"' in main
     assert "cmd_ascent" in main
+
+
+def test_timeout_leftover_uses_leftover_call_not_emergency_verb():
+    """T-555: leftover_call names recover vs ksc leftover, not emergencies.call."""
+    from physics_warp import leftover_call
+
+    assert leftover_call(recoverable=True) == "recover"
+    assert leftover_call(recoverable=False) == "ksc leftover"
+    ascent = Path("ascent.py").read_text(encoding="utf-8")
+    assert "leftover_call" in ascent
+    assert "abort_ksc_leftover" in ascent
+    assert "call(why," not in ascent
+    assert 'call("ksc leftover"' not in ascent
+    timeout_at = ascent.find("timeout_hit(")
+    leftover_at = ascent.find("leftover_call(")
+    recover_at = ascent.find('== "recover"')
+    abort_at = ascent.find("abort_ksc_leftover")
+    assert timeout_at != -1 and leftover_at != -1
+    assert leftover_at > timeout_at
+    assert recover_at > leftover_at
+    assert abort_at > leftover_at

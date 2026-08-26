@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-26 — org-rsi slice 5: capcom Walt not Valentina; seated plan envelope only; jebediah is Commander dossier not T-081 hop. science.md dump stays. jebediah/logs stay. Pad still flies.
 - 2026-08-26 — org-rsi parent closeout: AGENTS radio to seated briefing; kRPC traps to agent-notes (not lessons). CHARTER:69 leftover named, not rewritten. Pad still flies.
 - 2026-08-26 — org-rsi applied (`docs/archive/2026-08-26-org-rsi/APPLIED.md`): novels parked; lessons not the miss bus; tape id uncrewed; attach-run + S/M/C + hop_factory_pad kept. CHARTER creed / slate / pulse untouched. T-471 still pad-RF. Pad still flies.
 - 2026-08-26 — org-rsi slice 3: strip inject; packet desk+BRIEF+named helper; floors Lars/Jeb medium, Mortimer high; drop lessons append; NUKE spotter + builder; Katherine on roster; first command packets the Hank-named id. Pad still flies.

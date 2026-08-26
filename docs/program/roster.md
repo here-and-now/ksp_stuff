@@ -15,7 +15,7 @@ Ground is not launched. Pilots map 1:1 to in-game kerbals when available.
 | `docs/crew/verena.md` | Verena Grokman | Communications |
 | `docs/crew/katherine.md` | Katherine Grokman | Flight Dynamics — tape windows |
 | `docs/crew/jebediah.md` | Jebediah Grokman | Pilot |
-| `docs/crew/valentina.md` | Valentina Grokman | Pilot (CAPCOM when Jeb flies) |
+| `docs/crew/valentina.md` | Valentina Grokman | Pilot (stub) |
 | `docs/crew/bill.md` | Bill Grokman | Pilot / flight engineer |
 | `docs/crew/bob.md` | Bob Grokman | Pilot / science |
 | `docs/crew/grok.md` | Grok Grokman | Spare pilot (`create_kerbal`) |

@@ -20366,6 +20366,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T16:47:59Z",
+            "claim": "hop_factory _high_dwell_sit/_release_pad_throttle: 16-23-52Z lid 50 km then independent 1 MainThrottle 0 still burned 54\u219288 km apo 268; PresMat High ~42 s of 305. MECO is commanded throttle 0 (independent setpoint 0 + MainThrottle 0), not dropping independent. After lid _hold_or_cut uses hop_apo not inf. hop_factory.py hop_factory_pad.py tests/test_hop_factory.py. Not hop.py. Forest/Grasslands: same.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -20379,7 +20387,7 @@
       "tags": [],
       "title": "proc-loft MET 21s throttle 1 thrust 0 fuel frozen 2038 \u2014 flameout not shear",
       "type": "control",
-      "updated": "2026-08-26T16:23:11Z"
+      "updated": "2026-08-26T16:47:59Z"
     },
     "T-510": {
       "assignee": "",
@@ -20568,5 +20576,5 @@
       "updated": "2026-08-26T16:43:46Z"
     }
   },
-  "updated": "2026-08-26T16:44:35Z"
+  "updated": "2026-08-26T16:47:59Z"
 }

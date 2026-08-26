@@ -19,8 +19,10 @@ not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
 inland slew after. Splash bind is
 not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
-Toggle; skip-latch does not drop a bound High card. After High lid,
-High dwell is not a burn; quiet loft honors uplink phys-warp.
+Toggle; skip-latch does not drop a bound High card. After High lid, commanded throttle 0 is MECO
+(independent setpoint 0 + MainThrottle 0) — not dropping independent.
+High dwell is not a burn; do not loft out of atmo. Quiet loft honors
+uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
 sit=landed at pad alt with fuel is still burning. Parked water/splash
@@ -153,14 +155,16 @@ def _keep_start_sit(
     """After hop light, keep throttle 1 + independent until MECO.
 
     Airborne GET throttle 0 is not MECO — independent still burns.
-    Lid alt or crumbs is MECO. Pad sit after light is still the start.
-    Forest / Grasslands: same.
+    Lid alt, High dwell, or crumbs is MECO. Pad sit after light is
+    still the start. Forest / Grasslands: same.
     """
     if not lit or down:
         return False
     if not left_pad:
         return True
     if flying_high:
+        if _high_dwell_sit(reached_lid=lofted_lid, down=down):
+            return False
         return _lid_burn_sit(
             snap, hop_apo=hop_apo, flying_high=True, lofted_lid=lofted_lid
         )
@@ -189,8 +193,9 @@ def _hold_start(
     """Keep MainThrottle 1 + independent until MECO.
 
     Airborne GET throttle 0 is not MECO — independent still burns.
-    ``_pad_hold`` GET 0 after loft drops independent — a restart at 0
-    remaining. Pad sit still ``_pad_hold``. Forest / Grasslands: same.
+    MECO is commanded throttle 0 (setpoint 0 + MainThrottle 0), not
+    dropping independent. Pad sit still ``_pad_hold``. Forest /
+    Grasslands: same.
     """
     if not left_pad:
         return _pad_hold(vessel, snap, lit=lit, left_pad=False, deaf=deaf)
@@ -230,6 +235,8 @@ def _flameout_sit(
 def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
     """After FlyingHigh lid, until down. Not a burn.
 
+    16-23-52Z lid 50 km then throttle 1 through 88 km / apo 268 left
+    the band in ~42 s. MECO at the lid; do not loft out of atmo.
     Wernher ``want_coast`` already 1× on thick air / high q / silk / burn.
     Quiet loft honors uplink ``phys-warp``. Forest / Grasslands: same.
     """
@@ -626,6 +633,8 @@ def run_factory_vessel(
                     apo_cut = True
                 if _lid_alt_reached(snap, hop_apo, flying_high=flying_high):
                     apo_cut = True
+                if _high_dwell_sit(reached_lid=reached_lid, down=down):
+                    apo_cut = True
                 fuel_now = H._snap_fuel(snap)
                 crumbs = math.isfinite(fuel_now) and fuel_now <= H.WATER_BRAKE_FUEL_MIN
                 arm_now = _chute_arm_now(
@@ -656,7 +665,7 @@ def run_factory_vessel(
                     apo_cut, _braking = H._hold_or_cut(
                         vessel,
                         snap,
-                        math.inf if flying_high else hop_apo,
+                        math.inf if flying_high and not reached_lid else hop_apo,
                         cut=apo_cut,
                         hold=1.0,
                         brake=False,

@@ -517,7 +517,9 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertFalse(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertFalse(engine.independent_throttle)
+        self.assertTrue(engine.independent_throttle)
+        self.assertLessEqual(engine.throttle, 0.05)
+        self.assertEqual(vessel.control.throttle, 0.0)
 
     def test_pad_hold_keeps_independent_when_thrusting_on_pad(self):
         """rf-ignition-ullage: 10-09-22Z release after light is a restart at 0."""
@@ -627,6 +629,17 @@ class TestHopFactoryPad(unittest.TestCase):
                 flying_high=True,
             )
         )
+        self.assertFalse(
+            _keep_start_sit(
+                fly,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=True,
+            )
+        )
 
     def test_hold_start_airborne_throttle_get_zero_keeps_independent(self):
         """rf-ignition-ullage: independent stays 1 while GET MainThrottle is 0."""
@@ -665,15 +678,19 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertFalse(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertFalse(engine.independent_throttle)
+        self.assertTrue(engine.independent_throttle)
+        self.assertLessEqual(engine.throttle, 0.05)
+        self.assertEqual(vessel.control.throttle, 0.0)
 
-    def test_hold_start_releases_independent_at_meco(self):
+    def test_hold_start_meco_commands_throttle_zero(self):
+        """flyinghigh-lid: 16-23-52Z MECO is setpoint 0, not dropping independent."""
         vessel = _Vessel()
         engine = _Engine()
         vessel.parts.engines = [engine]
         engine.independent_throttle = True
         engine.throttle = 1.0
         vessel.control.throttle = 1.0
+        sets = engine.independent_sets
         fly = type(
             "S",
             (),
@@ -689,7 +706,51 @@ class TestHopFactoryPad(unittest.TestCase):
                 deaf=False,
             )
         )
-        self.assertFalse(engine.independent_throttle)
+        self.assertTrue(engine.independent_throttle)
+        self.assertEqual(engine.independent_sets, sets)
+        self.assertLessEqual(engine.throttle, 0.05)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_hold_start_rf_meco_zeros_setpoint(self):
+        """flyinghigh-lid: 16-23-52Z independent 1 MainThrottle 0 still burned."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        vessel.parts.engines = [engine]
+        engine.independent_throttle = True
+        engine.pct = 100.0
+        engine.actual = 1.0
+        vessel.control.throttle = 1.0
+        sets = engine.independent_sets
+        lid = type(
+            "S",
+            (),
+            {"situation": "flying", "alt": 54_000.0, "fuel": 216.0, "link": True},
+        )()
+        self.assertFalse(
+            _keep_start_sit(
+                lid,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=True,
+            )
+        )
+        self.assertFalse(
+            _hold_start(
+                vessel,
+                lid,
+                keep_start=False,
+                left_pad=True,
+                lit=True,
+                deaf=False,
+            )
+        )
+        self.assertTrue(engine.independent_throttle)
+        self.assertEqual(engine.independent_sets, sets)
+        self.assertLessEqual(engine.pct, 5.0)
+        self.assertEqual(vessel.control.throttle, 0.0)
 
     def test_flameout_sit_thrust_zero_with_fuel_left(self):
         """rf-ignition-ullage: 16-05-34Z MET 21 throttle 1 thrust 0 fuel 2038."""

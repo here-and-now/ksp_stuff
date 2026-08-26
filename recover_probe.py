@@ -11,7 +11,7 @@ from hangar import (
     walk_home,
     write_overlay_last,
 )
-from session import Session
+from session import Session, SessionError
 
 
 def _print_sci(session: Session) -> None:
@@ -106,8 +106,17 @@ def cmd_recover_probe(
         )
     if space_center:
         print("walk home + Close — not leftover-ksc, not revert", flush=True)
-        n = walk_home(session)
-        print(f"walk home recovered n={n}", flush=True)
+        try:
+            n = walk_home(session)
+            print(f"walk home recovered n={n}", flush=True)
+        except SessionError as exc:
+            print(f"walk home: {exc}", flush=True)
+            _print_sci(session)
+            print(f"scene now {game_scene(session)}", flush=True)
+            ok, why = ksc_ready(session)
+            print(f"ksc_ready: {ok} ({why})", flush=True)
+            write_overlay_last(session)
+            return 2
         _print_sci(session)
         msg = dismiss_flight_results(session)
         print(msg, flush=True)

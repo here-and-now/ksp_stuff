@@ -494,11 +494,6 @@ OVERLAY_LAST = Path(__file__).resolve().parent / "docs" / "program" / "overlay.l
 UNRECOVERABLE_LAST = (
     Path(__file__).resolve().parent / "docs" / "program" / "unrecoverable.last"
 )
-_SKIP_LEFTOVER_TYPES = frozenset(
-    {"spaceobject", "flag", "eva", "debris", "asteroid", "unknown"}
-)
-
-
 _RECOVER_SITS = frozenset({"landed", "splashed", "pre_launch", "prelaunch"})
 _WRECK_SITS = frozenset({"landed", "splashed"})
 _AIR_SITS = frozenset({"flying", "sub_orbital", "suborbital"})
@@ -508,12 +503,14 @@ _UNRECOVERABLE: set[str] = set()
 
 
 def leftover_ship(vessel: Any) -> bool:
-    """Living craft we walk home. Asteroids, debris, EVA, flags, dead GUID are not.
+    """Living craft we walk home. Asteroids, EVA, flags, dead GUID are not.
 
     Crash-UI wreck (landed/splashed, recoverable=0) is not pad occupancy.
     Os will not click Recover. A GUID we already Closed stays out after
     Space Center lists it as SUB_ORBITAL again. Airborne leftovers are
     still listed; they do not occupy the pad (``leftover_occupies_pad``).
+    rec=yes landed/splashed debris *is* occupancy (T-479 Cape blob) —
+    Hangar on top of it shears. Flying / rec=0 debris is not.
     """
     try:
         name = str(getattr(vessel, "name", "") or "").strip()
@@ -522,13 +519,16 @@ def leftover_ship(vessel: Any) -> bool:
     if not name:
         return False
     low = name.lower()
-    if low.endswith(" debris"):
-        return False
     if low.startswith("ast.") or "asteroid" in low or "xrl-" in low:
         return False
     typ = _status_name(getattr(vessel, "type", None))
-    if typ in _SKIP_LEFTOVER_TYPES:
+    if typ in {"spaceobject", "flag", "eva", "asteroid", "unknown"}:
         return False
+    if typ == "debris" or low.endswith(" debris"):
+        if not (
+            _vessel_recoverable(vessel) and _vessel_sit(vessel) in _WRECK_SITS
+        ):
+            return False
     vid = _vessel_id(vessel)
     if vid and vid in _load_unrecoverable():
         return False
@@ -805,11 +805,12 @@ def walk_home(session: Session) -> int:
     rec=0 is not pad occupancy: leave it in the sky. Already in Flight:
     wait land on the MET clock if it will, then recover(). Crash-UI
     (landed/splashed rec=0): remember vessel.id. Close skips the scene
-    setter when already at KSC (re-set rewinds). From Flight: persist
-    RAM then scene; save fail stays Flight; rewind is failure.
-    ``reload_save=False``. Never revert.
+    setter when already at KSC (re-set rewinds). From Flight: uniquify
+    names, persist RAM then scene; save fail stays Flight; rewind is
+    failure. ``reload_save=False``. Never revert.
     """
     session.require_connected()
+    _unique_flight_names(session)
     n = 0
     recovered_names: list[str] = []
     for vessel in leftover_ships(session):
@@ -1178,12 +1179,67 @@ def _ut_rewound(before: float | None, after: float | None) -> bool:
     return after < before - 0.5
 
 
+def _is_debris_vessel(vessel: Any) -> bool:
+    name = _vessel_name(vessel).lower()
+    if name.endswith(" debris"):
+        return True
+    return _status_name(getattr(vessel, "type", None)) == "debris"
+
+
+def _unique_flight_names(session: Any) -> int:
+    """Rename duplicate craft basenames before Kerbalism OnSave.
+
+    Kerbalism ``VesselData`` ctor ``Add(part.flightID)``. A wreck plus
+    ``<craft> Debris`` share ``craft_basename`` (T-479). Keep the
+    non-debris name; suffix others with kRPC ``_object_id``. Duplicate
+    flightIDs *inside* one ProtoVessel still fail-close persist (no
+    kRPC Die). Never leftover-ksc. Never revert.
+    """
+    sc = getattr(session, "space_center", None)
+    try:
+        pool = list(getattr(sc, "vessels", []) or [])
+    except Exception:
+        return 0
+    groups: dict[str, list[Any]] = {}
+    for vessel in pool:
+        name = _vessel_name(vessel)
+        if name == "?":
+            continue
+        token = craft_basename(name) or name.lower()
+        groups.setdefault(token, []).append(vessel)
+    n = 0
+    taken = {_vessel_name(v) for v in pool}
+    for group in groups.values():
+        if len(group) < 2:
+            continue
+        primary = next((v for v in group if not _is_debris_vessel(v)), group[0])
+        for vessel in group:
+            if vessel is primary:
+                continue
+            oid = _vessel_id(vessel) or str(n + 1)
+            base = _vessel_name(vessel)
+            new = f"{base} {oid}"
+            extra = 2
+            while new in taken:
+                new = f"{base} {oid}-{extra}"
+                extra += 1
+            try:
+                vessel.name = new
+            except Exception as exc:
+                log.warning("Close uniquify %s: %s", base, exc)
+                continue
+            taken.add(new)
+            n += 1
+            log.info("Close uniquify %s → %s", base, new)
+    return n
+
+
 def _persist_ram(session: Session) -> None:
     """Write RAM to disk so Flight→KSC loads this clock. Not a load.
 
     ``save('persistent')`` is not ``load('persistent')`` (F-014). Never
     leftover-ksc. Named ``hop-exit-<stamp>`` is also legal; last SaveGame
-    must be current RAM.
+    must be current RAM. Caller uniquifies names first (T-479).
     """
     sc = getattr(session, "space_center", None)
     fn = getattr(sc, "save", None) if sc is not None else None
@@ -1243,8 +1299,9 @@ def _close_to_ksc(session: Session, *, reload_save: bool = False) -> None:
 
     ``StartWithNewLaunch`` writes persistent before the hop. Space Center
     from Flight loads that file (pad MET 0). Tracking is KSP's wreck
-    ``onLeavingFlight``. Persist RAM first so the clock on disk is *this*
-    flight. Save fail: stay Flight. ``reload_save=True`` is refused.
+    ``onLeavingFlight``. Uniquify names, persist RAM first so the clock
+    on disk is *this* flight. Save fail: stay Flight. ``reload_save=True``
+    is refused.
     """
     if reload_save:
         log.warning("load_space_center refused — Close is scene setter only")
@@ -1258,12 +1315,14 @@ def _close_to_ksc(session: Session, *, reload_save: bool = False) -> None:
             align_live(session)
         except Exception as exc:
             log.warning("RA align before Close (%s)", exc)
+        _unique_flight_names(session)
         try:
             _persist_ram(session)
         except Exception as exc:
-            log.warning("Close save persistent failed (%s) — not setting scene", exc)
+            brief = str(exc).split("Server stack", 1)[0].strip() or str(exc)
+            log.warning("Close save persistent failed (%s) — not setting scene", brief)
             raise SessionError(
-                f"Close refused: save RAM failed ({exc}); staying in Flight"
+                f"Close refused: save RAM failed ({brief}); staying in Flight"
             ) from exc
         _set_game_scene(session, "tracking_station")
         scene = game_scene(session)

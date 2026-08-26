@@ -723,6 +723,15 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   Save fail stays Flight. Named `hop-exit-<stamp>` is legal; never
   leftover-ksc; never `load("persistent")` (F-014). Air leftover is not
   a Hangar veto; rewind is.
+- **2026-08-26** — T-479: Kerbalism `VesselData` ctor `parts.Add(part.flightID)`.
+  Hangar shear + leftover `<craft> Debris` share `craft_basename` with the
+  wreck; `DB.Save` walks `flightState.protoVessels` and throws
+  `Key: 1465015097` (OnSave / recover). kRPC 0.6 `Part` has no `.id` and
+  no `Vessel.Die`. Close uniquifies names (belt) before persist; rec=yes
+  landed/splashed debris is leftover (Cape 450-part blob). Uniquify does
+  not skip duplicate flightIDs *inside* that ProtoVessel — save stay
+  Flight, never rewind. Never leftover-ksc. Never `load("persistent")`.
+  Never revert.
 - **2026-08-23** — Tape eyes: state rows carry `recoverable`, `chute`,
   `sci_run`/`sci_rem`, `mass`, `available_thrust`, streamed
   `flight.g_force`. `kind=landing` also on wreck; `kind=recoverable` on

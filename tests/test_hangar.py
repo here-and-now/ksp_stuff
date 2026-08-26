@@ -179,6 +179,26 @@ class TestKscReady(unittest.TestCase):
         self.assertTrue(ok)
         self.assertEqual(why, "ksc")
 
+    def test_recoverable_ground_debris_is_leftover_ship(self):
+        blob = _craft(
+            "t7-pbc Debris", typ="debris", recoverable=True, sit="landed", id="blob"
+        )
+        self.assertTrue(leftover_ship(blob))
+        session = _Session(scene="space_center", vessels=(blob,))
+        ok, why = ksc_ready(session)
+        self.assertFalse(ok)
+        self.assertIn("leftover ships", why)
+
+    def test_flying_debris_is_not_leftover_ship(self):
+        fin = _craft(
+            "t7-pbc Debris", typ="debris", recoverable=False, sit="flying", id="fin"
+        )
+        self.assertFalse(leftover_ship(fin))
+        session = _Session(scene="space_center", vessels=(fin,))
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
+
     def test_sub_orbital_will_land_orbiting_will_not(self):
         self.assertTrue(leftover_will_land(_craft("t7-pbc", sit="sub_orbital")))
         self.assertFalse(leftover_will_land(_craft("t7-pbc", sit="orbiting")))
@@ -350,6 +370,40 @@ class TestGoSpaceCenter(unittest.TestCase):
             ("game_scene", "tracking_station"), session.space_center.order
         )
 
+    def test_close_from_flight_uniquifies_wreck_and_debris_names(self):
+        wreck = _craft("t7-pbc", sit="landed", recoverable=False, id="wreck")
+        blob = _craft(
+            "t7-pbc Debris",
+            typ="debris",
+            sit="landed",
+            recoverable=False,
+            id="blob",
+        )
+        fin = _craft(
+            "t7-pbc Debris",
+            typ="debris",
+            sit="flying",
+            recoverable=False,
+            id="fin",
+        )
+        session = _Session(
+            scene="flight",
+            ut=1200.0,
+            launch_ut=900.0,
+            vessels=(wreck, blob, fin),
+        )
+        with patch("hangar.time.sleep"):
+            go_space_center(session, timeout=5.0)
+        names = [wreck.name, blob.name, fin.name]
+        self.assertEqual(len(set(names)), 3)
+        self.assertEqual(wreck.name, "t7-pbc")
+        self.assertNotEqual(blob.name, "t7-pbc Debris")
+        self.assertNotEqual(fin.name, blob.name)
+        self.assertEqual(session.space_center.saves, ["persistent"])
+        self.assertEqual(session.space_center.loads, [])
+        self.assertEqual(session.space_center.reverts, 0)
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+
     def test_close_from_flight_rewind_is_failure(self):
         session = _Session(scene="flight", ut=1200.0, launch_ut=900.0)
         with patch("hangar.time.sleep"):
@@ -460,6 +514,39 @@ class TestHangarLaunchGate(unittest.TestCase):
         self.assertEqual(n, 1)
         self.assertEqual(session.space_center.vessels, [])
         self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
+
+    def test_walk_home_recovers_ground_debris_then_close(self):
+        wreck = _craft("t7-pbc", sit="landed", recoverable=False, id="guid-dead")
+        blob = _craft(
+            "t7-pbc Debris",
+            typ="debris",
+            sit="landed",
+            recoverable=True,
+            id="blob",
+        )
+        session = _Session(
+            scene="flight", ut=1200.0, launch_ut=900.0, vessels=[wreck, blob]
+        )
+
+        def _recover() -> None:
+            session.space_center.vessels = [
+                v for v in session.space_center.vessels if v is not blob
+            ]
+
+        blob.recover = _recover  # type: ignore[method-assign]
+        hangar_mod._UNRECOVERABLE.add("guid-dead")
+        try:
+            with patch("hangar.time.sleep"):
+                n = walk_home(session)
+        finally:
+            hangar_mod._UNRECOVERABLE.discard("guid-dead")
+        self.assertEqual(n, 1)
+        self.assertNotIn(blob, session.space_center.vessels)
+        self.assertNotEqual(blob.name, wreck.name)
+        self.assertEqual(session.space_center.saves, ["persistent"])
+        self.assertEqual(session.space_center.loads, [])
+        self.assertEqual(session.space_center.reverts, 0)
         self.assertEqual(session.conn.krpc.game_scene.name, "space_center")
 
     def test_walk_home_ksc_air_leftover_no_go_flight(self):

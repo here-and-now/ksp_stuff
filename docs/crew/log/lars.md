@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-26 — T-552 Pulse: this-hop `python main.py ascent` C-534 Valiant loft. Helper `ascent.py`. RF live until 50 km lid MECO (`vacuum_stage_sit` false). Toggle InSpaceLow after lid. `chute_arm_sit` silk. recover yes. hop.py parked. Do not Hangar.
 - 2026-08-26 — T-532 Pulse: this-hop C-534 still lid MECO 50 km + InSpaceLow Toggle + silk. Orbit stack (`_orbit_stack_sit` Terrier): AP east while thrusting (5° gimbal; never write gimbal), no lid MECO, circularize Pe≥140 km. hop_factory.py. Do not Hangar.
 - 2026-08-26 — T-536 Pulse last-write: lid MECO 50 km live, Toggle InSpaceLow, silk descent. Girders none in pulse — not hop_factory. Do not circularize (no Terrier). Autostrut-on-write already T-506. Do not Hangar.
 - 2026-08-26 — T-509 rf-ignition-ullage: hop_factory `_keep_start_sit` / `_hold_start` keep independent through the burn. 16-05-34Z MET 9.7 GET throttle 0 thrust 89 kN — `_pad_hold` airborne GET 0 dropped independent; MET 21 throttle 1 thrust 0 fuel 2038 parts 30. Thrust 0 with fuel left is OffPlan, not shear. Do not Hangar.

@@ -24,6 +24,8 @@ import rf_throttle as RF
 from emergencies import Ctx, call
 from physics_warp import (
     apply_sit_warp,
+    chute_arm_sit,
+    chute_deploy_sit,
     leftover_call,
     timeout_hit,
     unpause_clock,
@@ -125,6 +127,21 @@ def loft_meco_sit(
     if two_stage:
         return False
     return lofted_lid or loft_lid_sit(snap, hop_apo)
+
+
+def space_low_sit(
+    live_sit: str = "",
+    *,
+    lofted_lid: bool = False,
+    down: bool = False,
+) -> bool:
+    """InSpaceLow after lid. Flying at 50 km is not this.
+
+    kRPC sub_orbital / orbiting / escaping. Forest / Grasslands: same.
+    """
+    if not lofted_lid or down:
+        return False
+    return H.sit_matches(live_sit, "", "InSpaceLow", "")
 
 
 def circularize_sit(
@@ -273,6 +290,8 @@ def run_ascent_vessel(
     said_down = False
     said_meco = False
     said_coast = [""]
+    started: list[str] = []
+    chute_armed = False
     met0: float | None = None
     two_stage = vacuum_stage_sit(vessel)
     H._say(f"ascent apo={hop_apo:.0f}", on_log)
@@ -373,6 +392,39 @@ def run_ascent_vessel(
                     RF.cut(vessel)
                     H._say("ascent circularized", on_log)
                     return "ascent orbit"
+            live_now = H._live_sit(vessel, snap)
+            live_biome = H._snap_biome(snap, vessel)
+            if space_low_sit(live_now, lofted_lid=lofted_lid, down=down):
+                try:
+                    from tickets import science_ids_for
+
+                    space_ids = science_ids_for(situation="inspacelow")
+                except Exception:
+                    space_ids = ()
+                need = H.bound_science_need(
+                    live_sit=live_now,
+                    live_biome=live_biome,
+                    alt=H._snap_alt(snap),
+                )
+                pending = tuple(eid for eid in space_ids if eid not in started)
+                more = (
+                    H._start_paying(vessel, pending, snap, on_log, need)
+                    if pending
+                    else []
+                )
+                if more:
+                    started.extend(more)
+                    H._say("ascent science " + ",".join(more), on_log)
+            if (
+                lofted_lid
+                and not down
+                and not chute_armed
+                and chute_arm_sit(snap)
+            ):
+                H.arm_chutes(vessel, on_log)
+                chute_armed = True
+            if lofted_lid and not down and chute_deploy_sit(snap):
+                H.deploy_chutes(vessel, on_log)
             burning_now = RF.burning(vessel, snap, lofted=lofted) if keep else False
             apply_sit_warp(
                 session,

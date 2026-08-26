@@ -12,6 +12,7 @@ from ascent import (
     loft_lid_sit,
     loft_meco_sit,
     orbit_done_sit,
+    space_low_sit,
     stage_sit,
     vacuum_stage_sit,
 )
@@ -236,6 +237,14 @@ def test_circularize_and_stage_sits():
     assert not stage_sit(
         burnout, two_stage=False, staged=False, keep_live=False, down=False
     )
+
+
+def test_space_low_sit_after_lid_not_flying():
+    assert space_low_sit("sub_orbital", lofted_lid=True, down=False)
+    assert space_low_sit("InSpaceLow", lofted_lid=True, down=False)
+    assert not space_low_sit("flying", lofted_lid=True, down=False)
+    assert not space_low_sit("sub_orbital", lofted_lid=False, down=False)
+    assert not space_low_sit("sub_orbital", lofted_lid=True, down=True)
 
 
 def test_source_hop_parked_orbit_is_ascent():

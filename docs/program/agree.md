@@ -13,8 +13,8 @@ hang: C-534 kspstuff-hop-valiant-proc-redstone-pbc
 bind: S-514 kerbalism_LITE InSpaceLow 10/0.03
 duration_vs_high: High cannot pay; C-534 loft sits InSpaceLow ~249–300 km; LITE 10s finishes; lid-MECO 137 km High cannot pay LITE; S-516 InSpaceLow goo capped (paid)
 recover: yes
-meco: this-hop lid 50 km live + independent off; Terrier stack no lid-MECO — AP east while thrusting, circ Pe>140 km
-dynamics: still loft-only; C-534 4x1500 Valiant same 249–270 km family as C-504 (+~0.1 km/s); 7x1500 Valiant TWR~0.78 sits; 7x1500 Reliant Δv~4.5 km/s apo~400–500 km Pe through planet; circularize still Terrier after 45
+meco: python main.py ascent; this-hop Valiant loft RF live until 50 km lid MECO + independent off (vacuum_stage_sit false); Terrier two-stage later no lid-MECO — gravity turn east while thrusting, circ Pe>140 km
+dynamics: this-hop loft-only yes; C-534 ascent = Valiant lid MECO apo~118–140 km High leftover~450–530 horiz~15 m/s; hop tape still loft-through 213–276 km apex horiz 17–30 m/s; circularize still Terrier east gravity turn after 45
 constellation: Cape LIVE 64 bps omni SurfAntenna; loft stays Cape sky; DSN L LIVE TL2; minRelayTL=3 no sat
 agreed: yes
 blocker: none
@@ -73,71 +73,64 @@ hosted OKTO PAW on_craft=yes.
 
 ## Pulse (Lars)
 
-This-hop C-534 is loft, not orbit. `hop_factory.py` inland. Pad-RF
-`hop_factory_pad.py` (one sit). Throttle 1 + SAS vertical until lid.
-MECO at 50 km **live** alt: MainThrottle 0, setpoint 0, independent
-off. `_hold_lid` after lid is MECO — not inland-through-burnout.
-After lid, Toggle InSpaceLow (`_space_low_sit`). Arm Nylon on
-descent (`_space_silk_arm_sit`) — recover yes. Do not circularize
-this hang: no Terrier; Pe stays on the ground. Inland slew after lid
-MECO has no plume (Valiant `ModuleGimbal` 5° idle; heading 297
-weathercock). Pulse never writes gimbal. Girders none in pulse.
-Do not retune MECO / lid / silk to High 305 s. Log must not print
-hold inland through burnout after High lid.
+This-hop ``python main.py ascent`` on C-534. Helper ``ascent.py``.
+Live RF ``rf_throttle.py`` (independent, not UI MainThrottle).
+``hop.py`` parked. ``vacuum_stage_sit`` is false (no Terrier) —
+loft path: ``RF.apply`` live 1 from light until ``loft_lid_sit`` /
+``loft_meco_sit`` (50 km **live** alt), then ``RF.cut`` independent
+off. After lid, Toggle InSpaceLow (``space_low_sit`` / ``sit_matches``).
+Coast ``apply_sit_warp``. Arm Nylon on ``chute_arm_sit`` — recover
+yes when down. Do not circularize this hang: Pe stays on the ground.
+Pulse never writes gimbal. Do not retune MECO / lid / silk to High
+305 s.
 
-When the hang is the Terrier orbit stack (`_orbit_stack_sit`): do
-**not** MECO at 50 km. SAS on the pad, then AP **while thrusting**
-so the 5° gimbal turns. Gravity turn **east** (heading 90) through
-first-stage burnout. Then Terrier at apo until Pe ≥ ~140 km High
-lid. rec=no is honest if orbiting. Same compose — not a stamp
-helper. Forest / Grasslands: same.
+When ``vacuum_stage_sit`` is true (Terrier on the hang): keep live
+through first-stage burnout — gravity turn **east** while thrusting,
+no lid MECO — then stage, vacuum apply live near apo until Pe ≥
+~140 km High lid. rec=no is honest if orbiting. Same compose —
+not a stamp helper. Forest / Grasslands: same.
 
 ## Dynamics (Katherine, opt-in)
 
-Still loft-only. C-534 tape two hops (19-48-52Z / 20-07-41Z)
-agree with the C-504 family — not circularize. Pad **7.47 t** /
-2700 kero / parts 25. Loft-through apo **243–281 km**,
-sit=sub_orbital, apex horiz **24–30 m/s** vs circular
-**7.75–7.82 km/s**. Leftover kero **161–221**. Q_max **22.6–22.8 kPa**
-at 7–8 km; FAR at apo is zero. Burnout pitch 65 heading 297 horiz
-<40 m/s — vertical, not a gravity turn. InSpaceLow. Pe through the
-planet. Short **~7.7 km/s** of circular speed.
+This-hop loft-only yes. C-534 on `python main.py ascent` is
+Valiant lid MECO — not circularize. Terrier later is east gravity
+turn (no lid MECO), Pe ≥ ~140 km, after `advRocketry` 45.
 
-C-504 handful (17-13-14Z / 18-57-09Z / 19-08-49Z / 19-31-20Z): apo
-**249–270 km**, apex horiz **61–84 m/s**, same sit. C-534 20-07-41Z
-**281 km** is the extra tank; 19-48-52Z leftover 221 cut apo to
-**243 km**. Same envelope, tens of km of apo, not a new family.
+C-534 pad **7.47 t** / 2700 kero / parts 25. Five hops
+(20-18-43Z / 20-41-53Z / 20-54-37Z / 21-05-13Z / 21-10-50Z)
+plus 19-48-52Z / 20-07-41Z agree. Hop tape is loft-through, not
+the ascent cut: 50 km live is still throttle 1 / ~100 kN
+(21-10-50Z 51.7 km leftover **458** vz **1.30 km/s** apo
+**140 km**; 20-18-43Z 49.1 km leftover **493** vz **1.24 km/s**
+apo **129 km**). First MECO is **81–92 km**, leftover
+**169–277**. Apex sit=sub_orbital apo **213–276 km**, horiz
+**17–30 m/s** vs circular **7.75–7.82 km/s**. Pe through the
+planet (~−6360 km). Q_max **22.7–22.9 kPa**. FAR at apo is
+zero. Burnout pitch **65** heading **297** — weathercock, not
+090. Short **~7.7 km/s** of circular speed.
 
-High-band: loft-through is the envelope. 50 km live is still
-throttle 1 (19-48-52Z 59 km; 20-07-41Z 49 km). Ascent High ~60 s;
-InSpaceLow hundreds of seconds; descent High ~60 s then abort.
-T-404 PresMat 305 s in 50–140 km cannot pay. Lid-MECO apo 137 km
-High is worse (T-523). Same answer on C-534 as C-504.
+Ascent Valiant lid MECO is that 50 km live state: apo
+**~118–140 km** High, leftover **~450–530** unused, horiz
+**~14–17 m/s**, pitch **~88**. Same family as C-504 T-523
+(vz 1.29 km/s apo 137 km). Extra 1500 L vs C-504 has not burned
+yet at the lid. InSpaceLow may not pay. T-404 PresMat 305 s
+cannot pay (lid-MECO High ~260 s; loft-through High up
+**~37–46 s**, space hundreds).
+
+Cannot circularize this hang. Gravity-turning leftover after
+lid still leaves Pe on the ground — need ~7.8 km/s horiz; mass
+ratio for 7.7 km/s at 270 s is ~18; this hang is ~6. 7×1500
+Valiant TWR ~0.78 sits; 7×1500 Reliant Δv ~4.5 km/s is still
+sub-orbital. Both 1 ignition.
 
 Descent vs last-flight recover: last-flight is abort/exit, not
-sit. 19-48-52Z chute armed ~237 km then shear 25→12 at 27.7 km
-q=39 kPa landing catastrophic Shores. 20-07-41Z chute armed
-~277 km; tape cuts flying 101 km vz −1829 landing catastrophic
-Shores. Do not Learn recover from those exits.
+sit. 21-10-50Z tape cuts flying **90.7 km** chute armed (ship.md
+same). Envelope landing catastrophic rec=no; 20-41-53Z
+envelope rec=yes sit=splashed is synthesized vs last flying
+46 km vz −2.0 km/s. Do not Learn recover from those exits.
 
-`generalRocketry` also unlocks Reliant (RF 215 kN / 0.42 t / Isp
-~256–270 / **1 ignition**) and lets a tank fill to 1500 L. It does
-not buy a restart or 330 s.
-
-- **7×1500 L Valiant:** pad TWR ~0.78. Does not loft.
-- **7×1500 L Reliant:** TWR ~1.7 so the extra tank *flies*. Vac Δv
-  ~4.4–4.6 km/s. Vertical ballistic apo maybe **~400–500 km**,
-  still sit=sub_orbital, Pe still through the planet. A gravity
-  turn at 4.5 km/s still leaves Pe on the ground (need ~7.8 km/s
-  horiz). Mass ratio for 7.7 km/s at 270 s is ~18; this hang is
-  ~6.
-- **Reliant vs Valiant** is TWR (and 0.33 t) so 7×1500 can leave
-  the pad — not circularize Δv. Both 1 ignition.
-
-Phase 2 remains `advRocketry` 45 Terrier: restartable vacuum
-second stage, Pe above the ~140 km High lid, first stage
-gravity-turn east. Do not Hangar a circularize claim on this
-tree. C-534 is the loft successor, not an orbit hang.
+Phase 2 remains Terrier vacuum upper, AP east while thrusting.
+Do not Hangar a circularize claim on this tree.
 
 ## Constellation (Eleanor, opt-in)
 

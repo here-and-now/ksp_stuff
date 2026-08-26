@@ -10,11 +10,12 @@ katherine` or `--tag dynamics`) — not every pad. Eleanor last-writes
 ```
 sit: InSpaceLow
 hang: C-534 kspstuff-hop-valiant-proc-redstone-pbc
-bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-516 mysteryGoo InSpaceLow 641/0.18 leftover 3.41
-duration_vs_high: High cannot pay; this loft sits InSpaceLow ~268 km; LITE 10s finishes; goo leftover remaining ~364s — silk recover the can
+bind: S-514 kerbalism_LITE InSpaceLow 10/0.03
+duration_vs_high: High cannot pay; C-534 loft sits InSpaceLow ~249–300 km; LITE 10s finishes; lid-MECO 137 km High cannot pay LITE; S-516 InSpaceLow goo capped (paid)
 recover: yes
 meco: lid 50 km live; independent off; Toggle InSpaceLow; silk descent — not circularize
 dynamics: still loft-only; C-534 4x1500 Valiant same 249–270 km family as C-504 (+~0.1 km/s); 7x1500 Valiant TWR~0.78 sits; 7x1500 Reliant Δv~4.5 km/s apo~400–500 km Pe through planet; circularize still Terrier after 45
+constellation: Cape LIVE 64 bps omni SurfAntenna; loft stays Cape sky; DSN L LIVE TL2; minRelayTL=3 no sat
 agreed: yes
 blocker: none
 ```
@@ -49,18 +50,19 @@ orbit.
 ## Bind (Linus)
 
 This-hop: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 (file,
-scan still unstarted ~2.00). Envelope Shores loft-through apo
-249–270 km sits InSpaceLow; LITE 10 s finishes; recover HD 0.25 MB.
-Lid-MECO apo 137 km is High — cannot pay LITE; do not re-pin High
-305 s. Successor no-girder bigger-tank hang still this sit while
-OKTO PAW on_craft. Closed S-516 InSpaceLow goo — capped (paid).
-Closed S-515 TELEMETRY InSpaceLow — capped (paid). High / Forest /
-splash leftover stays shelf — keep an eye; do not unbind forever;
-not this-hop: T-368 FlyingHigh goo leftover 3.00, T-069 Forest High
-TELEMETRY leftover 1.512, T-404 High PresMat 2.70 (305 s cannot
-pay). Bank 5.58 need ~39.42 for advRocketry 45. Not Water. Not
-Grasslands. Not Surface. Pulse Toggle in space. f013 LITE hosted
-OKTO PAW on_craft=yes.
+scan still unstarted ~2.00) on C-534
+`kspstuff-hop-valiant-proc-redstone-pbc` OKTO PAW. Envelope Shores
+loft-through apo 249–300 km sits InSpaceLow; LITE 10 s finishes;
+recover HD 0.25 MB. Lid-MECO apo 137 km is High — cannot pay LITE;
+do not unbind S-514; do not re-pin High 305 s. T-533: keep
+loft-through (apo>140 km). Closed S-516 InSpaceLow goo — capped
+(paid); YAML leftover 3.41 was stale. Closed S-515 TELEMETRY
+InSpaceLow — capped (paid). High / Forest / splash leftover stays
+shelf — keep an eye; do not unbind forever; not this-hop: T-368
+FlyingHigh goo leftover 1.57, T-069 Forest High TELEMETRY leftover
+1.512, T-404 High PresMat 2.70 (305 s cannot pay). Bank 7.02 need
+~37.98 for advRocketry 45. Not Water. Not Grasslands. Not Surface.
+Pulse Toggle in space. f013 LITE hosted OKTO PAW on_craft=yes.
 
 ## Pulse (Lars)
 
@@ -119,3 +121,28 @@ remains `advRocketry` 45 Terrier: restartable vacuum second stage,
 Pe above the ~140 km High lid, first stage gravity-turn east. Do
 not Hangar a circularize claim on this tree. C-534 is the loft
 successor, not an orbit hang.
+
+## Constellation (Eleanor, opt-in)
+
+Cape is **live** for C-534. Dump: `US - Cape Canaveral` L 1.5 dBi
+Tx 40 dBm need_TL=0 **LIVE**. GSTL=2. TL2 **64 bps** is table and
+Cape path (T-427). Hang omni `SurfAntenna` (Communotron 16-S,
+start, gain=2, L). Last flying snap of this craft: `link: yes`
+`rate_bps: 64` `via: US - Cape Canaveral`. Hangar none this sit —
+that snap is the path, not a live RateToHome. Loft is vertical
+over Cape (apex horiz tens of m/s); silk recover stays Cape sky.
+Do not cheat a link. Do not plan dump hours as RateToHome.
+
+Also LIVE at GSTL=2 (need_TL=0): Wallops, Bermuda, DSN L
+Goldstone / Canberra / Madrid (gain 8). Rest of the map is
+**SILENT** until commsTL3 / `basicScience`. `minRelayTL = 3`.
+Every relay part is **LOCKED**. T-065: keep 16-S on the chute
+hang. HG-5 is `basicScience` locked. Omni until a hop goes deaf.
+
+A future orbit craft needs a path that is **not Cape-only**. This
+hang never leaves Cape sky and does not stay up. Ground DSN L is
+already LIVE at TL2 — that is the candidate, not a satellite.
+Dump LIVE is need_TL, not close at LEO range from 16-S. A sat
+cannot relay until `minRelayTL` and a relay part. Do not invent a
+constellation. Antenna on the hang is Gus when omni is the miss
+— it is not the miss here.

@@ -6,7 +6,7 @@ Machine slugs stay internal.
 
 **Mortimer Grokman, CEO** owns the objective and org RSI. **Hank**
 owns who is hired, the pad, leftover/KSC hygiene
-(`recover()` + Close; never leftover-ksc load), and **after-flight tape** (`desk`,
+(`recover()` + Close; persist-then-KSC; never leftover-ksc load), and **after-flight tape** (`desk`,
 `tickets attach-run`, `tickets landing`). **Gene Grokman, Launch /
 Flight Director** stamps `go:` on a fly ticket and leftover
 **honesty**. Mortimer never flies. Gene never routes tickets. Hank
@@ -24,7 +24,7 @@ exit **ends** the hop — Commander does not review.
 | Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
 | Hank | hop pid | `fly: yes` | exact `cli` (parent starts it when `commander: none`) | last-flight; lock on that **control** pid |
 | Hank | Commander | `commander: jebediah` (crewed / firsts / `campaign: none`) | fly ticket + exact `cli`; abort officer | `result:` `exit:` `handoff:` |
-| Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load | pad clean |
+| Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP. Never revert. Never leftover-ksc load | pad clean |
 | Hank | tape | Commander CLI returned | `desk`, leftover, `attach-run`, `landing` | `ops next` — no Jeb debrief |
 | Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
 | Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
@@ -49,7 +49,8 @@ edit `persistent.sfs` ResearchAndDevelopment (`sci`, `Tech` node) when
 Linus/Lars/Gene brief a paid unlock.
 Commander ↛ revert / quickload / return to VAB / rewind UT. Crash UI is
 honest: **Hank** recovers the ship (`recover()`) and **Close**s to KSC,
-then Hangar the next stack on a **clean** pad. Os disabled reverting
+then Hangar the next stack on a **clean** pad. Persist must survive a
+split wreck; skip-dup is persist not the broom. Os disabled reverting
 flights. Never revert. Never leftover-ksc save/load. Os will not click
 it. Screenshot when stuck; do not wait for a founder click.
 Clean-pad Hangar of the seated craft for the sortie may stay inside
@@ -140,7 +141,7 @@ do not have. Parent copies that line into Lars’s packet so he is not
 sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`
-(**FED** + f013 + EC); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
+(**FED** + collider-clear HS + f013 + EC); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 **control blocks**: sit, warp, timeout, leftover abort, chute sits)
 without waiting for a miss. `physics_warp.py` is Wernher. Lars
@@ -288,10 +289,16 @@ false. Do not restore Batch Learn.
 After a hop: **Hank leftover first.** Walk home: `recover()` the ship
 and **Close** to KSC (`recover-probe --recover` if recoverable). Os
 disabled reverting flights. Never revert. Never leftover-ksc save/load
-(that looked like a reload / return to pre-launch). Crash-UI rec=0
-MET frozen is **not** pad occupancy (Os will not click Recover).
-Living SUB_ORBITAL leftover: wait land on MET then `recover()`; Close
-while flying does not drop it (`leftover-prelaunch-ghost`).
+(that looked like a reload / return to pre-launch). Recoverable ground
+Debris (pad Goo) is leftover — leftover_ship must see it; wait recover
+by GUID not name. `recover()` is persist-then-KSC; Python RPC returning
+is not despawn. Harmony skip-dup is persist fail-open, not the broom.
+Flying rec=0 blobs that throw Kerbalism persist make recover a no-op —
+quit KSP is walk home that sit (leftover-probe first after restart; no
+Hangar on dirty persist). Crash-UI rec=0 MET frozen is **not** pad
+occupancy (Os will not click Recover). Living SUB_ORBITAL leftover:
+wait land on MET then `recover()`; Close while flying does not drop it
+(`leftover-prelaunch-ghost`).
 Then: clean 0 → re-fly last `cli:` **only if that bind can still
 pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
 ≥50 km). Living recover + `sci_run=0` is **not** that path — do not
@@ -520,7 +527,7 @@ Bind = patch science payload (`experiment_id` / `part` / `duration_s` /
 `ec_rate` / `recover_banks`). Do not rewrite `science.md`. Idle on open
 science tickets, not `need_science`.
 
-**Gus** — `capable:` `craft:` `f013:` FED (`craft fuel`) `tickets:` `blocker:` (if no). Then `tickets feedback`.
+**Gus** — `capable:` `craft:` `f013:` FED (`craft fuel`) collider `tickets:` `blocker:` (if no). Then `tickets feedback`.
 
 **Lars** — `tickets:` `stack:` `f013:` `blocks:`. Then `tickets feedback`.
 
@@ -575,7 +582,8 @@ experiment_id / part / duration_s / ec_rate / recover_banks: yes|no
 
 Gus sizes EC from `ec_rate × duration_s` **and** proves **FED**
 (`python main.py craft fuel <craft>`) **before** `capable: yes`.
-Starved / BLOCKED is `capable: no`. If `world` sci does not move after a briefed recover → Linus, then Gene.
+Starved / BLOCKED is `capable: no`. Hangar-detonating HS splice is
+`capable: no` (T-500 collider). If `world` sci does not move after a briefed recover → Linus, then Gene.
 
 ## Feedback (T-375 amended; findings)
 

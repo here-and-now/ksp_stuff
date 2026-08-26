@@ -88,17 +88,20 @@ Rare `ops --tag ask`. Stamp `verify` when waiting for more hops.
 paths and `git commit` a sentence. Do not wait for Hank. Do not commit
 gitignored tape (`desk.md`, last-flight, jsonl).
 
-**VAB helpers (Os 2026-08-25 / T-481 / T-496):** Gus does not default to hand-writing
+**VAB helpers (Os 2026-08-25 / T-481 / T-496 / T-499):** Gus does not default to hand-writing
 `.craft`. He reviews his own spawns and files
 `type=systems --desk wernher --fingerprint vab-helper`. Wernher writes
 the helper (`craft.py` / CLI). Gus does not edit `.py`. Pad flies a
 **fed** hang — do not idle for helpers. A hang you cannot prove is
-FED is not capable. `python main.py craft fuel <craft>` dumps attach
+FED is not capable. FED is not enough: HS splice must leave **collider
+clearance** (T-500). `python main.py craft fuel <craft>` dumps attach
 + `fuelCrossFeed` (BLOCKED = starved). A helper that writes a hang
 must leave the **engine in the first fire list** (`sqor=0`, not only
 `istg=1`), the heatshield a **VAB dish** (`bottomDiameter=0`), not a
-filled puck, and a **fed** engine (`insert_heatshield` refuses
-`fuelCrossFeed=False`; T-495 dump / T-497 gate). Do not write
+filled puck, a **fed** engine (`insert_heatshield` refuses
+`fuelCrossFeed=False`; T-495 dump / T-497 gate; `--payload` SAS-first
+tank T-498), and collider half `max(length/2+0.179, catalog MODEL
+±0.5)` not `length*0.5`. Hangar detonation is not capable. Do not write
 GameData.
 
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not

@@ -81,10 +81,13 @@ names, not stamp names. **VAB helpers:** when Gus files
 parts in the live VAB (kRPC cannot). Pad still flies a **fed** hang.
 A hang-writing helper must leave the **engine in the first fire list**
 (`sqor=0`, not only `istg=1`), the heatshield a **VAB dish**
-(`bottomDiameter=0`), not a filled puck, and a **fed** engine.
-`insert_heatshield` refuses `fuelCrossFeed=False`. `craft fuel` dumps
-attach + `fuelCrossFeed` (T-495 / T-497). Do not write GameData. Node
-offset is catalog, not tank-half.
+(`bottomDiameter=0`), not a filled puck, a **fed** engine, and
+**collider clearance**. `insert_heatshield` refuses
+`fuelCrossFeed=False`. `--payload` splices SAS-first tank (T-498).
+HS splice half is `max(length/2+0.179, catalog MODEL ±0.5)` not
+`length*0.5` (T-500). `craft fuel` dumps attach + `fuelCrossFeed`
+(T-495 / T-497). Do not write GameData. Node offset is catalog, not
+tank-half.
 Extract leftover abort / chute sits still living in `hop.py` into
 blocks. **Log more kRPC** into jsonl / Tape windows /
 `python main.py telem` skim — not just a parser over 9 columns. On a
@@ -92,7 +95,10 @@ miss: patch the named `.py`; finding on the work ticket; helper
 docstring holds physics. `docs/agent-notes.md` only for still-true kRPC
 API facts. Do **not** append `docs/lessons.md`. One log line
 `docs/crew/log/wernher.md`. Leftover recover-then-Hangar *kernel* is
-yours; Hank runs the CLI. Stumble on thin tape → another
+yours; Hank runs the CLI. Persist must survive a split wreck.
+Recoverable ground Debris is leftover (wait GUID). Harmony skip-dup is
+persist, not the broom. T-501 owns leftover_ship / recover wait. Never
+leftover-ksc. Stumble on thin tape → another
 `--type systems --fingerprint <stem>`. Do not idle the pad.
 
 Last-flight 40 lines is abort/exit, not the vessel. Query `tape.Tape` —

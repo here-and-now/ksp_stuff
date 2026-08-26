@@ -63,9 +63,9 @@ Next CTT is `generalRocketry` 20 (need ~6.38; bank 13.62 does not
 pay 20). `survivability` 15 is spent. Do not spend crumbs. Pad this sit
 belongs to a **fed** hang (Gus rebuilding). T-428 / T-430 stay alts.
 T-409 / T-433
-nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). VAB helpers
-T-413–T-420 plus T-480/T-482/T-483/T-495/T-497 are Wernher; a hang you
-cannot prove is FED is not capable; pad does not wait. Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
+nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). Persist must survive a split wreck; skip-dup is persist not the broom; recoverable ground Debris is leftover (T-501). VAB helpers
+T-413–T-420 plus T-480/T-482/T-483/T-495/T-497/T-498/T-500 are Wernher; a hang you
+cannot prove is FED is not capable; FED is not enough without collider clearance; pad does not wait. Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
 path. File leftover credits while recording; sample leftover is the
 can. Goo ~429 MB does not TX at TL2. Recover still banks the HD when
 recover() works.

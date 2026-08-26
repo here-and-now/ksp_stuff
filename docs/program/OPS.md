@@ -241,8 +241,10 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
       recover-probe                    # signal only
       recover-probe --recover          # recoverable leftover — recover()
       ksc                              # scene after Close, not a reload
-    # Walk home: recover() the ship and Close to KSC. Os disabled
-    # reverting flights. Never revert. Never leftover-ksc save/load
+    # Walk home: recover() the ship and Close to KSC. Persist must
+    # survive a split wreck; skip-dup is persist not the broom.
+    # Recoverable ground Debris is leftover. Os disabled reverting
+    # flights. Never revert. Never leftover-ksc save/load
     # (that looked like a reload / return to pre-launch).
     # pad occupancy after leftover is clean
     return
@@ -287,7 +289,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 |---|---|---|
 | Lock live, `ship.md` off-nominal | **parent TUI** (not `ops next`) then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse; Wernher kRPC/control-blocks — **no stick**. Eyes: `ship.md`. `status` GET (`kspstuff-read`) does not write jsonl. Sit/MET/log disagree → one `stuck-<stem>` PNG then read it |
 | Lock live, nominal | ground desks via `ops next` (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time. Do not wait hop stdout. `hop light` is not airborne |
-| Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
+| Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP that sit. Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
 | Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
 | Fly needs `go` | Gene | that fly ticket; batch vehicle/science/control/**systems** |
@@ -419,7 +421,7 @@ Lars / Wernher is parent TUI reading `ship.md`, not `ops next`.
 Os does not click crash UI. Commander does not recover leftover or
 Close the crash dialog — hop abort `ksc leftover` is a handoff to
 Hank. Commander does not review after CLI exit. Hank leftover (lock
-**free**) is `recover()` + Close — never leftover-ksc load. Clean-pad
+**free**) is `recover()` + Close — persist-then-KSC; never leftover-ksc load. Clean-pad
 Hangar of the seated craft for the sortie may stay inside hop
 (`install_and_launch`) — launch, not leftover hygiene. Splash HD
 recover of **this** hop after a briefed dwell stays mission.

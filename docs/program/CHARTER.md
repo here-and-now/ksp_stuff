@@ -49,7 +49,8 @@ Honest miss, then patch — a little how-not-to-fly-a-rocket, never
 humiliation. Never revert to launch, quickload, return to VAB, or
 rewind UT. Os disabled reverting flights. The crash dialog is not a
 time machine. Os will not click it. Walk-home leftover: **Hank**
-`recover()` the ship and **Close** to KSC — never leftover-ksc
+`recover()` the ship and **Close** to KSC — persist must survive a
+split wreck; recoverable ground Debris is leftover; never leftover-ksc
 save/load. Then fly the next stack. Ops humor is dry and
 rare. **Kardashev III or bust** is creed in the world model and a
 joke in the TUI — nobody preaches mid-burn. Wonder is an **inner
@@ -65,7 +66,7 @@ Environment memory is **query tools**, not this file:
 
 ```bash
 python main.py desk                    # writes docs/program/desk.md (lock, hangar, f013, sci, stack)
-python main.py recover-probe [--recover] | ksc   # leftover/KSC: recover()+Close — Hank, not Commander. Never leftover-ksc load. Never revert.
+python main.py recover-probe [--recover] | ksc   # leftover/KSC: recover()+Close — Hank, not Commander. Persist-then-KSC. Never leftover-ksc load. Never revert.
 python main.py protocol fly            # fly ticket + desk; plan.md fallback (no kRPC)
 python main.py world
 python main.py tech
@@ -155,7 +156,8 @@ Mortimer mutates PROTOCOL and job cards on an org hire without Os
 unless a title is added or removed.
 
 Pad needs VAB `capable: yes` (**FED**: `craft fuel` path to the
-engine; starved is `capable: no`) and a real `craft:` file. PBC probes launch
+engine; starved is `capable: no`; Hangar-detonating HS splice is
+`capable: no`) and a real `craft:` file. PBC probes launch
 **uncrewed**. Leftover crew flies `phase` on the vessel they have.
 
 Crew on the active vessel must match the seated pilot. Rails warp scans

@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-26 — Practice last-write T-499 vab-helper ×17 (stem 20) + T-502 leftover-ksc ×3 (stem 4): FED is not enough — HS collider clearance (T-500); T-503 owns VAB test pin 0.191. Persist must survive a split wreck; skip-dup is persist not the broom; recoverable ground Debris is leftover (T-501). Pad leftover 0 after Os restart. Did not Hangar. Bank 13.62 need ~6.38 generalRocketry 20. Pad still flies.
 - 2026-08-26 — Practice last-write T-496 vab-helper ×14 (stem 16): a hang you cannot prove is FED is not capable. craft fuel (T-495) + insert_heatshield refuses fuelCrossFeed=False (T-497). C-477 starved Ablator-only pad Δv 0/0. Pad belongs to a fed hang. Gus rebuilding. Did not Hangar. Bank 13.62 need ~6.38 generalRocketry 20. Pad still flies.
 - 2026-08-26 — Practice last-write T-470/T-478/T-481: hop light is plume not ignitions 1→0 (Lars T-471 hop_factory_pad); loft hang C-477 silk+HS not t7-wheel-pbc lithobrake; vab-helper engine first fire + HS dish not puck (T-480/T-482/T-483). Bank 13.62 need ~6.38 generalRocketry 20. Pad still flies.
 - 2026-08-26 — comms-org-rsi applied (`docs/archive/2026-08-26-comms-org-rsi/APPLIED.md`): leftover writers dead; packet desk+BRIEF; hop light ≠ airborne; capcom Walt; T-484–T-494 filed not T-471. CHARTER creed / slate / pulse untouched. Pad still flies.

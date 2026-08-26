@@ -113,8 +113,13 @@ python main.py recover-probe --recover
 python main.py ksc
 ```
 
-Walk home: `recover()` the ship and **Close** to KSC. Never revert. Never
-leftover-ksc save/load. Never leftover CLI while `flight.lock` is live.
+Walk home: `recover()` the ship and **Close** to KSC. Recoverable ground
+Debris (pad Goo) is leftover — leftover_ship must see it; wait recover
+by GUID not name. `recover()` is persist-then-KSC; skip-dup Harmony is
+persist fail-open, not the broom. Flying rec=0 blobs that throw persist
+make recover a no-op — quit KSP that sit (leftover-probe first after
+restart; no Hangar on dirty persist). Never revert. Never leftover-ksc
+save/load. Never leftover CLI while `flight.lock` is live.
 Commander hop does not recover leftover. Spawn brief:
 `docs/program/tickets/BRIEF.md`. Desks must not emit `need_*` or `good:`
 in the Return fence.

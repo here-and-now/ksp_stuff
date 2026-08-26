@@ -12,14 +12,14 @@ titles. Drop RAF/spy/radio-compact.
 | **Commander** | Abort officer on crewed/firsts (`commander: jebediah`). The hop/pad **pid** is the **control** writer. kRPC GET readers are other Sessions; they do not take the stick. Uncrewed: parent starts `cli:`. |
 | **uplink** | RF to a spacecraft. File is a stick note. Keep until it hurts. |
 | **slate** | Film. Mortimer’s board. Keep. |
-| **capable:** | Gus sign-off. Keep. **FED** proof (`python main.py craft fuel <craft>`) is part of the stamp: tanks must reach the engine. Starved / `fuelCrossFeed=False` inline HS is `capable: no` (C-477). |
-| **FED** | Fuel path from tank to engine on disk. `craft fuel` dumps attach + `fuelCrossFeed`. Ablator-only on the engine is starved. |
+| **capable:** | Gus sign-off. Keep. **FED** proof (`python main.py craft fuel <craft>`) is part of the stamp: tanks must reach the engine. Starved / `fuelCrossFeed=False` inline HS is `capable: no` (C-477). FED is not enough: a Hangar-detonating HS splice is `capable: no` (T-500). |
+| **FED** | Fuel path from tank to engine on disk. `craft fuel` dumps attach + `fuelCrossFeed`. Ablator-only on the engine is starved. Collider-clear HS splice is a separate helper duty (T-498 `--payload`, T-500). |
 | **go: / wait** | MCC. Keep. |
 | **campaign:** | Fly ticket `payload.campaign` (`protocol fly` prints it). `uncrewed` = parent re-flies last `cli` on clean 0 without Gene. Uncrewed `payload.learn` is hop-exit `attach-run` (kernel), not Gene. `ops next` hires Gene for Learn only when campaign is not `uncrewed` and learn is empty. `none` = Learn each hop. Seated `plan.md` is envelope (`hop_apo` / `expect_*` / `emergencies`) — not a copy of `go` / `cli` / `campaign`. |
 | **CAPCOM** | NASA loop. **Walt**. TUI is phase start / phase end / unexpected only. Verena is Communications. Keep the split. |
 | **Hangar** | KSP building + our launch helper. Keep. |
-| **leftover / KSC** | Space Center wreck or unmatched vessel (includes timeout still-flying). **Hank** walk home: `recover()` if recoverable, else Close (`recover-probe --recover` when recoverable). Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |
-| **leftover-ksc** | **Retired.** Named save/load of the overlay looked like a reload / return to pre-launch. Os disabled reverting flights. Overlay dismiss is `recover()` + Close. Never that load. |
+| **leftover / KSC** | Space Center wreck or unmatched vessel (includes timeout still-flying and recoverable **ground Debris** — pad Goo). **Hank** walk home: `recover()` if recoverable, else Close (`recover-probe --recover` when recoverable). `recover()` is persist-then-KSC; Python RPC returning is not despawn. Wait GUID on `vessels`, not leftover names. Commander hop does not recover leftover. This-hop splash HD after a briefed dwell is mission. Never revert. |
+| **leftover-ksc** | **Retired as a load.** Named save/load of the overlay looked like a reload / return to pre-launch. Persist must survive a split wreck. Harmony skip-dup is persist fail-open, not the broom. Flying rec=0 blobs that throw Kerbalism persist make recover a no-op — quit KSP that sit. Overlay dismiss is `recover()` + Close. Never that load. |
 | **pad** | Launch pad / `python main.py pad`. Keep. |
 | **F-014 / I-012** | Gym ids live only inside a ticket **title**. Speech is the twin **T-id** (F-014 → T-184). |
 | **need_*** | Do not emit. Open `--type control|vehicle|science|…`. Not a hire token. |

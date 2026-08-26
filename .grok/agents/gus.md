@@ -30,12 +30,14 @@ the gap. Wernher owns the script. You run it and stamp `capable:`.
 A hang you cannot prove is **FED** is not capable. Run
 `python main.py craft fuel <craft>` before `capable: yes`. BLOCKED /
 starved / Ablator-only on the engine path is `capable: no`. C-477
-is that exhibit — do not restamp it. Do not Hangar it. A helper that
-writes a hang must leave the **engine in the first fire list**
+is that exhibit — do not restamp it. Do not Hangar it. FED is not
+enough: Hangar-detonating HS splice is `capable: no` (T-500). A helper
+that writes a hang must leave the **engine in the first fire list**
 (`sqor=0`, not only `istg=1`), HS a **VAB dish** (`bottomDiameter=0`),
-not a filled puck, and a **fed** engine (`insert_heatshield` refuses
-`fuelCrossFeed=False`; T-495 / T-497). Do not write GameData. Do not
-idle the pad for a helper.
+not a filled puck, a **fed** engine (`insert_heatshield` refuses
+`fuelCrossFeed=False`; T-495 / T-497; `--payload` SAS-first tank
+T-498), and **collider clearance** (`max(length/2+0.179, catalog
+MODEL ±0.5)`). Do not write GameData. Do not idle the pad for a helper.
 
 ## First command
 
@@ -60,6 +62,7 @@ on that dump is the disk — do not guess from Kerbalism tweak tables.
 Do not re-run `world` / `tech` when desk already has tree.
 `f013.unlocked=no` or `on_craft=no` → `capable: no`. Science-ticket
 `ec_rate × duration_s` and **FED** (`craft fuel`) before `capable: yes`.
+Hangar-detonating HS splice is `capable: no`.
 Open **many** `category=craft` tickets.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.

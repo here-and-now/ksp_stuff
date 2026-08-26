@@ -208,14 +208,14 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
-    "vab-helper": 13,
+    "vab-helper": 16,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
     "C-477": {
       "assignee": "",
       "blockers": [],
-      "capable": "yes",
+      "capable": "no",
       "category": "craft",
       "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
       "created": "2026-08-26T10:48:37Z",
@@ -280,6 +280,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:53:33Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. Dish HS isolates the Valiant from 2415 kero. Disk: last proc tank attN bottom=proceduralHeatshield_1320489094; HS attN top=last tank bottom=Valiant; HS Ablator 80 only, no ModuleFuelTanks. GameData ProceduralParts Heatshield.cfg + MM ConfigCache last-write fuelCrossFeed=False (same as stock HeatShield1). Repo grep zero fuelCrossFeed; insert_heatshield splices tank-HS-engine and does not mention flow. T-480/T-482/T-483 were node/dish/first-fire \u2014 not this. Pad 14-45-39Z STAGE 000 throttle 0 plume=no fuel 2415 DeltaV 0/0 Ablator 80/80 never hop light. Helpers T-495 dump attach+fuel path, T-497 insert_heatshield must leave a fed engine or refuse. Loft alt T-406 t7-wheel-proc last tank attN bottom=Valiant (fed). Do not Hangar T-406. Do not Hangar t7-chute Mk16. Did not restamp t7-wheel-pbc. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft; geiger e101 unlocked=yes on_craft. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -295,7 +303,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T14:50:20Z"
+      "updated": "2026-08-26T14:53:33Z"
     },
     "T-001": {
       "assignee": "",
@@ -18616,6 +18624,14 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-26T14:51:11Z",
+            "claim": "14-45-39Z restaged STAGE 000 plume=no throttle 0 fuel 2415 never hop light; Hank uplink abort. Os: hang issue not pad-RF \u2014 C-477 HS between last tank and Valiant, fuel flow unproven. Gus has C-477. Do not retune hop_factory_pad.py for this hop.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -18629,7 +18645,7 @@
       "tags": [],
       "title": "T-469 live scrap: never hop light, engine dead on pad, Os abort",
       "type": "control",
-      "updated": "2026-08-26T14:43:01Z"
+      "updated": "2026-08-26T14:51:11Z"
     },
     "T-472": {
       "assignee": "",
@@ -19438,7 +19454,97 @@
       "title": "RSI leftover-prelaunch-ghost \u00d77",
       "type": "rsi",
       "updated": "2026-08-26T14:44:07Z"
+    },
+    "T-495": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T14:53:09Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-495",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T14:53:33Z",
+            "claim": "Gap: no disk dump of attach tree + fuelCrossFeed path through an inline HS. C-477 last tank attN bottom=HS, HS attN bottom=Valiant, Ablator only. GameData+ConfigCache proceduralHeatshield fuelCrossFeed=False. insert_heatshield never prints flow. Pad DeltaV 0/0 with 2415 kero is the flight proof; helper must show that from .craft+cfg without Hangar.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Gus Grokman, Vehicle Engineering Lead",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "VAB helper: dump attach tree + fuelCrossFeed path through an inline HS (disk, no Hangar)",
+      "type": "systems",
+      "updated": "2026-08-26T14:53:33Z"
+    },
+    "T-496": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T14:53:09Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-496",
+      "payload": {
+        "count": 14
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI vab-helper \u00d714",
+      "type": "rsi",
+      "updated": "2026-08-26T14:53:09Z"
+    },
+    "T-497": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T14:53:09Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-497",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T14:53:33Z",
+            "claim": "insert_heatshield splices proceduralHeatshield between last tank and engine and does not check fuelCrossFeed. C-477 dish is fuelCrossFeed=False so Valiant is starved. Helper must leave a fed engine (tank still attached to engine, or refuse the splice). T-480/T-482/T-483 closed node/dish/first-fire \u2014 not flow. Do not write GameData.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Gus Grokman, Vehicle Engineering Lead",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "insert_heatshield must refuse fuelCrossFeed=False splice \u2014 leave a fed engine",
+      "type": "systems",
+      "updated": "2026-08-26T14:53:33Z"
     }
   },
-  "updated": "2026-08-26T14:50:20Z"
+  "updated": "2026-08-26T14:53:33Z"
 }

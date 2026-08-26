@@ -9,10 +9,11 @@ and not independent True with setpoint 0. After thrusting,
 MainThrottle 1 is the burn. Commanded throttle 0 after loft is MECO.
 Throttle 0 then 1 is a restart. Do not gate stage on GET
 currentThrottle. hop light logs ignitions remaining, independent
-setpoint, and currentThrottle. RF pad: hop light is the product —
-abort after confirmed light. abort_pad cut is MainThrottle only;
-zero independent setpoint and engine active before process exit.
-Do not loft. Forest / Grasslands: same.
+setpoint, and currentThrottle. After confirmed light, loft — hold
+vertical until lid then inland. abort_pad cut is MainThrottle only;
+``_cut_pad_engine`` zeros independent setpoint and engine active
+before process exit. Do not abort after light. Forest / Grasslands:
+same.
 """
 
 from __future__ import annotations
@@ -293,25 +294,6 @@ def _cut_pad_engine(vessel: object) -> None:
             pass
 
 
-def _abort_rf_light(
-    vessel: object, on_log: Callable[[str], None] | None
-) -> None:
-    """RF pad: hop light is the product. Cut engine, recover, abort.
-
-    Do not loft. Kill independent before abort_pad — MainThrottle 0
-    is not the burn when independent is still the meet.
-    """
-    from emergencies import Ctx, call
-
-    H._say("hop abort rf-light-test", on_log)
-    _cut_pad_engine(vessel)
-    try:
-        call("abort_pad", Ctx(session=None, vessel=vessel))
-    except Exception:
-        _cut_pad_engine(vessel)
-    raise MissionAbort("rf-light-test")
-
-
 def _engine_throttle(engine: object) -> float:
     """Ignition command on this engine. kRPC control.throttle is not this.
 
@@ -425,9 +407,10 @@ def _pad_light(
     Re-apply on the stage pulse zeros the setpoint this tick.
     Throttle 0 then 1 is a restart. Pad 1 g still lights when the
     command is 1 at ignition. hop light logs ignitions remaining,
-    setpoint, currentThrottle. RF pad: hop light is the product —
-    abort after confirmed light. Cut engine before process exit.
-    Do not loft. Forest / Grasslands: same.
+    setpoint, currentThrottle. After confirmed light, return True
+    and let the factory hold. abort_pad cut is MainThrottle only —
+    ``_cut_pad_engine`` before process exit. Do not abort after
+    light. Forest / Grasslands: same.
     """
     if deaf:
         H._light(vessel, on_log, snap)
@@ -457,8 +440,6 @@ def _pad_light(
         raise MissionAbort(f"light failed: {exc}") from exc
     after = _pad_rf_snap(vessel)
     H._say("hop light " + _fmt_rf_snap(after, before=before), on_log)
-    if _rf_pad_sit(vessel):
-        _abort_rf_light(vessel, on_log)
     return True
 
 

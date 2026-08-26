@@ -195,8 +195,10 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _pad_thrusting", pad)
         self.assertIn("def _pad_rf_snap", pad)
         self.assertIn("def _rf_pad_sit", pad)
-        self.assertIn("def _abort_rf_light", pad)
         self.assertIn("def _cut_pad_engine", pad)
+        self.assertIn("_cut_pad_engine", factory)
+        self.assertNotIn("def _abort_rf_light", pad)
+        self.assertNotIn("rf-light-test", pad)
         self.assertNotIn("wait_water", factory)
         self.assertNotIn("wait_splash", factory)
 
@@ -265,18 +267,11 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("setpoint=1.00", lit)
         self.assertIn("ignitions=?", lit)
 
-    def test_pad_light_aborts_rf_after_confirmed_light(self):
-        """rf-ignition-ullage: hop light is the product. Do not loft."""
+    def test_pad_light_lofts_rf_after_confirmed_light(self):
+        """rf-ignition-ullage: after hop light, loft. Do not abort-after-light."""
         vessel = _Vessel()
         engine = _RfEngine()
         vessel.parts.engines = [engine]
-        vessel.recoverable = True
-        vessel.recovered = 0
-
-        def recover():
-            vessel.recovered += 1
-
-        vessel.recover = recover
         snap = type("S", (), {"link": True, "situation": "pre_launch"})()
         logs: list[str] = []
         self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
@@ -292,36 +287,25 @@ class TestHopFactoryPad(unittest.TestCase):
             vessel.control.staged += 1
 
         vessel.control.activate_next_stage = stage
-        with self.assertRaises(MissionAbort) as ctx:
-            _pad_light(vessel, logs.append, snap, deaf=False)
-        self.assertIn("rf-light-test", str(ctx.exception))
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
         self.assertEqual(vessel.control.staged, 1)
-        self.assertEqual(vessel.recovered, 1)
-        self.assertEqual(vessel.control.throttle, 0.0)
-        self.assertFalse(engine.independent_throttle)
-        self.assertEqual(engine.pct, 0.0)
-        self.assertIs(engine.active, False)
+        self.assertGreater(vessel.control.throttle, 0.05)
+        self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.pct, 5.0)
         lit = " ".join(logs)
         self.assertIn("hop light", lit)
         self.assertIn("ignitions=1→0", lit)
         self.assertIn("setpoint=1.00", lit)
         self.assertIn("currentThrottle=0.00", lit)
-        self.assertIn("hop abort rf-light-test", lit)
+        self.assertNotIn("hop abort", lit)
 
-    def test_pad_light_aborts_rf_kills_engine_when_not_recoverable(self):
-        """rf-ignition-ullage: rec=no after hop light still dead engine, not loft."""
+    def test_cut_pad_engine_after_rf_light_kills_engine(self):
+        """rf-ignition-ullage: rec=no abort after hop light still dead engine."""
         vessel = _Vessel()
         engine = _RfEngine()
         engine.active = True
         engine.actual = 0.24
         vessel.parts.engines = [engine]
-        vessel.recoverable = False
-        vessel.recovered = 0
-
-        def recover():
-            vessel.recovered += 1
-
-        vessel.recover = recover
         snap = type("S", (), {"link": True, "situation": "pre_launch"})()
         logs: list[str] = []
         self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
@@ -332,16 +316,15 @@ class TestHopFactoryPad(unittest.TestCase):
             vessel.control.staged += 1
 
         vessel.control.activate_next_stage = stage
-        with self.assertRaises(MissionAbort) as ctx:
-            _pad_light(vessel, logs.append, snap, deaf=False)
-        self.assertIn("rf-light-test", str(ctx.exception))
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
         self.assertEqual(vessel.control.staged, 1)
-        self.assertEqual(vessel.recovered, 0)
+        self.assertTrue(engine.independent_throttle)
+        _cut_pad_engine(vessel)
         self.assertEqual(vessel.control.throttle, 0.0)
         self.assertFalse(engine.independent_throttle)
         self.assertEqual(engine.pct, 0.0)
         self.assertIs(engine.active, False)
-        self.assertIn("hop abort rf-light-test", " ".join(logs))
+        self.assertNotIn("hop abort", " ".join(logs))
 
     def test_cut_pad_engine_zeros_independent_before_exit(self):
         """rf-ignition-ullage: 09-44-55Z abort_pad left independent 1, lofted."""

@@ -4,7 +4,9 @@ Flying card after loft. Pad light is throttle 1 on the engine, then
 stage — RF 1-start at engine throttle 0 is spent. kRPC
 ``control.throttle`` is not the burn. Throttle 0 then 1 is a restart.
 hop light is not the burn: ``_pad_hold`` (``hop_factory_pad``) keeps
-the start. Independent is enabled once — re-enable zeros Current
+the start. After confirmed light, loft. Uplink abort / MissionAbort
+``_cut_pad_engine`` first — abort_pad cut is MainThrottle only.
+Independent is enabled once — re-enable zeros Current
 Throttle and stage spends the ignition at 0.
 FlyingHigh wait is loft to lid alt,
 not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
@@ -28,7 +30,7 @@ from typing import Callable
 
 import hop as H
 from emergencies import Ctx, call
-from hop_factory_pad import _pad_hold, _pad_light
+from hop_factory_pad import _cut_pad_engine, _pad_hold, _pad_light
 from phases import OffPlan, check_expect
 from physics_warp import (
     airborne_cannot_pay,
@@ -349,9 +351,14 @@ def run_factory_vessel(
                 except Exception:
                     stop = False
                 if stop:
+                    _cut_pad_engine(vessel)
                     call("abort_pad", ctx)
                     raise MissionAbort("abort")
-            H._uplink_tick(ctx)
+            try:
+                H._uplink_tick(ctx)
+            except MissionAbort:
+                _cut_pad_engine(vessel)
+                raise
             live = H._active(session, vessel)
             if live is None:
                 if left_pad:
@@ -946,6 +953,7 @@ def run_factory_vessel(
                     return got
 
             if down and not left_pad:
+                _cut_pad_engine(vessel)
                 call("abort_pad", ctx)
                 raise MissionAbort("wreck")
 
@@ -1045,7 +1053,9 @@ def run_factory_vessel(
                         return got
                 if left_pad:
                     H.abort_ksc_leftover(vessel, on_log, why="timeout")
+                _cut_pad_engine(vessel)
                 raise MissionAbort("timeout")
             nap(H._nap_dt(pulse, snap, braking=False))
 
+    _cut_pad_engine(vessel)
     raise MissionAbort("timeout")

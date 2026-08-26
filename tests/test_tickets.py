@@ -625,6 +625,7 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(tickets.commander_for(campaign="uncrewed"), "none")
         self.assertEqual(tickets.commander_for(campaign="none"), "jebediah")
         self.assertIn("katherine", tickets.DESKS)
+        self.assertEqual(tickets.DEFAULT_ROUTE["recover"], "hank")
 
     def test_fly_ready_hires_katherine_only_with_inbox(self):
         t = tickets.open_ticket(
@@ -795,7 +796,7 @@ class TestOpsNext(unittest.TestCase):
         self.assertNotIn("gene", desks)
         self.assertEqual(act["fly_ready"], t["id"])
 
-    def test_campaign_stop_hires_gene_for_learn(self):
+    def test_campaign_stop_hires_gene_for_go_stamp(self):
         tickets.open_ticket(
             type="fly",
             title="hop-splash",
@@ -806,7 +807,8 @@ class TestOpsNext(unittest.TestCase):
         act = ops.next_actions(desk={"hangar": "none"}, locked=False)
         hire = act["hire"][0]
         self.assertEqual(hire["desk"], "gene")
-        self.assertIn("Learn", hire["why"])
+        self.assertEqual(hire["why"], "fly ticket needs go stamp")
+        self.assertNotIn("Learn", hire["why"])
         self.assertIsNone(act["fly_ready"])
 
     def test_uncrewed_missing_go_is_stamp_not_learn(self):
@@ -937,6 +939,52 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(d["leftover"], "2")
         self.assertEqual(ops.leftover_n(d), 2)
 
+    def test_idle_empty_or_ops_ticket_no_fake_gene(self):
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertEqual(act["hire"], [])
+        self.assertIsNone(act["fly_ready"])
+        self.assertNotIn("gene", [h["desk"] for h in act["hire"]])
+        tickets.open_ticket(
+            type="ops",
+            title="house glue",
+            reporter="Hank",
+            desk="hank",
+        )
+        act2 = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        desks = [h["desk"] for h in act2["hire"]]
+        self.assertIn("hank", desks)
+        self.assertNotIn("gene", desks)
+        self.assertTrue(act2["hire"][0].get("tickets"))
+
+    def test_capable_hangar_from_vehicle_ticket(self):
+        unsigned = tickets.capable_hangar()
+        self.assertEqual(unsigned, ("no", ""))
+        hang = tickets.open_ticket(
+            type="vehicle",
+            title="t7-wheel hang",
+            reporter="Gus",
+            payload={"craft": "kspstuff-hop-valiant-t7-wheel-pbc"},
+        )
+        tickets.patch_ticket(hang["id"], {"capable": "yes"}, who="gus")
+        alt = tickets.open_ticket(
+            type="vehicle",
+            title="cone recover alt",
+            reporter="Gus",
+            payload={"craft": "kspstuff-hop-valiant-t7-wheel-cone-pbc"},
+            tags=["recover"],
+        )
+        tickets.patch_ticket(alt["id"], {"capable": "yes"}, who="gus")
+        cap, name = tickets.capable_hangar()
+        self.assertEqual(cap, "yes")
+        self.assertEqual(name, "kspstuff-hop-valiant-t7-wheel-pbc")
+        from missions import hangar_craft_name
+
+        with patch(
+            "missions.seated_craft_path",
+            return_value=Path("/no/such/craft.md"),
+        ):
+            self.assertEqual(hangar_craft_name(), "kspstuff-hop-valiant-t7-wheel-pbc")
+
 
 class TestPacketAndReasoning(unittest.TestCase):
     def setUp(self):
@@ -1046,6 +1094,14 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("reasoning: medium", skim)
         self.assertNotIn("xhigh", skim)
         self.assertNotIn("xhigh", deep)
+        from missions import seated_logs_dir
+
+        links = tickets.infer_links(tickets.show_ticket(t["id"]))
+        self.assertIn(
+            str(seated_logs_dir() / "2026-08-21T21-14-09Z-hop-splash.jsonl"),
+            links["tape"],
+        )
+        self.assertNotIn("docs/program/blocks.md", [i["path"] for i in links["skim"]])
 
     def test_from_need_stack_is_control_ticket(self):
         t = tickets.from_need(
@@ -1419,6 +1475,15 @@ class TestMigrateSecondBus(unittest.TestCase):
             "press",
             "ops",
         ))
+
+    def test_migrate_second_bus_does_not_mint_lessons(self):
+        with patch(
+            "docs_inventory.lesson_headings",
+            return_value=["Forest is 270 — hang-envelope"],
+        ):
+            tickets.migrate_second_bus()
+        titles = [t["title"] for t in tickets.load_head()["tickets"].values()]
+        self.assertFalse(any("Forest is 270" in t for t in titles))
 
     def test_skim_omits_parked_dispatch(self):
         from docs_inventory import FORBIDDEN_DISPATCH, packet_read_paths, skim_mentions_forbidden

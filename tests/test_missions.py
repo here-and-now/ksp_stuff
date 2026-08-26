@@ -96,6 +96,7 @@ class TestSeatAndPlan(unittest.TestCase):
                     with self.assertRaises(SessionError) as ctx:
                         pad_craft_name()
         self.assertIn("capable", str(ctx.exception))
+        self.assertNotIn("vab.md", str(ctx.exception).lower())
 
     def test_seat_missing_refused(self):
         from missions import seat

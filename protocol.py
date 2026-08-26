@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
 
 from card import card_flying_ids, card_pad_ids, card_splash_ids
 from phases import NAMES as PHASE_NAMES
@@ -78,15 +77,6 @@ def parse_return(text: str, desk: str) -> ParseResult:
     return ParseResult(desk=slug, fields=fields, missing=missing)
 
 
-def _plan_kv(path: Path | None = None) -> dict[str, str]:
-    from missions import seated_plan_path
-
-    dest = path or seated_plan_path()
-    if not dest.is_file():
-        return {}
-    return parse_kv(dest.read_text(encoding="utf-8"))
-
-
 _PHASE_SIT = {
     "pad": "landed",
     "hop": "flying",
@@ -130,9 +120,10 @@ def fly_gate(
     t = ticket if ticket is not None else seated_fly_ticket()
     ff = fly_fields(t)
     go = (ff.get("go") or "").lower()
-    phase = (ff.get("phase") or plan.get("phase") or "").lower()
-    rec = (ff.get("cli") or plan.get("recommended") or plan.get("cli") or "").strip()
-    campaign = (ff.get("campaign") or plan.get("campaign") or "none").strip() or "none"
+    phase = (ff.get("phase") or "").lower()
+    rec = (ff.get("cli") or "").strip()
+    campaign = (ff.get("campaign") or "none").strip() or "none"
+    _ = plan
 
     def _out(fly: str, reason: str, cli: str) -> FlyGate:
         return FlyGate(
@@ -144,6 +135,8 @@ def fly_gate(
             "hop-pid",
         )
 
+    if not t:
+        return _out("wait", "missing ticket", rec)
     if go != "yes":
         return _out("wait", "missing go: yes", rec)
     if sit.lock == "live":
@@ -263,7 +256,7 @@ def cmd_protocol(argv: list[str]) -> int:
         text = sci.read_text(encoding="utf-8") if sci.is_file() else ""
         gate = fly_gate(
             sit=sit,
-            plan=_plan_kv(),
+            plan={},
             science_text=text,
             ticket=seated_fly_ticket(),
         )

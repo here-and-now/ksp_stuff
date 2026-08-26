@@ -33,7 +33,6 @@ LAST_PATH = Path("docs/program/uplink.last")
 LOOP_PATH = Path("docs/program/loop.md")  # shim; Commander notes go to the dossier
 NOTE_TECH_PATH = Path("docs/program/note-tech.md")
 _LEGACY_NOTE_TECH = Path("docs/program/helm-tech.md")
-PLAN_PATH = Path("docs/program/plan.md")  # shim; canonical is missions/<id>/plan.md
 SHIP_PATH = Path("docs/program/ship.md")
 
 
@@ -177,8 +176,8 @@ def plan_meta() -> dict[str, str]:
     try:
         path = plan_file()
     except Exception:
-        path = PLAN_PATH if PLAN_PATH.is_file() else None
-    if path is None or not path.is_file():
+        return out
+    if not path.is_file():
         return out
     for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.strip()
@@ -207,12 +206,6 @@ def write_plan_file(*, extra: dict[str, str] | None = None) -> None:
         if key in meta:
             lines.append(f"{key}: {meta[key]}\n")
     path.write_text("".join(lines), encoding="utf-8")
-    try:
-        from missions import sync_shim
-
-        sync_shim()
-    except Exception:
-        log.debug("shim sync failed", exc_info=True)
 
 
 def save_plan() -> None:

@@ -106,7 +106,7 @@ DEFAULT_ROUTE = {
     "org": "mortimer",
     "rsi": "mortimer",
     "ctt": "mortimer",
-    "recover": "jebediah",
+    "recover": "hank",
     "press": "verena",
     "ops": "hank",
 }
@@ -300,7 +300,6 @@ def _rebuild() -> dict[str, Any]:
     head = {"tickets": tickets, "fingerprints": fps, "updated": _now()}
     HEAD.write_text(json.dumps(head, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     FINGERPRINTS.write_text(json.dumps(fps, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    _write_board_md(tickets)
     return head
 
 
@@ -368,8 +367,108 @@ def batch_reasoning(rows: list[dict[str, Any]], desk: str) -> str:
     return lvl if rows else "medium"
 
 
+def ticket_craft(t: dict[str, Any] | None) -> str:
+    """payload.craft, top-level craft, or crafts/*.craft evidence stem."""
+    if not t:
+        return ""
+    pl = t.get("payload") if isinstance(t.get("payload"), dict) else {}
+    raw = (
+        (pl or {}).get("craft")
+        or (pl or {}).get("vehicle")
+        or t.get("craft")
+        or t.get("payload.craft")
+        or ""
+    )
+    name = str(raw).strip()
+    if not name or name.startswith("("):
+        for ev in t.get("evidence") or []:
+            sp = str(ev).replace("\\", "/")
+            if sp.endswith(".craft"):
+                name = sp.rsplit("/", 1)[-1]
+                break
+    if name.endswith(".craft"):
+        name = name[: -len(".craft")]
+    if "/" in name:
+        name = name.rsplit("/", 1)[-1]
+    if not name or name.startswith("("):
+        return ""
+    return name
+
+
+def ticket_capable(t: dict[str, Any] | None) -> str:
+    if not t:
+        return ""
+    pl = t.get("payload") if isinstance(t.get("payload"), dict) else {}
+    return str(t.get("capable") or (pl or {}).get("capable") or "").strip().lower()
+
+
+def capable_hangar(*, prefer: str = "") -> tuple[str, str]:
+    """Open vehicle ticket with capable:yes and a craft name. Recover alts skip."""
+    want = str(prefer or "").strip()
+    if want.endswith(".craft"):
+        want = want[: -len(".craft")]
+    if not want:
+        fly = seated_fly_ticket()
+        pl = fly.get("payload") if isinstance((fly or {}).get("payload"), dict) else {}
+        waste = (pl or {}).get("waste") if isinstance((pl or {}).get("waste"), dict) else {}
+        want = str((pl or {}).get("craft") or (waste or {}).get("craft") or "").strip()
+        if want.endswith(".craft"):
+            want = want[: -len(".craft")]
+    rows: list[dict[str, Any]] = []
+    for t in (load_head().get("tickets") or {}).values():
+        if t.get("type") != "vehicle":
+            continue
+        if t.get("status") in {"done", "wont"}:
+            continue
+        if ticket_capable(t) != "yes":
+            continue
+        if not ticket_craft(t):
+            continue
+        rows.append(t)
+    if not rows:
+        return "no", ""
+    if want:
+        matched = [t for t in rows if ticket_craft(t) == want]
+        if matched:
+            rows = matched
+    hang = [
+        t
+        for t in rows
+        if "recover" not in _norm_tags(t.get("tags"))
+    ]
+    if hang:
+        rows = hang
+    rows.sort(key=lambda t: (str(t.get("updated") or ""), str(t.get("id") or "")))
+    chosen = rows[-1]
+    return "yes", ticket_craft(chosen)
+
+
+def _tape_jsonl(t: dict[str, Any] | None) -> str:
+    """payload.telem_run, else live_run under seated_logs_dir. Never invent jebediah."""
+    if not t:
+        return ""
+    payload = t.get("payload") if isinstance(t.get("payload"), dict) else {}
+    path = str((payload or {}).get("telem_run") or "").strip()
+    if path:
+        return path
+    live = str((payload or {}).get("live_run") or "").strip()
+    if not live:
+        return ""
+    p = Path(live)
+    if p.suffix.lower() != ".jsonl":
+        p = Path(str(p) + ".jsonl")
+    if p.is_absolute() or len(p.parts) > 1:
+        return str(p).replace("\\", "/")
+    try:
+        from missions import seated_logs_dir
+
+        return str(seated_logs_dir() / p.name)
+    except Exception:
+        return str(p)
+
+
 def infer_links(t: dict[str, Any]) -> dict[str, Any]:
-    """Skim vs deep paths. Jsonl is tape CLI only — never a read_file."""
+    """Skim is always desk+BRIEF. Jsonl is tape CLI only — never a read_file."""
     skim: list[dict[str, str]] = []
     deep: list[dict[str, str]] = []
     tape: list[str] = []
@@ -395,33 +494,26 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
 
     add(skim, "desk", "docs/program/desk.md", "sit")
     add(skim, "brief", "docs/program/tickets/BRIEF.md", "how")
-    payload = t.get("payload") or {}
     typ = t.get("type")
-    craft = payload.get("craft") or payload.get("vehicle") or ""
+    craft = ticket_craft(t)
     if craft and not str(craft).endswith(".craft"):
         craft_path = f"crafts/{craft}.craft"
     else:
         craft_path = str(craft)
+    run = _tape_jsonl(t)
     if typ == "fly":
-        add(skim, "briefing", "docs/missions/jebediah/briefing.md", "brief")
-        telem = payload.get("telem_run") or ""
-        if telem:
-            add_tape(str(telem))
+        if run:
+            add_tape(run)
         if craft_path:
             add(deep, "craft", craft_path, "stack")
         add(deep, "last-flight", "docs/last-flight.md", "last abort")
-    elif typ == "science" or t.get("category") == "science_opportunity":
-        add(skim, "science", "docs/program/science.md", "opportunities")
     elif typ == "vehicle":
-        add(skim, "vab", "docs/program/vab.md", "VAB")
         if craft_path:
             add(deep, "craft", craft_path, "stack")
     elif typ == "control":
-        add(skim, "blocks", "docs/program/blocks.md", "catalog")
         add(deep, "last-flight", "docs/last-flight.md", "abort")
-        live = payload.get("live_run") or ""
-        if live:
-            add_tape(f"docs/missions/jebediah/logs/{live}.jsonl")
+        if run:
+            add_tape(run)
     elif typ == "systems":
         add(deep, "agent-notes", "docs/agent-notes.md", "kRPC")
     elif typ == "recover":
@@ -451,11 +543,7 @@ def infer_links(t: dict[str, Any]) -> dict[str, Any]:
 def _packet_envelope(t: dict[str, Any]) -> dict[str, Any] | None:
     """Landing/eyes from disk tape, else stored payload. Never jsonl rows."""
     payload = t.get("payload") or {}
-    path = payload.get("telem_run") or ""
-    if not path:
-        live = payload.get("live_run") or ""
-        if live:
-            path = f"docs/missions/jebediah/logs/{live}.jsonl"
+    path = _tape_jsonl(t)
     if not path:
         evs = [e for e in (t.get("evidence") or []) if str(e).endswith(".jsonl")]
         path = evs[-1] if evs else ""
@@ -714,34 +802,6 @@ def close_ticket(tid: str, *, why: str = "", who: str = "hank") -> dict[str, Any
     if why_s:
         fields["close_why"] = why_s
     return patch_ticket(tid, fields, who=who)
-
-
-def _write_board_md(tickets: dict[str, dict[str, Any]]) -> None:
-    open_t = [
-        t
-        for t in tickets.values()
-        if t.get("status") not in {"done", "wont"}
-    ]
-    open_t.sort(key=lambda t: (t.get("severity", "S4"), t.get("priority", "P3"), t["id"]))
-    lines = [
-        "# Ticket board",
-        "",
-        f"open: {len(open_t)} / {len(tickets)}",
-        "",
-        "| id | type | cat | S | P | R | status | desk | tags | title |",
-        "|---|---|---|---|---|---|---|---|---|---|",
-    ]
-    for t in open_t:
-        title = (t.get("title") or "").replace("|", "/")
-        cat = t.get("category") or TYPE_CATEGORY.get(t.get("type") or "", "")
-        tags = ",".join(t.get("tags") or [])
-        lines.append(
-            f"| {t['id']} | {t.get('type')} | {cat} | {t.get('severity')} | "
-            f"{t.get('priority')} | {reasoning_for(t)} | {t.get('status')} | "
-            f"{t.get('desk')} | {tags} | {title} |"
-        )
-    lines.append("")
-    PRINT.write_text("\n".join(lines), encoding="utf-8")
 
 
 def open_ticket(
@@ -1602,7 +1662,7 @@ SEED = (
 
 
 def seed_legacy(*, who: str = "hank") -> list[str]:
-    """Idempotent: skip titles already on the board. Also I/F/lesson twins."""
+    """Idempotent: skip titles already on the board. Also I/F twins."""
     existing = {
         t.get("title") for t in (load_head().get("tickets") or {}).values()
     }
@@ -1630,8 +1690,8 @@ def _title_has_token(titles: list[str], token: str) -> bool:
 
 
 def migrate_second_bus(*, who: str = "hank") -> list[str]:
-    """I-012..I-020, F-001..F-015, lessons.md ``##`` twins. Idempotent on title token."""
-    from docs_inventory import IF_TWINS, lesson_headings
+    """I-012..I-020, F-001..F-015 twins. Idempotent on title token. No lesson mint."""
+    from docs_inventory import IF_TWINS
 
     titles = [t.get("title") or "" for t in (load_head().get("tickets") or {}).values()]
     opened: list[str] = []
@@ -1662,33 +1722,6 @@ def migrate_second_bus(*, who: str = "hank") -> list[str]:
         if fields:
             t = patch_ticket(t["id"], fields, who=who)
         titles.append(t["title"])
-        opened.append(t["id"])
-    for heading in lesson_headings():
-        if not heading:
-            continue
-        if _title_has_token(titles, heading):
-            continue
-        t = open_ticket(
-            type="control",
-            title=heading,
-            reporter="Lars Grokman, Vehicle Systems Engineer",
-            severity="S3",
-            priority="P1",
-            desk="lars",
-            fingerprint="",
-            rsi_loop="none",
-            tags=["legacy-twin", "lesson"],
-        )
-        patch_ticket(
-            t["id"],
-            {
-                "status": "done",
-                "close_why": "patched history; lessons.md is forensics",
-                "summary": "patched history; lessons.md is forensics",
-            },
-            who=who,
-        )
-        titles.append(heading)
         opened.append(t["id"])
     return opened
 
@@ -1769,9 +1802,8 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
     ar.add_argument("id")
     ar.add_argument("--path", required=True)
     ar.add_argument("--who", default="hank")
-    sub.add_parser("board")
     sub.add_parser("seed")
-    sub.add_parser("dump", help="Rewrite science/slate/plan/briefing dumps from tickets")
+    sub.add_parser("dump", help="Rewrite slate (and seated dumps) from tickets")
     args = p.parse_args(argv)
     try:
         if args.act == "open":
@@ -1891,10 +1923,6 @@ def cmd_tickets(argv: list[str] | None = None) -> int:
             learn = (t.get("payload") or {}).get("learn")
             if learn:
                 print("learn:", learn)
-            return 0
-        if args.act == "board":
-            _rebuild()
-            print(PRINT.read_text(encoding="utf-8"), end="")
             return 0
         if args.act == "seed":
             ids = seed_legacy()

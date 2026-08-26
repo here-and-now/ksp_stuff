@@ -94,6 +94,7 @@ class TestDesk(unittest.TestCase):
         self.assertNotIn("open science at this tree", text)
         self.assertNotIn("mysteryGoo", text)
         self.assertNotIn("Cape", text)
+        self.assertNotIn("note-tech", text)
 
     def test_format_sit_review_not_parked_or_missing(self):
         path = latest_review()
@@ -145,6 +146,11 @@ class TestDesk(unittest.TestCase):
         self.assertAlmostEqual(now, 5.6718)
         self.assertEqual(src, "sfs")
         self.assertIsNone(lag)
+
+    def test_format_sit_omits_note_tech(self):
+        text = format_sit(_sit(note_tech="Jebediah → Lars: leftover"))
+        self.assertNotIn("note-tech", text)
+        self.assertNotIn("Jebediah → Lars", text)
 
     def test_format_sit_notes_disk_lag(self):
         text = format_sit(_sit(sci=5.6718, sci_src="last-flight", sci_disk=1.4718))

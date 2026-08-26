@@ -26,7 +26,6 @@ from missions import (
     seated_id,
     seated_logs_dir,
     seated_science_path,
-    vab_kv,
 )
 from session import SessionError
 from world import (
@@ -41,8 +40,6 @@ from world import (
 
 LAST_FLIGHT = Path("docs/last-flight.md")
 LOCK = Path("docs/program/flight.lock")
-NOTE_TECH = Path("docs/program/note-tech.md")
-_LEGACY_NOTE_TECH = Path("docs/program/helm-tech.md")
 DESK_MD = Path("docs/program/desk.md")
 
 
@@ -389,36 +386,6 @@ def sci_delta(now: float | None, before: float | None) -> str:
     return f"{before:.4f} → {now:.4f} ({now - before:+.4f})"
 
 
-def _note_tech_path() -> Path | None:
-    if NOTE_TECH.is_file():
-        return NOTE_TECH
-    if _LEGACY_NOTE_TECH.is_file():
-        return _LEGACY_NOTE_TECH
-    return None
-
-
-def _last_note_tech() -> str:
-    path = _note_tech_path()
-    if path is None:
-        return ""
-    notes = [
-        ln.strip()
-        for ln in path.read_text(encoding="utf-8").splitlines()
-        if ln.startswith("- ")
-    ]
-    return _clip_note(notes[-1][2:] if notes else "")
-
-
-_NOTE_TECH_MAX = 160
-
-
-def _clip_note(text: str) -> str:
-    one = " ".join(str(text or "").split())
-    if len(one) <= _NOTE_TECH_MAX:
-        return one
-    return one[: _NOTE_TECH_MAX - 1] + "…"
-
-
 def bind_line() -> str:
     bits: list[str] = []
     try:
@@ -486,12 +453,12 @@ def leftover_science_lines(world: World, *, limit: int = 12) -> tuple[str, ...]:
 
 def build_sit(world: World | None = None) -> DeskSit:
     world = world or load_world()
-    vab = vab_kv()
-    capable = vab.get("capable", "?")
     try:
         craft = hangar_craft_name()
+        capable = "yes"
     except SessionError:
-        craft = vab.get("craft", "") or "(none)"
+        craft = "(none)"
+        capable = "no"
     sci_path = seated_science_path()
     card_text = sci_path.read_text(encoding="utf-8") if sci_path.is_file() else ""
     eids = card_science_ids(ticket=seated_fly_ticket())
@@ -551,7 +518,7 @@ def build_sit(world: World | None = None) -> DeskSit:
         last_exit=last["exit"],
         last_abort=last["abort"],
         review=review,
-        note_tech=_last_note_tech(),
+        note_tech="",
         f013=f013,
         stack=tuple(names),
         vessels=vessel_names,
@@ -620,8 +587,6 @@ def format_sit(sit: DeskSit) -> str:
         lines.append(f"hop_apo: {sit.hop_apo}")
     if sit.pay:
         lines.append(f"pay: {sit.pay}")
-    if sit.note_tech:
-        lines.append(f"note-tech: {_clip_note(sit.note_tech)}")
     lines.append(f"# leftover vessels n={len(sit.vessels)}")
     if sit.vessels:
         lines.extend(f"  {name}" for name in sit.vessels)

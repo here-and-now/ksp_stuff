@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -12,8 +11,6 @@ from tickets import (
     commander_for,
     fly_fields,
     list_tickets,
-    load_head,
-    needs_learn,
     packet_cmd,
     science_is_catalog,
     show_ticket,
@@ -313,11 +310,7 @@ def next_actions(
     needing_go = [t for t in fly_tickets if fly_fields(t).get("go") != "yes"]
     if needing_go:
         t = needing_go[0]
-        why = (
-            "campaign stop — batch Learn"
-            if needs_learn(t)
-            else "fly ticket needs go stamp"
-        )
+        why = "fly ticket needs go stamp"
         _hire("gene", [t], why)
         ready = {"inbox", "triage", "ready", "assigned"}
 
@@ -370,7 +363,13 @@ def next_actions(
         if batch:
             _hire(desk_name, batch, "ground queue")
     if not hires:
-        _hire("hank", [], "pad idle — no fly_ready, no leftover, no ground")
+        ops_rows = [
+            t
+            for t in list_tickets(open_only=True)
+            if t.get("type") == "ops" and _ready_status(t)
+        ]
+        if ops_rows:
+            _hire("hank", ops_rows, "ops ticket")
     return {
         "lock": "free",
         "pad": "idle",

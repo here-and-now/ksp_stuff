@@ -127,7 +127,12 @@ class TestFlyGate(unittest.TestCase):
         self.addCleanup(self._ids.stop)
 
     def test_missing_go_is_wait(self):
-        gate = fly_gate(sit=_sit(), plan={"phase": "hop"}, science_text=_FLYING)
+        gate = fly_gate(
+            sit=_sit(),
+            plan={"phase": "hop", "go": "yes"},
+            science_text=_FLYING,
+            ticket={"go": "", "payload": {"phase": "hop", "cli": "python main.py hop"}},
+        )
         self.assertEqual(gate.fly, "wait")
         self.assertIn("go", gate.reason)
 
@@ -319,7 +324,7 @@ class TestFlyGate(unittest.TestCase):
             ticket=None,
         )
         self.assertEqual(gate.fly, "wait")
-        self.assertIn("go", gate.reason)
+        self.assertIn("ticket", gate.reason)
         self.assertEqual(gate.commander, "none")
 
     def test_ticket_science_ids_skip_card(self):

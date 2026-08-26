@@ -103,18 +103,22 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
                     fly = seated_fly_ticket()
                     fid = str((fly or {}).get("id") or "")
                     if fid:
-                        attach_run(fid, jsonl, who="wernher")
+                        attach_run(fid, jsonl, who="hank")
                 except Exception:
                     log.debug("attach-run failed", exc_info=True)
         try:
-            person = current_pilot()
-            note = f"{stamp} {command} exit={exit_code}"
-            if abort:
-                note += f" abort={abort}"
-            note += f" → {archive.as_posix()}"
-            if review_path is not None:
-                note += f" review={review_path.as_posix()}"
-            append_log(person, note)
+            from tickets import commander_for, fly_fields, seated_fly_ticket
+
+            ff = fly_fields(seated_fly_ticket())
+            if commander_for(campaign=ff.get("campaign") or "none") != "none":
+                person = current_pilot()
+                note = f"{stamp} {command} exit={exit_code}"
+                if abort:
+                    note += f" abort={abort}"
+                note += f" → {archive.as_posix()}"
+                if review_path is not None:
+                    note += f" review={review_path.as_posix()}"
+                append_log(person, note)
         except Exception:
             log.debug("could not append crew log", exc_info=True)
     except Exception:
@@ -751,12 +755,6 @@ def main(argv: list[str] | None = None) -> int:
     note_p = sub.add_parser("note", help="Append a line to docs/program/loop.md")
     note_p.add_argument("who")
     note_p.add_argument("text", nargs="+")
-    nt = sub.add_parser(
-        "note-tech",
-        help="Commander → Lars/Gus/Wernher (docs/program/note-tech.md)",
-    )
-    nt.add_argument("desk", help="Lars|Gus|Wernher|Gene")
-    nt.add_argument("text", nargs="+")
     rev = sub.add_parser("review", help="Roll up a flight jsonl (no kRPC)")
     rev.add_argument("log", nargs="?", default=None, help="docs/missions/jebediah/logs/<stamp>-hop.jsonl")
     sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
@@ -868,12 +866,6 @@ def main(argv: list[str] | None = None) -> int:
 
         note(args.who, " ".join(args.text))
         return 0
-    if args.cmd == "note-tech":
-        from uplink import note_tech
-
-        path = note_tech(args.desk, " ".join(args.text), who="Jebediah")
-        print(f"note-tech {path}", flush=True)
-        return 0
     if args.cmd == "review":
         from review import latest_jsonl, write_review
 
@@ -907,7 +899,7 @@ def main(argv: list[str] | None = None) -> int:
         print(text, end="" if text.endswith("\n") else "\n")
         return 0
     if args.cmd == "brief":
-        from missions import seated_briefing_path, seated_id, sync_shim
+        from missions import seated_briefing_path, seated_id
         from uplink import note
 
         body = " ".join(args.text)
@@ -918,10 +910,6 @@ def main(argv: list[str] | None = None) -> int:
             encoding="utf-8",
         )
         note("Gene", body)
-        try:
-            sync_shim()
-        except Exception:
-            pass
         print("briefed", flush=True)
         return 0
     if args.cmd == "seat":

@@ -34,6 +34,7 @@ for _first, _slug in (
     ("Gus", "gus"),
     ("Lars", "lars"),
     ("Verena", "verena"),
+    ("Katherine", "katherine"),
 ):
     _SLUG[f"{_first} Grokman"] = _slug
     _SLUG[f"{_first} Kerman"] = _slug

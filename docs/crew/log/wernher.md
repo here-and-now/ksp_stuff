@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — org-rsi slice 2: packet skim desk+BRIEF; fly_gate tickets-only; hangar T-400 capable; kill board writer / lesson mint / sync_shim / note-tech CLI; attach-run who=hank; recover desk=hank. No Hangar. No hop. Never revert.
+
 - 2026-08-26 — org-rsi slice 1: unpin lessons/blocks/note-tech tests; `fly_gate` go is tickets-only (missing ticket waits). No Hangar. No hop. Never revert.
 
 - 2026-08-25 — T-467 id-prefix: `_next_id` prefix-by-type (science S-, fly M-, vehicle C-, else T-). Global N. History keeps T-. landing parse S/M/C. TYPES unchanged. No hop_factory. Never revert.

@@ -7,7 +7,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
-from crew import Person, _parse_kv, append_log
+from crew import Person, _parse_kv, append_log, slug_for
 
 
 class TestCrew(unittest.TestCase):
@@ -39,6 +39,10 @@ class TestCrew(unittest.TestCase):
             dest = log_dir / "gene.md"
             self.assertTrue(dest.is_file())
             self.assertIn("leftover recover", dest.read_text(encoding="utf-8"))
+
+    def test_katherine_slug(self):
+        self.assertEqual(slug_for("Katherine Grokman"), "katherine")
+        self.assertEqual(slug_for("Katherine Kerman"), "katherine")
 
 
 if __name__ == "__main__":

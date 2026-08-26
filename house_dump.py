@@ -5,21 +5,22 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from missions import (
+    seated_briefing_path,
+    seated_id,
+    seated_plan_path,
+    seated_science_path,
+)
 from tickets import (
     fly_fields,
     list_tickets,
     science_is_catalog,
     seated_fly_ticket,
-    show_ticket,
 )
 from world import TechNode, parse_tech_tree
 
 DESK = Path("docs/program/desk.md")
 SLATE = Path("docs/program/slate.md")
-SCIENCE = Path("docs/program/science.md")
-SEATED_SCIENCE = Path("docs/missions/jebediah/science.md")
-PLAN = Path("docs/missions/jebediah/plan.md")
-BRIEFING = Path("docs/missions/jebediah/briefing.md")
 _FALLBACK_STABILITY = ("stability", 18.0, ("engineering101", "basicRocketry"))
 _FALLBACK_GENERAL = ("generalRocketry", 20.0, ("basicRocketry",))
 _TREE_CANDIDATES = (
@@ -220,10 +221,10 @@ def format_seated_science(*, desk: dict[str, str] | None = None) -> str:
         if (t.get("payload") or {}).get("experiment_id")
     )
     lines = [
-        "# jebediah science dump (tickets)",
+        f"# {seated_id()} science dump (tickets)",
         "",
         "science: tickets",
-        f"flight: {d.get('seat') or 'jebediah'}",
+        f"flight: {d.get('seat') or seated_id()}",
         f"craft: {d.get('craft') or ''}",
         "recover_banks: yes",
         f"notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not live.",
@@ -255,7 +256,7 @@ def format_seated_science(*, desk: dict[str, str] | None = None) -> str:
 
 
 def render_plan(path: Path | None = None) -> str:
-    target = path or PLAN
+    target = path or seated_plan_path()
     fly = seated_fly_ticket() or {}
     ff = fly_fields(fly)
     raw = target.read_text(encoding="utf-8") if target.is_file() else ""
@@ -338,7 +339,7 @@ def render_briefing(*, desk: dict[str, str] | None = None) -> str:
             f"run={land.get('run') or '?'}."
         )
     return (
-        f"# Briefing — Gene → {d.get('seat') or 'jebediah'}\n"
+        f"# Briefing — Gene → {d.get('seat') or seated_id()}\n"
         "\n"
         f"Earth. PBC. `{fly.get('id') or 'none'}`. go: **{ff.get('go') or 'wait'}**. "
         f"campaign: **{ff.get('campaign') or 'none'}**.\n"
@@ -417,21 +418,20 @@ def render_slate(
 
 def render_all() -> list[str]:
     written: list[str] = []
-    sci = format_science_dump()
-    SCIENCE.write_text(sci if sci.endswith("\n") else sci + "\n", encoding="utf-8")
-    written.append(str(SCIENCE))
+    seated_sci = seated_science_path()
     seated = format_seated_science()
-    SEATED_SCIENCE.parent.mkdir(parents=True, exist_ok=True)
-    SEATED_SCIENCE.write_text(seated if seated.endswith("\n") else seated + "\n", encoding="utf-8")
-    written.append(str(SEATED_SCIENCE))
-    if PLAN.parent.is_dir():
-        PLAN.write_text(render_plan(), encoding="utf-8")
-        written.append(str(PLAN))
-    if BRIEFING.parent.is_dir():
-        BRIEFING.write_text(render_briefing(), encoding="utf-8")
-        written.append(str(BRIEFING))
-    if SLATE.is_file() or True:
-        SLATE.parent.mkdir(parents=True, exist_ok=True)
-        SLATE.write_text(render_slate(), encoding="utf-8")
-        written.append(str(SLATE))
+    seated_sci.parent.mkdir(parents=True, exist_ok=True)
+    seated_sci.write_text(seated if seated.endswith("\n") else seated + "\n", encoding="utf-8")
+    written.append(str(seated_sci))
+    plan = seated_plan_path()
+    if plan.parent.is_dir():
+        plan.write_text(render_plan(plan), encoding="utf-8")
+        written.append(str(plan))
+    brief = seated_briefing_path()
+    if brief.parent.is_dir():
+        brief.write_text(render_briefing(), encoding="utf-8")
+        written.append(str(brief))
+    SLATE.parent.mkdir(parents=True, exist_ok=True)
+    SLATE.write_text(render_slate(), encoding="utf-8")
+    written.append(str(SLATE))
     return written

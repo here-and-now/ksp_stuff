@@ -117,22 +117,16 @@ def vab_kv() -> dict[str, str]:
 
 
 def hangar_craft_name() -> str:
-    """Hangar name. Seated craft.md, then VAB, then mission. L-039 capable."""
+    """Hangar name from vehicle ticket capable:yes + payload.craft. Not vab.md."""
     from session import SessionError
+    from tickets import capable_hangar
 
-    kv = vab_kv()
-    cap = kv.get("capable", "").lower()
-    if cap != "yes":
+    prefer = _parse_kv(seated_craft_path()).get("craft", "").strip()
+    cap, name = capable_hangar(prefer=prefer)
+    if cap != "yes" or not name or name.startswith("("):
         raise SessionError(
-            f"VAB capable={cap or 'missing'} — no Hangar (L-039)"
+            f"vehicle capable={cap or 'missing'} — no Hangar"
         )
-    seated = _parse_kv(seated_craft_path())
-    name = (seated.get("craft") or kv.get("craft") or "").strip()
-    if not name or name.startswith("("):
-        meta = mission_meta()
-        name = (meta.get("craft") or "").strip()
-    if not name or name.startswith("("):
-        raise SessionError("no craft: on craft.md / vab.md / mission — VAB must name a file")
     return name
 
 
@@ -189,26 +183,6 @@ def write_current(*, flight: str, pilot: str, capcom: str | None = None) -> None
     )
 
 
-def sync_shim(flight_id: str | None = None) -> None:
-    """Copy seated dossier plan/brief onto docs/program/ so old readers match."""
-    fid = flight_id or seated_id()
-    plan = seated_plan_path(fid)
-    if not plan.is_file():
-        raise FileNotFoundError(f"no plan for {fid}: {plan}")
-    SHIM_PLAN.parent.mkdir(parents=True, exist_ok=True)
-    text = plan.read_text(encoding="utf-8")
-    if not text.startswith("#"):
-        text = f"# Seated {fid}. Canonical: {plan.as_posix()}\n" + text
-    elif "Canonical:" not in text.split("\n", 1)[0]:
-        lines = text.splitlines()
-        lines[0] = f"# Seated {fid}. Canonical: {plan.as_posix()}"
-        text = "\n".join(lines) + ("\n" if text.endswith("\n") else "")
-    SHIM_PLAN.write_text(text if text.endswith("\n") else text + "\n", encoding="utf-8")
-    brief = seated_briefing_path(fid)
-    if brief.is_file():
-        SHIM_BRIEF.write_text(brief.read_text(encoding="utf-8"), encoding="utf-8")
-
-
 def seat(who: str) -> str:
     """Point current.md at a mission. Refuses lost and a live flight."""
     held = lock_held()
@@ -226,7 +200,6 @@ def seat(who: str) -> str:
         raise RuntimeError(f"cannot seat {fid} — status {meta.get('status')}")
     pilot = meta.get("pilot") or seated_pilot()
     write_current(flight=fid, pilot=pilot)
-    sync_shim(fid)
     write_index()
     log.info("seated %s (%s)", fid, pilot)
     return fid

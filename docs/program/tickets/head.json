@@ -209,7 +209,7 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
-    "vab-helper": 24,
+    "vab-helper": 27,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
@@ -432,13 +432,25 @@
     "C-534": {
       "assignee": "",
       "blockers": [],
+      "capable": "yes",
       "category": "craft",
       "created": "2026-08-26T19:36:51Z",
       "desk": "gus",
       "evidence": [],
       "fingerprint": "bigger-dv",
       "id": "C-534",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:46:57Z",
+            "claim": "capable yes kspstuff-hop-valiant-proc-redstone-pbc. craft fuel FED last tank attN bottom=Valiant. Clone C-504 + liquid --count 4 --diameter 1.25 --length 1.222 (1500 L / 675 kero each, 2700 kero; ProceduralPartsTank1500L generalRocketry spent) + chute --kind cone restage + strip 3x trussPiece1x + textureSet RedstoneStripes. Engine istg=0 sqor=0 first fire; chute istg=1 sqor=0 last. Tanks/sas/engine Heaviest/rigid. No girders. No HS (C-477 blob). Nylon RC_cone 50m payload-side OKTO. Omni SurfAntenna gain=2. Cape 64 bps. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft; geiger e101 unlocked=yes on_craft; 2HOT start on_craft TELEMETRY/LITE OKTO HD=1 + 4xEngineer7500 HD=0.5. Thin tape T-284. Helper T-539 vab-helper: liquid hardcodes PlainWhite and still comments volumeMax 0.8; no girders -n 0 strip. fingerprint bigger-dv. Did not Hangar C-477 / t7-chute Mk16 / T-362 lite. C-504 shelf. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
@@ -449,7 +461,7 @@
       "tags": [],
       "title": "Push generalRocketry: one proc hang, no girders, bigger tanks, Redstone stripes",
       "type": "vehicle",
-      "updated": "2026-08-26T19:36:51Z"
+      "updated": "2026-08-26T19:46:57Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -21418,6 +21430,22 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T19:46:57Z",
+            "claim": "Hang last-write: this-tree pad is C-534 kspstuff-hop-valiant-proc-redstone-pbc capable yes. craft fuel FED. 4x proc 1.25x1.222 RedstoneStripes 1500 L 2700 kero, no girders, silk RC_cone, Valiant first fire. C-504 loft-pbc stays shelf. Did not Hangar. Did not restamp C-477. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T19:47:05Z",
+            "claim": "still loft-only. Tape six C-504 hops apo 249-270 km sit=sub_orbital apex horiz 39-84 m/s vs circular 7.75-7.82 km/s; vac \u0394v 3.5-3.7 km/s. generalRocketry 1500 L/tank: 7x1500 Valiant TWR~0.78 does not loft; 7x1500 Reliant (215 kN, 1 ign) TWR~1.7 vac \u0394v~4.4-4.6 km/s ballistic apo ~400-500 km still Pe through planet. 4x1500 (~6 kL) same 249-270 km family. Reliant buys TWR not circularize. Terrier after 45.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -21433,8 +21461,87 @@
       ],
       "title": "innovate C-504 successor \u2014 sit hang bind recover meco",
       "type": "ops",
-      "updated": "2026-08-26T19:44:46Z"
+      "updated": "2026-08-26T19:47:05Z"
+    },
+    "T-537": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T19:46:14Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-537",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "liquid_cylinder hardcodes PlainWhite and volumeMax 0.8 kL \u2014 need --texture RedstoneStripes and 1500 L (generalRocketry)",
+      "type": "systems",
+      "updated": "2026-08-26T19:46:14Z"
+    },
+    "T-538": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T19:46:14Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-538",
+      "payload": {
+        "count": 25
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI vab-helper \u00d725",
+      "type": "rsi",
+      "updated": "2026-08-26T19:46:14Z"
+    },
+    "T-539": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T19:46:44Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-539",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:46:57Z",
+            "claim": "Gap: craft liquid hardcodes textureSet=PlainWhite; liquid_cylinder comment still says volumeMax 0.8 kL (1500 L is generalRocketry \u2014 now spent). No CLI to strip girders (girders -n N only adds). C-534 used clone C-504 + liquid 4x1.25x1.222 + chute cone + Craft API drop trussPiece1x + textureSet RedstoneStripes. Need: liquid --texture RedstoneStripes, volumeMax 1.5 legal, girders -n 0 / --strip.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "craft liquid --texture RedstoneStripes; volumeMax 1.5; girders -n 0 strip",
+      "type": "systems",
+      "updated": "2026-08-26T19:46:57Z"
     }
   },
-  "updated": "2026-08-26T19:44:46Z"
+  "updated": "2026-08-26T19:47:05Z"
 }

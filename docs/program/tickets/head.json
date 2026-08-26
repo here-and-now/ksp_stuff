@@ -208,14 +208,14 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
-    "vab-helper": 19,
+    "vab-helper": 20,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
     "C-477": {
       "assignee": "",
       "blockers": [],
-      "capable": "no",
+      "capable": "yes",
       "category": "craft",
       "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
       "created": "2026-08-26T10:48:37Z",
@@ -320,6 +320,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:51:12Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. craft fuel FED. Rebuilt clone T-430 + craft heatshield --payload. T-500 dish half 0.5 m (sas-hs 0.591 / hs-tank 0.8125; Hangar 15-14-43Z detonated 0.191 / 0.4125 sit=landed parts=10). Last tank attN bottom=Valiant. Engine istg=0 sqor=0 first fire. VAB dish bottomDiameter=0 Round3 Ablative 80. OKTO+RC_cone Nylon 50m minDeployment 2500. 7x proc 1.25x0.625 Default 2415 kero. Seated uncrewed craft.md. T-406 FED loft alt \u2014 do not Hangar 1.3 km shear. Do not Hangar t7-chute Mk16. Omni SurfAntenna gain=2. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO HD=1 + 3xEngineer7500 HD=0.5. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -335,7 +343,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T15:18:06Z"
+      "updated": "2026-08-26T15:51:12Z"
     },
     "T-001": {
       "assignee": "",
@@ -19781,13 +19789,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write vab-helper \u00d717 (stem 19): FED is not enough \u2014 collider-clear HS splice. Software T-498/T-500. Pad a fed hang.",
       "created": "2026-08-26T15:13:05Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-499",
       "payload": {
-        "count": 17
+        "count": 17,
+        "findings": [
+          {
+            "at": "2026-08-26T15:51:29Z",
+            "claim": "Practice last-write vab-helper \u00d717 (stem 19): FED is not enough \u2014 HS splice must leave collider clearance (T-500 Hangar 15-14-43Z detonated a FED SAS-HS-tank). --payload SAS-first tank is the FED path (T-498); tank-engine splice stays refused (T-497). craft fuel dump + insert_heatshield refuse still hold. CHARTER/PROTOCOL/BRIEF/GLOSSARY/gus/wernher patched. Software stays T-498/T-500 done. Did not Hangar. Did not take a new systems ticket.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19795,11 +19814,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI vab-helper \u00d717",
       "type": "rsi",
-      "updated": "2026-08-26T15:13:05Z"
+      "updated": "2026-08-26T15:51:29Z"
     },
     "T-500": {
       "assignee": "",
@@ -19880,13 +19899,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write leftover-ksc \u00d73 (stem 4): persist must survive a split wreck; skip-dup persist not broom; Debris is leftover. Code T-501. Never leftover-ksc.",
       "created": "2026-08-26T15:31:33Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "leftover-ksc",
       "id": "T-502",
       "payload": {
-        "count": 3
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-26T15:51:29Z",
+            "claim": "Practice last-write leftover-ksc \u00d73 (stem 4): persist must survive a split wreck. Recoverable ground Debris is leftover \u2014 leftover_ship must see it; wait recover by GUID. Harmony skip-dup is persist fail-open, not the broom. recover() is persist-then-KSC; flying rec=0 blobs that throw Kerbalism persist make recover a no-op \u2014 quit KSP that sit. Pad leftover 0 after Os restart; skip-dup loaded. CHARTER/PROTOCOL/OPS/GLOSSARY/hank/wernher patched. Software stays T-501. Never leftover-ksc. Did not Hangar.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19894,12 +19924,45 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI leftover-ksc \u00d73",
       "type": "rsi",
-      "updated": "2026-08-26T15:31:33Z"
+      "updated": "2026-08-26T15:51:30Z"
+    },
+    "T-503": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T15:51:13Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-503",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T15:51:45Z",
+            "claim": "test_c477_payload_hs_is_node_math_not_clearance still expects sas-hs 0.191 on crafts/kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. C-477 rebuilt T-500 heatshield --payload half 0.5 (sas-hs 0.591 / hs-tank 0.8125, FED, engine sqor=0, dish bottomDiameter=0). Pin clearance or freeze the 15-14-43Z exhibit. Did not edit .py. Did not Hangar.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "gus",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "VAB test still pins C-477 SAS-HS 0.191 after T-500 0.5 m clearance rebuild",
+      "type": "systems",
+      "updated": "2026-08-26T15:51:45Z"
     }
   },
-  "updated": "2026-08-26T15:40:27Z"
+  "updated": "2026-08-26T15:51:45Z"
 }

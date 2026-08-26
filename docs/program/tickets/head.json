@@ -600,13 +600,21 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T21:30:55Z",
+            "claim": "Kept this-hop S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc OKTO PAW. T-552 ascent loft still sits InSpaceLow. science-scan still unstarted ~2.00 (file 0.25 MB / 10 s / 0.03). LITE 10 s finishes; recover HD. Leftover High later. Lid-MECO 137 km High cannot pay \u2014 do not unbind; do not re-pin High 305 s. InSpaceLow thermo/TELEMETRY/goo capped; PresMat has no InSpaceLow sit. High/Forest/splash shelf: T-368 FlyingHigh goo leftover 0.293, T-069 Forest High TELEMETRY leftover 1.512, T-404 High PresMat 2.70. Bank 8.29 need ~36.71 for advRocketry 45; this-hop LITE ~2.00 still leaves ~34.71. Pulse Toggle in space. f013 LITE hosted OKTO PAW on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "probeCoreOcto_v2",
         "instrument": "OKTO PAW (probeCoreOcto_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop InSpaceLow LITE seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc OKTO PAW. Scan still unstarted kerbalism_LITE@InSpaceLow ~2.00. file 0.25 MB / 10 s / 0.03. C-534 loft-through 249-300 km InSpaceLow; lid-MECO 137 km High cannot pay. Do not re-pin High 305 s. Closed S-515 TELEMETRY InSpaceLow (capped) and S-516 InSpaceLow goo (capped). High/Forest/splash shelf not this-hop: T-368 FlyingHigh goo leftover 0.293, T-069 Forest High TELEMETRY 1.512, T-404 High PresMat 2.70. Bank 8.29 need ~36.71 for advRocketry 45. Not Water. Not Grasslands. Not Surface. recover HD 0.25 MB. recover_banks yes.",
+        "note": "this-hop InSpaceLow LITE seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc OKTO PAW. T-552 ascent loft still sits InSpaceLow. Scan still unstarted kerbalism_LITE@InSpaceLow ~2.00. file 0.25 MB / 10 s / 0.03. C-534 loft-through 249-300 km InSpaceLow; lid-MECO 137 km High cannot pay. Leftover High later. Do not re-pin High 305 s. Closed S-515 TELEMETRY InSpaceLow (capped) and S-516 InSpaceLow goo (capped). High/Forest/splash shelf not this-hop: T-368 FlyingHigh goo leftover 0.293, T-069 Forest High TELEMETRY 1.512, T-404 High PresMat 2.70. Bank 8.29 need ~36.71 for advRocketry 45. Not Water. Not Grasslands. Not Surface. recover HD 0.25 MB. recover_banks yes.",
         "on_craft": "yes",
         "part": "probeCoreOcto_v2",
         "recover_banks": "yes",
@@ -632,7 +640,7 @@
       ],
       "title": "InSpaceLow LITE unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T20:56:44Z"
+      "updated": "2026-08-26T21:30:55Z"
     },
     "S-515": {
       "assignee": "linus",
@@ -22186,6 +22194,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T21:30:55Z",
+            "claim": "bind: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 on C-534 OKTO PAW. Scan still unstarted ~2.00. T-552 ascent loft still sits InSpaceLow (249-300 km); LITE 10 s finishes; recover HD. Leftover High later \u2014 do not re-pin T-404 305 s. Thermo/TELEMETRY/goo InSpaceLow capped. f013 LITE hosted OKTO PAW on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ]
       },
@@ -22201,8 +22217,8 @@
       ],
       "title": "ascent profile now \u2014 sit hang bind recover meco for python main.py ascent",
       "type": "ops",
-      "updated": "2026-08-26T21:29:48Z"
+      "updated": "2026-08-26T21:30:55Z"
     }
   },
-  "updated": "2026-08-26T21:29:48Z"
+  "updated": "2026-08-26T21:30:55Z"
 }

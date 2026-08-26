@@ -56,12 +56,13 @@ loft-through apo 249–300 km sits InSpaceLow; LITE 10 s finishes;
 recover HD 0.25 MB. Lid-MECO apo 137 km is High — cannot pay LITE;
 do not unbind S-514; do not re-pin High 305 s. T-533: keep
 loft-through (apo>140 km). Closed S-516 InSpaceLow goo — capped
-(paid); YAML leftover 3.41 was stale. Closed S-515 TELEMETRY
-InSpaceLow — capped (paid). High / Forest / splash leftover stays
-shelf — keep an eye; do not unbind forever; not this-hop: T-368
-FlyingHigh goo leftover 1.57, T-069 Forest High TELEMETRY leftover
-1.512, T-404 High PresMat 2.70 (305 s cannot pay). Bank 7.02 need
-~37.98 for advRocketry 45. Not Water. Not Grasslands. Not Surface.
+(paid). Closed S-515 TELEMETRY InSpaceLow — capped (paid). Thermo
+InSpaceLow capped; PresMat has no InSpaceLow sit. High / Forest /
+splash leftover stays shelf — keep an eye; do not unbind forever;
+not this-hop: T-368 FlyingHigh goo leftover 0.293 (crumbs), T-069
+Forest High TELEMETRY leftover 1.512, T-404 High PresMat 2.70 (305 s
+cannot pay). Bank 8.29 need ~36.71 for advRocketry 45. This-hop LITE
+~2.00 still leaves ~34.71. Not Water. Not Grasslands. Not Surface.
 Pulse Toggle in space. f013 LITE hosted OKTO PAW on_craft=yes.
 
 ## Pulse (Lars)

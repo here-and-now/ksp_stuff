@@ -1,7 +1,11 @@
 """Sounding block: shared helpers + parked hop-to-water / hop-splash.
 
-Factory inland (``python main.py hop``) lives in hop_factory. Coast
-physics 2–4× lives in physics_warp. Sit/biome Toggle lives in science.
+Orbit stacks are ``ascent.py`` (``python main.py ascent``). Live RF
+throttle is ``rf_throttle`` (independent, not UI MainThrottle). This
+module is parked for those rockets — do not grow an immortal factory
+here. Factory inland (``python main.py hop``) still lives in
+hop_factory. Coast physics 2–4× lives in physics_warp. Sit/biome
+Toggle lives in science.
 
 Helpers name sit: lofted, burning, landed, splashed, recoverable.
 Unmanned deaf (known no radio) zeros the stick; pad-light aborts.
@@ -2268,7 +2272,8 @@ def run_on_vessel(
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars.
 
     Factory inland pulse lives in hop_factory (no water/splash flags).
-    This loop is parked hop-to-water / hop-splash only.
+    Orbit stacks live in ascent (``python main.py ascent``). This loop
+    is parked hop-to-water / hop-splash only.
 
     Leftover (did not light) with drive files or no Experiment modules
     skips a fresh start. A hop this process lit starts the flying card

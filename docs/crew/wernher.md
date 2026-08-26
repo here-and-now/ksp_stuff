@@ -47,6 +47,7 @@ puck; node offset is catalog), T-495 (`craft fuel` dump), T-497
 top; Stayputnik has no top; cone `srfAttach=0`; engine first fire,
 chute last), T-537 / T-539 (`craft liquid --texture`; volumeMax 1.5;
 `girders -n 0` strip). Sit-match flying vs InSpaceLow is T-517 (`control-blocks`).
+Orbit stacks are T-548 (`ascent.py` / `rf_throttle.py`; hop.py parked).
 Pad flies a **fed** hang (C-534). Do not write GameData. Pad-RF
 pulse is Lars `hop_factory_pad.py` (T-471) — hop light is plume, not
 ignitions 1→0. T-421 latch already living — do not retune

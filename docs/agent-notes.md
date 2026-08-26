@@ -529,8 +529,9 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 | `active_vessel` at KSC, nothing spawned | live (`None`) |
 | `launch_vessel` + recover, `launchable_vessels` | live |
 | `control.throttle`, `activate_next_stage`, `sas`, `pitch` | live |
+| RF live = `independentThrottlePercentage` (UI MainThrottle is the bar) | live |
 | throttle/pitch getter lag (1 physics tick) | live |
-| pad ignition = throttle then `activate_next_stage` | live |
+| pad ignition = independent live then `activate_next_stage` | live |
 | `auto_pilot.engaged`, `target_pitch/heading/roll`, `wait`, `error` | live |
 | AP `error` while disengaged | live (raises) |
 | AP engage clears SAS | live |
@@ -570,6 +571,12 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
 
 ## Log
 
+- **2026-08-26** — T-548: RF live is `independentThrottlePercentage`
+  / PAW Current Throttle (`rf_throttle.apply`). kRPC
+  `control.throttle` is the UI MainThrottle bar — not the burn.
+  `Engine.throttle` GET is `currentThrottle` (0 until lit). Enable
+  independent once; re-enable zeros the setpoint. Orbit stacks:
+  `python main.py ascent`.
 - **2026-08-25** — T-454: `Session(readonly=True)` connects
   `name=kspstuff-read`. GET only: Control / `game_scene` /
   `active_vessel` / `recover()` raise `ReadOnlyError`.

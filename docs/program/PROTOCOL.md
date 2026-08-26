@@ -184,9 +184,13 @@ without waiting for a miss. Flying-card Toggle at High lid is High, not InSpaceL
 legal). RF pad is **one sit** in `hop_factory_pad.py` — not a
 `_pad_*` per stamp. `pad.py` / `splash.py` / `blocks.md` stay pulse/phase.
 `hop.py` is parked water/splash + **shared** helpers that are
-actually shared. One immortal factory that remembers Flea, Hammer,
-4t, and splash-090 is not the way. Tests lock the **blocks**, not
-dead-hang envelopes. No stamp-named `_after_skip`.
+actually shared. Orbit stacks are `ascent.py` (`python main.py
+ascent`) from those blocks. RF live throttle is `rf_throttle.py`
+(`independentThrottlePercentage` / PAW Current Throttle) — kRPC
+`control.throttle` is the UI MainThrottle bar, not the burn. One
+immortal factory that remembers Flea, Hammer, 4t, and splash-090 is
+not the way. Tests lock the **blocks**, not dead-hang envelopes. No
+stamp-named `_after_skip`.
 
 **Engines (Os 2026-08-25 / T-456 / T-470):** ReStockPlus liquids are RF
 ullage + finite ignitions. Pad 1 g still lights. Throttle 0 then 1
@@ -194,7 +198,8 @@ is a restart. Desks verify **this hang** (cfg / ConfigCache / live
 module). Do **not** paste a part→N ignition table here or in spawn
 prompts. Confirmed pad light is **plume** / currentThrottle rising
 after the engine fires — not ignitions remaining 1→0, not kRPC
-`Engine.throttle` GET. Independent setpoint is the RF live. Staging
+`Engine.throttle` GET. Independent setpoint is the RF live
+(`rf_throttle.apply` — not UI MainThrottle). Staging
 a chute (or any empty-of-engine stage) is not hop light.
 Pad-dead-no-plume with a **fed** engine is Lars `hop_factory_pad.py`
 (`rf-ignition-ullage`) — not loft, not Wernher, not a GameData raise.

@@ -1,6 +1,7 @@
 """One flight segment per process. Gene names only ``NAMES``.
 
 Unknown names abort — Lars writes the block. Factory hop is ``hop``.
+Orbit stacks are ``python main.py ascent`` (not a Gene ``NAMES`` phase).
 ``hop-to-water`` / ``hop-splash`` are retired Gene names; loops stay in
 ``hop.py`` and the matching ``python main.py`` commands.
 """

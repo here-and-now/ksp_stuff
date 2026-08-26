@@ -78,7 +78,7 @@ hire (Lars + Gus + Linus on **that** ticket; `docs/program/agree.md`).
 `--tag constellation` / `ops --tag ask --desk eleanor` pulls Eleanor.
 At most tag `learn` — no new TYPE. Plan is not feedback (no
 `--fingerprint` required).
-Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q`.
+Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_ascent.py tests/test_hop.py tests/test_pad_science.py -q`.
 Lars packet `read:` third path is the **named helper file**
 (`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland compose,
 `pad.py` pad dwell, `science.py` sit-match). Not the immortal factory

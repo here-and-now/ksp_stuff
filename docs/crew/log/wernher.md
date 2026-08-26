@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-548/T-549: hop.py parked for orbit; `rf_throttle.py` live is independentThrottlePercentage not UI MainThrottle; `ascent.py` compose (`python main.py ascent`) Valiant loft now / Terrier two-stage later. Tests lock blocks. No hop_factory. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-541 DESKS eleanor; format_next/format_packet no reasoning= so Hank inherits TUI. T-539 craft liquid --texture RedstoneStripes, 1500 L legal, girders -n 0 strip. T-501 leftover Debris/GUID wait already on disk. No Hangar. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-511 engine-dead vs shear: telem flags + Tape envelope + last-flight classify_abort. 16-05-34Z throttle 1 thrust 0 fuel 2038 parts=30 is engine-dead; parts 30→9 is the funeral. Compact windows carry thrust. No hop.py. Never leftover-ksc. Never revert.

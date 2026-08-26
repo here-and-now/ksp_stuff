@@ -264,6 +264,51 @@ def cmd_hangar(session: Session, args: argparse.Namespace) -> int:
         release_lock()
 
 
+def cmd_ascent(session: Session, args: argparse.Namespace) -> int:
+    from emergencies import Ctx, call as emergency_call
+    from flightlog import WriterLockError, release_lock, start
+    from ascent import run_ascent
+    from phases import OffPlan
+
+    t0 = time.monotonic()
+    try:
+        start("ascent", crew="", session=session)
+
+        def abort() -> bool:
+            if args.timeout <= 0:
+                return False
+            return time.monotonic() - t0 > args.timeout
+
+        try:
+            result = run_ascent(session, on_log=_log, abort=abort)
+        except OffPlan as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"OFFPLAN {exc}")
+            write_handoff(command="ascent", exit_code=4, abort=f"OFFPLAN {exc}")
+            return 4
+        except MissionAbort as exc:
+            emergency_call("hold", Ctx(session=session))
+            _log(f"ABORT {exc}")
+            write_handoff(command="ascent", exit_code=2, abort=str(exc))
+            return 2
+        except SessionError as exc:
+            _log(f"SESSION {exc}")
+            write_handoff(command="ascent", exit_code=1, abort=f"SESSION {exc}")
+            return 1
+        _log(result)
+        write_handoff(command="ascent", exit_code=0)
+        return 0
+    except WriterLockError as exc:
+        _log(f"SESSION {exc}")
+        return 1
+    except SessionError as exc:
+        _log(f"SESSION {exc}")
+        write_handoff(command="ascent", exit_code=1, abort=f"SESSION {exc}")
+        return 1
+    finally:
+        release_lock()
+
+
 def cmd_hop(session: Session, args: argparse.Namespace) -> int:
     from emergencies import Ctx, call as emergency_call
     from flightlog import WriterLockError, release_lock, start
@@ -639,6 +684,16 @@ def main(argv: list[str] | None = None) -> int:
     hop_p = sub.add_parser(
         "hop",
         help="Sounding: Hangar Flea uncrewed, light, FlyingLow card, recover HD",
+    )
+    ascent_p = sub.add_parser(
+        "ascent",
+        help="Orbit stack: Hangar seated craft, RF live throttle, loft or two-stage",
+    )
+    ascent_p.add_argument(
+        "--timeout",
+        type=float,
+        default=0.0,
+        help="Wall-clock abort (seconds). 0 = none (default).",
     )
     hop_p.add_argument(
         "--timeout",
@@ -1145,6 +1200,8 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_hangar(session, args)
         if args.cmd == "hop":
             return cmd_hop(session, args)
+        if args.cmd == "ascent":
+            return cmd_ascent(session, args)
         if args.cmd == "warp-batch":
             return cmd_warp_batch(session, args)
         if args.cmd == "splash":

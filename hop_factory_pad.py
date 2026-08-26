@@ -10,7 +10,9 @@ MainThrottle 1 is the burn. Commanded throttle 0 after loft is MECO.
 Throttle 0 then 1 is a restart. Do not gate stage on GET
 currentThrottle. hop light logs ignitions remaining, independent
 setpoint, and currentThrottle. RF pad: hop light is the product —
-abort after confirmed light. Do not loft. Forest / Grasslands: same.
+abort after confirmed light. abort_pad cut is MainThrottle only;
+zero independent setpoint and engine active before process exit.
+Do not loft. Forest / Grasslands: same.
 """
 
 from __future__ import annotations
@@ -250,34 +252,64 @@ def _rf_pad_sit(vessel: object) -> bool:
     return False
 
 
-def _abort_rf_light(
-    vessel: object, on_log: Callable[[str], None] | None
-) -> None:
-    """RF pad: hop light is the product. Cut, recover, abort. Do not loft."""
-    from emergencies import Ctx, call
-
-    H._say("hop abort rf-light-test", on_log)
-    try:
-        call("abort_pad", Ctx(session=None, vessel=vessel))
-    except Exception:
-        try:
-            control = getattr(vessel, "control", None)
-            if control is not None:
-                control.throttle = 0.0
-        except Exception:
-            pass
-    raise MissionAbort("rf-light-test")
-
-
-def _write_engine_setpoint(engine: object) -> None:
-    """Write independentThrottlePercentage 100 after enable. Not a re-enable."""
+def _write_engine_setpoint(engine: object, percent: float = 100.0) -> None:
+    """Write independentThrottlePercentage. 100 is the ignition meet."""
     for mod in _engine_modules(engine):
         setter = getattr(mod, "set_field_float_by_id", None)
         if callable(setter):
             try:
-                setter("independentThrottlePercentage", 100.0)
+                setter("independentThrottlePercentage", float(percent))
             except Exception:
                 pass
+
+
+def _cut_pad_engine(vessel: object) -> None:
+    """Kill the pad engine before the hop pid exits.
+
+    abort_pad cut is control.throttle. Independent 1 after hop light
+    keeps the engine burning with no writer. MainThrottle 0 first,
+    then independent setpoint 0, then engine active False. Forest /
+    Grasslands: same.
+    """
+    try:
+        control = getattr(vessel, "control", None)
+        if control is not None:
+            control.throttle = 0.0
+    except Exception:
+        pass
+    for eng in _pad_engines(vessel):
+        try:
+            eng.throttle = 0.0
+        except Exception:
+            pass
+        _write_engine_setpoint(eng, 0.0)
+        try:
+            eng.independent_throttle = False
+        except Exception:
+            pass
+        try:
+            eng.active = False
+        except Exception:
+            pass
+
+
+def _abort_rf_light(
+    vessel: object, on_log: Callable[[str], None] | None
+) -> None:
+    """RF pad: hop light is the product. Cut engine, recover, abort.
+
+    Do not loft. Kill independent before abort_pad — MainThrottle 0
+    is not the burn when independent is still the meet.
+    """
+    from emergencies import Ctx, call
+
+    H._say("hop abort rf-light-test", on_log)
+    _cut_pad_engine(vessel)
+    try:
+        call("abort_pad", Ctx(session=None, vessel=vessel))
+    except Exception:
+        _cut_pad_engine(vessel)
+    raise MissionAbort("rf-light-test")
 
 
 def _engine_throttle(engine: object) -> float:
@@ -394,8 +426,8 @@ def _pad_light(
     Throttle 0 then 1 is a restart. Pad 1 g still lights when the
     command is 1 at ignition. hop light logs ignitions remaining,
     setpoint, currentThrottle. RF pad: hop light is the product —
-    abort after confirmed light. Do not loft. Forest / Grasslands:
-    same.
+    abort after confirmed light. Cut engine before process exit.
+    Do not loft. Forest / Grasslands: same.
     """
     if deaf:
         H._light(vessel, on_log, snap)

@@ -26,26 +26,31 @@ hire (three in parallel on that ticket, then split).
 
 ## Hang (Gus)
 
-This tree: C-534 `kspstuff-hop-valiant-proc-redstone-pbc`. FED (last
-tank attN bottom=Valiant). Nylon `RC_cone` 50 m payload-side on OKTO
-(Stayputnik has no top; cone `srfAttach=0`). Engine `istg=0` `sqor=0`
-first fire; chute `istg=1` `sqor=0` last. No girders. 4× proc
-1.25×1.222 Cylinder `RedstoneStripes` 1500 L Default 2700 kero
-(`ProceduralPartsTank1500L` generalRocketry spent) vs C-504 7×767 +
-3× girder 2415 kero. Stack Heaviest/rigid. No HS. Recover: silk.
-`capable: yes`. Pad until `advRocketry` 45. 268 km loft is not orbit —
-Pe on the ground. Silk recover banks InSpaceLow toward 45. C-504
-`kspstuff-hop-valiant-proc-loft-pbc` stays shelf, not pad. Do not
-idle Reliant / Thumper / TD-06 alts this sit — they stay shelf. C-477
-blob is not capable. t7-wheel-pbc lithobrake is not recover. T-428 /
-T-430 stay alts. Girderless lite T-362 is not this hang.
+This tree pad: C-534 `kspstuff-hop-valiant-proc-redstone-pbc`. FED
+(last tank attN bottom=Valiant). Nylon `RC_cone` 50 m payload-side on
+OKTO (Stayputnik has no top; cone `srfAttach=0`). Engine `istg=0`
+`sqor=0` first fire; chute `istg=1` `sqor=0` last. No girders. 4×
+proc 1.25×1.222 Cylinder `RedstoneStripes` 1500 L Default 2700 kero.
+Stack Heaviest/rigid. No HS. Recover: silk. `capable: yes`. Pad until
+`advRocketry` 45. 268 km loft is not orbit — Pe on the ground. Did
+not restamp C-534. Did not Hangar C-534.
 
-After `advRocketry` 45: Terrier (LV-909) vacuum hang — two-stage
-atmospheric first (Valiant / Reliant) + Terrier circularize. Orbit is
-Pe above ~140 km High lid, not apo 268 km. rec=no is honest if
-orbiting. Do not write or Hangar that stack before the node. Do not
-Hangar C-477. Leftover High / Forest / splash hangs wait a living
-orbit.
+Orbit donor on disk, not pad: C-544
+`kspstuff-hop-valiant-proc-orbit-pbc`. Clone C-534 + 2 extra
+`sasModule` (3 total, Heaviest/rigid) for FAR heading. Same Valiant
+5° gimbal (cfg; FAR ×1.5 may read 7.5 — tape still HDG 297). Same
+4×1500 L Redstone 2700 kero, no girders, no HS, silk, engine first
+fire. `craft fuel` FED. Terrier `liquidEngine3_v2` **LOCKED**
+`advRocketry` 45 — not on the file; do not Hangar a locked part.
+Reliant has no gimbal. Swivel gimbal 3° is worse. `capable: no`
+(first-stage donor, not two-stage circularize). Helper T-546:
+two-stage compose (extra wheel CLI, proc decoupler + upper tanks +
+Terrier after unlock; `liquid` must not flatten the split; staging
+Valiant first / decoupler / Terrier / chute last). After 45: splice
+Terrier vacuum upper, Pe above ~140 km High lid. rec=no is honest if
+orbiting. Do not Hangar the donor until the node. Do not Hangar
+C-477. C-504 loft-pbc stays shelf. Leftover High / Forest / splash
+hangs wait a living orbit.
 
 ## Bind (Linus)
 

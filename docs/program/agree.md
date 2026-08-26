@@ -44,15 +44,16 @@ orbit.
 ## Bind (Linus)
 
 This-hop: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 (file,
-scan still unstarted) + S-516 mysteryGoo InSpaceLow leftover
-641/0.18/3.41 seq1 (sample, silk recover). Envelope Shores loft
-~268 km is InSpaceLow every hop. Unbound S-515 TELEMETRY InSpaceLow
-(capped, paid). LITE 10 s finishes. Goo leftover 2.590/6.000
-remaining ~364 s may not finish a ~300 s coast — leftover still
-pays if complete; recover the can (429 MB). T-368 High goo same eid
-unbound. T-404 High PresMat unbound. T-069 Forest High TELEMETRY
-unbound (Shores). Not Water. Not Grasslands. Not Surface. Pulse
-Toggle in space. f013 Goo start on_craft; LITE hosted OKTO PAW.
+scan still unstarted). Envelope Shores loft ~268 km is InSpaceLow
+every hop. LITE 10 s finishes; recover HD 0.25 MB. Closed S-516
+InSpaceLow goo — science-scan capped (paid); desk leftover gone.
+Closed S-515 TELEMETRY InSpaceLow — capped (paid). High / Forest /
+splash leftover stays shelf — keep an eye; do not unbind forever;
+not this-hop: T-368 FlyingHigh goo leftover 3.457, T-069 Forest
+High TELEMETRY leftover 1.512, T-404 High PresMat 2.70 (305 s
+cannot pay). Bank 5.13 need ~39.87 for advRocketry 45. Not Water.
+Not Grasslands. Not Surface. Pulse Toggle in space. f013 LITE
+hosted OKTO PAW on_craft=yes.
 
 ## Pulse (Lars)
 

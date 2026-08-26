@@ -18,7 +18,13 @@ import math
 from pathlib import Path
 from typing import Any
 
-from telem import classify_impact, format_landing, impact_speed, stack_shear
+from telem import (
+    classify_impact,
+    engine_dead,
+    format_landing,
+    impact_speed,
+    stack_shear,
+)
 
 _PAD = frozenset({"pre_launch", "prelaunch"})
 _DOWN = frozenset({"landed", "splashed"})
@@ -57,6 +63,9 @@ _COMPACT = (
     "root",
     "debris_n",
     "shear",
+    "engine_dead",
+    "thrust",
+    "available_thrust",
     "landing",
     "link",
     "snr",
@@ -396,7 +405,9 @@ def _kin(row: dict[str, Any] | None) -> dict[str, Any]:
         "parts_n": src.get("parts_n"),
         "root": src.get("root") or "",
         "shear": bool(src.get("shear")) if src.get("shear") is not None else None,
+        "engine_dead": bool(src.get("engine_dead") or engine_dead(src)) or None,
         "throttle": _round(src.get("throttle"), 2),
+        "thrust": _round(src.get("thrust")),
         "fuel": _round(src.get("fuel")),
         "biome": src.get("biome") or "",
         "lat": _round(src.get("lat"), 4),
@@ -526,6 +537,13 @@ class Tape:
                 break
         if not shear:
             shear = any(bool(r.get("shear")) for r in states)
+        dead = False
+        prev_state: dict[str, Any] | None = None
+        for row in states:
+            if engine_dead(row, prev_state) or row.get("engine_dead"):
+                dead = True
+                break
+            prev_state = row
         silk = _recovered_silk(last, landing_row)
         rec_sit = ""
         if recover_row:
@@ -634,9 +652,12 @@ class Tape:
             "root": (last or {}).get("root") or "",
             "debris_n": (last or {}).get("debris_n"),
             "shear": shear,
+            "engine_dead": dead,
             "link": (last or {}).get("link"),
             "via": (last or {}).get("via") or "",
-            "events": kinds + (["shear"] if shear and "shear" not in kinds else []),
+            "events": kinds
+            + (["engine-dead"] if dead and "engine-dead" not in kinds else [])
+            + (["shear"] if shear and "shear" not in kinds else []),
         }
 
     def window(
@@ -864,7 +885,8 @@ def format_envelope(row: dict[str, Any]) -> str:
     if mass_pad is not None and mass_last is not None:
         mass_s = f"{_fmt(mass_pad)}→{_fmt(mass_last)}"
     parts_s = "?" if parts_n is None else str(parts_n)
-    lines.append(f"stack: mass={mass_s} parts={parts_s} shear={shear_s}")
+    dead_s = " engine-dead=yes" if row.get("engine_dead") else ""
+    lines.append(f"stack: mass={mass_s} parts={parts_s} shear={shear_s}{dead_s}")
     kinds = row.get("events") or []
     if kinds:
         lines.append("events: " + ",".join(str(k) for k in kinds))

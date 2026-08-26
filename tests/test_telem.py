@@ -16,8 +16,10 @@ from tape import Tape, cmd_telem, envelope, format_envelope
 from telem import (
     EventLog,
     Telem,
+    classify_abort,
     classify_impact,
     comms_via,
+    engine_dead,
     format_landing,
     format_snapshot,
     gates,
@@ -1495,6 +1497,188 @@ class TestStackShear(unittest.TestCase):
         self.assertIn("shear=yes", text)
         self.assertIn("mass=", text)
         self.assertIn("broken=none", text)
+
+
+class TestEngineDead(unittest.TestCase):
+    def test_throttle_on_no_plume_fuel_left_is_dead(self):
+        cur = {
+            "situation": "flying",
+            "throttle": 1.0,
+            "thrust": 0.0,
+            "fuel": 2038.0,
+            "parts_n": 30,
+        }
+        self.assertTrue(engine_dead(cur))
+        self.assertIn(
+            "engine-dead",
+            gates(
+                Snapshot(
+                    situation="flying",
+                    throttle=1.0,
+                    thrust=0.0,
+                    fuel=2038.0,
+                    parts_n=30,
+                    engine_dead=True,
+                )
+            ),
+        )
+
+    def test_pad_and_coast_and_empty_are_not_dead(self):
+        self.assertFalse(
+            engine_dead(
+                {
+                    "situation": "pre_launch",
+                    "throttle": 1.0,
+                    "thrust": 0.0,
+                    "fuel": 2000.0,
+                    "parts_n": 30,
+                }
+            )
+        )
+        self.assertFalse(
+            engine_dead(
+                {
+                    "situation": "flying",
+                    "throttle": 0.0,
+                    "thrust": 0.0,
+                    "fuel": 2000.0,
+                    "parts_n": 30,
+                }
+            )
+        )
+        self.assertFalse(
+            engine_dead(
+                {
+                    "situation": "flying",
+                    "throttle": 1.0,
+                    "thrust": 0.0,
+                    "fuel": 0.0,
+                    "parts_n": 30,
+                }
+            )
+        )
+        self.assertFalse(
+            engine_dead(
+                {
+                    "situation": "flying",
+                    "throttle": 1.0,
+                    "thrust": 89000.0,
+                    "fuel": 2000.0,
+                    "parts_n": 30,
+                }
+            )
+        )
+
+    def test_parts_drop_this_pulse_is_not_dead(self):
+        prev = {
+            "situation": "flying",
+            "throttle": 1.0,
+            "thrust": 0.0,
+            "fuel": 2038.0,
+            "parts_n": 30,
+        }
+        cur = {
+            "situation": "flying",
+            "throttle": 1.0,
+            "thrust": 0.0,
+            "fuel": 2038.0,
+            "parts_n": 9,
+        }
+        self.assertTrue(engine_dead(prev))
+        self.assertFalse(engine_dead(cur, prev))
+
+    def test_classify_abort_prefers_dead_over_shear(self):
+        states = [
+            {
+                "kind": "state",
+                "situation": "flying",
+                "throttle": 1.0,
+                "thrust": 0.0,
+                "fuel": 2038.0,
+                "parts_n": 30,
+            },
+            {
+                "kind": "state",
+                "situation": "flying",
+                "throttle": 1.0,
+                "thrust": 0.0,
+                "fuel": 2038.0,
+                "parts_n": 9,
+                "shear": True,
+            },
+        ]
+        self.assertEqual(classify_abort("shear", states), "engine-dead")
+        self.assertEqual(classify_abort("not recoverable", states), "engine-dead")
+        self.assertEqual(
+            classify_abort("OFFPLAN thrust 0 with fuel left", states),
+            "engine-dead",
+        )
+        self.assertEqual(classify_abort("timeout", states), "timeout")
+
+    def test_classify_abort_keeps_shear_when_still_thrusting(self):
+        states = [
+            {
+                "kind": "state",
+                "situation": "flying",
+                "throttle": 1.0,
+                "thrust": 89000.0,
+                "fuel": 400.0,
+                "parts_n": 30,
+            },
+            {
+                "kind": "state",
+                "situation": "flying",
+                "throttle": 1.0,
+                "thrust": 80000.0,
+                "fuel": 380.0,
+                "parts_n": 9,
+                "shear": True,
+            },
+        ]
+        self.assertEqual(classify_abort("shear", states), "shear")
+
+    def test_live_read_flags_engine_dead_before_shear(self):
+        vessel = _Vessel(alt=900.0, sit="flying", speed=80.0, fuel=2038.0)
+        vessel.control.throttle = 1.0
+        vessel.thrust = 0.0
+        vessel.available_thrust = 0.0
+        vessel.mass = 6160.0
+        core = type("Part", (), {"name": "probeCoreSphere.v2", "modules": []})()
+        tank = type("Part", (), {"name": "proceduralTank", "modules": []})()
+        vessel.parts = type("P", (), {"all": [core, tank], "root": core})()
+        events = EventLog()
+        with Telem(_Session(vessel), events=events) as telem:
+            first = telem.read()
+            vessel.mass = 400.0
+            vessel.parts = type("P", (), {"all": [core], "root": core})()
+            second = telem.read()
+        self.assertTrue(first.engine_dead)
+        self.assertIn("engine-dead", first.flags)
+        self.assertEqual(first.parts_n, 2)
+        self.assertFalse(first.shear)
+        self.assertTrue(second.engine_dead)
+        self.assertTrue(second.shear)
+        hits = [e for e in events.events if e.get("event") == "engine-dead"]
+        self.assertEqual(len(hits), 1)
+
+    def test_160534_tape_names_engine_dead_not_shear(self):
+        path = _tape_log("2026-08-26T16-05-34Z-hop.jsonl")
+        if not path.is_file():
+            self.skipTest(f"missing {path}")
+        env = envelope(path)
+        text = format_envelope(env)
+        self.assertTrue(env["engine_dead"])
+        self.assertFalse(env["shear"])
+        self.assertIn("engine-dead", env["events"])
+        self.assertIn("engine-dead=yes", text)
+        self.assertIn("shear=no", text)
+        self.assertEqual(classify_abort("shear", path), "engine-dead")
+        self.assertEqual(classify_abort("not recoverable", env), "engine-dead")
+        tape = Tape(path)
+        air = tape.window("airborne")
+        thrusts = [r.get("thrust") for r in air["rows"] if "thrust" in r]
+        self.assertTrue(thrusts)
+        self.assertTrue(any(t == 0 or t == 0.0 for t in thrusts))
 
 
 class TestWhere(unittest.TestCase):

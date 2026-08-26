@@ -406,6 +406,32 @@ class TestShipEnvelope(unittest.TestCase):
         self.assertIn("plume: yes", lit)
         self.assertIn("thrust: 12", lit)
 
+    def test_envelope_from_snapshot_engine_dead(self):
+        from telem import Snapshot
+
+        env = envelope_from_snapshot(
+            Snapshot(
+                heading=299.0,
+                wreck=False,
+                throttle=1.0,
+                thrust=0.0,
+                fuel=2038.0,
+                parts_n=30,
+                engine_dead=True,
+                flags=("engine-dead",),
+            ),
+            as_of="2026-08-26T16:05Z",
+        )
+        self.assertTrue(env["engine_dead"])
+        self.assertEqual(env["throttle"], 1.0)
+        self.assertEqual(env["thrust"], 0.0)
+        self.assertIs(env["plume"], False)
+        text = format_ship(env)
+        self.assertIn("engine_dead: yes", text)
+        self.assertIn("throttle: 1", text)
+        self.assertIn("plume: no", text)
+        self.assertIn("parts_n: 30", text)
+
     def test_format_ship_link_no(self):
         from telem import Snapshot
 

@@ -80,6 +80,12 @@ IMPACT_SOFT_MS = 15.0
 IMPACT_FIRM_MS = 50.0
 IMPACT_HARD_MS = 100.0
 G0 = 9.80665
+ENGINE_DEAD_THROTTLE = 0.5
+ENGINE_DEAD_THRUST_N = 1.0
+ENGINE_DEAD_FUEL_KG = 1.0
+_SHEAR_FUNERAL = frozenset(
+    {"", "shear", "wreck", "not recoverable", "abort", "abort_pad"}
+)
 _FUELS = (
     "ElectricCharge",
     "SolidFuel",
@@ -163,6 +169,7 @@ class Snapshot:
     root: str = ""
     debris_n: int | None = None
     shear: bool = False
+    engine_dead: bool = False
     available_thrust: float = float("nan")
     link: bool | None = None
     snr: float = float("nan")
@@ -451,6 +458,14 @@ def debris_count(session: Any) -> int | None:
     return n
 
 
+def _row_get(obj: Any, key: str) -> Any:
+    if obj is None:
+        return None
+    if isinstance(obj, dict):
+        return obj.get(key)
+    return getattr(obj, key, None)
+
+
 def stack_shear(prev: Any, cur: Any) -> bool:
     """Aero/attitude shear: stack mass/parts vanish without a stage.
 
@@ -460,9 +475,7 @@ def stack_shear(prev: Any, cur: Any) -> bool:
     """
 
     def _get(obj: Any, key: str) -> Any:
-        if isinstance(obj, dict):
-            return obj.get(key)
-        return getattr(obj, key, None)
+        return _row_get(obj, key)
 
     p_stage, c_stage = _get(prev, "stage"), _get(cur, "stage")
     try:
@@ -487,6 +500,106 @@ def stack_shear(prev: Any, cur: Any) -> bool:
     if math.isfinite(pf) and math.isfinite(cf) and pf > cf:
         dfuel = pf - cf
     return drop >= max(200.0, dfuel + 150.0)
+
+
+def engine_dead(cur: Any, prev: Any = None) -> bool:
+    """Airborne throttle on, no plume, fuel left, stack intact.
+
+    16-05-34Z MET 21 thrust=0 fuel 2038 parts=30 while throttle 1; hop later
+    named shear 30→9 at impact. Parts drop is the funeral. Pad sit is
+    pad-dead-no-plume. Coast throttle 0 is not this class. Empty tanks is
+    the empty-tanks gate. Missing thrust fail-closed.
+    """
+    sit = str(
+        _row_get(cur, "situation") or _row_get(cur, "sit") or ""
+    ).lower().replace("-", "_")
+    if sit not in _AIR:
+        return False
+    thr = _finite(_row_get(cur, "throttle"))
+    if not math.isfinite(thr) or thr < ENGINE_DEAD_THROTTLE:
+        return False
+    thrust = _finite(_row_get(cur, "thrust"))
+    if not math.isfinite(thrust) or thrust > ENGINE_DEAD_THRUST_N:
+        return False
+    fuel = _finite(_row_get(cur, "fuel"))
+    if not math.isfinite(fuel) or fuel <= ENGINE_DEAD_FUEL_KG:
+        return False
+    c_n = _row_get(cur, "parts_n")
+    try:
+        if c_n is not None and int(c_n) <= 0:
+            return False
+    except (TypeError, ValueError):
+        pass
+    p_n = _row_get(prev, "parts_n") if prev is not None else None
+    try:
+        if p_n is not None and c_n is not None and int(c_n) < int(p_n):
+            return False
+    except (TypeError, ValueError):
+        pass
+    return True
+
+
+def _abort_rows(src: Any) -> list[Any]:
+    if src is None:
+        return []
+    if isinstance(src, list):
+        return src
+    if isinstance(src, dict):
+        if src.get("kind") or src.get("situation") or src.get("sit"):
+            return [src]
+        return []
+    states = getattr(src, "states", None)
+    if callable(states):
+        try:
+            return list(states())
+        except Exception:
+            return []
+    try:
+        path = Path(src)
+    except TypeError:
+        return []
+    if not path.is_file():
+        return []
+    from tape import Tape
+
+    return Tape(path).states()
+
+
+def _is_envelope(src: Any) -> bool:
+    if not isinstance(src, dict):
+        return False
+    if isinstance(src.get("pad"), dict) or isinstance(src.get("last"), dict):
+        return True
+    return "samples" in src and "kind" not in src
+
+
+def classify_abort(abort: str | None, src: Any = None) -> str:
+    """Name engine-dead when tape had it before parts-drop shear.
+
+    last-flight abort shear / wreck / not recoverable is the funeral when
+    tape already had throttle 1 + thrust 0 + fuel left + parts intact.
+    """
+    raw = (abort or "").strip()
+    key = raw.lower()
+    dead = False
+    if _is_envelope(src):
+        dead = bool(src.get("engine_dead"))
+    else:
+        prev = None
+        for row in _abort_rows(src):
+            if engine_dead(row, prev):
+                dead = True
+                break
+            prev = row
+    if dead and (
+        key in _SHEAR_FUNERAL
+        or "shear" in key
+        or "thrust 0 with fuel left" in key
+    ):
+        return "engine-dead"
+    if "shear" in key:
+        return "shear"
+    return raw
 
 
 def _vessel_key(vessel: Any) -> tuple[Any, ...]:
@@ -595,6 +708,8 @@ def gates(snap: Snapshot) -> list[str]:
         out.append(f"reliability {snap.broken}")
     if snap.shear:
         out.append("shear")
+    if snap.engine_dead:
+        out.append("engine-dead")
     sit = snap.situation
     if snap.vessel is not None and snap.ec is not None and snap.ec <= 0:
         out.append("ec=0")
@@ -763,6 +878,8 @@ class Telem:
         self._prev_stage: int | None = None
         self._sheared: bool = False
         self._shear_emitted: bool = False
+        self._engine_dead: bool = False
+        self._engine_dead_emitted: bool = False
         self._vessel_key: tuple[Any, ...] | None = None
         self._slow_at: float = 0.0
         self._slow_cost_s: float = 0.0
@@ -1259,6 +1376,7 @@ class Telem:
             root=root,
             debris_n=debris_n,
             shear=bool(sheared),
+            engine_dead=False,
             available_thrust=avail,
             link=link,
             snr=snr,
@@ -1266,6 +1384,13 @@ class Telem:
             rate_bps=rate_bps,
             resources=resources,
         )
+        dead = bool(self._engine_dead) or engine_dead(
+            snap,
+            {"parts_n": self._prev_parts, "fuel": self._prev_fuel},
+        )
+        if dead:
+            self._engine_dead = True
+        snap.engine_dead = bool(self._engine_dead)
         reasons = gates(snap)
         snap.flags = tuple(reasons)
         now_hz = time.monotonic()
@@ -1284,6 +1409,18 @@ class Telem:
                 parts_n=parts_n,
                 root=root,
                 debris_n=debris_n,
+                met=met,
+                sit=sit,
+            )
+        dead_edge = bool(snap.engine_dead) and not self._engine_dead_emitted
+        if dead_edge:
+            self._engine_dead_emitted = True
+            self.events.emit(
+                "engine-dead",
+                throttle=throttle,
+                thrust=thrust,
+                fuel=fuel,
+                parts_n=parts_n,
                 met=met,
                 sit=sit,
             )
@@ -1311,7 +1448,11 @@ class Telem:
         self._prev_stage = stage
         if self._should_record():
             _record_run(
-                self.session, snap, rec_edge=rec_edge, shear_edge=shear_edge
+                self.session,
+                snap,
+                rec_edge=rec_edge,
+                shear_edge=shear_edge,
+                dead_edge=dead_edge,
             )
         return snap
 
@@ -1336,6 +1477,7 @@ def _record_run(
     *,
     rec_edge: bool = False,
     shear_edge: bool = False,
+    dead_edge: bool = False,
 ) -> None:
     """Write this pulse to the seated jsonl. No-op if flight has not started."""
     try:
@@ -1401,6 +1543,22 @@ def _record_run(
                 met=snap.met,
                 alt=snap.alt,
                 q=snap.q,
+            )
+        if dead_edge:
+            event(
+                "engine-dead",
+                (
+                    f"engine-dead throttle={snap.throttle:g} "
+                    f"thrust={snap.thrust:g} fuel={snap.fuel} "
+                    f"parts={snap.parts_n}"
+                ),
+                throttle=snap.throttle,
+                thrust=snap.thrust,
+                fuel=snap.fuel,
+                parts_n=snap.parts_n,
+                sit=snap.situation,
+                met=snap.met,
+                alt=snap.alt,
             )
     except Exception:
         log.debug("flightlog record failed", exc_info=True)

@@ -23,7 +23,7 @@ from pathlib import Path
 
 from hangar import game_scene
 from session import ConnectionSettings, Session, SessionError
-from telem import MissionAbort
+from telem import MissionAbort, classify_abort
 
 log = logging.getLogger("kspstuff")
 
@@ -62,6 +62,11 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
                 log_event("sci_bank", f"sci={sci:.4f}", sci=sci)
             except Exception:
                 log.debug("sci_bank event failed", exc_info=True)
+        jsonl = log_path()
+        try:
+            abort = classify_abort(abort, jsonl)
+        except Exception:
+            log.debug("abort class failed", exc_info=True)
         HANDOFF.parent.mkdir(parents=True, exist_ok=True)
         body = [
             f"command: {command}",
@@ -76,7 +81,6 @@ def write_handoff(*, command: str, exit_code: int, abort: str | None = None) -> 
         text = "\n".join(body)
         HANDOFF.write_text(text, encoding="utf-8")
         stamp = log_stamp() or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H%MZ")
-        jsonl = log_path()
         if jsonl is not None:
             archive = jsonl.with_suffix(".md")
         else:

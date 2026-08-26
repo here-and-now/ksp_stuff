@@ -3538,7 +3538,8 @@
         "docs/missions/uncrewed/logs/2026-08-26T14-57-37Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T15-14-43Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T15-52-38Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T16-05-34Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T16-05-34Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T16-23-52Z-hop.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3793,7 +3794,7 @@
           "geigerCounter",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T16-05-34Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T16-23-52Z-hop.jsonl",
         "waste": {
           "bind": [
             {
@@ -3838,7 +3839,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T16:07:48Z"
+      "updated": "2026-08-26T16:28:42Z"
     },
     "T-082": {
       "assignee": "",
@@ -20140,7 +20141,18 @@
       "evidence": [],
       "fingerprint": "rf-ignition-ullage",
       "id": "T-509",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T16:23:11Z",
+            "claim": "hop_factory _keep_start_sit/_hold_start/_flameout_sit: after hop light keep MainThrottle 1 + independent until lid MECO. 16-05-34Z MET 9.7 flying GET throttle 0 thrust 89 kN fuel 2238 parts 30 \u2014 _pad_hold airborne GET 0 dropped independent (restart at 0 remaining); MET 21 throttle 1 thrust 0 fuel frozen 2038 parts 30 then lithobrake shear 30\u21929. Thrust 0 with fuel left is OffPlan, not shear. hop_factory.py:143,180,206,709,721 tests/test_hop_factory.py:575,631,694. Not hop.py. Not hop_factory_pad. Do not raise ignitions.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
@@ -20151,7 +20163,7 @@
       "tags": [],
       "title": "proc-loft MET 21s throttle 1 thrust 0 fuel frozen 2038 \u2014 flameout not shear",
       "type": "control",
-      "updated": "2026-08-26T16:12:06Z"
+      "updated": "2026-08-26T16:23:11Z"
     },
     "T-510": {
       "assignee": "",
@@ -20181,6 +20193,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "last-flight abort class is engine-dead vs shear from Tape; ship.md shows engine-dead before hop shear stdout. Did not patch hop.py.",
       "created": "2026-08-26T16:16:50Z",
       "desk": "wernher",
       "evidence": [],
@@ -20195,6 +20208,14 @@
             "owner": "none",
             "real": false,
             "who": "mortimer"
+          },
+          {
+            "at": "2026-08-26T16:28:34Z",
+            "claim": "16-05-34Z Tape already had throttle 1 thrust 0 fuel 2038 parts=30 from MET 21; compact windows dropped thrust so last-flight named hop shear 30->9. telem.engine_dead + gates engine-dead on ship.md; Tape envelope engine_dead=yes and compact thrust; classify_abort remaps shear/not recoverable/OFFPLAN thrust 0 with fuel left to engine-dead. Parts drop is the funeral. Did not patch hop.py (Lars T-509 loft cutoff).",
+            "evidence": "docs/missions/uncrewed/logs/2026-08-26T16-05-34Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -20204,14 +20225,14 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "telem"
       ],
       "title": "hop abort names parts-drop shear; radio already thrust 0 plume no",
       "type": "systems",
-      "updated": "2026-08-26T16:17:04Z"
+      "updated": "2026-08-26T16:28:35Z"
     }
   },
-  "updated": "2026-08-26T16:17:04Z"
+  "updated": "2026-08-26T16:28:42Z"
 }

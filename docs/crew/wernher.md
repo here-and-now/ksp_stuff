@@ -31,9 +31,9 @@ Jsonl helpers (`telem-eyes-library`, T-449 landed): last-snap sit vs
 recover sit, `sci_rem` vs bank, rec, 4× q skip. Last-flight 40 lines
 is not the vessel (09-01Z). Explore unused surfaces. Thin tape /
 9-column skim is his miss. New missing helper still that stem.
-Live watch is `ship.md` (disk) — thrust/plume/parts_n/fuel already
-print; hop abort naming parts-drop shear after engine-dead is
-`telem-eyes-library` (T-508), not hop.py. Lock-live `status` is a GET reader
+Live watch is `ship.md` (disk) — throttle/thrust/plume/parts_n/fuel
+and `engine_dead` print; last-flight abort class is engine-dead vs
+shear (`telem-eyes-library`, T-511), not hop.py. Lock-live `status` is a GET reader
 (`kspstuff-read`) after T-454. XOR with Lars on a miss patch of the
 same `.py`. `ksc_ready` with vessels n=0 + `can_revert` true is a lie
 while Revert is painted. RealAntennas kRPC is live — do not cheat a

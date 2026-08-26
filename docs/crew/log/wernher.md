@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-511 engine-dead vs shear: telem flags + Tape envelope + last-flight classify_abort. 16-05-34Z throttle 1 thrust 0 fuel 2038 parts=30 is engine-dead; parts 30→9 is the funeral. Compact windows carry thrust. No hop.py. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-501 leftover_ship walks recoverable ground Debris (pad Goo); wait recover by `_object_id` on vessels, not leftover_pad_ships names. kRPC Recover() is async OnVesselRecoveryRequested + persist; flying rec=0 blobs make it a no-op. No Hangar. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-500 HS splice uses collider half max(length/2+0.179, catalog MODEL ±0.5), not node math. insert_inline bumps new_half=0.1. --payload SAS-first tank FED; tank-engine still refused. Hangar 15-14-43Z was 0.191/0.4125. Did not write GameData. No Hangar. Never leftover-ksc. Never revert.

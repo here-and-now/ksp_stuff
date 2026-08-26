@@ -54,6 +54,8 @@ _SHIP_EXTRA = (
     "thrust",
     "stage",
     "plume",
+    "throttle",
+    "engine_dead",
 )
 _AS_OF_FMT = ("%Y-%m-%dT%H:%MZ", "%Y-%m-%dT%H:%M:%SZ")
 _REPR_FIELD = re.compile(
@@ -450,7 +452,7 @@ def _ship_num(val: Any) -> Any:
 
 
 def _fmt_ship(key: str, val: Any) -> str:
-    if key in {"wreck", "link", "plume"}:
+    if key in {"wreck", "link", "plume", "engine_dead"}:
         if val in (True, 1, "1", "True", "true", "yes"):
             return "yes"
         if val in (False, 0, "0", "False", "false", "no"):
@@ -492,10 +494,16 @@ def envelope_from_snapshot(
     thrust = getattr(state, "thrust", None)
     if isinstance(thrust, float) and not math.isfinite(thrust):
         thrust = None
+    throttle = getattr(state, "throttle", None)
+    if isinstance(throttle, float) and not math.isfinite(throttle):
+        throttle = None
     stage = getattr(state, "stage", None)
     plume = None
     if isinstance(thrust, (int, float)):
         plume = float(thrust) > 0.0
+    dead = bool(getattr(state, "engine_dead", False))
+    if not dead and "engine-dead" in str(flag_s):
+        dead = True
     return {
         "heading": getattr(state, "heading", None),
         "wreck": getattr(state, "wreck", None),
@@ -524,6 +532,8 @@ def envelope_from_snapshot(
         "thrust": thrust,
         "stage": stage,
         "plume": plume,
+        "throttle": throttle,
+        "engine_dead": True if dead else None,
     }
 
 

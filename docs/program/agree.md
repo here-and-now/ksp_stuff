@@ -11,7 +11,7 @@ hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
 bind: T-404 barometerScan FlyingHigh 305/0.05
 duration_vs_high: 305s file does not finish tens-of-seconds loft-through (~42s then InSpaceLow ~268 km, four hops +0); pays iff MECO/dwell ≥305s in 50–140 km
 recover: yes
-meco: lid then coast
+meco: lid 50 km live; independent off; High dwell coast
 dynamics: none
 agreed: yes
 blocker: none
@@ -51,10 +51,16 @@ recover HD 1.17 MB not TX 41 h.
 ## Pulse (Lars)
 
 `hop_factory.py` inland compose. Pad-RF `hop_factory_pad.py` (one
-sit). Throttle 1 + SAS vertical until lid MECO; inland slew after.
-Honest MECO leftover fuel is the coast, not engine-dead. Recover
-**no** on this hang (no HS/chute) — leftover is Hank after wreck.
-Do not retune MECO / lid / silk because the last hop sheared.
+sit). Throttle 1 + SAS vertical until lid. MECO at 50 km **live**
+alt: MainThrottle 0, setpoint 0, independent off. Then High dwell
+coast — not a burn, not inland-through-burnout. 17-01-10Z printed
+that sit at 55 km throttle 1. After that gate, 17-13-14Z still
+emptied tanks by MET 153 alt 98 km apo 270 km; PresMat dwell in
+space, sci +0. `_hold_lid` after lid is MECO. Log must not print
+hold inland through burnout after High lid. Residual vz at lid
+still exits 140 km — that is the fight; 305 s in 50–140 km is not
+MECO-at-lid alone. Hang owns recover. Do not retune MECO / lid /
+silk to the last shear.
 
 ## Dynamics (Katherine, opt-in)
 

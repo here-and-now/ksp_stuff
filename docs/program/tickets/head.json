@@ -20704,6 +20704,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T17:40:29Z",
+            "claim": "pulse: MECO at 50 km live alt (MainThrottle 0, setpoint 0, independent off); High dwell coast not inland-through-burnout. 17-01-10Z that sit at 55 km throttle 1; 17-13-14Z after the gate still emptied tanks MET 153 alt 98 km apo 270 km PresMat in space sci +0. _hold_lid after lid is MECO. Residual vz at lid still exits 140 km \u2014 305 s in 50-140 is not MECO-at-lid alone.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -20719,7 +20727,7 @@
       ],
       "title": "sit hang bind recover meco \u2014 C-504 High PresMat 305s; silk vs recover no",
       "type": "ops",
-      "updated": "2026-08-26T17:36:52Z"
+      "updated": "2026-08-26T17:40:29Z"
     },
     "T-522": {
       "assignee": "",
@@ -20751,7 +20759,31 @@
       "title": "High-band 305s PresMat vs loft-through tens of seconds",
       "type": "ops",
       "updated": "2026-08-26T17:36:52Z"
+    },
+    "T-523": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T17:40:29Z",
+      "desk": "katherine",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-523",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "High-band time / vz at lid: 17-13-14Z 50 km live vz~1.3 km/s apo~138 km; 305s in 50-140?",
+      "type": "ops",
+      "updated": "2026-08-26T17:40:29Z"
     }
   },
-  "updated": "2026-08-26T17:36:52Z"
+  "updated": "2026-08-26T17:40:29Z"
 }

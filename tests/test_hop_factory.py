@@ -8,6 +8,7 @@ from pathlib import Path
 from hop_factory import (
     _flameout_sit,
     _high_dwell_sit,
+    _hold_lid,
     _hold_start,
     _inland_burnout_sit,
     _keep_start_sit,
@@ -758,6 +759,64 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertFalse(engine.independent_throttle)
         self.assertLessEqual(engine.pct, 5.0)
         self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_hold_lid_after_high_lid_is_meco(self):
+        """flyinghigh-lid: 17-13-14Z throttle 1 at 59 km emptied tanks."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        vessel.parts.engines = [engine]
+        engine.independent_throttle = True
+        engine.pct = 100.0
+        engine.actual = 1.0
+        vessel.control.throttle = 1.0
+        lid = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 59_536.0,
+                "fuel": 167.0,
+                "apo": 179_713.0,
+                "link": True,
+            },
+        )()
+        self.assertFalse(
+            _hold_lid(
+                vessel,
+                lid,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=True,
+            )
+        )
+        self.assertFalse(engine.independent_throttle)
+        self.assertLessEqual(engine.pct, 5.0)
+        self.assertEqual(vessel.control.throttle, 0.0)
+        below = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 42_299.0,
+                "fuel": 395.0,
+                "apo": 105_160.0,
+                "link": True,
+            },
+        )()
+        engine.independent_throttle = True
+        engine.pct = 100.0
+        vessel.control.throttle = 1.0
+        self.assertTrue(
+            _hold_lid(
+                vessel,
+                below,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=False,
+            )
+        )
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertTrue(engine.independent_throttle)
 
     def test_inland_burnout_sit_not_after_high_lid(self):
         """flyinghigh-lid: 17-01-10Z hold inland through burnout after lid is not MECO."""

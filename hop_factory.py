@@ -21,7 +21,9 @@ not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
 Toggle; skip-latch does not drop a bound High card. After High lid, MECO is MainThrottle 0, setpoint 0, then independent
 off. Do not re-enable. Do not hold inland through burnout — that sit
-kept throttle 1 at 55 km (17-01-10Z). High dwell is not a burn; plume
+kept throttle 1 at 55 km (17-01-10Z). After that gate, 17-13-14Z still
+thrust 1 at 59 km and emptied tanks by MET 153 apo 270 km —
+``_hold_lid`` after lid is MECO. High dwell is not a burn; plume
 still up is still the burn. Do not loft out of atmo. Quiet loft honors
 uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
@@ -236,8 +238,9 @@ def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
     """After FlyingHigh lid, until down. Not a burn.
 
     17-01-10Z science dwell then hold inland through burnout, throttle 1
-    at 55 km. MECO at the lid; inland-burnout is not this. Plume still
-    up is still the burn. Do not loft out of atmo.
+    at 55 km. 17-13-14Z that log was gone and tanks still emptied at
+    59 km throttle 1. MECO at the lid; inland-burnout is not this.
+    Plume still up is still the burn. Do not loft out of atmo.
     Wernher ``want_coast`` already 1× on thick air / high q / silk / burn.
     Quiet loft honors uplink ``phys-warp``. Forest / Grasslands: same.
     """
@@ -300,9 +303,14 @@ def _hold_lid(
 
     AP engage at zenith has no heading. Inland slew clears SAS and does
     not hold vertical. SAS from light holds the loft until lid alt or
-    crumbs. After lid, leftover LF is not throttle 1. Forest /
+    crumbs. After lid, MECO: MainThrottle 0, setpoint 0, independent
+    off — leftover LF is the coast. 17-13-14Z throttle 1 at 59 km
+    emptied tanks by MET 153. Residual vz is not this sit. Forest /
     Grasslands: same.
     """
+    if flying_high and lofted_lid:
+        _release_pad_throttle(vessel)
+        return False
     burn = _lid_burn_sit(
         snap, hop_apo=hop_apo, flying_high=flying_high, lofted_lid=lofted_lid
     )

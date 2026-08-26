@@ -236,6 +236,9 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("_release_pad_throttle(vessel)", factory)
         self.assertIn("or _pad_plume(vessel, snap)", factory)
         self.assertIn('OffPlan("thrust 0 with fuel left")', factory)
+        self.assertNotIn("H._hold_or_cut", factory)
+        self.assertNotIn("vessel.control.throttle = 1.0", factory)
+        self.assertNotIn("control.throttle = 1.0", factory)
 
     def test_pad_light_does_not_stage_on_krpc_throttle_alone(self):
         vessel = _Vessel()
@@ -500,7 +503,7 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIs(engine.active, False)
 
     def test_pad_hold_keeps_start_airborne_until_meco(self):
-        """rf-ignition-ullage: independent stays 1 until loft MECO."""
+        """rf-ignition-ullage: UI GET 0 is not MECO; independent stays 1."""
         vessel = _Vessel()
         engine = _Engine()
         vessel.parts.engines = [engine]
@@ -537,12 +540,12 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertTrue(engine.independent_throttle)
         self.assertEqual(vessel.control.throttle, 1.0)
         vessel.control.throttle = 0.0
-        self.assertFalse(
+        self.assertTrue(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertFalse(engine.independent_throttle)
-        self.assertLessEqual(engine.throttle, 0.05)
-        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.throttle, 0.05)
+        self.assertEqual(vessel.control.throttle, 1.0)
 
     def test_pad_hold_keeps_independent_when_thrusting_on_pad(self):
         """rf-ignition-ullage: 10-09-22Z release after light is a restart at 0."""
@@ -665,7 +668,7 @@ class TestHopFactoryPad(unittest.TestCase):
         )
 
     def test_hold_start_airborne_throttle_get_zero_keeps_independent(self):
-        """rf-ignition-ullage: independent stays 1 while GET MainThrottle is 0."""
+        """rf-ignition-ullage: MainThrottle GET is the bar; independent is the flame."""
         vessel = _Vessel()
         engine = _Engine()
         vessel.parts.engines = [engine]
@@ -698,12 +701,13 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertEqual(engine.independent_sets, sets)
         vessel.control.throttle = 0.0
-        self.assertFalse(
+        self.assertTrue(
             _pad_hold(vessel, fly, lit=True, left_pad=True, deaf=False)
         )
-        self.assertFalse(engine.independent_throttle)
-        self.assertLessEqual(engine.throttle, 0.05)
-        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.throttle, 0.05)
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertEqual(engine.independent_sets, sets)
 
     def test_hold_start_meco_commands_throttle_zero(self):
         """flyinghigh-lid: 16-49-02Z MECO is independent off after MainThrottle 0."""
@@ -816,7 +820,8 @@ class TestHopFactoryPad(unittest.TestCase):
         )()
         engine.independent_throttle = True
         engine.pct = 100.0
-        vessel.control.throttle = 1.0
+        vessel.control.throttle = 0.0
+        sets = engine.independent_sets
         self.assertTrue(
             _hold_lid(
                 vessel,
@@ -828,6 +833,8 @@ class TestHopFactoryPad(unittest.TestCase):
         )
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertTrue(engine.independent_throttle)
+        self.assertGreater(engine.pct, 5.0)
+        self.assertEqual(engine.independent_sets, sets)
         engine.independent_throttle = True
         engine.pct = 100.0
         vessel.control.throttle = 1.0

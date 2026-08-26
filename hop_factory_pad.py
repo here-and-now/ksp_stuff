@@ -15,10 +15,13 @@ current_stage < part.stage. Command Engine.active True with the
 live setpoint so a chute-only current stage does not eat the only
 ignition. hop light logs ignitions remaining, independent setpoint,
 and currentThrottle only when the flame is up. After confirmed
-light, MainThrottle 1 and independent setpoint 1 stay until
-loft/MECO at the lid — not a pad MECO, not a thrusting handoff.
-Dropping independent is a restart with 0 remaining. Commanded
-throttle 0 after loft is MECO. Throttle 0 then 1 is a restart.
+light, dual-write MainThrottle 1 (UI bar) and independent setpoint 1
+(the flame) until loft/MECO at the lid — not a pad MECO, not a
+thrusting handoff. Live is independent setpoint / plume, not UI
+MainThrottle GET and not kRPC Engine.throttle GET (currentThrottle
+is 0 until lit). Dropping independent is a restart with 0 remaining.
+After lid MECO, cut independent and MainThrottle — leave the bar at
+1 and the UI lies on a dead engine. Throttle 0 then 1 is a restart.
 After confirmed light, loft — hold vertical until lid then inland.
 Engine already fired with no plume is a dead pad, not a loft.
 abort_pad cut is MainThrottle only; ``_cut_pad_engine`` zeros
@@ -359,12 +362,14 @@ def _pad_engine_live(vessel: object) -> bool | None:
 
 
 def _apply_pad_throttle(vessel: object) -> None:
-    """Throttle 1 on control and on the engines. Enable independent once.
+    """Dual-write: MainThrottle paints the bar; independent is the flame.
 
-    Engine.active True with that setpoint is the pad light when the
-    current stage is empty of engine. Do not wait for the chute stage
-    to pass — staging an empty/chute fire can spend the only ignition
-    at currentThrottle 0. Forest / Grasslands: same.
+    Enable independent once. Engine.active True with that setpoint is
+    the pad light when the current stage is empty of engine. Do not
+    wait for the chute stage to pass — staging an empty/chute fire
+    can spend the only ignition at currentThrottle 0. kRPC
+    Engine.throttle GET is currentThrottle 0 until lit. Forest /
+    Grasslands: same.
     """
     try:
         control = vessel.control
@@ -399,10 +404,11 @@ def _release_pad_throttle(vessel: object) -> None:
 
     Independent still burns when MainThrottle GET is 0. Dropping
     independent then re-enabling is a restart with 0 remaining. After
-    lid we do not re-enable. 16-49-02Z setpoint 0 with independent 1
-    left thrust 100 kN at 54 km. Independent off after MainThrottle 0
-    is MECO. Do not set engine active False (abort only). Forest /
-    Grasslands: same.
+    lid we do not re-enable. Leave MainThrottle 1 after independent
+    off and the UI lies on a dead engine. 16-49-02Z setpoint 0 with
+    independent 1 left thrust 100 kN at 54 km. Independent off after
+    MainThrottle 0 is MECO. Do not set engine active False (abort
+    only). Forest / Grasslands: same.
     """
     try:
         control = getattr(vessel, "control", None)
@@ -584,23 +590,20 @@ def _pad_hold(
 
     hop light is not the burn. Independent is enabled once.
     Re-enabling zeros the setpoint — a restart with 0 remaining.
-    Airborne is still that start: MainThrottle 1 and independent
-    setpoint 1 stay until loft/MECO at the lid. Pad thrusting is
-    not a handoff. Pad sit throttle 0 is a drop: write 1 without
-    toggling independent. MECO after loft is MainThrottle 0,
-    setpoint 0, then independent off — do not re-enable.
+    Live is independent setpoint / plume, not UI MainThrottle GET
+    and not kRPC Engine.throttle GET (currentThrottle is 0 until
+    lit). Airborne GET 0 is a drop: dual-write MainThrottle 1 without
+    toggling independent. Pad sit throttle 0 is the same drop. MECO
+    after loft is sit (lid / crumbs), not GET 0 —
+    ``_release_pad_throttle`` zeros the bar then independent. Leave
+    MainThrottle 1 after independent off and the UI lies.
     ``_cut_pad_engine`` only on abort. Pad 1 g still lights.
     Forest / Grasslands: same.
     """
     if not lit or deaf:
         return False
     down = H._down(snap, flown=left_pad)
-    left = left_pad or H._airborne(snap) or down
-    try:
-        throttle = float(getattr(vessel.control, "throttle", 0.0) or 0.0)
-    except Exception:
-        throttle = 0.0
-    if down or (left and throttle <= 0.05):
+    if down:
         _release_pad_throttle(vessel)
         return False
     _apply_pad_throttle(vessel)

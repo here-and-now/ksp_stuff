@@ -4,19 +4,21 @@ Flying card after loft. Pad light is throttle 1 on the engine, then
 stage — RF 1-start at engine throttle 0 is spent. kRPC
 ``control.throttle`` is not the burn. Throttle 0 then 1 is a restart.
 hop light is not the burn: ``_pad_hold`` (``hop_factory_pad``) keeps
-the start on the pad. After confirmed light, MainThrottle 1 and
-independent setpoint 1 stay until loft/MECO at the lid — not a pad
-MECO, not airborne GET throttle 0. Independent still burns when
-MainThrottle GET is 0 (16-05-34Z MET 9.7 thrust 89 kN). ``_pad_hold``
-GET 0 after loft drops independent — a restart at 0 remaining.
+the start on the pad. After confirmed light, dual-write MainThrottle 1 (UI bar) and
+independent setpoint 1 (the flame) until loft/MECO at the lid — not a
+pad MECO, not airborne GET throttle 0. Live is independent setpoint /
+plume. kRPC Engine.throttle GET is currentThrottle 0 until lit.
+Independent still burns when MainThrottle GET is 0 (16-05-34Z MET 9.7
+thrust 89 kN). UI GET 0 is a drop, not MECO. Leave MainThrottle 1
+after independent off and the UI lies on a dead engine.
 Thrust 0 with fuel left and parts intact is OffPlan, not shear.
 Uplink abort / MissionAbort ``_cut_pad_engine`` first — abort_pad
 cut is MainThrottle only. Independent is enabled once — re-enable
 zeros Current Throttle and stage spends the ignition at 0. Dropping
 independent after light is a restart with 0 remaining.
 FlyingHigh wait is loft to lid alt,
-not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
-inland slew after. Splash bind is
+not a dwell at 1 km. Lid hold is independent 1 + SAS vertical until
+lid; inland slew after. Splash bind is
 not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
 Toggle; skip-latch does not drop a bound High card. After lid MECO,
@@ -296,12 +298,14 @@ def _keep_start_sit(
     lofted_lid: bool = False,
     orbit: bool = False,
 ) -> bool:
-    """After hop light, keep throttle 1 + independent until MECO.
+    """After hop light, keep independent setpoint 1 until MECO.
 
-    Airborne GET throttle 0 is not MECO — independent still burns.
-    Lid alt, High dwell, or crumbs is MECO. Orbit stack is not lid
-    MECO — leftover LF is still the first-stage burn. Pad sit after
-    light is still the start. Forest / Grasslands: same.
+    MainThrottle paints the bar; it is not the RF burn. Airborne GET
+    throttle 0 is not MECO — independent still burns. Lid alt, High
+    dwell, or crumbs is MECO. After lid, cut independent and
+    MainThrottle. Orbit stack is not lid MECO — leftover LF is still
+    the first-stage burn. Pad sit after light is still the start.
+    Forest / Grasslands: same.
     """
     if not lit or down:
         return False
@@ -351,10 +355,11 @@ def _hold_start(
     lit: bool,
     deaf: bool,
 ) -> bool:
-    """Keep MainThrottle 1 + independent until MECO.
+    """Keep independent setpoint 1 until MECO; dual-write the UI bar.
 
     Airborne GET throttle 0 is not MECO — independent still burns.
-    MECO is MainThrottle 0, setpoint 0, then independent off. Do not
+    MECO is MainThrottle 0, setpoint 0, then independent off. Leave
+    MainThrottle 1 after independent off and the UI lies. Do not
     re-enable. Pad sit still ``_pad_hold``. Forest / Grasslands: same.
     """
     if not left_pad:
@@ -490,15 +495,17 @@ def _hold_lid(
     lofted_lid: bool = False,
     orbit: bool = False,
 ) -> bool:
-    """FlyingHigh below lid: throttle 1, SAS vertical. Not inland slew.
+    """FlyingHigh below lid: independent 1, SAS vertical. Not inland slew.
 
     AP engage at zenith has no heading. Inland slew clears SAS and does
     not hold vertical. SAS from light holds the loft until lid alt or
-    crumbs. After lid, MECO: MainThrottle 0, setpoint 0, independent
-    off — leftover LF is the coast. lofted_lid latch is not required:
-    live alt ≥50 km is MECO. 17-13-14Z throttle 1 at 59 km emptied
-    tanks by MET 153. Residual vz is not this sit. Orbit stack is not
-    this MECO — AP east while thrusting. Forest / Grasslands: same.
+    crumbs. MainThrottle-only is not the RF burn — dual-write with
+    independent. After lid, MECO: MainThrottle 0, setpoint 0,
+    independent off — leftover LF is the coast. lofted_lid latch is
+    not required: live alt ≥50 km is MECO. 17-13-14Z throttle 1 at
+    59 km emptied tanks by MET 153. Residual vz is not this sit.
+    Orbit stack is not this MECO — AP east while thrusting. Forest /
+    Grasslands: same.
     """
     if orbit:
         return False
@@ -515,18 +522,11 @@ def _hold_lid(
     )
     if not burn and not vertical:
         return False
-    try:
-        control = vessel.control
-    except Exception:
-        return True
     if burn:
-        try:
-            control.throttle = 1.0
-        except Exception:
-            pass
+        _apply_pad_throttle(vessel)
     if vertical:
         try:
-            control.sas = True
+            vessel.control.sas = True
         except Exception:
             pass
     return True
@@ -884,10 +884,7 @@ def run_factory_vessel(
                 chute_open = True
             if lofted and down:
                 apo_cut = True
-                try:
-                    vessel.control.throttle = 0.0
-                except Exception:
-                    pass
+                _release_pad_throttle(vessel)
             if left_pad and not down:
                 if chute_open:
                     apo_cut = True
@@ -931,17 +928,8 @@ def run_factory_vessel(
                 ):
                     apo_cut = True
                     _release_pad_throttle(vessel)
-                else:
-                    apo_cut, _braking = H._hold_or_cut(
-                        vessel,
-                        snap,
-                        math.inf if flying_high and not reached_lid else hop_apo,
-                        cut=apo_cut,
-                        hold=1.0,
-                        brake=False,
-                        braking=False,
-                    )
-                    del _braking
+                elif apo_cut:
+                    _release_pad_throttle(vessel)
                 _hold_lid(
                     vessel,
                     snap,
@@ -1365,10 +1353,7 @@ def run_factory_vessel(
                 pass
             elif pad_boost:
                 if not deaf:
-                    try:
-                        vessel.control.throttle = 1.0
-                    except Exception:
-                        pass
+                    _apply_pad_throttle(vessel)
             elif left_pad and H._recoverable(vessel) and not _orbit_done_sit(
                 snap, orbit=orbit
             ):
@@ -1442,10 +1427,7 @@ def run_factory_vessel(
                 pass
             elif pad_boost:
                 if not deaf:
-                    try:
-                        vessel.control.throttle = 1.0
-                    except Exception:
-                        pass
+                    _apply_pad_throttle(vessel)
             elif left_pad and (down or H._low_flying(snap)) and not _orbit_done_sit(
                 snap, orbit=orbit
             ):

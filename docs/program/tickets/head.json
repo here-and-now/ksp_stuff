@@ -158,7 +158,7 @@
     "savanna-flyinglow-thermo": 1,
     "savanna-landed-telemetry": 1,
     "savanna-landed-thermo": 1,
-    "sci-unchanged-recovered": 29,
+    "sci-unchanged-recovered": 30,
     "science skip (no Experiment modules) ABORT no science (wanted mysteryGoo) after splash MET 226.3 EC=0": 1,
     "science-skip-no-modules": 2,
     "science-skip-timeout": 6,
@@ -3340,7 +3340,8 @@
         "docs/missions/uncrewed/logs/2026-08-26T09-34-15Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T09-35-05Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T09-36-46Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T09-44-55Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T09-44-55Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3389,25 +3390,25 @@
             "throttle": null
           },
           "alt_before": null,
-          "alt_max": 85.431,
+          "alt_max": 86.643,
           "apex": {
-            "alt": 85.431,
-            "apo": 85.431,
+            "alt": 86.643,
+            "apo": 86.643,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.447,
-            "ec": 509.819,
-            "fuel": 1575.0,
+            "downrange": 0.448,
+            "ec": 489.865,
+            "fuel": 1574.896,
             "g": 1.0,
-            "heading": 298.948,
-            "horiz": 0.014,
+            "heading": 298.934,
+            "horiz": 0.007,
             "lat": 28.6084,
-            "lon": -80.5998,
-            "mass": 4696.312,
+            "lon": -80.5997,
+            "mass": 4695.585,
             "met": 0.0,
             "parts_n": 27,
-            "pitch": 89.98,
+            "pitch": 90.0,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreSphere.v2",
@@ -3416,10 +3417,10 @@
             "sci_run": false,
             "shear": false,
             "sit": "pre_launch",
-            "stage": 1,
+            "stage": 0,
             "throttle": 0.0
           },
-          "apo_max": 85.431,
+          "apo_max": 86.643,
           "biome": "Shores",
           "biomes": [
             "Shores"
@@ -3459,13 +3460,14 @@
           "command": "hop",
           "debris_n": 0,
           "descent_n": 0,
-          "downrange": 0.447,
+          "downrange": 0.448,
           "dt_s": null,
-          "ec": 509.162,
+          "ec": 489.865,
           "events": [
             "start",
             "hangar",
             "recoverable",
+            "uplink",
             "recover",
             "sci_bank",
             "landing",
@@ -3475,28 +3477,28 @@
           "gap_s": null,
           "heading": null,
           "horiz": null,
-          "hz_median": 0.14,
+          "hz_median": 0.13,
           "impact_ms": null,
           "landing": "soft",
           "landing_synthesized": true,
           "last": {
-            "alt": 85.431,
-            "apo": 85.431,
+            "alt": 86.643,
+            "apo": 86.643,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.447,
-            "ec": 509.162,
-            "fuel": 1575.0,
+            "downrange": 0.448,
+            "ec": 489.865,
+            "fuel": 1574.896,
             "g": 1.0,
-            "heading": 298.901,
-            "horiz": 0.0,
+            "heading": 298.934,
+            "horiz": 0.007,
             "lat": 28.6084,
-            "lon": -80.5998,
-            "mass": 4696.31,
+            "lon": -80.5997,
+            "mass": 4695.585,
             "met": 0.0,
             "parts_n": 27,
-            "pitch": 89.966,
+            "pitch": 90.0,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreSphere.v2",
@@ -3505,31 +3507,31 @@
             "sci_run": false,
             "shear": false,
             "sit": "pre_launch",
-            "stage": 1,
+            "stage": 0,
             "throttle": 0.0
           },
           "lat": 28.6084,
           "link": true,
-          "lon": -80.5998,
-          "mass": 4696.31,
+          "lon": -80.5997,
+          "mass": 4695.585,
           "mass_pad": 4696.312,
           "met": 0.0,
           "met_end": 0.0,
           "met_start": 0.0,
           "pad": {
-            "alt": 85.431,
-            "apo": 85.431,
+            "alt": 86.643,
+            "apo": 86.643,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.447,
-            "ec": 509.819,
+            "downrange": 0.448,
+            "ec": 509.815,
             "fuel": 1575.0,
             "g": 1.0,
-            "heading": 298.948,
-            "horiz": 0.014,
+            "heading": 298.921,
+            "horiz": 0.006,
             "lat": 28.6084,
-            "lon": -80.5998,
+            "lon": -80.5997,
             "mass": 4696.312,
             "met": 0.0,
             "parts_n": 27,
@@ -3547,44 +3549,50 @@
           },
           "parts_n": 27,
           "parts_pad": 27,
-          "path": "docs/missions/uncrewed/logs/2026-08-26T09-44-55Z-hop.jsonl",
+          "path": "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl",
           "pitch": null,
           "q_max": 0.0,
           "recoverable": true,
           "root": "probeCoreSphere.v2",
-          "run": "2026-08-26T09-44-55Z-hop.jsonl",
-          "samples": 2,
+          "run": "2026-08-26T10-09-22Z-hop.jsonl",
+          "samples": 25,
           "sci_bank": 2.2905,
           "sci_delta": 0.0,
           "sci_paid": false,
           "sci_rem": 0.0,
           "sci_run": false,
           "shear": false,
-          "sit": "flying",
-          "sit_mismatch": true,
+          "sit": "pre_launch",
+          "sit_mismatch": false,
           "skip_n": 0,
           "skips": [],
           "speed": null,
-          "stage": 1,
+          "stage": 0,
           "thick_air_skip": false,
           "v_vert": null,
           "via": "US - Cape Canaveral"
         },
-        "learn": "landing: soft impact=? m/s heading=? horiz=? pitch=? sit=flying synth apo=85 biome=Shores rec=yes sci=run=0 rem=0 bank=2.29 +0",
+        "learn": "landing: soft impact=? m/s heading=? horiz=? pitch=? sit=pre_launch synth apo=87 biome=Shores rec=yes sci=run=0 rem=0 bank=2.29 +0",
         "phase": "hop",
         "science_ids": [
           "barometerScan",
           "geigerCounter",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T09-44-55Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl",
         "waste": {
           "bind": [
             {
-              "biome": "Shores",
+              "biome": "",
               "eid": "barometerScan",
-              "id": "T-461",
-              "situation": "Surface@Shores"
+              "id": "T-404",
+              "situation": "FlyingHigh"
+            },
+            {
+              "biome": "",
+              "eid": "barometerScan",
+              "id": "T-460",
+              "situation": "FlyingLow"
             }
           ],
           "craft": "kspstuff-hop-valiant-t7-wheel-pbc"
@@ -3610,7 +3618,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T09:45:33Z"
+      "updated": "2026-08-26T10:13:05Z"
     },
     "T-082": {
       "assignee": "",
@@ -18070,6 +18078,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:08:08Z",
+            "claim": "hop_factory_pad _pad_light/_cut_pad_engine: after confirmed light return True and loft (hold vertical until lid then inland). Do not abort-after-light. abort_pad cut is MainThrottle only \u2014 _cut_pad_engine zeros independent + engine active before process exit (uplink abort / MissionAbort). hop_factory_pad.py:12,410,443 hop_factory.py:354,360 tests/test_hop_factory.py:270. Not hop.py. Do not raise ignitions.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -18083,19 +18099,30 @@
       "tags": [],
       "title": "T-469 live scrap: never hop light, engine dead on pad, Os abort",
       "type": "control",
-      "updated": "2026-08-26T09:52:32Z"
+      "updated": "2026-08-26T10:08:08Z"
     },
     "T-472": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Pad abort pre_launch is a control miss, not sci-unchanged-recovered. Re-fly last cli. High cannot pay pad and that does not idle the loft. Wreck rec=no still re-flies. Do not make High a pad card.",
       "created": "2026-08-26T09:28:41Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "sci-unchanged-recovered",
       "id": "T-472",
       "payload": {
-        "count": 22
+        "count": 22,
+        "findings": [
+          {
+            "at": "2026-08-26T10:18:43Z",
+            "claim": "Pad abort sit=pre_launch rec=yes sci_run=0 is not sci-unchanged-recovered. _pad_abort_envelope tickets.py:1193-1198; _sci_unchanged_waste:1212-1213; waste_blocks_refly:1391-1394. High cannot pay pad (bind_matches_envelope stays false) and that does not idle the loft. protocol fly yes. Locked tests/test_tickets.py:1988. T-471 is Lars pad-RF. Do not make High a pad card.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -18103,11 +18130,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI sci-unchanged-recovered \u00d722",
       "type": "rsi",
-      "updated": "2026-08-26T09:28:41Z"
+      "updated": "2026-08-26T10:18:43Z"
     },
     "T-473": {
       "assignee": "",
@@ -18118,7 +18145,18 @@
       "evidence": [],
       "fingerprint": "",
       "id": "T-473",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T10:04:55Z",
+            "claim": "everybody-left: RA honesty, RF ullage/ignitions, org-rsi parked novels, hop light 09-44, leftover loft after the desk left. Hero stuck-orphan-fly. README now. Did not invent orbit. Did not clobber first-mystery-goo.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
@@ -18131,8 +18169,8 @@
       ],
       "title": "Press: RF ignition, RA honesty, org-rsi, leftover loft",
       "type": "press",
-      "updated": "2026-08-26T09:57:27Z"
+      "updated": "2026-08-26T10:04:55Z"
     }
   },
-  "updated": "2026-08-26T10:03:38Z"
+  "updated": "2026-08-26T10:18:43Z"
 }

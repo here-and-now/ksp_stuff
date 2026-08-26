@@ -191,6 +191,9 @@ the envelope or the next signed hang that can bank. Living recover +
 clean 0. Bind can still pay = last-envelope sit/biome/apo matches
 bound tickets (08-44 Shores land ≠ Forest leftover; 10-57 Forest
 splash ≠ SrfLanded). Wreck rec=no is a miss: re-fly last `cli:`.
+Pad abort sit=`pre_launch` never lofted: not this waste class —
+re-fly last `cli:` (control miss). Do not rebind FlyingHigh to a
+pad card (T-472).
 Stop the batch **only** leftover / crash UI, f013 fail,
 live control `.py` must be patched, or Os wait. `go: wait` **only**
 those.
@@ -263,7 +266,9 @@ Then: clean 0 → re-fly last `cli:` **only if that bind can still
 pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
 ≥50 km). Living recover + `sci_run=0` is **not** that path — do not
 light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
-re-flies last `cli:`. Miss (nonzero / ABORT / `science (none)` / `science skip`):
+re-flies last `cli:`. Pad abort sit=`pre_launch` re-flies last `cli:`
+(control miss, T-472) — High still cannot pay pad, and that does not
+idle the loft. Miss (nonzero / ABORT / `science (none)` / `science skip`):
 spawn **Lars** on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
 Failed coast/suicide relight with fuel left is engine physics
 (`rf-ignition-ullage`, Lars `hop_factory_pad.py`) — not Wernher, not
@@ -279,7 +284,8 @@ clamp `hop_apo` to 18 km. Timeout while flying:
 Hank `recover()` if recoverable, else Close / `ksc leftover`. Never
 revert. **sci unchanged** on a living recover:
 Linus rebinds last-envelope biome/sit **before** the next light — not Lars unless the live
-`.py` actually broke, not Gene to consider. Pad waits only for
+`.py` actually broke, not Gene to consider. Pad abort sit=`pre_launch`
+is not that rebind (High stays High). Pad waits only for
 leftover and for a patch of the **live** control `.py` (cannot hop
 while Lars writes the named control `.py`). **Do not hire Gene to replan a miss.**
 If `go:` is still yes and the hang still capable **and the bind

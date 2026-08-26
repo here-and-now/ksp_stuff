@@ -1190,11 +1190,26 @@ def _sci_run_zero(landing: dict[str, Any] | None) -> bool:
         return not bool(run)
 
 
+def _pad_abort_envelope(landing: dict[str, Any] | None) -> bool:
+    """Never left the pad. RF/control miss, not science waste (T-472)."""
+    if not isinstance(landing, dict):
+        return False
+    sit = _norm_sit_key(str(landing.get("sit") or ""))
+    return sit in {"prelaunch"}
+
+
 def _sci_unchanged_waste(landing: dict[str, Any] | None) -> bool:
-    """Living recover + sci_run=0. Unknown run does not count."""
+    """Living recover + sci_run=0. Unknown run does not count.
+
+    Pad abort sit=pre_launch never lofted — control miss, not this class
+    (T-472). Do not rebind FlyingHigh to a pad card. Wreck rec=no is
+    already excluded.
+    """
     if not isinstance(landing, dict):
         return False
     if landing.get("recoverable") is not True:
+        return False
+    if _pad_abort_envelope(landing):
         return False
     return _sci_run_zero(landing)
 
@@ -1373,8 +1388,10 @@ def waste_blocks_refly(
     """Living +0 is not clean-0 until bind can pay envelope or hang/bind changed.
 
     Wreck rec=no is a miss — re-fly last cli. Not this latch.
-    Pad abort rec=yes sit=pre_launch is still living +0 (T-468):
-    FlyingHigh / FlyingLow / splash cannot pay pad.
+    Pad abort rec=yes sit=pre_launch never lofted — control miss
+    (T-472). Re-fly last cli. FlyingHigh still cannot *pay* pad
+    (bind_matches_envelope stays false); that does not idle the loft
+    or turn High into a pad card.
     """
     if not ticket:
         return False

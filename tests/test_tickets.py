@@ -1985,8 +1985,8 @@ class TestPacketAttachAndInbox(unittest.TestCase):
             )
         )
 
-    def test_waste_blocks_refly_pre_launch_pad_abort_cannot_pay(self):
-        """T-468: pad abort rec=yes sit=pre_launch cannot pay PresMat trio."""
+    def test_waste_blocks_refly_pre_launch_pad_abort_does_not_block(self):
+        """T-472: pad abort never lofted. Control miss, not High rebind."""
         craft = "kspstuff-hop-valiant-t7-wheel-pbc"
         for sit, biome, title in (
             ("FlyingHigh", "", "FlyingHigh barometer"),
@@ -2017,7 +2017,7 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         snap = tickets.bind_snapshot(craft=craft)
         self.assertFalse(tickets.bind_matches_envelope(landing))
         fly = {"payload": {"landing": landing, "waste": snap}}
-        self.assertTrue(tickets.waste_blocks_refly(fly, craft=craft))
+        self.assertFalse(tickets.waste_blocks_refly(fly, craft=craft))
         wreck = {**landing, "recoverable": False}
         self.assertFalse(
             tickets.waste_blocks_refly(
@@ -2025,6 +2025,26 @@ class TestPacketAttachAndInbox(unittest.TestCase):
                 craft=craft,
             )
         )
+        self.assertFalse(tickets.sci_unchanged_waste(landing))
+        path = Path(tempfile.mkdtemp()) / "pad-abort.jsonl"
+        path.write_text("{}\n", encoding="utf-8")
+        hop = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+            },
+        )
+        with patch("tape.envelope", return_value=landing):
+            tickets.attach_run(hop["id"], path, who="hank")
+        cur = tickets.show_ticket(hop["id"])
+        self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 0)
+        self.assertNotIn("waste", cur.get("payload") or {})
+        self.assertFalse(tickets.waste_blocks_refly(cur, craft=craft))
 
     def test_bind_matches_envelope_flyinglow_pays_short_hop(self):
         tickets.open_ticket(
@@ -2104,6 +2124,50 @@ class TestPacketAttachAndInbox(unittest.TestCase):
             locked=False,
         )
         self.assertEqual(g2["fly"], "yes")
+
+    def test_ops_fly_gate_pre_launch_pad_abort_is_yes(self):
+        """T-472: High bind + pad abort is fly yes. Do not hire Linus to pad-card."""
+        craft = "kspstuff-hop-valiant-t7-wheel-pbc"
+        tickets.open_ticket(
+            type="science",
+            title="FlyingHigh barometer",
+            reporter="Linus",
+            payload={
+                "experiment_id": "barometerScan",
+                "situation": "FlyingHigh",
+                "biome": "",
+                "bound": "yes",
+                "craft": craft,
+            },
+        )
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+                "landing": {
+                    "recoverable": True,
+                    "sci_run": 0,
+                    "sit": "pre_launch",
+                    "biome": "Shores",
+                    "apo_max": 86.643,
+                },
+                "waste": tickets.bind_snapshot(craft=craft),
+            },
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        g = ops.fly_gate(
+            desk={"hangar": "none", "craft": craft},
+            locked=False,
+        )
+        self.assertEqual(g["fly"], "yes")
+        self.assertFalse(
+            tickets.waste_blocks_refly(tickets.show_ticket(t["id"]), craft=craft)
+        )
 
 
 class TestReviewLearn(unittest.TestCase):

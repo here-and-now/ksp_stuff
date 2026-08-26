@@ -70,7 +70,9 @@ that *adds* a fp counts. Living recover + `sci_run=0` bumps
 `sci-unchanged-recovered` on `attach_run` (once per new jsonl). That
 bump is **not** fly_ready on last `cli:` — bind must pay envelope
 sit/biome/apo (FlyingHigh ≥50 km) first (T-337). Wreck rec=no
-re-flies last `cli:`. At
+re-flies last `cli:`. Pad abort sit=`pre_launch` never lofted: not
+this bump; re-fly last `cli:` (control miss, T-472). Do not make High
+a pad card. At
 count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` → desk
 **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only the
 CLI). `ops next` prints `rsi:` and hires Mortimer lock-free; lock
@@ -330,7 +332,8 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
   stack cannot reach. After living recover + sci unchanged, do not
   re-fly a bind the envelope cannot pay — Linus rebinds from the
   envelope, or Gene picks the next signed hang that can bank.
-  Wreck rec=no is a miss: re-fly last `cli:`.
+  Wreck rec=no is a miss: re-fly last `cli:`. Pad abort
+  sit=`pre_launch` is the same miss (control, not a High rebind).
 - Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`;
   never rails / WarpTo). High dwell is not a burn. `chute_arm_sit`
   1× is Arm, not apo. Thick air ≤18 km stays 1×. Sitting 1× for

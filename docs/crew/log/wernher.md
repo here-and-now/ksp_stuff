@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-472 pad abort unlatch: sit=pre_launch rec=yes sci_run=0 is control miss, not sci-unchanged-recovered. High cannot pay pad and that does not idle the loft. Wreck rec=no still re-flies. No hop_factory. Never revert.
+
 - 2026-08-26 — T-468 harvest ×19: latch still-true (T-346). Pad abort pre_launch rec=yes sci_run=0 cannot pay PresMat trio; protocol fly wait. Wreck rec=no re-flies. No hop_factory. Never revert.
 
 - 2026-08-26 — org-rsi slice 4: git mv novels to `docs/archive/2026-08-26-org-rsi/`; world-model chair stub; blocks Gene CLI; NUKE sit-card/BOARD; classify archive-first. No Hangar. No hop. Never revert.

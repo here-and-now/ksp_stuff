@@ -226,7 +226,7 @@ hangs stay omni (`SurfAntenna` / Communotron 16-S).
 | **Lars** | Hop still keys off `vessel.comms.can_communicate`. RA `CanComm` exists. | Targeting loops in `hop_factory.py` until a control miss. |
 | **Gus** | Disk `python main.py comms`. Omni is the current hang. | Sign a dish until a ticket says the omni is the miss. |
 | **Katherine** | Radio windows may show on tape (`link` / `snr`). | kRPC writes. Invent a targeting loop. |
-| **Iris** | Disk `python main.py comms` + `ra-rate.md`. Cape **64 bps** is table and path. Reports Wernher what RA/kRPC still hides. | kRPC Session. `.py`. Cheat a link. Invent a constellation. |
+| **Eleanor** | Disk `python main.py comms` + `ra-rate.md`. Cape **64 bps** is table and path. Reports Wernher what RA/kRPC still hides. | kRPC Session. `.py`. Cheat a link. Invent a constellation. |
 | **Hank** | Close is persist → Tracking → KSC. `ra_align` on desk / Close. | Hangar on a rewound clock. Close without persist-first. |
 
 ---

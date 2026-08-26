@@ -29,7 +29,7 @@ Parked org novels are not dispatch.
 | **Walt** | CAPCOM | Phase edge speech | Hire |
 | **Verena** | Communications | Press tickets | Fly |
 | **Katherine Grokman** | Flight Dynamics | Tape windows, atmosphere / FAR / attitude; rare asks | kRPC, Hangar, `hop.py`, jsonl novels, every-turn pad occupancy |
-| **Iris Grokman** | Director of Constellation Operations | RealAntennas, Cape/ground, future crafts / sats; rare asks | `.py`, kRPC Session, press, windows, CAPCOM |
+| **Eleanor Grokman** | Director of Constellation Operations | RealAntennas, Cape/ground, future crafts / sats; rare asks | `.py`, kRPC Session, press, windows, CAPCOM |
 
 **Os talks to Hank** (this session, default). Os talks to Mortimer
 when the *objective* or the *house constitution* changes.
@@ -41,7 +41,7 @@ said otherwise.
 
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
 cheat a link. Discover use when a hop goes deaf. Brief:
-`docs/program/krpc.md` (Gene / Lars / Gus / Katherine / Iris / Hank).
+`docs/program/krpc.md` (Gene / Lars / Gus / Katherine / Eleanor / Hank).
 
 **The Grok parent process *is* Hank** for operations. Not an unnamed
 switchboard. `subagent_type: hank` exists for isolated ops writes;
@@ -173,8 +173,8 @@ circle. Payload / `docs/program/agree.md`: `sit`, `hang`, `bind`
 (`none` or Katherine T-id), `agreed` yes/wait, `blocker`. Desk
 `hank`. Hank hires **Lars + Gus + Linus in parallel on that id**.
 Not leftover wreck tickets. Katherine only if `dynamics` is set or
-`--tag dynamics` / `ops --tag ask --desk katherine`. Iris only if
-`--tag constellation` / `ops --tag ask --desk iris`. Gene does not
+`--tag dynamics` / `ops --tag ask --desk katherine`. Eleanor only if
+`--tag constellation` / `ops --tag ask --desk eleanor`. Gene does not
 merge. Fly ready that still pays `agree.md` still flies.
 
 **RSI ticket:** fingerprint, count, assigned loop.
@@ -190,7 +190,7 @@ Enforced in `tickets.py`, not job-card prose:
 - Linus may last-write science payload, and **Bind** on `agree.md`.
 - Lars may close `type=control` with a finding (`tickets feedback --claim`), and last-write **Pulse** on `agree.md`.
 - Katherine may last-write **Dynamics** on `agree.md` when pulled (`--tag dynamics` / `ops --tag ask --desk katherine`).
-- Iris may last-write **Constellation** on `agree.md` when pulled (`--tag constellation` / `ops --tag ask --desk iris`).
+- Eleanor may last-write **Constellation** on `agree.md` when pulled (`--tag constellation` / `ops --tag ask --desk eleanor`).
 - Wernher may close `type=systems`.
 - Hank may close `ops --tag plan` after `agreed: yes` (conference turn done; file stays the goal).
 - Commander may open `type=control` **during the hop** (still connected). After CLI exit, **Hank** opens control from last-flight abort (`tickets open --type control`). Hop abort leftover files to Hank, not a Commander recover CLI. Do not hire the Commander to debrief.
@@ -284,7 +284,7 @@ would change agree.md) and lock free:
     hire lars + gus + linus IN PARALLEL on THAT plan ticket
     do not also hire leftover vehicle/science/control wreck tickets
     katherine only if dynamics set or --tag dynamics / ask desk=katherine
-    iris only if --tag constellation / ask desk=iris
+    iris only if --tag constellation / ask desk=eleanor
     # Gene is not this merge. Fly ready that still pays agree.md
     # still flies (plan does not empty the pad).
     return
@@ -319,8 +319,8 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP that sit. Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
 | Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
-| Open `ops --tag plan` (unsigned, or hang/bind/pulse would change `agree.md`) | **Lars + Gus + Linus** (parallel, same ticket) | that plan ticket — **not** leftover wreck tickets. Katherine only if `dynamics` / `--tag ask --desk katherine` / `--tag dynamics`. Iris only if `--tag constellation` / `--tag ask --desk iris`. Gene is not this merge. Fly ready that still pays `agree.md` still flies |
-| Open `desk=iris` / `--tag constellation` | **Iris** | that ops ticket — Cape / RA / ground / future crafts. Not every `ops next`. Disk only. Reports Wernher asks |
+| Open `ops --tag plan` (unsigned, or hang/bind/pulse would change `agree.md`) | **Lars + Gus + Linus** (parallel, same ticket) | that plan ticket — **not** leftover wreck tickets. Katherine only if `dynamics` / `--tag ask --desk katherine` / `--tag dynamics`. Eleanor only if `--tag constellation` / `--tag ask --desk eleanor`. Gene is not this merge. Fly ready that still pays `agree.md` still flies |
+| Open `desk=eleanor` / `--tag constellation` | **Eleanor** | that ops ticket — Cape / RA / ground / future crafts. Not every `ops next`. Disk only. Reports Wernher asks |
 | Fly needs `go` | Gene | that fly ticket; batch vehicle/science/control/**systems** that **match** `agree.md` |
 | Campaign-stop Learn (not uncrewed, empty `payload.learn`) | Gene | that fly ticket |
 | Tree unlocked, no crafts | Gus | all open vehicle tickets for that node |
@@ -388,8 +388,8 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
 **Inner circle (lock free, `--tag plan`):** three hires, **one**
 ticket. Gus Hang section + `.craft`. Linus Bind section + science
 payload. Lars Pulse section + named helper. Not leftover wreck
-tickets that turn. Katherine only if the plan names her. Iris only
-if the plan names her (`--tag constellation` / `--desk iris`). Hank
+tickets that turn. Katherine only if the plan names her. Eleanor only
+if the plan names her (`--tag constellation` / `--desk eleanor`). Hank
 may talk to her directly.
 
 While Jeb flies T-fly:

@@ -49,7 +49,7 @@ or last-flight. Uncrewed: Hank
 starts `cli:`. Crewed/firsts: Commander is abort officer, not the PID.
 **Katherine Grokman, Flight Dynamics** models tape windows (atmosphere, Q,
 heading). Background. Rare asks. Not a kRPC writer.
-**Iris Grokman, Director of Constellation Operations** owns RealAntennas,
+**Eleanor Grokman, Director of Constellation Operations** owns RealAntennas,
 Cape/ground, how the network reaches future crafts and satellites that
 do not exist yet. Opt-in. Disk only. Does not write `.py`. Reports
 what she needs from Wernher. Not Verena (press), not Katherine
@@ -130,7 +130,7 @@ Planning is a **conference on files**. Flying is Gene → Commander.
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
 | **Verena Grokman** | Communications | `README.md`, `docs/press/` | stick, Hangar, uplink, `.py` |
 | **Katherine Grokman** | Flight Dynamics | tape windows (atmosphere, Q, FAR) | kRPC, Hangar, every-turn pad occupancy |
-| **Iris Grokman** | Director of Constellation Operations | RealAntennas, Cape/ground, future crafts / sats | `.py`, kRPC Session, press, windows, CAPCOM |
+| **Eleanor Grokman** | Director of Constellation Operations | RealAntennas, Cape/ground, future crafts / sats | `.py`, kRPC Session, press, windows, CAPCOM |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
 
 Linus briefs **Gene** (what / when / which part). Gene copies that into

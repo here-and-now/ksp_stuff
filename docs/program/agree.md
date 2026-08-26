@@ -3,8 +3,8 @@
 Shared achievable plan. Not seated `plan.md`. Not last-miss leftovers.
 Inner circle last-writes **only their section**. Gene does not merge.
 Katherine last-writes **Dynamics** when pulled (`ops --tag ask --desk
-katherine` or `--tag dynamics`) — not every pad. Iris last-writes
-**Constellation** when pulled (`ops --tag ask --desk iris` or
+katherine` or `--tag dynamics`) — not every pad. Eleanor last-writes
+**Constellation** when pulled (`ops --tag ask --desk eleanor` or
 `--tag constellation`) — not every pad. Hank talks to her directly.
 
 ```

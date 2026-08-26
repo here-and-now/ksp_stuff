@@ -38,3 +38,5 @@ Gene: abort pad-dead-no-plume
 script: acked abort pad-dead-no-plume
 Gene: abort
 script: acked abort
+Gene: abort
+script: acked abort

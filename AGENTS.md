@@ -115,6 +115,7 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI; watch telem; note/hold/abort if unusual; one stuck PNG **during hop** | `.py`, `.craft`, after-flight review, 15 s narration |
 | **Communications** | `verena` | Verena Grokman | Press tickets | Commander, Hangar, uplink, `.py` |
 | **Flight Dynamics** | `katherine` (else `general-purpose` + `.grok/agents/katherine.md`) | Katherine Grokman | Tape windows, atmosphere/FAR/attitude models; rare asks to Lars/Gus/Linus/Gene | kRPC, Hangar, `hop.py`, jsonl in prompt, every-turn pad occupancy |
+| **Director of Constellation Operations** | `eleanor` (else `general-purpose` + `.grok/agents/eleanor.md`) | Eleanor Grokman | RealAntennas, Cape/ground, future crafts / sats; reports Wernher asks | `.py`, kRPC Session, press, windows, CAPCOM |
 
 If the named type is missing this session, spawn `general-purpose` with
 the matching `.grok/agents/*.md` as the prompt body.
@@ -143,10 +144,9 @@ patch `.py` in the same turn — spawn R&D.
 ## When to spawn (do this, don't offer)
 
 Hank: **`python main.py desk`** then **`python main.py ops next`**.
-Hire exactly those desks with those ticket ids. Copy `reasoning=`
-(never **xhigh**). **low** is Walt (speech) and S4 hygiene. **high**
-is Mortimer / rsi / org / ctt / S1. Lars and Jeb **medium**. Everyone
-else **medium**. Packet is **skim**; `--deep` is opt-in. Hank is the
+Hire exactly those desks with those ticket ids. Do **not** copy
+`reasoning=` into spawn packets — inherit **current TUI reasoning**.
+Packet is **skim**; `--deep` is opt-in. Hank is the
 TUI session. First command for a hire is **`tickets packet <id>`**
 (the Hank-named id; live T- stay; new science/fly/vehicle mint S-/M-/C-).
 **Fresh spawn** for Commander, a new ticket, and after CLI exit.

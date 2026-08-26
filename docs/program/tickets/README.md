@@ -11,8 +11,8 @@ Eleven types: `fly` `science` `vehicle` `control` `systems` `org`
 `--type ops --tag ask|feedback|explore`. Inner-circle plan:
 `--type ops --tag plan` (Lars + Gus + Linus on that ticket;
 `docs/program/agree.md`). Katherine: `--tag dynamics` or
-`ops --tag ask --desk katherine`. Iris: `--tag constellation` or
-`ops --tag ask --desk iris`. Paid node: `--type ctt`.
+`ops --tag ask --desk katherine`. Eleanor: `--tag constellation` or
+`ops --tag ask --desk eleanor`. Paid node: `--type ctt`.
 Press: `--type press`. Desks `tickets open --type …`. Do not emit
 `need_*` / `card:` / `recommended:` / `ask:` / `feedback:` / `good:` as
 return keys. After the hire: `tickets feedback T-NNN --claim "…"`.

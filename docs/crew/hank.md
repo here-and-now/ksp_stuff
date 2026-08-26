@@ -25,8 +25,8 @@ Inner circle: when hang/bind/pulse would change `agree.md`, hire
 Lars + Gus + Linus on **one** `ops --tag plan` ticket — not leftover
 wreck tickets, not Gene as merge. After the first-orbit letter: that
 plan hire is **orbital phases**. Katherine opt-in (`--tag dynamics`)
-for Pe / apo / FAR circularization — not every pad. Iris opt-in
-(`--tag constellation` / `--desk iris`) for Cape / ground / a future
+for Pe / apo / FAR circularization — not every pad. Eleanor opt-in
+(`--tag constellation` / `--desk eleanor`) for Cape / ground / a future
 craft — not every pad. Talk to her directly. Leftover High /
 Forest is shelf, not this-hop. Fly ready that still pays `agree.md`
 still flies. A plan conference does not empty the pad. Inherit TUI

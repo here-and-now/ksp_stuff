@@ -2,13 +2,27 @@
 
 science: tickets
 flight: uncrewed
-craft: kspstuff-hop-valiant-t7-wheel-pbc
+craft: kspstuff-hop-valiant-proc-loft-pbc
 recover_banks: yes
 notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not live.
   fly: T-081 cli=python main.py hop
-  science_ids: (none — T-404 305s cannot pay C-504 High; this-hop unbound)
+  science_ids: kerbalism_LITE,kerbalism_TELEMETRY
 
 ## Flying
 
-# this-hop none. T-404 PresMat 305s unbound — cannot pay ~260s MECO / ~56s loft-through.
-# T-460 / T-461 / T-069 stay unbound catalog. No experiment_id this hop.
+- experiment: kerbalism_LITE
+  situation: InSpaceLow
+  experiment_id: kerbalism_LITE
+  part: probeCoreSphere_v2
+  duration_s: 10
+  ec_rate: 0.03
+  recover_banks: yes
+  ticket: S-514
+- experiment: kerbalism_TELEMETRY
+  situation: InSpaceLow
+  experiment_id: kerbalism_TELEMETRY
+  part: probeCoreSphere_v2
+  duration_s: 30
+  ec_rate: 0.052
+  recover_banks: yes
+  ticket: S-515

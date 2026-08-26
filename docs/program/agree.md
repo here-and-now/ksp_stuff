@@ -6,10 +6,10 @@ Katherine last-writes **Dynamics** when pulled (`ops --tag ask --desk
 katherine` or `--tag dynamics`) — not every pad.
 
 ```
-sit: FlyingHigh
+sit: InSpaceLow
 hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
-bind: none
-duration_vs_high: MECO@50km ~260s FAR / loft-through ~56s; T-404 305s cannot pay; no High file ≤250s pays Shores
+bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-515 kerbalism_TELEMETRY InSpaceLow 30/0.052
+duration_vs_high: High cannot pay (T-404 305s vs ~260s); this loft sits InSpaceLow ~268 km; LITE 10s + TELEMETRY 30s finish
 recover: yes
 meco: lid 50 km live; independent off; High dwell coast
 dynamics: MECO@50km ~271s vac / ~260s FAR in 50–140 (vz 1.29 km/s apo 137 km); T-404 305s cannot pay
@@ -33,17 +33,15 @@ alts, not this hang. Do not replace C-504 because the last hop sheared.
 
 ## Bind (Linus)
 
-This-hop: **none**. Unbound T-404 FlyingHigh PresMat 305/0.05/2.70.
-MECO-at-lid High is ~260 s FAR / ~271 s vac (Kepler ceiling 276 s);
-loft-through ~56 s up. 305 s cannot pay. File rem=0 stays the High
-shelf until a hang holds ≥305 s in 50–140 km. No High file ≤250 s
-pays Shores: T-069 Forest TELEMETRY 25 s leftover cannot pay Shores
-High (capped); thermo/geiger High capped; goo 641 s sample. Envelope
-Shores heading 297 — not Forest, not Water, not Grasslands. T-460
-FlyingLow 305 s unbound. InSpaceLow LITE S-514 10 s / 2.00 is shelf
-(flying Toggle at 50 km does not retry in space). S-515 TELEMETRY
-30 s / 2.00 + S-516 goo leftover 3.41 shelf. Not Surface. Not T-461.
-Do not drop High for splash leftover — High itself cannot pay 305 s.
+This-hop: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 + S-515
+kerbalism_TELEMETRY InSpaceLow 30/0.052/2.00 seq1. Files. Stayputnik
+PAW. Envelope Shores heading 297 loft ~268 km is InSpaceLow every
+hop — High cannot pay (T-404 305 s vs ~260 s FAR). 10 s + 30 s finish
+in space. T-404 High PresMat unbound. T-069 Forest High TELEMETRY
+same eid as S-515 — stays unbound (Shores High capped). S-516 goo
+leftover 3.41 sample 641 s shelf. Not Water. Not Grasslands. Not
+Surface. Pulse must Toggle in space; 50 km High lid skip-latch does
+not retry. recover HD 0.25+0.75 MB not TX.
 
 ## Pulse (Lars)
 

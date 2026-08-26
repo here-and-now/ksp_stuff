@@ -432,20 +432,31 @@
       "id": "S-514",
       "payload": {
         "biome": "global",
-        "bound": "no",
+        "bound": "yes",
         "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 10,
         "ec_rate": 0.03,
         "est": 2.0,
         "experiment_id": "kerbalism_LITE",
+        "findings": [
+          {
+            "at": "2026-08-26T17:55:28Z",
+            "claim": "Bound InSpaceLow LITE 10/0.03/2.00 seq0 on C-504 Stayputnik PAW. Envelope Shores heading 297 loft ~268 km is InSpaceLow every hop. High cannot pay (T-404 305 s unbound). Side-by-side S-515 TELEMETRY 30/0.052/2.00 seq1. 10 s finishes in space. T-081 science_ids kerbalism_LITE,kerbalism_TELEMETRY. T-069 Forest High TELEMETRY unbound (same eid as S-515). S-516 goo leftover 3.41 sample shelf. Not Water. Not Grasslands. Not Surface. Pulse must Toggle in space. f013 Stayputnik PAW start on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
+          }
+        ],
         "host": "probeCoreSphere_v2",
         "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "unbound InSpaceLow LITE 10/0.03/2.00 on kspstuff-hop-valiant-proc-loft-pbc. file cap 2 \u00d7 LEO 1.0. 16-23-52Z sat InSpaceLow after High ~42 s; last-flight skip not-in-card. 10 s can finish this loft. hop_science_ids situation=flying drops InSpaceLow; sit_matches default True; factory skip-latch cannot retry after High Toggle. Shelf until Toggle waits space. HD 0.25 MB recover not TX. f013: Stayputnik PAW start on_craft=yes. recover_banks yes.",
+        "note": "this-hop InSpaceLow LITE seq0 on kspstuff-hop-valiant-proc-loft-pbc (C-504 capable yes). Unstarted kerbalism_LITE InSpaceLow ~2.00 (cap 2 \u00d7 LEO 1.0). file 0.25 MB / 10 s / 0.03. Envelope Shores heading 297 loft ~268 km is InSpaceLow every hop. High cannot pay (T-404 305 s). 10 s finishes in space. Side-by-side S-515 TELEMETRY 30/0.052/2.00 seq1. Stayputnik PAW start on_craft=yes. T-404 High unbound. T-069 Forest High TELEMETRY unbound (same eid as S-515). S-516 goo leftover 3.41 sample shelf. Not Water. Not Grasslands. Not Surface. Pulse must Toggle in space; 50 km High lid skip-latch does not retry. recover HD not TX. recover_banks yes.",
         "on_craft": "yes",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
+        "seq": 0,
         "situation": "InSpaceLow",
         "size_mb": 0.25,
         "tech": "start",
@@ -458,16 +469,16 @@
       "sci_expect": 2.0,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "inspacelow",
         "lite",
-        "unbound"
+        "bound"
       ],
       "title": "InSpaceLow LITE unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T16:43:46Z"
+      "updated": "2026-08-26T17:55:28Z"
     },
     "S-515": {
       "assignee": "linus",
@@ -480,20 +491,31 @@
       "id": "S-515",
       "payload": {
         "biome": "global",
-        "bound": "no",
+        "bound": "yes",
         "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 30,
         "ec_rate": 0.052,
         "est": 2.0,
         "experiment_id": "kerbalism_TELEMETRY",
+        "findings": [
+          {
+            "at": "2026-08-26T17:55:28Z",
+            "claim": "Bound InSpaceLow TELEMETRY 30/0.052/2.00 seq1 on C-504 Stayputnik PAW. Unstarted ~2.00. Side-by-side S-514 LITE seq0. Envelope Shores loft ~268 km InSpaceLow. T-069 Forest High same eid stays unbound (Shores High capped). Pulse must Toggle in space. f013 Stayputnik PAW start on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
+          }
+        ],
         "host": "probeCoreSphere_v2",
         "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "unbound InSpaceLow TELEMETRY 30/0.052/2.00 on kspstuff-hop-valiant-proc-loft-pbc. file cap 2 \u00d7 LEO 1.0. 16-23-52Z sat InSpaceLow; last-flight skip not-in-card. 30 s can finish this loft. Forest High leftover 1.512 T-069 is Forest pin \u2014 Shores High TELEMETRY capped. hop_science_ids situation=flying drops InSpaceLow. Shelf until Toggle waits space. HD 0.75 MB recover not TX 26 h. f013: Stayputnik PAW start on_craft=yes. recover_banks yes.",
+        "note": "this-hop InSpaceLow TELEMETRY seq1 on kspstuff-hop-valiant-proc-loft-pbc (C-504 capable yes). Unstarted kerbalism_TELEMETRY InSpaceLow ~2.00 (cap 2 \u00d7 LEO 1.0). file 0.75 MB / 30 s / 0.052. Envelope Shores heading 297 loft ~268 km is InSpaceLow every hop. 30 s finishes in space. Side-by-side S-514 LITE 10/0.03/2.00 seq0. Same eid as T-069 Forest High leftover \u2014 T-069 stays unbound (Shores High TELEMETRY capped). Stayputnik PAW start on_craft=yes. Not Water. Not Grasslands. Not Surface. Pulse must Toggle in space. recover HD 0.75 MB not TX 26 h. recover_banks yes.",
         "on_craft": "yes",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
+        "seq": 1,
         "situation": "InSpaceLow",
         "size_mb": 0.75,
         "tech": "start",
@@ -506,16 +528,16 @@
       "sci_expect": 2.0,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "inspacelow",
         "telemetry",
-        "unbound"
+        "bound"
       ],
       "title": "InSpaceLow TELEMETRY unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T16:43:46Z"
+      "updated": "2026-08-26T17:55:28Z"
     },
     "S-516": {
       "assignee": "linus",
@@ -3970,7 +3992,10 @@
         },
         "learn": "landing: catastrophic impact=1720 m/s heading=297 horiz=69 pitch=65 sit=flying synth apo=270039 biome=Shores rec=no sci=run=0 rem=0 bank=13.62 +0",
         "phase": "hop",
-        "science_ids": [],
+        "science_ids": [
+          "kerbalism_LITE",
+          "kerbalism_TELEMETRY"
+        ],
         "telem_run": "docs/missions/uncrewed/logs/2026-08-26T17-13-14Z-hop.jsonl",
         "waste": {
           "bind": [
@@ -4016,7 +4041,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T17:51:49Z"
+      "updated": "2026-08-26T17:55:12Z"
     },
     "T-082": {
       "assignee": "",
@@ -20549,7 +20574,17 @@
       "fingerprint": "vab-helper",
       "id": "T-513",
       "payload": {
-        "count": 23
+        "count": 23,
+        "findings": [
+          {
+            "at": "2026-08-26T17:55:39Z",
+            "claim": "Practice last-write vab-helper \u00d723 (stem 24): C-504 loft is no-HS; recover silk. Helper that writes recover silk INSERTs RC_cone stacked on payload core (OKTO top; Stayputnik has no top; cone srfAttach=0); Nylon 50m; engine sqor=0 first fire; chute last. T-512 owns that helper. T-506 still owns no-HS loft autostrut. FED/collider/dish/first-fire still hold. Did not open a duplicate systems ticket. Pad flies C-504 \u2014 do not idle for helpers.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -20561,7 +20596,7 @@
       "tags": [],
       "title": "RSI vab-helper \u00d723",
       "type": "rsi",
-      "updated": "2026-08-26T16:41:12Z"
+      "updated": "2026-08-26T17:55:39Z"
     },
     "T-517": {
       "assignee": "",
@@ -20889,7 +20924,36 @@
       "title": "T-404 305 s cannot pay C-504 High (~260 s MECO-at-lid; loft-through ~56 s up)",
       "type": "ops",
       "updated": "2026-08-26T17:52:07Z"
+    },
+    "T-526": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T17:55:17Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-526",
+      "payload": {
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
+        "note": "This-hop S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 + S-515 TELEMETRY 30/0.052/2.00 seq1. hop_factory Toggles at alt >= FLYING_LOW_M (50 km) when flying_high, then science_attempted latch. science.py sit_matches defaults True for InSpaceLow at High; skip (situation cannot pay) at 50 km does not retry in space. C-504 loft sits InSpaceLow ~268 km every hop. Pulse must Toggle in space (sub_orbital >=140 km), not at High lid.",
+        "sit": "InSpaceLow",
+        "to": "lars"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "Toggle InSpaceLow in space not 50 km High lid",
+      "type": "ops",
+      "updated": "2026-08-26T17:55:28Z"
     }
   },
-  "updated": "2026-08-26T17:52:07Z"
+  "updated": "2026-08-26T17:55:39Z"
 }

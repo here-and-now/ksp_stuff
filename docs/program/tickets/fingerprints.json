@@ -92,7 +92,7 @@
   "land-or-splash": 1,
   "learn-rsi-jump": 1,
   "leftover-hides-unstarted": 1,
-  "leftover-ksc": 1,
+  "leftover-ksc": 2,
   "leftover-ksc-docs": 1,
   "leftover-ksc-voodoo": 1,
   "leftover-lf-suicide-recut": 1,
@@ -207,6 +207,6 @@
   "tundra-landed-telemetry": 1,
   "tundra-landed-thermo": 1,
   "unstarted-splash-telemetry": 1,
-  "vab-helper": 9,
+  "vab-helper": 11,
   "z200-vs-z100-chute": 1
 }

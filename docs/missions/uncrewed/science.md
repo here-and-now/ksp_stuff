@@ -6,23 +6,23 @@ craft: kspstuff-hop-valiant-proc-loft-pbc
 recover_banks: yes
 notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not live.
   fly: T-081 cli=python main.py hop
-  science_ids: kerbalism_LITE,kerbalism_TELEMETRY
+  science_ids: kerbalism_LITE,mysteryGoo
 
 ## Flying
 
 - experiment: kerbalism_LITE
   situation: InSpaceLow
   experiment_id: kerbalism_LITE
-  part: probeCoreSphere_v2
+  part: probeCoreOcto_v2
   duration_s: 10
   ec_rate: 0.03
   recover_banks: yes
   ticket: S-514
-- experiment: kerbalism_TELEMETRY
+- experiment: mysteryGoo
   situation: InSpaceLow
-  experiment_id: kerbalism_TELEMETRY
-  part: probeCoreSphere_v2
-  duration_s: 30
-  ec_rate: 0.052
+  experiment_id: mysteryGoo
+  part: GooExperiment
+  duration_s: 641
+  ec_rate: 0.18
   recover_banks: yes
-  ticket: S-515
+  ticket: S-516

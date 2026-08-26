@@ -446,15 +446,23 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T18:33:50Z",
+            "claim": "Kept InSpaceLow LITE 10/0.03/2.00 seq0. Scan still unstarted ~2.00 after TELEMETRY InSpaceLow capped. File finishes in space. Side-by-side S-516 goo leftover seq1. Host probeCoreOcto_v2 OKTO PAW on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
-        "host": "probeCoreSphere_v2",
-        "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
+        "host": "probeCoreOcto_v2",
+        "instrument": "OKTO PAW (probeCoreOcto_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop InSpaceLow LITE seq0 on kspstuff-hop-valiant-proc-loft-pbc (C-504 capable yes). Unstarted kerbalism_LITE InSpaceLow ~2.00 (cap 2 \u00d7 LEO 1.0). file 0.25 MB / 10 s / 0.03. Envelope Shores heading 297 loft ~268 km is InSpaceLow every hop. High cannot pay (T-404 305 s). 10 s finishes in space. Side-by-side S-515 TELEMETRY 30/0.052/2.00 seq1. Stayputnik PAW start on_craft=yes. T-404 High unbound. T-069 Forest High TELEMETRY unbound (same eid as S-515). S-516 goo leftover 3.41 sample shelf. Not Water. Not Grasslands. Not Surface. Pulse must Toggle in space; 50 km High lid skip-latch does not retry. recover HD not TX. recover_banks yes.",
+        "note": "this-hop InSpaceLow LITE seq0 on C-504 OKTO PAW. Scan still unstarted kerbalism_LITE@InSpaceLow ~2.00. file 0.25 MB / 10 s / 0.03. TELEMETRY InSpaceLow capped (S-515 unbound). 10 s finishes in space. Side-by-side S-516 goo leftover 3.41 seq1. Envelope Shores loft ~268 km InSpaceLow. Not Water. Not Grasslands. Not Surface. recover HD 0.25 MB. recover_banks yes.",
         "on_craft": "yes",
-        "part": "probeCoreSphere_v2",
+        "part": "probeCoreOcto_v2",
         "recover_banks": "yes",
         "seq": 0,
         "situation": "InSpaceLow",
@@ -478,7 +486,7 @@
       ],
       "title": "InSpaceLow LITE unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T17:55:28Z"
+      "updated": "2026-08-26T18:33:50Z"
     },
     "S-515": {
       "assignee": "linus",
@@ -491,7 +499,7 @@
       "id": "S-515",
       "payload": {
         "biome": "global",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 30,
         "ec_rate": 0.052,
@@ -505,17 +513,24 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T18:33:50Z",
+            "claim": "Unbound InSpaceLow TELEMETRY 30/0.052 \u2014 science-scan capped (paid). This-hop S-514 LITE seq0 + S-516 goo leftover 3.41 seq1. T-069 Forest High leftover 1.512 stays unbound (Shores). f013 OKTO PAW on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
-        "host": "probeCoreSphere_v2",
+        "host": "probeCoreOcto_v2",
         "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop InSpaceLow TELEMETRY seq1 on kspstuff-hop-valiant-proc-loft-pbc (C-504 capable yes). Unstarted kerbalism_TELEMETRY InSpaceLow ~2.00 (cap 2 \u00d7 LEO 1.0). file 0.75 MB / 30 s / 0.052. Envelope Shores heading 297 loft ~268 km is InSpaceLow every hop. 30 s finishes in space. Side-by-side S-514 LITE 10/0.03/2.00 seq0. Same eid as T-069 Forest High leftover \u2014 T-069 stays unbound (Shores High TELEMETRY capped). Stayputnik PAW start on_craft=yes. Not Water. Not Grasslands. Not Surface. Pulse must Toggle in space. recover HD 0.75 MB not TX 26 h. recover_banks yes.",
+        "note": "unbound catalog. InSpaceLow TELEMETRY capped (paid). file rem complete. This-hop S-514 LITE 10/0.03/2.00 seq0 + S-516 goo leftover 3.41 seq1. T-069 Forest High leftover 1.512 stays unbound (Shores). recover_banks yes.",
         "on_craft": "yes",
         "part": "probeCoreSphere_v2",
         "recover_banks": "yes",
-        "seq": 1,
         "situation": "InSpaceLow",
         "size_mb": 0.75,
         "tech": "start",
@@ -528,16 +543,16 @@
       "sci_expect": 2.0,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "inspacelow",
         "telemetry",
-        "bound"
+        "unbound"
       ],
       "title": "InSpaceLow TELEMETRY unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T17:55:28Z"
+      "updated": "2026-08-26T18:33:50Z"
     },
     "S-516": {
       "assignee": "linus",
@@ -550,20 +565,31 @@
       "id": "S-516",
       "payload": {
         "biome": "global",
-        "bound": "no",
+        "bound": "yes",
         "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 641,
         "ec_rate": 0.18,
         "est": 3.41,
         "experiment_id": "mysteryGoo",
+        "findings": [
+          {
+            "at": "2026-08-26T18:33:50Z",
+            "claim": "Bound InSpaceLow goo leftover 641/0.18/3.41 seq1 on C-504 GooExperiment (silk recover yes). Sample mysteryGoo@EarthInSpaceLow 2.590/6.000 left=3.41 remaining ~364 s. Envelope Shores loft ~268 km is InSpaceLow. Recover the can (429 MB) not TX. Side-by-side S-514 LITE 10/0.03/2.00 seq0 (scan still unstarted). Unbound S-515 TELEMETRY InSpaceLow (capped/paid). T-368 High goo same eid unbound. T-404 High PresMat unbound. Bank 0.16 need ~44.84 for advRocketry 45. Not Water. Not Grasslands. Not Surface. f013 GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
+          }
+        ],
         "host": "none",
         "instrument": "Mystery Goo Containment Unit (GooExperiment) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "sample",
         "leftover": 3.41,
-        "note": "unbound InSpaceLow goo leftover 641/0.18/3.41 on kspstuff-hop-valiant-proc-loft-pbc. Sample mysteryGoo@EarthInSpaceLow 2.590/6.000 left=3.41. 16-23-52Z sat InSpaceLow ~300 s MET; remaining ~364 s may not finish. Recover the can (429 MB). C-504 has Nylon RC_cone; 16-23-52Z rec=no wreck lost the can. Shelf until living recover. High goo leftover 4.75 is T-368. f013: GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop InSpaceLow goo leftover seq1 on kspstuff-hop-valiant-proc-loft-pbc (C-504 silk recover yes). Sample mysteryGoo@EarthInSpaceLow 2.590/6.000 left=3.41. 641 s / 0.18; remaining ~364 s. Envelope Shores loft ~268 km is InSpaceLow every hop. Recover the can (429 MB) not TX. Side-by-side S-514 LITE 10/0.03/2.00 seq0 (scan still unstarted). Unbound S-515 TELEMETRY InSpaceLow (capped). T-368 High goo same eid unbound. T-404 High PresMat unbound. Not Water. Not Grasslands. Not Surface. f013: GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "GooExperiment",
         "recover_banks": "yes",
+        "seq": 1,
         "situation": "InSpaceLow",
         "size_mb": 429,
         "tech": "start",
@@ -576,17 +602,17 @@
       "sci_expect": 3.41,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "inspacelow",
         "goo",
-        "unbound",
-        "leftover"
+        "leftover",
+        "bound"
       ],
       "title": "InSpaceLow goo leftover 3.41",
       "type": "science",
-      "updated": "2026-08-26T16:43:46Z"
+      "updated": "2026-08-26T18:33:50Z"
     },
     "T-001": {
       "assignee": "",
@@ -3997,7 +4023,7 @@
         "phase": "hop",
         "science_ids": [
           "kerbalism_LITE",
-          "kerbalism_TELEMETRY"
+          "mysteryGoo"
         ],
         "telem_run": "docs/missions/uncrewed/logs/2026-08-26T18-09-36Z-hop.jsonl",
         "waste": {
@@ -4044,7 +4070,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T18:21:15Z"
+      "updated": "2026-08-26T18:33:35Z"
     },
     "T-082": {
       "assignee": "",
@@ -21020,5 +21046,5 @@
       "updated": "2026-08-26T18:30:31Z"
     }
   },
-  "updated": "2026-08-26T18:30:31Z"
+  "updated": "2026-08-26T18:33:50Z"
 }

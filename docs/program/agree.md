@@ -8,8 +8,8 @@ katherine` or `--tag dynamics`) — not every pad.
 ```
 sit: InSpaceLow
 hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
-bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-515 kerbalism_TELEMETRY InSpaceLow 30/0.052
-duration_vs_high: High cannot pay (T-404 305s vs ~260s); this loft sits InSpaceLow ~268 km; LITE 10s + TELEMETRY 30s finish
+bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-516 mysteryGoo InSpaceLow 641/0.18 leftover 3.41
+duration_vs_high: High cannot pay; this loft sits InSpaceLow ~268 km; LITE 10s finishes; goo leftover remaining ~364s — silk recover the can
 recover: yes
 meco: lid 50 km live; independent off; High dwell coast
 dynamics: MECO@50km ~271s vac / ~260s FAR in 50–140 (vz 1.29 km/s apo 137 km); T-404 305s cannot pay
@@ -33,15 +33,16 @@ alts, not this hang. Do not replace C-504 because the last hop sheared.
 
 ## Bind (Linus)
 
-This-hop: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 + S-515
-kerbalism_TELEMETRY InSpaceLow 30/0.052/2.00 seq1. Files. Stayputnik
-PAW. Envelope Shores heading 297 loft ~268 km is InSpaceLow every
-hop — High cannot pay (T-404 305 s vs ~260 s FAR). 10 s + 30 s finish
-in space. T-404 High PresMat unbound. T-069 Forest High TELEMETRY
-same eid as S-515 — stays unbound (Shores High capped). S-516 goo
-leftover 3.41 sample 641 s shelf. Not Water. Not Grasslands. Not
-Surface. Pulse must Toggle in space; 50 km High lid skip-latch does
-not retry. recover HD 0.25+0.75 MB not TX.
+This-hop: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 (file,
+scan still unstarted) + S-516 mysteryGoo InSpaceLow leftover
+641/0.18/3.41 seq1 (sample, silk recover). Envelope Shores loft
+~268 km is InSpaceLow every hop. Unbound S-515 TELEMETRY InSpaceLow
+(capped, paid). LITE 10 s finishes. Goo leftover 2.590/6.000
+remaining ~364 s may not finish a ~300 s coast — leftover still
+pays if complete; recover the can (429 MB). T-368 High goo same eid
+unbound. T-404 High PresMat unbound. T-069 Forest High TELEMETRY
+unbound (Shores). Not Water. Not Grasslands. Not Surface. Pulse
+Toggle in space. f013 Goo start on_craft; LITE hosted OKTO PAW.
 
 ## Pulse (Lars)
 

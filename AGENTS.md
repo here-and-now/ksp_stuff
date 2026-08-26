@@ -112,8 +112,8 @@ the parent calls `spawn_subagent`. A child cannot spawn another child.
 | **Launch / Flight Director** | `gene` | Gene Grokman | Stamp `go:` on a **fly ticket**, briefing, leftover honesty; off-nominal mid-sortie uplink / `go: wait` | PROTOCOL, routing, **stick** (Commander is the writer) |
 | **Vehicle Engineering Lead** | `gus` | Gus Grokman | `.craft` (many vehicle tickets / hire), `capable:` | Hangar, fly, `.py` |
 | **Director of Research** | `linus` | Linus Grokman | Science tickets (many / hire), bind when capable | Commander radio, Hangar, `.craft` |
-| **Chief Systems Engineer** | `wernher` | Wernher Grokman | World/software architecture: desk, hangar, telem, kRPC, ops kernel; **control sit/warp blocks** (`physics_warp.py`, sit predicates, timeout clock) | This-hop factory pulse, `.craft` |
-| **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control **pulse**: one living rocket composed from Wernher blocks (`hop_factory.py` inland or a t7-only file; **pad-RF** is `hop_factory_pad.py` — one sit, no `_pad_*` per stamp), pad/splash | Warp *law*, stamp-named helpers, immortal `hop.py` factory, Hangar, kRPC world |
+| **Chief Systems Engineer** | `wernher` | Wernher Grokman | World/software architecture: desk, hangar, telem, kRPC, ops kernel; **control sit/warp blocks** (`physics_warp.py`, sit predicates, timeout clock, `rf_throttle.py`) | This-hop pulse (`ascent.py` / hop_factory), `.craft` |
+| **Vehicle Systems Engineer** | `lars` | Lars Grokman | Vehicle control **pulse**: one living rocket composed from Wernher blocks (`ascent.py` orbit / `python main.py ascent`, `hop_factory.py` inland or a t7-only file; **pad-RF** is `hop_factory_pad.py` — one sit, no `_pad_*` per stamp), pad/splash | Warp *law*, `rf_throttle.py`, stamp-named helpers, immortal `hop.py` factory, Hangar, kRPC world |
 | **Commander / Pilot** | seated slug (`jebediah`, …) | current.md | Exact CLI; watch telem; note/hold/abort if unusual; one stuck PNG **during hop** | `.py`, `.craft`, after-flight review, 15 s narration |
 | **Communications** | `verena` | Verena Grokman | Press tickets | Commander, Hangar, uplink, `.py` |
 | **Flight Dynamics** | `katherine` (else `general-purpose` + `.grok/agents/katherine.md`) | Katherine Grokman | Tape windows, atmosphere/FAR/attitude models; rare asks to Lars/Gus/Linus/Gene | kRPC, Hangar, `hop.py`, jsonl in prompt, every-turn pad occupancy |
@@ -210,7 +210,8 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   the board → spawn those specialists **without Gene between them**.
   Legal parallel: Linus opportunities ∥ Gus `capable:` (not bind);
   Linus opportunities ∥ Lars pulse; Wernher systems/blocks ∥ Lars pulse
-  (**different files** — Wernher `physics_warp.py`, Lars the living pulse).
+  (**different files** — Wernher `physics_warp.py` / `rf_throttle.py`,
+  Lars `ascent.py` or hop_factory).
   Linus **bind** only after Gus `capable: yes`.
 - After that set returns → **do not** spawn Gene as a merge bus.
   Gene is the only `go:` when `ops next` hires him. `go: wait` when
@@ -261,12 +262,14 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   from last-flight if the Commander did not (after-exit) — always
   `--fingerprint <stem>` (lookup `fingerprints.json`; empty is
   refused; longer kebab aliases onto an existing prefix). Spawn **Lars**
-  on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_factory.py`
+  on the named **helper** file (`ascent.py` orbit / `python main.py
+  ascent`, `hop_factory_pad.py` pad-RF, `hop_factory.py`
   inland or the living compose, `pad.py` pad dwell, `science.py` sit-match,
   parked `hop.py` water/splash). Packet `read:` third path is that file —
-  not the immortal factory for a pad miss, not `hop.py` for a factory miss.
-  Warp / timeout-clock / sit-predicate misses → **Wernher** on
-  `physics_warp.py` (or open `type=systems --fingerprint control-blocks`).
+  not the immortal factory for a pad miss, not `hop.py` for a factory miss,
+  not `rf_throttle.py`.
+  Warp / timeout-clock / sit-predicate / RF live-catalog misses → **Wernher** on
+  `physics_warp.py` / `rf_throttle.py` (or open `type=systems --fingerprint control-blocks`).
   Spawn Wernher **iff** that, or Lars said
   `stack: ok` **and** the abort is a kRPC trap, **or** open
   `type=systems` (Wernher without a miss — kRPC explore is standing).
@@ -280,15 +283,17 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   freeze keeps throttle 1.
 - Open `type=control` → spawn **Lars**
   immediately. Do not auto-Gene after. Never a heredoc. Packet
-  `read:` ≤3: desk + BRIEF + **the named helper `.py`** (`hop_factory_pad.py`
-  pad-RF, `hop_factory.py` inland or the living compose / `pad.py` /
-  `science.py` / parked `hop.py`).
-  Warp law is Wernher (`physics_warp.py`). Do not send Lars a new
+  `read:` ≤3: desk + BRIEF + **the named helper `.py`** (`ascent.py`
+  orbit, `hop_factory_pad.py` pad-RF, `hop_factory.py` inland or the
+  living compose / `pad.py` / `science.py` / parked `hop.py`).
+  Warp law / RF live catalog is Wernher (`physics_warp.py`,
+  `rf_throttle.py`). Do not send Lars a new
   `_after_skip` helper. Tests lock blocks, not dead-hang envelopes.
   Every Lars science-miss packet names **tree** and whether the sit’s
   Science instrument is unlocked (F-013). Do not send him to patch a
   Geiger dwell at Start. Do not send him `hop.py` for an inland-slew
-  or coast-warp miss.
+  or coast-warp miss. Do not send him `rf_throttle.py` for an
+  `ascent.py` miss.
 - Fly next only if `protocol fly` prints `fly: yes` (uncrewed campaign
   continue counts; no new Gene `go:` between hops).
 - Os says PR / press / README / article / funding → spawn **Verena

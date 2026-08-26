@@ -178,19 +178,27 @@ sequencing a ghost instrument.
 C-534 loft is no-HS, recover silk; C-504 shelf); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 **control blocks**: sit, warp, timeout, leftover abort, chute sits, sit-match)
-without waiting for a miss. Flying-card Toggle at High lid is High, not InSpaceLow (T-517). `physics_warp.py` is Wernher. Lars
-**composes one living rocket's pulse** from those blocks
-(`hop_factory.py` inland, or a file that only flies t7-chute —
-legal). RF pad is **one sit** in `hop_factory_pad.py` — not a
-`_pad_*` per stamp. `pad.py` / `splash.py` / `blocks.md` stay pulse/phase.
-`hop.py` is parked water/splash + **shared** helpers that are
-actually shared. Orbit stacks are `ascent.py` (`python main.py
-ascent`) from those blocks. RF live throttle is `rf_throttle.py`
-(`independentThrottlePercentage` / PAW Current Throttle) — kRPC
+without waiting for a miss. Flying-card Toggle at High lid is High, not InSpaceLow (T-517).
+`physics_warp.py` (sit / warp / timeout / leftover abort / chute sits)
+and `rf_throttle.py` (RF live catalog) are Wernher **blocks**. Lars
+**composes one living rocket's pulse** from those blocks:
+`hop_factory.py` inland science hop, `hop_factory_pad.py` RF pad
+(**one sit**, no `_pad_*` per stamp), **`ascent.py` orbit**
+(`python main.py ascent`) — Valiant loft now; Terrier two-stage later
+is still this file. A t7-only compose is legal. `pad.py` /
+`science.py` / `blocks.md` stay pulse/phase. `hop.py` is parked
+water/splash + **shared** helpers that are actually shared. T-548
+minted `ascent.py`; mint is not this-hop pulse (T-554). A miss on
+`ascent.py` is Lars (`type=control`). Wernher may extract a sit-named
+block from the compose into `rf_throttle.py` / `physics_warp.py`; he
+does not retune loft / MECO / gravity-turn numbers in `ascent.py`.
+XOR: one `.py` owner per miss of the **same** file. Legal: Wernher
+blocks ∥ Lars `ascent.py`. RF live throttle is
+`independentThrottlePercentage` / PAW Current Throttle — kRPC
 `control.throttle` is the UI MainThrottle bar, not the burn. One
 immortal factory that remembers Flea, Hammer, 4t, and splash-090 is
-not the way. Tests lock the **blocks**, not dead-hang envelopes. No
-stamp-named `_after_skip`.
+not the way. Do not wait Terrier to transfer `ascent.py`. Tests lock
+the **blocks**, not dead-hang envelopes. No stamp-named `_after_skip`.
 
 **Engines (Os 2026-08-25 / T-456 / T-470):** ReStockPlus liquids are RF
 ullage + finite ignitions. Pad 1 g still lights. Throttle 0 then 1
@@ -368,7 +376,11 @@ Pad abort sit=`pre_launch` re-flies last `cli:` when scheduled
 idle the loft. Loft-only High/Low bind + short recovered dud re-flies
 last `cli:` when scheduled (T-475) — High cannot pay 655 m landed,
 and that does not idle the loft. Miss (nonzero / ABORT / `science (none)` / `science skip`):
-spawn **Lars** on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
+spawn **Lars** on the named **helper** file (`ascent.py` orbit /
+`python main.py ascent`, `hop_factory_pad.py` pad-RF,
+`hop_factory.py` inland, or the living rocket's compose). Warp / sit /
+timeout / leftover-abort / chute-sit / RF live-throttle **blocks** →
+Wernher (`physics_warp.py`, `rf_throttle.py`).
 Last-flight abort `shear` / `hop shear parts N→M` is **not** the miss
 class when tape already had throttle 1 + thrust 0 + plume no + fuel
 frozen + parts intact — query `telem --window airborne|burnout`.
@@ -473,10 +485,11 @@ is a skim block on the fly ticket after `tickets attach-run`
 `cli:` is fly `payload.cli`
 **copied verbatim** (F-004) from `python main.py protocol fly` — not
 Gene `recommended:`, not seated `plan.md`. Lars `read:` third path is
-the **named helper file** (`hop_factory_pad.py` pad-RF, else
-`hop_factory.py` inland compose, `pad.py` pad, `science.py` sit-match)
-— not the immortal factory for a pad miss, not `hop.py` for a factory
-miss, not `physics_warp.py` (Wernher blocks). Lars first command is
+the **named helper file** (`ascent.py` orbit, `hop_factory_pad.py`
+pad-RF, else `hop_factory.py` inland compose, `pad.py` pad,
+`science.py` sit-match) — not the immortal factory for a pad miss,
+not `hop.py` for a factory miss, not `physics_warp.py` /
+`rf_throttle.py` (Wernher blocks). Lars first command is
 that packet, skim, not a named jsonl. Parent copies **f013**
 from desk. Do not send parked campaign notes. Children do
 not re-run `world`/`tech`/`parts` if desk is this sit.

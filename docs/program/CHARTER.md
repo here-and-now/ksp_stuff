@@ -126,8 +126,8 @@ Planning is a **conference on files**. Flying is Gene → Commander.
 | **Gene Grokman** | Launch / Flight Director | `go:` on a fly ticket, briefing | routing, stick |
 | **Gus Grokman** | Vehicle Engineering Lead | `.craft` (batch), `capable:` | Hangar, uplink, `.py` |
 | **Linus Grokman** | Director of Research | science tickets, bind | Commander radio, Hangar |
-| **Lars Grokman** | Vehicle Systems Engineer | one living rocket's **pulse** composed from Wernher blocks (`hop_factory.py` or a t7-only file) | craft, tree, fly, leftover overlay, warp *law*, stamp-named helpers, immortal `hop.py` factory |
-| **Wernher Grokman** | Chief Systems Engineer | kRPC / desk / hangar / leftover overlay / telem / ops kernel; **control blocks** (sit, warp, timeout, leftover abort, chute sits) | craft, this-hop pulse |
+| **Lars Grokman** | Vehicle Systems Engineer | one living rocket's **pulse** composed from Wernher blocks (`ascent.py` orbit, `hop_factory.py` inland, or a t7-only file; pad-RF `hop_factory_pad.py`) | craft, tree, fly, leftover overlay, warp *law*, `rf_throttle.py`, stamp-named helpers, immortal `hop.py` factory |
+| **Wernher Grokman** | Chief Systems Engineer | kRPC / desk / hangar / leftover overlay / telem / ops kernel; **control blocks** (`physics_warp.py`, `rf_throttle.py`) | craft, this-hop pulse (`ascent.py`) |
 | **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; leftover `need_qol` → Wernher (`type=systems`) |
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
 | **Verena Grokman** | Communications | `README.md`, `docs/press/` | stick, Hangar, uplink, `.py` |

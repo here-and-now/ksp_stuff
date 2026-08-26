@@ -30,9 +30,11 @@ dead-hang envelopes.
 
 | Sit | File | Not |
 |---|---|---|
+| Orbit loft / circularize (`python main.py ascent`) | `ascent.py` — **living orbit compose** (T-554) | `hop_factory.py`; Wernher `rf_throttle.py` / `physics_warp.py` |
 | Factory inland (`python main.py hop`): slew, chute, sit-matched science, recover, pad-boost | `hop_factory.py` **or the living rocket's compose** | `hop.py` pulse; dead Flea/Hammer/4t/splash-090 branches |
 | RF pad light/hold (ullage, finite ignitions, engine throttle) | `hop_factory_pad.py` — **one pad-RF block** | a new `_pad_*` per stamp; `hop.py` |
 | Coast / pad physics warp (2–4×, rails 0, uplink `phys-warp` / `no_warp`) | `physics_warp.py` — **Wernher** | a warp `if` or `_coast_after_skip` in the pulse |
+| RF live throttle catalog (independent setpoint, ullage/ignition sits) | `rf_throttle.py` — **Wernher** | retuning loft / MECO / gravity-turn in `ascent.py` |
 | Sit/biome can-pay / Toggle | `science.py` | hop sequencing a ghost sit |
 | Pad dwell | `pad.py` | hop |
 | Parked `hop-to-water` / `hop-splash` suicide-burn | `hop.py` | factory pulse |
@@ -54,8 +56,9 @@ read that engine. Cartoon MECO / lid / `_hold_or_cut` suicide relight
 is false. **Honest MECO is not engine-dead** (16-23-52Z burnout fuel
 28 thrust 0 parts=30 apo 268 km). MET-21 cutoff with a burn still
 owed is loft compose T-509, not pad-RF. RF pad is **one sit** in
-`hop_factory_pad.py` — do not add a `_pad_*` per stamp. Compose stays
-`hop_factory.py`. Not `hop.py`, not Wernher. Do not raise ignitions.
+`hop_factory_pad.py` — do not add a `_pad_*` per stamp. Inland compose
+stays `hop_factory.py`. Orbit compose is `ascent.py` (T-554). Not
+`hop.py`, not Wernher. Do not raise ignitions.
 Do not open `type=systems` for “engine did not light” until ignitions
 remaining, ullage, and EC ignitor are checked. Pad-dead live is
 T-471. Loft cutoff with a burn still owed is T-509.
@@ -97,9 +100,10 @@ Packet is `docs/program/desk.md` + this ticket +
 `docs/program/tickets/BRIEF.md`. Skim unless `--deep`. Cite
 `tickets landing T-NNN` — not last-flight prose, not jsonl. Query
 **Tape**. Packet third path is the **named helper file**
-(`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland compose,
-`pad.py` pad dwell, `science.py` sit-match) — not the immortal factory
-for a pad miss, not `hop.py`. Open **many** control fingerprints in
+(`ascent.py` orbit, `hop_factory_pad.py` pad-RF, else
+`hop_factory.py` inland compose, `pad.py` pad dwell, `science.py`
+sit-match) — not the immortal factory for a pad miss, not `hop.py`,
+not `rf_throttle.py`. Open **many** control fingerprints in
 one hire. Thin tape / leftover overlay → `--type systems --fingerprint
 <stem>` (Wernher). Pad waits **only the live control file**.
 
@@ -171,10 +175,11 @@ revert, quickload, or rewind UT. Splash HD of **this** hop stays yours.
 After a `.py` patch:
 
 ```bash
-python -m pytest tests/test_hop_factory.py tests/test_physics_warp.py tests/test_pad_science.py -q
+python -m pytest tests/test_ascent.py tests/test_hop_factory.py tests/test_physics_warp.py tests/test_pad_science.py -q
 ```
 
-Pad-RF: `tests/test_hop_factory.py` (`-k pad` is legal). Factory inland
+Orbit compose: `tests/test_ascent.py`. Pad-RF:
+`tests/test_hop_factory.py` (`-k pad` is legal). Factory inland
 compose: also `-k factory` / `-k pad_boost`. Do not start with the
 house `test_hop.py` (231).
 

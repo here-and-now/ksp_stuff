@@ -22270,7 +22270,41 @@
       "title": "T-552 ascent lid-MECO apo ~118-140 km High; S-514 InSpaceLow cannot pay",
       "type": "ops",
       "updated": "2026-08-26T21:34:22Z"
+    },
+    "T-554": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "close_why": "verdict A: Lars patches ascent.py on a miss; Wernher keeps rf_throttle / physics_warp. PROTOCOL + job cards + Practice last-write.",
+      "created": "2026-08-26T21:39:19Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-554",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T21:44:07Z",
+            "claim": "verdict A: Lars owns ascent.py as the living orbit pulse; Wernher owns rf_throttle.py / physics_warp.py blocks. Mint (T-548) is not pulse. Miss on ascent.py \u2192 Lars type=control. Do not wait Terrier. XOR same file. Legal Wernher blocks \u2225 Lars ascent.py.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "done",
+      "tags": [],
+      "title": "Verdict: who owns ascent.py \u2014 Lars pulse vs Wernher blocks",
+      "type": "org",
+      "updated": "2026-08-26T21:44:07Z"
     }
   },
-  "updated": "2026-08-26T21:34:23Z"
+  "updated": "2026-08-26T21:44:07Z"
 }

@@ -69,7 +69,9 @@ hops pay. Stumble → ticket (RSI). Thin tape →
 envelope bind → Linus. “Build a new stack” / keep alts signed →
 `--type vehicle` (Gus). QOL / kernel / unused kRPC / **log more** →
 `--type systems --fingerprint <stem>` (Wernher, standing). Warp the
-coast → Lars (`type=control --fingerprint <stem>`). One log line
+coast / orbit loft miss → Lars (`ascent.py` / hop_factory;
+`type=control --fingerprint <stem>`). RF live catalog / sit-warp
+blocks stay Wernher (`rf_throttle.py`, `physics_warp.py`). One log line
 `docs/crew/log/mortimer.md`.
 
 Last-flight 40 lines is not the vessel. Do not reason a Learn from it

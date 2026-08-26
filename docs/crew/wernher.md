@@ -47,8 +47,11 @@ puck; node offset is catalog), T-495 (`craft fuel` dump), T-497
 top; Stayputnik has no top; cone `srfAttach=0`; engine first fire,
 chute last), T-537 / T-539 (`craft liquid --texture`; volumeMax 1.5;
 `girders -n 0` strip). Sit-match flying vs InSpaceLow is T-517 (`control-blocks`).
-Orbit stacks are T-548 (`ascent.py` / `rf_throttle.py`; hop.py parked).
-Pad flies a **fed** hang (C-534). Do not write GameData. Pad-RF
+Orbit CLI mint is T-548 (`ascent.py` scaffold + `rf_throttle.py`
+blocks; hop.py parked). T-554: Lars owns `ascent.py` as the living
+orbit pulse; Wernher keeps `rf_throttle.py` / `physics_warp.py`. Do
+not retune loft / MECO / gravity-turn in `ascent.py`. Pad flies a
+**fed** hang (C-534). Do not write GameData. Pad-RF
 pulse is Lars `hop_factory_pad.py` (T-471) — hop light is plume, not
 ignitions 1→0. T-421 latch already living — do not retune
 `hop_factory.py`. Commit the patch. Not sequencing. Stumble

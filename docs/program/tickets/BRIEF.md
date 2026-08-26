@@ -80,15 +80,18 @@ At most tag `learn` — no new TYPE. Plan is not feedback (no
 `--fingerprint` required).
 Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_ascent.py tests/test_hop.py tests/test_pad_science.py -q`.
 Lars packet `read:` third path is the **named helper file**
-(`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland compose,
-`pad.py` pad dwell, `science.py` sit-match). Not the immortal factory
-for a pad miss. Not `hop.py` for a factory miss. RF pad is **one sit**
-— no `_pad_*` per stamp. Warp / sit / timeout / leftover-abort /
-chute-sit **blocks** are Wernher (`physics_warp.py`). Tests lock those
-blocks, not dead-hang envelopes in `test_hop.py`. Lars first pytest is
+(`ascent.py` orbit / `python main.py ascent`, `hop_factory_pad.py`
+pad-RF, else `hop_factory.py` inland compose, `pad.py` pad dwell,
+`science.py` sit-match). Not the immortal factory for a pad miss. Not
+`hop.py` for a factory miss. Not `rf_throttle.py`. RF pad is **one
+sit** — no `_pad_*` per stamp. Warp / sit / timeout / leftover-abort /
+chute-sit / RF live-throttle **blocks** are Wernher
+(`physics_warp.py`, `rf_throttle.py`). Tests lock those
+blocks, not dead-hang envelopes in `test_hop.py`. Orbit compose pytest
+is `tests/test_ascent.py`. Lars first inland pytest is
 `tests/test_hop_factory.py` (`-k pad` pad-RF), not house `test_hop.py`
 (231). Miss physics lives on the helper docstring + `tickets feedback
---claim`. Warp law is Wernher.
+--claim`. Warp law is Wernher. A miss on `ascent.py` is Lars (T-554).
 
 Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
 Opt-in: `ops --tag ask --desk katherine` or `--tag dynamics` when

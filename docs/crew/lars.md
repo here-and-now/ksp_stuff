@@ -32,11 +32,13 @@ Wernher's traps. Not Gus's rockets. Nested notebooks are parked.
 ## Notes
 
 Misses only (or open `type=control`). Patch the **named** control file
-(`hop_factory_pad.py` RF pad sit, `hop_factory.py` inland compose,
-`hop.py` shared helpers + parked water/splash). Packet third path is
-that helper. Miss physics lives on the helper docstring +
-`tickets feedback --claim`. Warp law is Wernher (`physics_warp.py`).
-First pytest is `tests/test_hop_factory.py`, not the house. RF pad is
+(`ascent.py` orbit compose, `hop_factory_pad.py` RF pad sit,
+`hop_factory.py` inland compose, `hop.py` shared helpers + parked
+water/splash). Packet third path is that helper. Miss physics lives
+on the helper docstring + `tickets feedback --claim`. Warp law / RF
+live catalog is Wernher (`physics_warp.py`, `rf_throttle.py`). Orbit
+pytest is `tests/test_ascent.py`. Inland first pytest is
+`tests/test_hop_factory.py`, not the house. RF pad is
 one block — not a `_pad_*` per stamp. The pad waits that file, not a
 Gene conference. Not a tour of the tree. Not after a clean recover.
 Not Gus. Uncrewed miss is leftover + this patch + re-fly.

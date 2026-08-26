@@ -43,11 +43,13 @@ always fresh; resume only the same ticket on the same file while the
 patch is unfinished.
 
 Open **systems** tickets → **Wernher**. Warp / timeout-clock /
-sit-predicate (`physics_warp.py`, fingerprint `control-blocks`) →
-Wernher. Living pulse miss → Lars (`hop_factory_pad.py` pad-RF, else
-`hop_factory.py` or the rocket's compose). Failed relight with fuel left
-is engine physics (`rf-ignition-ullage`, Lars) until this hang is
-checked. Never both on the same `.py`.
+sit-predicate (`physics_warp.py`, fingerprint `control-blocks`) and
+RF live catalog (`rf_throttle.py`) → Wernher. Living pulse miss →
+Lars (`ascent.py` orbit / `python main.py ascent`,
+`hop_factory_pad.py` pad-RF, else `hop_factory.py` inland). T-548
+minted `ascent.py`; a miss on that file is Lars (T-554). Failed
+relight with fuel left is engine physics (`rf-ignition-ullage`, Lars)
+until this hang is checked. Never both on the same `.py`.
 
 **Inner circle hire shape** (house law; kernel emit is Wernher
 `ops.py` / `inner-circle-plan`). When an open `ops --tag plan` is
@@ -110,9 +112,10 @@ fuel frozen while parts intact (engine dead — **not** FAR shear).
 Sit/MET/log disagree → one `screenshot --name stuck-<stem>`,
 then read the PNG. Nominal: leave the Commander alone. Off-nominal:
 `uplink abort|hold` if wreck-class; spawn **Gene** if plan/`go` must
-change (no stick); spawn **Lars** if the living pulse / flameout
-(`rf-ignition-ullage`); spawn **Wernher**
-if kRPC/telem/control-blocks or hop abort still names parts-drop shear.
+change (no stick); spawn **Lars** if the living pulse (`ascent.py` / hop_factory) /
+flameout (`rf-ignition-ullage`); spawn **Wernher**
+if kRPC/telem/control-blocks (`physics_warp.py` / `rf_throttle.py`)
+or hop abort still names parts-drop shear.
 Do not stamp `far-shear` from last-flight when radio already had
 thrust 0. After CLI: `telem --window` then last-flight. Timeout flying leftover: `recover()` if
 recoverable, else Close / `ksc leftover`. Never revert. After CLI exit,

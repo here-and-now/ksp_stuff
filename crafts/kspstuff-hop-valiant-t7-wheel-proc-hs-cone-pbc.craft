@@ -595,7 +595,6 @@ PART
 	modMass = 0
 	modSize = 0,0,0
 	link = proceduralTankRealFuels_1443731105
-	link = proceduralTankRealFuels_1443731105
 	link = batteryPack_2100000001
 	link = batteryPack_2100000002
 	link = batteryPack_2100000003
@@ -937,7 +936,6 @@ PART
 	modMass = 0
 	modSize = 0,0,0
 	link = proceduralTankRealFuels_1120660612
-	link = proceduralTankRealFuels_1120660612
 	attN = top,proceduralTankRealFuels_1671050297
 	attN = bottom,proceduralTankRealFuels_1120660612
 	EVENTS
@@ -1017,7 +1015,6 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	link = proceduralTankRealFuels_1978949792
 	link = proceduralTankRealFuels_1978949792
 	attN = top,proceduralTankRealFuels_1443731105
 	attN = bottom,proceduralTankRealFuels_1978949792
@@ -1099,7 +1096,6 @@ PART
 	modMass = 0
 	modSize = 0,0,0
 	link = proceduralTankRealFuels_1960865343
-	link = proceduralTankRealFuels_1960865343
 	attN = top,proceduralTankRealFuels_1120660612
 	attN = bottom,proceduralTankRealFuels_1960865343
 	EVENTS
@@ -1180,7 +1176,6 @@ PART
 	modMass = 0
 	modSize = 0,0,0
 	link = proceduralTankRealFuels_1140172381
-	link = proceduralTankRealFuels_1140172381
 	attN = top,proceduralTankRealFuels_1978949792
 	attN = bottom,proceduralTankRealFuels_1140172381
 	EVENTS
@@ -1260,7 +1255,6 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	link = proceduralTankRealFuels_1114614042
 	link = proceduralTankRealFuels_1114614042
 	attN = top,proceduralTankRealFuels_1960865343
 	attN = bottom,proceduralTankRealFuels_1114614042
@@ -1439,19 +1433,34 @@ PART
 		textureSet = Ablative
 		shapeName = Smooth Cone
 		capTextureIndex = 1
+		forceLegacyTextures = True
 	}
 	MODULE
 	{
 		name = ProceduralShapeBezierCone
 		selectedShape = Round3
+		shapePoints = (1, 0, 1, 0.5)
 		topDiameter = 1.25
-		bottomDiameter = 1.25
+		bottomDiameter = 0
 		length = 0.2
+		coneBottomMode = Constant
 	}
 	MODULE
 	{
 		name = ProceduralHeatshield
+		mass = 0.1
+		fairingThickness = 0.01
+		useFairing = False
 		ablativeResource = Ablator
+		fairingTextureSet = Original
+	}
+	MODULE
+	{
+		name = ModuleJettison
+		activejettisonName = fairing
+		isJettisoned = False
+		shroudHideOverride = False
+		stagingEnabled = False
 	}
 	RESOURCE
 	{

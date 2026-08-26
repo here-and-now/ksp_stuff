@@ -208,7 +208,7 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
-    "vab-helper": 11,
+    "vab-helper": 12,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
@@ -240,6 +240,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T11:31:21Z",
+            "claim": "T-402 Y did not stop Hangar sit=landed parts=11. Remaining joint: HS collider \u2014 T-420 disc wrote bottomDiameter=1.25 filled puck on Valiant plate (drag cube +0.179 m above top node). VAB-saved dish (Os 5/6) is bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) fairingThickness 0.01. Wrote that; useFairing=False; jettison stagingEnabled=False. Engine stays T-402 Y 9.7005201. Deduped mid-tank double links. Helper T-482 vab-helper (kind=disc still writes puck). Omni SurfAntenna gain=2 Cape 64 bps. f013 PresMat+Goo+geiger on_craft TELEMETRY OKTO HD=1 + 3xEngineer7500 HD=0.5. Thin tape T-284. Did not Hangar. Not t7-chute Mk16.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -255,7 +263,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T11:05:06Z"
+      "updated": "2026-08-26T11:31:21Z"
     },
     "T-001": {
       "assignee": "",
@@ -3390,7 +3398,8 @@
         "docs/missions/uncrewed/logs/2026-08-26T10-22-06Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T10-41-43Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T10-58-22Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T10-58-22Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T11-19-18Z-hop.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3439,26 +3448,26 @@
             "throttle": null
           },
           "alt_before": null,
-          "alt_max": 92.261,
+          "alt_max": 96.072,
           "apex": {
-            "alt": 92.261,
-            "apo": 94.184,
+            "alt": 96.072,
+            "apo": 112.054,
             "biome": "Shores",
             "broken": null,
             "chute": "stowed",
-            "downrange": 0.453,
-            "ec": 349.932,
+            "downrange": 0.447,
+            "ec": 349.937,
             "fuel": 0.0,
             "g": 0.0,
-            "heading": 296.179,
-            "horiz": 6.497,
+            "heading": 283.318,
+            "horiz": 0.381,
             "lat": 28.6084,
-            "lon": -80.5997,
+            "lon": -80.5998,
             "mass": 404.557,
-            "met": 0.56,
+            "met": 0.58,
             "parts_n": 11,
-            "pitch": 86.173,
-            "q": 50.644,
+            "pitch": 52.618,
+            "q": 194.278,
             "recoverable": true,
             "root": "probeCoreOcto.v2",
             "sci_bank": 13.6243,
@@ -3469,7 +3478,7 @@
             "stage": 1,
             "throttle": 0.0
           },
-          "apo_max": 94.184,
+          "apo_max": 112.054,
           "biome": "Shores",
           "biomes": [
             "Shores"
@@ -3509,44 +3518,45 @@
           "command": "hop",
           "debris_n": 1,
           "descent_n": 0,
-          "downrange": 0.453,
+          "downrange": 0.447,
           "dt_s": null,
-          "ec": 349.932,
+          "ec": 349.937,
           "events": [
             "start",
             "hangar",
             "landing",
             "recoverable",
+            "recover",
             "sci_bank",
             "end"
           ],
-          "g_max": 0.001,
+          "g_max": 0.002,
           "gap_s": null,
           "heading": null,
           "horiz": null,
           "hz_median": null,
           "impact_ms": null,
-          "landing": "soft",
+          "landing": "firm",
           "landing_synthesized": false,
           "last": {
-            "alt": 92.261,
-            "apo": 94.184,
+            "alt": 96.072,
+            "apo": 112.054,
             "biome": "Shores",
             "broken": null,
             "chute": "stowed",
-            "downrange": 0.453,
-            "ec": 349.932,
+            "downrange": 0.447,
+            "ec": 349.937,
             "fuel": 0.0,
             "g": 0.0,
-            "heading": 296.179,
-            "horiz": 6.497,
+            "heading": 283.318,
+            "horiz": 0.381,
             "lat": 28.6084,
-            "lon": -80.5997,
+            "lon": -80.5998,
             "mass": 404.557,
-            "met": 0.56,
+            "met": 0.58,
             "parts_n": 11,
-            "pitch": 86.173,
-            "q": 50.644,
+            "pitch": 52.618,
+            "q": 194.278,
             "recoverable": true,
             "root": "probeCoreOcto.v2",
             "sci_bank": 13.6243,
@@ -3559,12 +3569,12 @@
           },
           "lat": 28.6084,
           "link": true,
-          "lon": -80.5997,
+          "lon": -80.5998,
           "mass": 404.557,
           "mass_pad": null,
-          "met": 0.56,
-          "met_end": 0.56,
-          "met_start": 0.56,
+          "met": 0.58,
+          "met_end": 0.58,
+          "met_start": 0.58,
           "pad": {
             "alt": null,
             "apo": null,
@@ -3596,12 +3606,12 @@
           },
           "parts_n": 11,
           "parts_pad": null,
-          "path": "docs/missions/uncrewed/logs/2026-08-26T10-58-22Z-hop.jsonl",
+          "path": "docs/missions/uncrewed/logs/2026-08-26T11-19-18Z-hop.jsonl",
           "pitch": null,
-          "q_max": 50.644,
+          "q_max": 194.278,
           "recoverable": true,
           "root": "probeCoreOcto.v2",
-          "run": "2026-08-26T10-58-22Z-hop.jsonl",
+          "run": "2026-08-26T11-19-18Z-hop.jsonl",
           "samples": 1,
           "sci_bank": 13.6243,
           "sci_delta": null,
@@ -3619,14 +3629,14 @@
           "v_vert": null,
           "via": "US - Cape Canaveral"
         },
-        "learn": "landing: soft impact=? m/s heading=? horiz=? pitch=? sit=landed apo=94 biome=Shores rec=yes sci=run=0 rem=0 bank=13.62",
+        "learn": "landing: firm impact=? m/s heading=? horiz=? pitch=? sit=landed apo=112 biome=Shores rec=yes sci=run=0 rem=0 bank=13.62",
         "phase": "hop",
         "science_ids": [
           "barometerScan",
           "geigerCounter",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T10-58-22Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T11-19-18Z-hop.jsonl",
         "waste": {
           "bind": [
             {
@@ -3671,7 +3681,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T10:58:39Z"
+      "updated": "2026-08-26T11:19:39Z"
     },
     "T-082": {
       "assignee": "",
@@ -18549,7 +18559,26 @@
       "evidence": [],
       "fingerprint": "leftover-ksc",
       "id": "T-479",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T11:14:11Z",
+            "claim": "Kerbalism VesselData ctor Add(part.flightID) Key 1465015097 \u2014 not a vessel-name dict. Live Flight n=5: 0-part wreck MET 4 rec=no plus 450-part rec=yes Cape blob and 3 flying fins, all craft_basename t7-wheel-proc-hs-cone-pbc. Uniquify ran (Debris 46958/64/65/66); recover of the blob stayed in list; persist still threw; stayed Flight (no rewind). kRPC 0.6 Part has no .id, no Vessel.Die, temperature not settable, no decouplers. rec=yes landed debris is leftover so Hangar will not stack on the blob. Safe kRPC Close is persist after that blob is gone; Harmony skip-dup flightID in VesselData ctor is the remaining save path (Os copy + restart, T-427 pattern) \u2014 do not leftover-ksc, do not load persistent, do not revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T11:14:17Z",
+            "claim": "Kerbalism VesselData ctor Add(part.flightID) Key 1465015097 \u2014 not a vessel-name dict. Live Flight n=5: 0-part wreck MET 4 rec=no plus 450-part rec=yes Cape blob. Uniquify ran; persist still threw; stayed Flight. No kRPC Die. rec=yes landed debris is leftover. Harmony skip-dup flightID is remaining save path \u2014 never leftover-ksc, never load persistent, never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P0",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
@@ -18562,7 +18591,7 @@
       ],
       "title": "Close to KSC refused: Kerbalism OnSave duplicate ProtoVessel key 1465015097",
       "type": "systems",
-      "updated": "2026-08-26T11:00:02Z"
+      "updated": "2026-08-26T11:14:17Z"
     },
     "T-480": {
       "assignee": "",
@@ -18609,7 +18638,29 @@
       "title": "RSI vab-helper \u00d710",
       "type": "rsi",
       "updated": "2026-08-26T11:04:37Z"
+    },
+    "T-482": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T11:31:08Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-482",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "craft heatshield disc writes 1.25 puck not VAB dish bottomDiameter=0",
+      "type": "systems",
+      "updated": "2026-08-26T11:31:08Z"
     }
   },
-  "updated": "2026-08-26T11:05:07Z"
+  "updated": "2026-08-26T11:31:21Z"
 }

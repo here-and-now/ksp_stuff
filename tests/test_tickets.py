@@ -1929,7 +1929,9 @@ class TestPacketAttachAndInbox(unittest.TestCase):
                 craft="t7-chute-pbc",
             )
         )
-        self.assertTrue(
+        # T-475: loft-only High bind does not idle a short living +0.
+        self.assertFalse(tickets.bind_matches_envelope(living))
+        self.assertFalse(
             tickets.waste_blocks_refly(
                 {"payload": {"landing": living, "waste": snap}},
                 craft="t7-chute-pbc",
@@ -1937,6 +1939,7 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         )
 
     def test_waste_blocks_refly_flyinghigh_short_hop_cannot_pay(self):
+        """High still cannot *pay* 2.5 km. Loft-only bind does not idle (T-475)."""
         tickets.open_ticket(
             type="science",
             title="FlyingHigh goo",
@@ -1963,7 +1966,8 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         fly = {"payload": {"landing": landing, "waste": snap}}
         self.assertFalse(tickets.waste_blocks_refly(fly, craft="t7-chute-pbc"))
         living = {**landing, "recoverable": True, "landing": "soft"}
-        self.assertTrue(
+        self.assertFalse(tickets.bind_matches_envelope(living))
+        self.assertFalse(
             tickets.waste_blocks_refly(
                 {"payload": {"landing": living, "waste": snap}},
                 craft="t7-chute-pbc",
@@ -2044,6 +2048,64 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         cur = tickets.show_ticket(hop["id"])
         self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 0)
         self.assertNotIn("waste", cur.get("payload") or {})
+        self.assertFalse(tickets.waste_blocks_refly(cur, craft=craft))
+
+    def test_waste_blocks_refly_loft_short_dud_does_not_block(self):
+        """T-475: 10-27-52Z lofted ~655 m rec=yes sci_run=0. High+Low bind.
+
+        High cannot pay landed 655 m. That does not idle the loft or
+        turn High into a Surface card. Forest leftover still waits.
+        """
+        craft = "kspstuff-hop-valiant-t7-wheel-pbc"
+        for sit, title in (
+            ("FlyingHigh", "FlyingHigh barometer"),
+            ("FlyingLow", "FlyingLow barometer"),
+        ):
+            tickets.open_ticket(
+                type="science",
+                title=title,
+                reporter="Linus",
+                payload={
+                    "experiment_id": "barometerScan",
+                    "situation": sit,
+                    "biome": "",
+                    "bound": "yes",
+                    "craft": craft,
+                },
+            )
+        landing = {
+            "landing": "hard",
+            "sit": "landed",
+            "biome": "Shores",
+            "apo_max": 655.45,
+            "alt_max": 647.901,
+            "recoverable": True,
+            "sci_run": 0,
+            "sci_bank": 13.6243,
+        }
+        self.assertTrue(tickets._bound_loft_only())
+        self.assertTrue(tickets.sci_unchanged_waste(landing))
+        self.assertFalse(tickets.bind_matches_envelope(landing))
+        snap = tickets.bind_snapshot(craft=craft)
+        fly = {"payload": {"landing": landing, "waste": snap}}
+        self.assertFalse(tickets.waste_blocks_refly(fly, craft=craft))
+        path = Path(tempfile.mkdtemp()) / "short-dud.jsonl"
+        path.write_text("{}\n", encoding="utf-8")
+        hop = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+            },
+        )
+        with patch("tape.envelope", return_value=landing):
+            tickets.attach_run(hop["id"], path, who="hank")
+        cur = tickets.show_ticket(hop["id"])
+        self.assertEqual(tickets.fingerprint_count(tickets.SCI_UNCHANGED_FP), 0)
         self.assertFalse(tickets.waste_blocks_refly(cur, craft=craft))
 
     def test_bind_matches_envelope_flyinglow_pays_short_hop(self):
@@ -2155,6 +2217,62 @@ class TestPacketAttachAndInbox(unittest.TestCase):
                     "sit": "pre_launch",
                     "biome": "Shores",
                     "apo_max": 86.643,
+                },
+                "waste": tickets.bind_snapshot(craft=craft),
+            },
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        g = ops.fly_gate(
+            desk={"hangar": "none", "craft": craft},
+            locked=False,
+        )
+        self.assertEqual(g["fly"], "yes")
+        self.assertFalse(
+            tickets.waste_blocks_refly(tickets.show_ticket(t["id"]), craft=craft)
+        )
+
+    def test_ops_fly_gate_loft_short_dud_is_yes(self):
+        """T-475: High+Low bind + 655 m landed recover is fly yes. Do not idle."""
+        craft = "kspstuff-hop-valiant-t7-wheel-pbc"
+        tickets.open_ticket(
+            type="science",
+            title="FlyingHigh barometer",
+            reporter="Linus",
+            payload={
+                "experiment_id": "barometerScan",
+                "situation": "FlyingHigh",
+                "biome": "",
+                "bound": "yes",
+                "craft": craft,
+            },
+        )
+        tickets.open_ticket(
+            type="science",
+            title="FlyingLow barometer",
+            reporter="Linus",
+            payload={
+                "experiment_id": "barometerScan",
+                "situation": "FlyingLow",
+                "biome": "",
+                "bound": "yes",
+                "craft": craft,
+            },
+        )
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={
+                "cli": "python main.py hop",
+                "campaign": "uncrewed",
+                "phase": "hop",
+                "landing": {
+                    "recoverable": True,
+                    "sci_run": 0,
+                    "sit": "landed",
+                    "biome": "Shores",
+                    "apo_max": 655.45,
                 },
                 "waste": tickets.bind_snapshot(craft=craft),
             },

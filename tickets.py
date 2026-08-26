@@ -1380,6 +1380,23 @@ def hang_or_bind_changed(snap: Any, *, craft: str = "") -> bool:
     return bool(prev and cur and prev != cur)
 
 
+def _bound_loft_only() -> bool:
+    """True when every bound card is FlyingHigh/FlyingLow (no surface leftover)."""
+    rows = _bound_science_rows()
+    if not rows:
+        return False
+    n_fly = 0
+    for row in rows:
+        need = _norm_sit_key(str(row.get("situation") or ""))
+        if not need:
+            continue
+        if "flying" in need:
+            n_fly += 1
+            continue
+        return False
+    return n_fly > 0
+
+
 def waste_blocks_refly(
     ticket: dict[str, Any] | None,
     *,
@@ -1392,6 +1409,12 @@ def waste_blocks_refly(
     (T-472). Re-fly last cli. FlyingHigh still cannot *pay* pad
     (bind_matches_envelope stays false); that does not idle the loft
     or turn High into a pad card.
+
+    Loft bind only (FlyingHigh / FlyingLow, no surface leftover) +
+    living +0 short hop — pulse miss of the loft, not unpaid leftover
+    (T-475). High cannot pay 655 m landed; that does not idle the
+    High loft or turn High into a Surface card. Forest leftover vs
+    Shores land still waits (bound is not loft-only).
     """
     if not ticket:
         return False
@@ -1405,6 +1428,8 @@ def waste_blocks_refly(
     if bind_matches_envelope(env):
         return False
     if hang_or_bind_changed(pl.get("waste"), craft=craft):
+        return False
+    if _bound_loft_only():
         return False
     return True
 
@@ -1473,9 +1498,12 @@ def attach_run(tid: str, path: str | Path, *, who: str = "hank") -> dict[str, An
     if learn and not finding_rows(t):
         t = add_feedback(tid, claim=learn, evidence=p, who="hank")
     fresh_run = p != prev_run and p not in prev_evs
-    if fresh_run and cur.get("type") == "fly" and _sci_unchanged_waste(
-        landing if isinstance(landing, dict) else None
-    ):
+    t = show_ticket(tid)
+    # Bump only when the latch would idle fly_ready (Forest leftover
+    # vs Shores). Loft-only High/Low short dud re-flies (T-475) — not
+    # another sci-unchanged-recovered RSI. Pad abort already excluded
+    # from _sci_unchanged_waste (T-472).
+    if fresh_run and cur.get("type") == "fly" and waste_blocks_refly(t):
         bump_fingerprint(SCI_UNCHANGED_FP, who="hank", source=p, tid=tid)
         t = show_ticket(tid)
     return t

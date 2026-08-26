@@ -67,12 +67,15 @@ prefix). Empty fp is refused on `control` / `systems` /
 `ops --tag feedback` (`legacy-twin` exempt) so the clock can tick.
 Abort novels, timestamps, and `hop-<digits>` do not count. A patch
 that *adds* a fp counts. Living recover + `sci_run=0` bumps
-`sci-unchanged-recovered` on `attach_run` (once per new jsonl). That
-bump is **not** fly_ready on last `cli:` — bind must pay envelope
-sit/biome/apo (FlyingHigh ≥50 km) first (T-337). Wreck rec=no
-re-flies last `cli:`. Pad abort sit=`pre_launch` never lofted: not
-this bump; re-fly last `cli:` (control miss, T-472). Do not make High
-a pad card. At
+`sci-unchanged-recovered` on `attach_run` (once per new jsonl) **when
+the latch would idle fly_ready**. Forest leftover vs Shores land still
+waits (T-337). Wreck rec=no re-flies last `cli:`. Pad abort
+sit=`pre_launch` never lofted: not this bump; re-fly last `cli:`
+(control miss, T-472). Loft-only FlyingHigh/FlyingLow bind + short
+recovered dud (655 m landed rec=yes sci_run=0): not this bump; re-fly
+last `cli:` — High cannot pay 655 m and that does not idle the loft
+or turn High into a Surface card (T-475). Do not make High a pad
+card. At
 count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` → desk
 **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only the
 CLI). `ops next` prints `rsi:` and hires Mortimer lock-free; lock
@@ -334,6 +337,9 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
   envelope, or Gene picks the next signed hang that can bank.
   Wreck rec=no is a miss: re-fly last `cli:`. Pad abort
   sit=`pre_launch` is the same miss (control, not a High rebind).
+  Loft-only High/Low bind + short recovered dud is the same miss
+  (T-475) — do not idle High forever on 655 m. Forest leftover vs
+  Shores land still waits.
 - Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`;
   never rails / WarpTo). High dwell is not a burn. `chute_arm_sit`
   1× is Arm, not apo. Thick air ≤18 km stays 1×. Sitting 1× for

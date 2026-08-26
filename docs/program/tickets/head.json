@@ -18319,13 +18319,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Loft-only High/Low bind + short recovered dud is not sci-unchanged-recovered wait. Re-fly last cli. High cannot pay 655 m and that does not idle the loft or turn High into a Surface card. Forest leftover still waits.",
       "created": "2026-08-26T10:28:53Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "sci-unchanged-recovered",
       "id": "T-475",
       "payload": {
-        "count": 31
+        "count": 31,
+        "findings": [
+          {
+            "at": "2026-08-26T10:41:04Z",
+            "claim": "Loft-only FlyingHigh/FlyingLow bind + 655 m landed rec=yes sci_run=0 is not sci-unchanged-recovered wait. _bound_loft_only tickets.py:1383-1398; waste_blocks_refly:1432-1433. High cannot pay 655 m (bind_matches_envelope stays false) and that does not idle the loft or turn High into a Surface card. protocol fly yes. Locked tests/test_tickets.py:2053. Forest leftover vs Shores land still waits. f013 unchanged.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -18333,12 +18344,36 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI sci-unchanged-recovered \u00d731",
       "type": "rsi",
-      "updated": "2026-08-26T10:28:53Z"
+      "updated": "2026-08-26T10:41:04Z"
+    },
+    "T-476": {
+      "assignee": "",
+      "blockers": [],
+      "category": "press",
+      "created": "2026-08-26T10:39:56Z",
+      "desk": "verena",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-476",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "press"
+      ],
+      "title": "Press: 55-line portrait law broke org-rsi",
+      "type": "press",
+      "updated": "2026-08-26T10:39:56Z"
     }
   },
-  "updated": "2026-08-26T10:37:58Z"
+  "updated": "2026-08-26T10:41:04Z"
 }

@@ -1,7 +1,7 @@
 # uncrewed stack
 
 status: signed
-craft: kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc
+craft: kspstuff-hop-valiant-t7-wheel-proc-pbc
 parts:
   - probeCoreSphere.v2
   - sasModule
@@ -12,10 +12,11 @@ parts:
   - GooExperiment
   - sensorThermometer
   - kerbalism-geigercounter
-  - fuelTankSmallFlat
+  - proceduralTankRealFuels
   - restock-engine-125-valiant
   - basicFin
-notes: T-400 **capable yes**. t7-pbc + stability sasModule + PresMat.
-  4×Engineer7500 HD=2.5. No chute. FlyingHigh leftover TELEMETRY Forest
-  1.51 + geiger High 2.15 + PresMat FH file. Stayputnik TELEMETRY.
-  Alts T-402 hs T-403 cone (do not Hangar cone this sit). Not a Flea.
+notes: T-406 **capable yes**. 7× proc 1.25×0.625 Default 2415 kero.
+  Last tank attN bottom=Valiant (fed). No HS. No chute. C-477 dish
+  fuelCrossFeed=False isolates engine — capable no; do not Hangar.
+  Do not Hangar t7-chute Mk16. Not T-433 nose. Not t7-wheel-pbc.
+  f013 PresMat+Goo+geiger+2HOT on_craft. Not a Flea.

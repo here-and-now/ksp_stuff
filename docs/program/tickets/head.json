@@ -288,6 +288,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:57:04Z",
+            "claim": "Seated loft is T-406 kspstuff-hop-valiant-t7-wheel-proc-pbc (fed tank-Valiant). C-477 stays capable no \u2014 dish fuelCrossFeed=False isolates Valiant. Did not Hangar C-477. Do not Hangar t7-chute Mk16. Not T-433 nose. f013 PresMat+Goo+geiger on_craft. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -303,7 +311,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T14:53:33Z"
+      "updated": "2026-08-26T14:57:04Z"
     },
     "T-001": {
       "assignee": "",
@@ -15413,6 +15421,7 @@
       "blockers": [],
       "capable": "yes",
       "category": "craft",
+      "craft": "kspstuff-hop-valiant-t7-wheel-proc-pbc",
       "created": "2026-08-25T06:44:18Z",
       "desk": "gus",
       "evidence": [
@@ -15509,6 +15518,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:57:04Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. Seated on uncrewed craft.md so hop Hangars a fed engine. Last tank proceduralTankRealFuels_1114614042 attN bottom=Valiant_1226153168; engine attN top=that tank. No HS. 7x proc 1.25x0.625 Default 2415 kero. C-477 capable no (dish fuelCrossFeed=False). Do not Hangar t7-chute Mk16. Not T-433 nose. Did not Hangar this sit. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft; geiger e101 unlocked=yes on_craft. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15525,7 +15542,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-26T14:35:28Z"
+      "updated": "2026-08-26T14:57:04Z"
     },
     "T-407": {
       "assignee": "",
@@ -19546,5 +19563,5 @@
       "updated": "2026-08-26T14:53:33Z"
     }
   },
-  "updated": "2026-08-26T14:53:33Z"
+  "updated": "2026-08-26T14:57:04Z"
 }

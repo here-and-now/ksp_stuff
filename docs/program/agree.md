@@ -12,7 +12,7 @@ bind: T-404 barometerScan FlyingHigh 305/0.05
 duration_vs_high: 305s file does not finish tens-of-seconds loft-through (~42s then InSpaceLow ~268 km, four hops +0); pays iff MECO/dwell ≥305s in 50–140 km
 recover: yes
 meco: lid 50 km live; independent off; High dwell coast
-dynamics: none
+dynamics: MECO@50km ~271s vac / ~260s FAR in 50–140 (vz 1.29 km/s apo 137 km); T-404 305s cannot pay
 agreed: yes
 blocker: none
 ```
@@ -64,5 +64,12 @@ silk to the last shear.
 
 ## Dynamics (Katherine, opt-in)
 
-none — pull when High-band time / FAR Q / weathercock is the fight.
-Stamp `verify` after the window; do not sit every `ops next`.
+Four loft-throughs agree at the lid: 50 km live vz 1.29 km/s (16-23-52Z
+1.32), pitch 87–89, heading 299–302, Q_max ~23 kPa, Shores, throttle 1
+through High. MECO at that state: vacuum apo 137 km, 50→apo→50 = 271 s
+(16-23-52Z 249 s if apo 141 km nicks InSpaceLow). FAR Q ~1.1 kPa at lid
+shaves a few seconds (~260 s), not 45. Kepler ceiling in-band (kiss
+140 km) is 276 s. MECO earlier is worse (42 km vz 1.10 → apo 106 km →
+216 s in High). Lid leftover ~290 kg hovers ~38 s, not 305. Loft-through
+High is ~56 s up / ~50 s down (17-01-10Z). T-404 305 s cannot pay. Silk
+is recover, not a High drogue.

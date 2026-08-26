@@ -20764,14 +20764,62 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "MECO at 50 km cannot pay T-404 305 s: ~271 s vacuum in 50-140 km, ceiling 276 s.",
       "created": "2026-08-26T17:40:29Z",
       "desk": "katherine",
       "evidence": [],
       "fingerprint": "",
       "id": "T-523",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T17:48:16Z",
+            "claim": "C-504 MECO at 50 km live is vz 1.29 km/s apo 137 km \u2192 271 s vacuum / ~260 s FAR in 50-140 km (17-13-14Z / 17-01-10Z / 16-49-02Z agree; 16-23-52Z 1.32 km/s 249 s). Kepler ceiling 276 s. Loft-through High ~56 s up. T-404 305 s cannot pay. MECO earlier is worse. Asks T-524 Lars / T-525 Linus. Last-write Dynamics on agree.md.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "done",
+      "tags": [
+        "ask"
+      ],
+      "title": "High-band time / vz at lid: 17-13-14Z 50 km live vz~1.3 km/s apo~138 km; 305s in 50-140?",
+      "type": "ops",
+      "updated": "2026-08-26T17:48:16Z"
+    },
+    "T-524": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T17:47:40Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-524",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T17:48:08Z",
+            "claim": "C-504 lid vz 1.29 km/s (four hops agree). MECO there: vacuum apo 137 km, 50-140 km 271 s (~260 s FAR). Kepler ceiling kiss-140 is 276 s. MECO earlier is worse (42 km vz 1.10 \u2192 216 s). Lid ~290 kg hovers ~38 s not 305. Coast-at-lid cannot pay T-404 305 s; do not chase earlier MECO for High time.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ],
+        "to": "lars"
+      },
+      "priority": "P1",
+      "reporter": "Katherine Grokman, Flight Dynamics",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
@@ -20780,10 +20828,46 @@
       "tags": [
         "ask"
       ],
-      "title": "High-band time / vz at lid: 17-13-14Z 50 km live vz~1.3 km/s apo~138 km; 305s in 50-140?",
+      "title": "MECO at 50 km coast is ~271 s in 50-140; T-404 305 s does not pay",
       "type": "ops",
-      "updated": "2026-08-26T17:40:29Z"
+      "updated": "2026-08-26T17:48:08Z"
+    },
+    "T-525": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T17:47:40Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-525",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T17:48:08Z",
+            "claim": "T-404 PresMat FlyingHigh 305/0.05 cannot finish C-504 High: loft-through ~56 s up / ~50 s down; MECO-at-50 km coast ~260-271 s; Kepler ceiling 276 s. Need a High file that finishes in \u2264250 s, or unbind T-404. Silk is recover not dwell.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ],
+        "to": "linus"
+      },
+      "priority": "P1",
+      "reporter": "Katherine Grokman, Flight Dynamics",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "T-404 305 s cannot pay C-504 High (~260 s MECO-at-lid; loft-through ~56 s up)",
+      "type": "ops",
+      "updated": "2026-08-26T17:48:08Z"
     }
   },
-  "updated": "2026-08-26T17:40:29Z"
+  "updated": "2026-08-26T17:48:16Z"
 }

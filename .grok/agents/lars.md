@@ -55,13 +55,13 @@ checked.
 water/splash CLIs**. Do not add factory inland or warp branches there.
 Do not grow `hop_factory.py` with dead-hang memory. `run_factory_vessel`
 must not grow `wait_water` / `wait_splash`. Do not add a stamp-named `if`
-(`18-34-22Z`, `16-47-21Z`, `_loft_after_skip`) in the pulse **or in a
-helper docstring as the rule**. Tests may cite a stamp; the function
-is the law (`_burning` / `_lofted` / `sit_matches` / `apply_coast`).
-If the patch only holds on this hop's envelope, it is not done. One
-cause is still one **sit-named** function. Warp is a clock on that
-sit — not a new flight. Need a new sit? Ask Wernher; do not grow the
-pulse. Prefer a compose that only flies the living rocket.
+(`_loft_after_skip`) in the pulse **or in a helper docstring as the
+rule**. Tests may cite a stamp; the function is the law (`_burning` /
+`_lofted` / `sit_matches` / `apply_coast`). If the patch only holds on
+this hop's envelope, it is not done. One cause is still one
+**sit-named** function. Warp is a clock on that sit — not a new flight.
+Need a new sit? Ask Wernher; do not grow the pulse. Prefer a compose
+that only flies the living rocket.
 
 Not leftover recover-then-Hangar (Hank/Wernher). Not desk / tickets /
 ops / hangar scenes / telem schema (Wernher). Not Gus. Not Linus bind.
@@ -70,7 +70,6 @@ ops / hangar scenes / telem schema (Wernher). Not Gus. Not Linus bind.
 
 ```bash
 python main.py tickets packet T-NNN   # Hank-named id; control stays T-
-python -m pytest tests/test_hop_factory.py -k pad -q
 ```
 
 Packet is `docs/program/desk.md` + this ticket +
@@ -113,12 +112,11 @@ needs a new block, `ops --tag ask --desk wernher --fingerprint control-blocks`.
 
 **FlyingHigh lid:** loft to live-alt `hop_apo` **first**, then
 Toggle, cut, chute, land leftover. FlyingHigh wait is **not a sit
-at 800 m apo** (17-50-46Z wait then pitch 25 lithobrake 339 m). Do
-not wait-then-pitch in the first km. Not abort-at-lid, not
-skip-chute, not silk at 2 km wait-burn, not OffPlan Space.
-Predicted apo is not the latch. Splash / missing flying card still
-waits the High lid (`_inland_high_sit`); bound FlyingLow flying card
-is airborne Toggle. Do not clamp `hop_apo` to 18 km (06-57-16Z).
+at 800 m apo**. Do not wait-then-pitch in the first km. Not
+abort-at-lid, not skip-chute, not silk at 2 km wait-burn, not OffPlan
+Space. Predicted apo is not the latch. Splash / missing flying card
+still waits the High lid (`_inland_high_sit`); bound FlyingLow flying
+card is airborne Toggle. Do not clamp `hop_apo` to 18 km.
 `hop_target_apo(space=True)` keeps Gene 50 km. Arm after lid alt or
 crumb burnout. `apply_sit_warp` 1× on `chute_arm_sit` **before** Arm.
 
@@ -129,26 +127,7 @@ is still in the paying card (`forest-splashed-thermo`); sample rem=0
 splash leftover as not-in-card; wrong sit is cannot-pay. File rem=0
 (PresMat as well as 2HOT / TELEMETRY) still pays (`hold-ground-card`).
 Airborne cannot-pay is not card-done: after High dwell, **Toggle splash
-leftover** on splash sit before recover (08-40-14Z Water unpaid).
-
-After a `.py` patch:
-
-```bash
-python -m pytest tests/test_hop_factory.py tests/test_physics_warp.py tests/test_pad_science.py -q
-```
-
-Pad-RF: `tests/test_hop_factory.py` (`-k pad` is legal). Factory inland
-compose: also `-k factory` / `-k pad_boost`. Do not start with the
-house `test_hop.py` (231).
-
-**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Hop
-still keys off `vessel.comms.can_communicate`. Do **not** cheat a
-link. Do not add targeting loops in `hop_factory.py` until a control
-miss. Discover when a hop goes deaf. Brief: `docs/program/krpc.md`.
-
-**Git (Os 2026-08-25):** after you patch `.py`, `git add` those paths
-and `git commit` a sentence. Do not wait for Hank. Do not commit
-gitignored tape.
+leftover** on splash sit before recover.
 
 Last-flight 40 lines is abort/exit, not the vessel. Query
 `python main.py telem <jsonl> --window descent` and `--window impact`
@@ -163,10 +142,20 @@ RF pad is already one block — do not mint `_pad_light2`. Warp law is
 Wernher. Do not re-fly. Do not patch leftover Hangar into hop. Never
 revert, quickload, or rewind UT. Splash HD of **this** hop stays yours.
 
+After a `.py` patch:
+
+```bash
+python -m pytest tests/test_hop_factory.py tests/test_physics_warp.py tests/test_pad_science.py -q
+```
+
+Pad-RF: `tests/test_hop_factory.py` (`-k pad` is legal). Factory inland
+compose: also `-k factory` / `-k pad_boost`. Do not start with the
+house `test_hop.py` (231).
+
 ## Return
 
 ```
-tickets: T-NNN | none
+tickets: T-/S-/M-/C-NNN | none
 stack: ok|patched
 lesson: none|<sortie>
 f013: <instrument tech unlocked on_craft>

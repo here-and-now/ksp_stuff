@@ -55,8 +55,7 @@ ticket is open. Law (T-452): one **control** writer; GET readers
 legal. You land reader mode (`session.py`, name `kspstuff-read`,
 `stream.remove` on close, no jsonl/`ship.md`/last-flight/Control/scene)
 and cheap pulse (`telem.py`, actual dt). `status` while lock live is
-that reader — today it still writes jsonl, so keep the CLI refuse
-until the patch.
+that reader. Writer `Telem.read` still owns jsonl / `ship.md`.
 
 ## First command
 
@@ -76,21 +75,18 @@ invent a stem per T-id. Uncrewed `payload.learn` is already Hank
 
 Patch the `.py` named on the ticket (smallest close). Control-block
 tickets: `physics_warp.py` (and sit helpers Lars will call) — sit
-names, not stamp names. **VAB helpers (Os 2026-08-25):** when Gus
-files `type=systems --fingerprint vab-helper`, you write the craft
-builder (`craft.py` / a CLI Gus can run). He does not edit `.py`.
-Catalog this sit: T-413 clone+swap tank, T-414 chute MODULE, T-416
-girder ring, T-417 insert-inline sas/PresMat, T-418 proc cylinder
-Kero/LOx (not SolidFuel pad_pbc), T-419 Nylon donor copy, T-420 proc
-HS splice. Pad still flies the signed hang.
-Do not place parts in the live VAB (kRPC cannot). Extract leftover abort / chute sits still
-living in `hop.py` into blocks. **Log more
-kRPC** into jsonl / Tape windows / `python main.py telem` skim — not
-just a parser over 9 columns. On a miss: patch the named `.py`; finding
-on the work ticket; helper docstring holds physics. `docs/agent-notes.md`
-only for still-true kRPC API facts. Do **not** append `docs/lessons.md`.
-One log line `docs/crew/log/wernher.md`. Leftover recover-then-Hangar
-*kernel* is yours; Hank runs the CLI. Stumble on thin tape → another
+names, not stamp names. **VAB helpers:** when Gus files
+`type=systems --fingerprint vab-helper`, you write the craft builder
+(`craft.py` / a CLI Gus can run). He does not edit `.py`. Do not place
+parts in the live VAB (kRPC cannot). Pad still flies the signed hang.
+Extract leftover abort / chute sits still living in `hop.py` into
+blocks. **Log more kRPC** into jsonl / Tape windows /
+`python main.py telem` skim — not just a parser over 9 columns. On a
+miss: patch the named `.py`; finding on the work ticket; helper
+docstring holds physics. `docs/agent-notes.md` only for still-true kRPC
+API facts. Do **not** append `docs/lessons.md`. One log line
+`docs/crew/log/wernher.md`. Leftover recover-then-Hangar *kernel* is
+yours; Hank runs the CLI. Stumble on thin tape → another
 `--type systems --fingerprint <stem>`. Do not idle the pad.
 
 Last-flight 40 lines is abort/exit, not the vessel. Query `tape.Tape` —
@@ -110,21 +106,12 @@ Cheap pulse / actual dt is `thin-tape`.
 - Vehicle burns as numbers, `.craft`, `python main.py mun`.
 - PyQt UI, scratch vessel scripts. Never revert unless Os said so
   **this sit**.
-- Cheat a RealAntennas link (MaxTL, fake `SetTarget*` / TxPower,
-  ignore deaf). Service is live. **T-427 / `docs/program/ra-rate.md`:**
-  GSTL=2 is real; **64 bps is table and live Cape path** (`RateToHome`).
-  Pre-clamp 31.5 kbps is not current. Patch
-  `RateBoundaries`/`FwdDataRate` with Harmony (already in GameData).
-  Do not MM TechLevel. Do not hop for this.
-
-**Git (Os 2026-08-25):** after you patch `.py` / kRPC notes, `git add`
-those paths and `git commit` a sentence. Do not wait for Hank. Do
-not commit gitignored tape.
+- Cheat a radio link. Service is live. Brief: `docs/program/krpc.md`.
 
 ## Return
 
 ```
-tickets: T-NNN | none
+tickets: T-/S-/M-/C-NNN | none
 ready_to_fly: yes|no
 files: a.py, b.py
 blocker: <only if no>

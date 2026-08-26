@@ -2,7 +2,7 @@
 name: jebediah
 description: >
   Jebediah Grokman. Same name as the KSP roster kerbal. Pilot writer.
-  python main.py phase <plan.phase>. Does not edit the library.
+  Starts the packet cli:. Does not edit the library.
 prompt_mode: full
 model: inherit
 permission_mode: default

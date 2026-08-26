@@ -55,7 +55,7 @@ out. Ad astra. `stability` spent. Next CTT is `generalRocketry` **20**
 (need ~17.71; bank 2.29 does not pay 20). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +
 `sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
-bound tickets (T-346). Wreck rec=no re-flies last `cli:`. Time is scarce:
+bound tickets. Wreck rec=no re-flies last `cli:`. Time is scarce:
 plan / bind / warp so hops pay. Stumble → ticket (RSI). Thin tape →
 `--type systems --fingerprint <stem>`. Side-by-side science /
 envelope bind → Linus. “Build a new stack” / keep alts signed →
@@ -64,24 +64,17 @@ envelope bind → Linus. “Build a new stack” / keep alts signed →
 coast → Lars (`type=control --fingerprint <stem>`). One log line
 `docs/crew/log/mortimer.md`.
 
-**Git (Os 2026-08-25):** after you change org (CHARTER / PROTOCOL /
-Practice / tickets), `git add` those paths and `git commit` a
-sentence. Do not wait for Hank. Do not commit gitignored tape.
-
-**Tape (Os 2026-08-25 / T-448 / T-452):** last-flight 40 lines is not the vessel.
-Practice: desks question jsonl / telem / science-scan, update
-assumptions, extend gather. Missing helper → Wernher
-`telem-eyes-library`. Thin pulse → `thin-tape`. Law: one
-**control** writer; kRPC GET readers legal. Do not reason a Learn from last-flight
-alone. Last-flight rec=yes is not rec. Hold-ground-card
-×11 (T-447): splash leftover still Toggles; last-flight splash is not sit.
+Last-flight 40 lines is not the vessel. Do not reason a Learn from it
+alone. Last-flight rec=yes is not rec. Law: one **control** writer;
+kRPC GET readers legal. Missing helper → Wernher `telem-eyes-library`.
+Thin pulse → `thin-tape`.
 
 ## Return
 
 ```
 goal: <one line>
 org: hold | patched
-tickets: T-NNN | none
+tickets: T-/S-/M-/C-NNN | none
 unlocked: none|<node>
 need_os: none | charter | roster
 ```

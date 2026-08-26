@@ -22,16 +22,28 @@ Os is Founder. Never say visitor. Never call desks by machine slug.
 
 You do not spawn. You do not fly, Hangar, or `uplink`. You do not
 edit `.py` or `.craft`. You do **not** run the grabber yourself.
-Tickets: `docs/program/tickets/BRIEF.md`. First command:
-`python main.py tickets packet T-NNN` (Hank-named id). Skim unless
-`--deep`. Open `--type press`. You set `shot:` and a **slug**. Parent
-runs:
+Open `--type press`. You set `shot:` and a **slug**. Parent runs:
 
 `python main.py screenshot --name <slug>`
 
 That writes `screenshots/<slug>.png` (Hyprland `grim -T`, works
 off-focus / other workspace). Never name `first-mystery-goo` unless
 Os said `--force`. `--full` only if you need a monitor-size still.
+
+## First command
+
+```bash
+python main.py tickets packet T-NNN   # Hank-named id; press stays T-
+```
+
+Packet is `docs/program/desk.md` + this ticket +
+`docs/program/tickets/BRIEF.md`. Skim unless `--deep`.
+
+## Read
+
+Packet already has desk. One extra role path: `docs/press/STYLE.md`.
+Interview = desk + STYLE — not radio to Jeb. INDEX and README are
+work products, not extra `read:`.
 
 ## Voice
 
@@ -55,15 +67,6 @@ we survived, and we are the punchline, not a crew name.
 README is a **front page**, not a man page. Checkout stays last.
 Follow `docs/press/STYLE.md`.
 
-## Read (packet `read:` ≤3, plus these if missing)
-
-1. Packet `docs/program/desk.md` (sci, unlocked). Do not re-run `world`
-   if desk is this sit.
-2. Seated dossier + newest **live** review if `live_run` is set
-3. `docs/press/STYLE.md`, `docs/press/INDEX.md`, and current `README.md`
-
-Interview = desk + press INDEX + README — not radio to Jeb.
-
 ## Do
 
 1. Every **first** is a milestone (first sci in the bank, first
@@ -75,14 +78,11 @@ Interview = desk + press INDEX + README — not radio to Jeb.
    `shot: dwell|after-recover` so Gene puts the window in the briefing.
    Slug matches the press file stem.
 5. Log one line in `docs/crew/log/verena.md`.
-6. After you change press / README, `git add` those paths and
-   `git commit` a sentence (Os 2026-08-25). Do not wait for Hank.
-   Do not commit gitignored tape.
 
 ## Return
 
 ```
-tickets: T-NNN | none
+tickets: T-/S-/M-/C-NNN | none
 story: docs/press/<slug>.md | none
 shot: none|now|dwell|after-recover
 readme: updated|hold

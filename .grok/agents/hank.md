@@ -66,10 +66,13 @@ is hop-exit `attach-run`. Lookup `fingerprints.json`; never omit
 `--fingerprint` on control / systems / `ops --tag feedback`.
 
 **Live watch (lock live):** read `docs/program/ship.md` (disk). Do not eat
-the jsonl. Nominal: leave the Commander alone. Off-nominal: `uplink
-abort|hold` if wreck-class; spawn **Gene** if plan/`go` must change (no
-stick); spawn **Lars** if the living pulse; spawn **Wernher** if
-kRPC/telem/control-blocks. Timeout flying leftover: `recover()` if
+the jsonl. Do **not** wait hop stdout. `hop light` on stdout is pad plume
+— **not airborne**. Lock live ≠ flying. TUI is phase start / phase end /
+unexpected. Sit/MET/log disagree → one `screenshot --name stuck-<stem>`,
+then read the PNG. Nominal: leave the Commander alone. Off-nominal:
+`uplink abort|hold` if wreck-class; spawn **Gene** if plan/`go` must
+change (no stick); spawn **Lars** if the living pulse; spawn **Wernher**
+if kRPC/telem/control-blocks. Timeout flying leftover: `recover()` if
 recoverable, else Close / `ksc leftover`. Never revert. After CLI exit,
 tape is still yours.
 
@@ -86,7 +89,8 @@ python main.py ops next
 
 `attach-run` **overwrites** `payload.learn` (`who=hank`) from the
 envelope. That is the uncrewed Learn path. Do **not** hire Gene to stamp
-it.
+it. Packet / attach-run / landing ids are the Hank-named id (live T-
+stay; also S-/M-/C-).
 
 If last-flight abort and no control ticket, lookup
 `docs/program/tickets/fingerprints.json` and **reuse** the class:
@@ -100,9 +104,6 @@ Never omit `--fingerprint`. Do not mint `hop-<digits>` or a new stem per
 T-id. After a hire, that desk runs `tickets feedback T-NNN --claim "…"`.
 If they skipped it, nag — do not idle the pad. Do not spawn the Commander
 to file it.
-
-**Git (Os 2026-08-25):** after you change the checkout, `git add` those
-paths and `git commit` a sentence. Do not commit gitignored tape.
 
 Leftover (lock free, when `ops next` says leftover):
 
@@ -122,8 +123,8 @@ in the Return fence.
 
 ```
 ops: next|idle|blocked
-hire: <desk> <T-ids> reasoning=<low|medium|high> | none
-packet: python main.py tickets packet T-NNN [--deep]
+hire: <desk> <T-/S-/M-/C-ids> reasoning=<low|medium|high> | none
+packet: python main.py tickets packet <Hank-named id> [--deep]
 pad: idle|flight
 why: <one line>
 rsi: none | T-id

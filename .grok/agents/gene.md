@@ -48,17 +48,12 @@ crafts) a bind **this hang can bank**. Schedule the pad. Always some
 actual flight unless leftover / crash UI, missing `f013`, no capable
 craft, empty shelf, or Os wait. `go: wait` **only** those. Do not take
 15 minutes after a miss to write a novel. An RSI letter does **not**
-empty the pad. Do not re-fly a living +0 (any sit/biome) — not only
-a Forest loft. 08-44 Shores land is not Forest leftover; 10-57 Forest
-splash is not a land bind; stiff-pbc **splashes**. FlyingHigh leftover
-is t7-wheel / t7-pbc loft ≥50 km, not `go: wait`, not silk, not
-abort-at-lid, not wait-at-800 m then pitch. Splash Water bind does
-not clamp `hop_apo` to 18 km.
-Do not Hangar 4t / dv5 / girderless lite. Restamp from the
-envelope or the next signed alt. Thin tape: cite it like `f013` and open `--type systems --fingerprint
-<stem>` — still stamp `go: yes` if leftover clean and the hang lives. Bind
-**side-by-side** science when Linus has it; do not fly thermo-only
-because it is familiar. Stumble → ticket with `--fingerprint`. Uncrewed miss is **not**
+empty the pad. Do not re-fly a living +0 (any sit/biome).
+Restamp from the envelope or the next signed alt. Thin tape: cite it
+like `f013` and open `--type systems --fingerprint <stem>` — still stamp
+`go: yes` if leftover clean and the hang lives. Bind **side-by-side**
+science when Linus has it; do not fly thermo-only because it is
+familiar. Stumble → ticket with `--fingerprint`. Uncrewed miss is **not**
 your hire — leftover is Hank, live `.py` is Lars, re-fly last `cli:`
 if the hang lives **and the bind can still pay**, next already-signed
 alt if it died (stamp that fly ticket only if it has no `go:`).
@@ -83,16 +78,6 @@ Firsts → `--type press`. Paid node → `--type ctt`. Friction → `--type ops
 do not invent a stem per T-id. Empty `--fingerprint` on `control` / `systems` / `ops --tag
 feedback` is refused. `payload.cli` is the exact Commander CLI.
 Do not tell another desk in Return prose. **Landing wins `learn`.**
-
-**RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. `link:
-no` before dwell is already off-nominal; RA can deaf a probe stock
-CommNet would keep. Do **not** cheat a link. Do not `go: wait` for a
-dish we have not needed. Discover targeting when a hop goes deaf.
-Brief: `docs/program/krpc.md`.
-
-**Git (Os 2026-08-25):** after you change the checkout (briefing,
-tickets you stamped/closed), `git add` those paths and `git commit`
-a sentence. Do not wait for Hank. Do not commit gitignored tape.
 
 Last-flight 40 lines is abort/exit, not the vessel. **Do not Learn from
 it.** Stamp `learn` from `tickets landing` / envelope only. Jsonl wins.
@@ -143,24 +128,20 @@ Mid-phase hire: `ship.md` is the eye. You uplink; you do not throttle.
 ## Return
 
 ```
-fly: T-NNN
-flight: <tape id>
-seat: <kerbal | none>
-phase: <name>
-craft: <file or inflight>
-tickets: T-NNN | none
 go: yes|wait
 cli: python main.py <phase> | none
+phase: <name>
+f013: <instrument tech unlocked on_craft>
+flight: <tape id>
 campaign: uncrewed|none
 learn: none|<one line>
-f013: <instrument tech unlocked on_craft>
-shot: none|dwell|after-recover
-slate: docs/program/slate.md
+tickets: T-/S-/M-/C-NNN | none
 ```
 
 Uncrewed `learn:` is `none` here (kernel already stamped). Also stamp
 `--field cli|campaign|phase`. Do not emit `need_*` or `good:` / `feedback:`.
-After the work: `python main.py tickets feedback T-NNN --claim "…"`
+Do not emit `recommended:` (`cli:` aliases). After the work:
+`python main.py tickets feedback T-NNN --claim "…"`
 (one finding — not a Learn novel). Body (not the
 fence): `tickets open --type ops --tag ask|explore|feedback --fingerprint <stem>`
 (feedback **requires** the stem).

@@ -5,8 +5,10 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
+from hop import WATER_HEADING_DEG, WATER_PITCH_DEG, WATER_PITCH_UP
 from hop_factory import (
     _chute_arm_now,
+    _circularize_sit,
     _flameout_sit,
     _high_dwell_sit,
     _hold_lid,
@@ -14,6 +16,9 @@ from hop_factory import (
     _inland_burnout_sit,
     _keep_start_sit,
     _lid_alt_reached,
+    _orbit_cmd_pitch,
+    _orbit_done_sit,
+    _orbit_stack_sit,
     _space_low_sit,
     _space_silk_arm_sit,
 )
@@ -981,3 +986,158 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("no signal (pad)", str(ctx.exception))
         self.assertEqual(vessel.control.staged, 0)
         self.assertEqual(vessel.control.throttle, 0.0)
+
+
+class TestHopFactoryOrbit(unittest.TestCase):
+    def test_orbit_stack_sit_is_terrier_not_valiant(self):
+        loft = _Vessel()
+        valiant = _RfEngine()
+        valiant.part.name = "restock-engine-125-valiant"
+        loft.parts.engines = [valiant]
+        self.assertFalse(_orbit_stack_sit(loft))
+        self.assertFalse(_orbit_stack_sit(None))
+
+        stack = _Vessel()
+        terrier = _RfEngine()
+        terrier.part.name = "restock-engine-125-terrier"
+        terrier.part.title = "LV-909 'Terrier' Liquid Fuel Engine"
+        stack.parts.engines = [valiant, terrier]
+        self.assertTrue(_orbit_stack_sit(stack))
+
+    def test_hold_lid_orbit_stack_is_not_meco(self):
+        """Orbit hang keeps the burn at 59 km. Loft still MECO."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        vessel.parts.engines = [engine]
+        engine.independent_throttle = True
+        engine.pct = 100.0
+        engine.actual = 1.0
+        vessel.control.throttle = 1.0
+        lid = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 59_536.0,
+                "fuel": 167.0,
+                "thrust": 100_000.0,
+                "apo": 179_713.0,
+                "link": True,
+            },
+        )()
+        self.assertFalse(
+            _hold_lid(
+                vessel,
+                lid,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=True,
+                orbit=True,
+            )
+        )
+        self.assertEqual(vessel.control.throttle, 1.0)
+        self.assertTrue(engine.independent_throttle)
+        self.assertTrue(
+            _keep_start_sit(
+                lid,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=True,
+                orbit=True,
+            )
+        )
+        self.assertFalse(
+            _keep_start_sit(
+                lid,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=True,
+                orbit=False,
+            )
+        )
+
+    def test_orbit_cmd_pitch_is_east_not_inland(self):
+        pitch, yawed = _orbit_cmd_pitch(False, 0, 90.0, float("nan"), 0.0)
+        self.assertEqual(pitch, WATER_PITCH_UP - 10.0)
+        self.assertFalse(yawed)
+        pitch, yawed = _orbit_cmd_pitch(False, 3, 80.0, WATER_HEADING_DEG, 8.0)
+        self.assertEqual(pitch, WATER_PITCH_DEG)
+        self.assertTrue(yawed)
+        self.assertNotEqual(WATER_HEADING_DEG, 270.0)
+
+    def test_circularize_sit_near_apo_until_pe_lid(self):
+        near = type(
+            "S",
+            (),
+            {
+                "alt": 250_000.0,
+                "apo": 268_000.0,
+                "peri": -500_000.0,
+                "v_vert": -12.0,
+            },
+        )()
+        done = type(
+            "S",
+            (),
+            {
+                "alt": 250_000.0,
+                "apo": 255_000.0,
+                "peri": 150_000.0,
+                "v_vert": 0.0,
+            },
+        )()
+        loft = type(
+            "S",
+            (),
+            {
+                "alt": 59_000.0,
+                "apo": 137_000.0,
+                "peri": -500_000.0,
+                "v_vert": 1_200.0,
+            },
+        )()
+        self.assertTrue(_circularize_sit(near, orbit=True, down=False))
+        self.assertFalse(_circularize_sit(near, orbit=False, down=False))
+        self.assertFalse(_circularize_sit(done, orbit=True, down=False))
+        self.assertTrue(_orbit_done_sit(done, orbit=True))
+        self.assertFalse(_orbit_done_sit(done, orbit=False))
+        self.assertFalse(_circularize_sit(loft, orbit=True, down=False))
+
+    def test_flameout_after_orbit_lid_is_coast(self):
+        vessel = _Vessel()
+        vessel.parts.all = [object()] * 25
+        dead = type(
+            "S",
+            (),
+            {
+                "situation": "flying",
+                "alt": 80_000.0,
+                "fuel": 400.0,
+                "thrust": 0.0,
+                "available_thrust": 0.0,
+            },
+        )()
+        self.assertFalse(
+            _flameout_sit(
+                dead,
+                vessel,
+                keep_start=True,
+                orbit=True,
+                lofted_lid=True,
+            )
+        )
+        self.assertTrue(
+            _flameout_sit(
+                dead,
+                vessel,
+                keep_start=True,
+                orbit=False,
+                lofted_lid=True,
+            )
+        )

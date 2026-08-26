@@ -37,6 +37,14 @@ Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 sit=landed at pad alt with fuel is still burning. Parked water/splash
 CLIs stay in hop.py. This module must not name those flags. Helpers live
 on the hop module so test patches of hop.* still bind.
+
+Orbit stack (``_orbit_stack_sit``: vacuum Terrier on the hang) is not
+lid-MECO. SAS on the pad, then AP **while thrusting** — Valiant
+``ModuleGimbal`` 5° follows Autopilot; pulse never writes gimbal.
+Inland slew after lid MECO has no plume (heading 297 weathercock).
+Gravity turn east (heading 90) through first-stage burnout, then
+Terrier at apo until Pe ≥ High lid. C-534 Valiant loft is not this.
+Forest / Grasslands: same.
 """
 
 from __future__ import annotations
@@ -50,6 +58,7 @@ from emergencies import Ctx, call
 from hop_factory_pad import (
     _apply_pad_throttle,
     _cut_pad_engine,
+    _pad_engines,
     _pad_hold,
     _pad_light,
     _pad_plume,
@@ -116,6 +125,117 @@ def _inland_high_sit(
     return True
 
 
+def _engine_label(engine: object) -> str:
+    """kRPC Engine + Part name/title. Cfg is not a part→N table."""
+    bits: list[str] = []
+    try:
+        part = getattr(engine, "part", None)
+    except Exception:
+        part = None
+    for obj in (engine, part):
+        if obj is None:
+            continue
+        for attr in ("name", "title"):
+            try:
+                raw = getattr(obj, attr, None)
+            except Exception:
+                continue
+            text = str(raw or "").strip().lower()
+            if text:
+                bits.append(text)
+    return " ".join(bits)
+
+
+def _orbit_stack_sit(vessel: object | None = None) -> bool:
+    """Terrier / LV-909 vacuum second stage is the circularize hang.
+
+    C-534 Valiant loft is not this. Pulse never writes gimbal. Forest /
+    Grasslands: same.
+    """
+    if vessel is None:
+        return False
+    for eng in _pad_engines(vessel):
+        label = _engine_label(eng)
+        compact = label.replace(" ", "").replace("_", "-")
+        if "terrier" in label or "lv-909" in label or "lv909" in compact:
+            return True
+        if "liquidengine2" in compact:
+            return True
+    return False
+
+
+def _orbit_cmd_pitch(
+    yawed: bool,
+    yaw_n: int,
+    flown_pitch: float,
+    flown_heading: float,
+    met: float,
+) -> tuple[float, bool]:
+    """Yaw 10° off zenith heading 90, then 25° from up. AP while thrusting."""
+    if yawed:
+        return H.WATER_PITCH_DEG, True
+    captured = (
+        math.isfinite(flown_heading)
+        and H._heading_err_deg(flown_heading, H.WATER_HEADING_DEG)
+        <= H.INLAND_HEADING_CAPTURE_DEG
+        and math.isfinite(flown_pitch)
+        and float(flown_pitch) <= H.INLAND_YAW_PITCH_DEG + 5.0
+    )
+    timed_out = math.isfinite(met) and float(met) >= H.INLAND_YAW_MET_S
+    unseen = not math.isfinite(flown_heading) and int(yaw_n) >= 2
+    if captured or timed_out or unseen:
+        return H.WATER_PITCH_DEG, True
+    return H.INLAND_YAW_PITCH_DEG, False
+
+
+def _orbit_peri_ok(snap: object) -> bool:
+    """Pe above the High lid is orbit. Apo 268 km with Pe through the planet is not."""
+    peri = getattr(snap, "peri", float("nan"))
+    try:
+        peri_f = float(peri)
+    except (TypeError, ValueError):
+        peri_f = float("nan")
+    return math.isfinite(peri_f) and peri_f >= H.FLYING_HIGH_M
+
+
+def _orbit_done_sit(snap: object, *, orbit: bool = False) -> bool:
+    """Circularized. Recover no. Forest / Grasslands: same."""
+    return bool(orbit) and _orbit_peri_ok(snap)
+
+
+def _circularize_sit(
+    snap: object,
+    *,
+    orbit: bool,
+    down: bool,
+) -> bool:
+    """Apo Terrier until Pe ≥ High lid. Loft Valiant is not this.
+
+    Near apo in space, or already past apo above the lid. Forest /
+    Grasslands: same.
+    """
+    if not orbit or down or _orbit_peri_ok(snap):
+        return False
+    alt = H._snap_alt(snap)
+    apo = getattr(snap, "apo", float("nan"))
+    vz = H._snap_v_vert(snap)
+    try:
+        apo_f = float(apo)
+    except (TypeError, ValueError):
+        apo_f = float("nan")
+    if math.isfinite(alt) and math.isfinite(apo_f) and apo_f > 0.0:
+        if alt >= 0.9 * apo_f:
+            return True
+    if (
+        math.isfinite(vz)
+        and vz <= 0.0
+        and math.isfinite(alt)
+        and alt >= H.FLYING_HIGH_M
+    ):
+        return True
+    return False
+
+
 def _lid_alt_reached(
     snap: object, hop_apo: float, *, flying_high: bool | None = None
 ) -> bool:
@@ -174,17 +294,35 @@ def _keep_start_sit(
     hop_apo: float,
     flying_high: bool,
     lofted_lid: bool = False,
+    orbit: bool = False,
 ) -> bool:
     """After hop light, keep throttle 1 + independent until MECO.
 
     Airborne GET throttle 0 is not MECO — independent still burns.
-    Lid alt, High dwell, or crumbs is MECO. Pad sit after light is
-    still the start. Forest / Grasslands: same.
+    Lid alt, High dwell, or crumbs is MECO. Orbit stack is not lid
+    MECO — leftover LF is still the first-stage burn. Pad sit after
+    light is still the start. Forest / Grasslands: same.
     """
     if not lit or down:
         return False
     if not left_pad:
         return True
+    if orbit:
+        fuel = H._snap_fuel(snap)
+        if not math.isfinite(fuel) or fuel <= H.WATER_BRAKE_FUEL_MIN:
+            return False
+        reached = lofted_lid or (
+            flying_high
+            and _lid_alt_reached(snap, hop_apo, flying_high=True)
+        )
+        if not reached:
+            return True
+        thrust = getattr(snap, "thrust", float("nan"))
+        try:
+            thrust_f = float(thrust)
+        except (TypeError, ValueError):
+            thrust_f = float("nan")
+        return math.isfinite(thrust_f) and thrust_f > 0.0
     if flying_high:
         if _high_dwell_sit(reached_lid=lofted_lid, down=down):
             return False
@@ -235,13 +373,18 @@ def _flameout_sit(
     vessel: object,
     *,
     keep_start: bool,
+    orbit: bool = False,
+    lofted_lid: bool = False,
 ) -> bool:
     """Thrust 0 with fuel left and parts intact is OffPlan, not shear.
 
-    Independent drop is a restart at 0 remaining. Forest / Grasslands:
-    same.
+    Independent drop is a restart at 0 remaining. Orbit stack after
+    lid is first-stage coast — upper fuel is not a Valiant restart.
+    Forest / Grasslands: same.
     """
     if not keep_start:
+        return False
+    if orbit and lofted_lid:
         return False
     fuel = H._snap_fuel(snap)
     if not math.isfinite(fuel) or fuel <= H.WATER_BRAKE_FUEL_MIN:
@@ -345,6 +488,7 @@ def _hold_lid(
     hop_apo: float,
     flying_high: bool,
     lofted_lid: bool = False,
+    orbit: bool = False,
 ) -> bool:
     """FlyingHigh below lid: throttle 1, SAS vertical. Not inland slew.
 
@@ -353,9 +497,11 @@ def _hold_lid(
     crumbs. After lid, MECO: MainThrottle 0, setpoint 0, independent
     off — leftover LF is the coast. lofted_lid latch is not required:
     live alt ≥50 km is MECO. 17-13-14Z throttle 1 at 59 km emptied
-    tanks by MET 153. Residual vz is not this sit. Forest /
-    Grasslands: same.
+    tanks by MET 153. Residual vz is not this sit. Orbit stack is not
+    this MECO — AP east while thrusting. Forest / Grasslands: same.
     """
+    if orbit:
+        return False
     if flying_high and (
         lofted_lid or _lid_alt_reached(snap, hop_apo, flying_high=True)
     ):
@@ -540,8 +686,17 @@ def run_factory_vessel(
     prev_stack_mass = float("nan")
     prev_stack_fuel = float("nan")
     prev_stack_parts: int | None = None
+    orbit = _orbit_stack_sit(vessel)
+    orbit_staged = False
+    said_circ = False
     H._say(f"hop apo={hop_apo:.0f}", on_log)
-    if flying_high:
+    if orbit:
+        H._say(
+            "hop gravity turn east while thrusting, no lid MECO, "
+            f"circularize Pe>={H.FLYING_HIGH_M:.0f}",
+            on_log,
+        )
+    elif flying_high:
         H._say(
             f"hop hold vertical until lid {hop_apo:.0f} m, then slew "
             f"inland heading {H.INLAND_HEADING_DEG:g}",
@@ -582,6 +737,7 @@ def run_factory_vessel(
             ctx.vessel = vessel
             snap = telem.read()
             pulses += 1
+            orbit = orbit or _orbit_stack_sit(vessel)
             if did_light and met0 is None:
                 try:
                     m0 = float(getattr(snap, "met", float("nan")))
@@ -763,7 +919,9 @@ def run_factory_vessel(
                     flying_high=flying_high,
                     lofted_lid=reached_lid,
                 )
-                if lid_burn:
+                if lid_burn and not orbit:
+                    apo_cut = False
+                elif orbit:
                     apo_cut = False
                 elif flying_high and (
                     reached_lid
@@ -790,7 +948,15 @@ def run_factory_vessel(
                     hop_apo=hop_apo,
                     flying_high=flying_high,
                     lofted_lid=reached_lid,
+                    orbit=orbit,
                 )
+                if orbit and not down and not _orbit_done_sit(
+                    snap, orbit=True
+                ):
+                    alt_now = H._snap_alt(snap)
+                    if math.isfinite(alt_now) and alt_now >= H.FLYING_HIGH_M:
+                        arm_now = False
+                        deploy_now = False
 
             apo = getattr(snap, "apo", float("nan"))
             try:
@@ -803,6 +969,7 @@ def run_factory_vessel(
                 left_pad
                 and not down
                 and not waiting_hd
+                and not orbit
                 and math.isfinite(apo_f)
                 and apo_f > lid
                 and not (flying_high and apo_cut)
@@ -835,9 +1002,14 @@ def run_factory_vessel(
                 hop_apo=hop_apo,
                 flying_high=flying_high,
                 lofted_lid=reached_lid,
+                orbit=orbit,
             )
             if left_pad and not down and _flameout_sit(
-                snap, vessel, keep_start=keep_start
+                snap,
+                vessel,
+                keep_start=keep_start,
+                orbit=orbit,
+                lofted_lid=reached_lid,
             ):
                 raise OffPlan("thrust 0 with fuel left")
             _hold_start(
@@ -871,7 +1043,38 @@ def run_factory_vessel(
                     met_slew = float(getattr(snap, "met", float("nan")))
                 except (TypeError, ValueError):
                     met_slew = float("nan")
-                if _lid_vertical_sit(
+                if orbit:
+                    if not inland_yawed:
+                        inland_yaw_n += 1
+                    inland_pitch, inland_yawed = _orbit_cmd_pitch(
+                        inland_yawed,
+                        inland_yaw_n,
+                        flown_p,
+                        flown_h,
+                        met_slew,
+                    )
+                    H._steer_east(
+                        vessel,
+                        pitch=inland_pitch,
+                        flown_pitch=flown_p,
+                        flown_heading=flown_h,
+                        burning=burning_now,
+                    )
+                    if not said_slew:
+                        H._say(
+                            "hop gravity turn east while thrusting "
+                            f"heading={H.WATER_HEADING_DEG:g}",
+                            on_log,
+                        )
+                        said_slew = True
+                    if inland_yawed and not said_pitch:
+                        H._say(
+                            f"hop pitch {H.WATER_PITCH_FROM_UP:g}° east "
+                            f"heading={H.WATER_HEADING_DEG:g}",
+                            on_log,
+                        )
+                        said_pitch = True
+                elif _lid_vertical_sit(
                     snap,
                     hop_apo=hop_apo,
                     flying_high=flying_high,
@@ -884,6 +1087,7 @@ def run_factory_vessel(
                         hop_apo=hop_apo,
                         flying_high=flying_high,
                         lofted_lid=reached_lid,
+                        orbit=orbit,
                     )
                 else:
                     if not inland_yawed:
@@ -1013,7 +1217,21 @@ def run_factory_vessel(
                     hop_apo=hop_apo,
                     flying_high=flying_high,
                     lofted_lid=reached_lid,
+                    orbit=orbit,
                 )
+                if _circularize_sit(snap, orbit=orbit, down=down):
+                    if not orbit_staged:
+                        try:
+                            vessel.control.activate_next_stage()
+                        except Exception:
+                            pass
+                        orbit_staged = True
+                    _apply_pad_throttle(vessel)
+                    if not said_circ:
+                        H._say("hop circularize Pe", on_log)
+                        said_circ = True
+                elif _orbit_done_sit(snap, orbit=orbit):
+                    _release_pad_throttle(vessel)
 
             waiting_lid = (
                 flying_high
@@ -1151,7 +1369,9 @@ def run_factory_vessel(
                         vessel.control.throttle = 1.0
                     except Exception:
                         pass
-            elif left_pad and H._recoverable(vessel):
+            elif left_pad and H._recoverable(vessel) and not _orbit_done_sit(
+                snap, orbit=orbit
+            ):
                 if not said_down:
                     H._say("hop down", on_log)
                     said_down = True
@@ -1226,7 +1446,9 @@ def run_factory_vessel(
                         vessel.control.throttle = 1.0
                     except Exception:
                         pass
-            elif left_pad and (down or H._low_flying(snap)):
+            elif left_pad and (down or H._low_flying(snap)) and not _orbit_done_sit(
+                snap, orbit=orbit
+            ):
                 got = H._force_recover(vessel, on_log)
                 if got is not None:
                     return got
@@ -1235,6 +1457,7 @@ def run_factory_vessel(
                 left_pad
                 and not down
                 and flying_high
+                and not orbit
                 and (
                     reached_lid
                     or _lid_alt_reached(
@@ -1322,6 +1545,9 @@ def run_factory_vessel(
             ):
                 timed_out = True
             if timed_out:
+                if _orbit_done_sit(snap, orbit=orbit):
+                    H._say("hop orbit", on_log)
+                    return "orbit"
                 if left_pad:
                     got = H._recover_hd(vessel, on_log)
                     if got is not None:

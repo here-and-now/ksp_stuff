@@ -4232,7 +4232,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T20:59:26Z"
+      "updated": "2026-08-26T21:00:02Z"
     },
     "T-082": {
       "assignee": "",
@@ -20688,6 +20688,22 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-26T21:03:28Z",
+            "claim": "Orbit stack is not lid-MECO; C-534 loft still _hold_lid MECO at 50 km live + independent off. MET-21 thrust 0 with fuel left below lid stays OffPlan (rf-ignition-ullage). hop_factory.py _orbit_stack_sit / _keep_start_sit / _hold_lid. Not hop_factory_pad.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T21:03:47Z",
+            "claim": "Orbit stack is not lid-MECO; C-534 loft still _hold_lid MECO at 50 km live + independent off. MET-21 thrust 0 with fuel left below lid stays OffPlan (rf-ignition-ullage). hop_factory.py _orbit_stack_sit / _keep_start_sit / _hold_lid. Not hop_factory_pad.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -20701,7 +20717,7 @@
       "tags": [],
       "title": "proc-loft MET 21s throttle 1 thrust 0 fuel frozen 2038 \u2014 flameout not shear",
       "type": "control",
-      "updated": "2026-08-26T20:27:46Z"
+      "updated": "2026-08-26T21:03:47Z"
     },
     "T-510": {
       "assignee": "",
@@ -21504,6 +21520,22 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-26T21:03:28Z",
+            "claim": "pulse: this-hop C-534 still lid MECO 50 km live + InSpaceLow Toggle + silk recover yes. Orbit stack (_orbit_stack_sit Terrier): SAS pad then AP east while thrusting (Valiant ModuleGimbal 5\u00b0, pulse never writes gimbal), no lid MECO, circularize Pe>=140 km. hop_factory.py. Inland slew after lid MECO has no plume (heading 297 weathercock). Do not pad-RF. Girders none.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T21:03:47Z",
+            "claim": "pulse: this-hop C-534 still lid MECO 50 km live + InSpaceLow Toggle + silk recover yes. Orbit stack (_orbit_stack_sit Terrier): SAS pad then AP east while thrusting (Valiant ModuleGimbal 5\u00b0, pulse never writes gimbal), no lid MECO, circularize Pe>=140 km. hop_factory.py. Inland slew after lid MECO has no plume (heading 297 weathercock). Do not pad-RF. Girders none.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "lars"
           }
         ],
         "to": "lars"
@@ -21521,7 +21553,7 @@
       ],
       "title": "Phase 2 circularize pulse is east gravity turn + apo Terrier; C-504 vertical loft cannot",
       "type": "ops",
-      "updated": "2026-08-26T20:27:46Z"
+      "updated": "2026-08-26T21:03:47Z"
     },
     "T-533": {
       "assignee": "",
@@ -22001,5 +22033,5 @@
       "updated": "2026-08-26T20:58:49Z"
     }
   },
-  "updated": "2026-08-26T20:59:33Z"
+  "updated": "2026-08-26T21:03:47Z"
 }

@@ -13,7 +13,7 @@ hang: C-534 kspstuff-hop-valiant-proc-redstone-pbc
 bind: S-514 kerbalism_LITE InSpaceLow 10/0.03
 duration_vs_high: High cannot pay; C-534 loft sits InSpaceLow ~249–300 km; LITE 10s finishes; lid-MECO 137 km High cannot pay LITE; S-516 InSpaceLow goo capped (paid)
 recover: yes
-meco: lid 50 km live; independent off; Toggle InSpaceLow; silk descent — not circularize
+meco: this-hop lid 50 km live + independent off; Terrier stack no lid-MECO — AP east while thrusting, circ Pe>140 km
 dynamics: still loft-only; C-534 4x1500 Valiant same 249–270 km family as C-504 (+~0.1 km/s); 7x1500 Valiant TWR~0.78 sits; 7x1500 Reliant Δv~4.5 km/s apo~400–500 km Pe through planet; circularize still Terrier after 45
 constellation: Cape LIVE 64 bps omni SurfAntenna; loft stays Cape sky; DSN L LIVE TL2; minRelayTL=3 no sat
 agreed: yes
@@ -72,20 +72,24 @@ Pulse Toggle in space. f013 LITE hosted OKTO PAW on_craft=yes.
 
 ## Pulse (Lars)
 
-This-hop is loft, not orbit. Successor hang still this compose —
-girders **none** in pulse. `hop_factory.py` inland. Pad-RF
+This-hop C-534 is loft, not orbit. `hop_factory.py` inland. Pad-RF
 `hop_factory_pad.py` (one sit). Throttle 1 + SAS vertical until lid.
 MECO at 50 km **live** alt: MainThrottle 0, setpoint 0, independent
-off. `_hold_lid` after lid is MECO — not inland-through-burnout
-(17-01-10Z throttle 1 at 55 km; 17-13-14Z emptied tanks MET 153 apo
-270 km). After lid, Toggle InSpaceLow when the live sit is space
-(`_space_low_sit`); High cannot-pay is not space-done. Arm Nylon on
-descent (`_space_silk_arm_sit`) — recover yes. Do not circularize: no
-Terrier; Pe stays on the ground. Do not write truss/girder into
-`hop_factory`. Stiffness is hang autostrut, not a pulse part. Forest
-/ Grasslands: same. Do not retune MECO / lid / silk to High 305 s or
-to the last shear. Log must not print hold inland through burnout
-after High lid.
+off. `_hold_lid` after lid is MECO — not inland-through-burnout.
+After lid, Toggle InSpaceLow (`_space_low_sit`). Arm Nylon on
+descent (`_space_silk_arm_sit`) — recover yes. Do not circularize
+this hang: no Terrier; Pe stays on the ground. Inland slew after lid
+MECO has no plume (Valiant `ModuleGimbal` 5° idle; heading 297
+weathercock). Pulse never writes gimbal. Girders none in pulse.
+Do not retune MECO / lid / silk to High 305 s. Log must not print
+hold inland through burnout after High lid.
+
+When the hang is the Terrier orbit stack (`_orbit_stack_sit`): do
+**not** MECO at 50 km. SAS on the pad, then AP **while thrusting**
+so the 5° gimbal turns. Gravity turn **east** (heading 90) through
+first-stage burnout. Then Terrier at apo until Pe ≥ ~140 km High
+lid. rec=no is honest if orbiting. Same compose — not a stamp
+helper. Forest / Grasslands: same.
 
 ## Dynamics (Katherine, opt-in)
 

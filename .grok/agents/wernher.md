@@ -79,6 +79,10 @@ names, not stamp names. **VAB helpers:** when Gus files
 `type=systems --fingerprint vab-helper`, you write the craft builder
 (`craft.py` / a CLI Gus can run). He does not edit `.py`. Do not place
 parts in the live VAB (kRPC cannot). Pad still flies the signed hang.
+A hang-writing helper must leave the **engine in the first fire list**
+(`sqor=0`, not only `istg=1`) and the heatshield a **VAB dish**
+(`bottomDiameter=0`), not a filled puck. Node offset is catalog, not
+tank-half. Live gaps T-480 / T-482 / T-483.
 Extract leftover abort / chute sits still living in `hop.py` into
 blocks. **Log more kRPC** into jsonl / Tape windows /
 `python main.py telem` skim — not just a parser over 9 columns. On a
@@ -97,9 +101,10 @@ Cheap pulse / actual dt is `thin-tape`.
 
 - “Engine did not light” with fuel left is **not** a kRPC trap until
   ignitions remaining, ullage, and EC ignitor are checked on **this
-  hang** (`rf-ignition-ullage`). Pulse is Lars `hop_factory.py`
-  (T-457). Do not raise ignitions. Do not write GameData. Do not
-  paste a part→N table.
+  hang** (`rf-ignition-ullage`). Confirmed pad light is **plume**, not
+  ignitions 1→0. Pulse is Lars `hop_factory_pad.py` pad-RF (T-471) /
+  `hop_factory.py` compose (T-457). Do not raise ignitions. Do not
+  write GameData. Do not paste a part→N table.
 - This-hop `_after_skip` helpers in the pulse (that is Lars
   overfitting). Give him a sit-named block instead. Do not freeze
   Flea / Hammer / splash-090 envelopes in tests — lock the block.

@@ -153,16 +153,20 @@ actually shared. One immortal factory that remembers Flea, Hammer,
 4t, and splash-090 is not the way. Tests lock the **blocks**, not
 dead-hang envelopes. No stamp-named `_after_skip`.
 
-**Engines (Os 2026-08-25 / T-456):** ReStockPlus liquids are RF
+**Engines (Os 2026-08-25 / T-456 / T-470):** ReStockPlus liquids are RF
 ullage + finite ignitions. Pad 1 g still lights. Throttle 0 then 1
 is a restart. Desks verify **this hang** (cfg / ConfigCache / live
 module). Do **not** paste a part→N ignition table here or in spawn
-prompts. Failed coast/suicide relight with fuel left is **engine
-physics** (`rf-ignition-ullage`, Lars `hop_factory_pad.py` pad-RF /
-`hop_factory.py` compose) until a desk has read that engine. RF pad
-is one sit — not a `_pad_*` per stamp. Do not open `type=systems` /
-kRPC for “engine did not light” first. Do not raise ignitions. Never
-GameData.
+prompts. Confirmed pad light is **plume** / currentThrottle rising
+after the engine fires — not ignitions remaining 1→0, not kRPC
+`Engine.throttle` GET. Independent setpoint is the RF live. Staging
+a chute (or any empty-of-engine stage) is not hop light.
+Pad-dead-no-plume is Lars `hop_factory_pad.py` (`rf-ignition-ullage`)
+— not loft, not Wernher, not a GameData raise. Failed coast/suicide
+relight with fuel left is **engine physics** until a desk has read
+that engine. RF pad is one sit — not a `_pad_*` per stamp. Do not
+open `type=systems` / kRPC for “engine did not light” first. Do not
+raise ignitions. Never GameData.
 
 **Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
 is a sin**. Do **not** idle the pad as a religion: a **living recover
@@ -172,20 +176,22 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
-splash match the hang; FlyingHigh waits ≥50 km on **t7-wheel** /
-**t7-pbc**, not a 30 km stiff loft, not t7-chute this sit). FlyingHigh
-wait is loft live-alt ≥50 km / Toggle / cut / chute / land leftover —
-not a sit at 800 m apo, not wait-then-pitch in the first km, not
-throttle-0 at light, not silk, not abort-at-lid, not skip-chute, not
-OffPlan under `expect_apo_max`. Throttle 1 + SAS vertical until lid;
-inland slew after. Thick air ≤18 km is 1×. 4× silk / chute Arm shears
-t7 — `chute_arm_sit` 1× is Arm, **not** apo (`hop-coast-phys-warp`).
-Quiet loft after lid honors Hank `phys-warp` (High dwell is not a
-burn). Do not Hangar FAR-sheared 4t / dv5 /
-girderless lite / a 4×-sheared t7 this sit. Do not Hangar
-**t7-wheel-nose** (T-409) as silk. Signed next loft is
-**t7-wheel-proc** (T-406, same length, more kero) — Hangar after
-leftover, not an RSI letter. Do not gather a
+splash match the hang; FlyingHigh waits ≥50 km on seated
+**t7-wheel-proc-hs-cone-pbc** (C-477, silk+HS), not t7-wheel-pbc
+(T-400 `capable: no` — lithobrake is not recover), not a 30 km stiff
+loft, not t7-chute Mk16). FlyingHigh wait is loft live-alt ≥50 km /
+Toggle / cut / chute / land leftover — not a sit at 800 m apo, not
+wait-then-pitch in the first km, not throttle-0 at light, not
+abort-at-lid, not skip-chute, not OffPlan under `expect_apo_max`.
+Silk on C-477 is recover, not the wait. Throttle 1 + SAS vertical
+until lid; inland slew after. Thick air ≤18 km is 1×. 4× silk /
+chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
+(`hop-coast-phys-warp`). Quiet loft after lid honors Hank
+`phys-warp` (High dwell is not a burn). Do not Hangar FAR-sheared 4t
+/ dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 this sit.
+Do not Hangar **t7-wheel-nose** (T-409) as silk. Loft hang this sit
+is **C-477** (already seated). T-406 proc no-silk and T-428 HS-only
+/ T-430 silk-only stay alts — not a second Hangar from this letter. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;
 uplink `phys-warp` / `no_warp`; never rails / WarpTo). Ground fills
 the shelf **during** flight (lock live, other files). Wernher **logs
@@ -294,7 +300,9 @@ spawn **Lars** on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_f
 Failed coast/suicide relight with fuel left is engine physics
 (`rf-ignition-ullage`, Lars `hop_factory_pad.py`) — not Wernher, not
 `type=systems` — until ignitions remaining, ullage, and EC ignitor
-are checked on **this hang**.
+are checked on **this hang**. Confirmed light is plume, not
+ignitions 1→0. Pad-dead-no-plume waits that file (T-471) — High
+stays High.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
 still loft, cut, coast, chute, land leftover, **then Toggle splash
 leftover**. Skip-latch is

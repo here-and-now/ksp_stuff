@@ -18492,6 +18492,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write rf-ignition-ullage \u00d78 (stem 10): hop light is plume not ignitions 1\u21920. T-471 owns the live miss. Pad still flies.",
       "created": "2026-08-25T22:01:00Z",
       "desk": "mortimer",
       "evidence": [],
@@ -18516,11 +18517,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI rf-ignition-ullage \u00d78",
       "type": "rsi",
-      "updated": "2026-08-26T14:35:44Z"
+      "updated": "2026-08-26T14:35:56Z"
     },
     "T-471": {
       "assignee": "",
@@ -18782,6 +18783,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write bigger-dv \u00d719 (stem 20): loft hang C-477 silk+HS. t7-wheel-pbc lithobrake is not recover. Bank 13.62 need ~6.38. Pad still flies.",
       "created": "2026-08-26T10:48:37Z",
       "desk": "mortimer",
       "evidence": [],
@@ -18806,11 +18808,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI bigger-dv \u00d719",
       "type": "rsi",
-      "updated": "2026-08-26T14:35:44Z"
+      "updated": "2026-08-26T14:35:56Z"
     },
     "T-479": {
       "assignee": "",
@@ -18881,6 +18883,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write vab-helper \u00d710 (stem 13): engine first fire + HS dish not puck. Live gaps T-480/T-482/T-483. Pad still flies.",
       "created": "2026-08-26T11:04:37Z",
       "desk": "mortimer",
       "evidence": [],
@@ -18905,11 +18908,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI vab-helper \u00d710",
       "type": "rsi",
-      "updated": "2026-08-26T14:35:44Z"
+      "updated": "2026-08-26T14:35:56Z"
     },
     "T-482": {
       "assignee": "",
@@ -19274,5 +19277,5 @@
       "updated": "2026-08-26T13:53:40Z"
     }
   },
-  "updated": "2026-08-26T14:35:44Z"
+  "updated": "2026-08-26T14:35:56Z"
 }

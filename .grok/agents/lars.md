@@ -38,18 +38,24 @@ dead-hang envelopes.
 | Parked `hop-to-water` / `hop-splash` suicide-burn | `hop.py` | factory pulse |
 | New sit name / warp law / timeout clock | Wernher `ops --tag ask --desk wernher --fingerprint control-blocks` | a stamp helper |
 
-**RF liquids (Os 2026-08-25 / T-456 / T-457):** ReStockPlus liquids
+**RF liquids (Os 2026-08-25 / T-456 / T-470):** ReStockPlus liquids
 have RF ullage + finite ignitions. Pad 1 g still lights. Throttle 0
 then 1 is a restart (spends an ignition, needs settle). Verify
 **this hang** (cfg / ConfigCache / live module) — do not memorize a
-part→N table. Failed coast/suicide relight with fuel left is engine
-physics (`rf-ignition-ullage`) until you have read that engine.
-Cartoon MECO / lid / `_hold_or_cut` suicide relight is false. RF pad
-is **one sit** in `hop_factory_pad.py` — do not add a `_pad_*` per
-stamp. Compose stays `hop_factory.py`. Not `hop.py`, not Wernher. Do
-not raise ignitions. Do not open `type=systems` for “engine did not
-light” until ignitions remaining, ullage, and EC ignitor are
-checked.
+part→N table. Confirmed pad light is **plume** / currentThrottle
+rising after the engine fires — not ignitions remaining 1→0, not
+kRPC `Engine.throttle` GET. Independent setpoint is the RF live.
+Staging a chute (empty-of-engine stage) is not hop light.
+Pad-dead-no-plume is this file, not loft. Do not abort-after-light.
+Pad thrusting is not a handoff — keep MainThrottle 1 until lid MECO;
+`_cut_pad_engine` only on abort. Failed coast/suicide relight with
+fuel left is engine physics (`rf-ignition-ullage`) until you have
+read that engine. Cartoon MECO / lid / `_hold_or_cut` suicide relight
+is false. RF pad is **one sit** in `hop_factory_pad.py` — do not add
+a `_pad_*` per stamp. Compose stays `hop_factory.py`. Not `hop.py`,
+not Wernher. Do not raise ignitions. Do not open `type=systems` for
+“engine did not light” until ignitions remaining, ullage, and EC
+ignitor are checked. Live miss is T-471.
 
 `hop.py` is **shared helpers that are actually shared + parked
 water/splash CLIs**. Do not add factory inland or warp branches there.

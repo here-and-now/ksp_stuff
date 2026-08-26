@@ -27,6 +27,9 @@ python main.py tickets open --type systems --category improvement \
 
 `craft.py` already has `StackBuilder` / attach / proc cylinder. Name
 the gap. Wernher owns the script. You run it and stamp `capable:`.
+A helper that writes a hang must leave the **engine in the first
+fire list** (`sqor=0`, not only `istg=1`) and HS a **VAB dish**
+(`bottomDiameter=0`), not a filled puck (T-480 / T-482 / T-483).
 Do not idle the pad for a helper.
 
 ## First command
@@ -56,10 +59,13 @@ Do not re-run `world` / `tech` when desk already has tree.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** Next honest node `generalRocketry` **20** (bank
-2.29 does not pay). Keep **many different crafts already signed on
-disk** (not one hang designed after a wreck). Fill the shelf **during**
-lock live. Do **not** Hangar proc-4t / swivel-dv5 / girderless lite
-(`far-shear`). Keep alts signed.
+13.62 does not pay; need ~6.38). Loft hang this sit is **C-477**
+t7-wheel-proc-hs-cone-pbc (silk+HS). Do **not** restamp t7-wheel-pbc
+`capable: yes` — lithobrake is not recover. Keep **many different
+crafts already signed on disk** (not one hang designed after a wreck).
+Fill the shelf **during** lock live. Do **not** Hangar proc-4t /
+swivel-dv5 / girderless lite / t7-chute Mk16 (`far-shear`). Keep alts
+signed.
 
 **Procedural Parts:** when a proc part is **unlocked** for the job,
 prefer it over stock. `proceduralTankRealFuels` (shapes

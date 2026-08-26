@@ -59,11 +59,17 @@ Splash HD recover of **this** hop after a briefed dwell stays mission.
 
 **Hop light vs airborne:** `hop light` on hop stdout is pad plume, not
 airborne. Lock live ≠ flying. Parent mid-hop reads `ship.md`. Do **not**
-wait hop stdout. Sit/MET/log disagree → one `screenshot --name
-stuck-<stem>` then read the PNG. TUI is phase start / phase end /
-unexpected only (Walt). Off-nominal Gene / Lars / Wernher is parent
-TUI reading `ship.md`, not `ops next`. Lock-live `ops next` is ground
-batch only.
+wait hop stdout. Radio already prints **thrust / plume / parts_n / fuel**
+— those kv are first-class eyes. Throttle 1 + thrust 0 + plume no +
+fuel frozen while parts intact is **unexpected** (engine already dead)
+— **not** FAR shear. Last-flight `shear` / hop stdout `hop shear parts
+N→M` is the wreck, not the cause (16-05-34Z: MET 21 thrust=0 fuel
+frozen parts=30; hop logged shear 30→9 at impact). Sit/MET/log
+disagree → one `screenshot --name stuck-<stem>` then read the PNG.
+TUI is phase start / phase end / unexpected only (Walt). Off-nominal
+Gene / Lars / Wernher is parent TUI reading `ship.md`, not `ops next`.
+Lock-live `ops next` is ground batch only. After CLI: `telem --window`,
+not last-flight 40.
 
 **Ground talk (between exits, lock free):** Gene, Linus, Gus, Lars,
 Wernher, Mortimer, Verena may address each other by name. Still not
@@ -247,24 +253,30 @@ not a cheat, not the only path; recover still banks the HD when
 leftover is the can (Goo ~429 MB does not TX at TL2); splash leftover
 unpaid is Toggle-at-sit, not a reason to forbid TX.
 
-**Live watch (Os 2026-08-23):** Someone looks at the hop **while it
-flies**. The Commander watches telem/gates. Unusual →
+**Live watch (Os 2026-08-23 / T-508):** Someone looks at the hop **while it
+flies**. The Commander watches telem/gates — **throttle / thrust /
+plume / fuel vs parts**. Unusual →
 `python main.py note <Name> "…"` and/or hold/abort per emergencies
 (in-flight radio, not a review after recover). **Hank** (parent)
 periodically runs **`python main.py ship`** (disk envelope from
-`ship.md`). Do **not** wait hop stdout. `hop light` is pad plume —
+`ship.md`). Read **thrust / plume / parts_n / fuel**. Do **not**
+wait hop stdout. `hop light` is pad plume —
 **not airborne**. Lock live ≠ flying. Sit/MET/log disagree → one
 `screenshot --name stuck-<stem>` then read the PNG. TUI is phase
-start / phase end / unexpected only (Walt). Lock-live `status` /
+start / phase end / unexpected only (Walt). Unexpected includes
+throttle 1 + thrust 0 + plume no + fuel frozen while parts intact
+(engine already dead) — Walt says **engine dead**, not shear.
+Lock-live `status` /
 leftover GET is a reader Session (`kspstuff-read`, T-454) — it does
 **not** write jsonl. Writer `Telem.read` still owns jsonl /
 `ship.md`. Do not `read_file`
 the growing jsonl. Off-nominal (wreck
 flags, lithobrake, empty tanks + still flying, heading never moving,
-EC=0 before dwell, crash UI): **do something** — parent TUI reading
+EC=0 before dwell, crash UI, **engine dead with stack intact**): **do something** — parent TUI reading
 `ship.md`, not `ops next`. `uplink abort|hold`
 if wreck-class; spawn **Gene** if the plan/`go` must change
-mid-sortie; spawn **Lars** if the living pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks (`physics_warp.py`). Issue-clear → that desk, not a Gene novel.
+mid-sortie; spawn **Lars** if the living pulse / control / flameout
+(`rf-ignition-ullage`); spawn **Wernher** if kRPC/telem/desk/control-blocks (`physics_warp.py`) or hop abort still names parts-drop **shear**. Issue-clear → that desk, not a Gene novel. Do not stamp `far-shear` from last-flight when radio already had thrust 0.
 **Nominal** hop: no Gene, no 15 s narration, no heartbeat swallow.
 “Do not spawn Gene during the phase” is **repealed for off-nominal
 only**. Depth 1. Gene does **not** take the stick (hop pid is the
@@ -309,12 +321,19 @@ idle the loft. Loft-only High/Low bind + short recovered dud re-flies
 last `cli:` (T-475) — High cannot pay 655 m landed, and that does not
 idle the loft. Miss (nonzero / ABORT / `science (none)` / `science skip`):
 spawn **Lars** on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
+Last-flight abort `shear` / `hop shear parts N→M` is **not** the miss
+class when tape already had throttle 1 + thrust 0 + plume no + fuel
+frozen + parts intact — query `telem --window airborne|burnout`.
+Flameout with fuel left is engine physics (`rf-ignition-ullage`,
+Lars T-509) — not FAR. Kernel still naming parts-drop as hop abort is
+Wernher `telem-eyes-library`, not a hop.py steal of T-509.
 Failed coast/suicide relight with fuel left is engine physics
 (`rf-ignition-ullage`, Lars `hop_factory_pad.py`) — not Wernher, not
 `type=systems` — until ignitions remaining, ullage, and EC ignitor
 are checked on **this hang**. Confirmed light is plume, not
 ignitions 1→0. Pad-dead-no-plume waits that file (T-471) — High
-stays High.
+stays High. Airborne cutoff with a **fed** tank is the same engine
+physics (T-509), not shear.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
 still loft, cut, coast, chute, land leftover, **then Toggle splash
 leftover**. Skip-latch is

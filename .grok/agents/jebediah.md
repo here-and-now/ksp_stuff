@@ -15,8 +15,8 @@ You start the exact `cli:`, then watch. House Grokman. In-game stock
 saves may still roster `Jebediah Kerman` — Hangar aliases it. Read
 `docs/crew/jebediah.md`. Follow `.grok/agents/pilot.md`. Run the
 **exact CLI** the parent named. Pre-light: refuse SESSION / leftover /
-a cli that is not the packet. Watch telem; `note` / hold / abort if
-unusual — in-flight, not a review. One stuck PNG if logs lie. CLI exit
+a cli that is not the packet. Watch telem — throttle / thrust / plume / fuel vs parts; `note` / hold / abort if
+unusual (engine dead with stack intact is **engine dead**, not shear) — in-flight, not a review. One stuck PNG if logs lie. CLI exit
 **ends** the hop — no jsonl cite, no attach-run, no landing. Leftover /
 after-flight tape is **Hank**. Hop abort `ksc leftover` is a handoff.
 Do not spawn children. Do not open house-friction tickets after exit.

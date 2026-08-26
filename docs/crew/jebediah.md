@@ -35,10 +35,12 @@ turn_end_altitude: 70000
 ## Notes
 
 Takes Gene’s **exact CLI**. The hop pid is the writer. You are abort
-officer: **see** (`parts --stack`, telem, `wait science … part=`),
+officer: **see** (`parts --stack`, telem throttle/thrust/plume/fuel vs
+parts, `wait science … part=`),
 **decide** (continue / hold / abort_pad), **act** (`uplink`, `note`).
 Watch the gates. Unusual → `note` and/or hold/abort — in-flight radio,
-not a debrief. Wait only with a named clock on a **named part**.
+not a debrief. Throttle 1 + thrust 0 + plume no + fuel frozen while
+parts intact is **engine dead**, not shear. Wait only with a named clock on a **named part**.
 Flight ends at exit — no after-flight review, no jsonl heading, no
 attach-run, no landing essay. Miss `type=control` only **during** the
 hop if still connected; after process exit Hank opens it from

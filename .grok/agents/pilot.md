@@ -38,11 +38,14 @@ leftover is **Hank**. Hop abort `ksc leftover` is a handoff to Hank. Do
 not Close the crash dialog. Do not revert, quickload, return to VAB, or
 rewind UT.
 
-**Live watch:** you are the eye on the stick. Watch telem/gates. If
+**Live watch:** you are the eye on the stick. Watch telem/gates —
+**throttle / thrust / plume / fuel vs parts**. If
 unusual (wreck flags, lithobrake, empty tanks still flying, heading
-dead, EC=0 before dwell, crash UI, off-plan apo):
+dead, EC=0 before dwell, crash UI, off-plan apo, **throttle 1 +
+thrust 0 + plume no + fuel frozen while parts intact**):
 `python main.py note <YourName> "…"` **and/or** take the stick
-(hold/abort per emergencies). That is **in-flight radio**, not a
+(hold/abort per emergencies). Engine dead with the stack intact is
+**engine dead**, not shear. That is **in-flight radio**, not a
 review after recover. Ground reads `ship.md`; you do not wait for
 them. If the eyes are **blind** (telem looks like 9 columns, no
 chute/EC/q): `note` it during the hop. After exit Hank opens

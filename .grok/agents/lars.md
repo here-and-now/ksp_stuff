@@ -136,8 +136,13 @@ Airborne cannot-pay is not card-done: after High dwell, **Toggle splash
 leftover** on splash sit before recover.
 
 Last-flight 40 lines is abort/exit, not the vessel. Query
-`python main.py telem <jsonl> --window descent` and `--window impact`
-on a miss. Always `tickets feedback --claim`.
+`python main.py telem <jsonl> --window airborne` and `--window burnout`
+**before** descent/impact. Last-flight `shear` / hop stdout `hop shear
+parts N→M` is **not** the cause when tape already had throttle 1 +
+thrust 0 + plume no + fuel frozen + parts intact — that is engine
+physics (`rf-ignition-ullage`, T-509). Kernel still naming parts-drop
+as hop abort is Wernher `telem-eyes-library` — not this pulse, not
+`hop.py` from T-508. Always `tickets feedback --claim`.
 
 ## After a miss
 

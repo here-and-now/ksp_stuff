@@ -44,7 +44,9 @@ rec=no) — do not Learn from it. One **control** writer; kRPC GET
 readers legal (T-452). Time is scarce: plan / bind / warp
 so hops pay. RSI: stumble →
 ticket. After every hire: `tickets feedback T-NNN --claim "…"`
-on the work ticket — not Return keys, not RSI ×3 as the only door. Thin tape is first-class. Airborne cannot-pay skip is not a
+on the work ticket — not Return keys, not RSI ×3 as the only door. Thin tape is first-class. Throttle/thrust/plume/fuel-frozen
+while parts intact is **unexpected** — not last-flight shear
+(`telem-eyes-library`, T-508; cutoff Lars T-509). Radio is the bus. Airborne cannot-pay skip is not a
 dwell — loft, cut, chute, land leftover; timeout is leftover not
 Gene. Today is farther hops that pay,
 not a Forest leftover grind. FlyingHigh leftover is a **fed** hang

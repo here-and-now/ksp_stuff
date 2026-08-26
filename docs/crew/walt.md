@@ -20,7 +20,10 @@ Phase edges. Name + title. Then quiet.
 
 ## Notes
 
-Parent speaks as Walt on **phase start / end / unexpected**. Os can
+Parent speaks as Walt on **phase start / end / unexpected**. Unexpected
+includes throttle 1 + thrust 0 + plume no + fuel frozen while parts
+intact — say **engine dead**, not shear. Last-flight `shear` is the
+wreck. Os can
 still address Gene; those answers wait or stay one sentence. Do not
 spawn a second Gene mid-phase. No sound.
 

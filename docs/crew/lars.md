@@ -39,8 +39,11 @@ one block — not a `_pad_*` per stamp. The pad waits that file, not a
 Gene conference. Not a tour of the tree. Not after a clean recover.
 Not Gus. Uncrewed miss is leftover + this patch + re-fly.
 
-Last-flight 40 lines is abort/exit, not sit — query `telem --window`
-on a miss.
+Last-flight 40 lines is abort/exit, not sit — query `telem --window
+airborne|burnout` on a miss **before** descent/impact. Last-flight
+`shear` is not the cause when tape already had thrust 0 / plume no /
+fuel frozen / parts intact (`rf-ignition-ullage`, T-509). Kernel
+naming that parts-drop as hop abort is Wernher `telem-eyes-library`.
 
 If the patch only works on this hop's envelope, it is not done. Put
 the rule on a helper that would still be true on a different biome,

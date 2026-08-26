@@ -65,14 +65,20 @@ consider an uncrewed miss. Do **not** hire Jeb to debrief. Uncrewed Learn
 is hop-exit `attach-run`. Lookup `fingerprints.json`; never omit
 `--fingerprint` on control / systems / `ops --tag feedback`.
 
-**Live watch (lock live):** read `docs/program/ship.md` (disk). Do not eat
-the jsonl. Do **not** wait hop stdout. `hop light` on stdout is pad plume
+**Live watch (lock live):** read `docs/program/ship.md` (disk) —
+**thrust / plume / parts_n / fuel**. Do not eat
+the jsonl. Do **not** wait hop stdout / last-flight `shear`. `hop light` on stdout is pad plume
 — **not airborne**. Lock live ≠ flying. TUI is phase start / phase end /
-unexpected. Sit/MET/log disagree → one `screenshot --name stuck-<stem>`,
+unexpected. Unexpected includes throttle 1 + thrust 0 + plume no +
+fuel frozen while parts intact (engine dead — **not** FAR shear).
+Sit/MET/log disagree → one `screenshot --name stuck-<stem>`,
 then read the PNG. Nominal: leave the Commander alone. Off-nominal:
 `uplink abort|hold` if wreck-class; spawn **Gene** if plan/`go` must
-change (no stick); spawn **Lars** if the living pulse; spawn **Wernher**
-if kRPC/telem/control-blocks. Timeout flying leftover: `recover()` if
+change (no stick); spawn **Lars** if the living pulse / flameout
+(`rf-ignition-ullage`); spawn **Wernher**
+if kRPC/telem/control-blocks or hop abort still names parts-drop shear.
+Do not stamp `far-shear` from last-flight when radio already had
+thrust 0. After CLI: `telem --window` then last-flight. Timeout flying leftover: `recover()` if
 recoverable, else Close / `ksc leftover`. Never revert. After CLI exit,
 tape is still yours.
 

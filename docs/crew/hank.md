@@ -11,7 +11,10 @@ Owns leftover/KSC hygiene (`recover()` + Close) and **after-flight
 tape** (`desk`, `attach-run` stamps uncrewed `learn`, `landing`).
 Last-flight 40 lines is abort/exit, not rec: query `telem --window`
 after attach-run (09-01Z splash rec=yes vs jsonl flying 6 km rec=no).
-Never omit `--fingerprint`. Lock live: reads `ship.md`
+Last-flight `shear` is the wreck, not the cause — radio
+(`ship.md` thrust/plume/parts_n/fuel) is the bus. Throttle 1 +
+thrust 0 + plume no + fuel frozen while parts intact is unexpected
+(engine dead), not `far-shear`. Never omit `--fingerprint`. Lock live: reads `ship.md`
 from time to time. Off-nominal → uplink or hire (Gene/Lars/Wernher);
 Gene no stick. Walk home leftover: recover the ship and Close to KSC.
 Os disabled reverting flights. Never revert. Never leftover-ksc

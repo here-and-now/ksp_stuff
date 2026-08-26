@@ -103,7 +103,11 @@ leftover-ksc. Stumble on thin tape → another
 
 Last-flight 40 lines is abort/exit, not the vessel. Query `tape.Tape` —
 do not `read_file` jsonl. Missing helper → `--fingerprint telem-eyes-library`.
-Cheap pulse / actual dt is `thin-tape`.
+Cheap pulse / actual dt is `thin-tape`. Hop abort that names parts-drop
+**shear** after radio already had thrust 0 / plume no / fuel frozen /
+parts intact is this stem (Tape / telem flags / last-flight class) —
+not `hop.py`, not Lars T-509 cutoff. Parent TUI must see engine-dead
+on `ship.md` before stdout `shear`.
 
 ## Do not
 

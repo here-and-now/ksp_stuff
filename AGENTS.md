@@ -74,23 +74,29 @@ a field itch (`--tag explore`), not every Learn. Spawn prompts do not
 inject niche notebooks.
 
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
-**phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN) only.
-Speak as **Walt** on those edges (name + title). Mid-phase: **read
-`docs/program/ship.md`** from time to time (disk). Do **not** wait hop
-stdout. `hop light` on stdout is pad plume — **not airborne**. Lock
+**phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN,
+**engine dead**: throttle 1 + thrust 0 + plume no + fuel frozen while
+parts intact) only. Speak as **Walt** on those edges (name + title) —
+engine dead is **engine dead**, not shear. Mid-phase: **read
+`docs/program/ship.md`** from time to time (disk) — **thrust / plume /
+parts_n / fuel**. Do **not** wait hop stdout / last-flight `shear`.
+`hop light` on stdout is pad plume — **not airborne**. Lock
 live ≠ flying. Sit/MET/log disagree → one
 `python main.py screenshot --name stuck-<stem>`, then **read the PNG**.
 Lock-live `status` is a GET reader (`kspstuff-read`); it must not write
 Control or tape. Do not `read_file` the growing jsonl. Nominal hop: no
 Gene, no 15 s narration. Off-nominal (wreck flags, lithobrake, empty
-tanks + flying, heading stuck, EC=0 before dwell, crash UI): parent
+tanks + flying, heading stuck, EC=0 before dwell, crash UI, **engine
+dead with stack intact**): parent
 TUI reading `ship.md` — `python main.py uplink abort|hold` if wreck-class;
 spawn **Gene** if plan/`go` must change; spawn **Lars** if the living
-pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks.
+pulse / control / flameout; spawn **Wernher** if kRPC/telem/desk/control-blocks
+or hop abort still names parts-drop shear.
 Issue-clear → that desk. **Not `ops next`.** Gene does not take the
 stick. Os “how’s it going?” on a **nominal** hop → read `ship.md`,
 speak as Walt — no hire. Off-nominal → hire, then Walt. `ship.md` is
-radio, not chat.
+radio, not chat. Do not stamp `far-shear` from last-flight when radio
+already had thrust 0.
 
 Spawn children **as soon as the work is independent**. Depth is one: only
 the parent calls `spawn_subagent`. A child cannot spawn another child.

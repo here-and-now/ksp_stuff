@@ -5,12 +5,16 @@ House **Grokman**. **Kardashev III or bust.**
 An Earth program (**RSS + Kerbalism Default**, science sandbox, PBC
 probes first). FAR, RealChute, and RealHeat are on this install (2026-08-21).
 Not Realism Overhaul. `~/Games/KSP-RO` is parked. Agents are the staff.
-**Working goal (Os 2026-08-24 / 2026-08-26):** bigger rockets, more Δv, farther
-out. Ad astra. `generalRocketry` **spent**. Next CTT is `advRocketry` **45**
-(need ~**44.84**; bank 0.16 does not pay 45). Pad this sit belongs to **C-504**.
+**Working goal (Os 2026-08-26):** first orbit. Leftover science later —
+keep an eye out; do not unbind the shelf; do not make it this-hop.
+Split into phases the tree can actually fly. Ad astra.
+`generalRocketry` **spent**. Next CTT is `advRocketry` **45** (Terrier;
+bank ~5.13 does not pay 45). Pad this sit belongs to **C-504** until
+that node. 268 km loft is not orbit. Do not spend the next 45 on
+aviation / basicScience while Terrier is the orbit engine.
 Cape **64 bps** is honest
 radio — TX is a tool, not a cheat, not the only path. Do not spend crumbs.
-Chute hops that cannot bank FlyingHigh / a new biome are not the factory.
+Chute hops that cannot bank toward Terrier are not the factory.
 Pad occupancy: inventory (many science, many crafts), Gene picks, fly.
 Tape is the product. Question it (jsonl / telem / science-scan); last-flight
 40 lines is not the vessel. Creed is still Kardashev III. Do not spend crumbs.

@@ -224,6 +224,11 @@ chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
 this sit. Do not Hangar **t7-wheel-nose** (T-409) as silk. Pad this
 sit belongs to **C-504** until `advRocketry` 45.
 16-23-52Z held through burnout apo 268 km rec=no — iterate this hang.
+268 km loft is not orbit. Today is **first orbit** (phased): pay
+Terrier this tree, circularize after `advRocketry` 45, leftover
+science on the way later. Leftover High / Forest / splash stays
+shelf — do not unbind forever; do not make it this-hop. Inner-circle
+orbital-phase conference does **not** empty the pad.
 T-428 HS-only / T-430 silk-only stay alts — not a Hangar from this
 letter. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;

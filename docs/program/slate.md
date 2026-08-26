@@ -1,51 +1,57 @@
 # Slate
 
 **Goal:** Kardashev III or bust. Moon is a waypoint. Probes first.
-**Today (Os 2026-08-24):** bigger rockets, more Δv, farther out. Ad
-astra. `generalRocketry` **spent**. Next CTT is `advRocketry` **45**
-(need ~**44.84**; bank 0.16 does not pay 45). Pad this sit belongs to **C-504**.
-Do not spend crumbs.
-Farther hops that can bank FlyingHigh / a new biome are the work.
-Tape is the product. Save `letsgrok` / `~/Games/KSP-rss`. CTT+PBC.
-RO sandbox is the next tree, not this save.
+**Today (Os 2026-08-26):** first orbit. Leftover science later — keep
+an eye out; do not unbind the shelf; do not make it this-hop. Split
+into phases the tree can actually fly. Ad astra. `generalRocketry`
+**spent**. Next CTT is `advRocketry` **45** (Terrier). Bank ~5.13 does
+not pay 45. Do not spend crumbs. Do not spend the next 45 on aviation
+/ basicScience / flightControl while Terrier is the orbit engine.
+268 km loft is not orbit.
 
-**Bank:** desk **sci 0.1576**. Tree **start,engineering101,basicRocketry,survivability,stability,generalRocketry**. `advRocketry` (45) LOCKED — need ~**44.84**. `load persistent` is forbidden (F-014).
+**Bank:** desk **sci 5.1287**. Tree **start,engineering101,basicRocketry,survivability,stability,generalRocketry**. `advRocketry` (45) LOCKED — need ~**39.87**. `load persistent` is forbidden (F-014).
 **Aero (2026-08-21):** FAR, RealChute, RealHeat **installed**. Kerbalism
 Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
 
-**Next:** Pad this-hop is **C-504** `kspstuff-hop-valiant-proc-loft-pbc`
-(FED, no HS; recover silk). This-hop bind is **none** — T-404 FlyingHigh
-PresMat 305 s cannot pay MECO-at-lid High (~260 s FAR). Pad belongs to
-C-504 until `advRocketry` **45**. C-477 is
-the blob exhibit (`capable: no` —
-Hangar 15-52-38Z parts=397 even after T-500 dish). Forest T-069
-TELEMETRY cannot pay a Shores splash — do not re-pin it.
-Splash Water bind does **not** drop the High lid to 18 km. 88.8 km
-proof is t7-pbc 13-31-03Z. 16-23-52Z held through burnout apo 268 km
-rec=no — iterate **this** hang. Do not fly **t7-wheel-pbc** (T-400
-`capable: no` — lithobrake is not recover). Do not Hangar C-477 /
-t7-chute Mk16 this sit (silk/4×/pitch wrecks). T-428 HS-only, T-430
-silk-only are alts, not a Hangar from this letter. T-409 / T-433 nose
-is aero, not silk. OX-STAT T-408/T-431 is dwell EC, not the loft hang.
-Forest SrfLanded leftover waits a hang that lands. Splash T-313/T-288
-waits a splash hang. Do not re-fly living +0 binds. Next CTT is
-`advRocketry` **45** (Reliant / FL-T200 / proc 1500 L Available; bank 0.16
-does not pay 45). `campaign: uncrewed`.
+**Phases (tech, not a hang):**
 
-**How today:** pad occupancy on **C-504** that can **pay** FlyingHigh
-≥50 km, not C-477 blob, not another living +0, not t7-wheel-pbc lithobrake. Throttle 1 + SAS vertical until lid;
-inland slew after. Thick air ≤18 km is 1×. Quiet loft after lid honors
-Hank `phys-warp`. `chute_arm_sit` 1× is Arm/silk, not apo. Splash leftover
-Toggles after airborne dwell — do not recover unpaid. Skip-latch is
-FlyingLow cannot-pay only. 163 km is not OffPlan
-when `expect_apo_max` is 400 km. Do **not** Hangar 4t / dv5 / girderless
-lite / a 4×-sheared t7 / t7-chute Mk16 / C-477 / T-409 as silk (`far-shear`). Idle pad is a
-sin; do not idle it as a religion — a living recover that cannot pay
-is waste. Last-flight 40 lines is not the vessel; do not Learn from it.
-Warp the coast. Thin tape → `type=systems` (`telem-eyes-library`).
-Do not recover Ast. XRL-564. Do not idle the
-pad for a letter, a VAB helper, or a 15 min replan. Live Cape path
-is **64 bps** (table and `RateToHome`).
+1. **Pay Terrier (this tree).** C-504 Valiant loft already sits
+   InSpaceLow ~268 km with Pe on the ground — suborbital. Pad this sit
+   belongs to **C-504** `kspstuff-hop-valiant-proc-loft-pbc` (FED, no
+   HS; recover silk) until `advRocketry` 45 or a signed alt is
+   `capable: yes`. Reliant / Thumper / TD-06 / FL-T200 / proc 1500 L
+   are Available now — a two-stage loft may pay more Δv; do not idle
+   the pad for it. Science this loft can bank when silk recovers
+   (InSpaceLow the envelope sits) is the path to 45. Not leftover High
+   305 s. Not Forest leftover. Not splash leftover as this-hop.
+   C-477 blob (`capable: no`). Do not fly t7-wheel-pbc (lithobrake).
+
+2. **Circularize (`advRocketry` 45 spent).** Terrier (LV-909) is the
+   vacuum engine. Two-stage: atmospheric first (Valiant / Reliant) +
+   Terrier. First orbit is Pe above the ~140 km High lid (RSS/FAR), not
+   apo 268 km. rec=no is honest if actually orbiting. Inner circle
+   writes that sit on `agree.md` when the node is paid — not this
+   letter. Sibling 45-nodes wait.
+
+3. **Leftover on the way.** After a living orbit, or when a hang's
+   envelope can pay: FlyingHigh leftover, Forest TELEMETRY, splash,
+   Surface, other biomes. Keep the shelf. Do not grind leftover
+   instead of orbit. Later CTT (`heavyRocketry` 90, fuelSystems, …)
+   wait a bank orbit can grow.
+
+**Next:** Pad this-hop is **C-504**. This-hop bind is what that loft
+can pay in InSpaceLow when silk recovers — leftover High / Forest /
+splash stays catalog. `campaign: uncrewed`. Inner circle `ops --tag
+plan` writes orbital phases onto `agree.md`; the pad still flies
+C-504. Katherine `--tag dynamics` if Pe / apo / FAR circularization
+windows — not every pad.
+
+**How today:** pad occupancy on **C-504** that can **pay**. Tape is the
+product. Idle pad is a sin; do not idle it as a religion — a living
+recover that cannot pay is waste. Wreck rec=no re-flies last `cli:`.
+Warp the coast. Last-flight 40 lines is not the vessel. Do not Hangar
+4t / dv5 / lite / t7-chute Mk16 / C-477 / t7-wheel-pbc. An RSI letter
+does not empty the pad. A plan conference does not empty the pad.
 
 Canonical save `letsgrok`. `KSP-RO` is parked. Honor 4761 lives in
 `docs/archive/` only.

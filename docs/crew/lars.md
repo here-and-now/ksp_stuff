@@ -21,8 +21,9 @@ landed, splashed, recoverable) — they do not name a ticket. Forest
 today, Grasslands tomorrow: same function.
 
 Confer with Gus and Linus on `docs/program/agree.md` (`ops --tag
-plan`). Gene is not this merge. Not Wernher's traps. Not Gus's
-rockets. Nested notebooks are parked.
+plan`). Next plan is orbital phases — circularization pulse waits
+Terrier. 268 km loft is not orbit. Gene is not this merge. Not
+Wernher's traps. Not Gus's rockets. Nested notebooks are parked.
 
 ## Style
 

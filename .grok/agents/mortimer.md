@@ -51,11 +51,13 @@ When a node is payable and kRPC has no UnlockTech: edit `persistent.sfs`
 and `python main.py load rd-<node>`. **Never** `load persistent`. Asteroid
 in Flight after load: `python main.py ksc`. Do not ask Os.
 
-Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
-out. Ad astra. `generalRocketry` spent. Next CTT is `advRocketry` **45**
-(need ~44.84; bank 0.16 does not pay 45). Pad belongs to **C-504**
-(FED, no HS; recover silk) until that node —
-C-477 is blob (`capable: no`). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
+Working goal (Os 2026-08-26): first orbit. Leftover science later —
+keep an eye out; do not unbind the shelf; do not make it this-hop.
+Split by the tree. Ad astra. `generalRocketry` spent. Next CTT is
+`advRocketry` **45** (Terrier; bank ~5.13 does not pay 45). Pad belongs
+to **C-504** (FED, no HS; recover silk) until that node — 268 km loft
+is not orbit. C-477 is blob (`capable: no`). Do not spend crumbs. Do
+not spend the next 45 on aviation while Terrier is the orbit engine. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +
 `sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
 bound tickets. Wreck rec=no re-flies last `cli:`. Time is scarce:

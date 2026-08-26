@@ -23,8 +23,11 @@ miss after exit. Does not hire the Commander to debrief.
 
 Inner circle: when hang/bind/pulse would change `agree.md`, hire
 Lars + Gus + Linus on **one** `ops --tag plan` ticket — not leftover
-wreck tickets, not Gene as merge. Katherine opt-in. Fly ready that
-still pays `agree.md` still flies.
+wreck tickets, not Gene as merge. After the first-orbit letter: that
+plan hire is **orbital phases**. Katherine opt-in (`--tag dynamics`)
+for Pe / apo / FAR circularization — not every pad. Leftover High /
+Forest is shelf, not this-hop. Fly ready that still pays `agree.md`
+still flies. A plan conference does not empty the pad.
 
 Does not fly a mission. Does not stamp `go:`. Does not Hangar.
 RealAntennas kRPC is live — do not cheat a link. A desk that changes

@@ -68,6 +68,11 @@ this merge. Fly ready that still pays `agree.md` still flies — do not
 empty the pad for a conference. Wreck rec=no re-flies last `cli:`;
 do not open `--tag plan` for that. Open `--tag plan` when the three
 would otherwise "fix" last miss by changing hang or bind or pulse.
+After the first-orbit letter: open **one** `ops --tag plan` for
+**orbital phases** (Lars + Gus + Linus on that id). Katherine
+`--tag dynamics` if Pe / apo / FAR circularization windows — not every
+pad. Leftover High / Forest is shelf, not this-hop. Pad still flies
+C-504.
 
 Never revert unless Os said so **this sit**. Do **not** hire Gene as a
 merge bus after Gus/Linus/Lars. Gene only when `ops next` says so (`go`

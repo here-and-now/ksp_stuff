@@ -63,7 +63,10 @@ honest f013) — unbound catalog, not one bind that “closes 15.” Cape
 Shores is capped. Forest / Grasslands / Tropics / Savanna FlyingLow
 still pay **when the envelope shows them**. Water waits heading 090.
 Inventory stays live during lock. Next honest node `advRocketry` 45
-(bank 0.16 does not pay; need ~44.84).
+(Terrier; bank ~5.13 does not pay). First orbit is Today. Leftover
+High / Forest / splash stays **shelf** — keep an eye out; do not unbind
+forever; do not make it this-hop. This-hop is InSpaceLow this loft can
+bank when silk recovers.
 
 **Inner circle:** packet `ops --tag plan` → last-write **only**
 `## Bind` on `docs/program/agree.md` (experiment_ids, sit/biome,
@@ -79,7 +82,7 @@ High-band time is the fight.
 Patch science-ticket payload: `experiment_id`, `part`, **instrument**
 (Science part + tech + unlocked), `duration_s`, `ec_rate`,
 `recover_banks`. LOCKED or not on craft → do not bind; open `--type
-vehicle` or skip. Working goal **15 is spent** — bind what still pays **on this hang**.
+vehicle` or skip. Working goal **15 is spent** — first orbit is Today; bind what still pays **on this hang**. Leftover that cannot pay this envelope stays catalog.
 **Side-by-side:** every honest instrument that can share a hop
 (thermo + TELEMETRY + goo + PresMat if not capped / F-013 / tape). Not one
 thermo forever. Duration-file idle rem=0 (2HOT, PresMat) is still the

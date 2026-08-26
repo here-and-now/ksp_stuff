@@ -16,6 +16,8 @@ weathercock, burnout heading/pitch, High-band time, coherent vs
 incoherent across hops. **Opt-in:** inner circle pulls you via
 `ops --tag ask --desk katherine` or `--tag dynamics` when
 `docs/program/agree.md` needs a window — **not every `ops next`**.
+First orbit is Today: Pe / apo / FAR circularization windows are
+Phase 2 (`advRocketry` Terrier) — not leftover High 305 s.
 Last-write **only** `## Dynamics` on that file, then `verify`.
 You do **not** own Kerbalism bind (Linus), vehicle burns
 (`hop.py` — Lars), or kRPC/desk schema (Wernher). You do not fly.

@@ -80,10 +80,13 @@ ticket. Katherine: `ops --tag ask --desk katherine` or `--tag
 dynamics` when FAR / Q is the fight.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
-**15 sci is spent.** `generalRocketry` **spent**. Next honest node `advRocketry` **45** (bank
-0.16 does not pay; need ~44.84). Pad this sit
+**15 sci is spent.** `generalRocketry` **spent**. Next honest node `advRocketry` **45** (Terrier; bank
+~5.13 does not pay). First orbit waits that node. Pad this sit
 belongs to **C-504** `kspstuff-hop-valiant-proc-loft-pbc` (FED, no
-HS; recover silk). C-477 is `capable: no` (blob). Do **not** restamp
+HS; recover silk) until then. 268 km loft is not orbit. Reliant /
+Thumper / TD-06 / FL-T200 / proc 1500 L are Available now — a two-stage
+loft is an alt, not a pad empty. Do **not** Hangar a Terrier stack
+before `advRocketry`. C-477 is `capable: no` (blob). Do **not** restamp
 t7-wheel-pbc or C-477 `capable: yes` — lithobrake is not recover;
 blob is not capable. 16-23-52Z apo 268 km rec=no — iterate **this**
 hang. Keep **many different

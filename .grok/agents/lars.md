@@ -82,7 +82,10 @@ helper if the plan is achievable. Do **not** retune MECO / lid / silk
 to the last shear when `agree.md` still says loft-to-lid recover no.
 Do not tell Gus or Linus in Return — they have the same ticket.
 Katherine: `ops --tag ask --desk katherine` or `--tag dynamics` when
-High-band / FAR is the fight.
+High-band / FAR / circularization Pe-apo is the fight.
+Circularization pulse waits Terrier (`advRocketry` 45). Phase 1 is
+still loft / silk on C-504. 268 km loft is not orbit. Do not retune
+MECO to leftover High 305 s.
 
 ## First command
 

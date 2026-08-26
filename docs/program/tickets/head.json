@@ -20568,6 +20568,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write vab-helper \u00d723: recover silk INSERT RC_cone on OKTO. T-512 owns the helper. Pad flies C-504.",
       "created": "2026-08-26T16:41:12Z",
       "desk": "mortimer",
       "evidence": [],
@@ -20592,7 +20593,7 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI vab-helper \u00d723",
       "type": "rsi",
@@ -20639,13 +20640,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write control-blocks \u00d710: High-lid Toggle is High, not InSpaceLow. T-517 owns sit-match. Pad still flies C-504.",
       "created": "2026-08-26T16:43:46Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "control-blocks",
       "id": "T-518",
       "payload": {
-        "count": 10
+        "count": 10,
+        "findings": [
+          {
+            "at": "2026-08-26T17:55:39Z",
+            "claim": "Practice last-write control-blocks \u00d710 (stem 11): flying-card Toggle at High lid records High. hop_science_ids(situation=flying) drops InSpaceLow; sit_matches default True; skip-latch cannot-pay never retries in space. InSpaceLow binds never start unless Toggle waits space. T-517 owns sit-match. Do not retune MECO lid. Loop stays C-504 until generalRocketry 20 then one node after. Did not open a duplicate systems ticket. Pad still flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -20653,11 +20665,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI control-blocks \u00d710",
       "type": "rsi",
-      "updated": "2026-08-26T16:43:46Z"
+      "updated": "2026-08-26T17:55:40Z"
     },
     "T-519": {
       "assignee": "",
@@ -20955,5 +20967,5 @@
       "updated": "2026-08-26T17:55:28Z"
     }
   },
-  "updated": "2026-08-26T17:55:39Z"
+  "updated": "2026-08-26T17:55:40Z"
 }

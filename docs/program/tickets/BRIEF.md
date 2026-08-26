@@ -105,7 +105,10 @@ the helper (`craft.py` / CLI). Gus does not edit `.py`. Pad flies a
 FED is not capable. FED is not enough: HS splice must leave **collider
 clearance** (T-500). C-504 loft is **no-HS** — a helper that writes a
 loft hang must autostrut Heaviest/rigid + stage-engine `sqor=0`
-**without** requiring HS/chute (T-506). `python main.py craft fuel <craft>` dumps attach
+**without** requiring HS (T-506). Recover silk: `craft chute --kind cone`
+**INSERT**s `RC_cone` stacked on the payload core (OKTO top; Stayputnik
+has no top; cone `srfAttach=0`); Nylon 50 m; engine first fire, chute
+last (T-512). `python main.py craft fuel <craft>` dumps attach
 + `fuelCrossFeed` (BLOCKED = starved). A helper that writes a hang
 must leave the **engine in the first fire list** (`sqor=0`, not only
 `istg=1`), the heatshield a **VAB dish** (`bottomDiameter=0`) when the

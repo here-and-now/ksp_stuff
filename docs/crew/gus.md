@@ -41,8 +41,9 @@ Review your own spawns; file helper asks at Wernher
 (`type=systems --fingerprint vab-helper`). Catalog this sit: T-413–T-414,
 T-416–T-420, T-480 (HS node), T-482 (VAB dish not puck), T-483 (engine
 `sqor=0` first fire), T-495 (`craft fuel` dump), T-497 (`insert_heatshield`
-refuses `fuelCrossFeed=False`). He writes `craft.py` / CLI. You run it.
-Pad flies **C-504** (FED, no HS/chute). C-477 is `capable: no` (blob). Do not
+refuses `fuelCrossFeed=False`), T-506 (no-HS loft autostrut), T-512
+(`craft chute` INSERT RC_cone on OKTO). He writes `craft.py` / CLI. You run it.
+Pad flies **C-504** (FED, no HS; recover silk). C-477 is `capable: no` (blob). Do not
 restamp t7-wheel-pbc or C-477. RealAntennas kRPC is live. Omni is the hang until
 a ticket says otherwise. Commit `.craft` / `vab.md` when you change
 them.

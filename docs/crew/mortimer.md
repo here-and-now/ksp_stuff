@@ -63,13 +63,13 @@ fly t7-wheel-pbc (lithobrake is not recover). OX-STAT is dwell EC, not
 the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
 Next CTT is `generalRocketry` 20 (need ~6.38; bank 13.62 does not
 pay 20) then **one node after**. `survivability` 15 is spent. Do not
-spend crumbs. Pad this sit belongs to **C-504** (FED, no HS/chute;
+spend crumbs. Pad this sit belongs to **C-504** (FED, no HS; recover silk;
 16-23-52Z apo 268 km rec=no — iterate this hang). Honest MECO leftover
 fuel is not engine-dead. T-428 / T-430 stay alts.
 T-409 / T-433
 nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). Persist must survive a split wreck; skip-dup is persist not the broom; recoverable ground Debris is leftover (T-501). VAB helpers
-T-413–T-420 plus T-480/T-482/T-483/T-495/T-497/T-498/T-500 are Wernher; a hang you
-cannot prove is FED is not capable; FED is not enough without collider clearance; pad does not wait. Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
+T-413–T-420 plus T-480/T-482/T-483/T-495/T-497/T-498/T-500/T-506/T-512 are Wernher; a hang you
+cannot prove is FED is not capable; FED is not enough without collider clearance; recover silk INSERT RC_cone on OKTO (T-512); pad does not wait. Flying-card Toggle at High lid is High, not InSpaceLow (T-517). Live Cape path is 64 bps — TX is a tool, not a cheat, not the only
 path. File leftover credits while recording; sample leftover is the
 can. Goo ~429 MB does not TX at TL2. Recover still banks the HD when
 recover() works.

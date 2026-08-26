@@ -33,8 +33,10 @@ starved / Ablator-only on the engine path is `capable: no`. C-477
 is that exhibit — do not restamp it. Do not Hangar it. FED is not
 enough: Hangar-detonating HS splice is `capable: no` (T-500). C-504
 loft is **no-HS** — a helper that writes a loft hang must autostrut
-Heaviest/rigid + stage-engine `sqor=0` without requiring HS/chute
-(T-506). A helper that writes a hang must leave the **engine in the
+Heaviest/rigid + stage-engine `sqor=0` without requiring HS
+(T-506). Recover silk: `craft chute --kind cone` **INSERT**s `RC_cone`
+stacked on the payload core (OKTO top; Stayputnik has no top; cone
+`srfAttach=0`); engine first fire, chute last (T-512). A helper that writes a hang must leave the **engine in the
 first fire list** (`sqor=0`, not only `istg=1`), HS a **VAB dish**
 (`bottomDiameter=0`) when the hang *has* an HS, not a filled puck, a
 **fed** engine (`insert_heatshield` refuses `fuelCrossFeed=False`;
@@ -81,7 +83,7 @@ Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** Next honest node `generalRocketry` **20** (bank
 13.62 does not pay; need ~6.38) then **one node after**. Pad this sit
 belongs to **C-504** `kspstuff-hop-valiant-proc-loft-pbc` (FED, no
-HS/chute). C-477 is `capable: no` (blob). Do **not** restamp
+HS; recover silk). C-477 is `capable: no` (blob). Do **not** restamp
 t7-wheel-pbc or C-477 `capable: yes` — lithobrake is not recover;
 blob is not capable. 16-23-52Z apo 268 km rec=no — iterate **this**
 hang. Keep **many different

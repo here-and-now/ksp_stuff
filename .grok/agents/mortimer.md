@@ -33,7 +33,7 @@ patch house docs, or `tickets open --type systems --fingerprint
 (`heading-never-090`, `sci-unchanged-recovered`, `flyinghigh-lid`,
 `science-skip-timeout`, `hold-ground-card`, `hop-coast-phys-warp`,
 `telem-eyes-library`, `thin-tape`, `rf-ignition-ullage`, `bigger-dv`,
-`vab-helper`);
+`vab-helper`, `control-blocks`);
 do not invent a stem per T-id. Empty `--fingerprint` on `control` /
 `systems` / `ops --tag feedback` is kernel-refused. You may rewrite
 PROTOCOL, job cards (`.grok/agents/*.md`), portraits (voice only — not
@@ -53,8 +53,9 @@ in Flight after load: `python main.py ksc`. Do not ask Os.
 
 Working goal (Os 2026-08-24): bigger rockets, more Δv, farther
 out. Ad astra. `stability` spent. Next CTT is `generalRocketry` **20**
-(need ~6.38; bank 13.62 does not pay 20). Pad belongs to a **fed** hang
-— C-477 is starved (`capable: no`). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
+(need ~6.38; bank 13.62 does not pay 20). Pad belongs to **C-504**
+(FED, no HS; recover silk) until that node then one node after —
+C-477 is blob (`capable: no`). Do not spend crumbs. Pad occupancy: tape is the product; an **idle pad is a sin**. A
 **living recover that cannot pay is also a waste.** Living recover +
 `sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
 bound tickets. Wreck rec=no re-flies last `cli:`. Time is scarce:

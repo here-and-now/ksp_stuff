@@ -13,10 +13,11 @@ RO sandbox is the next tree, not this save.
 **Aero (2026-08-21):** FAR, RealChute, RealHeat **installed**. Kerbalism
 Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
 
-**Next:** FlyingHigh this-hop is **T-404** PresMat 305/0.05 + **T-460**
-FlyingLow + **T-368** goo on **C-504** `kspstuff-hop-valiant-proc-loft-pbc`
-(FED, no HS/chute). Pad belongs to C-504 until `generalRocketry` **20**
-then **one node after**. C-477 is the blob exhibit (`capable: no` —
+**Next:** Pad this-hop is **C-504** `kspstuff-hop-valiant-proc-loft-pbc`
+(FED, no HS; recover silk). This-hop bind is **none** — T-404 FlyingHigh
+PresMat 305 s cannot pay MECO-at-lid High (~260 s FAR). Pad belongs to
+C-504 until `generalRocketry` **20** then **one node after**. C-477 is
+the blob exhibit (`capable: no` —
 Hangar 15-52-38Z parts=397 even after T-500 dish). Forest T-069
 TELEMETRY cannot pay a Shores splash — do not re-pin it.
 Splash Water bind does **not** drop the High lid to 18 km. 88.8 km

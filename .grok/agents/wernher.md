@@ -83,8 +83,12 @@ A hang-writing helper must leave the **engine in the first fire list**
 (`sqor=0`, not only `istg=1`), the heatshield a **VAB dish**
 (`bottomDiameter=0`) when the hang *has* an HS, not a filled puck, a
 **fed** engine, and **collider clearance**. C-504 loft is **no-HS** —
-autostrut Heaviest/rigid + stage-engine without requiring HS/chute
-(T-506). `insert_heatshield` refuses `fuelCrossFeed=False`. `--payload`
+autostrut Heaviest/rigid + stage-engine without requiring HS
+(T-506). Recover silk: `craft chute --kind cone` **INSERT**s `RC_cone`
+on the payload core (OKTO top; Stayputnik has no top; cone
+`srfAttach=0`); engine first fire, chute last (T-512). Sit-match:
+flying-card Toggle at High lid is High, not InSpaceLow (T-517).
+`insert_heatshield` refuses `fuelCrossFeed=False`. `--payload`
 splices SAS-first tank (T-498). HS splice half is
 `max(length/2+0.179, catalog MODEL ±0.5)` not `length*0.5` (T-500).
 `craft fuel` dumps attach + `fuelCrossFeed` (T-495 / T-497). Do not

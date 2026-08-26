@@ -168,10 +168,10 @@ sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`
 (**FED** + f013 + EC; collider-clear HS only when the hang *has* an HS —
-C-504 loft is no-HS); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
+C-504 loft is no-HS, recover silk); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
-**control blocks**: sit, warp, timeout, leftover abort, chute sits)
-without waiting for a miss. `physics_warp.py` is Wernher. Lars
+**control blocks**: sit, warp, timeout, leftover abort, chute sits, sit-match)
+without waiting for a miss. Flying-card Toggle at High lid is High, not InSpaceLow (T-517). `physics_warp.py` is Wernher. Lars
 **composes one living rocket's pulse** from those blocks
 (`hop_factory.py` inland, or a file that only flies t7-chute —
 legal). RF pad is **one sit** in `hop_factory_pad.py` — not a
@@ -208,7 +208,7 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
 splash match the hang; FlyingHigh waits ≥50 km on **C-504**
-`kspstuff-hop-valiant-proc-loft-pbc` (FED, no HS/chute), not C-477
+`kspstuff-hop-valiant-proc-loft-pbc` (FED, no HS; recover silk), not C-477
 (`capable: no` — Hangar 15-52-38Z blob even after T-500 dish), not t7-wheel-pbc
 (T-400 `capable: no` — lithobrake is not recover), not a 30 km stiff
 loft, not t7-chute Mk16). FlyingHigh wait is loft live-alt ≥50 km /

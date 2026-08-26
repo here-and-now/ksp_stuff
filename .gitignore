@@ -53,6 +53,7 @@ screenshots/*
 !screenshots/earth-is-round.png
 !screenshots/earth-limb.png
 !screenshots/even-more-girders.png
+!screenshots/everybody-left.png
 !screenshots/farthest-flight-city.png
 !screenshots/first-space-black.png
 !screenshots/far-glide.png
@@ -71,6 +72,9 @@ screenshots/*
 !screenshots/house-loop.svg
 !screenshots/rocket-flea.png
 !screenshots/science-above-15.png
+!screenshots/stuck-orphan-down.png
+!screenshots/stuck-orphan-fly.png
+!screenshots/stuck-rf-pad-light.png
 !screenshots/success-splashdown.png
 !screenshots/suicide-plume.png
 !screenshots/the-can-that-lived.png

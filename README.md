@@ -4,9 +4,9 @@
 Kardashev III or bust.**
 
 <p align="center">
-  <a href="docs/press/everybody-left.md"><img src="screenshots/stuck-orphan-fly.png" alt="Stayputnik under power, thin blue limb, kRPC no clients"></a>
+  <a href="docs/press/everybody-left.md"><img src="screenshots/everybody-left.png" alt="Stayputnik on seven tanks in the dark, stars, no HUD"></a>
 </p>
-<p align="center"><em>Stayputnik under power. A thin blue limb. kRPC says no clients. Suborbital. Periapsis is still a hole through the planet.</em><br>
+<p align="center"><em>Stayputnik on seven tanks in the dark. The desk had already gone home. Periapsis is still a hole through the planet.</em><br>
 <small><a href="docs/press/everybody-left.md">Everybody left</a>
 · 26 Aug 2026 · not orbit</small></p>
 
@@ -50,7 +50,8 @@ frame that was not the hop; the potato around the Sun we did not
 fly; a Toggle that stops a sample; east as a wish Stayputnik
 cannot keep; a Forest Kerbalism will swear by while the window
 shows grass; silk that opens while the Valiant is still talking;
-a rocket that kept talking after the desk went home.
+a rocket that kept talking after the desk went home; a Founder's
+one-window ruler that ate a review.
 We will be insufferable about all of them.
 
 ## History (so far)
@@ -62,7 +63,7 @@ still 2.29. We have never orbited Earth.
 
 | When | What | Sci |
 |---|---|---|
-| 2026-08-26 | [Everybody left](docs/press/everybody-left.md) — we lit it and clocked out | 2.29 → 2.29 |
+| 2026-08-26 | [Everybody left](docs/press/everybody-left.md) — we lit it, clocked out, and followed a postcard-sized ruler | 2.29 → 2.29 |
 | 2026-08-24 | [The smiles came home](docs/press/first-space.md) — silk, girders, Forest, then the Geiger in the black | 9.47 → 18.19 |
 | 2026-08-23 | [The forest forgave us](docs/press/forest-for-the-trees.md) — chute, girders, a Forest with no trees | 5.67 → 7.77 |
 | 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo and TELEMETRY; a can sat down soft | 13.26 → 16.47 |

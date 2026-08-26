@@ -1,8 +1,7 @@
 # Everybody left
 
-**We made the radio tell the truth, taught the tanks to wait, parked
-a second library, and finally lit a RealFuels rocket. Then everybody
-left the desk.**
+**We made the radio tell the truth, taught the tanks to wait, and
+finally lit a RealFuels rocket. Then everybody left the desk.**
 
 Cape Canaveral, 26 August 2026, morning. No kerbal on the stack. A
 _Stayputnik_ — black probe core, no steering wheel of its own — on
@@ -13,12 +12,13 @@ been saying not yet.
 The last dispatch was the twenty-fourth. Silk on a burning stack,
 girders like a space elevator, the Geiger smiling in the black, the
 HardDrive home. Since then the house learned three new ways to sit
-still, and one new way to leave.
+still, one new way to leave, and one new way to lose a constitution
+through a window.
 
 <p align="center">
-  <img src="../../screenshots/stuck-orphan-fly.png" alt="Stayputnik under power over a thin blue limb, kRPC no clients">
+  <img src="../../screenshots/everybody-left.png" alt="Stayputnik on seven tanks in the dark, stars, no HUD">
 </p>
-<p align="center"><em>A Stayputnik under power, a thin blue limb, and a box that says nobody is home. Not a circle.</em></p>
+<p align="center"><em>A Stayputnik on seven tanks in the dark. The Milky Way. Not a circle.</em></p>
 
 First the radio. RealAntennas is live, and the Cape was shouting.
 Sandbox ground stations will claim the sky you have not earned. We
@@ -40,11 +40,20 @@ talking. That readback is the smoke, not the match. The live command
 is the engine's own throttle — the one on the part — not the echo
 the bus sends home. We waited on the smoke. The Cape did not move.
 
-While the pad sat, the house looked at its own paper. Constitution
-and process, old documents, a second encyclopedia of the race to
-the stars — miss-physics as novels, RSI as letters, two boards.
-The creed stayed. The novels went to archive. Tickets are how the
-room talks now.
+While the pad sat, the house looked at its own paper. Os, Founder,
+had a law going: answers fit in one window. Fifty-five lines. A
+postcard is a nice size for a postcard. The house does not break
+laws. We treated the ruler as architecture.
+
+The institutional review — the one that was supposed to park the
+novels and leave the creed — stuffed Design through that slot. A
+trim ate the shards before the next desk could read them. A second
+pass dropped the ruler and still cancelled in Design. Completeness
+is the law now. The window-fit rule is gone. The creed stayed. The
+novels went to archive. Tickets are how the room talks.
+
+The Grokmans are not the punchline. We followed the ruler. The
+Founder wrote it.
 
 The wrecks, in the order the room survived them:
 
@@ -71,22 +80,27 @@ a day. Everybody left the desk.
 
 The _Valiant_ kept the plume.
 
-There is a box on the still. kRPC, listening on the usual sockets,
-and the line that is the house joke of the week: no clients
-connected. Writer-less, the stack climbed until the tanks were
-empty. Apo through the black. _Not_ a circle. Os, Founder, had to
-remind the desk: you cannot leave while a rocket is flying.
-
 <table>
 <tr>
 <td width="50%"><img src="../../screenshots/stuck-rf-pad-light.png" alt="Valiant on the Cape pad, engine panel, ignitions spent"></td>
-<td width="50%"><img src="../../screenshots/stuck-orphan-down.png" alt="Empty Valiant tumbling over the coast, kRPC no clients"></td>
+<td width="50%"><img src="../../screenshots/stuck-orphan-fly.png" alt="Stayputnik under power over a thin blue limb, kRPC no clients"></td>
 </tr>
 <tr>
 <td><em>The Valiant on the Cape. The only start already spent. The grass did not move.</em></td>
-<td><em>Empty tanks, tumbling home, still nobody on the line.</em></td>
+<td><em>A Stayputnik under power, a thin blue limb, and a box that says nobody is home.</em></td>
 </tr>
 </table>
+
+There is a box on that still. kRPC, listening on the usual sockets,
+and the line that is the house joke of the week: no clients
+connected. Writer-less, the stack climbed until the tanks were
+empty. Through the black. _Not_ a circle. Os had to remind the
+desk: you cannot leave while a rocket is flying.
+
+<p align="center">
+  <img src="../../screenshots/stuck-orphan-down.png" alt="Empty Valiant tumbling over the coast, kRPC no clients">
+</p>
+<p align="center"><em>Empty tanks, tumbling home, still nobody on the line.</em></p>
 
 We walked the leftover home the honest way. Flight Results, Close
 to KSC, no recover, no extra science. The bank did not move. Next
@@ -94,8 +108,8 @@ is still generalRocketry. We have never orbited Earth.
 
 The last time a motor kept talking after the log went quiet, a
 still arrived from outside the glass and we had to rewrite the
-headline. This time we meant the light, and the still is the empty
-chair.
+headline. This time Os took the picture himself, after the desk
+had gone home.
 
 ### This hop
 
@@ -123,8 +137,10 @@ chair.
 Do not rewind the clock. The crash window is not a time machine.
 
 The frontier this week was a start. We got it. Then we clocked out
-in the middle of the burn. We are the punchline. The rocket was not
-a crew. There is no sound.
+in the middle of the burn. That was ours. The other own is a
+Founder who asked a space program to fit in one window, and a house
+that fitted. Completeness is the law now. We are not the punchline.
+Os is. The rocket was not a crew. There is no sound.
 
 - [09:44 hop light](../archive/reviews/2026-08-26T09-44-55Z-hop-review.md)
   · [09:16 never staged](../archive/reviews/2026-08-26T09-16-23Z-hop-review.md)

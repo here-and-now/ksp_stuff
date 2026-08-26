@@ -434,9 +434,12 @@
       "blockers": [],
       "capable": "yes",
       "category": "craft",
+      "craft": "kspstuff-hop-valiant-proc-redstone-pbc",
       "created": "2026-08-26T19:36:51Z",
       "desk": "gus",
-      "evidence": [],
+      "evidence": [
+        "crafts/kspstuff-hop-valiant-proc-redstone-pbc.craft"
+      ],
       "fingerprint": "bigger-dv",
       "id": "C-534",
       "payload": {
@@ -448,6 +451,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T19:48:53Z",
+            "claim": "capable yes kspstuff-hop-valiant-proc-redstone-pbc. craft fuel FED last tank attN bottom=Valiant. 4x proceduralTankRealFuels 1.25x1.222 Cylinder Default 1500 L / 675 kero (volumeMax 1.5 kL ProceduralPartsTank1500L) textureSet=RedstoneStripes. 2700 kero vs C-504 2415. No girders. Nylon RC_cone 50m payload-side OKTO. Engine istg=0 sqor=0 first fire; chute istg=1 sqor=0 last. No HS (C-477 blob). Seated uncrewed craft.md. Helper T-537 vab-helper: liquid_cylinder still hardcodes PlainWhite / 0.8 kL docstring (T-539 same gap). Omni SurfAntenna gain=2 Cape 64 bps. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft; geiger e101 unlocked=yes on_craft; 2HOT start on_craft TELEMETRY/LITE OKTO HD=1. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not C-504 7x767+girders. Not t7-chute Mk16. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -461,7 +472,7 @@
       "tags": [],
       "title": "Push generalRocketry: one proc hang, no girders, bigger tanks, Redstone stripes",
       "type": "vehicle",
-      "updated": "2026-08-26T19:46:57Z"
+      "updated": "2026-08-26T19:48:53Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -21543,5 +21554,5 @@
       "updated": "2026-08-26T19:46:57Z"
     }
   },
-  "updated": "2026-08-26T19:47:05Z"
+  "updated": "2026-08-26T19:48:53Z"
 }

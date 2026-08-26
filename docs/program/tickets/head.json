@@ -158,7 +158,7 @@
     "savanna-flyinglow-thermo": 1,
     "savanna-landed-telemetry": 1,
     "savanna-landed-thermo": 1,
-    "sci-unchanged-recovered": 30,
+    "sci-unchanged-recovered": 32,
     "science skip (no Experiment modules) ABORT no science (wanted mysteryGoo) after splash MET 226.3 EC=0": 1,
     "science-skip-no-modules": 2,
     "science-skip-timeout": 6,
@@ -3341,7 +3341,9 @@
         "docs/missions/uncrewed/logs/2026-08-26T09-35-05Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T09-36-46Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T09-44-55Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T10-22-06Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3361,166 +3363,165 @@
         ],
         "landing": {
           "airborne": {
-            "alt": null,
-            "apo": null,
-            "biome": "",
-            "broken": null,
-            "chute": "",
-            "downrange": null,
-            "ec": null,
-            "fuel": null,
-            "g": null,
-            "heading": null,
-            "horiz": null,
-            "lat": null,
-            "lon": null,
-            "mass": null,
-            "met": null,
-            "parts_n": null,
-            "pitch": null,
-            "q": null,
-            "recoverable": null,
-            "root": "",
-            "sci_bank": null,
-            "sci_rem": null,
-            "sci_run": null,
-            "shear": null,
-            "sit": "",
-            "stage": null,
-            "throttle": null
-          },
-          "alt_before": null,
-          "alt_max": 86.643,
-          "apex": {
-            "alt": 86.643,
-            "apo": 86.643,
+            "alt": 86.238,
+            "apo": 86.624,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
             "downrange": 0.448,
-            "ec": 489.865,
-            "fuel": 1574.896,
-            "g": 1.0,
-            "heading": 298.934,
-            "horiz": 0.007,
+            "ec": 508.549,
+            "fuel": 1568.926,
+            "g": 1.94,
+            "heading": 298.946,
+            "horiz": 0.006,
             "lat": 28.6084,
             "lon": -80.5997,
-            "mass": 4695.585,
-            "met": 0.0,
+            "mass": 4669.253,
+            "met": 0.32,
             "parts_n": 27,
-            "pitch": 90.0,
-            "q": 0.0,
-            "recoverable": true,
+            "pitch": 89.96,
+            "q": 1.456,
+            "recoverable": false,
             "root": "probeCoreSphere.v2",
-            "sci_bank": 2.2905,
+            "sci_bank": 13.6243,
             "sci_rem": 0.0,
             "sci_run": false,
             "shear": false,
-            "sit": "pre_launch",
+            "sit": "flying",
             "stage": 0,
             "throttle": 0.0
           },
-          "apo_max": 86.643,
+          "alt_before": 203.758,
+          "alt_max": 647.901,
+          "apex": {
+            "alt": 647.901,
+            "apo": 654.093,
+            "biome": "Shores",
+            "broken": null,
+            "chute": "none",
+            "downrange": 0.446,
+            "ec": 509.14,
+            "fuel": 1443.749,
+            "g": 0.0,
+            "heading": 298.904,
+            "horiz": 0.144,
+            "lat": 28.6084,
+            "lon": -80.5998,
+            "mass": 4405.618,
+            "met": 16.54,
+            "parts_n": 27,
+            "pitch": 89.972,
+            "q": 61.622,
+            "recoverable": false,
+            "root": "probeCoreSphere.v2",
+            "sci_bank": 13.6243,
+            "sci_rem": 0.0,
+            "sci_run": false,
+            "shear": false,
+            "sit": "flying",
+            "stage": 0,
+            "throttle": 1.0
+          },
+          "apo_max": 655.45,
           "biome": "Shores",
           "biomes": [
             "Shores"
           ],
           "broken": null,
           "burnout": {
-            "alt": null,
-            "apo": null,
-            "biome": "",
+            "alt": 203.758,
+            "apo": 652.32,
+            "biome": "Shores",
             "broken": null,
-            "chute": "",
-            "downrange": null,
-            "ec": null,
-            "fuel": null,
-            "g": null,
-            "heading": null,
-            "horiz": null,
-            "lat": null,
-            "lon": null,
-            "mass": null,
-            "met": null,
-            "parts_n": null,
-            "pitch": null,
-            "q": null,
-            "recoverable": null,
-            "root": "",
-            "sci_bank": null,
-            "sci_rem": null,
-            "sci_run": null,
-            "shear": null,
-            "sit": "",
-            "stage": null,
-            "throttle": null
+            "chute": "none",
+            "downrange": 0.445,
+            "ec": 508.271,
+            "fuel": 1443.749,
+            "g": 0.01,
+            "heading": 299.187,
+            "horiz": 0.24,
+            "lat": 28.6084,
+            "lon": -80.5998,
+            "mass": 4405.604,
+            "met": 25.02,
+            "parts_n": 27,
+            "pitch": 89.641,
+            "q": 5051.059,
+            "recoverable": false,
+            "root": "probeCoreSphere.v2",
+            "sci_bank": 13.6243,
+            "sci_rem": 0.0,
+            "sci_run": false,
+            "shear": false,
+            "sit": "flying",
+            "stage": 0,
+            "throttle": 1.0
           },
-          "burnout_n": 0,
+          "burnout_n": 3,
           "chute": "none",
           "command": "hop",
           "debris_n": 0,
-          "descent_n": 0,
-          "downrange": 0.448,
+          "descent_n": 2,
+          "downrange": 0.445,
           "dt_s": null,
-          "ec": 489.865,
+          "ec": 508.271,
           "events": [
             "start",
             "hangar",
-            "recoverable",
-            "uplink",
             "recover",
+            "recoverable",
             "sci_bank",
             "landing",
             "end"
           ],
-          "g_max": 0.999,
-          "gap_s": null,
-          "heading": null,
-          "horiz": null,
-          "hz_median": 0.13,
-          "impact_ms": null,
-          "landing": "soft",
+          "g_max": 1.94,
+          "gap_s": 8.68,
+          "heading": 299.187,
+          "horiz": 0.24,
+          "hz_median": 0.12,
+          "impact_ms": 96.268,
+          "landing": "hard",
           "landing_synthesized": true,
           "last": {
-            "alt": 86.643,
-            "apo": 86.643,
+            "alt": 203.758,
+            "apo": 652.32,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.448,
-            "ec": 489.865,
-            "fuel": 1574.896,
-            "g": 1.0,
-            "heading": 298.934,
-            "horiz": 0.007,
+            "downrange": 0.445,
+            "ec": 508.271,
+            "fuel": 1443.749,
+            "g": 0.01,
+            "heading": 299.187,
+            "horiz": 0.24,
             "lat": 28.6084,
-            "lon": -80.5997,
-            "mass": 4695.585,
-            "met": 0.0,
+            "lon": -80.5998,
+            "mass": 4405.604,
+            "met": 25.02,
             "parts_n": 27,
-            "pitch": 90.0,
-            "q": 0.0,
-            "recoverable": true,
+            "pitch": 89.641,
+            "q": 5051.059,
+            "recoverable": false,
             "root": "probeCoreSphere.v2",
-            "sci_bank": 2.2905,
+            "sci_bank": 13.6243,
             "sci_rem": 0.0,
             "sci_run": false,
             "shear": false,
-            "sit": "pre_launch",
+            "sit": "flying",
             "stage": 0,
-            "throttle": 0.0
+            "throttle": 1.0
           },
           "lat": 28.6084,
           "link": true,
-          "lon": -80.5997,
-          "mass": 4695.585,
+          "lon": -80.5998,
+          "mass": 4405.604,
           "mass_pad": 4696.312,
-          "met": 0.0,
-          "met_end": 0.0,
+          "met": 25.02,
+          "met_end": 25.02,
           "met_start": 0.0,
           "pad": {
-            "alt": 86.643,
-            "apo": 86.643,
+            "alt": 85.987,
+            "apo": 85.987,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
@@ -3528,18 +3529,18 @@
             "ec": 509.815,
             "fuel": 1575.0,
             "g": 1.0,
-            "heading": 298.921,
-            "horiz": 0.006,
+            "heading": 298.935,
+            "horiz": 0.021,
             "lat": 28.6084,
             "lon": -80.5997,
             "mass": 4696.312,
             "met": 0.0,
             "parts_n": 27,
-            "pitch": 89.98,
+            "pitch": 90.0,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreSphere.v2",
-            "sci_bank": 2.2905,
+            "sci_bank": 13.6243,
             "sci_rem": 0.0,
             "sci_run": false,
             "shear": false,
@@ -3549,37 +3550,48 @@
           },
           "parts_n": 27,
           "parts_pad": 27,
-          "path": "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl",
-          "pitch": null,
-          "q_max": 0.0,
+          "path": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
+          "pitch": 89.641,
+          "q_max": 5051.059,
           "recoverable": true,
           "root": "probeCoreSphere.v2",
-          "run": "2026-08-26T10-09-22Z-hop.jsonl",
-          "samples": 25,
-          "sci_bank": 2.2905,
+          "run": "2026-08-26T10-27-52Z-hop.jsonl",
+          "samples": 6,
+          "sci_bank": 13.6243,
           "sci_delta": 0.0,
           "sci_paid": false,
           "sci_rem": 0.0,
           "sci_run": false,
           "shear": false,
-          "sit": "pre_launch",
-          "sit_mismatch": false,
-          "skip_n": 0,
-          "skips": [],
-          "speed": null,
+          "sit": "landed",
+          "sit_mismatch": true,
+          "skip_n": 1,
+          "skips": [
+            {
+              "alt_a": 647.901,
+              "alt_b": 203.758,
+              "met_dt": 8.48,
+              "q_a": 61.622,
+              "q_b": 5051.059,
+              "rate": 1.8,
+              "t_dt": 4.6,
+              "thick": true
+            }
+          ],
+          "speed": 95.878,
           "stage": 0,
-          "thick_air_skip": false,
-          "v_vert": null,
+          "thick_air_skip": true,
+          "v_vert": -96.268,
           "via": "US - Cape Canaveral"
         },
-        "learn": "landing: soft impact=? m/s heading=? horiz=? pitch=? sit=pre_launch synth apo=87 biome=Shores rec=yes sci=run=0 rem=0 bank=2.29 +0",
+        "learn": "landing: hard impact=96 m/s heading=299 horiz=0 pitch=90 sit=landed synth apo=655 biome=Shores rec=yes sci=run=0 rem=0 bank=13.62 +0",
         "phase": "hop",
         "science_ids": [
           "barometerScan",
           "geigerCounter",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
         "waste": {
           "bind": [
             {
@@ -3618,7 +3630,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T10:13:05Z"
+      "updated": "2026-08-26T10:29:02Z"
     },
     "T-082": {
       "assignee": "",
@@ -14771,6 +14783,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:12Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-pbc (seated until Hangar). leftover 0. t7-pbc + sasModule + PresMat + 4xEngineer7500 HD=2.5 + 5xZ-100. 7xFL-T100 Valiant 1575 kero 1-start. No chute, no silk. 10-22-06Z rec=yes shear 27\u219217 tanks lithobraked Stayputnik \u2014 do not rely on that. Next loft T-406 proc 2415 kero still no chute. Silk recover T-430 cone. Do not Hangar t7-chute. Omni SurfAntenna gain=2. Cape 64 bps. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:46Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-pbc (seated until Hangar). leftover 0. t7-pbc + sasModule + PresMat + 4xEngineer7500 HD=2.5 + 5xZ-100. 7xFL-T100 Valiant 1575 kero 1-start. No chute, no silk. 10-22-06Z rec=yes shear 27\u219217 tanks lithobraked Stayputnik \u2014 do not rely on that. Next loft T-406 proc 2415 kero still no chute. Silk recover T-430 cone. Do not Hangar t7-chute. Omni SurfAntenna gain=2. Cape 64 bps. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -14785,7 +14813,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:02Z"
+      "updated": "2026-08-26T10:35:46Z"
     },
     "T-401": {
       "assignee": "",
@@ -15011,7 +15039,7 @@
       "id": "T-404",
       "payload": {
         "biome": "",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
@@ -15073,17 +15101,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:37:58Z",
+            "claim": "Unbound FlyingHigh PresMat 305/0.05/2.70. Envelope 10-27-52Z sit=landed biome=Shores apo=655 rec=yes sci_run=0 rem=0 bank 13.62 +0. FlyingHigh cannot pay 655 m. File rem=0 stays the High shelf for the next loft that actually crosses 50 km. Do not Learn lithobrake as the recover plan. This-hop T-460 FlyingLow 2.10 seq0 + T-461 Surface@Shores 0.90 seq1. Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Goo High T-368 wait t7+Mk16. recover HD 1.17 MB not TX 41 h. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "leftover": null,
-        "note": "this-hop FlyingHigh PresMat seq0 on t7-wheel-pbc (capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Pad-abort T-461 Surface paid that envelope; Os wants loft. Writer-less leftover loft rec=no is wreck, not a splash or High Learn. Scan marks High out on the 50 km lid; hang still t7-wheel-pbc. Goo High T-368 wait t7+Mk16. Geiger High capped. Forest High TELEMETRY 1.512 T-069 shelf (Forest loft). Side-by-side T-460 FlyingLow 2.10 seq1. Unbound T-461 Surface (cannot pay loft). Not Water. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "leftover": "unstarted",
+        "note": "unbound catalog. FlyingHigh PresMat ~2.70 cannot pay 10-27-52Z sit=landed Shores apo=655 rec=yes sci_run=0. File rem=0 stays the High shelf for the next loft that actually crosses 50 km. Do not Learn lithobrake as the recover plan. This-hop T-460 FlyingLow 2.10 seq0 + T-461 Surface@Shores 0.90 seq1. Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Goo High T-368 wait t7+Mk16. Geiger High capped. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 0,
+        "seq": "",
         "situation": "FlyingHigh",
         "size_mb": 1.17,
         "tech": "stability",
@@ -15115,16 +15151,16 @@
       "sci_expect": 2.7,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "flyinghigh",
         "barometer",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-26T10:03:38Z"
+      "updated": "2026-08-26T10:37:58Z"
     },
     "T-405": {
       "assignee": "",
@@ -15223,6 +15259,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:11Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. Next loft. leftover 0. 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 767 L / 345 kero / 422 LOx vs 7xT100 1575 kero. Same 4.375 m stack as 88.8 km proof; 2415 kero. Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant 1-start. No chute, no silk. 10-22-06Z t7-wheel-pbc rec=yes was tanks lithobraking Stayputnik \u2014 do not rely on that. Silk recover Hangar after leftover: T-430 cone Nylon 50m (not t7-chute). HS recover T-428 Ablative 80 no silk. Omni SurfAntenna. Cape 64 bps. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:46Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. Next loft. leftover 0. 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 767 L / 345 kero / 422 LOx vs 7xT100 1575 kero. Same 4.375 m stack as 88.8 km proof; 2415 kero. Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant 1-start. No chute, no silk. 10-22-06Z t7-wheel-pbc rec=yes was tanks lithobraking Stayputnik \u2014 do not rely on that. Silk recover Hangar after leftover: T-430 cone Nylon 50m (not t7-chute). HS recover T-428 Ablative 80 no silk. Omni SurfAntenna. Cape 64 bps. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15239,7 +15291,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T10:35:46Z"
     },
     "T-407": {
       "assignee": "",
@@ -16280,6 +16332,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:11Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. Recover alt of next loft, not silk. Disk: proceduralHeatshield Ablative 80 length 0.2 + 7x proc 1.25x0.625 Default 2415 kero. No chute, no silk. 10-22-06Z lithobrake luck is not this hang. If Os wants silk recover after leftover, Hangar T-430 cone not this HS and not t7-chute. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:46Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. Recover alt of next loft, not silk. Disk: proceduralHeatshield Ablative 80 length 0.2 + 7x proc 1.25x0.625 Default 2415 kero. No chute, no silk. 10-22-06Z lithobrake luck is not this hang. If Os wants silk recover after leftover, Hangar T-430 cone not this HS and not t7-chute. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16296,7 +16364,7 @@
       ],
       "title": "t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T10:35:46Z"
     },
     "T-429": {
       "assignee": "",
@@ -16386,6 +16454,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:11Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. Silk recover alt. Disk: OKTO+RC_cone Nylon 50m pre 2.5 minDeployment 2500 deployAlt 700 + 7x proc 1.25x0.625 Default 2415 kero. This is the Hangar after leftover if Os wants silk recover (tanks lithobrake is not a recover system). Do not Hangar t7-chute this sit (silk/4x/pitch). Not the loft hang \u2014 loft is T-406 no chute. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:35:46Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. Silk recover alt. Disk: OKTO+RC_cone Nylon 50m pre 2.5 minDeployment 2500 deployAlt 700 + 7x proc 1.25x0.625 Default 2415 kero. This is the Hangar after leftover if Os wants silk recover (tanks lithobrake is not a recover system). Do not Hangar t7-chute this sit (silk/4x/pitch). Not the loft hang \u2014 loft is T-406 no chute. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16402,7 +16486,7 @@
       ],
       "title": "t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T10:35:46Z"
     },
     "T-431": {
       "assignee": "",
@@ -17584,16 +17668,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:37:58Z",
+            "claim": "Rebound FlyingLow PresMat 305/0.05/2.10 seq0 on t7-wheel-pbc. Envelope 10-27-52Z apo=655 is FlyingLow; recovered sit=landed Shores rec=yes sci_run=0. Scan REACH 2.10. File rem=0 is still the card. Unbound T-404 High (cannot pay 655 m). Side-by-side T-461 Surface@Shores 0.90 seq1 (pays landed envelope). Not Water. Not Grasslands. recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
-        "note": "this-hop FlyingLow PresMat seq1 on t7-wheel-pbc. Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Loft crosses Low. Pad-abort T-461 Surface cannot pay loft. Writer-less leftover loft rec=no is wreck, not a splash rebind. Not Water (never 090). Not Grasslands. Side-by-side T-404 FlyingHigh 2.70 seq0. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "leftover": "unstarted",
+        "note": "this-hop FlyingLow PresMat seq0 on t7-wheel-pbc. Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Envelope 10-27-52Z apo=655 is Low. Unbound T-404 High (cannot pay 655 m). Side-by-side T-461 Surface@Shores 0.90 seq1 (pays landed envelope). Not Water (never 090). Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 1,
+        "seq": 0,
         "situation": "FlyingLow",
         "size_mb": 1.17,
         "tech": "stability",
@@ -17616,7 +17709,7 @@
       ],
       "title": "FlyingLow barometer 2.10",
       "type": "science",
-      "updated": "2026-08-26T10:03:38Z"
+      "updated": "2026-08-26T10:37:58Z"
     },
     "T-461": {
       "assignee": "linus",
@@ -17631,7 +17724,7 @@
       "id": "T-461",
       "payload": {
         "biome": "Shores",
-        "bound": "no",
+        "bound": "yes",
         "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
@@ -17685,17 +17778,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:37:58Z",
+            "claim": "Rebound Surface@Shores PresMat 305/0.05/0.90 seq1 on t7-wheel-pbc. Envelope 10-27-52Z sit=landed biome=Shores rec=yes apo=655 sci_run=0. Scan Surface REACH 0.90. File rem=0 is still the card. Thermo/TELEMETRY/goo/geiger Surface capped \u2014 PresMat only. Unbound T-404 High. Side-by-side T-460 FlyingLow seq0. Do not Learn lithobrake as the recover plan. Water stays unbound (never 090). recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "unbound catalog. Surface@Shores PresMat ~0.90 cannot pay a loft. Pad-abort envelope paid this sit; next hop is loft. File rem=0 stays the Surface shelf. Do not Learn writer-less leftover loft rec=no as splash. This-hop T-404 FlyingHigh seq0 + T-460 FlyingLow seq1. Water splash PresMat T-423 shelf (never 090). Thermo/TELEMETRY/goo/geiger Surface capped. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop Surface@Shores PresMat seq1 on t7-wheel-pbc. Envelope 10-27-52Z sit=landed biome=Shores apo=655 rec=yes sci_run=0. Scan Surface@Biomes REACH 0.90. file 1.17 MB / 305 s / 0.05. File rem=0 is still the card. Thermo/TELEMETRY/goo/geiger Surface capped \u2014 PresMat only. Unbound T-404 High. Side-by-side T-460 FlyingLow seq0. Do not Learn lithobrake as the recover plan. Water stays unbound (never 090). Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": "",
+        "seq": 1,
         "situation": "Surface@Shores",
         "size_mb": 1.17,
         "tech": "stability",
@@ -17709,17 +17810,17 @@
       "sci_expect": 0.9,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "shores",
         "barometer",
-        "unbound",
+        "bound",
         "surface"
       ],
       "title": "Shores Surface barometer 0.90",
       "type": "science",
-      "updated": "2026-08-26T10:03:38Z"
+      "updated": "2026-08-26T10:37:58Z"
     },
     "T-462": {
       "assignee": "",
@@ -18086,6 +18187,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:20:51Z",
+            "claim": "hop_factory_pad _pad_hold: after hop light keep MainThrottle 1 and independent setpoint 1 until loft/MECO at the lid. 10-09-22Z ignitions=1\u21920 currentThrottle=0.24 independent=yes then pad thrusting released independent \u2014 re-enable zeros setpoint, restart at ignitions 0, MET 0 tanks full STAGE 0 no plume. Pad thrusting is not a handoff. _cut_pad_engine only on abort. hop_factory_pad.py:8,367,448,478 tests/test_hop_factory.py:387. Not hop.py. Do not raise ignitions. Do not abort-after-light.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -18099,7 +18208,7 @@
       "tags": [],
       "title": "T-469 live scrap: never hop light, engine dead on pad, Os abort",
       "type": "control",
-      "updated": "2026-08-26T10:08:08Z"
+      "updated": "2026-08-26T10:20:51Z"
     },
     "T-472": {
       "assignee": "",
@@ -18170,7 +18279,66 @@
       "title": "Press: RF ignition, RA honesty, org-rsi, leftover loft",
       "type": "press",
       "updated": "2026-08-26T10:04:55Z"
+    },
+    "T-474": {
+      "assignee": "",
+      "blockers": [],
+      "category": "press",
+      "created": "2026-08-26T10:20:04Z",
+      "desk": "verena",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-474",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T10:25:19Z",
+            "claim": "Everybody Left stills allowlisted and committed (everybody-left.png hero = Os loft; supporting stuck-orphan-fly/down, stuck-rf-pad-light). Bureaucracy beat: Os 55-line / one-window ruler, clip ate Design, cutover cancelled; completeness is law; Os is the punchline, not the Grokmans. README + INDEX. Commit b87faa5. Did not invent orbit. Did not clobber first-mystery-goo.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "press"
+      ],
+      "title": "Press: screenshots + org-rsi 55-line portrait law",
+      "type": "press",
+      "updated": "2026-08-26T10:25:19Z"
+    },
+    "T-475": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T10:28:53Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "sci-unchanged-recovered",
+      "id": "T-475",
+      "payload": {
+        "count": 31
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "software",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI sci-unchanged-recovered \u00d731",
+      "type": "rsi",
+      "updated": "2026-08-26T10:28:53Z"
     }
   },
-  "updated": "2026-08-26T10:18:43Z"
+  "updated": "2026-08-26T10:37:58Z"
 }

@@ -36,6 +36,13 @@ FORBIDDEN_DISPATCH = (
     "docs/program/sit-card.json",
     "docs/program/org-flow/",
     ".grok/agents/spotter.md",
+    "docs/program/plan.md",
+    "docs/program/briefing.md",
+    "docs/program/science.md",
+    "docs/program/vab.md",
+    "docs/program/note-tech.md",
+    "docs/program/loop.md",
+    "docs/crew/builder.md",
 )
 
 GITIGNORED_OPTIONAL = frozenset(
@@ -67,6 +74,13 @@ _ORG_NOVEL_NAMES = frozenset(
         "learn-rsi.md",
         "feedback-plan.md",
         "lessons.md",
+        "plan.md",
+        "briefing.md",
+        "science.md",
+        "vab.md",
+        "note-tech.md",
+        "loop.md",
+        "builder.md",
     }
 )
 
@@ -327,8 +341,6 @@ def classify(rel: str) -> str:
         return "parked_archive"
     if rel.startswith("docs/program/feedback/"):
         return "parked_archive"
-    if name in _ORG_NOVEL_NAMES:
-        return "parked_archive"
     if rel.endswith("-review.md"):
         return "parked_archive"
     if "/missions/" in rel and rel.endswith("/mission.md"):
@@ -341,12 +353,20 @@ def classify(rel: str) -> str:
         return "live_tape"
     if rel == "docs/last-flight.md":
         return "live_tape"
+    if rel == "docs/program/ship.md":
+        return "live_tape"
     if "/missions/" in rel and "/logs/" in rel:
         return "live_tape"
     if "/missions/" in rel and rel.endswith("/craft.md"):
         return "live_tape"
     if "/missions/" in rel and rel.endswith("/loop.md"):
         return "live_tape"
+    if "/missions/" in rel and rel.endswith(
+        ("/plan.md", "/science.md", "/briefing.md")
+    ):
+        return "live_kernel"
+    if name in _ORG_NOVEL_NAMES:
+        return "parked_archive"
     return "live_kernel"
 
 

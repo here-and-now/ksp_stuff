@@ -213,13 +213,6 @@ def format_science_dump(
 def format_seated_science(*, desk: dict[str, str] | None = None) -> str:
     d = desk if desk is not None else desk_kv()
     bound, _ = _open_science()
-    fly = seated_fly_ticket() or {}
-    ff = fly_fields(fly)
-    ids = ",".join(ff.get("science_ids") or []) or ",".join(
-        str((t.get("payload") or {}).get("experiment_id") or "")
-        for t in bound
-        if (t.get("payload") or {}).get("experiment_id")
-    )
     lines = [
         f"# {seated_id()} science dump (tickets)",
         "",
@@ -227,9 +220,7 @@ def format_seated_science(*, desk: dict[str, str] | None = None) -> str:
         f"flight: {d.get('seat') or seated_id()}",
         f"craft: {d.get('craft') or ''}",
         "recover_banks: yes",
-        f"notes: dump of bound tickets + fly `science_ids`. Retired splash hang is not live.",
-        f"  fly: {fly.get('id') or 'none'} cli={ff.get('cli') or 'none'}",
-        f"  science_ids: {ids or 'none'}",
+        "notes: dump of bound tickets. Bind is ticket payload.",
         "",
         "## Flying",
         "",
@@ -255,10 +246,11 @@ def format_seated_science(*, desk: dict[str, str] | None = None) -> str:
     return "\n".join(lines)
 
 
+_PLAN_TWINS = frozenset({"go", "recommended", "cli", "campaign", "science_ids"})
+
+
 def render_plan(path: Path | None = None) -> str:
     target = path or seated_plan_path()
-    fly = seated_fly_ticket() or {}
-    ff = fly_fields(fly)
     raw = target.read_text(encoding="utf-8") if target.is_file() else ""
     kv: dict[str, str] = {}
     header: list[str] = []
@@ -270,23 +262,9 @@ def render_plan(path: Path | None = None) -> str:
             continue
         k, _, v = line.partition(":")
         key = k.strip()
-        if key.lower() == "recommended":
+        if key.lower().replace("-", "_") in _PLAN_TWINS:
             continue
         kv[key] = v.strip()
-    if ff.get("phase"):
-        kv["phase"] = ff["phase"]
-    if ff.get("go"):
-        kv["go"] = ff["go"]
-    if ff.get("cli"):
-        kv["cli"] = ff["cli"]
-    if ff.get("campaign"):
-        kv["campaign"] = ff["campaign"]
-    ids = ff.get("science_ids") or []
-    if ids:
-        kv["science_ids"] = ",".join(ids) if isinstance(ids, (list, tuple)) else str(ids)
-    craft = (fly.get("craft") or (fly.get("payload") or {}).get("craft") or "")
-    if craft:
-        kv["craft"] = str(craft)
     order = [
         "mun_pe",
         "suicide_start",
@@ -301,10 +279,6 @@ def render_plan(path: Path | None = None) -> str:
         "expect_apo_max",
         "craft",
         "hop_apo",
-        "go",
-        "cli",
-        "campaign",
-        "science_ids",
         "emergencies",
     ]
     lines = header or ["# Gene's plan. `python main.py phase` runs `phase:`."]
@@ -323,7 +297,6 @@ def render_plan(path: Path | None = None) -> str:
 def render_briefing(*, desk: dict[str, str] | None = None) -> str:
     d = desk if desk is not None else desk_kv()
     fly = seated_fly_ticket() or {}
-    ff = fly_fields(fly)
     pl = fly.get("payload") or {}
     land = pl.get("landing") or {}
     bound, _ = _open_science()
@@ -341,16 +314,12 @@ def render_briefing(*, desk: dict[str, str] | None = None) -> str:
     return (
         f"# Briefing — Gene → {d.get('seat') or seated_id()}\n"
         "\n"
-        f"Earth. PBC. `{fly.get('id') or 'none'}`. go: **{ff.get('go') or 'wait'}**. "
-        f"campaign: **{ff.get('campaign') or 'none'}**.\n"
-        f"Helm **`{ff.get('cli') or 'none'}`**. Craft **`{d.get('craft') or '?'}`**.\n"
-        "Dump of the fly ticket + last landing. Do not Hangar "
-        "`proc-tank-pbc`.\n"
+        f"Earth. PBC. Craft **`{d.get('craft') or '?'}`**.\n"
+        "Dump of last landing + bound ids. go/cli/campaign live on the fly ticket.\n"
         "\n"
         f"{where}\n"
         "\n"
         f"Bound this hop: {binds}.\n"
-        f"science_ids: {','.join(ff.get('science_ids') or []) or 'ticket-bound'}.\n"
         f"f013: copy desk.md. hangar **{d.get('hangar') or 'none'}**. leftover **n={d.get('leftover') or 0}**.\n"
         "\n"
         "emergencies: hold, cut, no_warp, stage, recover, science, abort_pad\n"

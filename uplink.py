@@ -4,11 +4,10 @@ Files (git-friendly, next to the slate):
 
 - ``docs/program/uplink.md`` — one command. Gene/parent writes; the
   flying process *takes* it. ``status`` must not.
-- ``docs/program/loop.md`` — one-line notes. Not the stick (L-032).
-- ``docs/program/note-tech.md`` — Commander → Lars/Gus/Wernher. What
-  the stack needed. Gene still owns the CLI.
-- ``docs/program/plan.md`` — live numbers ``set`` can change; ``phase`` /
-  ``expect_*`` survive ``save_plan`` (L-037).
+- ``docs/program/ship.md`` — live radio (parent reads mid-hop).
+- seated ``docs/missions/<id>/plan.md`` — envelope ``hop_apo`` /
+  ``expect_*`` / ``emergencies``; ``set`` can change numbers.
+- seated ``docs/missions/<id>/loop.md`` — talk, not the stick.
 
 Gene is not on console every tick. Mid-phase the parent may
 ``abort|hold`` on wreck-class only. Telem wreck gates still abort even
@@ -30,9 +29,6 @@ log = logging.getLogger("kspstuff")
 
 UPLINK_PATH = Path("docs/program/uplink.md")
 LAST_PATH = Path("docs/program/uplink.last")
-LOOP_PATH = Path("docs/program/loop.md")  # shim; Commander notes go to the dossier
-NOTE_TECH_PATH = Path("docs/program/note-tech.md")
-_LEGACY_NOTE_TECH = Path("docs/program/helm-tech.md")
 SHIP_PATH = Path("docs/program/ship.md")
 
 
@@ -113,8 +109,7 @@ _PLAN_META = (
     "expect_apo_max",
     "craft",
     "hop_apo",
-    "go",
-    "recommended",
+    "emergencies",
 )
 
 
@@ -217,30 +212,6 @@ def note(who: str, text: str) -> None:
     line = f"{who}: {text.rstrip()}\n"
     with path.open("a", encoding="utf-8") as fh:
         fh.write(line)
-
-
-def note_tech(desk: str, text: str, *, who: str = "") -> Path:
-    """Commander → tech desks. Does not rewrite Gene's plan."""
-    from datetime import datetime, timezone
-
-    path = NOTE_TECH_PATH
-    if _LEGACY_NOTE_TECH.is_file() and not path.is_file():
-        path = _LEGACY_NOTE_TECH
-    path.parent.mkdir(parents=True, exist_ok=True)
-    if not path.is_file():
-        path.write_text(
-            "# Commander → tech\n\n"
-            "The seated Commander writes what the stack needed.\n"
-            "Lars / Gus / Wernher / Gene read between exits. Not the stick.\n\n",
-            encoding="utf-8",
-        )
-    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
-    speaker = (who or "Commander").strip() or "Commander"
-    dest = (desk or "tech").strip() or "tech"
-    line = f"- {stamp} **{speaker} → {dest}:** {text.rstrip()}\n"
-    with path.open("a", encoding="utf-8") as fh:
-        fh.write(line)
-    return path
 
 
 def _parse(text: str) -> Command | None:
@@ -359,7 +330,7 @@ def _apply(cmd: Command) -> None:
 
 
 def radio_text() -> str:
-    """Gene inbox. No kRPC. Ship line + pending uplink + last talk."""
+    """Gene inbox. No kRPC. Ship line + pending uplink."""
     bits: list[str] = []
     if SHIP_PATH.is_file():
         bits.append("SHIP " + SHIP_PATH.read_text(encoding="utf-8").strip())
@@ -367,18 +338,6 @@ def radio_text() -> str:
         bits.append("SHIP (none — flight not publishing yet)")
     cmd = peek()
     bits.append("UPLINK " + (cmd.raw if cmd else "(clear)"))
-    bits.append("PLAN " + " ".join(f"{k}={v:g}" for k, v in desk.plan.items()))
-    loop = loop_file()
-    if loop.is_file():
-        lines = [
-            ln
-            for ln in loop.read_text(encoding="utf-8").splitlines()
-            if ln.strip() and not ln.strip().startswith("#")
-        ]
-        bits.append("LOOP")
-        bits.extend(f"  {ln}" for ln in lines[-8:])
-    else:
-        bits.append("LOOP (empty)")
     return "\n".join(bits) + "\n"
 
 

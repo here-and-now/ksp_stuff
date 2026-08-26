@@ -1,9 +1,10 @@
 """On-disk flight recorder. Not for the TUI.
 
 One **run** is one Commander command (`python main.py pad`). Files live
-under the seated mission ``logs/``. Stamp is Earth UTC with seconds
-plus Kerbal UT/MET in the jsonl start event. Cadence is Telem
-``pulse_s`` (cruise ~5 Hz, ~20 Hz while throttled or near the surface). A ``kind=landing``
+under the tape-id folder ``docs/missions/<id>/logs/`` (``current.md``
+``flight:``). Stamp is Earth UTC with seconds plus Kerbal UT/MET in
+the jsonl start event. Cadence is Telem ``pulse_s`` (cruise ~5 Hz,
+~20 Hz while throttled or near the surface). A ``kind=landing``
 row is the flying→splashed/landed transition. ``docs/flights/index.jsonl``
 indexes runs for the ticket bus.
 """

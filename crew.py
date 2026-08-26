@@ -109,11 +109,11 @@ def load_person(name_or_slug: str) -> Person:
 
 def current_assignment() -> dict[str, str]:
     if not CURRENT_PATH.is_file():
-        return {"pilot": "Jebediah Grokman", "capcom": "Valentina Grokman"}
+        return {"pilot": "Jebediah Grokman", "capcom": "Walt Grokman"}
     kv = _parse_kv(CURRENT_PATH.read_text(encoding="utf-8"))
     out = {
-        "pilot": kv.get("pilot", "Jebediah Grokman"),
-        "capcom": kv.get("capcom", "Valentina Grokman"),
+        "pilot": kv.get("pilot") or "Jebediah Grokman",
+        "capcom": kv.get("capcom") or "Walt Grokman",
     }
     if kv.get("flight"):
         out["flight"] = kv["flight"]

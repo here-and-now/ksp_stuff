@@ -69,7 +69,6 @@ class DeskSit:
     last_exit: str
     last_abort: str
     review: str
-    note_tech: str
     f013: tuple[F013, ...]
     stack: tuple[str, ...]
     vessels: tuple[str, ...]
@@ -518,7 +517,6 @@ def build_sit(world: World | None = None) -> DeskSit:
         last_exit=last["exit"],
         last_abort=last["abort"],
         review=review,
-        note_tech="",
         f013=f013,
         stack=tuple(names),
         vessels=vessel_names,

@@ -1365,7 +1365,12 @@ class TestHouseDump(unittest.TestCase):
         )
         out = render_plan(tmp)
         self.assertNotIn("recommended:", out)
+        self.assertNotIn("go:", out)
+        self.assertNotIn("cli:", out)
+        self.assertNotIn("campaign:", out)
+        self.assertNotIn("science_ids:", out)
         self.assertIn("hop_apo: 18000", out)
+        self.assertIn("phase: hop", out)
 
     def test_next_ctt_skips_spent_stability(self):
         from house_dump import next_ctt, format_science_dump, render_slate
@@ -1551,6 +1556,20 @@ class TestLiveDocsInventory(unittest.TestCase):
         self.assertEqual(classify("docs/missions/uncrewed/loop.md"), "live_tape")
         self.assertEqual(classify("docs/program/lars-rsi.md"), "parked_archive")
         self.assertEqual(classify("docs/lessons.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/plan.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/briefing.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/science.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/vab.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/note-tech.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/loop.md"), "parked_archive")
+        self.assertEqual(classify("docs/crew/builder.md"), "parked_archive")
+        self.assertEqual(classify("docs/program/ship.md"), "live_tape")
+        self.assertEqual(
+            classify("docs/missions/jebediah/plan.md"), "live_kernel"
+        )
+        self.assertEqual(
+            classify("docs/missions/jebediah/science.md"), "live_kernel"
+        )
 
     def test_live_trio_rows_read_as_findings(self):
         self.assertEqual(len(tickets.TYPES), 11)

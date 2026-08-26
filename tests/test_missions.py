@@ -68,7 +68,8 @@ class TestSeatAndPlan(unittest.TestCase):
 
         tmp = Path(tempfile.mkdtemp()) / "plan.md"
         tmp.write_text(
-            "phase: hop\nnext: wait\ngo: wait\nmun_pe: 25000\n",
+            "phase: hop\nnext: wait\nhop_apo: 18000\nexpect_apo_max: 400000\n"
+            "emergencies: hold, cut\nmun_pe: 25000\n",
             encoding="utf-8",
         )
         load_plan()
@@ -80,7 +81,11 @@ class TestSeatAndPlan(unittest.TestCase):
         text = tmp.read_text(encoding="utf-8")
         self.assertIn("phase: hop", text)
         self.assertIn("next: wait", text)
-        self.assertIn("go: wait", text)
+        self.assertIn("hop_apo: 18000", text)
+        self.assertIn("expect_apo_max: 400000", text)
+        self.assertIn("emergencies: hold, cut", text)
+        self.assertNotIn("go:", text)
+        self.assertNotIn("recommended:", text)
 
     def test_pad_unsigned_raises(self):
         from unittest.mock import patch

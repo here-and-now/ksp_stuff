@@ -752,13 +752,24 @@ def main(argv: list[str] | None = None) -> int:
         help="hold|cut|no_warp|phys-warp|warp|stage|recover|science|transmit|abort_pad|freeze|abort|set|…",
     )
     up.add_argument("rest", nargs="*", help="reason or `mun_pe 25000`")
-    note_p = sub.add_parser("note", help="Append a line to docs/program/loop.md")
+    note_p = sub.add_parser(
+        "note",
+        help="Append a line to seated docs/missions/<id>/loop.md",
+    )
     note_p.add_argument("who")
     note_p.add_argument("text", nargs="+")
     rev = sub.add_parser("review", help="Roll up a flight jsonl (no kRPC)")
-    rev.add_argument("log", nargs="?", default=None, help="docs/missions/jebediah/logs/<stamp>-hop.jsonl")
-    sub.add_parser("plan", help="Print docs/program/plan.md (Gene's numbers)")
-    sub.add_parser("radio", help="Gene inbox: ship.md + uplink + loop (no kRPC)")
+    rev.add_argument(
+        "log",
+        nargs="?",
+        default=None,
+        help="docs/missions/<id>/logs/<stamp>-hop.jsonl",
+    )
+    sub.add_parser(
+        "plan",
+        help="Print seated docs/missions/<id>/plan.md (Gene envelope)",
+    )
+    sub.add_parser("radio", help="Gene inbox: ship.md + uplink (no kRPC)")
     sub.add_parser(
         "ship",
         help="Live envelope from ship.md (heading/wreck/ec/alt/lat/lon/downrange/biome; no kRPC)",
@@ -768,8 +779,14 @@ def main(argv: list[str] | None = None) -> int:
     seat_p = sub.add_parser("seat", help="Point current.md at a mission folder")
     seat_p.add_argument("who", help="flight id or roster string")
     sub.add_parser("missions", help="Print docs/missions/INDEX.md (no kRPC)")
-    sub.add_parser("vab", help="Print VAB board + seated craft.md (no kRPC)")
-    sub.add_parser("science", help="Print Linus board; career snapshot if connected")
+    sub.add_parser(
+        "vab",
+        help="Print seated docs/missions/<id>/craft.md (capable is tickets)",
+    )
+    sub.add_parser(
+        "science",
+        help="Print seated docs/missions/<id>/science.md (bind is tickets)",
+    )
     sub.add_parser(
         "science-scan",
         help="Live MM experiment defs + leftovers (no kRPC). Linus catalog.",
@@ -929,13 +946,11 @@ def main(argv: list[str] | None = None) -> int:
         print(index_text(), end="")
         return 0
     if args.cmd == "vab":
-        from missions import VAB_PATH, seated_craft_path, seated_id
+        from missions import seated_craft_path, seated_id
 
-        bits = []
-        if VAB_PATH.is_file():
-            bits.append(VAB_PATH.read_text(encoding="utf-8").rstrip())
+        bits = ["# tickets: python main.py tickets list --type vehicle"]
         craft = seated_craft_path()
-        bits.append(f"\n# seated {seated_id()} craft.md")
+        bits.append(f"# seated {seated_id()} craft.md")
         if craft.is_file():
             bits.append(craft.read_text(encoding="utf-8").rstrip())
         print("\n".join(bits) + "\n", end="")
@@ -1057,13 +1072,11 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         return 0
     if args.cmd == "science":
-        from missions import SCIENCE_PATH, seated_id, seated_science_path
+        from missions import seated_id, seated_science_path
 
-        bits = []
-        if SCIENCE_PATH.is_file():
-            bits.append(SCIENCE_PATH.read_text(encoding="utf-8").rstrip())
+        bits = ["# tickets: python main.py tickets list --type science"]
         card = seated_science_path()
-        bits.append(f"\n# seated {seated_id()} science.md")
+        bits.append(f"# seated {seated_id()} science.md")
         if card.is_file():
             bits.append(card.read_text(encoding="utf-8").rstrip())
         print("\n".join(bits) + "\n", end="")

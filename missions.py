@@ -1,8 +1,8 @@
-"""Many dossiers, one Commander (L-038).
+"""Tape id folders under ``docs/missions/<id>/``.
 
-A mission is one crewed stack until recover, home, or missing. The Commander
-(``phase`` / ``mun`` / ``recover``) flies only the seated id in
-``docs/program/current.md``. Uplink / ship / lock stay global.
+``current.md`` ``flight:`` is the tape id (uncrewed hops write
+``docs/missions/uncrewed/logs/``). Commander dossier stays ``jebediah``.
+Uplink / ship / lock stay global.
 """
 
 from __future__ import annotations
@@ -17,11 +17,6 @@ log = logging.getLogger("kspstuff")
 
 ROOT = Path("docs/missions")
 CURRENT_PATH = Path("docs/program/current.md")
-SHIM_PLAN = Path("docs/program/plan.md")
-SHIM_BRIEF = Path("docs/program/briefing.md")
-SHIM_LOOP = Path("docs/program/loop.md")
-VAB_PATH = Path("docs/program/vab.md")
-SCIENCE_PATH = Path("docs/program/science.md")
 
 _NAMED = {
     "Jebediah Grokman": "jebediah",
@@ -113,7 +108,8 @@ def seated_science_path(flight_id: str | None = None) -> Path:
 
 
 def vab_kv() -> dict[str, str]:
-    return _parse_kv(VAB_PATH)
+    """Program vab.md is archived. Hangar is the capable ticket."""
+    return {}
 
 
 def hangar_craft_name() -> str:
@@ -175,7 +171,7 @@ def lock_held() -> str | None:
 
 def write_current(*, flight: str, pilot: str, capcom: str | None = None) -> None:
     kv = current_kv()
-    cap = capcom or kv.get("capcom", "Jebediah Grokman")
+    cap = capcom or kv.get("capcom") or "Walt Grokman"
     CURRENT_PATH.parent.mkdir(parents=True, exist_ok=True)
     CURRENT_PATH.write_text(
         f"flight: {flight}\npilot: {pilot}\ncapcom: {cap}\n",

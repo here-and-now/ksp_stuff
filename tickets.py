@@ -13,7 +13,6 @@ ROOT = Path(__file__).resolve().parent
 TICKET_DIR = ROOT / "docs" / "program" / "tickets"
 BOARD = TICKET_DIR / "board.jsonl"
 HEAD = TICKET_DIR / "head.json"
-PRINT = TICKET_DIR / "BOARD.md"
 FINGERPRINTS = TICKET_DIR / "fingerprints.json"
 
 TYPES = (
@@ -444,7 +443,7 @@ def capable_hangar(*, prefer: str = "") -> tuple[str, str]:
 
 
 def _tape_jsonl(t: dict[str, Any] | None) -> str:
-    """payload.telem_run, else live_run under seated_logs_dir. Never invent jebediah."""
+    """payload.telem_run, else an existing docs/missions/*/logs file. Never invent a seat."""
     if not t:
         return ""
     payload = t.get("payload") if isinstance(t.get("payload"), dict) else {}
@@ -457,14 +456,16 @@ def _tape_jsonl(t: dict[str, Any] | None) -> str:
     p = Path(live)
     if p.suffix.lower() != ".jsonl":
         p = Path(str(p) + ".jsonl")
-    if p.is_absolute() or len(p.parts) > 1:
-        return str(p).replace("\\", "/")
-    try:
-        from missions import seated_logs_dir
-
-        return str(seated_logs_dir() / p.name)
-    except Exception:
-        return str(p)
+    posix = str(p).replace("\\", "/")
+    if p.is_file():
+        return posix
+    name = p.name
+    logs = ROOT / "docs" / "missions"
+    if logs.is_dir() and name:
+        hits = sorted(logs.glob(f"*/logs/{name}"))
+        if hits:
+            return str(hits[0]).replace("\\", "/")
+    return ""
 
 
 def infer_links(t: dict[str, Any]) -> dict[str, Any]:

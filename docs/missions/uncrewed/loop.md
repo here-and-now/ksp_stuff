@@ -36,3 +36,5 @@ Gene: abort spent-ignition-pad
 script: acked abort spent-ignition-pad
 Gene: abort pad-dead-no-plume
 script: acked abort pad-dead-no-plume
+Gene: abort
+script: acked abort

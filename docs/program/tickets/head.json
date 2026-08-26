@@ -272,6 +272,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:50:20Z",
+            "claim": "14-45-39Z hangar t7-wheel-proc-hs-cone-pbc STAGE 000 thrust 0 plume=no throttle 0 sit=pre_launch MET 0 fuel 2415 ABORT uplink abort never hop light. Os: heatshield placement / fuel flow through the dish \u2014 Gus, not pad-RF. Screenshot screenshots/stuck-pad-no-plume.png PAW Procedural Heatshield Ablator 80/80. Pad waits this hang.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -287,7 +295,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T14:35:27Z"
+      "updated": "2026-08-26T14:50:20Z"
     },
     "T-001": {
       "assignee": "",
@@ -3426,7 +3434,8 @@
         "docs/missions/uncrewed/logs/2026-08-26T11-19-18Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T11-51-29Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T12-09-06Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T12-18-51Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T12-18-51Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T14-45-39Z-hop.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3475,25 +3484,25 @@
             "throttle": null
           },
           "alt_before": null,
-          "alt_max": 85.738,
+          "alt_max": 85.737,
           "apex": {
-            "alt": 85.738,
+            "alt": 85.737,
             "apo": 85.737,
             "biome": "Shores",
             "broken": null,
-            "chute": "stowed",
+            "chute": "armed",
             "downrange": 0.447,
-            "ec": 1048.92,
+            "ec": 1042.491,
             "fuel": 2415.0,
             "g": 1.0,
-            "heading": 298.925,
-            "horiz": 0.008,
+            "heading": 298.886,
+            "horiz": 0.0,
             "lat": 28.6084,
             "lon": -80.5998,
-            "mass": 7019.392,
+            "mass": 7019.364,
             "met": 0.0,
             "parts_n": 33,
-            "pitch": 89.944,
+            "pitch": 89.96,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreOcto.v2",
@@ -3502,7 +3511,7 @@
             "sci_run": false,
             "shear": false,
             "sit": "pre_launch",
-            "stage": 2,
+            "stage": 0,
             "throttle": 0.0
           },
           "apo_max": 85.737,
@@ -3541,17 +3550,19 @@
             "throttle": null
           },
           "burnout_n": 0,
-          "chute": "stowed",
+          "chute": "armed",
           "command": "hop",
           "debris_n": 0,
           "descent_n": 0,
           "downrange": 0.447,
           "dt_s": null,
-          "ec": 1048.92,
+          "ec": 1036.225,
           "events": [
             "start",
             "hangar",
             "recoverable",
+            "uplink",
+            "recover",
             "sci_bank",
             "landing",
             "end"
@@ -3565,23 +3576,23 @@
           "landing": "soft",
           "landing_synthesized": true,
           "last": {
-            "alt": 85.738,
+            "alt": 85.737,
             "apo": 85.737,
             "biome": "Shores",
             "broken": null,
-            "chute": "stowed",
+            "chute": "armed",
             "downrange": 0.447,
-            "ec": 1048.92,
+            "ec": 1036.225,
             "fuel": 2415.0,
             "g": 1.0,
-            "heading": 298.925,
-            "horiz": 0.008,
+            "heading": 298.885,
+            "horiz": 0.0,
             "lat": 28.6084,
             "lon": -80.5998,
-            "mass": 7019.392,
+            "mass": 7019.302,
             "met": 0.0,
             "parts_n": 33,
-            "pitch": 89.944,
+            "pitch": 89.948,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreOcto.v2",
@@ -3590,13 +3601,13 @@
             "sci_run": false,
             "shear": false,
             "sit": "pre_launch",
-            "stage": 2,
+            "stage": 0,
             "throttle": 0.0
           },
           "lat": 28.6084,
           "link": true,
           "lon": -80.5998,
-          "mass": 7019.392,
+          "mass": 7019.302,
           "mass_pad": 7019.396,
           "met": 0.0,
           "met_end": 0.0,
@@ -3608,11 +3619,11 @@
             "broken": null,
             "chute": "stowed",
             "downrange": 0.447,
-            "ec": 1049.838,
+            "ec": 1049.834,
             "fuel": 2415.0,
             "g": 1.0,
-            "heading": 298.891,
-            "horiz": 0.011,
+            "heading": 298.892,
+            "horiz": 0.01,
             "lat": 28.6084,
             "lon": -80.5998,
             "mass": 7019.396,
@@ -3632,13 +3643,13 @@
           },
           "parts_n": 33,
           "parts_pad": 33,
-          "path": "docs/missions/uncrewed/logs/2026-08-26T12-18-51Z-hop.jsonl",
+          "path": "docs/missions/uncrewed/logs/2026-08-26T14-45-39Z-hop.jsonl",
           "pitch": null,
           "q_max": 0.0,
           "recoverable": true,
           "root": "probeCoreOcto.v2",
-          "run": "2026-08-26T12-18-51Z-hop.jsonl",
-          "samples": 2,
+          "run": "2026-08-26T14-45-39Z-hop.jsonl",
+          "samples": 12,
           "sci_bank": 13.6243,
           "sci_delta": 0.0,
           "sci_paid": false,
@@ -3650,7 +3661,7 @@
           "skip_n": 0,
           "skips": [],
           "speed": null,
-          "stage": 2,
+          "stage": 0,
           "thick_air_skip": false,
           "v_vert": null,
           "via": "US - Cape Canaveral"
@@ -3662,7 +3673,7 @@
           "geigerCounter",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T12-18-51Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T14-45-39Z-hop.jsonl",
         "waste": {
           "bind": [
             {
@@ -3707,7 +3718,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T14:28:08Z"
+      "updated": "2026-08-26T14:50:20Z"
     },
     "T-082": {
       "assignee": "",
@@ -19429,5 +19440,5 @@
       "updated": "2026-08-26T14:44:07Z"
     }
   },
-  "updated": "2026-08-26T14:44:07Z"
+  "updated": "2026-08-26T14:50:20Z"
 }

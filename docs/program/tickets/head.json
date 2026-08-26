@@ -217,6 +217,7 @@
       "blockers": [],
       "capable": "yes",
       "category": "craft",
+      "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
       "created": "2026-08-26T10:48:37Z",
       "desk": "gus",
       "evidence": [],
@@ -246,7 +247,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T10:52:09Z"
     },
     "T-001": {
       "assignee": "",
@@ -13394,11 +13395,11 @@
       "id": "T-368",
       "payload": {
         "biome": "global",
-        "bound": "no",
-        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
+        "bound": "yes",
+        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
         "duration_s": 641,
         "ec_rate": 0.18,
-        "est": 5.4,
+        "est": 4.75,
         "experiment_id": "mysteryGoo",
         "findings": [
           {
@@ -13416,19 +13417,29 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:57:37Z",
+            "claim": "Rebound FlyingHigh goo leftover 641/0.18/4.75 seq2 on C-477 hs-cone silk+HS. Sample mysteryGoo@EarthFlyingHigh 0.647/5.400 left=4.75. Splash/Low/landed goo capped. Recover the can (429 MB) \u2014 silk now on hang, not wait t7+Mk16. 641 s may not finish; leftover still pays if complete. Do not Learn 10-41-43Z 1 km dud. Side-by-side T-404 PresMat High seq0 + T-460 Low seq1. Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. f013 GooExperiment start unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "Mystery Goo Containment Unit (GooExperiment) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "sample",
-        "leftover": null,
-        "note": "unbound catalog. FlyingHigh goo unstarted ~5.40 (641/0.18 sample). 06-36-38Z started; save still missing mysteryGoo@EarthFlyingHigh (sample incomplete). Envelope sit=splashed biome=Water \u2014 FlyingHigh cannot pay. Splash goo capped 2.40/2.40. Shelf until High loft with goo in card. f013 GooExperiment start unlocked=yes on_craft=yes. Not Grasslands. recover_banks yes.",
+        "leftover": 4.75,
+        "note": "this-hop FlyingHigh goo leftover seq2 on kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (C-477 capable yes, silk+HS). leftover mysteryGoo@EarthFlyingHigh 0.647/5.400 left=4.75 \u2192 641 s / 0.18 sample \u2014 recover the can (429 MB), not TX. Splash/FlyingLow/landed goo capped. 641 s may not finish; leftover still pays on recover if complete. Silk recover is on this hang \u2014 not wait t7+Mk16. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc. Side-by-side T-404 PresMat High seq0 + T-460 FlyingLow seq1. Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. Not Water. Not Grasslands. f013: GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "GooExperiment",
         "recover_banks": "yes",
-        "seq": null,
+        "seq": 2,
         "situation": "FlyingHigh",
+        "size_mb": 429,
         "tech": "start",
+        "tx": "no",
         "unlocked": "yes"
       },
       "payload.bound": "yes",
@@ -13438,19 +13449,19 @@
       "priority": "P2",
       "reporter": "Linus Grokman, Director of Research",
       "rsi_loop": "none",
-      "sci_expect": 5.4,
+      "sci_expect": 4.75,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "flyinghigh",
         "goo",
-        "unbound"
+        "bound"
       ],
-      "title": "FlyingHigh goo unstarted 5.40 wait t7+Mk16",
+      "title": "FlyingHigh goo leftover 4.75",
       "type": "science",
-      "updated": "2026-08-25T06:55:27Z"
+      "updated": "2026-08-26T10:57:37Z"
     },
     "T-369": {
       "assignee": "linus",
@@ -15080,8 +15091,8 @@
       "id": "T-404",
       "payload": {
         "biome": "",
-        "bound": "no",
-        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
+        "bound": "yes",
+        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
         "est": 2.7,
@@ -15150,17 +15161,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:57:37Z",
+            "claim": "Rebound FlyingHigh PresMat 305/0.05/2.70 seq0 on C-477 kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (OKTO+RC_cone+HS+7xproc, silk recover). Gus capable yes. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc as this hang. File rem=0 is still the card. Scan unstarted 2.70; High out is 50 km lid from old hop \u2014 this hang lofts >=50 km. Side-by-side T-460 FlyingLow 2.10 seq1 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay High loft). Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. Thermo High capped. recover HD 1.17 MB not TX 41 h. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "unbound catalog. FlyingHigh PresMat ~2.70 cannot pay 10-27-52Z sit=landed Shores apo=655 rec=yes sci_run=0. File rem=0 stays the High shelf for the next loft that actually crosses 50 km. Do not Learn lithobrake as the recover plan. This-hop T-460 FlyingLow 2.10 seq0 + T-461 Surface@Shores 0.90 seq1. Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Goo High T-368 wait t7+Mk16. Geiger High capped. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop FlyingHigh PresMat seq0 on kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (C-477 capable yes, silk+HS loft). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc as this hang. Scan High out is 50 km lid from old hop; this hang lofts \u226550 km. Side-by-side T-460 FlyingLow 2.10 seq1 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay High loft). Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. Thermo High capped. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": "",
+        "seq": 0,
         "situation": "FlyingHigh",
         "size_mb": 1.17,
         "tech": "stability",
@@ -15192,16 +15211,16 @@
       "sci_expect": 2.7,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "flyinghigh",
         "barometer",
-        "unbound"
+        "bound"
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-26T10:37:58Z"
+      "updated": "2026-08-26T10:57:37Z"
     },
     "T-405": {
       "assignee": "",
@@ -17704,7 +17723,7 @@
       "payload": {
         "biome": "",
         "bound": "yes",
-        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
+        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
         "est": 2.1,
@@ -17757,17 +17776,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:57:37Z",
+            "claim": "Rebound FlyingLow PresMat 305/0.05/2.10 seq1 on C-477 hs-cone silk+HS. Loft crosses Low. Scan REACH 2.10. File rem=0 is still the card. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc as this hang. Not Water. Not Grasslands. Side-by-side T-404 FlyingHigh seq0 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay High loft). recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop FlyingLow PresMat seq0 on t7-wheel-pbc. Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Envelope 10-27-52Z apo=655 is Low. Unbound T-404 High (cannot pay 655 m). Side-by-side T-461 Surface@Shores 0.90 seq1 (pays landed envelope). Not Water (never 090). Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop FlyingLow PresMat seq1 on kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (C-477 capable yes). Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Loft crosses Low. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc as this hang. Not Water (never 090). Not Grasslands. Side-by-side T-404 FlyingHigh 2.70 seq0 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay High loft). HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 0,
+        "seq": 1,
         "situation": "FlyingLow",
         "size_mb": 1.17,
         "tech": "stability",
@@ -17790,7 +17817,7 @@
       ],
       "title": "FlyingLow barometer 2.10",
       "type": "science",
-      "updated": "2026-08-26T10:37:58Z"
+      "updated": "2026-08-26T10:57:37Z"
     },
     "T-461": {
       "assignee": "linus",
@@ -17805,8 +17832,8 @@
       "id": "T-461",
       "payload": {
         "biome": "Shores",
-        "bound": "yes",
-        "craft": "kspstuff-hop-valiant-t7-wheel-pbc",
+        "bound": "no",
+        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
         "est": 0.9,
@@ -17867,17 +17894,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T10:57:37Z",
+            "claim": "Unbound Surface@Shores PresMat 305/0.05/0.90. High loft on C-477 cannot pay Surface. File rem=0 stays the Surface shelf. Do not Learn 10-41-43Z ~1 km dud or 10-27-52Z lithobrake as this hang. This-hop T-404 FlyingHigh seq0 + T-460 FlyingLow seq1 + T-368 goo leftover 4.75 seq2. Water stays unbound (never 090). recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop Surface@Shores PresMat seq1 on t7-wheel-pbc. Envelope 10-27-52Z sit=landed biome=Shores apo=655 rec=yes sci_run=0. Scan Surface@Biomes REACH 0.90. file 1.17 MB / 305 s / 0.05. File rem=0 is still the card. Thermo/TELEMETRY/goo/geiger Surface capped \u2014 PresMat only. Unbound T-404 High. Side-by-side T-460 FlyingLow seq0. Do not Learn lithobrake as the recover plan. Water stays unbound (never 090). Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "unbound catalog. Surface@Shores PresMat ~0.90 cannot pay a High loft on C-477 hs-cone. File rem=0 stays the Surface shelf. Do not Learn 10-41-43Z ~1 km dud or 10-27-52Z lithobrake as this hang. This-hop T-404 FlyingHigh seq0 + T-460 FlyingLow seq1 + T-368 goo leftover 4.75 seq2. Water splash PresMat T-423 shelf (never 090). Thermo/TELEMETRY/goo/geiger Surface capped. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 1,
+        "seq": "",
         "situation": "Surface@Shores",
         "size_mb": 1.17,
         "tech": "stability",
@@ -17891,17 +17926,17 @@
       "sci_expect": 0.9,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "shores",
         "barometer",
-        "bound",
+        "unbound",
         "surface"
       ],
       "title": "Shores Surface barometer 0.90",
       "type": "science",
-      "updated": "2026-08-26T10:37:58Z"
+      "updated": "2026-08-26T10:57:37Z"
     },
     "T-462": {
       "assignee": "",
@@ -18491,5 +18526,5 @@
       "updated": "2026-08-26T10:48:37Z"
     }
   },
-  "updated": "2026-08-26T10:49:38Z"
+  "updated": "2026-08-26T10:57:37Z"
 }

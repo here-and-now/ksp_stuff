@@ -1,10 +1,10 @@
 ship = kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc
 version = 1.12.5
-description = PBC silk+HS loft. OKTO+RC_cone Nylon 50m minDeployment 2500 + proceduralHeatshield 1.25x0.2 Ablative 80 + 7x proc 1.25x0.625 Default 2415 kero. Not tanks lithobrake. Not t7-wheel-pbc. Not t7-chute Mk16. Not lite/dv5/4t. Not a Flea.
+description = PBC silk+HS loft. OKTO+RC_cone Nylon 50m minDeployment 2500 + proceduralHeatshield VAB dish payload-side (SAS-tank, not tank-engine) Ablative 80 + 7x proc 1.25x0.625 Default 2415 kero. Last tank on Valiant. Not tanks lithobrake. Not t7-wheel-pbc. Not t7-chute Mk16. Not lite/dv5/4t. Not a Flea.
 type = VAB
 size = 2,16,2
 steamPublishedFileId = 0
-persistentId = 1314098963
+persistentId = 1525971003
 rot = 0,0,0,1
 missionFlag = Squad/Flags/default
 vesselType = Probe
@@ -484,9 +484,9 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	link = proceduralTankRealFuels_1671050297
+	link = proceduralHeatshield_1689786856
 	attN = top,probeCoreOcto.v2_1666040601
-	attN = bottom,proceduralTankRealFuels_1671050297
+	attN = bottom,proceduralHeatshield_1689786856
 	EVENTS
 	{
 	}
@@ -571,12 +571,91 @@ PART
 }
 PART
 {
+	part = proceduralHeatshield_1689786856
+	partName = Part
+	persistentId = 1057009193
+	pos = 0.0,14.62552,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,14.62552,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = -1
+	resPri = 0
+	dstg = 0
+	sidx = -1
+	sqor = -1
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	link = proceduralTankRealFuels_1671050297
+	attN = top,sasModule_1884000001
+	attN = bottom,proceduralTankRealFuels_1671050297
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = ProceduralPart
+		textureSet = Ablative
+		shapeName = Smooth Cone
+		capTextureIndex = 1
+		forceLegacyTextures = True
+	}
+	MODULE
+	{
+		name = ProceduralShapeBezierCone
+		selectedShape = Round3
+		shapePoints = (1, 0, 1, 0.5)
+		topDiameter = 1.25
+		bottomDiameter = 0
+		length = 0.2
+		coneBottomMode = Constant
+	}
+	MODULE
+	{
+		name = ProceduralHeatshield
+		mass = 0.1
+		fairingThickness = 0.01
+		useFairing = False
+		ablativeResource = Ablator
+		fairingTextureSet = Original
+	}
+	MODULE
+	{
+		name = ModuleJettison
+		activejettisonName = fairing
+		isJettisoned = False
+		shroudHideOverride = False
+		stagingEnabled = False
+	}
+	RESOURCE
+	{
+		name = Ablator
+		amount = 80
+		maxAmount = 80
+	}
+}
+PART
+{
 	part = proceduralTankRealFuels_1671050297
 	partName = Part
 	persistentId = 1175504479
-	pos = 0.0,14.41302,0.0
+	pos = 0.0,14.21302,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,14.41302,0.0
+	attPos0 = 0.0,14.21302,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -595,6 +674,7 @@ PART
 	modMass = 0
 	modSize = 0,0,0
 	link = proceduralTankRealFuels_1443731105
+	link = proceduralTankRealFuels_1443731105
 	link = batteryPack_2100000001
 	link = batteryPack_2100000002
 	link = batteryPack_2100000003
@@ -604,7 +684,7 @@ PART
 	link = batteryPack_2100000007
 	link = Engineer7500_1886000001
 	link = Engineer7500_1886000002
-	attN = top,sasModule_1884000001
+	attN = top,proceduralHeatshield_1689786856
 	attN = bottom,proceduralTankRealFuels_1443731105
 	EVENTS
 	{
@@ -663,7 +743,7 @@ PART
 	part = batteryPack_2100000001
 	partName = Part
 	persistentId = 2100000101
-	pos = 0.65,14.41302,0.0
+	pos = 0.65,14.21302,0.0
 	attPos = 0,0,0
 	attPos0 = 0.65,0.0,0.0
 	rot = 0.0,0.0,0.0,1.0
@@ -699,7 +779,7 @@ PART
 	part = batteryPack_2100000002
 	partName = Part
 	persistentId = 2100000102
-	pos = -0.65,14.41302,0.0
+	pos = -0.65,14.21302,0.0
 	attPos = 0,0,0
 	attPos0 = -0.65,0.0,0.0
 	rot = 0.0,0.0,0.0,1.0
@@ -735,7 +815,7 @@ PART
 	part = batteryPack_2100000003
 	partName = Part
 	persistentId = 2100000103
-	pos = 0.0,14.41302,0.65
+	pos = 0.0,14.21302,0.65
 	attPos = 0,0,0
 	attPos0 = 0.0,0.0,0.65
 	rot = 0.0,0.0,0.0,1.0
@@ -771,7 +851,7 @@ PART
 	part = batteryPack_2100000004
 	partName = Part
 	persistentId = 2100000104
-	pos = 0.0,14.41302,-0.65
+	pos = 0.0,14.21302,-0.65
 	attPos = 0,0,0
 	attPos0 = 0.0,0.0,-0.65
 	rot = 0.0,0.0,0.0,1.0
@@ -807,7 +887,7 @@ PART
 	part = batteryPack_2100000005
 	partName = Part
 	persistentId = 2100000105
-	pos = 0.46,14.41302,0.46
+	pos = 0.46,14.21302,0.46
 	attPos = 0,0,0
 	attPos0 = 0.46,0.0,0.46
 	rot = 0.0,0.0,0.0,1.0
@@ -843,7 +923,7 @@ PART
 	part = batteryPack_2100000006
 	partName = Part
 	persistentId = 2100000106
-	pos = -0.46,14.41302,0.46
+	pos = -0.46,14.21302,0.46
 	attPos = 0,0,0
 	attPos0 = -0.46,0.0,0.46
 	rot = 0.0,0.0,0.0,1.0
@@ -879,7 +959,7 @@ PART
 	part = batteryPack_2100000007
 	partName = Part
 	persistentId = 2100000107
-	pos = 0.46,14.41302,-0.46
+	pos = 0.46,14.21302,-0.46
 	attPos = 0,0,0
 	attPos0 = 0.46,0.0,-0.46
 	rot = 0.0,0.0,0.0,1.0
@@ -915,9 +995,9 @@ PART
 	part = proceduralTankRealFuels_1443731105
 	partName = Part
 	persistentId = 1588841698
-	pos = 0.0,13.78802,0.0
+	pos = 0.0,13.58802,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,13.78802,0.0
+	attPos0 = 0.0,13.58802,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -935,6 +1015,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
+	link = proceduralTankRealFuels_1120660612
 	link = proceduralTankRealFuels_1120660612
 	attN = top,proceduralTankRealFuels_1671050297
 	attN = bottom,proceduralTankRealFuels_1120660612
@@ -995,9 +1076,9 @@ PART
 	part = proceduralTankRealFuels_1120660612
 	partName = Part
 	persistentId = 1021387043
-	pos = 0.0,13.16302,0.0
+	pos = 0.0,12.96302,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,13.16302,0.0
+	attPos0 = 0.0,12.96302,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -1015,6 +1096,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
+	link = proceduralTankRealFuels_1978949792
 	link = proceduralTankRealFuels_1978949792
 	attN = top,proceduralTankRealFuels_1443731105
 	attN = bottom,proceduralTankRealFuels_1978949792
@@ -1075,9 +1157,9 @@ PART
 	part = proceduralTankRealFuels_1978949792
 	partName = Part
 	persistentId = 1197525158
-	pos = 0.0,12.53802,0.0
+	pos = 0.0,12.33802,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,12.53802,0.0
+	attPos0 = 0.0,12.33802,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -1095,6 +1177,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
+	link = proceduralTankRealFuels_1960865343
 	link = proceduralTankRealFuels_1960865343
 	attN = top,proceduralTankRealFuels_1120660612
 	attN = bottom,proceduralTankRealFuels_1960865343
@@ -1155,9 +1238,9 @@ PART
 	part = proceduralTankRealFuels_1960865343
 	partName = Part
 	persistentId = 1889016981
-	pos = 0.0,11.91302,0.0
+	pos = 0.0,11.71302,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,11.91302,0.0
+	attPos0 = 0.0,11.71302,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -1175,6 +1258,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
+	link = proceduralTankRealFuels_1140172381
 	link = proceduralTankRealFuels_1140172381
 	attN = top,proceduralTankRealFuels_1978949792
 	attN = bottom,proceduralTankRealFuels_1140172381
@@ -1235,9 +1319,9 @@ PART
 	part = proceduralTankRealFuels_1140172381
 	partName = Part
 	persistentId = 1156741536
-	pos = 0.0,11.28802,0.0
+	pos = 0.0,11.08802,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,11.28802,0.0
+	attPos0 = 0.0,11.08802,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -1255,6 +1339,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
+	link = proceduralTankRealFuels_1114614042
 	link = proceduralTankRealFuels_1114614042
 	attN = top,proceduralTankRealFuels_1960865343
 	attN = bottom,proceduralTankRealFuels_1114614042
@@ -1315,9 +1400,9 @@ PART
 	part = proceduralTankRealFuels_1114614042
 	partName = Part
 	persistentId = 1675104971
-	pos = 0.0,10.66302,0.0
+	pos = 0.0,10.46302,0.0
 	attPos = 0,0,0
-	attPos0 = 0.0,10.66302,0.0
+	attPos0 = 0.0,10.46302,0.0
 	rot = 0.0,0.0,0.0,1.0
 	attRot = 0,0,0,1
 	attRot0 = 0,0,0,1
@@ -1335,9 +1420,9 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	link = proceduralHeatshield_1320489094
+	link = restock-engine-125-valiant_1226153168
 	attN = top,proceduralTankRealFuels_1140172381
-	attN = bottom,proceduralHeatshield_1320489094
+	attN = bottom,restock-engine-125-valiant_1226153168
 	EVENTS
 	{
 	}
@@ -1392,85 +1477,6 @@ PART
 }
 PART
 {
-	part = proceduralHeatshield_1320489094
-	partName = Part
-	persistentId = 1268981505
-	pos = 0.0,10.25052,0.0
-	attPos = 0,0,0
-	attPos0 = 0.0,10.25052,0.0
-	rot = 0.0,0.0,0.0,1.0
-	attRot = 0,0,0,1
-	attRot0 = 0,0,0,1
-	mir = 1,1,1
-	symMethod = Radial
-	autostrutMode = Off
-	rigidAttachment = False
-	istg = -1
-	resPri = 0
-	dstg = 0
-	sidx = -1
-	sqor = -1
-	sepI = -1
-	attm = 0
-	modCost = 0
-	modMass = 0
-	modSize = 0,0,0
-	link = restock-engine-125-valiant_1226153168
-	attN = top,proceduralTankRealFuels_1114614042
-	attN = bottom,restock-engine-125-valiant_1226153168
-	EVENTS
-	{
-	}
-	ACTIONS
-	{
-	}
-	PARTDATA
-	{
-	}
-	MODULE
-	{
-		name = ProceduralPart
-		textureSet = Ablative
-		shapeName = Smooth Cone
-		capTextureIndex = 1
-		forceLegacyTextures = True
-	}
-	MODULE
-	{
-		name = ProceduralShapeBezierCone
-		selectedShape = Round3
-		shapePoints = (1, 0, 1, 0.5)
-		topDiameter = 1.25
-		bottomDiameter = 0
-		length = 0.2
-		coneBottomMode = Constant
-	}
-	MODULE
-	{
-		name = ProceduralHeatshield
-		mass = 0.1
-		fairingThickness = 0.01
-		useFairing = False
-		ablativeResource = Ablator
-		fairingTextureSet = Original
-	}
-	MODULE
-	{
-		name = ModuleJettison
-		activejettisonName = fairing
-		isJettisoned = False
-		shroudHideOverride = False
-		stagingEnabled = False
-	}
-	RESOURCE
-	{
-		name = Ablator
-		amount = 80
-		maxAmount = 80
-	}
-}
-PART
-{
 	part = restock-engine-125-valiant_1226153168
 	partName = Part
 	persistentId = 1927692361
@@ -1497,7 +1503,7 @@ PART
 	link = basicFin_1562494527
 	link = basicFin_1169236445
 	link = basicFin_1855602232
-	attN = top,proceduralHeatshield_1320489094
+	attN = top,proceduralTankRealFuels_1114614042
 	EVENTS
 	{
 	}
@@ -1513,7 +1519,7 @@ PART
 	part = basicFin_1562494527
 	partName = Part
 	persistentId = 1347814544
-	pos = 0.0,9.5805201,0.623
+	pos = 0.0,9.580520100000001,0.623
 	attPos = 0,0,0
 	attPos0 = 0.0,-0.12,0.623
 	rot = 0.0,0.707106829,0.0,0.707106829
@@ -1549,7 +1555,7 @@ PART
 	part = basicFin_1169236445
 	partName = Part
 	persistentId = 1352751940
-	pos = 0.539533575,9.5805201,-0.3115
+	pos = 0.539533575,9.580520100000001,-0.3115
 	attPos = 0,0,0
 	attPos0 = 0.539533575,-0.12,-0.3115
 	rot = 0.0,0.965925872,0.0,-0.258819103
@@ -1585,7 +1591,7 @@ PART
 	part = basicFin_1855602232
 	partName = Part
 	persistentId = 1759123314
-	pos = -0.539533575,9.5805201,-0.3115
+	pos = -0.539533575,9.580520100000001,-0.3115
 	attPos = 0,0,0
 	attPos0 = -0.539533575,-0.12,-0.3115
 	rot = 0.0,0.258819014,0.0,-0.965925872

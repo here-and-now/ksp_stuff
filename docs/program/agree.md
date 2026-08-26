@@ -26,16 +26,17 @@ hire (three in parallel on that ticket, then split).
 
 ## Hang (Gus)
 
-This tree pad: C-534 `kspstuff-hop-valiant-proc-redstone-pbc`. FED
-(last tank attN bottom=Valiant). Nylon `RC_cone` 50 m payload-side on
-OKTO (Stayputnik has no top; cone `srfAttach=0`). Engine `istg=0`
+This tree pad: C-534 `kspstuff-hop-valiant-proc-redstone-pbc`. Flies
+`python main.py ascent` now (T-552). FED (last tank attN
+bottom=Valiant). Nylon `RC_cone` 50 m payload-side on OKTO
+(Stayputnik has no top; cone `srfAttach=0`). Engine `istg=0`
 `sqor=0` first fire; chute `istg=1` `sqor=0` last. No girders. 4×
 proc 1.25×1.222 Cylinder `RedstoneStripes` 1500 L Default 2700 kero.
 Stack Heaviest/rigid. No HS. Recover: silk. `capable: yes`. Pad until
 `advRocketry` 45. 268 km loft is not orbit — Pe on the ground. Did
-not restamp C-534. Did not Hangar C-534.
+not replace C-534. Did not Hangar C-534.
 
-Orbit donor on disk, not pad: C-544
+Orbit donor on disk until 45, not pad: C-544
 `kspstuff-hop-valiant-proc-orbit-pbc`. Clone C-534 + 2 extra
 `sasModule` (3 total, Heaviest/rigid) for FAR heading. Same Valiant
 5° gimbal (cfg; FAR ×1.5 may read 7.5 — tape still HDG 297). Same

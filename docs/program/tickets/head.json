@@ -476,6 +476,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T21:29:48Z",
+            "claim": "T-552 keep pad hang C-534 kspstuff-hop-valiant-proc-redstone-pbc flies python main.py ascent now. craft fuel FED last tank attN bottom=Valiant. capable yes. C-544 donor disk until 45. Did not Hangar.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -489,7 +497,7 @@
       "tags": [],
       "title": "Push generalRocketry: one proc hang, no girders, bigger tanks, Redstone stripes",
       "type": "vehicle",
-      "updated": "2026-08-26T20:59:32Z"
+      "updated": "2026-08-26T21:29:48Z"
     },
     "C-544": {
       "assignee": "",
@@ -3934,7 +3942,7 @@
       "id": "T-081",
       "payload": {
         "campaign": "uncrewed",
-        "cli": "python main.py hop",
+        "cli": "python main.py ascent",
         "findings": [
           {
             "at": "2026-08-24T17:26:46Z",
@@ -4234,7 +4242,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T21:16:46Z"
+      "updated": "2026-08-26T21:28:33Z"
     },
     "T-082": {
       "assignee": "",
@@ -22159,7 +22167,42 @@
       "title": "RSI rf-ignition-ullage \u00d713",
       "type": "rsi",
       "updated": "2026-08-26T21:14:49Z"
+    },
+    "T-552": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T21:28:05Z",
+      "desk": "hank",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-552",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T21:29:48Z",
+            "claim": "hang: C-534 kspstuff-hop-valiant-proc-redstone-pbc flies python main.py ascent now. craft fuel FED last tank attN bottom=Valiant. 4x 1500 L RedstoneStripes 2700 kero, girders none, no HS. Engine istg=0 sqor=0 first fire; RC_cone Nylon 50m last. Recover silk. capable yes. C-544 kspstuff-hop-valiant-proc-orbit-pbc donor disk until advRocketry 45 Terrier \u2014 capable no; did not Hangar locked part. Did not replace C-534. Did not Hangar C-534 / C-477. C-504 shelf. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY/LITE OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "plan"
+      ],
+      "title": "ascent profile now \u2014 sit hang bind recover meco for python main.py ascent",
+      "type": "ops",
+      "updated": "2026-08-26T21:29:48Z"
     }
   },
-  "updated": "2026-08-26T21:24:07Z"
+  "updated": "2026-08-26T21:29:48Z"
 }

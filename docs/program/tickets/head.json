@@ -3691,7 +3691,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T12:19:22Z"
+      "updated": "2026-08-26T14:28:08Z"
     },
     "T-082": {
       "assignee": "",
@@ -18354,6 +18354,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:28:09Z",
+            "claim": "12-18-51Z hangar t7-wheel-proc-hs-cone-pbc sit=pre_launch ABORT pad-dead-no-plume rec=yes sci_run=0 bank=13.62 +0. Never lofted. Same rf-ignition-ullage as T-471. Pad waits hop_factory_pad.py. Do not re-fly last cli until plume lights.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -18367,7 +18375,7 @@
       "tags": [],
       "title": "T-469 live scrap: never hop light, engine dead on pad, Os abort",
       "type": "control",
-      "updated": "2026-08-26T12:07:39Z"
+      "updated": "2026-08-26T14:28:09Z"
     },
     "T-472": {
       "assignee": "",
@@ -19020,5 +19028,5 @@
       "updated": "2026-08-26T13:53:40Z"
     }
   },
-  "updated": "2026-08-26T13:54:12Z"
+  "updated": "2026-08-26T14:28:09Z"
 }

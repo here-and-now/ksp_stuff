@@ -1,7 +1,7 @@
 # uncrewed stack
 
 status: signed
-craft: kspstuff-hop-valiant-t7-wheel-pbc
+craft: kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc
 parts:
   - probeCoreSphere.v2
   - sasModule

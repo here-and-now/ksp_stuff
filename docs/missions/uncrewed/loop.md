@@ -20,3 +20,19 @@ Hank: abort T-465 live: hop light ign 0 thrust 0 sit pre_launch kero full
 script: acked abort T-465 live: hop light ign 0 thrust 0 sit pre_launch kero full
 Hank: abort Os scrap: engine not lighting
 script: acked abort Os scrap: engine not lighting
+Gene: abort never-light
+script: cleared leftover abort never-light (hop start)
+Gene: abort rf-light-test
+script: acked abort rf-light-test
+Gene: abort rf-light-test
+script: acked abort rf-light-test
+Gene: abort rf-light-test
+script: acked abort rf-light-test
+Gene: abort rf-light-test
+script: acked abort rf-light-test
+Gene: abort rf-light-test
+script: acked abort rf-light-test
+Gene: abort spent-ignition-pad
+script: acked abort spent-ignition-pad
+Gene: abort pad-dead-no-plume
+script: acked abort pad-dead-no-plume

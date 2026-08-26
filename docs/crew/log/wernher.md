@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-557 leftover abort in emergencies.call: verb `ksc leftover` (`ksc_leftover`). leftover_call(False) resolves; cut + 1×; do not recover. Ascent timeout leftover is not KeyError. No ascent.py. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-548/T-549: hop.py parked for orbit; `rf_throttle.py` live is independentThrottlePercentage not UI MainThrottle; `ascent.py` compose (`python main.py ascent`) Valiant loft now / Terrier two-stage later. Tests lock blocks. No hop_factory. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-541 DESKS eleanor; format_next/format_packet no reasoning= so Hank inherits TUI. T-539 craft liquid --texture RedstoneStripes, 1500 L legal, girders -n 0 strip. T-501 leftover Debris/GUID wait already on disk. No Hangar. Never leftover-ksc. Never revert.

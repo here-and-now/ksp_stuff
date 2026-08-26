@@ -530,6 +530,10 @@ def test_timeout_is_met_not_wall():
     assert not timeout_hit(met=float("nan"), met0=0.0, budget=600.0, down=False)
     assert leftover_call(recoverable=True) == "recover"
     assert leftover_call(recoverable=False) == "ksc leftover"
+    from emergencies import resolve
+
+    assert resolve(leftover_call(recoverable=True)) == "recover"
+    assert resolve(leftover_call(recoverable=False)) == "ksc_leftover"
     assert leftover_ksc_call(True) == "python main.py recover-probe --recover"
     assert leftover_ksc_call(False) == "python main.py recover-probe --space-center"
     assert crash_ui_leave() == "ksc leftover"

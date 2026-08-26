@@ -21,6 +21,7 @@ NAMES: tuple[str, ...] = (
     "science",
     "transmit",
     "abort_pad",
+    "ksc_leftover",
 )
 
 # Uplink verbs that map onto NAMES.
@@ -36,6 +37,9 @@ ALIASES: dict[str, str] = {
     "transmit": "transmit",
     "abort_pad": "abort_pad",
     "abort": "abort_pad",
+    "ksc leftover": "ksc_leftover",
+    "ksc_leftover": "ksc_leftover",
+    "ksc-leftover": "ksc_leftover",
 }
 
 # Kerbalism TX is an Experiment event. Never Toggle (start/stop) or stock dump.
@@ -276,6 +280,18 @@ def abort_pad(ctx: Ctx) -> str:
     return "abort_pad" if result != "recovered" else "abort_pad:recovered"
 
 
+def ksc_leftover(ctx: Ctx) -> str:
+    """Named leftover abort. Cut + 1×. Do not recover. Never leftover-ksc. Never revert.
+
+    ``leftover_call(recoverable=False)`` returns this verb. Recoverable
+    leftover is ``recover``. Hank walks home.
+    """
+    cut(ctx)
+    _drop_warp(ctx.session)
+    _emit(ctx, "call", name="ksc leftover")
+    return "ksc leftover"
+
+
 CALLABLES: dict[str, Callable[[Ctx], str]] = {
     "hold": hold,
     "cut": cut,
@@ -285,14 +301,16 @@ CALLABLES: dict[str, Callable[[Ctx], str]] = {
     "science": science,
     "transmit": transmit,
     "abort_pad": abort_pad,
+    "ksc_leftover": ksc_leftover,
 }
 
 
 def resolve(verb: str) -> str | None:
-    key = verb.lower().strip().replace("-", "_")
+    raw = verb.lower().strip()
+    key = raw.replace("-", "_").replace(" ", "_")
     if key in CALLABLES:
         return key
-    mapped = ALIASES.get(verb.lower().strip())
+    mapped = ALIASES.get(raw) or ALIASES.get(key)
     if mapped in CALLABLES:
         return mapped
     return None

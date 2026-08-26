@@ -322,7 +322,7 @@ def render_briefing(*, desk: dict[str, str] | None = None) -> str:
         f"Bound this hop: {binds}.\n"
         f"f013: copy desk.md. hangar **{d.get('hangar') or 'none'}**. leftover **n={d.get('leftover') or 0}**.\n"
         "\n"
-        "emergencies: hold, cut, no_warp, stage, recover, science, abort_pad\n"
+        "emergencies: hold, cut, no_warp, stage, recover, science, abort_pad, ksc leftover\n"
     )
 
 

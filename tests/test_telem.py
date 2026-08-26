@@ -11,7 +11,17 @@ from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
 
-from emergencies import CALLABLES, Ctx, abort_pad, call, cut, hold, transmit
+from emergencies import (
+    CALLABLES,
+    Ctx,
+    abort_pad,
+    call,
+    cut,
+    hold,
+    ksc_leftover,
+    resolve,
+    transmit,
+)
 from tape import Tape, cmd_telem, envelope, format_envelope
 from telem import (
     EventLog,
@@ -346,11 +356,35 @@ class TestEmergencies(unittest.TestCase):
             "science",
             "transmit",
             "abort_pad",
+            "ksc_leftover",
         ):
             self.assertIn(name, CALLABLES)
             self.assertIs(uplink.CALLABLES[name], CALLABLES[name])
         self.assertIs(uplink.CALLABLES["abort_pad"], abort_pad)
         self.assertIs(uplink.CALLABLES["transmit"], transmit)
+        self.assertIs(uplink.CALLABLES["ksc_leftover"], ksc_leftover)
+
+    def test_ksc_leftover_cuts_and_does_not_recover(self):
+        from physics_warp import leftover_call
+
+        self.assertEqual(resolve(leftover_call(recoverable=True)), "recover")
+        self.assertEqual(resolve(leftover_call(recoverable=False)), "ksc_leftover")
+        vessel = _Vessel(sit="flying")
+        vessel.control.throttle = 1.0
+        vessel.recoverable = True
+        ctx = Ctx(session=_Session(vessel), vessel=vessel, events=EventLog())
+        self.assertEqual(call("ksc leftover", ctx), "ksc leftover")
+        self.assertEqual(vessel.control.throttle, 0.0)
+        self.assertFalse(vessel.recovered)
+        self.assertEqual(ctx.session.space_center.physics_warp_factor, 0)
+        self.assertTrue(
+            any(
+                e.get("event") == "call" and e.get("name") == "ksc leftover"
+                for e in ctx.events.events
+            )
+        )
+        with self.assertRaises(KeyError):
+            call("unknown leftover", ctx)
 
     def test_transmit_fires_kerbalism_event_not_stock_or_toggle(self):
         class _Ev:

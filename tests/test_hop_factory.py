@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from hop_factory import (
+    _chute_arm_now,
     _flameout_sit,
     _high_dwell_sit,
     _hold_lid,
@@ -13,6 +14,7 @@ from hop_factory import (
     _inland_burnout_sit,
     _keep_start_sit,
     _space_low_sit,
+    _space_silk_arm_sit,
 )
 from hop_factory_pad import (
     _cut_pad_engine,
@@ -820,6 +822,54 @@ class TestHopFactoryPad(unittest.TestCase):
         )
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertTrue(engine.independent_throttle)
+
+    def test_space_silk_arm_sit_descent_after_lid(self):
+        """17-58-57Z Nylon stowed at 70 km vz -1.9 km/s; Arm on descent."""
+        down = type(
+            "S",
+            (),
+            {"alt": 70_465.0, "v_vert": -1_931.0, "pitch": 65.5, "chute": "stowed"},
+        )()
+        climb = type(
+            "S",
+            (),
+            {"alt": 59_536.0, "v_vert": 1_513.0, "pitch": 86.9, "chute": "stowed"},
+        )()
+        vac = type(
+            "S",
+            (),
+            {"alt": 269_682.0, "v_vert": -45.3, "pitch": 65.5, "chute": "stowed"},
+        )()
+        self.assertTrue(_space_silk_arm_sit(down))
+        self.assertTrue(_space_silk_arm_sit(vac))
+        self.assertFalse(_space_silk_arm_sit(climb))
+        self.assertTrue(
+            _chute_arm_now(
+                down,
+                hop_apo=50_000.0,
+                flying_high=True,
+                crumbs=True,
+                apo_cut=True,
+            )
+        )
+        self.assertTrue(
+            _chute_arm_now(
+                vac,
+                hop_apo=50_000.0,
+                flying_high=True,
+                crumbs=True,
+                apo_cut=True,
+            )
+        )
+        self.assertFalse(
+            _chute_arm_now(
+                climb,
+                hop_apo=50_000.0,
+                flying_high=True,
+                crumbs=False,
+                apo_cut=True,
+            )
+        )
 
     def test_space_low_sit_not_flying_lid(self):
         """16-23-52Z flying at 50 km is not InSpaceLow; sub_orbital is."""

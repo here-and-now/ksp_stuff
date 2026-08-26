@@ -26,7 +26,9 @@ off. Do not re-enable. Do not hold inland through burnout — that sit
 kept throttle 1 at 55 km (17-01-10Z). After that gate, 17-13-14Z still
 thrust 1 at 59 km and emptied tanks by MET 153 apo 270 km —
 ``_hold_lid`` after lid is MECO. High dwell is not a burn; plume
-still up is still the burn. Do not loft out of atmo. Quiet loft honors
+still up is still the burn. After space dwell, Arm Nylon on descent so
+HD comes home — 17-58-57Z chute=stowed at 70 km vz −1.9 km/s then
+shear, LITE rem=0 rec=no. Do not loft out of atmo. Quiet loft honors
 uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
@@ -365,6 +367,22 @@ def _hold_lid(
     return True
 
 
+def _space_silk_arm_sit(snap: object) -> bool:
+    """After lid, descent Arm. Not thick-air-only.
+
+    17-58-57Z Nylon stowed at 70 km vz −1.9 km/s then shear; LITE rem=0
+    rec=no. ``chute_arm_sit`` is ≤18 km — space loft misses that window.
+    Climbing after lid is not this. Forest / Grasslands: same.
+    """
+    if not H._lofted(snap):
+        return False
+    vz = H._snap_v_vert(snap)
+    if math.isfinite(vz):
+        return vz < 0.0
+    pitch = H._snap_pitch(snap)
+    return math.isfinite(pitch) and pitch < 0.0
+
+
 def _chute_arm_now(
     snap: object,
     *,
@@ -376,13 +394,18 @@ def _chute_arm_now(
     """Arm after lid alt or burnout descent. Climbing wait-burn is not silk.
 
     FlyingLow is ``chute_arm_sit``. FlyingHigh waits for lid alt or crumbs.
-    Throttle 0 with a full tank is not burnout. Forest / Grasslands: same.
+    After lid, descent Arm even above thick air (17-58-57Z). ``chute_arm_sit``
+    stays 1× in thick air. Throttle 0 with a full tank is not burnout.
+    Forest / Grasslands: same.
     """
-    if not chute_arm_sit(snap):
+    ready = (not flying_high) or crumbs or apo_cut or _lid_alt_reached(
+        snap, hop_apo, flying_high=flying_high
+    )
+    if not ready:
         return False
-    if not flying_high:
+    if chute_arm_sit(snap):
         return True
-    return crumbs or apo_cut or _lid_alt_reached(snap, hop_apo, flying_high=flying_high)
+    return bool(flying_high) and _space_silk_arm_sit(snap)
 
 
 def _chute_deploy_now(

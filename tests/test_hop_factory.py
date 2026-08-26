@@ -7,8 +7,10 @@ from pathlib import Path
 
 from hop_factory_pad import (
     _cut_pad_engine,
+    _pad_engine_waiting,
     _pad_hold,
     _pad_light,
+    _pad_plume,
     _pad_rf_snap,
     _rf_pad_sit,
 )
@@ -173,6 +175,7 @@ class _RfEngine(_CurrentThrottleEngine):
     def __init__(self):
         self.ignitions = 1
         self.actual = 0.0
+        self.active = False
         super().__init__()
         self.part = _RfPart(self)
 
@@ -193,6 +196,8 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _pad_engine_live", pad)
         self.assertIn("def _release_pad_throttle", pad)
         self.assertIn("def _pad_thrusting", pad)
+        self.assertIn("def _pad_plume", pad)
+        self.assertIn("def _pad_engine_waiting", pad)
         self.assertIn("def _pad_rf_snap", pad)
         self.assertIn("def _rf_pad_sit", pad)
         self.assertIn("def _cut_pad_engine", pad)
@@ -284,6 +289,7 @@ class TestHopFactoryPad(unittest.TestCase):
 
         def stage():
             engine.ignitions = 0
+            engine.actual = 0.24
             vessel.control.staged += 1
 
         vessel.control.activate_next_stage = stage
@@ -292,19 +298,102 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertGreater(vessel.control.throttle, 0.05)
         self.assertTrue(engine.independent_throttle)
         self.assertGreater(engine.pct, 5.0)
+        self.assertTrue(_pad_plume(vessel))
         lit = " ".join(logs)
         self.assertIn("hop light", lit)
         self.assertIn("ignitions=1→0", lit)
         self.assertIn("setpoint=1.00", lit)
-        self.assertIn("currentThrottle=0.00", lit)
+        self.assertIn("currentThrottle=0.00→0.24", lit)
         self.assertNotIn("hop abort", lit)
+
+    def test_pad_light_rf_ignitions_spend_is_not_plume(self):
+        """rf-ignition-ullage: 11-51-29Z ignitions 1→0 GET 0 is not hop light."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        engine.part.stage = 1
+        vessel.parts.engines = [engine]
+        vessel.control.current_stage = 2
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(_pad_engine_waiting(vessel))
+
+        def stage():
+            vessel.control.current_stage -= 1
+            vessel.control.staged += 1
+            engine.ignitions = 0
+
+        vessel.control.activate_next_stage = stage
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(vessel.control.current_stage, 1)
+        self.assertEqual(engine.actual, 0.0)
+        self.assertTrue(_pad_engine_waiting(vessel))
+        self.assertFalse(_pad_plume(vessel))
+        self.assertEqual(logs, [])
+
+    def test_pad_light_rf_restages_until_engine_plume(self):
+        """rf-ignition-ullage: chute istg=0 engine istg=1, empty stage is not light."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        engine.part.stage = 1
+        vessel.parts.engines = [engine]
+        vessel.control.current_stage = 2
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+
+        def stage():
+            vessel.control.current_stage -= 1
+            vessel.control.staged += 1
+            if vessel.control.current_stage < engine.part.stage:
+                engine.ignitions = 0
+                engine.actual = 0.24
+                engine.active = True
+
+        vessel.control.activate_next_stage = stage
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(vessel.control.current_stage, 1)
+        self.assertEqual(logs, [])
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 2)
+        self.assertEqual(vessel.control.current_stage, 0)
+        lit = " ".join(logs)
+        self.assertIn("hop light", lit)
+        self.assertIn("currentThrottle=0.00→0.24", lit)
+        self.assertNotIn("hop abort", lit)
+
+    def test_pad_light_rf_dead_engine_aborts(self):
+        """rf-ignition-ullage: engine fired, GET 0, MET 0 — dead pad, not loft."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        engine.part.stage = 1
+        vessel.parts.engines = [engine]
+        vessel.control.current_stage = 1
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+
+        def stage():
+            vessel.control.current_stage -= 1
+            vessel.control.staged += 1
+            engine.ignitions = 0
+            engine.actual = 0.0
+            engine.active = True
+
+        vessel.control.activate_next_stage = stage
+        with self.assertRaises(MissionAbort) as ctx:
+            _pad_light(vessel, logs.append, snap, deaf=False)
+        self.assertIn("pad-dead-no-plume", str(ctx.exception))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(logs, [])
 
     def test_cut_pad_engine_after_rf_light_kills_engine(self):
         """rf-ignition-ullage: rec=no abort after hop light still dead engine."""
         vessel = _Vessel()
         engine = _RfEngine()
-        engine.active = True
-        engine.actual = 0.24
         vessel.parts.engines = [engine]
         snap = type("S", (), {"link": True, "situation": "pre_launch"})()
         logs: list[str] = []
@@ -313,6 +402,7 @@ class TestHopFactoryPad(unittest.TestCase):
         def stage():
             engine.ignitions = 0
             engine.actual = 0.24
+            engine.active = True
             vessel.control.staged += 1
 
         vessel.control.activate_next_stage = stage

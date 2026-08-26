@@ -5,17 +5,21 @@ enable once. Re-enabling zeros the setpoint; stage then spends the
 only ignition at 0. Live is the independent setpoint (PAW Current
 Throttle / independentThrottlePercentage), not kRPC Engine.throttle
 GET (currentThrottle is 0 until lit — wait-for-GET never stages)
-and not independent True with setpoint 0. After confirmed light,
-MainThrottle 1 and independent setpoint 1 stay until loft/MECO at
-the lid — not a pad MECO, not a thrusting handoff. Dropping
-independent is a restart with 0 remaining. Commanded throttle 0
-after loft is MECO. Throttle 0 then 1 is a restart. Do not gate
-stage on GET currentThrottle. hop light logs ignitions remaining,
-independent setpoint, and currentThrottle. After confirmed light,
-loft — hold vertical until lid then inland. abort_pad cut is
-MainThrottle only; ``_cut_pad_engine`` zeros independent setpoint
-and engine active before process exit. Do not abort after light.
-Forest / Grasslands: same.
+and not independent True with setpoint 0. Do not gate stage on GET
+currentThrottle. Confirmed light is plume / currentThrottle rising
+after stage, not ignitions remaining 1→0 with GET still 0. An empty
+stage above the engine is not hop light — stage until the engine
+fires. hop light logs ignitions remaining, independent setpoint,
+and currentThrottle only when the flame is up. After confirmed
+light, MainThrottle 1 and independent setpoint 1 stay until
+loft/MECO at the lid — not a pad MECO, not a thrusting handoff.
+Dropping independent is a restart with 0 remaining. Commanded
+throttle 0 after loft is MECO. Throttle 0 then 1 is a restart.
+After confirmed light, loft — hold vertical until lid then inland.
+Engine already fired with no plume is a dead pad, not a loft.
+abort_pad cut is MainThrottle only; ``_cut_pad_engine`` zeros
+independent setpoint and engine active before process exit. Do not
+abort after light. Forest / Grasslands: same.
 """
 
 from __future__ import annotations
@@ -147,18 +151,21 @@ def _engine_setpoint(engine: object) -> float:
 
 def _engine_current_throttle(engine: object) -> float:
     """kRPC Engine.throttle GET / currentThrottle. 0 until lit."""
+    found = float("nan")
     try:
         raw = getattr(engine, "throttle", None)
     except Exception:
         raw = None
     value = _parse_throttle(raw)
     if math.isfinite(value):
-        return value
+        found = value
     for mod in _engine_modules(engine):
         value = _parse_throttle(_module_field(mod, "currentThrottle"))
-        if math.isfinite(value):
-            return value
-    return float("nan")
+        if math.isfinite(value) and (
+            not math.isfinite(found) or value > found
+        ):
+            found = value
+    return found
 
 
 def _engine_ignitions(engine: object) -> float:
@@ -394,6 +401,60 @@ def _pad_thrusting(vessel: object, snap: object) -> bool:
     return False
 
 
+def _pad_plume(vessel: object, snap: object | None = None) -> bool:
+    """Flame is up. Ignitions spend is not this. available_thrust is not this."""
+    for obj in (vessel, snap):
+        if obj is None:
+            continue
+        try:
+            value = float(getattr(obj, "thrust", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(value) and value > 1.0:
+            return True
+    for eng in _pad_engines(vessel):
+        try:
+            value = float(getattr(eng, "thrust", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            value = 0.0
+        if math.isfinite(value) and value > 1.0:
+            return True
+        cur = _engine_current_throttle(eng)
+        if math.isfinite(cur) and cur > 0.05:
+            return True
+    return False
+
+
+def _pad_engine_waiting(vessel: object) -> bool:
+    """Engine inverse stage has not fired. Empty stages above it still wait."""
+    try:
+        current = int(
+            getattr(getattr(vessel, "control", None), "current_stage")
+        )
+    except Exception:
+        current = None
+    waiting = False
+    saw_stage = False
+    for eng in _pad_engines(vessel):
+        try:
+            if bool(getattr(eng, "active", False)):
+                return False
+        except Exception:
+            pass
+        try:
+            istg = int(getattr(getattr(eng, "part", None), "stage"))
+        except Exception:
+            continue
+        saw_stage = True
+        if current is None:
+            continue
+        if current >= istg:
+            waiting = True
+    if saw_stage and current is not None:
+        return waiting
+    return True
+
+
 def _pad_light(
     vessel: object,
     on_log: Callable[[str], None] | None,
@@ -403,16 +464,21 @@ def _pad_light(
 ) -> bool:
     """Pad light: throttle 1 on the engine, then stage. One start.
 
-    RF spends the only ignition when stage fires. Live is the
-    independent setpoint, not independent True, not kRPC throttle,
+    RF spends the only ignition when the engine stage fires. Live is
+    the independent setpoint, not independent True, not kRPC throttle,
     and not Engine.throttle GET (currentThrottle is 0 until lit).
-    Re-apply on the stage pulse zeros the setpoint this tick.
+    Do not gate stage on GET currentThrottle. Confirmed light is
+    plume / currentThrottle rising after stage, not ignitions 1→0
+    with GET still 0. Empty stages above the engine are not hop
+    light. Re-apply on the stage pulse zeros the setpoint this tick
+    if independent is toggled — restoke throttle without re-enable.
     Throttle 0 then 1 is a restart. Pad 1 g still lights when the
     command is 1 at ignition. hop light logs ignitions remaining,
-    setpoint, currentThrottle. After confirmed light, return True
-    and let the factory hold. abort_pad cut is MainThrottle only —
-    ``_cut_pad_engine`` before process exit. Do not abort after
-    light. Forest / Grasslands: same.
+    setpoint, currentThrottle when the flame is up. After confirmed
+    light, return True and let the factory hold. Engine already
+    fired with no plume is a dead pad. abort_pad cut is MainThrottle
+    only — ``_cut_pad_engine`` before process exit. Do not abort
+    after light. Forest / Grasslands: same.
     """
     if deaf:
         H._light(vessel, on_log, snap)
@@ -431,18 +497,30 @@ def _pad_light(
     if not live:
         _apply_pad_throttle(vessel)
         return False
+    rf = _rf_pad_sit(vessel)
+    if rf and _pad_plume(vessel, snap):
+        after = _pad_rf_snap(vessel)
+        H._say("hop light " + _fmt_rf_snap(after), on_log)
+        return True
+    if rf and not _pad_engine_waiting(vessel):
+        raise MissionAbort("pad-dead-no-plume")
     try:
         control.sas = True
     except Exception:
         pass
+    _apply_pad_throttle(vessel)
     before = _pad_rf_snap(vessel)
     try:
         control.activate_next_stage()
     except Exception as exc:
         raise MissionAbort(f"light failed: {exc}") from exc
     after = _pad_rf_snap(vessel)
-    H._say("hop light " + _fmt_rf_snap(after, before=before), on_log)
-    return True
+    if (not rf) or _pad_plume(vessel):
+        H._say("hop light " + _fmt_rf_snap(after, before=before), on_log)
+        return True
+    if rf and not _pad_engine_waiting(vessel):
+        raise MissionAbort("pad-dead-no-plume")
+    return False
 
 
 def _pad_hold(

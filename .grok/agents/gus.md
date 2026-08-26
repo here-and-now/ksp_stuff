@@ -31,13 +31,16 @@ A hang you cannot prove is **FED** is not capable. Run
 `python main.py craft fuel <craft>` before `capable: yes`. BLOCKED /
 starved / Ablator-only on the engine path is `capable: no`. C-477
 is that exhibit — do not restamp it. Do not Hangar it. FED is not
-enough: Hangar-detonating HS splice is `capable: no` (T-500). A helper
-that writes a hang must leave the **engine in the first fire list**
-(`sqor=0`, not only `istg=1`), HS a **VAB dish** (`bottomDiameter=0`),
-not a filled puck, a **fed** engine (`insert_heatshield` refuses
-`fuelCrossFeed=False`; T-495 / T-497; `--payload` SAS-first tank
-T-498), and **collider clearance** (`max(length/2+0.179, catalog
-MODEL ±0.5)`). Do not write GameData. Do not idle the pad for a helper.
+enough: Hangar-detonating HS splice is `capable: no` (T-500). C-504
+loft is **no-HS** — a helper that writes a loft hang must autostrut
+Heaviest/rigid + stage-engine `sqor=0` without requiring HS/chute
+(T-506). A helper that writes a hang must leave the **engine in the
+first fire list** (`sqor=0`, not only `istg=1`), HS a **VAB dish**
+(`bottomDiameter=0`) when the hang *has* an HS, not a filled puck, a
+**fed** engine (`insert_heatshield` refuses `fuelCrossFeed=False`;
+T-495 / T-497; `--payload` SAS-first tank T-498), and **collider
+clearance** (`max(length/2+0.179, catalog MODEL ±0.5)`). Do not write
+GameData. Do not idle the pad for a helper.
 
 ## First command
 
@@ -67,13 +70,15 @@ Open **many** `category=craft` tickets.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** Next honest node `generalRocketry` **20** (bank
-13.62 does not pay; need ~6.38). Pad this sit belongs to a **fed**
-hang — C-477 is `capable: no` (starved). Do **not** restamp
+13.62 does not pay; need ~6.38) then **one node after**. Pad this sit
+belongs to **C-504** `kspstuff-hop-valiant-proc-loft-pbc` (FED, no
+HS/chute). C-477 is `capable: no` (blob). Do **not** restamp
 t7-wheel-pbc or C-477 `capable: yes` — lithobrake is not recover;
-starved is not capable. Keep **many different
+blob is not capable. 16-23-52Z apo 268 km rec=no — iterate **this**
+hang. Keep **many different
 crafts already signed on disk** (not one hang designed after a wreck).
 Fill the shelf **during** lock live. Do **not** Hangar proc-4t /
-swivel-dv5 / girderless lite / t7-chute Mk16 (`far-shear`). Keep alts
+swivel-dv5 / girderless lite / t7-chute Mk16 / C-477 (`far-shear`). Keep alts
 signed.
 
 **Procedural Parts:** when a proc part is **unlocked** for the job,

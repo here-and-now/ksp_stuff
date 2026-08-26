@@ -49,11 +49,11 @@ while parts intact is **unexpected** — not last-flight shear
 (`telem-eyes-library`, T-508; cutoff Lars T-509). Radio is the bus. Airborne cannot-pay skip is not a
 dwell — loft, cut, chute, land leftover; timeout is leftover not
 Gene. Today is farther hops that pay,
-not a Forest leftover grind. FlyingHigh leftover is a **fed** hang
+not a Forest leftover grind. FlyingHigh leftover is **C-504**
 ≥50 km — throttle 1 vertical until lid, not
 abort-at-lid / a 30 km stiff / wait-at-800 m then pitch / t7-chute
-Mk16. C-477 is starved (`capable: no`) — dish HS
-`fuelCrossFeed=False`. Silk is recover, not the wait. Splash
+Mk16. C-477 is blob (`capable: no`) — Hangar 15-52-38Z parts=397.
+Silk is recover, not the wait. Splash
 Water bind does not drop that lid to 18 km. Skip-latch is FlyingLow
 cannot-pay only. Thick air ≤18 km is 1×. High dwell is not a burn;
 quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
@@ -62,8 +62,10 @@ quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
 fly t7-wheel-pbc (lithobrake is not recover). OX-STAT is dwell EC, not
 the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent.
 Next CTT is `generalRocketry` 20 (need ~6.38; bank 13.62 does not
-pay 20). `survivability` 15 is spent. Do not spend crumbs. Pad this sit
-belongs to a **fed** hang (Gus rebuilding). T-428 / T-430 stay alts.
+pay 20) then **one node after**. `survivability` 15 is spent. Do not
+spend crumbs. Pad this sit belongs to **C-504** (FED, no HS/chute;
+16-23-52Z apo 268 km rec=no — iterate this hang). Honest MECO leftover
+fuel is not engine-dead. T-428 / T-430 stay alts.
 T-409 / T-433
 nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). Persist must survive a split wreck; skip-dup is persist not the broom; recoverable ground Debris is leftover (T-501). VAB helpers
 T-413–T-420 plus T-480/T-482/T-483/T-495/T-497/T-498/T-500 are Wernher; a hang you

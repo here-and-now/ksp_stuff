@@ -147,7 +147,8 @@ do not have. Parent copies that line into Lars’s packet so he is not
 sequencing a ghost instrument.
 
 **Serial:** `go: yes` (Gene only); Linus **bind** after Gus `capable:`
-(**FED** + collider-clear HS + f013 + EC); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
+(**FED** + f013 + EC; collider-clear HS only when the hang *has* an HS —
+C-504 loft is no-HS); one **control** writer; kRPC GET readers legal; Lars XOR Wernher on a **miss**. Open `type=systems` →
 Wernher (desk/ops/ticket kernel, hangar scene, telem, kRPC trap,
 **control blocks**: sit, warp, timeout, leftover abort, chute sits)
 without waiting for a miss. `physics_warp.py` is Wernher. Lars
@@ -186,9 +187,9 @@ signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
 on a fly ticket. **This-hop bind** is last-envelope biome/sit
 (Forest tape is Forest; Grasslands waits Grasslands; SrfLanded vs
-splash match the hang; FlyingHigh waits ≥50 km on a **fed** hang,
-not C-477 t7-wheel-proc-hs-cone-pbc (`capable: no` — dish HS
-`fuelCrossFeed=False` starved the Valiant), not t7-wheel-pbc
+splash match the hang; FlyingHigh waits ≥50 km on **C-504**
+`kspstuff-hop-valiant-proc-loft-pbc` (FED, no HS/chute), not C-477
+(`capable: no` — Hangar 15-52-38Z blob even after T-500 dish), not t7-wheel-pbc
 (T-400 `capable: no` — lithobrake is not recover), not a 30 km stiff
 loft, not t7-chute Mk16). FlyingHigh wait is loft live-alt ≥50 km /
 Toggle / cut / chute / land leftover — not a sit at 800 m apo, not
@@ -201,7 +202,8 @@ chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
 `phys-warp` (High dwell is not a burn). Do not Hangar FAR-sheared 4t
 / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / **C-477**
 this sit. Do not Hangar **t7-wheel-nose** (T-409) as silk. Pad this
-sit belongs to a **fed** hang (Gus rebuilding after T-406 shear).
+sit belongs to **C-504** until `generalRocketry` 20 then one node after.
+16-23-52Z held through burnout apo 268 km rec=no — iterate this hang.
 T-428 HS-only / T-430 silk-only stay alts — not a Hangar from this
 letter. Do not gather a
 subject this stack cannot reach. Warp the coast (physics 2–4×;
@@ -332,8 +334,10 @@ Failed coast/suicide relight with fuel left is engine physics
 `type=systems` — until ignitions remaining, ullage, and EC ignitor
 are checked on **this hang**. Confirmed light is plume, not
 ignitions 1→0. Pad-dead-no-plume waits that file (T-471) — High
-stays High. Airborne cutoff with a **fed** tank is the same engine
-physics (T-509), not shear.
+stays High. Airborne cutoff with a **fed** tank **and a burn still owed** is the
+same engine physics (T-509), not shear. Honest MECO leftover fuel
+(16-23-52Z burnout fuel 28 thrust 0 parts=30 apo 268 km) is the
+coast, not engine-dead.
 Airborne cannot-pay skip is **not** a dwell and **not** Gene —
 still loft, cut, coast, chute, land leftover, **then Toggle splash
 leftover**. Skip-latch is

@@ -51,7 +51,7 @@ Humor: dry, rare, never cute. Missing `go:` = wait. Pick from the
 shelf a bind this hang can bank; schedule the pad. An idle pad is a
 sin. A living recover that cannot pay is waste — do not re-fly +0
 Forest. `go: wait` only dirty hangar / missing f013 / empty shelf /
-unproven FED / Os wait. Starved (C-477) is not a signed hang. Thin tape: cite and open systems — do not empty the pad.
+unproven FED / Os wait. Pick **C-504**. Starved/blob (C-477) is not a signed hang. Thin tape: cite and open systems — do not empty the pad.
 RealAntennas kRPC is live (`krpc.md`). Do not cheat a link. Do not
 `go: wait` for a dish we have not needed. Commit org/briefing
 changes.

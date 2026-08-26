@@ -2,7 +2,8 @@
 
 **Goal:** Kardashev III or bust. Moon is a waypoint. Probes first.
 **Today (Os 2026-08-24):** bigger rockets, more Δv, farther out. Ad
-astra. `stability` **spent**. Next CTT is `generalRocketry` **20**.
+astra. `stability` **spent**. Next CTT is `generalRocketry` **20**,
+then **one node after**. Pad this sit belongs to **C-504**.
 Bank **13.62** does not pay 20 (need ~**6.38**). Do not spend crumbs.
 Farther hops that can bank FlyingHigh / a new biome are the work.
 Tape is the product. Save `letsgrok` / `~/Games/KSP-rss`. CTT+PBC.
@@ -13,12 +14,14 @@ RO sandbox is the next tree, not this save.
 Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
 
 **Next:** FlyingHigh this-hop is **T-404** PresMat 305/0.05 + **T-460**
-FlyingLow + **T-368** goo on a **fed** hang. C-477
-t7-wheel-proc-hs-cone-pbc is `capable: no` (dish HS starved the
-Valiant). Forest T-069 TELEMETRY cannot pay a Shores splash — do not re-pin it.
+FlyingLow + **T-368** goo on **C-504** `kspstuff-hop-valiant-proc-loft-pbc`
+(FED, no HS/chute). Pad belongs to C-504 until `generalRocketry` **20**
+then **one node after**. C-477 is the blob exhibit (`capable: no` —
+Hangar 15-52-38Z parts=397 even after T-500 dish). Forest T-069
+TELEMETRY cannot pay a Shores splash — do not re-pin it.
 Splash Water bind does **not** drop the High lid to 18 km. 88.8 km
-proof is t7-pbc 13-31-03Z. Pad belongs to a **fed** hang (Gus
-rebuilding after T-406 shear). Do not fly **t7-wheel-pbc** (T-400
+proof is t7-pbc 13-31-03Z. 16-23-52Z held through burnout apo 268 km
+rec=no — iterate **this** hang. Do not fly **t7-wheel-pbc** (T-400
 `capable: no` — lithobrake is not recover). Do not Hangar C-477 /
 t7-chute Mk16 this sit (silk/4×/pitch wrecks). T-428 HS-only, T-430
 silk-only are alts, not a Hangar from this letter. T-409 / T-433 nose
@@ -28,8 +31,8 @@ waits a splash hang. Do not re-fly living +0 binds. Next CTT is
 `generalRocketry` **20** (`sasModule` / PresMat Available; bank 13.62
 does not pay 20). `campaign: uncrewed`.
 
-**How today:** pad occupancy on a **fed** hang that can **pay** FlyingHigh
-≥50 km, not C-477 starved, not another living +0, not t7-wheel-pbc lithobrake. Throttle 1 + SAS vertical until lid;
+**How today:** pad occupancy on **C-504** that can **pay** FlyingHigh
+≥50 km, not C-477 blob, not another living +0, not t7-wheel-pbc lithobrake. Throttle 1 + SAS vertical until lid;
 inland slew after. Thick air ≤18 km is 1×. Quiet loft after lid honors
 Hank `phys-warp`. `chute_arm_sit` 1× is Arm/silk, not apo. Splash leftover
 Toggles after airborne dwell — do not recover unpaid. Skip-latch is

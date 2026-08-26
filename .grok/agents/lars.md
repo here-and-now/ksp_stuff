@@ -51,11 +51,14 @@ Pad thrusting is not a handoff — keep MainThrottle 1 until lid MECO;
 `_cut_pad_engine` only on abort. Failed coast/suicide relight with
 fuel left is engine physics (`rf-ignition-ullage`) until you have
 read that engine. Cartoon MECO / lid / `_hold_or_cut` suicide relight
-is false. RF pad is **one sit** in `hop_factory_pad.py` — do not add
-a `_pad_*` per stamp. Compose stays `hop_factory.py`. Not `hop.py`,
-not Wernher. Do not raise ignitions. Do not open `type=systems` for
-“engine did not light” until ignitions remaining, ullage, and EC
-ignitor are checked. Live miss is T-471.
+is false. **Honest MECO is not engine-dead** (16-23-52Z burnout fuel
+28 thrust 0 parts=30 apo 268 km). MET-21 cutoff with a burn still
+owed is loft compose T-509, not pad-RF. RF pad is **one sit** in
+`hop_factory_pad.py` — do not add a `_pad_*` per stamp. Compose stays
+`hop_factory.py`. Not `hop.py`, not Wernher. Do not raise ignitions.
+Do not open `type=systems` for “engine did not light” until ignitions
+remaining, ullage, and EC ignitor are checked. Pad-dead live is
+T-471. Loft cutoff with a burn still owed is T-509.
 
 `hop.py` is **shared helpers that are actually shared + parked
 water/splash CLIs**. Do not add factory inland or warp branches there.

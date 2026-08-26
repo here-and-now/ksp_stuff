@@ -40,7 +40,7 @@ stay — packet that id. Jsonl only `--deep` (S1). Do not re-run
 Hangar. Leftover honesty: `go: wait` if hangar is `recover` / `blocked`
 (Hank cleans). `f013` locked or not on craft → `go: wait`. No Gus
 `capable: yes` → `go: wait`. Starved / unproven **FED** is not capable
-— do not pick C-477. Copy desk `f013` / `bind:` into the briefing.
+— pick **C-504**, do not pick C-477. Copy desk `f013` / `bind:` into the briefing.
 
 Stamp `go` / `cli` / `campaign` / `phase`, **then render** seated
 `plan.md` (`hop_apo` / `expect_*` / `emergencies` live there). The ticket

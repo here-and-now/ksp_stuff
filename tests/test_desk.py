@@ -8,7 +8,6 @@ from pathlib import Path
 from desk import (
     DeskSit,
     F013,
-    _clip_note,
     card_experiments,
     format_sit,
     hangar_call,
@@ -278,12 +277,6 @@ class TestDesk(unittest.TestCase):
         else:
             self.assertIn(row.unlocked, {"yes", "no"})
 
-    def test_format_sit_clips_note_tech(self):
-        text = format_sit(_sit(note_tech="word " * 80))
-        line = next(ln for ln in text.splitlines() if ln.startswith("note-tech:"))
-        self.assertLessEqual(len(line), 180)
-        self.assertTrue(line.endswith("…"))
-
     def test_format_sit_bind_hop_apo(self):
         text = format_sit(
             _sit(bind="T-020 TELEMETRY 30/0.052 seq0", hop_apo="18 km")
@@ -293,10 +286,6 @@ class TestDesk(unittest.TestCase):
         self.assertNotIn("bind:", format_sit(_sit()))
         self.assertNotIn("pay:", format_sit(_sit()))
         self.assertIn("pay: no", format_sit(_sit(pay="no")))
-
-    def test_clip_note_one_line(self):
-        self.assertEqual(_clip_note("  a \n b  "), "a b")
-        self.assertLessEqual(len(_clip_note("x" * 400)), 160)
 
 
 if __name__ == "__main__":

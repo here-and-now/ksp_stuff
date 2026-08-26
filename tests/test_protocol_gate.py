@@ -56,6 +56,17 @@ _FLYING = (
 )
 
 
+def _fly_ticket(*, cli="python main.py hop", phase="hop", campaign="none", **extra):
+    payload = {"cli": cli, "campaign": campaign, "phase": phase}
+    payload.update(extra)
+    return {
+        "go": "yes",
+        "type": "fly",
+        "status": "ready",
+        "payload": payload,
+    }
+
+
 class TestParseReturn(unittest.TestCase):
     def test_gene_missing_go(self):
         result = parse_return("phase: hop\nrecommended: python main.py hop\n", "gene")
@@ -123,8 +134,9 @@ class TestFlyGate(unittest.TestCase):
     def test_capable_no_is_wait(self):
         gate = fly_gate(
             sit=_sit(capable="no"),
-            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
+            ticket=_fly_ticket(),
         )
         self.assertEqual(gate.fly, "wait")
         self.assertIn("capable", gate.reason)
@@ -132,8 +144,9 @@ class TestFlyGate(unittest.TestCase):
     def test_recover_leftover_is_wait(self):
         gate = fly_gate(
             sit=_sit(hangar="recover flea sit=FLYING"),
-            plan={"go": "yes", "phase": "hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
+            ticket=_fly_ticket(cli=""),
         )
         self.assertEqual(gate.fly, "wait")
         self.assertIn("leftover", gate.reason)
@@ -141,8 +154,9 @@ class TestFlyGate(unittest.TestCase):
     def test_leftover_n_is_wait(self):
         gate = fly_gate(
             sit=_sit(hangar="none", vessels=("kspstuff-hop-flea-pbc",)),
-            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
+            ticket=_fly_ticket(),
         )
         self.assertEqual(gate.fly, "wait")
         self.assertIn("leftover", gate.reason)
@@ -154,16 +168,18 @@ class TestFlyGate(unittest.TestCase):
                 craft="kspstuff-hop-hammer-pbc",
                 vessels=("kspstuff-hop-hammer-pbc",),
             ),
-            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
+            ticket=_fly_ticket(),
         )
         self.assertEqual(gate.fly, "yes")
 
     def test_empty_card_is_wait(self):
         gate = fly_gate(
             sit=_sit(card=(), f013=(F013("", "none", "none", "n/a", "no", "none"),)),
-            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text="# no experiments\n",
+            ticket=_fly_ticket(),
         )
         self.assertEqual(gate.fly, "wait")
         self.assertIn("card", gate.reason)
@@ -179,8 +195,9 @@ class TestFlyGate(unittest.TestCase):
         )
         gate = fly_gate(
             sit=_sit(f013=(row,), card=("geigerCounter",)),
-            plan={"go": "yes", "phase": "pad", "recommended": "python main.py pad"},
+            plan={"go": "wait", "phase": "pad"},
             science_text="## Pad\n- experiment: geigerCounter\n  situation: SrfLanded\n",
+            ticket=_fly_ticket(cli="python main.py pad", phase="pad"),
         )
         self.assertEqual(gate.fly, "wait")
         self.assertIn("f013", gate.reason)
@@ -188,12 +205,9 @@ class TestFlyGate(unittest.TestCase):
     def test_yes_when_signed_and_bound(self):
         gate = fly_gate(
             sit=_sit(),
-            plan={
-                "go": "yes",
-                "phase": "hop",
-                "recommended": "python main.py hop",
-            },
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
+            ticket=_fly_ticket(),
         )
         self.assertEqual(gate.fly, "yes")
         self.assertEqual(gate.cli, "python main.py hop")
@@ -222,7 +236,7 @@ class TestFlyGate(unittest.TestCase):
         with patch("protocol.waste_blocks_refly", return_value=True):
             gate = fly_gate(
                 sit=_sit(),
-                plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+                plan={"go": "wait", "phase": "hop"},
                 science_text=_FLYING,
                 ticket=self._waste_ticket(),
             )
@@ -235,7 +249,7 @@ class TestFlyGate(unittest.TestCase):
         with patch("protocol.waste_blocks_refly", return_value=False):
             gate = fly_gate(
                 sit=_sit(),
-                plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+                plan={"go": "wait", "phase": "hop"},
                 science_text=_FLYING,
                 ticket=self._waste_ticket(sit="splashed", biome="Forest"),
             )
@@ -245,7 +259,7 @@ class TestFlyGate(unittest.TestCase):
     def test_living_sci_run_1_is_yes(self):
         gate = fly_gate(
             sit=_sit(),
-            plan={"go": "yes", "phase": "hop", "recommended": "python main.py hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
             ticket=self._waste_ticket(sci_run=1, sit="splashed", biome="Forest"),
         )
@@ -254,8 +268,9 @@ class TestFlyGate(unittest.TestCase):
     def test_phase_leftover_cli(self):
         gate = fly_gate(
             sit=_sit(hangar="phase flea sit=PRELAUNCH", capable="no"),
-            plan={"go": "yes", "phase": "hop"},
+            plan={"go": "wait", "phase": "hop"},
             science_text=_FLYING,
+            ticket=_fly_ticket(cli="", phase="hop"),
         )
         self.assertEqual(gate.fly, "yes")
         self.assertEqual(gate.cli, "python main.py phase hop")
@@ -291,7 +306,7 @@ class TestFlyGate(unittest.TestCase):
         self.assertIn("commander: none", text)
         self.assertIn("writer: hop-pid", text)
 
-    def test_no_ticket_falls_back_to_plan(self):
+    def test_missing_ticket_is_wait(self):
         gate = fly_gate(
             sit=_sit(),
             plan={
@@ -303,9 +318,9 @@ class TestFlyGate(unittest.TestCase):
             science_text=_FLYING,
             ticket=None,
         )
-        self.assertEqual(gate.fly, "yes")
-        self.assertEqual(gate.cli, "python main.py hop")
-        self.assertEqual(gate.commander, "jebediah")
+        self.assertEqual(gate.fly, "wait")
+        self.assertIn("go", gate.reason)
+        self.assertEqual(gate.commander, "none")
 
     def test_ticket_science_ids_skip_card(self):
         ticket = {

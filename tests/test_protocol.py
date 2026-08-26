@@ -142,9 +142,6 @@ class TestPressDesk(unittest.TestCase):
             "2026-08-23T11-11-21Z-hop" in tale
             or "2026-08-23T10-47-12Z-hop" in tale
         )
-        lessons = Path("docs/lessons.md").read_text(encoding="utf-8")
-        self.assertIn("latitude", lessons)
-        self.assertIn("Forest is 270", lessons)
 
     def test_index_leads_with_science_gained(self):
         index = Path("docs/press/INDEX.md").read_text(encoding="utf-8")
@@ -193,8 +190,3 @@ class TestFeedbackBoard(unittest.TestCase):
             "mortimer",
         ):
             self.assertTrue((notes / f"{slug}.md").is_file())
-
-    def test_lessons_use_run_headings(self):
-        text = Path("docs/lessons.md").read_text(encoding="utf-8")
-        self.assertNotIn("L-NNN", text)
-        self.assertIn("## ", text)

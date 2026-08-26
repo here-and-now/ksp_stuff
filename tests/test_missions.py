@@ -6,6 +6,7 @@ import unittest
 from pathlib import Path
 
 from missions import (
+    current_kv,
     flight_slug,
     is_lost,
     other_crewed_warp_danger,
@@ -54,10 +55,12 @@ class TestSlugs(unittest.TestCase):
 
 
 class TestSeatAndPlan(unittest.TestCase):
-    def test_seated_jeb(self):
-        self.assertEqual(seated_id(), "jebediah")
+    def test_seated_follows_current_flight(self):
+        flight = (current_kv().get("flight") or "").strip().lower()
+        self.assertTrue(flight)
+        self.assertEqual(seated_id(), flight)
         self.assertTrue(seated_plan_path().is_file())
-        self.assertFalse(is_lost("jebediah"))
+        self.assertFalse(is_lost(flight))
 
     def test_save_plan_keeps_envelope(self):
         import tempfile
@@ -84,9 +87,14 @@ class TestSeatAndPlan(unittest.TestCase):
 
         from session import SessionError
 
-        with patch("missions.vab_kv", return_value={"capable": "no"}):
-            with self.assertRaises(SessionError) as ctx:
-                pad_craft_name()
+        with patch("tickets.load_head", return_value={"tickets": {}, "seq": {}}):
+            with patch("tickets.list_tickets", return_value=[]):
+                with patch(
+                    "missions.vab_kv",
+                    return_value={"capable": "no", "craft": "vab-ignored"},
+                ):
+                    with self.assertRaises(SessionError) as ctx:
+                        pad_craft_name()
         self.assertIn("capable", str(ctx.exception))
 
     def test_seat_missing_refused(self):

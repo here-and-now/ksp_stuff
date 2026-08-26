@@ -129,7 +129,7 @@ def fly_gate(
     names = phase_names or PHASE_NAMES
     t = ticket if ticket is not None else seated_fly_ticket()
     ff = fly_fields(t)
-    go = (ff.get("go") or plan.get("go") or "").lower()
+    go = (ff.get("go") or "").lower()
     phase = (ff.get("phase") or plan.get("phase") or "").lower()
     rec = (ff.get("cli") or plan.get("recommended") or plan.get("cli") or "").strip()
     campaign = (ff.get("campaign") or plan.get("campaign") or "none").strip() or "none"

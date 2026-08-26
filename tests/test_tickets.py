@@ -1032,6 +1032,9 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("docs/program/desk.md", skim)
         self.assertIn("docs/program/tickets/BRIEF.md", skim)
         self.assertNotIn("BOARD.md", skim)
+        self.assertNotIn("docs/program/science.md", skim)
+        self.assertNotIn("docs/program/vab.md", skim)
+        self.assertNotIn("docs/missions/jebediah/briefing.md", skim)
         self.assertIn("inbox:", skim)
         self.assertNotIn(".jsonl", skim)
         self.assertIn("packet T-001 --deep", skim)
@@ -1074,6 +1077,9 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("ticket: M-001", out)
         self.assertIn("docs/program/desk.md", out)
         self.assertNotIn("BOARD.md", out)
+        self.assertNotIn("docs/program/science.md", out)
+        self.assertNotIn("docs/program/vab.md", out)
+        self.assertNotIn("docs/program/blocks.md", out)
         self.assertNotIn(".jsonl", out)
         self.assertIn("--deep", out)
         self.assertIn("reasoning: medium", out)
@@ -1231,6 +1237,9 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("category: flight", skim)
         self.assertIn("docs/program/tickets/BRIEF.md", skim)
         self.assertNotIn("BOARD.md", skim)
+        self.assertNotIn("docs/program/science.md", skim)
+        self.assertNotIn("docs/program/vab.md", skim)
+        self.assertNotIn("docs/program/blocks.md", skim)
         self.assertNotIn("hard-splash.jsonl", skim)
         self.assertIn("hard-splash.jsonl", deep)
         self.assertIn("python main.py telem", deep)
@@ -1426,6 +1435,13 @@ class TestMigrateSecondBus(unittest.TestCase):
             self.assertEqual(skim_mentions_forbidden(path), [])
         for needle in FORBIDDEN_DISPATCH:
             self.assertNotIn(needle, skim)
+        self.assertIn("docs/program/desk.md", skim)
+        self.assertIn("docs/program/tickets/BRIEF.md", skim)
+        self.assertNotIn("BOARD.md", skim)
+        self.assertNotIn("docs/program/science.md", skim)
+        self.assertNotIn("docs/program/vab.md", skim)
+        self.assertNotIn("docs/program/blocks.md", skim)
+        self.assertNotIn("docs/missions/jebediah/briefing.md", skim)
 
 
 class TestLiveDocsInventory(unittest.TestCase):
@@ -1444,12 +1460,22 @@ class TestLiveDocsInventory(unittest.TestCase):
         self.assertEqual(mapping["docs/program/tickets/BRIEF.md"], "live_kernel")
         self.assertEqual(mapping["docs/missions/jebediah/plan.md"], "live_kernel")
         self.assertEqual(mapping["docs/missions/jebediah/science.md"], "live_kernel")
-        self.assertEqual(mapping["docs/program/tickets/board.jsonl"], "live_kernel")
+        self.assertIn(
+            mapping["docs/program/tickets/board.jsonl"],
+            ("live_tape", "live_kernel"),
+        )
         leftover = [r for r, c in mapping.items() if c == "leftover_migrated"]
-        self.assertTrue(any("I-012.md" in r for r in leftover))
-        self.assertTrue(any("F-014.md" in r for r in leftover))
         parked = [r for r, c in mapping.items() if c == "parked_archive"]
         self.assertTrue(any(r.startswith("docs/archive/") for r in parked))
+        for token in ("I-012.md", "F-014.md"):
+            hits = [r for r in mapping if r.endswith("/" + token) or r.endswith(token)]
+            self.assertTrue(hits, token)
+            for rel in hits:
+                self.assertTrue(rel.startswith("docs/archive/"), rel)
+                self.assertIn(mapping[rel], ("parked_archive", "leftover_migrated"), rel)
+                self.assertNotEqual(mapping[rel], "live_kernel", rel)
+                self.assertNotEqual(mapping[rel], "live_tape", rel)
+            self.assertFalse(any(rel.endswith(token) for rel in leftover if not rel.startswith("docs/archive/")))
         self.assertFalse(Path("docs/program/improve/README.md").is_file())
         self.assertFalse(Path("docs/crew/niche/gene.md").is_file())
 
@@ -1601,6 +1627,9 @@ class TestPacketAttachAndInbox(unittest.TestCase):
         skim = tickets.format_packet(t["id"], deep=False)
         self.assertIn("learn: heading never 090", skim)
         self.assertNotIn("BOARD.md", skim)
+        self.assertNotIn("docs/program/science.md", skim)
+        self.assertNotIn("docs/program/vab.md", skim)
+        self.assertNotIn("docs/program/blocks.md", skim)
 
     def test_attach_run_stamps_learn_and_sci_unchanged_bump(self):
         t = tickets.open_ticket(

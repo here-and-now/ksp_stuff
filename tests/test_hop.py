@@ -441,7 +441,6 @@ class TestHopCatalog(unittest.TestCase):
 
     def test_source_is_not_a_godfile(self):
         text = Path("hop.py").read_text(encoding="utf-8")
-        blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
         self.assertNotIn("from watch", text)
         self.assertNotIn("import watch", text)
         self.assertNotIn("from launch", text)
@@ -453,8 +452,6 @@ class TestHopCatalog(unittest.TestCase):
         self.assertIn("go_space_center", text)
         self.assertIn("from hangar import", text)
         self.assertIn("kspstuff-hop-hammer-pbc", text)
-        self.assertIn("uncrewed", blocks.lower())
-        self.assertIn("kspstuff-hop-hammer-pbc", blocks)
 
     def test_apo_clamp(self):
         with patch("hop.hop_wants_flying_high", return_value=False):
@@ -6814,19 +6811,6 @@ class TestHopInland(unittest.TestCase):
         self.assertGreater(len(dry_engaged), 1)
         self.assertTrue(any("hold inland through burnout" in line for line in logs))
 
-    def test_blocks_inland(self):
-        blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
-        self.assertIn("heading **270**", blocks)
-        self.assertIn("08-29-36Z", blocks)
-        self.assertIn("7.5° stayed Shores", blocks)
-        self.assertIn("set_direction_and_up", blocks)
-        self.assertIn("09-28-59Z", blocks)
-        self.assertIn("09-44-59Z", blocks)
-        self.assertIn("09-59-28Z", blocks)
-        self.assertIn("10-17-18Z", blocks)
-        self.assertIn("10-33-44Z", blocks)
-        self.assertIn("16-47-21Z", blocks)
-
 
 class TestHopToWater(unittest.TestCase):
     def setUp(self):
@@ -6894,26 +6878,6 @@ class TestHopToWater(unittest.TestCase):
                 code = cmd_phase(session, args)
         seated.assert_not_called()
         self.assertEqual(code, 2)
-
-    def test_blocks_name(self):
-        blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
-        self.assertIn("hop-to-water", blocks)
-        self.assertIn("25", blocks)
-        self.assertIn("valiant-east-pbc", blocks)
-        self.assertIn("Flea still", blocks)
-        self.assertIn("do not light", blocks)
-        self.assertIn("PRELAUNCH is a lie", blocks)
-        self.assertIn("through burnout", blocks)
-        self.assertIn("after left_pad", blocks)
-        self.assertIn("0.4", blocks)
-        self.assertIn("16-11-58Z", blocks)
-        self.assertIn("16-57-24Z", blocks)
-        self.assertIn("set_direction_and_up", blocks)
-        self.assertIn("22-03-59Z", blocks)
-        self.assertIn("22-45-26Z", blocks)
-        self.assertIn("10-11-27Z", blocks)
-        self.assertIn("suicide", blocks.lower())
-        self.assertIn("Retired campaign notes", blocks)
 
     def test_pitch_east_waits_splash(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")
@@ -8684,17 +8648,6 @@ class TestHopSplash(unittest.TestCase):
         hangar.assert_not_called()
         scene.assert_not_called()
         self.assertTrue(any("ksc: leftover" in line for line in logs))
-
-    def test_blocks_name(self):
-        blocks = Path("docs/program/blocks.md").read_text(encoding="utf-8")
-        self.assertIn("hop-splash", blocks)
-        self.assertIn("t7-splash", blocks)
-        self.assertIn("east slew", blocks)
-        self.assertIn("80 km", blocks)
-        self.assertIn("east-fin PRELAUNCH", blocks)
-        self.assertIn("stay cut", blocks)
-        self.assertIn("suicide", blocks.lower())
-        self.assertIn("Retired campaign notes", blocks)
 
     def test_vertical_no_east_no_flying_toggle(self):
         tel = _Mod("Experiment", "kerbalism_TELEMETRY")

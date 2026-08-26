@@ -186,7 +186,8 @@ second Session. Miss: leftover is Hank walking the ship home
 is Wernher. They do not both patch the same `.py`. Then the last
 `cli:` again, if the stack still lives. Ground fills the shelf
 *while* someone is flying — other files, same turn. Sit is
-`desk.md`. An RSI letter does not empty the pad.
+`desk.md`. An RSI letter does not empty the pad as a religion; Hank
+schedules hops. Idle is not a miss.
 
 | | | |
 |---|---|---|
@@ -248,8 +249,8 @@ Fingerprint **on open**, short stem (`heading-never-090`). Third
 open of the same stem files `type=rsi`. Software → Wernher. Else
 Mortimer. Hank sequences; he is not the RSI chair. Lock-free
 Mortimer rides `ops next` **with** the pad. Lock live: no new
-Mortimer. An RSI letter does not empty the pad. Friction is a
-ticket, not a Return novel.
+Mortimer. An RSI letter does not empty the pad as a religion. Idle
+is not a miss. Friction is a ticket, not a Return novel.
 
 Kardashev III is creed. Joke in the TUI. Nobody preaches
 mid-burn. A Type III civilization harnesses a galaxy. We have a

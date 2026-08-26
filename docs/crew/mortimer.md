@@ -36,9 +36,9 @@ Uncrewed Learn is kernel `attach-run` (`payload.learn`); Gene Learn
 is campaign-stop only. Uncrewed hops re-fly last `cli:` on clean 0
 **and** on a miss of a hang that still lives — not a Gene hire.
 Living recover + `sci_run=0` is **not** clean 0: envelope sit/biome
-must match bound tickets before last `cli:` lights. Pad
-occupancy: tape is the product; an idle pad is a sin. Do not idle the
-pad as a religion. A living recover that cannot pay is waste. Last-flight
+must match bound tickets before last `cli:` lights. Pad occupancy: tape is the product; Hank schedules hops. Pad may sit
+while ground cooks. Idle is not a miss. Do not empty the pad as a
+religion. A living recover that cannot pay is waste. Last-flight
 40 lines is not the vessel (09-01Z splash rec=yes vs jsonl flying 6 km
 rec=no) — do not Learn from it. One **control** writer; kRPC GET
 readers legal (T-452). Time is scarce: plan / bind / warp
@@ -58,7 +58,7 @@ Silk is recover, not the wait. Splash
 Water bind does not drop that lid to 18 km. Skip-latch is FlyingLow
 cannot-pay only. Thick air ≤18 km is 1×. High dwell is not a burn;
 quiet loft honors Hank `phys-warp`. `chute_arm_sit` 1× is Arm, not apo
-(T-442). Wreck rec=no re-flies last cli; living +0 is waste. Do not Hangar
+(T-442). Wreck rec=no re-flies last cli when Hank schedules it; living +0 is waste. Do not Hangar
 4t / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / C-477. Do not
 fly t7-wheel-pbc (lithobrake is not recover). OX-STAT is dwell EC, not
 the loft hang. 2HOT idle rem=0 is still the card. `stability` 18 is spent. `generalRocketry` 20 is spent.
@@ -67,7 +67,7 @@ pay 45). Do not spend the next 45 on aviation while Terrier is the
 orbit engine. `survivability` 15 is spent. Do not
 spend crumbs. Pad this sit belongs to **C-534** (FED, no HS, no girders;
 recover silk; C-504 loft-pbc shelf). First orbit waits
-Terrier. A plan conference does not empty the pad. Honest MECO leftover
+Terrier. A plan conference does not empty the pad as a religion; Hank may sit it. Honest MECO leftover
 fuel is not engine-dead. T-428 / T-430 stay alts.
 T-409 / T-433
 nose is aero, not silk. PresMat idle rem=0 is still the card. Bound leftover stays in-card — fly extras cannot hide splash leftover as not-in-card; wrong sit is cannot-pay. Airborne cannot-pay then recover splash without Toggle is waste (T-440). Persist must survive a split wreck; skip-dup is persist not the broom; recoverable ground Debris is leftover (T-501). VAB helpers

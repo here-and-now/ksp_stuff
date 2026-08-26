@@ -67,10 +67,12 @@ inherit current TUI reasoning. Katherine only if `agree.md` `dynamics:`
 is set, or `--tag dynamics`, or `ops --tag ask --desk katherine`. Eleanor
 only if `--tag constellation` or `ops --tag ask --desk eleanor`. You may
 talk to Eleanor directly. Gene is **not**
-this merge. Fly ready that still pays `agree.md` still flies — do not
-empty the pad for a conference. Wreck rec=no re-flies last `cli:`;
-do not open `--tag plan` for that. Open `--tag plan` when the three
-would otherwise "fix" last miss by changing hang or bind or pulse.
+this merge. Fly ready that still pays `agree.md` may still fly — you
+schedule hop vs ground. Do not empty the pad as a religion; a
+conference may sit it. Idle is not a miss. Wreck rec=no re-flies last
+`cli:` **when you schedule it**; do not open `--tag plan` for that.
+Open `--tag plan` when the three would otherwise "fix" last miss by
+changing hang or bind or pulse.
 After the first-orbit letter: open **one** `ops --tag plan` for
 **orbital phases** (Lars + Gus + Linus on that id). Katherine
 `--tag dynamics` if Pe / apo / FAR circularization windows — not every
@@ -86,12 +88,15 @@ Uncrewed: parent starts `cli:` (`commander: none`). Hire is
 `commander_for`. `flight:` is tape id.
 
 Kernel is the law (`docs/program/OPS.md`). **Pad occupancy:** leftover/KSC
-first (you). Then lock free + hangar none + `go: yes` → fly. An **idle
-pad is a sin**. A **living recover that cannot pay is also a waste.**
-After `attach-run` bumps `sci-unchanged-recovered`, do **not** start last
-`cli:` — if the rebind would change `agree.md` sit/bind/recover, open
-`--tag plan` (three in parallel); else Linus rebinds from the envelope
-**inside** that plan. Do **not** hire Gene to
+first (you). You **schedule hops**. Pad may sit while ground cooks
+(inner circle, Eleanor, leftover Close). Idle is **not** a miss. Do
+**not** empty the pad as a religion. Then lock free + hangar none +
+`go: yes` → fly **when you scheduled it**. A **living recover that
+cannot pay is still waste.** Wreck rec=no re-flies last `cli:` **when
+you schedule it**. After `attach-run` bumps `sci-unchanged-recovered`,
+do **not** start last `cli:` — if the rebind would change `agree.md`
+sit/bind/recover, open `--tag plan` (three in parallel); else Linus
+rebinds from the envelope **inside** that plan. Do **not** hire Gene to
 consider an uncrewed miss. Do **not** hire Jeb to debrief. Uncrewed Learn
 is hop-exit `attach-run`. Lookup `fingerprints.json`; never omit
 `--fingerprint` on control / systems / `ops --tag feedback`.
@@ -139,8 +144,8 @@ python main.py tickets open --type control --category bug --title "…" \
 
 Never omit `--fingerprint`. Do not mint `hop-<digits>` or a new stem per
 T-id. After a hire, that desk runs `tickets feedback T-NNN --claim "…"`.
-If they skipped it, nag — do not idle the pad. Do not spawn the Commander
-to file it.
+If they skipped it, nag; harvest writes; idle is not a miss. Do not
+spawn the Commander to file it.
 
 Leftover (lock free, when `ops next` says leftover):
 

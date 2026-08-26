@@ -46,19 +46,22 @@ leftover High that cannot pay is shelf, not `go: wait`. Copy desk `f013` / `bind
 Stamp `go` / `cli` / `campaign` / `phase`, **then render** seated
 `plan.md` (`hop_apo` / `expect_*` / `emergencies` live there). The ticket
 is the source. Stamp `learn` only when hired for Learn (one line). **Pick from the shelf** (Linus opportunities + Gus signed
-crafts) a bind **this hang can bank**. Schedule the pad. Always some
-actual flight unless leftover / crash UI, missing `f013`, no capable
-craft, empty shelf, or Os wait. `go: wait` **only** those. Do not take
-15 minutes after a miss to write a novel. An RSI letter does **not**
-empty the pad. Do not re-fly a living +0 (any sit/biome).
-Restamp from the envelope or the next signed alt. Thin tape: cite it
-like `f013` and open `--type systems --fingerprint <stem>` — still stamp
-`go: yes` if leftover clean and the hang lives. Bind **side-by-side**
-science when Linus has it; do not fly thermo-only because it is
-familiar. Stumble → ticket with `--fingerprint`. Uncrewed miss is **not**
-your hire — leftover is Hank, live `.py` is Lars, re-fly last `cli:`
-if the hang lives **and the bind can still pay**, next already-signed
-alt if it died (stamp that fly ticket only if it has no `go:`).
+crafts) a bind **this hang can bank**. Hank schedules the pad. Stamp
+`go: yes` when leftover / `f013` / capable / shelf are clean **and
+Hank has scheduled the hop**. Idle is not a miss. `go: wait` **only**
+leftover / crash UI, missing `f013`, no capable craft, empty shelf,
+or Os wait. Do not take 15 minutes after a miss to write a novel. An
+RSI letter does **not** empty the pad as a religion. Do not re-fly a
+living +0 (any sit/biome). Restamp from the envelope or the next
+signed alt. Thin tape: cite it like `f013` and open `--type systems
+--fingerprint <stem>` — still stamp `go: yes` if leftover clean, the
+hang lives, and Hank scheduled the hop. Bind **side-by-side** science
+when Linus has it; do not fly thermo-only because it is familiar.
+Stumble → ticket with `--fingerprint`. Uncrewed miss is **not** your
+hire — leftover is Hank, live `.py` is Lars, re-fly last `cli:` **when
+Hank schedules it** if the hang lives **and the bind can still pay**,
+next already-signed alt if it died (stamp that fly ticket only if it
+has no `go:`).
 Airborne `science skip (situation cannot pay)` of a landed bind is
 **not** `go: wait` during the hop — the hop still lands leftover.
 After CLI, recovered sit **is** the next bind. Cheap probe sit:

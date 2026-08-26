@@ -89,10 +89,11 @@ time — not every `ops next`. Eleanor is **opt-in** (`ops --tag ask
 ground / a path to a future craft — not every `ops next`. Hank talks
 to her directly; inner circle (Gus / Lars / Linus / Katherine) and
 anyone else may. Do **not** reopen the plan because the
-last hop sheared: wreck rec=no re-flies last `cli:`. Change hang /
-bind / recover / MECO only by rewriting `agree.md` together. Fly
-ready that still pays `agree.md` still flies — a conference does
-**not** empty the pad.
+last hop sheared: wreck rec=no re-flies last `cli:` **when Hank
+schedules it**. Change hang / bind / recover / MECO only by rewriting
+`agree.md` together. Fly ready that still pays `agree.md` may still
+fly — Hank schedules hop vs ground. A conference may sit the pad;
+it does **not** empty it as a religion. Idle is not a miss.
 
 **Ground talk (between exits, lock free):** leftover `ops --tag ask`
 is mail, not the shared goal. Gene, Wernher, Mortimer, Verena, Eleanor may
@@ -157,7 +158,7 @@ is **refused** on new `control` / `systems` / `ops --tag feedback`
 plus a copy line. Hop-class friction is that bump, not a remembered
 CLI. Third hit opens `type=rsi` (software → Wernher, else Mortimer).
 Lock live skips org; fly_ready still hires Mortimer without emptying
-the pad. Do not tell another desk in Return prose — open `ops --tag
+the pad as a religion. Idle is not a miss. Do not tell another desk in Return prose — open `ops --tag
 ask` (`payload.to` / `--desk` = addressee). **Landing envelope wins**
 over fly `payload.learn` (uncrewed: hop-exit `attach-run` overwrites
 it; Gene stamps only when `ops next` hires him).
@@ -205,9 +206,12 @@ that engine. RF pad is one sit — not a `_pad_*` per stamp. Do not
 open `type=systems` / kRPC for “engine did not light” first. Do not
 raise ignitions. Never GameData.
 
-**Pad occupancy (Os 2026-08-23):** Tape is the product. An **idle pad
-is a sin**. Do **not** idle the pad as a religion: a **living recover
-that cannot pay is also a waste**.
+**Pad occupancy (Os 2026-08-26 / T-543):** Tape is the product.
+**Hank schedules hops.** Pad may sit while ground cooks (inner
+circle, Eleanor, leftover Close). Idle is **not** a miss. Do **not**
+empty the pad as a religion. A **living recover that cannot pay is
+still waste**. Wreck rec=no re-flies last `cli:` **when Hank
+schedules it** — not a religion.
 Inventory stays full: Linus many `science_opportunity`; Gus many
 signed `.craft` alts (not one hang designed after a wreck). Gene
 **picks from that shelf** a bind this hang can bank and stamps `go:`
@@ -245,29 +249,31 @@ the shelf **during** flight (lock live, other files). Wernher **logs
 more kRPC** and explores unused 0.6 surfaces **without waiting for a
 miss** (`type=systems` standing). All data is good data if stored.
 A 10–15 min Gene conference, an RSI letter, “consider the 154 m/s”,
-or conference-then-+0 hops does **not** empty the pad — and does
-**not** re-fly the same +0 bind. After sci unchanged: rebind from
-the envelope or the next signed hang that can bank. Living recover +
-`sci_run=0` is the waste class (`sci-unchanged-recovered`) — **not**
-clean 0. Bind can still pay = last-envelope sit/biome/apo matches
-bound tickets (08-44 Shores land ≠ Forest leftover; 10-57 Forest
-splash ≠ SrfLanded). Wreck rec=no is a miss: re-fly last `cli:`.
-Pad abort sit=`pre_launch` never lofted: not this waste class —
-re-fly last `cli:` (control miss). Do not rebind FlyingHigh to a
-pad card (T-472). Loft-only FlyingHigh/FlyingLow bind + short
-recovered dud (655 m landed rec=yes `sci_run=0`): re-fly last
-`cli:` — High cannot pay 655 m and that does not idle the loft or
-turn High into a Surface card (T-475). Forest leftover vs Shores
-land still waits.
-Stop the batch **only** leftover / crash UI, f013 fail,
-live control `.py` must be patched, or Os wait. `go: wait` **only**
-those.
+or conference-then-+0 hops does **not** empty the pad as a
+religion — Hank may sit it for ground — and does **not** re-fly the
+same +0 bind. After sci unchanged: rebind from the envelope or the
+next signed hang that can bank. Living recover + `sci_run=0` is the
+waste class (`sci-unchanged-recovered`) — **not** clean 0. Bind can
+still pay = last-envelope sit/biome/apo matches bound tickets (08-44
+Shores land ≠ Forest leftover; 10-57 Forest splash ≠ SrfLanded).
+Wreck rec=no is a miss: re-fly last `cli:` **when Hank schedules
+it**. Pad abort sit=`pre_launch` never lofted: not this waste class —
+re-fly last `cli:` when scheduled (control miss). Do not rebind
+FlyingHigh to a pad card (T-472). Loft-only FlyingHigh/FlyingLow bind
++ short recovered dud (655 m landed rec=yes `sci_run=0`): re-fly last
+`cli:` when scheduled — High cannot pay 655 m and that does not idle
+the loft or turn High into a Surface card (T-475). Forest leftover vs
+Shores land still waits. Stop the batch leftover / crash UI, f013
+fail, live control `.py` must be patched, or Os wait. Hank may also
+sit the pad for ground. `go: wait` **only** leftover / crash UI /
+f013 / empty shelf / Os wait — idle is not `go: wait`.
 
 **Thin tape is first-class:** a 9-column space program is not a log
 shrug. Every desk that stumbles on it opens `--type systems` (or
 `--type ops --tag feedback`). Cite it on capable / bind / `go:` the
-way `f013` is cited. Do **not** idle the pad for it — Wernher patches
-during lock live. Query **Tape**, never raw jsonl. Last-flight 40
+way `f013` is cited. Do **not** treat it as a reason to miss a
+scheduled hop — Wernher patches during lock live. Idle is Hank's.
+Query **Tape**, never raw jsonl. Last-flight 40
 lines is abort/exit, not the vessel. **Do not reason a Learn from it.**
 Last-flight rec=yes is not rec. One **control** writer; kRPC GET
 readers are legal. Cadence is the writer’s duty. Desks that touch tape
@@ -326,8 +332,9 @@ lock free, leftover clean:
 `python main.py desk` then `protocol fly`. `fly: yes` /
 `commander: none` → parent starts `cli:` (hop pid is the **control** writer).
 **Do not hire Gene between hops** on clean 0 **or** on a miss of a
-hang that is still capable. Do not hire Jeb. Pad does not idle for
-Learn or for “consideration.” Uncrewed `payload.learn` is **kernel**:
+hang that is still capable. Do not hire Jeb. Learn or “consideration”
+do not own the pad; Hank schedules hop vs ground. Idle is not a miss.
+Uncrewed `payload.learn` is **kernel**:
 hop-exit `attach-run` overwrites it every hop (`who=hank`, one line
 from the envelope: landing + apo + biome + rec + sci). Next packet
 prints **this** hop. Gene is not that writer. `needs_learn` stays
@@ -346,15 +353,16 @@ Hangar on dirty persist). Crash-UI rec=0 MET frozen is **not** pad
 occupancy (Os will not click Recover). Living SUB_ORBITAL leftover:
 wait land on MET then `recover()`; Close while flying does not drop it
 (`leftover-prelaunch-ghost`).
-Then: clean 0 → re-fly last `cli:` **only if that bind can still
-pay** (envelope sit/biome/apo matches bound tickets; FlyingHigh
-≥50 km). Living recover + `sci_run=0` is **not** that path — do not
-light last `cli:` on the `sci-unchanged-recovered` bump. Wreck rec=no
-re-flies last `cli:`. Pad abort sit=`pre_launch` re-flies last `cli:`
+Then: clean 0 → re-fly last `cli:` **when Hank schedules it and
+that bind can still pay** (envelope sit/biome/apo matches bound
+tickets; FlyingHigh ≥50 km). Living recover + `sci_run=0` is **not**
+that path — do not light last `cli:` on the `sci-unchanged-recovered`
+bump. Wreck rec=no re-flies last `cli:` **when Hank schedules it**.
+Pad abort sit=`pre_launch` re-flies last `cli:` when scheduled
 (control miss, T-472) — High still cannot pay pad, and that does not
 idle the loft. Loft-only High/Low bind + short recovered dud re-flies
-last `cli:` (T-475) — High cannot pay 655 m landed, and that does not
-idle the loft. Miss (nonzero / ABORT / `science (none)` / `science skip`):
+last `cli:` when scheduled (T-475) — High cannot pay 655 m landed,
+and that does not idle the loft. Miss (nonzero / ABORT / `science (none)` / `science skip`):
 spawn **Lars** on the named **helper** file (`hop_factory_pad.py` pad-RF, `hop_factory.py` inland, or the living rocket's compose). Warp / sit / timeout / leftover-abort / chute-sit blocks → Wernher `physics_warp.py`.
 Last-flight abort `shear` / `hop shear parts N→M` is **not** the miss
 class when tape already had throttle 1 + thrust 0 + plume no + fuel
@@ -387,13 +395,14 @@ is not that rebind either (T-475). Pad waits only for
 leftover and for a patch of the **live** control `.py` (cannot hop
 while Lars writes the named control `.py`). **Do not hire Gene to replan a miss.**
 If `go:` is still yes and the hang still capable **and the bind
-still pays**: re-fly last `cli:` after leftover. If this hang died
-(aero shear, modules gone): next **already-signed** Gus alt — Gene
-stamps that fly ticket only if it has no `go:` yet.
-No alt on disk → hire Gus while leftover cleans, not a novel.
-Stop the string only: dirty hangar (`recover` / `blocked`), f013
-fail, Os wait, crewed/firsts Learn, empty shelf (no capable craft
-in the batch), `go: wait`. Gene **Learn** is campaign-stop only:
+still pays**: re-fly last `cli:` after leftover **when Hank
+schedules it**. If this hang died (aero shear, modules gone): next
+**already-signed** Gus alt — Gene stamps that fly ticket only if it
+has no `go:` yet. No alt on disk → hire Gus while leftover cleans,
+not a novel. Stop the string: dirty hangar (`recover` / `blocked`),
+f013 fail, Os wait, crewed/firsts Learn, empty shelf (no capable
+craft in the batch), `go: wait`. Hank may also sit the pad for
+ground — idle is not a miss. Gene **Learn** is campaign-stop only:
 `ops next` hires him when campaign is **not** `uncrewed` and
 `payload.learn` is empty (crewed / `campaign: none` / firsts).
 Uncrewed Learn is already on the ticket from `attach-run`.
@@ -602,7 +611,7 @@ Ask is a ticket id, not a Return key. Then `tickets feedback`.
 
 **Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`. Then `tickets feedback`.
 
-**Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). After Commander CLI: `desk`, `attach-run`, `landing`, leftover, then `ops next`. Child skipped `tickets feedback` → nag; do not idle the pad (harvest writes). Desks must not emit `need_*` or Return `good:`/`self:`/`them:`. Do not hire the Commander to explain the hop. Warp law is Wernher.
+**Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). He **schedules hops**; pad may sit while ground cooks. After Commander CLI: `desk`, `attach-run`, `landing`, leftover, then `ops next`. Child skipped `tickets feedback` → nag; harvest writes; idle is not a miss. Desks must not emit `need_*` or Return `good:`/`self:`/`them:`. Do not hire the Commander to explain the hop. Warp law is Wernher.
 
 **Pilot** — `result:` `exit:` `handoff:` `abort:` `last:`. Then `tickets feedback` on the fly ticket (`--claim`, not a landing essay). Drop `envelope:` / `improve:` / `feedback:` / `good:` / `need_*`. CLI exit **ends** the hop. Miss `type=control` only **during** the hop if still connected; after exit Hank opens from last-flight. Hop abort `ksc leftover` → Hank, not Commander recover. No attach-run, no landing, no jsonl cite.
 

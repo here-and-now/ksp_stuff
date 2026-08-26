@@ -56,9 +56,9 @@ Three RSI clocks, all **tickets**:
 
 1. **Org (Mortimer).** Trip: same ops-class failure 3 times, or Os
    org, or Hank files `type=org` P0. Mutates PROTOCOL / job cards.
-2. **Ops (Hank).** Pad-idle vs fly-time is a metric, not a vibe.
-   Recurring fingerprint → auto `type=rsi`. (No `ops-log.jsonl` in
-   this slice.)
+2. **Ops (Hank).** Pad-idle vs fly-time is a metric, not a miss.
+   Hank schedules hop vs ground. Recurring fingerprint → auto
+   `type=rsi`. (No `ops-log.jsonl` in this slice.)
 3. **Software (Wernher CSE).** Architecture of how we *see* the world
    (desk, leftover, crash UI, telem frame). Vehicle control patches
    stay Lars. XOR: one of them patches `.py` per miss.
@@ -81,7 +81,8 @@ card. At
 count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` → desk
 **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only the
 CLI). `ops next` prints `rsi:` and hires Mortimer lock-free; lock
-live skips org; fly_ready still hires him without emptying the pad.
+live skips org; fly_ready still hires him without emptying the pad
+as a religion. Idle is not a miss.
 That is the imperative: the loop *must* open the ticket; no LLM “we
 should maybe improve.”
 
@@ -286,7 +287,8 @@ would change agree.md) and lock free:
     katherine only if dynamics set or --tag dynamics / ask desk=katherine
     eleanor only if --tag constellation / ask desk=eleanor
     # Gene is not this merge. Fly ready that still pays agree.md
-    # still flies (plan does not empty the pad).
+    # may still fly — Hank schedules hop vs ground. Plan may sit
+    # the pad; idle is not a miss.
     return
 
 if fly ticket T with go empty or wait:
@@ -352,12 +354,13 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
 
 - Wall-clock is scarce. Plan / bind / warp so hops pay. One hire,
   many tickets of the same desk.
-- Tape is the product. An idle pad is a miss. Do **not** idle the
-  pad as a religion: a **living recover that cannot pay is also a
-  waste.** A 10–15 min Gene conference
-  after a test hop is the anti-pattern. Conference-then-+0 hops
-  are the same waste. A Commander after-flight review is the same
-  waste — CLI exit ends the hop.
+- Tape is the product. **Hank schedules hops.** Pad may sit while
+  ground cooks. Idle is **not** a miss. Do **not** empty the pad as
+  a religion. A **living recover that cannot pay is still waste.**
+  Wreck rec=no re-flies last `cli:` when Hank schedules it. A 10–15
+  min Gene conference after a test hop is the anti-pattern.
+  Conference-then-+0 hops are the same waste. A Commander
+  after-flight review is the same waste — CLI exit ends the hop.
 - **This-hop bind** is last-envelope biome/sit. Forest tape is
   Forest. Grasslands waits Grasslands. SrfLanded vs splash match
   the hang. FlyingHigh waits ≥50 km (wait is not a sit at 800 m
@@ -365,11 +368,11 @@ already-signed alt (Gene only if that fly ticket has no `go:`).
   stack cannot reach. After living recover + sci unchanged, do not
   re-fly a bind the envelope cannot pay — Linus rebinds from the
   envelope, or Gene picks the next signed hang that can bank.
-  Wreck rec=no is a miss: re-fly last `cli:`. Pad abort
-  sit=`pre_launch` is the same miss (control, not a High rebind).
-  Loft-only High/Low bind + short recovered dud is the same miss
-  (T-475) — do not idle High forever on 655 m. Forest leftover vs
-  Shores land still waits.
+  Wreck rec=no is a miss: re-fly last `cli:` **when Hank
+  schedules it**. Pad abort sit=`pre_launch` is the same miss
+  (control, not a High rebind). Loft-only High/Low bind + short
+  recovered dud is the same miss (T-475) — do not idle High forever
+  on 655 m. Forest leftover vs Shores land still waits.
 - Warp the coast (physics 2–4×; uplink `phys-warp` / `no_warp`;
   never rails / WarpTo). High dwell is not a burn. `chute_arm_sit`
   1× is Arm, not apo. Thick air ≤18 km stays 1×. Sitting 1× for

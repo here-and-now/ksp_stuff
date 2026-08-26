@@ -64,7 +64,8 @@ Three loops: **Commander** (flying), **Flight Director** (Gene `go:`
 on a fly ticket), **R&D** (Lars VSE *or* Wernher CSE). **RSI** is
 tickets (`type=rsi`) plus Mortimer on org mutation. Hank runs the
 ops loop every turn (`ops next`). Ground work may run while
-`flight.lock` is live. Pad occupancy first. Inner circle: **Lars** + **Gus** + **Linus** sit
+`flight.lock` is live. Hank schedules hop vs ground; idle is not a
+miss. Inner circle: **Lars** + **Gus** + **Linus** sit
 `docs/program/agree.md` (one `ops --tag plan` ticket, three parallel
 hires on that id), then split to own files. Not leftover wreck
 tickets. Not Gene as merge. Katherine opt-in (`ops --tag ask --desk
@@ -270,8 +271,10 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   `stack: ok` **and** the abort is a kRPC trap, **or** open
   `type=systems` (Wernher without a miss — kRPC explore is standing).
   **Do not hire Gene to consider the miss.** If leftover clean and
-  `protocol fly` → `fly: yes` (hang still capable, `go:` still yes):
-  spawn the Commander with that `cli:` — pad occupancy. Hang died
+  `protocol fly` → `fly: yes` (hang still capable, `go:` still yes)
+  **and Hank scheduled the hop**: spawn the Commander with that
+  `cli:`. Idle is not a miss. Wreck rec=no re-flies when Hank
+  schedules it. Hang died
   and a Gus alt is already `capable: yes` → Gene only if that fly
   ticket has no `go:`. No alt → Gus while leftover cleans. Lithobrake
   freeze keeps throttle 1.

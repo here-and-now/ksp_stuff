@@ -42,7 +42,8 @@ count, pitfall) — not only Os letters. Uncrewed Learn is kernel
 `attach-run`; Gene Learn is campaign-stop only. Do not restore Batch
 Learn. Do not flip `needs_learn`. `need_os` only for CHARTER **creed**
 or a roster **seat**. Do not hire yourself every Learn. An RSI letter
-does **not** empty the pad.
+does **not** empty the pad as a religion; Hank may sit it while
+ground cooks. Idle is not a miss.
 
 ## CTT spend
 
@@ -57,11 +58,13 @@ Split by the tree. Ad astra. `generalRocketry` spent. Next CTT is
 `advRocketry` **45** (Terrier; bank ~7.02 does not pay 45). Pad belongs
 to **C-534** (FED, no HS, no girders; recover silk; C-504 shelf) until that node — 268 km loft
 is not orbit. C-477 is blob (`capable: no`). Do not spend crumbs. Do
-not spend the next 45 on aviation while Terrier is the orbit engine. Pad occupancy: tape is the product; an **idle pad is a sin**. A
-**living recover that cannot pay is also a waste.** Living recover +
-`sci_run=0` is not clean-0 re-fly — envelope sit/biome must match
-bound tickets. Wreck rec=no re-flies last `cli:`. Time is scarce:
-plan / bind / warp so hops pay. Stumble → ticket (RSI). Thin tape →
+not spend the next 45 on aviation while Terrier is the orbit engine. Pad occupancy: tape is the product; **Hank schedules hops**. Pad may
+sit while ground cooks. Idle is **not** a miss. Do not empty the pad
+as a religion. A **living recover that cannot pay is still waste.**
+Living recover + `sci_run=0` is not clean-0 re-fly — envelope
+sit/biome must match bound tickets. Wreck rec=no re-flies last
+`cli:` when Hank schedules it. Time is scarce: plan / bind / warp so
+hops pay. Stumble → ticket (RSI). Thin tape →
 `--type systems --fingerprint <stem>`. Side-by-side science /
 envelope bind → Linus. “Build a new stack” / keep alts signed →
 `--type vehicle` (Gus). QOL / kernel / unused kRPC / **log more** →

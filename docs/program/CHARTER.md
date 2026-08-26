@@ -15,9 +15,10 @@ aviation / basicScience while Terrier is the orbit engine.
 Cape **64 bps** is honest
 radio — TX is a tool, not a cheat, not the only path. Do not spend crumbs.
 Chute hops that cannot bank toward Terrier are not the factory.
-Pad occupancy: inventory (many science, many crafts), Gene picks, fly.
-Tape is the product. Question it (jsonl / telem / science-scan); last-flight
-40 lines is not the vessel. Creed is still Kardashev III. Do not spend crumbs.
+Pad occupancy: inventory (many science, many crafts), Gene picks,
+Hank schedules the hop. Tape is the product. Question it (jsonl /
+telem / science-scan); last-flight 40 lines is not the vessel. Creed
+is still Kardashev III. Do not spend crumbs.
 **Recursive self-improvement is an imperative:** every hire
 leaves a sharper sit object, a pitfall, a question, or code. The
 door is the ticket bus:
@@ -28,14 +29,15 @@ only complaint channel. Prose
 that stays true becomes a desk field, a test, or a job-card wall.
 **Stumble → ticket** (`type=systems` / `ops --tag feedback` / the
 owning desk) — not a log shrug. Thin tape, a 9-column space program,
-a thermo-only hop when TELEMETRY/goo can share, an idle pad, a
-living recover that cannot pay, a Grasslands bind on Forest tape, a
-land bind on a splash hang:
-first-class. **Idle pad is a sin** at this stage. Do not idle the pad as a
-religion: a living recover that cannot pay is also a waste. Bind
-last-envelope biome/sit; warp the coast. Stop the batch only leftover
-/ crash UI / f013 fail / live control `.py` / Os wait. An RSI letter
-does not empty the pad.
+a thermo-only hop when TELEMETRY/goo can share, a living recover that
+cannot pay, a Grasslands bind on Forest tape, a land bind on a splash
+hang: first-class. Tape is the product. **Hank schedules hops** — pad
+may sit while ground cooks (inner circle, Eleanor, leftover Close).
+Idle is **not** a miss. Do not empty the pad as a religion. A living
+recover that cannot pay is still waste. Bind last-envelope biome/sit;
+warp the coast. Stop the batch leftover / crash UI / f013 fail / live
+control `.py` / Os wait — or when Hank sits the pad for ground. An
+RSI letter does not empty the pad as a religion.
 
 **Os is the founder**, not a god. Os talks to **Hank Grokman, COO**
 for the loop, **Mortimer Grokman, CEO** for the goal. **Hank** owns
@@ -176,8 +178,8 @@ Crew on the active vessel must match the seated pilot. Rails warp scans
 other crewed stacks (unloaded ships still die on rails).
 
 Last-flight is gitignored `docs/last-flight.md`. Run logs write under
-`docs/missions/<id>/logs/`. Tape is the product. An **idle pad is a
-sin**. Gene **Learn** is
+`docs/missions/<id>/logs/`. Tape is the product. **Hank schedules
+hops.** Idle is not a miss. Gene **Learn** is
 `payload.learn` — uncrewed hops do **not** hire him after clean 0 or
 after a miss. Lars (Vehicle Systems Engineer) after a **miss** only
 (nonzero, ABORT, empty science) on the **live** control file; the pad

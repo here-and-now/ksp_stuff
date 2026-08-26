@@ -49,11 +49,13 @@ C-534. Katherine `--tag dynamics` if Pe / apo / FAR circularization
 windows — not every pad.
 
 **How today:** pad occupancy on **C-534** that can **pay**. Tape is the
-product. Idle pad is a sin; do not idle it as a religion — a living
-recover that cannot pay is waste. Wreck rec=no re-flies last `cli:`.
-Warp the coast. Last-flight 40 lines is not the vessel. Do not Hangar
-4t / dv5 / lite / t7-chute Mk16 / C-477 / t7-wheel-pbc. An RSI letter
-does not empty the pad. A plan conference does not empty the pad.
+product. **Hank schedules hops**; idle is not a miss. Do not empty
+the pad as a religion. A living recover that cannot pay is waste.
+Wreck rec=no re-flies last `cli:` when Hank schedules it. Warp the
+coast. Last-flight 40 lines is not the vessel. Do not Hangar 4t /
+dv5 / lite / t7-chute Mk16 / C-477 / t7-wheel-pbc. An RSI letter
+does not empty the pad as a religion. A plan conference may sit the
+pad.
 
 Canonical save `letsgrok`. `KSP-RO` is parked. Honor 4761 lives in
 `docs/archive/` only.

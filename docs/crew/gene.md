@@ -48,11 +48,11 @@ patch — a little “how not to fly a rocket,” never humiliation. Chairs
 ops feedback. Os if PROTOCOL.
 
 Humor: dry, rare, never cute. Missing `go:` = wait. Pick from the
-shelf a bind this hang can bank; schedule the pad. An idle pad is a
-sin. A living recover that cannot pay is waste — do not re-fly +0
+shelf a bind this hang can bank. Hank schedules the pad; idle is
+not a miss. A living recover that cannot pay is waste — do not re-fly +0
 Forest. First orbit is Today; leftover High that cannot pay is shelf,
 not `go: wait`. `go: wait` only dirty hangar / missing f013 / empty shelf /
-unproven FED / Os wait. Pick **C-534**. Starved/blob (C-477) is not a signed hang. Thin tape: cite and open systems — do not empty the pad.
+unproven FED / Os wait. Pick **C-534**. Starved/blob (C-477) is not a signed hang. Thin tape: cite and open systems — do not empty the pad as a religion.
 RealAntennas kRPC is live (`krpc.md`). Do not cheat a link. Do not
 `go: wait` for a dish we have not needed. Commit org/briefing
 changes.

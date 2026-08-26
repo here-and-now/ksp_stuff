@@ -12,7 +12,7 @@ bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-516 mysteryGoo InSpaceLow 641/0
 duration_vs_high: High cannot pay; this loft sits InSpaceLow ~268 km; LITE 10s finishes; goo leftover remaining ~364s — silk recover the can
 recover: yes
 meco: lid 50 km live; independent off; Toggle InSpaceLow; silk descent — not circularize
-dynamics: still loft-only; 7x1500 Valiant TWR~0.78 sits; 7x1500 Reliant Δv~4.5 km/s apo~400–500 km Pe through planet; 4x1500 same 249–270 km family; circularize still Terrier after 45
+dynamics: still loft-only; C-534 4x1500 Valiant same 249–270 km family as C-504 (+~0.1 km/s); 7x1500 Valiant TWR~0.78 sits; 7x1500 Reliant Δv~4.5 km/s apo~400–500 km Pe through planet; circularize still Terrier after 45
 agreed: yes
 blocker: none
 ```
@@ -79,40 +79,41 @@ after High lid.
 
 ## Dynamics (Katherine, opt-in)
 
-Still loft-only. Six C-504 hops agree (16-23-52Z through
-19-08-49Z): loft-through apo **249–270 km**, sit=sub_orbital, Pe
-through the planet (ship peri ~−6358 km), apex horiz **39–84 m/s**
-vs circular **7.75–7.82 km/s** at 268–140 km. Pad mass **7.19 t** /
-dry **1.84 t** / kero **2415** (7×767 L = 5369 L, already the
-basicRocketry 800 L cap). Vac Δv **3.50–3.74 km/s** (Isp 270, MR
-3.8–4.1). Short **~4.1 km/s** of circular speed; **~5.7 km/s** of
-a ~9.4 km/s LEO budget. Leftover 23–32 kg (18-34-15Z 255 km /
-19-08-49Z 249 km) is 30–50 m/s, not a second burn. Valiant 100 kN /
-1 ignition spent at light. Burnout pitch 86–89 heading 299–302
-horiz <100 m/s — vertical, not a gravity turn. Q_max 22–24 kPa;
-FAR at apo is zero. InSpaceLow. Silk recovers this loft, not orbit.
+Still loft-only. C-534 (4×1500 L Valiant, 2700 kero, no girders)
+is the same apo/Pe family as C-504 tape. Six C-504 hops agree
+(16-23-52Z through 19-08-49Z): loft-through apo **249–270 km**,
+sit=sub_orbital, Pe through the planet (ship peri ~−6358 km), apex
+horiz **39–84 m/s** vs circular **7.75–7.82 km/s**. Pad mass
+**7.19 t** / dry **1.84 t** / kero **2415** (7×767 L = 5369 L,
+already the basicRocketry 800 L cap). Vac Δv **3.50–3.74 km/s**
+(Isp 270, MR 3.8–4.1). Short **~4.1 km/s** of circular speed;
+**~5.7 km/s** of a ~9.4 km/s LEO budget. Valiant 100 kN / 1
+ignition spent at light. Burnout pitch 86–89 heading 299–302 horiz
+<100 m/s — vertical, not a gravity turn. Q_max 22–24 kPa; FAR at
+apo is zero. InSpaceLow. Silk recovers this loft, not orbit.
 
-`generalRocketry` buys **1500 L/tank** (lengthMax 1.5 m) and
-**Reliant** (RF `liquidEngine` 215 kN / 0.42 t / Isp ~256–270 / **1
-ignition**). It does not buy a restart or 330 s. Apo/Pe family:
+C-534 vs that tape: 4×1500 L = 6000 L / 2700 kero vs 5369 L /
+2415 (~**+12%** propellant, girders gone). Vac Δv **~3.7–3.8 km/s**
+(TWR ~1.3). Apo maybe **~280–300 km**, still InSpaceLow, still Pe
+through the planet. What more tank buys at 4×1500: tens of km of
+apo, not a new family.
 
-- **7×1500 L Valiant:** pad TWR ~0.78. Does not loft. Not a higher
-  family — it sits.
+`generalRocketry` also unlocks Reliant (RF 215 kN / 0.42 t / Isp
+~256–270 / **1 ignition**) and lets a tank fill to 1500 L. It does
+not buy a restart or 330 s.
+
+- **7×1500 L Valiant:** pad TWR ~0.78. Does not loft.
 - **7×1500 L Reliant:** TWR ~1.7 so the extra tank *flies*. Vac Δv
-  ~4.4–4.6 km/s (MR ~5.8). Vertical ballistic apo maybe
-  **~400–500 km**, still InSpaceLow, still sit=sub_orbital, Pe
-  still through the planet. Apex horiz stays tens of m/s unless
-  the pulse gravity-turns; a turn at 4.5 km/s still leaves Pe on
-  the ground (need ~7.8 km/s horiz). Mass ratio for 7.7 km/s at
-  270 s is ~18; this hang is ~6.
-- **4×1500 L** (~6 kL, fewer joints, Valiant TWR ~1.3): same
-  **249–270 km** family as C-504 tape. What more tank buys if you
-  do not fill 7×1500: almost nothing.
-- **1×1500 L** is *less* fuel than 7×767. Shorter loft.
+  ~4.4–4.6 km/s. Vertical ballistic apo maybe **~400–500 km**,
+  still sit=sub_orbital, Pe still through the planet. A gravity
+  turn at 4.5 km/s still leaves Pe on the ground (need ~7.8 km/s
+  horiz). Mass ratio for 7.7 km/s at 270 s is ~18; this hang is
+  ~6.
+- **Reliant vs Valiant** is TWR (and 0.33 t) so 7×1500 can leave
+  the pad — not circularize Δv. Both 1 ignition.
 
-Reliant vs Valiant is TWR (and 0.33 t engine) so 7×1500 can leave
-the pad — not circularize Δv. Both 1 ignition. Lid-MECO at 50 km
-vz 1.29 km/s is still apo 137 km High. Phase 2 remains
-`advRocketry` 45 Terrier: restartable vacuum second stage, Pe
-above the ~140 km High lid, first stage gravity-turn east. Do not
-Hangar a circularize claim on this tree.
+Lid-MECO at 50 km vz 1.29 km/s is still apo 137 km High. Phase 2
+remains `advRocketry` 45 Terrier: restartable vacuum second stage,
+Pe above the ~140 km High lid, first stage gravity-turn east. Do
+not Hangar a circularize claim on this tree. C-534 is the loft
+successor, not an orbit hang.

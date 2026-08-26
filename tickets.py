@@ -1373,6 +1373,8 @@ def waste_blocks_refly(
     """Living +0 is not clean-0 until bind can pay envelope or hang/bind changed.
 
     Wreck rec=no is a miss — re-fly last cli. Not this latch.
+    Pad abort rec=yes sit=pre_launch is still living +0 (T-468):
+    FlyingHigh / FlyingLow / splash cannot pay pad.
     """
     if not ticket:
         return False

@@ -17841,6 +17841,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-26T09:14:58Z",
+            "claim": "After Linus rebound: T-404/T-460 unbound, T-461 Surface@Shores bound. hang_or_bind_changed + bind_matches_envelope unlatched waste_blocks_refly (tickets.py:1388-1391). protocol fly yes. Latch law still T-346; this sit pays because bind changed, not because pad abort is wreck. T-471 remains Lars pad-RF.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -17854,7 +17862,7 @@
       "tags": [],
       "title": "RSI sci-unchanged-recovered \u00d719",
       "type": "rsi",
-      "updated": "2026-08-26T09:13:36Z"
+      "updated": "2026-08-26T09:14:58Z"
     },
     "T-469": {
       "assignee": "",
@@ -17937,5 +17945,5 @@
       "updated": "2026-08-25T22:10:10Z"
     }
   },
-  "updated": "2026-08-26T09:13:36Z"
+  "updated": "2026-08-26T09:14:58Z"
 }

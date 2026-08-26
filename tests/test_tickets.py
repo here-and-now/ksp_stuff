@@ -1985,6 +1985,47 @@ class TestPacketAttachAndInbox(unittest.TestCase):
             )
         )
 
+    def test_waste_blocks_refly_pre_launch_pad_abort_cannot_pay(self):
+        """T-468: pad abort rec=yes sit=pre_launch cannot pay PresMat trio."""
+        craft = "kspstuff-hop-valiant-t7-wheel-pbc"
+        for sit, biome, title in (
+            ("FlyingHigh", "", "FlyingHigh barometer"),
+            ("FlyingLow", "", "FlyingLow barometer"),
+            ("SrfSplashed@Shores", "Shores", "Shores splash barometer"),
+        ):
+            tickets.open_ticket(
+                type="science",
+                title=title,
+                reporter="Linus",
+                payload={
+                    "experiment_id": "barometerScan",
+                    "situation": sit,
+                    "biome": biome,
+                    "bound": "yes",
+                    "craft": craft,
+                },
+            )
+        landing = {
+            "landing": "soft",
+            "sit": "pre_launch",
+            "biome": "Shores",
+            "apo_max": 85.431,
+            "recoverable": True,
+            "sci_run": False,
+            "sci_bank": 2.29,
+        }
+        snap = tickets.bind_snapshot(craft=craft)
+        self.assertFalse(tickets.bind_matches_envelope(landing))
+        fly = {"payload": {"landing": landing, "waste": snap}}
+        self.assertTrue(tickets.waste_blocks_refly(fly, craft=craft))
+        wreck = {**landing, "recoverable": False}
+        self.assertFalse(
+            tickets.waste_blocks_refly(
+                {"payload": {"landing": wreck, "waste": snap}},
+                craft=craft,
+            )
+        )
+
     def test_bind_matches_envelope_flyinglow_pays_short_hop(self):
         tickets.open_ticket(
             type="science",

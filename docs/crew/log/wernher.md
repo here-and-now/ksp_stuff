@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-468 harvest ×19: latch still-true (T-346). Pad abort pre_launch rec=yes sci_run=0 cannot pay PresMat trio; protocol fly wait. Wreck rec=no re-flies. No hop_factory. Never revert.
+
 - 2026-08-26 — org-rsi slice 4: git mv novels to `docs/archive/2026-08-26-org-rsi/`; world-model chair stub; blocks Gene CLI; NUKE sit-card/BOARD; classify archive-first. No Hangar. No hop. Never revert.
 
 - 2026-08-26 — org-rsi slice 5: tape id `uncrewed` (`current.md` flight: uncrewed, pilot: none; capcom stays). Dossier from live t7-wheel / T-081 / T-404 dumps. Historical `jebediah/logs` stay. No Hangar. No hop. Never revert.

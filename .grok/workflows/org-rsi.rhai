@@ -1,7 +1,7 @@
 let meta = #{
     name: "org-rsi",
     description: "Reusable house org-RSI: optional census, sharded design, skeptics, thin merge, optional pad-safe apply. Report in archive, never a live program novel.",
-    when_to_use: "Major org overhaul: markdown/card/injection rot, ticket bus supposed to be comms, or Os wants census then optional apply without a live docs/program letter",
+    when_to_use: "Major org overhaul: markdown/card/injection rot, ticket bus supposed to be comms, live radio (parent treats hop stdout as the pad), or Os wants census then optional apply without a live docs/program letter",
     phases: [
         #{ title: "Census", detail: "sharded live tree when no prior (or args.census true)" },
         #{ title: "Coverage", detail: "prior index vs live tree; gaps only" },
@@ -194,6 +194,8 @@ fn law(prior) {
     p += "Standing intent (not proven file classes — verify on disk): ticket bus is comms; MD only when a ticket cannot hold it; ";
     p += "do not inject lessons.md as miss physics; uncrewed tape should not be named after a kerbal seat; spotter is retired; ";
     p += "Lars compose from Wernher blocks is a later OPEN-TICKET, not a pulse retune this apply; pad stays hot; depth 1; one control writer.\n";
+    p += "Live radio: hop light is not airborne. Parent mid-hop reads ship.md; one stuck PNG when sit/MET/log disagree; do not wait on hop stdout. ";
+    p += "TUI is phase start / phase end / unexpected. Skip-save Tracking is not Close. recover() rec=yes then persist; if persist fails stay Flight.\n";
     p += "Keep unless disk proves otherwise: learn-rsi attach-run, lars-rsi S/M/C prefixes + hop_factory_pad.py as the pad-RF file.\n";
     p += "Do not restore spotter as spawnable, Gene-as-merge, Batch Learn, Return keys, need_* as the bus. ";
     p += "Do not leave a new live docs/program/*.md org novel. Reports go to archive or workflow scratch.\n";
@@ -591,9 +593,9 @@ djobs.push(#{
     prompt: design_prompt(
         prior,
         "comms-law + injection-law + hank-in-between",
-        "Who talks to whom; what a cold hire loads; what Hank still opens to run ops next. Packet vs parent vs job-card Inputs.",
+        "Who talks to whom; what a cold hire loads; what Hank still opens to run ops next. Packet vs parent vs job-card Inputs. TUI vs hop pid vs ship.md vs screenshot.",
         "- comms.md\n- interviews.md\n- census.md\n- friction.md\n",
-        "- AGENTS.md When to spawn + packet\n- docs/program/PROTOCOL.md Spawn packet + Handoffs + Files + Feedback\n- docs/program/OPS.md split of power\n- tickets.py packet() skim\n- .grok/agents/hank.md first command\n- docs/program/desk.md first 40\n- docs/program/tickets/BRIEF.md\n"
+        "- AGENTS.md When to spawn + packet + TUI 1 Hz / phase edges\n- docs/program/PROTOCOL.md Spawn packet + Handoffs + Files + Feedback\n- docs/program/OPS.md split of power\n- tickets.py packet() skim\n- .grok/agents/hank.md first command\n- docs/program/desk.md first 40\n- docs/program/ship.md first 20\n- docs/program/tickets/BRIEF.md\n"
     ),
 });
 djobs.push(#{
@@ -669,15 +671,15 @@ djobs.push(#{
     ),
 });
 djobs.push(#{
-    label: "design-compose-sequence",
+    label: "design-live-radio",
     agent_type: "org-review",
     capability_mode: "read-only",
     prompt: design_prompt(
         prior,
-        "compose-ticket + sequence + do-not-touch",
-        "Name the later compose ticket. Do not retune pulse this run. Order at most 8 pad-safe slices with owner. Hard do-not-touch list.",
-        "- harvest.md\n- friction.md\n- census.md\n",
-        "- hop_factory.py header (read, do not edit)\n- hop_factory_pad.py header\n- physics_warp.py header\n- docs/program/blocks.md first 40\n- .grok/agents/lars.md Where the cause lives\n- .grok/agents/wernher.md control blocks\n- PROTOCOL.md / OPS.md compose law\n"
+        "live radio + pad occupancy + hop-light vs airborne",
+        "How the parent knows the rocket is flying. ship.md is radio. One stuck PNG when sit/MET/log disagree. hop light is not airborne. Do not wait on hop stdout. TUI phase start/end/unexpected. Do not retune pulse this run — OPEN-TICKET if the helper must print plume. Sequence leftover slices in Merge.",
+        "- harvest.md\n- friction.md\n- comms.md\n",
+        "- AGENTS.md TUI / screenshot stuck / ship.md / lock-live status GET\n- .grok/agents/hank.md first command + radio\n- docs/program/ship.md first 20\n- docs/program/PROTOCOL.md Handoffs + Files\n- hop_factory_pad.py hop light / _pad_plume header (read, do not edit)\n- screenshots/ (list_dir names only)\n- docs/last-flight.md if present (gitignored — MISSING is valid)\n"
     ),
 });
 
@@ -693,7 +695,7 @@ let headings = [
     "lessons.md replacement",
     "mission identity",
     "job-card cuts",
-    "compose-ticket + sequence + do-not-touch",
+    "live radio + pad occupancy + hop-light vs airborne",
 ];
 
 let design_texts = [];

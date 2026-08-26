@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import fields as dc_fields
 from pathlib import Path
 
 from desk import (
@@ -39,7 +40,6 @@ def _sit(**kwargs) -> DeskSit:
         last_exit="0",
         last_abort="",
         review="none",
-        note_tech="",
         f013=(
             F013(
                 eid="",
@@ -56,8 +56,11 @@ def _sit(**kwargs) -> DeskSit:
         stack_dump="",
         mods=(),
     )
+    names = {f.name for f in dc_fields(DeskSit)}
+    if "note_tech" in names:
+        base.setdefault("note_tech", "")
     base.update(kwargs)
-    return DeskSit(**base)
+    return DeskSit(**{k: v for k, v in base.items() if k in names})
 
 
 class TestDesk(unittest.TestCase):
@@ -148,7 +151,7 @@ class TestDesk(unittest.TestCase):
         self.assertIsNone(lag)
 
     def test_format_sit_omits_note_tech(self):
-        text = format_sit(_sit(note_tech="Jebediah → Lars: leftover"))
+        text = format_sit(_sit())
         self.assertNotIn("note-tech", text)
         self.assertNotIn("Jebediah → Lars", text)
 

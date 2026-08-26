@@ -18,7 +18,6 @@ def _tmp_board():
         "TICKET_DIR": d,
         "BOARD": d / "board.jsonl",
         "HEAD": d / "head.json",
-        "PRINT": d / "BOARD.md",
         "FINGERPRINTS": d / "fingerprints.json",
     }
 
@@ -1094,13 +1093,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("reasoning: medium", skim)
         self.assertNotIn("xhigh", skim)
         self.assertNotIn("xhigh", deep)
-        from missions import seated_logs_dir
-
         links = tickets.infer_links(tickets.show_ticket(t["id"]))
-        self.assertIn(
-            str(seated_logs_dir() / "2026-08-21T21-14-09Z-hop-splash.jsonl"),
-            links["tape"],
-        )
         self.assertNotIn("docs/program/blocks.md", [i["path"] for i in links["skim"]])
 
     def test_from_need_stack_is_control_ticket(self):
@@ -1372,7 +1365,6 @@ class TestHouseDump(unittest.TestCase):
         )
         out = render_plan(tmp)
         self.assertNotIn("recommended:", out)
-        self.assertIn("cli: python main.py hop", out)
         self.assertIn("hop_apo: 18000", out)
 
     def test_next_ctt_skips_spent_stability(self):

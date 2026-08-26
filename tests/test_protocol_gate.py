@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import fields as dc_fields
 from pathlib import Path
 
 from desk import DeskSit, F013
@@ -28,7 +29,6 @@ def _sit(**kwargs) -> DeskSit:
         last_exit="0",
         last_abort="",
         review="none",
-        note_tech="",
         f013=(
             F013(
                 eid="temperatureScan",
@@ -45,8 +45,11 @@ def _sit(**kwargs) -> DeskSit:
         stack_dump="",
         mods=("FAR",),
     )
+    names = {f.name for f in dc_fields(DeskSit)}
+    if "note_tech" in names:
+        base.setdefault("note_tech", "")
     base.update(kwargs)
-    return DeskSit(**base)
+    return DeskSit(**{k: v for k, v in base.items() if k in names})
 
 
 _FLYING = (

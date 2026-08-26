@@ -51,6 +51,7 @@ class TestProtocolDoc(unittest.TestCase):
         self.assertNotIn("need_builder", mortimer)
         self.assertTrue(Path("docs/program/GLOSSARY.md").is_file())
         self.assertTrue(Path("docs/missions/jebediah/logs").is_dir())
+        self.assertTrue(Path("docs/missions/uncrewed/logs").is_dir())
         self.assertFalse(Path("docs/missions/jebediah/sorties").is_dir())
 
 

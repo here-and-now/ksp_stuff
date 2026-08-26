@@ -11,7 +11,7 @@ hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
 bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-516 mysteryGoo InSpaceLow 641/0.18 leftover 3.41
 duration_vs_high: High cannot pay; this loft sits InSpaceLow ~268 km; LITE 10s finishes; goo leftover remaining ~364s — silk recover the can
 recover: yes
-meco: lid 50 km live; independent off; High dwell coast
+meco: lid 50 km live; independent off; Toggle InSpaceLow; silk descent — not circularize
 dynamics: MECO@50km ~271s vac / ~260s FAR in 50–140 (vz 1.29 km/s apo 137 km); T-404 305s cannot pay
 agreed: yes
 blocker: none
@@ -56,17 +56,19 @@ Toggle in space. f013 Goo start on_craft; LITE hosted OKTO PAW.
 
 ## Pulse (Lars)
 
-`hop_factory.py` inland compose. Pad-RF `hop_factory_pad.py` (one
-sit). Throttle 1 + SAS vertical until lid. MECO at 50 km **live**
-alt: MainThrottle 0, setpoint 0, independent off. Then High dwell
-coast — not a burn, not inland-through-burnout. 17-01-10Z printed
-that sit at 55 km throttle 1. After that gate, 17-13-14Z still
-emptied tanks by MET 153 alt 98 km apo 270 km; PresMat dwell in
-space, sci +0. `_hold_lid` after lid is MECO. Log must not print
-hold inland through burnout after High lid. Residual vz at lid
-still exits 140 km — that is the fight; 305 s in 50–140 km is not
-MECO-at-lid alone. Hang owns recover. Do not retune MECO / lid /
-silk to the last shear.
+This-hop is loft, not orbit. `hop_factory.py` inland compose. Pad-RF
+`hop_factory_pad.py` (one sit). Throttle 1 + SAS vertical until lid.
+MECO at 50 km **live** alt: MainThrottle 0, setpoint 0, independent
+off. `_hold_lid` after lid is MECO — not inland-through-burnout
+(17-01-10Z throttle 1 at 55 km; 17-13-14Z emptied tanks MET 153 apo
+270 km). After lid, Toggle InSpaceLow when the live sit is space
+(`_space_low_sit`); High cannot-pay is not space-done. Arm Nylon on
+descent (`_space_silk_arm_sit`) — recover yes, hang owns silk. Do not
+circularize: no vacuum engine; Pe stays on the ground. Circularize
+pulse waits `advRocketry` 45 Terrier — Pe above ~140 km High lid is
+that sit, not this file this hang. Leftover later. Do not retune MECO
+/ lid / silk to High 305 s or to the last shear. Log must not print
+hold inland through burnout after High lid.
 
 ## Dynamics (Katherine, opt-in)
 

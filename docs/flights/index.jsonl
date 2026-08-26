@@ -155,3 +155,4 @@
 {"stamp": "2026-08-26T12-09-06Z", "command": "hop", "flight": "uncrewed", "path": "docs/missions/uncrewed/logs/2026-08-26T12-09-06Z-hop.jsonl", "samples": 9, "landing": "soft", "impact_ms": null, "heading": null, "sit": "pre_launch"}
 {"stamp": "2026-08-26T12-18-51Z", "command": "hop", "flight": "uncrewed", "path": "docs/missions/uncrewed/logs/2026-08-26T12-18-51Z-hop.jsonl", "samples": 9, "landing": "soft", "impact_ms": null, "heading": null, "sit": "pre_launch"}
 {"stamp": "2026-08-26T14-45-39Z", "command": "hop", "flight": "uncrewed", "path": "docs/missions/uncrewed/logs/2026-08-26T14-45-39Z-hop.jsonl", "samples": 21, "landing": "soft", "impact_ms": null, "heading": null, "sit": "pre_launch"}
+{"stamp": "2026-08-26T14-57-37Z", "command": "hop", "flight": "uncrewed", "path": "docs/missions/uncrewed/logs/2026-08-26T14-57-37Z-hop.jsonl", "samples": 14, "landing": "catastrophic", "impact_ms": 118.997, "heading": 302.247, "sit": "flying"}

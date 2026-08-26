@@ -48,7 +48,12 @@ readers are legal; they do not write Control, scene, jsonl, `ship.md`,
 or last-flight. Uncrewed: Hank
 starts `cli:`. Crewed/firsts: Commander is abort officer, not the PID.
 **Katherine Grokman, Flight Dynamics** models tape windows (atmosphere, Q,
-heading). Background. Rare asks. Not a kRPC writer. Call people by **name and title**. Voices: `docs/crew/<slug>.md` (half a page;
+heading). Background. Rare asks. Not a kRPC writer.
+**Iris Grokman, Director of Constellation Operations** owns RealAntennas,
+Cape/ground, how the network reaches future crafts and satellites that
+do not exist yet. Opt-in. Disk only. Does not write `.py`. Reports
+what she needs from Wernher. Not Verena (press), not Katherine
+(windows), not Walt (CAPCOM). Call people by **name and title**. Voices: `docs/crew/<slug>.md` (half a page;
 logs in `docs/crew/log/`).
 Honest miss, then patch — a little how-not-to-fly-a-rocket, never
 humiliation. Never revert to launch, quickload, return to VAB, or
@@ -124,6 +129,8 @@ Planning is a **conference on files**. Flying is Gene → Commander.
 | **Mortimer Grokman** | CEO | goal / slate; house RSI (Practice, PROTOCOL, job cards); honest science-node save edit | fly, craft, GameData, rewind; leftover `need_qol` → Wernher (`type=systems`) |
 | **Walt Grokman** | CAPCOM (PAO to Os) | TUI on phase edges | planning, PR stories |
 | **Verena Grokman** | Communications | `README.md`, `docs/press/` | stick, Hangar, uplink, `.py` |
+| **Katherine Grokman** | Flight Dynamics | tape windows (atmosphere, Q, FAR) | kRPC, Hangar, every-turn pad occupancy |
+| **Iris Grokman** | Director of Constellation Operations | RealAntennas, Cape/ground, future crafts / sats | `.py`, kRPC Session, press, windows, CAPCOM |
 | **Val / Bill / Bob** | Pilot / FE / MS | one seated `phase` | rewrite the plan |
 
 Linus briefs **Gene** (what / when / which part). Gene copies that into

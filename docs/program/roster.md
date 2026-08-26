@@ -14,6 +14,7 @@ Ground is not launched. Pilots map 1:1 to in-game kerbals when available.
 | `docs/crew/linus.md` | Linus Grokman | Research director |
 | `docs/crew/verena.md` | Verena Grokman | Communications |
 | `docs/crew/katherine.md` | Katherine Grokman | Flight Dynamics — tape windows |
+| `docs/crew/iris.md` | Iris Grokman | Director of Constellation Operations — RA / Cape / future crafts |
 | `docs/crew/jebediah.md` | Jebediah Grokman | Pilot |
 | `docs/crew/valentina.md` | Valentina Grokman | Pilot (stub) |
 | `docs/crew/bill.md` | Bill Grokman | Pilot / flight engineer |

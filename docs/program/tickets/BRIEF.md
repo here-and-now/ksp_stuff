@@ -56,6 +56,7 @@ python main.py tickets open --type ops --tag feedback --title "…" \
   --fingerprint sci-unchanged-recovered
 python main.py tickets open --type ops --tag plan --title "sit hang bind recover meco" --desk hank
 python main.py tickets open --type ops --tag ask --desk katherine --title "High-band / FAR window"
+python main.py tickets open --type ops --tag ask --desk iris --title "Cape path / future craft"
 python main.py tickets stamp T-NNN --field go --value yes --who gene
 python main.py tickets stamp T-NNN --field learn --value "…" --who gene
   # campaign-stop / crewed / firsts only — uncrewed is attach-run
@@ -74,6 +75,7 @@ python main.py tickets feedback T-NNN --claim "…"
 `ops --tag ask|feedback|explore|plan`. `--tag plan` is the inner-circle
 hire (Lars + Gus + Linus on **that** ticket; `docs/program/agree.md`).
 `--tag dynamics` / `ops --tag ask --desk katherine` pulls Katherine.
+`--tag constellation` / `ops --tag ask --desk iris` pulls Iris.
 At most tag `learn` — no new TYPE. Plan is not feedback (no
 `--fingerprint` required).
 Control/systems patches: `python -m pytest tests/test_physics_warp.py tests/test_hop.py tests/test_pad_science.py -q`.
@@ -92,6 +94,12 @@ Katherine (Flight Dynamics) is disk tape only: `telem --window`, not jsonl.
 Opt-in: `ops --tag ask --desk katherine` or `--tag dynamics` when
 `agree.md` needs High-band / FAR. Stamp `verify` when waiting for more
 hops. Not every `ops next`.
+
+Iris (Director of Constellation Operations) is disk only: `python main.py
+comms` (ConfigCache, no Session), `docs/program/ra-rate.md`. Opt-in:
+`ops --tag ask --desk iris` or `--tag constellation` when Cape / ground
+/ a future craft needs a path. Reports Wernher asks. Not every
+`ops next`. Kernel `DESKS` register is Wernher until `--desk iris` works.
 
 **Git (Os 2026-08-25):** after you change the checkout, `git add` those
 paths and `git commit` a sentence. Do not wait for Hank. Do not commit
@@ -126,8 +134,8 @@ path** (`RateToHome`). Pre-clamp 31.5 kbps is not current. Packet:
 
 One hire may open **many** tickets (Linus: leftover subjects; Gus:
 alts; Lars: control fingerprints; Wernher: systems). Skim (envelope).
-`--deep` is PNG/craft/tape CLI, not jsonl rows. Never xhigh. **low**
-Walt / S4; **high** Mortimer / rsi / org / S1; else **medium**. Packet is skim. Jsonl stays on disk. Packet skim is the **envelope**
+`--deep` is PNG/craft/tape CLI, not jsonl rows. Never xhigh. **Reasoning:** inherit current TUI reasoning. Hank does
+**not** copy `reasoning=` into spawn packets. Packet is skim. Jsonl stays on disk. Packet skim is the **envelope**
 (landing + pad/last heading/horiz/pitch + apo + hz + lat/lon/downrange + biome)
 plus this-hop `learn:`. Do **not**
 `read_file` a jsonl. Query `tape.Tape` / `python main.py telem` /

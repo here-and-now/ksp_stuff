@@ -38,6 +38,7 @@ exit **ends** the hop — Commander does not review.
 | Anyone | ticket bus | friction | `tickets open --fingerprint <stem>` | Hank routes |
 | Hank | Mortimer | `type=ctt` / `org` / rsi×3 | ticket | RD spend / PROTOCOL mutation |
 | Hank | Verena, Communications | `type=press` firsts | ticket | `story:` `shot:` |
+| Hank | Iris, Director of Constellation Operations | `desk=iris` / `--tag constellation` | ticket | `net:` / Wernher ask |
 | Walt, CAPCOM | Os | phase start / end / unexpected | one line, name+title | — |
 | Gene (between exits) or Commander (**during hop**) | KSP window | stuck | `screenshot --name stuck-<stem>` then read PNG | scene — not a postmortem |
 | Commander | radio | unusual **during hop** | `note` / hold / abort | in-flight — not a review |
@@ -83,14 +84,18 @@ Pulse Lars), files `tickets feedback --claim`, then does their part
 on their own files the same hire (`.craft` / science payload / pulse
 `.py`). Katherine is **opt-in** (`ops --tag ask --desk katherine` or
 `--tag dynamics`) when the plan needs tape windows / FAR / High-band
-time — not every `ops next`. Do **not** reopen the plan because the
+time — not every `ops next`. Iris is **opt-in** (`ops --tag ask
+--desk iris` or `--tag constellation`) when the plan needs Cape /
+ground / a path to a future craft — not every `ops next`. Hank talks
+to her directly; inner circle (Gus / Lars / Linus / Katherine) and
+anyone else may. Do **not** reopen the plan because the
 last hop sheared: wreck rec=no re-flies last `cli:`. Change hang /
 bind / recover / MECO only by rewriting `agree.md` together. Fly
 ready that still pays `agree.md` still flies — a conference does
 **not** empty the pad.
 
 **Ground talk (between exits, lock free):** leftover `ops --tag ask`
-is mail, not the shared goal. Gene, Wernher, Mortimer, Verena may
+is mail, not the shared goal. Gene, Wernher, Mortimer, Verena, Iris may
 address by name. Still not the stick. Nominal hop: still not
 mid-phase hire of Gene. Off-nominal `ship.md`: parent TUI may hire.
 Still different files in one turn. They do not spawn each other.
@@ -127,6 +132,7 @@ python main.py tickets open --type ops --tag ask --title "…" --desk <addressee
 python main.py tickets open --type ops --tag explore --priority P3 --title "…"
 python main.py tickets open --type ops --tag plan --title "sit hang bind recover meco" --desk hank
 python main.py tickets open --type ops --tag ask --desk katherine --title "High-band / FAR window"
+python main.py tickets open --type ops --tag ask --desk iris --title "Cape path / future craft"
 python main.py tickets open --type ops --tag feedback --title "…" --fingerprint <stem>
 python main.py tickets open --type control --title "…" --fingerprint <stem>
 python main.py tickets open --type systems --title "…" --fingerprint <stem>
@@ -443,10 +449,9 @@ Tickets how-to is always skim: `docs/program/tickets/BRIEF.md`. First
 command is `tickets packet <Hank-named id>` (live T- stay). PNG /
 craft / last-flight only on `--deep`. Jsonl is **disk**:
 `python main.py telem <jsonl>` or `tickets landing`. Do not read the
-tape. **Reasoning floors:** never xhigh. Jeb / Lars **medium**.
-Mortimer **high**. Wernher / Gene / Gus / Linus **medium**. **low** is
-Walt and S4. Hank is the TUI session — do not bump.
-Packet is skim; `--deep` is opt-in. Landing **envelope**
+tape. **Reasoning:** inherit current TUI reasoning. Hank does **not**
+copy `reasoning=` into spawn packets. Never xhigh. Packet is skim;
+`--deep` is opt-in. Landing **envelope**
 is a skim block on the fly ticket after `tickets attach-run`
 (uncrewed `learn:` is that overwrite). Commander
 `cli:` is fly `payload.cli`
@@ -590,6 +595,9 @@ science tickets, not `need_science`.
 **Katherine** — `tickets:` `model:`. Disk tape only. Ask is a ticket
 id, not a Return key. Then `tickets feedback`.
 
+**Iris** — `tickets:` `net:`. Disk only (`comms` dump / `ra-rate.md`).
+Ask is a ticket id, not a Return key. Then `tickets feedback`.
+
 **Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`. Then `tickets feedback`.
 
 **Hank** — `ops:` `hire:` `packet:` `pad:` `why:` `rsi:`. Leftover/KSC: he **runs** `recover-probe` / `ksc` (lock free). After Commander CLI: `desk`, `attach-run`, `landing`, leftover, then `ops next`. Child skipped `tickets feedback` → nag; do not idle the pad (harvest writes). Desks must not emit `need_*` or Return `good:`/`self:`/`them:`. Do not hire the Commander to explain the hop. Warp law is Wernher.
@@ -604,9 +612,10 @@ Gene last-writes **briefing prose + seated plan.md envelope** (`hop_apo` /
 plan. Flight-layer facts on
 `world-model.md` may update between exits — that is not a hire.
 **Inner circle** last-writes `docs/program/agree.md` by section (Hang
-Gus, Bind Linus, Pulse Lars). That file is the shared goal — not
-seated envelope, not last-flight. Gene **reads** it when stamping
-`go:`; he does not chair it. Mortimer last-writes **Practice**,
+Gus, Bind Linus, Pulse Lars). Katherine last-writes **Dynamics** when
+pulled; Iris last-writes **Constellation** when pulled. That file is the
+shared goal — not seated envelope, not last-flight. Gene **reads** it
+when stamping `go:`; he does not chair it. Mortimer last-writes **Practice**,
 PROTOCOL, and job cards on an org hire. Gus last-writes `.craft` and
 vehicle-ticket payload. Linus last-writes science **payload**. Do not
 rewrite `vab.md` / `science.md` dumps. Bind source is science-ticket

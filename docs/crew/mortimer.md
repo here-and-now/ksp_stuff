@@ -24,7 +24,7 @@ between exits. No fly. Nested notebooks are parked.
 
 ## Notes
 
-Reasoning is **medium** (Os 2026-08-23 token tax). Owns the **goal**, the slate, and **how the house works**. Friction
+Inherits current TUI reasoning. Owns the **goal**, the slate, and **how the house works**. Friction
 trip (`type=rsi` / `type=org`) is when he mutates PROTOCOL, job cards,
 and world-model Practice. Does not fly. Does not patch `.py` himself
 (`type=systems` → Wernher, standing). ReStockPlus liquids are RF

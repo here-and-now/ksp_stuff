@@ -26,7 +26,7 @@ titles. Drop RAF/spy/radio-compact.
 | **world model** | `docs/program/world-model.md`. Gene chairs flight layers. Mortimer chairs **Practice**. |
 | **Practice** | House pitfalls / QOL / still-true ops. Mortimer last-write. |
 | **agree.md** | Shared achievable plan (`docs/program/agree.md`): sit, hang, bind duration vs High window, recover yes/no, MECO. Inner circle last-writes by section. Not seated `plan.md`. |
-| **inner circle** | Lars + Gus + Linus. Confer on `agree.md` (`ops --tag plan`), then split. Gene is not this merge. Katherine opt-in. |
+| **inner circle** | Lars + Gus + Linus. Confer on `agree.md` (`ops --tag plan`), then split. Gene is not this merge. Katherine opt-in. Iris opt-in. |
 | **improve:** | Leftover blob. After the hire: `tickets feedback T-NNN --claim "…"` on the work ticket. Stumble *during* work: `type=ops --tag feedback` or `type=rsi`. `I-NNN` twins are tickets. |
 | **tickets feedback** | Mandatory after every hire. `--claim` required; `--evidence` `--owner` `--real` optional. Appends `payload.findings` on the packet T-id. Close harvests `close_why` if empty. Not Return keys. Not a child ticket per hire. |
 | **ask:** | Leftover. Open `type=ops --tag ask` (desk = addressee). P1 if it blocks `go`. |
@@ -36,12 +36,13 @@ titles. Drop RAF/spy/radio-compact.
 | **desk** | `python main.py desk` writes `docs/program/desk.md` — lock, hangar, f013, sci, stack. Packet food. Gitignored live tape. |
 | **KSP-RO** | Parked Express RO tree. Do not seat. Live gym is `~/Games/KSP-rss` / letsgrok. |
 | **science-scan** | Linus. Live MM experiment defs + leftovers vs REACH. Samples recover; files credit while recording. |
-| **comms** | Gus/Linus. Disk dump is ConfigCache (TL rates, craft, ground LIVE/SILENT). Live RA kRPC is `conn.real_antennas` (Os 2026-08-25). Do not cheat a link. |
+| **comms** | Iris (network map) / Gus (antenna on the hang). Disk dump is ConfigCache (TL rates, craft, ground LIVE/SILENT). Live RA kRPC is `conn.real_antennas` (Os 2026-08-25). Do not cheat a link. |
 | **Flight Dynamics** | Katherine. Tape windows (`telem --window`), not jsonl in the prompt. Relays by ticket. Not Linus bind, not Lars burns, not Wernher schema. |
+| **Constellation Operations** | Iris. RealAntennas, Cape/ground, future crafts / sats. Disk only. Reports Wernher asks. Not press, not windows, not CAPCOM. Opt-in: `ops --tag ask --desk iris` / `--tag constellation`. |
 | **sit-card** | **Retired.** Sit is `python main.py desk` / `desk.md`. |
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |
 | **tech-unlock** | Catalog CLI (kRPC). 0.6 has no purchase RPC — aborts. Paid node: Mortimer edits the save then `python main.py load rd-<node>`. **Never** `load persistent` (F-014 / I-010). |
 | **Kerman** | **Retired house name.** We are **Grokman**. Stock KSP roster may still say Kerman; Hangar aliases it. |
-| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`, `katherine.md`. Shared writer: `pilot.md`. Spawn types match those names. |
+| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`, `katherine.md`, `iris.md`. Shared writer: `pilot.md`. Spawn types match those names. |
 
 Packet field is `live_run:`, path `docs/missions/<id>/logs/`.

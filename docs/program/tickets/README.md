@@ -11,7 +11,8 @@ Eleven types: `fly` `science` `vehicle` `control` `systems` `org`
 `--type ops --tag ask|feedback|explore`. Inner-circle plan:
 `--type ops --tag plan` (Lars + Gus + Linus on that ticket;
 `docs/program/agree.md`). Katherine: `--tag dynamics` or
-`ops --tag ask --desk katherine`. Paid node: `--type ctt`.
+`ops --tag ask --desk katherine`. Iris: `--tag constellation` or
+`ops --tag ask --desk iris`. Paid node: `--type ctt`.
 Press: `--type press`. Desks `tickets open --type …`. Do not emit
 `need_*` / `card:` / `recommended:` / `ask:` / `feedback:` / `good:` as
 return keys. After the hire: `tickets feedback T-NNN --claim "…"`.
@@ -38,10 +39,10 @@ heading, apo, hz). No BOARD.md. No jsonl. No `lessons.md`. No
 `science.md` / `vab.md` / `blocks.md`. Jsonl stays on disk — query
 `telem` / `tickets landing`. `--deep` is PNG / craft / last-flight /
 tape CLI, not rows. First command is `tickets packet <Hank-named id>`
-(live T- stay; new S-/M-/C-). Reasoning: **low** Walt/S4; **high**
-Mortimer/rsi/org/S1; Lars and Jeb **medium**; else **medium**.
-`ops next` prints `reasoning=` and the packet command (skim; no auto
-`--deep`). Never xhigh. Warp law is Wernher.
+(live T- stay; new S-/M-/C-). **Reasoning:** inherit current TUI
+reasoning. Hank does **not** copy `reasoning=` into spawn packets.
+Never xhigh. Warp law is Wernher. Kernel still printing `reasoning=`
+on `ops next` / packet is Wernher.
 
 Categories replace cards: `craft`, `science_opportunity`, `bug`,
 `improvement`, plus `flight` / `recover` / `org`. Tags are free.

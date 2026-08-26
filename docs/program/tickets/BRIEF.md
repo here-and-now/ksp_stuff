@@ -58,7 +58,7 @@ python main.py tickets stamp T-NNN --field learn --value "…" --who gene
   # campaign-stop / crewed / firsts only — uncrewed is attach-run
 python main.py tickets stamp T-NNN --field capable --value yes --who gus
 python main.py tickets tag T-NNN --add hard-splash
-python main.py tickets attach-run T-NNN --path docs/missions/<id>/logs/<run>.jsonl
+python main.py tickets attach-run T-NNN --path docs/missions/uncrewed/logs/<run>.jsonl
   # overwrites payload.learn (who=hank)
 python main.py tickets feedback T-NNN --claim "…"
   # append payload.findings on the work ticket; close harvests --why if empty

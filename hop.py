@@ -56,6 +56,7 @@ from physics_warp import (
     apply_coast,
     chute_deploy_sit,
     coast_rate,
+    crash_ui_leave,
     leftover_abort_kv,
     leftover_abort_why,
     leftover_ksc_call,
@@ -1338,23 +1339,14 @@ def _leave_crash_ui(
 ) -> None:
     """Leave Catastrophic Flight Results.
 
-    Total wreck: do not go_space_center (overlay is not leftover-clean).
+    Never skip-save Tracking as Close. Persist-fail stays Flight.
     Caller aborts ``ksc leftover``. Never revert_to_launch.
     """
+    why = crash_ui_leave(total_wreck=total_wreck)
     if total_wreck:
-        _say("hop crash ui total wreck — ksc leftover (not space_center)", on_log)
+        _say(f"hop crash ui total wreck — {why} (not space_center)", on_log)
         return
-    try:
-        krpc = getattr(getattr(session, "conn", None), "krpc", None)
-        gs = getattr(krpc, "GameScene", None) if krpc is not None else None
-        ts = getattr(gs, "tracking_station", None) if gs is not None else None
-        if krpc is not None and ts is not None:
-            krpc.game_scene = ts
-            _say("hop crash ui tracking (not pad reload)", on_log)
-            return
-    except Exception as exc:
-        log.warning("hop crash ui tracking: %s", exc)
-    _say("hop crash ui abort in flight (not space_center)", on_log)
+    _say(f"hop crash ui {why} (not skip-save tracking)", on_log)
 
 
 def _finish_hd(

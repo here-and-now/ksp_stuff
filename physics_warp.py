@@ -20,7 +20,8 @@ Sits:
 - Timeout budget is MET / down, not wall seconds while 1×.
 - Airborne cannot-pay is a sit flag, not a dwell.
 - Timeout leftover: recover() if recoverable else ksc leftover.
-  Never revert.
+  Crash UI leave is ksc leftover. Skip-save Tracking is not Close.
+  Persist-fail stays Flight. Never revert.
 
 Hangar ``run_physics`` is unpause + 1×. Living loft uses
 ``unpause_clock`` then ``apply_coast`` / ``apply_sit_warp``.
@@ -426,3 +427,12 @@ def leftover_abort_why(*, sit: str, recoverable: bool, why: str = "") -> str:
     call = leftover_ksc_call(recoverable)
     extra = f" {why}" if why else ""
     return f"ksc leftover sit={sit or '?'} recoverable={rec_s} call: {call}{extra}"
+
+
+def crash_ui_leave(*, total_wreck: bool = False) -> str:
+    """Catastrophic Flight Results. Never skip-save Tracking as Close.
+
+    Persist-fail stays Flight. Caller aborts ``ksc leftover``. Never revert.
+    """
+    _ = total_wreck
+    return "ksc leftover"

@@ -233,7 +233,7 @@ def write_index() -> Path:
         "# Missions\n",
         "\n",
         "Tape id is `current.md` `flight:`. Uncrewed hops write `docs/missions/uncrewed/logs/`.\n",
-        "Commander dossier stays `jebediah` (historical logs stay). Seat with `python main.py seat <id>`.\n",
+        "Commander dossier stays `jebediah` (historical logs: `docs/archive/2026-08-26-jebediah-logs/`). Seat with `python main.py seat <id>`.\n",
         "Dossier render is `plan.md`; science dump is `science.md`; tape is `logs/*.jsonl`.\n",
         "\n",
         "| Id | Pilot | Status | Next |\n",

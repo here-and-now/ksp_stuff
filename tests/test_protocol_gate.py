@@ -78,7 +78,7 @@ class TestParseReturn(unittest.TestCase):
     def test_gene_ok(self):
         text = (
             "go: yes\n"
-            "recommended: python main.py hop\n"
+            "cli: python main.py hop\n"
             "phase: hop\n"
             "f013: temperatureScan unlocked=yes on_craft=yes\n"
         )
@@ -86,7 +86,7 @@ class TestParseReturn(unittest.TestCase):
         self.assertEqual(result.missing, ())
         self.assertEqual(result.fields["go"], "yes")
 
-    def test_gene_cli_aliases_recommended(self):
+    def test_gene_cli_does_not_require_recommended(self):
         text = (
             "go: yes\n"
             "cli: python main.py hop\n"
@@ -95,7 +95,9 @@ class TestParseReturn(unittest.TestCase):
         )
         result = parse_return(text, "gene")
         self.assertEqual(result.missing, ())
-        self.assertEqual(result.fields["recommended"], "python main.py hop")
+        self.assertNotIn("recommended", result.missing)
+        self.assertNotIn("lesson", result.missing)
+        self.assertNotIn("ask", result.missing)
 
     def test_gene_without_need_keys_ok(self):
         text = (
@@ -118,6 +120,14 @@ class TestParseReturn(unittest.TestCase):
     def test_linus_missing_science_or_f013(self):
         self.assertIn("science", parse_return("f013: x\n", "linus").missing)
         self.assertIn("f013", parse_return("science: tickets\n", "linus").missing)
+
+    def test_lars_and_katherine_drop_lesson_ask(self):
+        lars = parse_return("stack: ok\nf013: none\n", "lars")
+        self.assertEqual(lars.missing, ())
+        self.assertNotIn("lesson", lars.missing)
+        kath = parse_return("model: tape\ntickets: none\n", "katherine")
+        self.assertEqual(kath.missing, ())
+        self.assertNotIn("ask", kath.missing)
 
 
 class TestFlyGate(unittest.TestCase):

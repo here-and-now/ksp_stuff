@@ -23,6 +23,7 @@ from craft import (
     procedural_cylinder,
     replace_tanks,
     set_nylon_chute,
+    stage_engine_first,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -131,8 +132,11 @@ class TestChute(unittest.TestCase):
         self.assertEqual(para.get("minDeployment"), "2500")
         self.assertEqual(para.get("deploymentAlt"), "700")
         self.assertEqual(_mod(chute, "RealChuteModule").get("mustGoDown"), "True")
-        self.assertEqual(chute.istg, 0)
-        self.assertEqual(find_engine(craft).istg, 1)
+        engine = find_engine(craft)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        self.assertEqual(chute.istg, 1)
+        self.assertEqual(chute.sqor, 0)
         self.assertIsNotNone(_mod(chute, "ProceduralChute"))
 
     def test_cone_50m(self):
@@ -145,6 +149,25 @@ class TestChute(unittest.TestCase):
         self.assertEqual(para.get("deployedDiameter"), "50")
         self.assertEqual(para.get("preDeployedDiameter"), "2.5")
         self.assertEqual(para.get("minIsPressure"), "false")
+        engine = find_engine(craft)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        self.assertEqual(chute.istg, 1)
+        self.assertEqual(chute.sqor, 0)
+
+    def test_stage_engine_first_queues_valiant(self):
+        craft = Craft.load(T7_CHUTE)
+        engine = find_engine(craft)
+        chute = find_chutes(craft)[0]
+        chute.istg = 0
+        chute.sqor = 0
+        engine.istg = 1
+        engine.sqor = -1
+        stage_engine_first(craft)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        self.assertEqual(chute.istg, 1)
+        self.assertEqual(chute.sqor, 0)
 
     def test_copy_from_donor_refuses_inherited_tiny(self):
         donor = Craft.load(T7_CHUTE)
@@ -214,12 +237,15 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertEqual(hs.att_n.get("bottom"), engine.token)
         self.assertEqual(engine.att_n.get("top"), hs.token)
         self.assertLess(engine.pos[1], engine_y)
-        self.assertEqual(engine.istg, 1)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        hs_half = float(_mod(hs, "ProceduralShapeBezierCone").get("length") or "0.2") * 0.5
+        self.assertAlmostEqual(hs.pos[1] - hs_half - engine.pos[1], 0.45, places=3)
         ablator = [r for r in hs.resources if r.get("name") == "Ablator"]
         self.assertEqual(ablator[0].get("amount"), "80")
         cone = _mod(hs, "ProceduralShapeBezierCone")
         self.assertEqual(cone.get("topDiameter"), "1.25")
-        self.assertEqual(cone.get("bottomDiameter"), "1.25")
+        self.assertEqual(cone.get("bottomDiameter"), "0")
         self.assertFalse(any(p.name in {"parachuteSingle", "RC_cone"} for p in craft.parts))
 
     def test_adapter_1_427_to_1_25(self):

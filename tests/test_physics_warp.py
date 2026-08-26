@@ -19,6 +19,7 @@ from physics_warp import (
     chute_arm_sit,
     chute_deploy_sit,
     high_q_sit,
+    crash_ui_leave,
     leftover_abort_kv,
     leftover_abort_why,
     leftover_call,
@@ -531,6 +532,8 @@ def test_timeout_is_met_not_wall():
     assert leftover_call(recoverable=False) == "ksc leftover"
     assert leftover_ksc_call(True) == "python main.py recover-probe --recover"
     assert leftover_ksc_call(False) == "python main.py recover-probe --space-center"
+    assert crash_ui_leave() == "ksc leftover"
+    assert crash_ui_leave(total_wreck=True) == "ksc leftover"
     kv = leftover_abort_kv(sit="splashed", recoverable=True)
     assert kv[0] == "ksc: leftover"
     assert kv[1] == "sit: splashed"
@@ -555,6 +558,8 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "def timeout_hit" in warp
     assert "def leftover_ksc_call" in warp
     assert "def leftover_abort_kv" in warp
+    assert "def crash_ui_leave" in warp
+    assert "Skip-save Tracking is not Close" in warp
     assert "def thick_air_sit" in warp
     assert "def thick_air_cross_sit" in warp
     assert "Never revert" in warp
@@ -563,6 +568,8 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "leftover_abort_kv" in hop
     assert "chute_deploy_sit" in hop
     assert "want_coast" in hop
+    assert "crash_ui_leave" in hop
+    assert "not skip-save tracking" in hop
     assert "def leftover_ksc_call" not in hop
     factory = Path("hop_factory.py").read_text(encoding="utf-8")
     assert "def _loft_after_skip" not in factory

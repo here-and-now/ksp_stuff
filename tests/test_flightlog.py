@@ -376,14 +376,35 @@ class TestShipEnvelope(unittest.TestCase):
         from telem import Snapshot
 
         env = envelope_from_snapshot(
-            Snapshot(heading=90.0, wreck=True, ec=0.0, alt=74.0),
+            Snapshot(
+                heading=90.0,
+                wreck=True,
+                ec=0.0,
+                alt=74.0,
+                thrust=0.0,
+                stage=2,
+            ),
             as_of="2026-08-23T00:00Z",
         )
         self.assertTrue(env["wreck"])
         self.assertEqual(env["heading"], 90.0)
+        self.assertEqual(env["thrust"], 0.0)
+        self.assertEqual(env["stage"], 2)
+        self.assertIs(env["plume"], False)
         text = format_ship(env)
         self.assertIn("wreck: yes", text)
         self.assertIn("heading: 90", text)
+        self.assertIn("thrust: 0", text)
+        self.assertIn("stage: 2", text)
+        self.assertIn("plume: no", text)
+        lit = format_ship(
+            envelope_from_snapshot(
+                Snapshot(heading=90.0, wreck=False, thrust=12.0, stage=0),
+                as_of="2026-08-23T00:00Z",
+            )
+        )
+        self.assertIn("plume: yes", lit)
+        self.assertIn("thrust: 12", lit)
 
     def test_format_ship_link_no(self):
         from telem import Snapshot

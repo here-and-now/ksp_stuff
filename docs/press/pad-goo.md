@@ -55,6 +55,6 @@ The wrecks, in the order the room survived them:
 
 Twelve minutes on the lawn. The can had all the time in the world.
 
-- [Pad](../missions/jebediah/logs/2026-08-20T1235Z-pad.md)
+- [Pad](../archive/2026-08-26-jebediah-logs/2026-08-20T1235Z-pad.md)
 - After: [Two kilometers](first-hop.md)
 - Live: `python main.py world`

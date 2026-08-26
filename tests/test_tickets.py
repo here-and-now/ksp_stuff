@@ -1069,7 +1069,7 @@ class TestPacketAndReasoning(unittest.TestCase):
             t["id"],
             {
                 "evidence": [
-                    "docs/missions/jebediah/logs/2026-08-21T21-14-09Z-hop-splash.jsonl"
+                    "docs/archive/2026-08-26-jebediah-logs/2026-08-21T21-14-09Z-hop-splash.jsonl"
                 ]
             },
             who="hank",

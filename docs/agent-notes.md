@@ -717,6 +717,12 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   remember kRPC `_object_id` (Vessel has no `.id` in this 0.6 client)
   on disk (`unrecoverable.last`) so the next process skips it. Os will
   not click Recover. Never revert. Never leftover-ksc.
+- **2026-08-26** — T-479: Kerbalism `VesselData` ctor
+  `parts.Add(part.flightID)` throws on duplicate uint keys (OnSave /
+  Close persist). Harmony skip-dup (`kspstuff_kerbalism/`, Os copy,
+  `build.sh` does **not** install). Not a vessel-name dict. Persist
+  after the blob is gone is still the safe kRPC Close. Never
+  leftover-ksc. Never `load("persistent")`. Never revert.
 - **2026-08-24** — T-396: `GameScene.space_center` from Flight loads the
   last SaveGame (launch snapshot) unless `SpaceCenter.save("persistent")`
   wrote current RAM first. Detect-and-log after UT drops cannot un-rewind.

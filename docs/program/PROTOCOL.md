@@ -29,7 +29,7 @@ exit **ends** the hop — Commander does not review.
 | Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
 | Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
 | Hank | Linus, Director of Research | open science tickets | ids (batch) | payload bind (blocked until vehicle `capable`) |
-| Hank | Lars, Vehicle Systems Engineer | control **pulse** miss | ticket + `live_run` | `lesson:` close |
+| Hank | Lars, Vehicle Systems Engineer | control **pulse** miss | ticket + `live_run` | `stack:` close |
 | Hank | Wernher, Chief Systems Engineer | systems / kRPC world / **control sit/warp blocks** | ticket | systems close |
 | Commander | ticket bus | miss **during hop** (still connected) | `tickets open --type control --fingerprint <stem>` | Hank after exit |
 | Hank | ticket bus | miss after process exit | open control from last-flight abort **with `--fingerprint`** | Lars if needed — **no Jeb debrief** |
@@ -517,14 +517,14 @@ science tickets, not `need_science`.
 
 **Gus** — `capable:` `craft:` `f013:` `tickets:` `blocker:` (if no). Then `tickets feedback`.
 
-**Lars** — `tickets:` `stack:` `lesson:` `f013:` `blocks:`. Then `tickets feedback`.
+**Lars** — `tickets:` `stack:` `f013:` `blocks:`. Then `tickets feedback`.
 
 **Wernher** — `tickets:` `ready_to_fly:` `files:` `blocker:`. Then `tickets feedback`.
 
 **Verena** — `tickets:` `story:` `shot:` `readme:`. Then `tickets feedback`.
 
-**Katherine** — `tickets:` `model:` `ask:`. Disk tape only. Ask is a ticket
-id, not prose. Then `tickets feedback`.
+**Katherine** — `tickets:` `model:`. Disk tape only. Ask is a ticket
+id, not a Return key. Then `tickets feedback`.
 
 **Mortimer** — `goal:` `org:` `tickets:` `unlocked:` `need_os: none|charter|roster` (creed only). Drop `need_builder` / `need_qol` / `need_gene` / `recommended`. Then `tickets feedback`.
 

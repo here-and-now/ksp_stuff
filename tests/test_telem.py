@@ -31,6 +31,18 @@ from telem import (
 )
 import uplink
 
+ARCHIVE_LOGS = Path("docs/archive/2026-08-26-jebediah-logs")
+LIVE_UNCREWED_LOGS = Path("docs/missions/uncrewed/logs")
+LEGACY_JEB_LOGS = Path("docs/missions/jebediah/logs")
+
+
+def _tape_log(name: str) -> Path:
+    for root in (ARCHIVE_LOGS, LIVE_UNCREWED_LOGS, LEGACY_JEB_LOGS):
+        path = root / name
+        if path.is_file():
+            return path
+    return ARCHIVE_LOGS / name
+
 
 def _bind_run_jsonl(test: unittest.TestCase, path: Path) -> None:
     import flightlog
@@ -571,8 +583,8 @@ class TestLandingTape(unittest.TestCase):
 
 class TestTapeEyes(unittest.TestCase):
     hops = (
-        Path("docs/missions/jebediah/logs/2026-08-22T23-01-19Z-hop.jsonl"),
-        Path("docs/missions/jebediah/logs/2026-08-22T23-14-23Z-hop.jsonl"),
+        _tape_log("2026-08-22T23-01-19Z-hop.jsonl"),
+        _tape_log("2026-08-22T23-14-23Z-hop.jsonl"),
     )
 
     def test_hop_envelopes_without_state_rows(self):
@@ -629,7 +641,7 @@ class TestTapeEyes(unittest.TestCase):
         self.assertEqual(kinds[0]["kind"], "landing")
 
     def test_thin_tape_surfaces_q_ec_stage(self):
-        path = Path("docs/missions/jebediah/logs/2026-08-22T23-54-24Z-hop.jsonl")
+        path = _tape_log("2026-08-22T23-54-24Z-hop.jsonl")
         if not path.is_file():
             self.skipTest(f"missing {path}")
         env = envelope(path)
@@ -944,7 +956,7 @@ class TestTapeEyes(unittest.TestCase):
         self.assertEqual(payload["windows"][1]["window"], "airborne")
 
     def test_0901_tape_eyes_not_last_flight(self):
-        path = Path("docs/missions/jebediah/logs/2026-08-25T09-01-24Z-hop.jsonl")
+        path = _tape_log("2026-08-25T09-01-24Z-hop.jsonl")
         if not path.is_file():
             self.skipTest(f"missing {path}")
         env = envelope(path)
@@ -1129,7 +1141,7 @@ class TestDescentTape(unittest.TestCase):
         self.assertLessEqual(len(text), 900)
 
     def test_0721_envelope_shows_descent_ladder(self):
-        path = Path("docs/missions/jebediah/logs/2026-08-23T07-21-05Z-hop.jsonl")
+        path = _tape_log("2026-08-23T07-21-05Z-hop.jsonl")
         if not path.is_file():
             self.skipTest(f"missing {path}")
         env = envelope(path)
@@ -1147,7 +1159,7 @@ class TestDescentTape(unittest.TestCase):
 
     def test_0928_envelope_shows_burnout_attitude(self):
         """Apex is peak alt; slew flash is the burn row (Jeb 209/3)."""
-        path = Path("docs/missions/jebediah/logs/2026-08-23T09-28-59Z-hop.jsonl")
+        path = _tape_log("2026-08-23T09-28-59Z-hop.jsonl")
         if not path.is_file():
             self.skipTest(f"missing {path}")
         env = envelope(path)
@@ -1302,7 +1314,7 @@ class TestDescentTape(unittest.TestCase):
 
     def test_1647_envelope_burn_is_powered_hold(self):
         """Live 16-47-21Z tape: hold 297/65, not cutoff 15/16."""
-        path = Path("docs/missions/jebediah/logs/2026-08-23T16-47-21Z-hop.jsonl")
+        path = _tape_log("2026-08-23T16-47-21Z-hop.jsonl")
         if not path.is_file():
             self.skipTest(f"missing {path}")
         env = envelope(path)
@@ -1472,7 +1484,7 @@ class TestStackShear(unittest.TestCase):
         self.assertEqual(len(hits), 1)
 
     def test_envelope_surfaces_shear_on_known_hop(self):
-        path = Path("docs/missions/jebediah/logs/2026-08-23T06-53-50Z-hop.jsonl")
+        path = _tape_log("2026-08-23T06-53-50Z-hop.jsonl")
         if not path.is_file():
             self.skipTest(f"missing {path}")
         env = envelope(path)

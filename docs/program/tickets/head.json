@@ -18589,6 +18589,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:42:42Z",
+            "claim": "hop_factory_pad _pad_engine_waiting/_apply_pad_throttle/_pad_light: Engine.active on the pad is not already-fired. 12-18-51Z/12-09-06Z ABORT pad-dead-no-plume telem stage=2 never hop light \u2014 waiting short-circuited on active=True before restage. Fired is current_stage < part.stage; empty/chute above the engine still waits. Command Engine.active True with the live setpoint so a chute-only current stage does not spend the only ignition at currentThrottle 0. hop_factory_pad.py:12,351,381,442,525 tests/test_hop_factory.py:338,372. Not hop.py. Do not raise ignitions.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:43:01Z",
+            "claim": "hop_factory_pad _pad_engine_waiting/_apply_pad_throttle/_pad_light: Engine.active on the pad is not already-fired. 12-18-51Z/12-09-06Z ABORT pad-dead-no-plume telem stage=2 never hop light \u2014 waiting short-circuited on active=True before restage. Fired is current_stage < part.stage; empty/chute above the engine still waits. Command Engine.active True with the live setpoint so a chute-only current stage does not spend the only ignition at currentThrottle 0. hop_factory_pad.py:12,351,381,442,525 tests/test_hop_factory.py:338,372. Not hop.py. Do not raise ignitions.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -18602,7 +18618,7 @@
       "tags": [],
       "title": "T-469 live scrap: never hop light, engine dead on pad, Os abort",
       "type": "control",
-      "updated": "2026-08-26T14:28:09Z"
+      "updated": "2026-08-26T14:43:01Z"
     },
     "T-472": {
       "assignee": "",
@@ -18818,6 +18834,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "Harmony skip-dup flightID built; leftover 0 this sit; Os copy. Never leftover-ksc.",
       "created": "2026-08-26T11:00:02Z",
       "desk": "wernher",
       "evidence": [],
@@ -18840,6 +18857,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-26T14:44:04Z",
+            "claim": "Harmony skip-dup on Dictionary<uint,PartData>.Add (VesselData ctor flightID). kspstuff_kerbalism/ built; build.sh does not install. Os copy + restart (T-427 pattern). Leftover this sit is 0. Never leftover-ksc. Never load persistent. Never revert.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -18849,35 +18874,47 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "leftover"
       ],
       "title": "Close to KSC refused: Kerbalism OnSave duplicate ProtoVessel key 1465015097",
       "type": "systems",
-      "updated": "2026-08-26T11:14:17Z"
+      "updated": "2026-08-26T14:44:06Z"
     },
     "T-480": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "insert_inline uses catalog Valiant top 0.45 not tank half.",
       "created": "2026-08-26T11:04:37Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-480",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:04Z",
+            "claim": "insert_inline uses catalog node for non-tank children. Valiant top 0.45 not tank half 0.3125 (0.1375 m overlap).",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Gus Grokman, Vehicle Engineering Lead",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "insert_heatshield: Valiant child uses tank half 0.3125 not catalog top 0.45 \u2014 HS overlap 0.1375m pad wreck",
       "type": "systems",
-      "updated": "2026-08-26T11:04:37Z"
+      "updated": "2026-08-26T14:44:06Z"
     },
     "T-481": {
       "assignee": "",
@@ -18918,50 +18955,75 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "disc heatshield is VAB dish bottomDiameter=0.",
       "created": "2026-08-26T11:31:08Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-482",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "insert_heatshield disc writes bottomDiameter=0 (VAB dish), not 1.25 puck.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "craft heatshield disc writes 1.25 puck not VAB dish bottomDiameter=0",
       "type": "systems",
-      "updated": "2026-08-26T11:31:08Z"
+      "updated": "2026-08-26T14:44:06Z"
     },
     "T-483": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "stage_engine_first queues Valiant first fire; chute last.",
       "created": "2026-08-26T12:17:33Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-483",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:04Z",
+            "claim": "stage_engine_first: Valiant istg=0 sqor=0 first fire; chute istg=1 sqor=0 last. engine.istg=1 with sqor=-1 left chute as the only queued stage. Helper only; seated hang still chute-first until Gus re-runs craft chute.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "set_nylon_chute: engine.istg=1 leaves sqor=-1 \u2014 chute sqor=0 is only queued stage, first fire empty of Valiant",
       "type": "systems",
-      "updated": "2026-08-26T12:17:33Z"
+      "updated": "2026-08-26T14:44:06Z"
     },
     "T-484": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "SCHEMAS dropped recommended/lesson/ask.",
       "created": "2026-08-26T13:53:39Z",
       "desk": "wernher",
       "evidence": [],
@@ -18976,6 +19038,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "Dropped protocol SCHEMAS recommended/lesson/ask. gene is go/phase/f013; lars stack/f013; katherine model/tickets. Unpin test_protocol_gate. Findings stay tickets feedback --claim. No from-feedback shim.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -18985,23 +19055,34 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "Drop protocol SCHEMAS recommended/lesson/ask; unpin test_protocol_gate first",
       "type": "systems",
-      "updated": "2026-08-26T13:54:11Z"
+      "updated": "2026-08-26T14:44:06Z"
     },
     "T-485": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "feedback-return \u00d73 closed via T-484 SCHEMAS drop.",
       "created": "2026-08-26T13:53:39Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "feedback-return",
       "id": "T-485",
       "payload": {
-        "count": 3
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "feedback-return \u00d73: SCHEMAS no longer require recommended/lesson/ask (T-484).",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19009,11 +19090,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI feedback-return \u00d73",
       "type": "rsi",
-      "updated": "2026-08-26T13:53:39Z"
+      "updated": "2026-08-26T14:44:06Z"
     },
     "T-486": {
       "assignee": "",
@@ -19052,6 +19133,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "442 jebediah/logs moved to archive; tests unpinned.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
@@ -19066,6 +19148,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "Unpinned test_telem to archive path; git mv 442 jebediah/logs to docs/archive/2026-08-26-jebediah-logs/. New hops stay uncrewed/logs.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19075,23 +19165,34 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "MOVE 442 jebediah/logs after test_telem unpin; new hops already uncrewed/logs",
       "type": "systems",
-      "updated": "2026-08-26T13:54:11Z"
+      "updated": "2026-08-26T14:44:07Z"
     },
     "T-488": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "thin-tape \u00d73 closed via T-487 archive move.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "thin-tape",
       "id": "T-488",
       "payload": {
-        "count": 3
+        "count": 3,
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:06Z",
+            "claim": "thin-tape \u00d73: historical 442 jsonl parked; tests read archive; live writer uncrewed/logs (T-487).",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19099,11 +19200,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI thin-tape \u00d73",
       "type": "rsi",
-      "updated": "2026-08-26T13:53:40Z"
+      "updated": "2026-08-26T14:44:07Z"
     },
     "T-489": {
       "assignee": "",
@@ -19142,13 +19243,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "control-blocks \u00d78: crash_ui_leave landed; living compose stays T-489.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "control-blocks",
       "id": "T-490",
       "payload": {
-        "count": 8
+        "count": 8,
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:06Z",
+            "claim": "control-blocks \u00d78: crash_ui_leave is the leftover-abort block (T-493). Compose living pulse remains T-489.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19156,16 +19268,17 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI control-blocks \u00d78",
       "type": "rsi",
-      "updated": "2026-08-26T13:53:40Z"
+      "updated": "2026-08-26T14:44:07Z"
     },
     "T-491": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "ship.md thrust/stage/plume kv.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
@@ -19180,6 +19293,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "ship.md extra kv thrust/stage/plume from Snapshot.thrust>0. Not jsonl schema. Writer Telem.read still owns jsonl/ship.md; lock-live status is kspstuff-read.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19189,23 +19310,34 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "ship.md thrust/stage/plume kv only; not jsonl schema",
       "type": "systems",
-      "updated": "2026-08-26T13:54:12Z"
+      "updated": "2026-08-26T14:44:07Z"
     },
     "T-492": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "telem-eyes \u00d75 closed via T-491 ship.md kv.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "telem-eyes-library",
       "id": "T-492",
       "payload": {
-        "count": 5
+        "count": 5,
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "telem-eyes-library \u00d75: ship.md now prints thrust/stage/plume kv (T-491). Tests unpin to archive tape.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19213,16 +19345,17 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI telem-eyes-library \u00d75",
       "type": "rsi",
-      "updated": "2026-08-26T13:53:40Z"
+      "updated": "2026-08-26T14:44:07Z"
     },
     "T-493": {
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "skip-save Tracking is not Close; persist-fail stays Flight.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
@@ -19237,6 +19370,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "crash_ui_leave block: skip-save Tracking is not Close. hop._leave_crash_ui no longer sets tracking without persist. Persist-fail stays Flight.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19246,23 +19387,34 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "hangar persist-fail stay Flight; skip-save Tracking is not Close",
       "type": "systems",
-      "updated": "2026-08-26T13:54:12Z"
+      "updated": "2026-08-26T14:44:07Z"
     },
     "T-494": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "leftover-prelaunch-ghost \u00d77 closed via T-493.",
       "created": "2026-08-26T13:53:40Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "leftover-prelaunch-ghost",
       "id": "T-494",
       "payload": {
-        "count": 7
+        "count": 7,
+        "findings": [
+          {
+            "at": "2026-08-26T14:44:05Z",
+            "claim": "leftover-prelaunch-ghost \u00d77: skip-save Tracking is not Close; persist-fail stays Flight (T-493).",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -19270,12 +19422,12 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI leftover-prelaunch-ghost \u00d77",
       "type": "rsi",
-      "updated": "2026-08-26T13:53:40Z"
+      "updated": "2026-08-26T14:44:07Z"
     }
   },
-  "updated": "2026-08-26T14:35:56Z"
+  "updated": "2026-08-26T14:44:07Z"
 }

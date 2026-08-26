@@ -1244,7 +1244,8 @@ def _close_to_ksc(session: Session, *, reload_save: bool = False) -> None:
     ``StartWithNewLaunch`` writes persistent before the hop. Space Center
     from Flight loads that file (pad MET 0). Tracking is KSP's wreck
     ``onLeavingFlight``. Persist RAM first so the clock on disk is *this*
-    flight. Save fail: stay Flight. ``reload_save=True`` is refused.
+    flight. Save fail: stay Flight. Skip-save Tracking is not Close.
+    ``reload_save=True`` is refused.
     """
     if reload_save:
         log.warning("load_space_center refused — Close is scene setter only")

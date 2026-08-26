@@ -51,6 +51,9 @@ _SHIP_EXTRA = (
     "mass",
     "parts_n",
     "root",
+    "thrust",
+    "stage",
+    "plume",
 )
 _AS_OF_FMT = ("%Y-%m-%dT%H:%MZ", "%Y-%m-%dT%H:%M:%SZ")
 _REPR_FIELD = re.compile(
@@ -447,7 +450,7 @@ def _ship_num(val: Any) -> Any:
 
 
 def _fmt_ship(key: str, val: Any) -> str:
-    if key in {"wreck", "link"}:
+    if key in {"wreck", "link", "plume"}:
         if val in (True, 1, "1", "True", "true", "yes"):
             return "yes"
         if val in (False, 0, "0", "False", "false", "no"):
@@ -486,6 +489,13 @@ def envelope_from_snapshot(
     rate_bps = getattr(state, "rate_bps", None)
     if isinstance(rate_bps, float) and not math.isfinite(rate_bps):
         rate_bps = None
+    thrust = getattr(state, "thrust", None)
+    if isinstance(thrust, float) and not math.isfinite(thrust):
+        thrust = None
+    stage = getattr(state, "stage", None)
+    plume = None
+    if isinstance(thrust, (int, float)):
+        plume = float(thrust) > 0.0
     return {
         "heading": getattr(state, "heading", None),
         "wreck": getattr(state, "wreck", None),
@@ -511,6 +521,9 @@ def envelope_from_snapshot(
         "mass": getattr(state, "mass", None),
         "parts_n": getattr(state, "parts_n", None),
         "root": getattr(state, "root", None) or None,
+        "thrust": thrust,
+        "stage": stage,
+        "plume": plume,
     }
 
 

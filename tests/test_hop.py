@@ -8361,7 +8361,7 @@ class TestHopToWater(unittest.TestCase):
         )
         self.assertNotIn("hop airborne", logs)
         self.assertFalse(any(line.startswith("science ") for line in logs))
-        self.assertIn("hop crash ui tracking (not pad reload)", logs)
+        self.assertIn("hop crash ui ksc leftover (not skip-save tracking)", logs)
         self.assertNotIn("hop dismissed crash ui", logs)
         self.assertLess(t[0], 5.0)
 

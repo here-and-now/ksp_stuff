@@ -811,10 +811,15 @@ def insert_inline(
     p_off = _node_off(cat, parent.name, parent_node)
     n_top = _node_off(cat, new.name, new_top, half=new_half)
     n_bot = _node_off(cat, new.name, new_bottom, half=new_half)
-    try:
-        c_off = _node_off(cat, child.name, child_node, half=tank_height(child) * 0.5)
-    except KeyError:
-        c_off = (0.0, tank_height(child) * 0.5, 0.0)
+    if child.name in TANK_NAMES:
+        c_off = _node_off(
+            cat, child.name, child_node, half=tank_height(child) * 0.5
+        )
+    else:
+        try:
+            c_off = _node_off(cat, child.name, child_node)
+        except KeyError:
+            c_off = (0.0, tank_height(child) * 0.5, 0.0)
     new.pos = (
         parent.pos[0] + p_off[0] - n_top[0],
         parent.pos[1] + p_off[1] - n_top[1],
@@ -1021,8 +1026,25 @@ def replace_tanks(
     return craft
 
 
+def stage_engine_first(craft: Craft) -> None:
+    """Valiant first activate_next_stage; chute last. Chute istg=0 is not empty."""
+    engine = find_engine(craft)
+    if engine is not None:
+        engine.istg = 0
+        engine.sidx = 0
+        engine.sqor = 0
+    for chute in find_chutes(craft):
+        chute.istg = 1 if engine is not None else 0
+        chute.sidx = 0
+        chute.sqor = 0
+
+
 def set_nylon_chute(craft: Craft, kind: str = "mk16") -> CraftPart:
-    """Write RealChuteModule+ProceduralChute. Not an empty PARACHUTE."""
+    """Write RealChuteModule+ProceduralChute. Not an empty PARACHUTE.
+
+    Engine is first fire (istg=0 sqor=0). Chute is the later queued stage.
+    engine.istg=1 with sqor=-1 leaves chute sqor=0 as the only queued stage.
+    """
     if kind not in {"mk16", "cone"}:
         raise CraftError("chute kind must be mk16 or cone")
     chutes = find_chutes(craft)
@@ -1044,13 +1066,7 @@ def set_nylon_chute(craft: Craft, kind: str = "mk16") -> CraftPart:
             chute.name = "RC_cone"
             retarget(craft, old, chute.token)
         chute.modules = rc_cone_chute_modules()
-    chute.istg = 0
-    chute.sidx = 0
-    chute.sqor = 0
-    engine = find_engine(craft)
-    if engine is not None:
-        engine.istg = 1
-        engine.sidx = 0
+    stage_engine_first(craft)
     return chute
 
 
@@ -1074,13 +1090,7 @@ def copy_chute(craft: Craft, donor: Craft) -> CraftPart:
     if old != dst.token:
         retarget(craft, old, dst.token)
     dst.modules = [_copy_node(m) for m in src.modules]
-    dst.istg = 0
-    dst.sidx = 0
-    dst.sqor = 0
-    engine = find_engine(craft)
-    if engine is not None:
-        engine.istg = 1
-        engine.sidx = 0
+    stage_engine_first(craft)
     if not chute_is_nylon_good(dst):
         raise CraftError("copy produced a bad PARACHUTE")
     return dst
@@ -1166,7 +1176,11 @@ def insert_heatshield(
     ablator: int = 80,
     catalog: Catalog | None = None,
 ) -> CraftPart:
-    """Splice proceduralHeatshield between last tank and engine. No silk."""
+    """Splice proceduralHeatshield between last tank and engine. No silk.
+
+    Disc is a VAB dish (bottomDiameter=0), not a 1.25 puck. Engine child
+    uses catalog top (Valiant 0.45), not tank half 0.3125.
+    """
     if kind not in {"disc", "adapter"}:
         raise CraftError("heatshield kind must be disc or adapter")
     tanks = axial_tanks(craft)
@@ -1181,7 +1195,7 @@ def insert_heatshield(
     if top is not None:
         top_d = top
     if kind == "disc":
-        bottom = top_d
+        bottom = 0.0
     mods, res = heatshield_modules(
         top=top_d, bottom=bottom, length=length, ablator=ablator
     )
@@ -1196,8 +1210,7 @@ def insert_heatshield(
         catalog=catalog or Catalog.stock(),
         new_half=length * 0.5,
     )
-    engine.istg = 1
-    engine.sidx = 0
+    stage_engine_first(craft)
     return hs
 
 

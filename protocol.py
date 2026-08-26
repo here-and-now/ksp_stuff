@@ -9,14 +9,14 @@ from phases import NAMES as PHASE_NAMES
 from tickets import commander_for, fly_fields, seated_fly_ticket, waste_blocks_refly
 
 SCHEMAS: dict[str, tuple[str, ...]] = {
-    "gene": ("go", "recommended", "phase", "f013"),
+    "gene": ("go", "phase", "f013"),
     "gus": ("capable", "craft", "f013"),
     "linus": ("science", "f013"),
-    "lars": ("stack", "lesson", "f013"),
+    "lars": ("stack", "f013"),
     "mortimer": ("org", "goal"),
     "wernher": ("ready_to_fly", "files"),
     "verena": ("story", "shot"),
-    "katherine": ("model", "ask", "tickets"),
+    "katherine": ("model", "tickets"),
     "pilot": ("result", "exit", "handoff"),
 }
 
@@ -71,8 +71,6 @@ def parse_return(text: str, desk: str) -> ParseResult:
     if slug not in SCHEMAS:
         raise ValueError(f"unknown desk {desk}")
     fields = parse_kv(text)
-    if slug == "gene" and fields.get("cli") and not fields.get("recommended"):
-        fields["recommended"] = fields["cli"]
     missing = tuple(k for k in SCHEMAS[slug] if k not in fields or not fields[k])
     return ParseResult(desk=slug, fields=fields, missing=missing)
 

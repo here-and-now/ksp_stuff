@@ -105,9 +105,9 @@ Geiger is unlocked; it is not this stack.
 Couldn't we see the Forest for the trees. There were no trees.
 
 - [11:11 hop](../archive/2026-08-23-md-cutover/missions/jebediah/logs/2026-08-23T11-11-21Z-hop-review.md)
-  · [10:47, no where](../missions/jebediah/logs/2026-08-23T10-47-12Z-hop.md)
-  · [07:06 shear](../missions/jebediah/logs/2026-08-23T07-06-08Z-hop.md)
-  · [00:10 never armed](../missions/jebediah/logs/2026-08-23T00-10-20Z-hop.md)
+  · [10:47, no where](../archive/2026-08-26-jebediah-logs/2026-08-23T10-47-12Z-hop.md)
+  · [07:06 shear](../archive/2026-08-26-jebediah-logs/2026-08-23T07-06-08Z-hop.md)
+  · [00:10 never armed](../archive/2026-08-26-jebediah-logs/2026-08-23T00-10-20Z-hop.md)
 - Before: [The can lived](first-fifteen-sci.md)
 - House still: [Two kilometers](first-hop.md)
 - After: [The smiles came home](first-space.md)

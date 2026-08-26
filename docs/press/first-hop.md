@@ -76,8 +76,8 @@ The bank had already moved.
 Two kilometers of Earth sky. Fail the tape, keep the still, fly
 again. We are keeping the picture.
 
-- [Hop](../missions/jebediah/logs/2026-08-20T15-58-12Z-hop.md)
-  · [Leftover home](../missions/jebediah/logs/2026-08-20T17-02-13Z-hop.md)
+- [Hop](../archive/2026-08-26-jebediah-logs/2026-08-20T15-58-12Z-hop.md)
+  · [Leftover home](../archive/2026-08-26-jebediah-logs/2026-08-20T17-02-13Z-hop.md)
 - Before: [Stayputnik on the Cape](pad-goo.md)
 - After: [Five in the bank](first-five-sci.md)
 - Live: `python main.py world`

@@ -1,3 +1,3 @@
-flight: jebediah
-pilot: Jebediah Grokman
+flight: uncrewed
+pilot: none
 capcom: Valentina Grokman

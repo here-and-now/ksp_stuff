@@ -236,7 +236,8 @@ def write_index() -> Path:
     rows = [
         "# Missions\n",
         "\n",
-        "One Commander. Seat with `python main.py seat <id>`.\n",
+        "Tape id is `current.md` `flight:`. Uncrewed hops write `docs/missions/uncrewed/logs/`.\n",
+        "Commander dossier stays `jebediah` (historical logs stay). Seat with `python main.py seat <id>`.\n",
         "Dossier render is `plan.md`; science dump is `science.md`; tape is `logs/*.jsonl`.\n",
         "\n",
         "| Id | Pilot | Status | Next |\n",
@@ -244,8 +245,17 @@ def write_index() -> Path:
     ]
     seated = seated_id()
     cur = current_kv()
-    for fid in list_ids():
+    ids = list_ids()
+    if seated in ids:
+        ids = [seated] + [x for x in ids if x != seated]
+    for fid in ids:
         m = dict(mission_meta(fid))
+        if fid == "uncrewed":
+            m.setdefault("pilot", cur.get("pilot") if fid == seated else "none")
+            m.setdefault("status", "tape id")
+        elif fid == "jebediah":
+            m.setdefault("pilot", "Jebediah Grokman")
+            m.setdefault("status", "Commander dossier")
         if fid == seated:
             m.setdefault("pilot", cur.get("pilot") or seated_pilot())
             m.setdefault("status", "available")

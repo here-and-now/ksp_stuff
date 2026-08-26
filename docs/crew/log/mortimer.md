@@ -1,5 +1,7 @@
 # Mortimer Grokman — log
 
+- 2026-08-26 — org-rsi parent closeout: AGENTS radio to seated briefing; kRPC traps to agent-notes (not lessons). CHARTER:69 leftover named, not rewritten. Pad still flies.
+- 2026-08-26 — org-rsi applied (`docs/archive/2026-08-26-org-rsi/APPLIED.md`): novels parked; lessons not the miss bus; tape id uncrewed; attach-run + S/M/C + hop_factory_pad kept. CHARTER creed / slate / pulse untouched. T-471 still pad-RF. Pad still flies.
 - 2026-08-26 — org-rsi slice 3: strip inject; packet desk+BRIEF+named helper; floors Lars/Jeb medium, Mortimer high; drop lessons append; NUKE spotter + builder; Katherine on roster; first command packets the Hank-named id. Pad still flies.
 - 2026-08-25 — Lars RSI applied (`docs/program/lars-rsi.md`): prefix is the id (S/M/C else T-); RF pad one sit in hop_factory_pad. T-466/T-467 done. T-465 owns the flameout. Stem 7. Did not rewrite RF-ullage law. Did not raise ignitions. Git MISSING. Pad still flies.
 - 2026-08-25 — T-466 harvest: prefix is the id (science S-, fly M-, vehicle C-, else T-; global N; live T- stay). RF pad is one sit in hop_factory_pad — no `_pad_*` per stamp. Extract pad-RF only. Kernel T-467. T-465 owns the flameout. Stem count 7. Last-flight still the postcard. Did not rewrite RF-ullage law. Pad still flies.

@@ -118,11 +118,11 @@ are not applied to flight. Telem gates always win. Logs:
 
 **Radio + plan:** Gene owns seated `plan.md` **as a render** of the fly
 ticket (`go` / `cli` / `campaign` live on the ticket; `hop_apo` /
-`expect_*` / `emergencies` stay on the plan) and
-`docs/program/briefing.md` **between exits**. Uplink
+`expect_*` / `emergencies` stay on the plan) and seated
+`docs/missions/<id>/briefing.md` **between exits**. Uplink
 (`docs/program/uplink.md`) is last-write-wins; **the Commander takes**
-(`phase` / `pad`, not `status`). `loop.md` is talk, not the
-stick. `note-tech.md` is tape, not the bus. Bound+fueled `abort` is refused. Parent does **not**
+(`phase` / `pad`, not `status`). Seated `loop.md` is talk, not the
+stick. Bound+fueled `abort` is refused. Parent does **not**
 patch `.py` in the same turn — spawn R&D.
 
 ---
@@ -351,7 +351,7 @@ tanks, pre-flight fail):
 ## Order of work
 
 Connection → streams → control writes → `.craft` / `launch_vessel` → mission
-loops. Lessons already record kRPC 0.6 traps (`engaged`, protobuf
+loops. kRPC 0.6 traps live in `docs/agent-notes.md` (`engaged`, protobuf
 `get_services`, stream `getattr` form, warp-in-atmo, rails altitude cap,
 pad DIP/ESC, Telem). Commander / Flight Director / R&D.
 

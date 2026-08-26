@@ -83,24 +83,31 @@ after High lid.
 
 ## Dynamics (Katherine, opt-in)
 
-Still loft-only. C-534 (4×1500 L Valiant, 2700 kero, no girders)
-is the same apo/Pe family as C-504 tape. Six C-504 hops agree
-(16-23-52Z through 19-08-49Z): loft-through apo **249–270 km**,
-sit=sub_orbital, Pe through the planet (ship peri ~−6358 km), apex
-horiz **39–84 m/s** vs circular **7.75–7.82 km/s**. Pad mass
-**7.19 t** / dry **1.84 t** / kero **2415** (7×767 L = 5369 L,
-already the basicRocketry 800 L cap). Vac Δv **3.50–3.74 km/s**
-(Isp 270, MR 3.8–4.1). Short **~4.1 km/s** of circular speed;
-**~5.7 km/s** of a ~9.4 km/s LEO budget. Valiant 100 kN / 1
-ignition spent at light. Burnout pitch 86–89 heading 299–302 horiz
-<100 m/s — vertical, not a gravity turn. Q_max 22–24 kPa; FAR at
-apo is zero. InSpaceLow. Silk recovers this loft, not orbit.
+Still loft-only. C-534 tape two hops (19-48-52Z / 20-07-41Z)
+agree with the C-504 family — not circularize. Pad **7.47 t** /
+2700 kero / parts 25. Loft-through apo **243–281 km**,
+sit=sub_orbital, apex horiz **24–30 m/s** vs circular
+**7.75–7.82 km/s**. Leftover kero **161–221**. Q_max **22.6–22.8 kPa**
+at 7–8 km; FAR at apo is zero. Burnout pitch 65 heading 297 horiz
+<40 m/s — vertical, not a gravity turn. InSpaceLow. Pe through the
+planet. Short **~7.7 km/s** of circular speed.
 
-C-534 vs that tape: 4×1500 L = 6000 L / 2700 kero vs 5369 L /
-2415 (~**+12%** propellant, girders gone). Vac Δv **~3.7–3.8 km/s**
-(TWR ~1.3). Apo maybe **~280–300 km**, still InSpaceLow, still Pe
-through the planet. What more tank buys at 4×1500: tens of km of
-apo, not a new family.
+C-504 handful (17-13-14Z / 18-57-09Z / 19-08-49Z / 19-31-20Z): apo
+**249–270 km**, apex horiz **61–84 m/s**, same sit. C-534 20-07-41Z
+**281 km** is the extra tank; 19-48-52Z leftover 221 cut apo to
+**243 km**. Same envelope, tens of km of apo, not a new family.
+
+High-band: loft-through is the envelope. 50 km live is still
+throttle 1 (19-48-52Z 59 km; 20-07-41Z 49 km). Ascent High ~60 s;
+InSpaceLow hundreds of seconds; descent High ~60 s then abort.
+T-404 PresMat 305 s in 50–140 km cannot pay. Lid-MECO apo 137 km
+High is worse (T-523). Same answer on C-534 as C-504.
+
+Descent vs last-flight recover: last-flight is abort/exit, not
+sit. 19-48-52Z chute armed ~237 km then shear 25→12 at 27.7 km
+q=39 kPa landing catastrophic Shores. 20-07-41Z chute armed
+~277 km; tape cuts flying 101 km vz −1829 landing catastrophic
+Shores. Do not Learn recover from those exits.
 
 `generalRocketry` also unlocks Reliant (RF 215 kN / 0.42 t / Isp
 ~256–270 / **1 ignition**) and lets a tank fill to 1500 L. It does
@@ -116,11 +123,10 @@ not buy a restart or 330 s.
 - **Reliant vs Valiant** is TWR (and 0.33 t) so 7×1500 can leave
   the pad — not circularize Δv. Both 1 ignition.
 
-Lid-MECO at 50 km vz 1.29 km/s is still apo 137 km High. Phase 2
-remains `advRocketry` 45 Terrier: restartable vacuum second stage,
-Pe above the ~140 km High lid, first stage gravity-turn east. Do
-not Hangar a circularize claim on this tree. C-534 is the loft
-successor, not an orbit hang.
+Phase 2 remains `advRocketry` 45 Terrier: restartable vacuum
+second stage, Pe above the ~140 km High lid, first stage
+gravity-turn east. Do not Hangar a circularize claim on this
+tree. C-534 is the loft successor, not an orbit hang.
 
 ## Constellation (Eleanor, opt-in)
 

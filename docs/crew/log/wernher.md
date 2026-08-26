@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-501 leftover_ship walks recoverable ground Debris (pad Goo); wait recover by `_object_id` on vessels, not leftover_pad_ships names. kRPC Recover() is async OnVesselRecoveryRequested + persist; flying rec=0 blobs make it a no-op. No Hangar. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-500 HS splice uses collider half max(length/2+0.179, catalog MODEL ±0.5), not node math. insert_inline bumps new_half=0.1. --payload SAS-first tank FED; tank-engine still refused. Hangar 15-14-43Z was 0.191/0.4125. Did not write GameData. No Hangar. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-495 `craft fuel` dumps attach tree + fuelCrossFeed path from .craft+cfg (C-477 last tank→HS→Valiant BLOCKED Ablator only). T-497 insert_heatshield refuses fuelCrossFeed=False splice; tank stays on engine. Did not write GameData. No Hangar. Never leftover-ksc. Never revert.

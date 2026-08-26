@@ -412,7 +412,16 @@ space_center.launch_vessel(facility, name, site, crew, recover)
   `can_revert` as overlay on that sit. `tracking_station` is not KSC.
   Hangar does not `launch_vessel` until KSC is clean. Os will not click Recover / Cancel / Launch
   anyway. `vessel.recover()` returns before the ship leaves the list
-  — wait until gone.
+  — wait until gone. kRPC 0.6 `Vessel.Recover` is `StartCoroutine` on
+  the KSP `Vessel` (one `WaitUntil(true)` frame) then
+  `GameEvents.OnVesselRecoveryRequested`. `VesselRetrieval` queues the
+  GUID, `SaveGame("persistent")`, `LoadScene(SPACECENTER)`, then
+  `DestroyImmediate`. Python RPC returning is not despawn. Wait
+  `_object_id` on `space_center.vessels`, not leftover_pad_ships names
+  (those used to skip ` Debris`). Recoverable ground Debris (pad Goo)
+  is leftover. Flying Debris is not. If persist throws (Kerbalism
+  flying rec=0 blobs), the coroutine never LoadScene and Debris stays
+  — recover() is a no-op in that sit. Not leftover-ksc. Not Hangar.
 - `launch_vessel(..., recover=True)` from **space_center** and from **flight**
   entered `flight` / `pre_launch` with `active_vessel` set. Internally KSP
   **saves** via `FlightDriver.StartWithNewLaunch` → `GamePersistence.SaveGame`.
@@ -717,6 +726,14 @@ Status: **live** = exercised against this KSP; **code** = written, not live;
   remember kRPC `_object_id` (Vessel has no `.id` in this 0.6 client)
   on disk (`unrecoverable.last`) so the next process skips it. Os will
   not click Recover. Never revert. Never leftover-ksc.
+- **2026-08-26** — T-501: leftover_ship used to skip ` Debris` /
+  `VesselType.debris`, so walk_home never recovered the pad Goo.
+  Recoverable ground Debris is leftover; wait recover by `_object_id`
+  on `space_center.vessels`. kRPC `Recover()` is async
+  `OnVesselRecoveryRequested` → persist + LoadScene(SPACECENTER).
+  Flying rec=0 blobs that throw Kerbalism persist make recover() a
+  no-op (RPC returns, GUID stays). Harmony skip-dup is persist, not
+  this broom. Never leftover-ksc. Never revert.
 - **2026-08-26** — T-479: Kerbalism `VesselData` ctor
   `parts.Add(part.flightID)` throws on duplicate uint keys (OnSave /
   Close persist). Harmony skip-dup (`kspstuff_kerbalism/`, Os copy,

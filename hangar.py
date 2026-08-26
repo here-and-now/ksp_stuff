@@ -495,7 +495,7 @@ UNRECOVERABLE_LAST = (
     Path(__file__).resolve().parent / "docs" / "program" / "unrecoverable.last"
 )
 _SKIP_LEFTOVER_TYPES = frozenset(
-    {"spaceobject", "flag", "eva", "debris", "asteroid", "unknown"}
+    {"spaceobject", "flag", "eva", "asteroid", "unknown"}
 )
 
 
@@ -508,12 +508,14 @@ _UNRECOVERABLE: set[str] = set()
 
 
 def leftover_ship(vessel: Any) -> bool:
-    """Living craft we walk home. Asteroids, debris, EVA, flags, dead GUID are not.
+    """Living craft we walk home. Asteroids, EVA, flags, dead GUID are not.
 
-    Crash-UI wreck (landed/splashed, recoverable=0) is not pad occupancy.
-    Os will not click Recover. A GUID we already Closed stays out after
-    Space Center lists it as SUB_ORBITAL again. Airborne leftovers are
-    still listed; they do not occupy the pad (``leftover_occupies_pad``).
+    Recoverable ground Debris (pad Goo) is leftover — walk_home recover().
+    Flying Debris and rec=0 wreckage are not pad occupancy. Crash-UI wreck
+    (landed/splashed, recoverable=0) is not pad occupancy. Os will not
+    click Recover. A GUID we already Closed stays out after Space Center
+    lists it as SUB_ORBITAL again. Airborne leftovers are still listed;
+    they do not occupy the pad (``leftover_occupies_pad``).
     """
     try:
         name = str(getattr(vessel, "name", "") or "").strip()
@@ -522,13 +524,17 @@ def leftover_ship(vessel: Any) -> bool:
     if not name:
         return False
     low = name.lower()
-    if low.endswith(" debris"):
-        return False
     if low.startswith("ast.") or "asteroid" in low or "xrl-" in low:
         return False
     typ = _status_name(getattr(vessel, "type", None))
     if typ in _SKIP_LEFTOVER_TYPES:
         return False
+    debris = typ == "debris" or low.endswith(" debris")
+    if debris:
+        if _vessel_sit(vessel) not in _RECOVER_SITS:
+            return False
+        if not _vessel_recoverable(vessel):
+            return False
     vid = _vessel_id(vessel)
     if vid and vid in _load_unrecoverable():
         return False
@@ -758,26 +764,63 @@ def _wait_leftover_land(
         time.sleep(0.3)
 
 
-def _wait_recovered(session: Any, name: str, *, timeout: float = 20.0) -> bool:
-    deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
-        names = []
-        for vessel in leftover_pad_ships(session):
-            try:
-                names.append(str(getattr(vessel, "name", "") or ""))
-            except Exception:
-                continue
-        if name not in names:
+def _vessel_listed(session: Any, *, name: str, vid: str = "") -> bool:
+    """True while this leftover is still in ``space_center.vessels``.
+
+    Wait kRPC 0.6 ``_object_id`` (Vessel has no ``.id``), not
+    leftover_pad_ships names. leftover_pad_ships used to skip `` Debris``
+    so walk_home treated the pad Goo as gone without recover().
+    """
+    try:
+        pool = list(getattr(session.space_center, "vessels", []) or [])
+    except Exception:
+        return False
+    token = (vid or "").strip()
+    for other in pool:
+        if token:
+            if _vessel_id(other) == token:
+                return True
+            continue
+        try:
+            other_name = str(getattr(other, "name", "") or "")
+        except Exception:
+            continue
+        if other_name == name:
             return True
-        time.sleep(0.3)
     return False
 
 
+def _wait_recovered(
+    session: Any,
+    name: str,
+    *,
+    timeout: float = 20.0,
+    vessel: Any = None,
+    vid: str = "",
+) -> bool:
+    token = (vid or "").strip()
+    if not token and vessel is not None:
+        token = _vessel_id(vessel)
+    deadline = time.monotonic() + timeout
+    while True:
+        if not _vessel_listed(session, name=name, vid=token):
+            return True
+        if time.monotonic() >= deadline:
+            return False
+        time.sleep(0.3)
+
+
 def _recover_wait(session: Session, vessel: Any, name: str) -> bool:
+    vid = _vessel_id(vessel)
     try:
         run_physics(session)
     except Exception:
         pass
+    if game_scene(session) == "flight":
+        try:
+            session.switch_to(vessel)
+        except Exception:
+            pass
     try:
         log.info("walk home recover() %s sit=%s", name, _vessel_sit(vessel))
         try:
@@ -790,7 +833,7 @@ def _recover_wait(session: Session, vessel: Any, name: str) -> bool:
     except Exception as exc:
         log.warning("walk home recover %s: %s", name, exc)
         return False
-    if _wait_recovered(session, name):
+    if _wait_recovered(session, name, vessel=vessel, vid=vid):
         return True
     log.warning("walk home %s still in vessel list after recover()", name)
     return False
@@ -812,6 +855,7 @@ def walk_home(session: Session) -> int:
     session.require_connected()
     n = 0
     recovered_names: list[str] = []
+    recovered_vids: dict[str, str] = {}
     for vessel in leftover_ships(session):
         name = _vessel_name(vessel)
         started_in_flight = game_scene(session) == "flight"
@@ -835,6 +879,7 @@ def walk_home(session: Session) -> int:
             continue
         if rec:
             recovered_names.append(name)
+            recovered_vids[name] = _vessel_id(vessel)
             if _recover_wait(session, vessel, name):
                 n += 1
             continue
@@ -851,11 +896,13 @@ def walk_home(session: Session) -> int:
             sit = _vessel_sit(vessel)
         if rec:
             recovered_names.append(name)
+            recovered_vids[name] = _vessel_id(vessel)
             if _recover_wait(session, vessel, name):
                 n += 1
         elif started_in_flight:
             recovered_names.append(name)
-            if _wait_recovered(session, name):
+            recovered_vids[name] = _vessel_id(vessel)
+            if _wait_recovered(session, name, vessel=vessel, vid=recovered_vids[name]):
                 n += 1
             elif _vessel_recoverable(vessel) and _recover_wait(session, vessel, name):
                 n += 1
@@ -875,6 +922,7 @@ def walk_home(session: Session) -> int:
         elif sit in _WRECK_SITS:
             if _recover_wait(session, vessel, name):
                 recovered_names.append(name)
+                recovered_vids[name] = _vessel_id(vessel)
                 n += 1
             else:
                 remember_unrecoverable(vessel)
@@ -895,7 +943,7 @@ def walk_home(session: Session) -> int:
     except Exception:
         pass
     for name in recovered_names:
-        _wait_recovered(session, name)
+        _wait_recovered(session, name, vid=recovered_vids.get(name, ""))
     return n
 
 
@@ -1138,10 +1186,11 @@ def _can_revert(session: Any) -> bool:
 def ksc_ready(session: Any) -> tuple[bool, str]:
     """KSC overview, ground leftover gone, overlay not painted.
 
-    Asteroids/debris are not leftover ships. Airborne leftovers are
-    not a Hangar veto (Os). ``can_revert`` on a clean Space Center
-    after walk-home is leftover, not Flight Results. Empty Tracking
-    is not KSC. Never leftover-ksc. Never revert.
+    Asteroids and flying Debris are not leftover ships. Recoverable
+    ground Debris (pad Goo) is leftover. Airborne leftovers are not a
+    Hangar veto (Os). ``can_revert`` on a clean Space Center after
+    walk-home is leftover, not Flight Results. Empty Tracking is not
+    KSC. Never leftover-ksc. Never revert.
     """
     scene = game_scene(session).lower().replace(" ", "_")
     if scene in _TRACKING:

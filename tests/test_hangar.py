@@ -13,12 +13,14 @@ from ra_align import align_live
 from hangar import (
     Hangar,
     _abort_preflight_hang,
+    _wait_recovered,
     dismiss_flight_results,
     go_ksc,
     go_space_center,
     hold_prelaunch,
     install_signed,
     ksc_ready,
+    leftover_occupies_pad,
     leftover_ship,
     leftover_will_land,
     overlay_painted,
@@ -244,6 +246,39 @@ class TestKscReady(unittest.TestCase):
         self.assertTrue(ok)
         self.assertEqual(why, "ksc")
 
+    def test_landed_recoverable_debris_is_leftover_ship(self):
+        goo = _craft(
+            "t7-pbc Debris", recoverable=True, typ="debris", sit="landed", id="guid-goo"
+        )
+        self.assertTrue(leftover_ship(goo))
+        self.assertTrue(leftover_occupies_pad(goo))
+        session = _Session(scene="space_center", revert=False, vessels=(goo,))
+        ok, why = ksc_ready(session)
+        self.assertFalse(ok)
+        self.assertIn("leftover ships", why)
+
+    def test_flying_debris_is_not_leftover_ship(self):
+        blob = _craft(
+            "t7-pbc Debris", recoverable=False, typ="debris", sit="flying"
+        )
+        self.assertFalse(leftover_ship(blob))
+        self.assertFalse(leftover_occupies_pad(blob))
+        session = _Session(scene="space_center", revert=False, vessels=(blob,))
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
+
+    def test_landed_unrecoverable_debris_is_not_leftover_ship(self):
+        wreck = _craft(
+            "t7-pbc Debris", recoverable=False, typ="debris", sit="landed"
+        )
+        self.assertFalse(leftover_ship(wreck))
+        self.assertFalse(leftover_occupies_pad(wreck))
+        session = _Session(scene="space_center", revert=False, vessels=(wreck,))
+        ok, why = ksc_ready(session)
+        self.assertTrue(ok)
+        self.assertEqual(why, "ksc")
+
 
 class TestRaAlign(unittest.TestCase):
     def test_align_live_noop_without_service(self):
@@ -443,6 +478,93 @@ class TestHangarLaunchGate(unittest.TestCase):
             load_save(session, "leftover-ksc")
         self.assertIn("leftover-ksc", str(ctx.exception))
         self.assertEqual(session.space_center.loads, [])
+
+    def test_walk_home_recovers_pad_debris(self):
+        goo = _craft(
+            "t7-pbc Debris",
+            recoverable=True,
+            typ="debris",
+            sit="landed",
+            id="guid-goo",
+        )
+        session = _Session(scene="space_center", revert=False, vessels=[goo])
+
+        def _recover() -> None:
+            session.space_center.vessels = [
+                v for v in session.space_center.vessels if v is not goo
+            ]
+
+        goo.recover = _recover  # type: ignore[method-assign]
+        with patch("hangar.time.sleep"):
+            with patch("hangar.go_flight"):
+                n = walk_home(session)
+        self.assertEqual(n, 1)
+        self.assertEqual(session.space_center.vessels, [])
+        self.assertEqual(session.space_center.saves, [])
+        self.assertEqual(session.space_center.reverts, 0)
+
+    def test_wait_recovered_uses_object_id_not_pad_name(self):
+        goo = _craft(
+            "t7-pbc Debris",
+            recoverable=True,
+            typ="debris",
+            sit="landed",
+            id="guid-goo",
+        )
+        session = _Session(scene="space_center", vessels=[goo])
+
+        def _sleep(_dt: float) -> None:
+            session.space_center.vessels = []
+
+        with patch("hangar.time.sleep", side_effect=_sleep):
+            self.assertTrue(_wait_recovered(session, goo.name, vessel=goo))
+
+    def test_wait_recovered_timeout_if_guid_still_listed(self):
+        goo = _craft(
+            "t7-pbc Debris",
+            recoverable=True,
+            typ="debris",
+            sit="landed",
+            id="guid-goo",
+        )
+        session = _Session(scene="space_center", vessels=[goo])
+        clock = {"t": 0.0}
+
+        def _sleep(_dt: float) -> None:
+            clock["t"] += 100.0
+
+        with patch("hangar.time.monotonic", side_effect=lambda: clock["t"]):
+            with patch("hangar.time.sleep", side_effect=_sleep):
+                self.assertFalse(
+                    _wait_recovered(session, goo.name, vessel=goo, timeout=20.0)
+                )
+        self.assertEqual(session.space_center.vessels, [goo])
+
+    def test_walk_home_timeout_when_debris_recover_is_noop(self):
+        goo = _craft(
+            "t7-pbc Debris",
+            recoverable=True,
+            typ="debris",
+            sit="landed",
+            id="guid-goo",
+        )
+        session = _Session(scene="space_center", revert=False, vessels=[goo])
+        goo.recover = lambda: None  # type: ignore[method-assign]
+        clock = {"t": 0.0}
+
+        def _sleep(_dt: float) -> None:
+            clock["t"] += 100.0
+
+        with patch("hangar.time.monotonic", side_effect=lambda: clock["t"]):
+            with patch("hangar.time.sleep", side_effect=_sleep):
+                with patch("hangar.go_flight") as gf:
+                    n = walk_home(session)
+        self.assertEqual(n, 0)
+        gf.assert_not_called()
+        self.assertEqual(session.space_center.vessels, [goo])
+        ok, why = ksc_ready(session)
+        self.assertFalse(ok)
+        self.assertIn("leftover ships", why)
 
     def test_walk_home_recovers_then_close(self):
         wreck = _craft("hop-wreck", recoverable=True)

@@ -51,7 +51,7 @@ fly; a Toggle that stops a sample; east as a wish Stayputnik
 cannot keep; a Forest Kerbalism will swear by while the window
 shows grass; silk that opens while the Valiant is still talking;
 a rocket that kept talking after the desk went home; a Founder's
-one-window ruler that ate a review.
+fifty-five-line window that ate a review.
 We will be insufferable about all of them.
 
 ## History (so far)
@@ -63,7 +63,7 @@ still 2.29. We have never orbited Earth.
 
 | When | What | Sci |
 |---|---|---|
-| 2026-08-26 | [Everybody left](docs/press/everybody-left.md) — we lit it, clocked out, and followed a postcard-sized ruler | 2.29 → 2.29 |
+| 2026-08-26 | [Everybody left](docs/press/everybody-left.md) — we lit it, clocked out, and fitted a review to a window | 2.29 → 2.29 |
 | 2026-08-24 | [The smiles came home](docs/press/first-space.md) — silk, girders, Forest, then the Geiger in the black | 9.47 → 18.19 |
 | 2026-08-23 | [The forest forgave us](docs/press/forest-for-the-trees.md) — chute, girders, a Forest with no trees | 5.67 → 7.77 |
 | 2026-08-22 | [The can lived](docs/press/first-fifteen-sci.md) — splash Goo and TELEMETRY; a can sat down soft | 13.26 → 16.47 |

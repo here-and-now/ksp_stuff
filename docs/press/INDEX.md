@@ -15,7 +15,7 @@ are copied here under honest slugs when the photo is the right event.
 
 | Date | Story | Sci | Shot |
 |---|---|---|---|
-| 2026-08-26 | [Everybody left](everybody-left.md) — we lit a RealFuels rocket, clocked out, and followed a postcard-sized ruler | 2.29 → 2.29 | [in the dark](../../screenshots/everybody-left.png) |
+| 2026-08-26 | [Everybody left](everybody-left.md) — we lit a RealFuels rocket, clocked out, and fitted a review to a window | 2.29 → 2.29 | [in the dark](../../screenshots/everybody-left.png) |
 | 2026-08-24 | [The smiles came home](first-space.md) — silk on a burning stack, then the Geiger smiled in the black | 9.47 → 18.19 | [thin blue limb](../../screenshots/first-space-black.png) |
 | 2026-08-23 | [The forest forgave us](forest-for-the-trees.md) — a parachute, a porch of girders, and a Forest with no trees | 5.67 → 7.77 | [Forest, silk](../../screenshots/forest-first-touchdown.png) |
 | 2026-08-22 | [The can lived](first-fifteen-sci.md) — the Atlantic ate the stack until a can sat down soft | 13.26 → 16.47 | [the can, floating](../../screenshots/the-can-that-lived.png) |

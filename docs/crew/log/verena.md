@@ -1,5 +1,6 @@
 # Verena Grokman — log
 
+- 2026-08-26 — T-476 everybody-left: fourth-wall beat on portrait / 55-line / one-viewport law. `clip()` ate census and 3 of 5 skeptics; cutover schema-only dropped tables; org-rsi named org-review, scratch, apply gated. Os is the punchline. Hero stayed `everybody-left.png`. Did not invent orbit. Did not clobber first-mystery-goo.
 - 2026-08-26 — T-474 everybody-left: GitHub stills (everybody-left, stuck-orphan-fly/down, stuck-rf-pad-light allowlisted). Hero Os loft `everybody-left.png`. Bureaucracy beat: fifty-five-line / one-window ruler, clip ate Design, cutover cancelled; completeness is law; Os is the punchline, not the Grokmans. Did not invent orbit. Did not clobber first-mystery-goo.
 - 2026-08-26 — T-473 everybody-left: RA honesty, RF ullage/ignitions, org-rsi parked novels, hop light 09-44, leftover loft after the desk left. Hero stuck-orphan-fly. Did not invent orbit. Did not clobber first-mystery-goo.
 - 2026-08-25 — T-435 press voice: tables hold digits. Rewrote first-space as gold, then README + INDEX, then forest / can / potato / five / two-km / pad-goo. Captions visual. Did not invent orbit. Did not clobber first-mystery-goo.

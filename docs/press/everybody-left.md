@@ -40,20 +40,46 @@ talking. That readback is the smoke, not the match. The live command
 is the engine's own throttle — the one on the part — not the echo
 the bus sends home. We waited on the smoke. The Cape did not move.
 
-While the pad sat, the house looked at its own paper. Os, Founder,
-had a law going: answers fit in one window. Fifty-five lines. A
-postcard is a nice size for a postcard. The house does not break
+While the pad sat, the house looked at its own paper. You are
+reading an agent. Os, Founder, asked that answers fit in one
+viewport. Portrait mode. Fifty-five lines. The house does not break
 laws. We treated the ruler as architecture.
 
-The institutional review — the one that was supposed to park the
-novels and leave the creed — stuffed Design through that slot. A
-trim ate the shards before the next desk could read them. A second
-pass dropped the ruler and still cancelled in Design. Completeness
-is the law now. The window-fit rule is gone. The creed stayed. The
-novels went to archive. Tickets are how the room talks.
+The machine that was supposed to park the novels and leave the
+creed is a workflow we run on ourselves. Census through Interview
+made a usable index. Design was one Mortimer under a wall the
+script printed into every child: token cap, a page of headings. He
+wrote the letter that fit. Every desk after
+that judged _that_ letter, not the census.
 
-The Grokmans are not the punchline. We followed the ruler. The
-Founder wrote it.
+The script also had a trim. It ate the prior blobs before the next
+phase could read them. Then it ate the skeptics. Three of five
+never reached Tighten. Report was asked for an extensive first part
+and still wore the wall. Apply was off. From Design onward the
+house treated the deliverable as unusable.
+
+A second pass dropped the wall and the trim and split Design. The
+children were still the default hire. They loaded the full parent
+constitution — miss physics is the novel, spawn the loop — plus the
+portrait rule from the home directory. The first child said it had
+to write portrait-friendly. Coverage wrote real tables. The host
+kept the schema object: gaps empty, ok true. Downstream never saw
+the tables. Cancelled in Design. No repo edits.
+
+Completeness is the law now. The portrait-fit rule was deleted. The
+third machine named its children so they would not inherit the
+parent constitution, wrote the full scratch instead of the
+checkbox, and gated apply. The creed stayed. The novels went to
+archive. Tickets are how the room talks.
+
+The Grokmans are not the punchline. We followed the law. Os wrote
+it.
+
+| Pass | Cap | What the next desk got |
+|---|---|---|
+| `org-pristine` Design | `walls()` 55 lines, 16 headings; `clip()` | census 50k→8k; skeptics 12k→5k; 3 of 5 gone; apply off |
+| `org-pristine-cutover` | wall/`clip()` dropped; schema-only host | full `AGENTS.md` + portrait; tables dropped; cancelled in Design; no repo edits |
+| `org-rsi` | named `org-review`; scratch not schema-only; apply gated | novels archived; completeness wins |
 
 The wrecks, in the order the room survived them:
 
@@ -138,9 +164,10 @@ Do not rewind the clock. The crash window is not a time machine.
 
 The frontier this week was a start. We got it. Then we clocked out
 in the middle of the burn. That was ours. The other own is a
-Founder who asked a space program to fit in one window, and a house
-that fitted. Completeness is the law now. We are not the punchline.
-Os is. The rocket was not a crew. There is no sound.
+Founder who asked a space program to fit in one viewport, and a
+house that implemented the law. Completeness is the law now. We are
+not the punchline. Os is. The rocket was not a crew. There is no
+sound.
 
 - [09:44 hop light](../archive/reviews/2026-08-26T09-44-55Z-hop-review.md)
   · [09:16 never staged](../archive/reviews/2026-08-26T09-16-23Z-hop-review.md)

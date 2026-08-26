@@ -1326,7 +1326,7 @@ PART
 	resPri = 0
 	dstg = 0
 	sidx = 0
-	sqor = -1
+	sqor = 0
 	sepI = -1
 	attm = 0
 	modCost = 0

@@ -256,6 +256,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:34:33Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. Silk+HS loft hang. Disk: OKTO+RC_cone Nylon 50m istg=0 sqor=0 + Valiant istg=1 sqor=0 (STAGE 001 was chute-only). HS dish bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) Ablative 80 engine Y 9.7005201. 7x proc 1.25x0.625 Default 2415 kero. Pad-dead-no-plume still live \u2014 did not Hangar this sit. Do not Hangar t7-chute Mk16. Omni SurfAntenna gain=2. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO HD=1 + 3xEngineer7500 HD=0.5. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:27Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. Silk+HS loft hang. Disk: OKTO+RC_cone Nylon 50m istg=0 sqor=0 + Valiant istg=1 sqor=0 (STAGE 001 was chute-only). HS dish bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) Ablative 80 engine Y 9.7005201. 7x proc 1.25x0.625 Default 2415 kero. Pad-dead-no-plume still live \u2014 did not Hangar this sit. Do not Hangar t7-chute Mk16. Omni SurfAntenna gain=2. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO HD=1 + 3xEngineer7500 HD=0.5. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -271,7 +287,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T12:17:54Z"
+      "updated": "2026-08-26T14:35:27Z"
     },
     "T-001": {
       "assignee": "",
@@ -14224,6 +14240,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:33Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-pbc. 13-31-03Z apo 88.8 km shear=no is still the >=50 km proof (Stayputnik, no chute, 7xFL-T100 Valiant). Not the loft hang this sit. Loft is C-477 hs-cone silk+HS. Do not Hangar t7-chute / t7-chute-cone this sit. Omni SurfAntenna. Cape 64 bps. f013 2HOT+Goo+geiger on_craft TELEMETRY Stayputnik HD=0.5. Thin tape T-284. fingerprint aero-stiff-chute. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:27Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-pbc. 13-31-03Z apo 88.8 km shear=no is still the >=50 km proof (Stayputnik, no chute, 7xFL-T100 Valiant). Not the loft hang this sit. Loft is C-477 hs-cone silk+HS. Do not Hangar t7-chute / t7-chute-cone this sit. Omni SurfAntenna. Cape 64 bps. f013 2HOT+Goo+geiger on_craft TELEMETRY Stayputnik HD=0.5. Thin tape T-284. fingerprint aero-stiff-chute. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -14238,7 +14270,7 @@
       "tags": [],
       "title": "Seat t7-pbc (88.8 km proof) \u2014 Mk16 t7-chute is not lofting",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:38Z"
+      "updated": "2026-08-26T14:35:27Z"
     },
     "T-388": {
       "assignee": "",
@@ -14894,6 +14926,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:33Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-pbc. Stop flying. 10-22-06Z rec=yes was tanks lithobraking Stayputnik. Lithobrake is not recover. Loft hang is C-477. Disk kept as FL-T100 PresMat/wheel shelf. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik HD=2.5. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:27Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-pbc. Stop flying. 10-22-06Z rec=yes was tanks lithobraking Stayputnik. Lithobrake is not recover. Loft hang is C-477. Disk kept as FL-T100 PresMat/wheel shelf. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik HD=2.5. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -14908,7 +14956,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T14:35:27Z"
     },
     "T-401": {
       "assignee": "",
@@ -15014,6 +15062,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:34:33Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-hs-pbc. Recover alt, not loft. Cloned C-477 dish HS (bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) useFairing=False Ablative 80) \u2014 puck 1.25 detonated Hangar. Engine Y 9.7005201. No silk. Do not Hangar this sit. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:27Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-hs-pbc. Recover alt, not loft. Cloned C-477 dish HS (bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) useFairing=False Ablative 80) \u2014 puck 1.25 detonated Hangar. Engine Y 9.7005201. No silk. Do not Hangar this sit. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15030,7 +15094,7 @@
       ],
       "title": "t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:02Z"
+      "updated": "2026-08-26T14:35:27Z"
     },
     "T-403": {
       "assignee": "",
@@ -15101,6 +15165,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-cone-pbc. Recover alt, not loft. OKTO+RC_cone Nylon 50m istg=0 + Valiant istg=1 sqor=0 now (was sqor=-1 pad-dead). Do not Hangar this sit (silk/4x/pitch). f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO HD=1. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-cone-pbc. Recover alt, not loft. OKTO+RC_cone Nylon 50m istg=0 + Valiant istg=1 sqor=0 now (was sqor=-1 pad-dead). Do not Hangar this sit (silk/4x/pitch). f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO HD=1. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15117,7 +15197,7 @@
       ],
       "title": "t7-wheel-cone: RC_cone 50m recover alt of t7-wheel \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-404": {
       "assignee": "linus",
@@ -15394,6 +15474,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. No-silk proc loft alt, not the hang this sit. 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 767 L / 345 kero vs 7xT100 1575 kero. Same 4.375 m stack as 88.8 km proof; 2415 kero. Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant. No chute. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. No-silk proc loft alt, not the hang this sit. 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 767 L / 345 kero vs 7xT100 1575 kero. Same 4.375 m stack as 88.8 km proof; 2415 kero. Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant. No chute. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not lite/dv5/4t. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15410,7 +15506,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-407": {
       "assignee": "",
@@ -15508,6 +15604,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-oxstat-pbc. Dwell EC, not the loft. Same t7-wheel + 4x solarPanels5 survivability. Goo 641x0.18=115 plus command vs t7 3xZ-100 EC=0 MET 440. 4x0.35 EC/s sun. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik HD=2.5. Thin tape T-284. fingerprint ec=0-after-loft. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-oxstat-pbc. Dwell EC, not the loft. Same t7-wheel + 4x solarPanels5 survivability. Goo 641x0.18=115 plus command vs t7 3xZ-100 EC=0 MET 440. 4x0.35 EC/s sun. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik HD=2.5. Thin tape T-284. fingerprint ec=0-after-loft. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15522,7 +15634,7 @@
       "tags": [],
       "title": "t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-409": {
       "assignee": "",
@@ -15593,6 +15705,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-nose-pbc. Aero, not silk. Not the loft hang. OKTO+proceduralNoseCone Smooth Cone length 0.625. Stayputnik has no top node. Same 7xFL-T100 Valiant + sasModule + PresMat. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-nose-pbc. Aero, not silk. Not the loft hang. OKTO+proceduralNoseCone Smooth Cone length 0.625. Stayputnik has no top node. Same 7xFL-T100 Valiant + sasModule + PresMat. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15607,7 +15735,7 @@
       "tags": [],
       "title": "t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-410": {
       "assignee": "",
@@ -16483,6 +16611,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. Heat-only recover alt, no silk. Not the loft hang. Cloned C-477 dish HS (bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) useFairing=False Ablative 80) + 7x proc 1.25x0.625 Default 2415 kero. Engine Y 9.7005201. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. Heat-only recover alt, no silk. Not the loft hang. Cloned C-477 dish HS (bottomDiameter=0 Round3 shapePoints (1,0,1,0.5) useFairing=False Ablative 80) + 7x proc 1.25x0.625 Default 2415 kero. Engine Y 9.7005201. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16499,7 +16643,7 @@
       ],
       "title": "t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-429": {
       "assignee": "",
@@ -16613,6 +16757,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. Silk-only recover alt (no HS). Not the loft hang. OKTO+RC_cone Nylon 50m istg=0 + Valiant istg=1 sqor=0 now (was sqor=-1 pad-dead) + 7x proc 1.25x0.625 Default 2415 kero. Do not Hangar t7-chute Mk16. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. Silk-only recover alt (no HS). Not the loft hang. OKTO+RC_cone Nylon 50m istg=0 + Valiant istg=1 sqor=0 now (was sqor=-1 pad-dead) + 7x proc 1.25x0.625 Default 2415 kero. Do not Hangar t7-chute Mk16. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16629,7 +16789,7 @@
       ],
       "title": "t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-431": {
       "assignee": "",
@@ -16684,6 +16844,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-oxstat-pbc. Dwell EC, not the loft. 4x solarPanels5 + 7x proc 1.25x0.625 Default 2415 kero. Goo 641x0.18 plus command vs t7 3xZ-100 EC=0 MET 440. No chute. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint ec=0-after-loft. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-oxstat-pbc. Dwell EC, not the loft. 4x solarPanels5 + 7x proc 1.25x0.625 Default 2415 kero. Goo 641x0.18 plus command vs t7 3xZ-100 EC=0 MET 440. No chute. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint ec=0-after-loft. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16698,7 +16874,7 @@
       "tags": [],
       "title": "t7-wheel-proc-oxstat: 4x OX-STAT on t7-wheel-proc for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-432": {
       "assignee": "",
@@ -16796,6 +16972,22 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T14:34:34Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-nose-pbc. Aero, not silk. Not the loft hang. OKTO+proceduralNoseCone Smooth Cone length 0.625 + 7x proc 1.25x0.625 Default 2415 kero. Stayputnik has no top node. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T14:35:28Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-nose-pbc. Aero, not silk. Not the loft hang. OKTO+proceduralNoseCone Smooth Cone length 0.625 + 7x proc 1.25x0.625 Default 2415 kero. Stayputnik has no top node. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16810,7 +17002,7 @@
       "tags": [],
       "title": "t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T10:49:37Z"
+      "updated": "2026-08-26T14:35:28Z"
     },
     "T-434": {
       "assignee": "",
@@ -18306,7 +18498,17 @@
       "fingerprint": "rf-ignition-ullage",
       "id": "T-470",
       "payload": {
-        "count": 8
+        "count": 8,
+        "findings": [
+          {
+            "at": "2026-08-26T14:35:44Z",
+            "claim": "Practice last-write rf-ignition-ullage \u00d78 (stem 10): hop light is plume / currentThrottle rising after the engine fires, not ignitions 1\u21920, not kRPC GET throttle. Independent setpoint is the RF live. Empty stage is not hop light. Pad-dead-no-plume is Lars hop_factory_pad.py. Pad 1 g still lights; restart not free; do not raise ignitions. T-471 owns the live miss. Did not empty the pad.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -18318,7 +18520,7 @@
       "tags": [],
       "title": "RSI rf-ignition-ullage \u00d78",
       "type": "rsi",
-      "updated": "2026-08-25T22:01:00Z"
+      "updated": "2026-08-26T14:35:44Z"
     },
     "T-471": {
       "assignee": "",
@@ -18586,7 +18788,17 @@
       "fingerprint": "bigger-dv",
       "id": "T-478",
       "payload": {
-        "count": 19
+        "count": 19,
+        "findings": [
+          {
+            "at": "2026-08-26T14:35:44Z",
+            "claim": "Practice last-write bigger-dv \u00d719 (stem 20): loft hang is C-477 t7-wheel-proc-hs-cone-pbc (silk+HS). t7-wheel-pbc lithobrake is not recover (T-400 capable no). Do not Hangar 4t/dv5/lite/t7-chute Mk16. T-406/T-428/T-430 stay alts. Bank 13.62 need ~6.38 generalRocketry 20. Did not empty the pad.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -18598,7 +18810,7 @@
       "tags": [],
       "title": "RSI bigger-dv \u00d719",
       "type": "rsi",
-      "updated": "2026-08-26T10:48:37Z"
+      "updated": "2026-08-26T14:35:44Z"
     },
     "T-479": {
       "assignee": "",
@@ -18675,7 +18887,17 @@
       "fingerprint": "vab-helper",
       "id": "T-481",
       "payload": {
-        "count": 10
+        "count": 10,
+        "findings": [
+          {
+            "at": "2026-08-26T14:35:44Z",
+            "claim": "Practice last-write vab-helper \u00d710 (stem 13): Gus files, Wernher writes craft.py. Pad flies the signed hang. Helper must leave engine in first fire list (sqor=0 not only istg=1) and HS a VAB dish (bottomDiameter=0) not a filled puck. Node offset is catalog not tank-half. Live gaps T-480/T-482/T-483. Did not idle the pad.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -18687,7 +18909,7 @@
       "tags": [],
       "title": "RSI vab-helper \u00d710",
       "type": "rsi",
-      "updated": "2026-08-26T11:04:37Z"
+      "updated": "2026-08-26T14:35:44Z"
     },
     "T-482": {
       "assignee": "",
@@ -19052,5 +19274,5 @@
       "updated": "2026-08-26T13:53:40Z"
     }
   },
-  "updated": "2026-08-26T14:33:45Z"
+  "updated": "2026-08-26T14:35:44Z"
 }

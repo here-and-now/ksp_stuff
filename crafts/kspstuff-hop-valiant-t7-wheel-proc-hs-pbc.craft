@@ -1204,19 +1204,34 @@ PART
 		textureSet = Ablative
 		shapeName = Smooth Cone
 		capTextureIndex = 1
+		forceLegacyTextures = True
 	}
 	MODULE
 	{
 		name = ProceduralShapeBezierCone
 		selectedShape = Round3
+		shapePoints = (1, 0, 1, 0.5)
 		topDiameter = 1.25
-		bottomDiameter = 1.25
+		bottomDiameter = 0
 		length = 0.2
+		coneBottomMode = Constant
 	}
 	MODULE
 	{
 		name = ProceduralHeatshield
+		mass = 0.1
+		fairingThickness = 0.01
+		useFairing = False
 		ablativeResource = Ablator
+		fairingTextureSet = Original
+	}
+	MODULE
+	{
+		name = ModuleJettison
+		activejettisonName = fairing
+		isJettisoned = False
+		shroudHideOverride = False
+		stagingEnabled = False
 	}
 	RESOURCE
 	{

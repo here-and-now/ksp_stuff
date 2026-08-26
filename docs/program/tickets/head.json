@@ -17,7 +17,7 @@
     "chute-workshop-hop": 1,
     "commander-no-review": 1,
     "communotron16-vs-16s": 1,
-    "control-blocks": 9,
+    "control-blocks": 11,
     "ctt-stability": 2,
     "desert-flyinghigh-telemetry": 1,
     "desert-flyinglow-telemetry": 1,
@@ -411,6 +411,151 @@
       "title": "One procedural loft hang \u2014 FED, Hangar-safe, not C-477 blob",
       "type": "vehicle",
       "updated": "2026-08-26T16:41:45Z"
+    },
+    "S-514": {
+      "assignee": "linus",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-26T16:43:18Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "S-514",
+      "payload": {
+        "biome": "global",
+        "bound": "no",
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
+        "duration_s": 10,
+        "ec_rate": 0.03,
+        "est": 2.0,
+        "experiment_id": "kerbalism_LITE",
+        "host": "probeCoreSphere_v2",
+        "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
+        "kind": "file",
+        "leftover": "unstarted",
+        "note": "unbound InSpaceLow LITE 10/0.03/2.00 on kspstuff-hop-valiant-proc-loft-pbc. file cap 2 \u00d7 LEO 1.0. 16-23-52Z sat InSpaceLow after High ~42 s; last-flight skip not-in-card. 10 s can finish this loft. hop_science_ids situation=flying drops InSpaceLow; sit_matches default True; factory skip-latch cannot retry after High Toggle. Shelf until Toggle waits space. HD 0.25 MB recover not TX. f013: Stayputnik PAW start on_craft=yes. recover_banks yes.",
+        "on_craft": "yes",
+        "part": "probeCoreSphere_v2",
+        "recover_banks": "yes",
+        "situation": "InSpaceLow",
+        "size_mb": 0.25,
+        "tech": "start",
+        "tx": "no",
+        "unlocked": "n/a"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": 2.0,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "remaining",
+        "inspacelow",
+        "lite",
+        "unbound"
+      ],
+      "title": "InSpaceLow LITE unstarted 2.00",
+      "type": "science",
+      "updated": "2026-08-26T16:43:46Z"
+    },
+    "S-515": {
+      "assignee": "linus",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-26T16:43:46Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "S-515",
+      "payload": {
+        "biome": "global",
+        "bound": "no",
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
+        "duration_s": 30,
+        "ec_rate": 0.052,
+        "est": 2.0,
+        "experiment_id": "kerbalism_TELEMETRY",
+        "host": "probeCoreSphere_v2",
+        "instrument": "Stayputnik PAW (probeCoreSphere_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
+        "kind": "file",
+        "leftover": "unstarted",
+        "note": "unbound InSpaceLow TELEMETRY 30/0.052/2.00 on kspstuff-hop-valiant-proc-loft-pbc. file cap 2 \u00d7 LEO 1.0. 16-23-52Z sat InSpaceLow; last-flight skip not-in-card. 30 s can finish this loft. Forest High leftover 1.512 T-069 is Forest pin \u2014 Shores High TELEMETRY capped. hop_science_ids situation=flying drops InSpaceLow. Shelf until Toggle waits space. HD 0.75 MB recover not TX 26 h. f013: Stayputnik PAW start on_craft=yes. recover_banks yes.",
+        "on_craft": "yes",
+        "part": "probeCoreSphere_v2",
+        "recover_banks": "yes",
+        "situation": "InSpaceLow",
+        "size_mb": 0.75,
+        "tech": "start",
+        "tx": "no",
+        "unlocked": "n/a"
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": 2.0,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "remaining",
+        "inspacelow",
+        "telemetry",
+        "unbound"
+      ],
+      "title": "InSpaceLow TELEMETRY unstarted 2.00",
+      "type": "science",
+      "updated": "2026-08-26T16:43:46Z"
+    },
+    "S-516": {
+      "assignee": "linus",
+      "blockers": [],
+      "category": "science_opportunity",
+      "created": "2026-08-26T16:43:46Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "S-516",
+      "payload": {
+        "biome": "global",
+        "bound": "no",
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
+        "duration_s": 641,
+        "ec_rate": 0.18,
+        "est": 3.41,
+        "experiment_id": "mysteryGoo",
+        "host": "none",
+        "instrument": "Mystery Goo Containment Unit (GooExperiment) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
+        "kind": "sample",
+        "leftover": 3.41,
+        "note": "unbound InSpaceLow goo leftover 641/0.18/3.41 on kspstuff-hop-valiant-proc-loft-pbc. Sample mysteryGoo@EarthInSpaceLow 2.590/6.000 left=3.41. 16-23-52Z sat InSpaceLow ~300 s MET; remaining ~364 s may not finish. Recover the can (429 MB). C-504 has Nylon RC_cone; 16-23-52Z rec=no wreck lost the can. Shelf until living recover. High goo leftover 4.75 is T-368. f013: GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
+        "on_craft": "yes",
+        "part": "GooExperiment",
+        "recover_banks": "yes",
+        "situation": "InSpaceLow",
+        "size_mb": 429,
+        "tech": "start",
+        "tx": "no",
+        "unlocked": "yes"
+      },
+      "priority": "P2",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": 3.41,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "remaining",
+        "inspacelow",
+        "goo",
+        "unbound",
+        "leftover"
+      ],
+      "title": "InSpaceLow goo leftover 3.41",
+      "type": "science",
+      "updated": "2026-08-26T16:43:46Z"
     },
     "T-001": {
       "assignee": "",
@@ -3579,6 +3724,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T16:44:35Z",
+            "claim": "16-23-52Z fly science_ids barometerScan,geigerCounter,mysteryGoo started at FlyingHigh with T-404/T-368. Geiger High capped. Goo 641 s rec=no can lost. This-hop bind is T-404 barometerScan only. Dropped geiger+goo from T-081 science_ids so fly cannot shadow the High PresMat card.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "landing": {
@@ -3806,9 +3959,7 @@
         "learn": "landing: catastrophic impact=1846 m/s heading=297 horiz=21 pitch=65 sit=flying synth apo=268513 biome=Shores rec=no sci=run=1 rem=0 bank=13.62 +0",
         "phase": "hop",
         "science_ids": [
-          "barometerScan",
-          "geigerCounter",
-          "mysteryGoo"
+          "barometerScan"
         ],
         "telem_run": "docs/missions/uncrewed/logs/2026-08-26T16-23-52Z-hop.jsonl",
         "waste": {
@@ -3855,7 +4006,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T16:30:13Z"
+      "updated": "2026-08-26T16:44:35Z"
     },
     "T-082": {
       "assignee": "",
@@ -13588,14 +13739,15 @@
       "evidence": [
         "docs/missions/jebediah/logs/2026-08-24T18-34-09Z-hop.jsonl",
         "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
-        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T16-23-52Z-hop.jsonl"
       ],
       "fingerprint": "flyinghigh-goo",
       "id": "T-368",
       "payload": {
         "biome": "global",
-        "bound": "yes",
-        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
+        "bound": "no",
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 641,
         "ec_rate": 0.18,
         "est": 4.75,
@@ -13632,17 +13784,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T16:43:59Z",
+            "claim": "Unbound FlyingHigh goo leftover 641/0.18/4.75. Envelope 16-23-52Z High dwell ~42 s then InSpaceLow 268 km rec=no wreck \u2014 can lost. Sample mysteryGoo@EarthFlyingHigh 0.647/5.400 left=4.75 stays the High shelf. 641 s cannot finish this envelope. C-504 Nylon RC_cone is recover path, not this wreck. This-hop T-404 FlyingHigh PresMat 2.70 seq0. InSpaceLow goo leftover 3.41 is S-516 shelf. f013 GooExperiment start unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "Mystery Goo Containment Unit (GooExperiment) \u2014 tech start \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "sample",
         "leftover": 4.75,
-        "note": "this-hop FlyingHigh goo leftover seq2 on kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (C-477 capable yes, silk+HS). leftover mysteryGoo@EarthFlyingHigh 0.647/5.400 left=4.75 \u2192 641 s / 0.18 sample \u2014 recover the can (429 MB), not TX. Splash/FlyingLow/landed goo capped. 641 s may not finish; leftover still pays on recover if complete. Silk recover is on this hang \u2014 not wait t7+Mk16. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc. Side-by-side T-404 PresMat High seq0 + T-460 FlyingLow seq1. Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. Not Water. Not Grasslands. f013: GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "unbound FlyingHigh goo leftover 641/0.18/4.75 on kspstuff-hop-valiant-proc-loft-pbc. Sample mysteryGoo@EarthFlyingHigh 0.647/5.400 left=4.75. 16-23-52Z High dwell ~42 s then InSpaceLow; rec=no wreck \u2014 can lost. 641 s cannot finish this envelope. Recover the can (429 MB). Silk RC_cone is on C-504 now \u2014 shelf until a living recover. Splash/Low/landed goo capped. f013: GooExperiment start unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "GooExperiment",
         "recover_banks": "yes",
-        "seq": 2,
+        "seq": "",
         "situation": "FlyingHigh",
         "size_mb": 429,
         "tech": "start",
@@ -13659,16 +13819,16 @@
       "sci_expect": 4.75,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "flyinghigh",
         "goo",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingHigh goo leftover 4.75",
       "type": "science",
-      "updated": "2026-08-26T14:33:45Z"
+      "updated": "2026-08-26T16:43:59Z"
     },
     "T-369": {
       "assignee": "linus",
@@ -15388,14 +15548,15 @@
       "evidence": [
         "docs/missions/jebediah/logs/2026-08-24T21-07-06Z-hop.jsonl",
         "docs/missions/jebediah/logs/2026-08-25T06-36-38Z-hop.jsonl",
-        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T16-23-52Z-hop.jsonl"
       ],
       "fingerprint": "flyinghigh-barometer",
       "id": "T-404",
       "payload": {
         "biome": "",
         "bound": "yes",
-        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
         "est": 2.7,
@@ -15480,13 +15641,21 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T16:43:59Z",
+            "claim": "Kept FlyingHigh PresMat 305/0.05/2.70 seq0 on C-504 proc-loft-pbc. 16-23-52Z lofted High ~42 s then InSpaceLow apo 268 km rec=no sci_run=1 rem=0 bank 13.62 +0. Do not unbind High because pad-RF \u2014 this hop DID loft High then left it. PresMat cannot pay InSpaceLow (MM Surface/FlyingLow/FlyingHigh only). Pulse must MECO/dwell \u2265305 s in 50\u2013140 km. File rem=0 is still the card. Scan unstarted 2.70. Unbound T-460 same eid one Toggle. Unbound T-368 goo 641 s sample rec=no. InSpaceLow LITE S-514 2.00 / TELEMETRY S-515 2.00 / goo leftover S-516 3.41 shelf. Geiger High capped. Thermo High capped. Not Water. Not Grasslands. Not Surface. recover HD 1.17 MB not TX 41 h. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop FlyingHigh PresMat seq0 on kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (C-477 capable yes, silk+HS loft). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc as this hang. Scan High out is 50 km lid from old hop; this hang lofts \u226550 km. Side-by-side T-460 FlyingLow 2.10 seq1 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay High loft). Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. Thermo High capped. Not Grasslands. HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop FlyingHigh PresMat seq0 on kspstuff-hop-valiant-proc-loft-pbc (C-504 capable yes, Nylon RC_cone). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 41 h \u2014 recover HD. File rem=0 is still the card. 16-23-52Z lofted High ~42 s then InSpaceLow apo 268 km rec=no sci +0 \u2014 PresMat cannot pay InSpaceLow. Do not unbind High because pad-RF; this hop DID loft High then left it. Pulse must MECO/dwell \u2265305 s in 50\u2013140 km. Same eid one Toggle \u2014 unbound T-460 FlyingLow. Unbound T-368 goo 641 s sample (no living recover). InSpaceLow LITE 2.00 / TELEMETRY 2.00 / goo leftover 3.41 shelf. Geiger High capped. Thermo High capped. Not Water. Not Grasslands. Not Surface. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
@@ -15531,7 +15700,7 @@
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-26T14:33:44Z"
+      "updated": "2026-08-26T16:43:59Z"
     },
     "T-405": {
       "assignee": "",
@@ -18220,14 +18389,15 @@
       "created": "2026-08-25T11:04:29Z",
       "desk": "linus",
       "evidence": [
-        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl"
+        "docs/missions/jebediah/logs/2026-08-25T20-36-06Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T16-23-52Z-hop.jsonl"
       ],
       "fingerprint": "",
       "id": "T-460",
       "payload": {
         "biome": "",
-        "bound": "yes",
-        "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
+        "bound": "no",
+        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
         "est": 2.1,
@@ -18296,17 +18466,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T16:43:59Z",
+            "claim": "Unbound FlyingLow PresMat 305/0.05/2.10. 16-23-52Z loft blows through Low; same eid as T-404 one Toggle. File rem=0 stays the Low shelf. Scan REACH 2.10. Not Water. Not Grasslands. This-hop T-404 FlyingHigh PresMat seq0. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop FlyingLow PresMat seq1 on kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc (C-477 capable yes). Unstarted barometerScan FlyingLow ~2.10 (cap 3 \u00d7 0.7). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 145833 s (41 h) \u2014 recover HD this hop. File rem=0 is still the card. Loft crosses Low. Do not Learn 10-41-43Z ~1 km dud on retired t7-wheel-pbc as this hang. Not Water (never 090). Not Grasslands. Side-by-side T-404 FlyingHigh 2.70 seq0 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay High loft). HD 2.5 vs 1.17. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "unbound FlyingLow PresMat 305/0.05/2.10 on kspstuff-hop-valiant-proc-loft-pbc. Same eid as T-404 \u2014 one Toggle. 16-23-52Z loft blows through Low; 305 s cannot finish. File rem=0 stays the Low shelf. Not Water. Not Grasslands. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 1,
+        "seq": "",
         "situation": "FlyingLow",
         "size_mb": 1.17,
         "tech": "stability",
@@ -18320,16 +18498,16 @@
       "sci_expect": 2.1,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "flyinglow",
         "barometer",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingLow barometer 2.10",
       "type": "science",
-      "updated": "2026-08-26T14:33:45Z"
+      "updated": "2026-08-26T16:43:59Z"
     },
     "T-461": {
       "assignee": "linus",
@@ -20327,7 +20505,68 @@
       "title": "RSI vab-helper \u00d723",
       "type": "rsi",
       "updated": "2026-08-26T16:41:12Z"
+    },
+    "T-517": {
+      "assignee": "",
+      "blockers": [],
+      "category": "systems",
+      "created": "2026-08-26T16:43:46Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "control-blocks",
+      "id": "T-517",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T16:43:59Z",
+            "claim": "16-23-52Z sat InSpaceLow after High ~42 s. hop_science_ids(situation=flying) drops InSpaceLow. sit_matches defaults True so a flying-card Toggle at 50 km records High. hop_factory skip-latch science_attempted on cannot-pay \u2014 no retry in space. This-hop stays T-404 High PresMat; S-514 LITE / S-515 TELEMETRY / S-516 goo InSpaceLow stay unbound shelf.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
+          }
+        ],
+        "note": "16-23-52Z C-504 lofted High ~42 s then InSpaceLow to 268 km. hop_science_ids(situation=flying) drops InSpaceLow. science.sit_matches defaults True for InSpaceLow so a flying-card Toggle at 50 km records High. hop_factory skip-latch science_attempted on cannot-pay \u2014 no retry in space. This-hop stays T-404 FlyingHigh PresMat; InSpaceLow LITE 10 s / TELEMETRY 30 s are shelf until Toggle waits space. Cite like f013."
+      },
+      "priority": "P1",
+      "reporter": "Linus Grokman, Director of Research",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "inspacelow",
+        "sit-match"
+      ],
+      "title": "hop Toggle is FlyingHigh lid \u2014 InSpaceLow binds never start",
+      "type": "systems",
+      "updated": "2026-08-26T16:43:59Z"
+    },
+    "T-518": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T16:43:46Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "control-blocks",
+      "id": "T-518",
+      "payload": {
+        "count": 10
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "software",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI control-blocks \u00d710",
+      "type": "rsi",
+      "updated": "2026-08-26T16:43:46Z"
     }
   },
-  "updated": "2026-08-26T16:41:45Z"
+  "updated": "2026-08-26T16:44:35Z"
 }

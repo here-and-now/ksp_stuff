@@ -77,7 +77,11 @@ still 2.29. We have never orbited Earth.
 ·
 [Missions](docs/missions/INDEX.md)
 ·
-[Science](docs/program/science.md)
+[Tickets](docs/program/tickets/BRIEF.md)
+·
+`python main.py science-scan`
+·
+seated dump `docs/missions/<id>/science.md`
 
 <p align="center">
   <a href="docs/press/first-hop.md"><img src="screenshots/rocket-flea.png" alt="Flea off the Cape, motor lit"></a>

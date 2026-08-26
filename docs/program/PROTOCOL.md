@@ -56,10 +56,18 @@ Clean-pad Hangar of the seated craft for the sortie may stay inside
 hop (`install_and_launch`) — that is **launch**, not leftover hygiene.
 Splash HD recover of **this** hop after a briefed dwell stays mission.
 
+**Hop light vs airborne:** `hop light` on hop stdout is pad plume, not
+airborne. Lock live ≠ flying. Parent mid-hop reads `ship.md`. Do **not**
+wait hop stdout. Sit/MET/log disagree → one `screenshot --name
+stuck-<stem>` then read the PNG. TUI is phase start / phase end /
+unexpected only (Walt). Off-nominal Gene / Lars / Wernher is parent
+TUI reading `ship.md`, not `ops next`. Lock-live `ops next` is ground
+batch only.
+
 **Ground talk (between exits, lock free):** Gene, Linus, Gus, Lars,
 Wernher, Mortimer, Verena may address each other by name. Still not
 the stick. Nominal hop: still not mid-phase hire of Gene. Off-nominal
-`ship.md`: Hank may hire. Still different files in one turn. They
+`ship.md`: parent TUI may hire. Still different files in one turn. They
 do not spawn each other.
 
 ## World model
@@ -232,12 +240,17 @@ flies**. The Commander watches telem/gates. Unusual →
 `python main.py note <Name> "…"` and/or hold/abort per emergencies
 (in-flight radio, not a review after recover). **Hank** (parent)
 periodically runs **`python main.py ship`** (disk envelope from
-`ship.md`). Lock-live `status` / leftover GET is a reader Session
-(`kspstuff-read`, T-454). Writer `Telem.read` still owns jsonl /
+`ship.md`). Do **not** wait hop stdout. `hop light` is pad plume —
+**not airborne**. Lock live ≠ flying. Sit/MET/log disagree → one
+`screenshot --name stuck-<stem>` then read the PNG. TUI is phase
+start / phase end / unexpected only (Walt). Lock-live `status` /
+leftover GET is a reader Session (`kspstuff-read`, T-454) — it does
+**not** write jsonl. Writer `Telem.read` still owns jsonl /
 `ship.md`. Do not `read_file`
 the growing jsonl. Off-nominal (wreck
 flags, lithobrake, empty tanks + still flying, heading never moving,
-EC=0 before dwell, crash UI): **do something** — `uplink abort|hold`
+EC=0 before dwell, crash UI): **do something** — parent TUI reading
+`ship.md`, not `ops next`. `uplink abort|hold`
 if wreck-class; spawn **Gene** if the plan/`go` must change
 mid-sortie; spawn **Lars** if the living pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks (`physics_warp.py`). Issue-clear → that desk, not a Gene novel.
 **Nominal** hop: no Gene, no 15 s narration, no heartbeat swallow.
@@ -248,7 +261,9 @@ CLI exit, tape is still Hank (T-101).
 
 **Uncrewed campaign (I-016, amended):** Gene stamps
 `payload.campaign=uncrewed` on the first `go: yes` of a cheap probe
-sit. He renders seated `plan.md`. Parent, lock free, leftover clean:
+sit. Seated `plan.md` is envelope only (`hop_apo` / `expect_*` /
+`emergencies`) — do not copy `go` / `cli` / `campaign` onto it. Parent,
+lock free, leftover clean:
 `python main.py desk` then `protocol fly`. `fly: yes` /
 `commander: none` → parent starts `cli:` (hop pid is the **control** writer).
 **Do not hire Gene between hops** on clean 0 **or** on a miss of a
@@ -413,8 +428,9 @@ fallback). Do not vibe a hop because the last exit was 0.
 
 Gene is the only `go:`. Hire Gene when `ops next` names him
 (unstamped `go`, or campaign-stop Learn: campaign not `uncrewed` and
-`payload.learn` empty), **or** lock live and `ship.md` is off-nominal
-and the plan/`go` must change. Uncrewed hops **between** (lock free)
+`payload.learn` empty), **or** lock live and parent TUI reading
+`ship.md` is off-nominal and the plan/`go` must change. Lock-live
+`ops next` is ground batch only. Uncrewed hops **between** (lock free)
 are not Gene — and are not a skip of Learn: hop-exit `attach-run`
 already wrote `payload.learn`. Crewed / `campaign: none` / firsts:
 Learn each hop (`needs_learn`). Do **not** hire Gene as a merge bus
@@ -475,7 +491,9 @@ Stamp: `tickets stamp T-NNN --field go --value yes|wait --who gene` and
 patch `payload.cli` / `payload.campaign` / `payload.phase`. Stamp
 `payload.learn` only when hired for Learn (crewed / firsts /
 campaign-stop). Uncrewed: do not stamp learn (`attach-run` already
-did). Then render seated `plan.md`. Do not emit leftover `need_*`.
+did). Seated `plan.md` is envelope only (`hop_apo` / `expect_*` /
+`emergencies`). Do not copy `go` / `cli` / `campaign` onto it. Do not
+emit leftover `need_*`.
 
 **Linus**
 
@@ -508,9 +526,10 @@ id, not prose. Then `tickets feedback`.
 
 ## Files
 
-Gene last-writes **briefing prose + seated plan.md render** (`go` /
-`cli` / `campaign` / `phase` / `learn` from the fly ticket; `hop_apo` /
-`expect_*` / `emergencies` stay on the plan). Flight-layer facts on
+Gene last-writes **briefing prose + seated plan.md envelope** (`hop_apo` /
+`expect_*` / `emergencies` stay on the plan). `go` / `cli` / `campaign` /
+`phase` / `learn` live on the fly ticket — do not copy them onto seated
+plan. Flight-layer facts on
 `world-model.md` may update between exits — that is not a hire.
 Mortimer last-writes **Practice**,
 PROTOCOL, and job cards on an org hire. Gus last-writes `.craft` and
@@ -520,7 +539,7 @@ payload. Verena last-writes `README.md` (portrait) and `docs/press/`
 (story layer). The Commander takes `uplink.md`. `loop.md` is talk, not
 stick. Disagreement → Gene `go: wait`. Missing `go:` = wait.
 
-Milestone stills. Press: Verena picks from `screenshots/runs/` after the hop (beauty beats already hid HUD). Parent `--name` / `--beauty` between exits. **Stuck:** Gene (between exits) or the seated Commander **during the hop** may grab **one** HUD-on still when logs cannot explain the scene. Read the PNG. Not a postmortem after CLI exit. Not a heartbeat. Not press.
+Milestone stills. Press: Verena picks from `screenshots/runs/` after the hop (beauty beats already hid HUD). Parent `--name` / `--beauty` between exits. **Stuck:** parent mid-hop (sit/MET/log disagree), Gene (between exits), or the seated Commander **during the hop** may grab **one** HUD-on still when logs cannot explain the scene. Read the PNG. Not a postmortem after CLI exit. Not a heartbeat. Not press.
 
 Flight cadence (capture only — do not read): `screenshots/runs/<stamp>-<command>/`. Tape: ~10 s ticks (old ticks trimmed to 3) plus sit/stage/wreck — HUD on. Press: named beats (`light`, `airborne`, `science`, `chute`, `splash`, `recover`) hide HUD (F2) and pose the camera, then restore. Verena picks from that folder after the hop. Never grim during a live `phase`. Never clobber press heroes.
 

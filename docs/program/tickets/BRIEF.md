@@ -91,11 +91,8 @@ gitignored tape (`desk.md`, last-flight, jsonl).
 **VAB helpers (Os 2026-08-25):** Gus does not default to hand-writing
 `.craft`. He reviews his own spawns and files
 `type=systems --desk wernher --fingerprint vab-helper`. Wernher writes
-the helper (`craft.py` / CLI). Gus does not edit `.py`. Catalog this
-sit: T-413 clone+swap tank, T-414 chute MODULE, T-416 girder ring,
-T-417 insert-inline sas/PresMat, T-418 proc cylinder Kero/LOx,
-T-419 Nylon donor copy, T-420 proc HS splice. Pad flies the signed
-hang — do not idle for helpers.
+the helper (`craft.py` / CLI). Gus does not edit `.py`. Pad flies the
+signed hang — do not idle for helpers.
 
 **RealAntennas (Os 2026-08-25):** `conn.real_antennas` is live. Do not
 cheat a link. T-427 prove **passed**: TL2 **64 bps is table and Cape

@@ -2,9 +2,10 @@
 
 This is the house **operations kernel**. It is not a retrofit of
 `I-NNN` / `F-NNN` / leftover `ask:` / `need_*`. Those are archive and
-shims. The board is the source of truth. Seated `plan.md` is a
-**render** of the fly ticket — not a second live plan, and not a
-delete. `python main.py protocol fly` reads the fly ticket. Missing
+shims. The board is the source of truth. Seated `plan.md` is an
+**envelope** (`hop_apo` / `expect_*` / `emergencies`) — not a copy of
+`go` / `cli` / `campaign`, not a second live plan, and not a delete.
+`python main.py protocol fly` reads the fly ticket. Missing
 ticket = wait (no plan.go fallback).
 
 **Read first:** `python main.py tickets list` and this file.
@@ -147,8 +148,9 @@ hire** when a node unlocks.
 **Fly ticket payload:** `cli`, `phase`, `science_ids[]`, `vehicle` (T-id),
 `science` (T-ids), `go` (`yes`|`wait`|empty), `campaign` (`uncrewed`|`none`),
 `leftover_policy`. Gene stamps `go` **on this ticket only**. Seated
-`plan.md` is a **render** of the fly ticket (Gene may still write
-briefing prose; `hop_apo` / `expect_*` stay on the plan).
+`plan.md` is envelope only (`hop_apo` / `expect_*` / `emergencies`).
+Do not copy `go` / `cli` / `campaign` onto it. Gene may still write
+briefing prose.
 `python main.py protocol fly` reads the fly ticket. Missing ticket =
 wait. `ops fly` is occupancy only (do not retarget AGENTS).
 
@@ -221,15 +223,12 @@ hire:
 
 ```
 if lock live:
-    python main.py ship  (disk envelope). never eat the jsonl.
-    status GET only after Wernher reader Session (today it writes jsonl).
-    if off-nominal (wreck flags, lithobrake, empty tanks+flying,
-                    heading dead, EC=0 before dwell, crash UI):
-        uplink abort|hold if wreck-class
-        hire Gene if plan/go must change (no stick)
-        hire Lars if the living pulse / control
-        hire Wernher if kRPC / telem / desk / control-blocks (physics_warp)
-        issue-clear → that desk, not a Gene novel
+    # ops next: ground batch only. Parent TUI owns the hop.
+    # Do not wait hop stdout. hop light is not airborne. lock live ≠ flying.
+    # Eyes: ship.md. status GET (kspstuff-read) — does not write jsonl.
+    # Off-nominal Gene/Lars/Wernher is parent TUI reading ship.md, not
+    # this procedure. Sit/MET/log disagree → one stuck-<stem> PNG then
+    # read it. TUI is phase start / end / unexpected only (Walt).
     ground_only = tickets ready whose desk ≠ jebediah
     batch by desk (one hire per desk, many tickets)
     never a second Commander
@@ -286,8 +285,8 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 
 | Condition | Hire | Tickets in packet |
 |---|---|---|
-| Lock live, `ship.md` off-nominal | **Hank** then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse; Wernher kRPC/control-blocks — **no stick**. Eyes: `ship.md`; `status` GET after Wernher reader |
-| Lock live, nominal | ground desks (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time |
+| Lock live, `ship.md` off-nominal | **parent TUI** (not `ops next`) then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse; Wernher kRPC/control-blocks — **no stick**. Eyes: `ship.md`. `status` GET (`kspstuff-read`) does not write jsonl. Sit/MET/log disagree → one `stuck-<stem>` PNG then read it |
+| Lock live, nominal | ground desks via `ops next` (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time. Do not wait hop stdout. `hop light` is not airborne |
 | Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Never revert. Never leftover-ksc load |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
 | Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
@@ -379,8 +378,8 @@ ship.md          ← radio from the control writer, Walt
 ```
 
 **One sit object:** the fly ticket + desk snapshot. Seated `plan.md`
-is a **render** of the fly ticket (not a second source; do not delete
-it). `python main.py protocol fly` reads the fly ticket. Missing
+is envelope only (`hop_apo` / `expect_*` / `emergencies` — not a copy
+of `go` / `cli` / `campaign`; do not delete it). `python main.py protocol fly` reads the fly ticket. Missing
 ticket = wait (no plan.go fallback).
 
 **Commander packet `read:`:** skim from
@@ -412,7 +411,11 @@ Hygiene reviews are not a Gene hire. After-flight attach-run is
 One **control** writer. kRPC GET readers legal (no Control / scene /
 jsonl / `ship.md` / last-flight). Depth 1. Never revert / quickload /
 rewind UT. Os disabled reverting flights. Lock live: Hank reads
-`ship.md`. `status` only after Wernher reader mode. Off-nominal → hire.
+`ship.md`. Do not wait hop stdout. `hop light` is not airborne. Lock
+live ≠ flying. `status` GET (`kspstuff-read`) does not write jsonl.
+TUI is phase start / end / unexpected only (Walt). Sit/MET/log
+disagree → one `stuck-<stem>` PNG then read it. Off-nominal Gene /
+Lars / Wernher is parent TUI reading `ship.md`, not `ops next`.
 Os does not click crash UI. Commander does not recover leftover or
 Close the crash dialog — hop abort `ksc leftover` is a handoff to
 Hank. Commander does not review after CLI exit. Hank leftover (lock

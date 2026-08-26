@@ -74,18 +74,23 @@ a field itch (`--tag explore`), not every Learn. Spawn prompts do not
 inject niche notebooks.
 
 You do **not** swallow 1 Hz or 15 s heartbeats. TUI is **phase start**,
-**phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN). Speak as
-**Walt** on those edges (name + title). Mid-phase: **read
-`docs/program/ship.md`** from time to time (disk). Lock-live `status`
-is a GET reader (`kspstuff-read`); it must not write Control or tape.
-Do not `read_file` the growing jsonl. Nominal hop: no Gene, no 15 s
-narration. Off-nominal (wreck flags, lithobrake, empty tanks + flying,
-heading stuck, EC=0 before dwell, crash UI): `python main.py uplink
-abort|hold` if wreck-class; spawn **Gene** if plan/`go` must change;
-spawn **Lars** if the living pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks.
-Issue-clear → that desk. Gene does not take the stick. Os “how’s it
-going?” on a **nominal** hop → read `ship.md`, speak as Walt — no hire.
-Off-nominal → hire, then Walt. `ship.md` is radio, not chat.
+**phase end**, and **unexpected** (WRECK, lithobrake, OFFPLAN) only.
+Speak as **Walt** on those edges (name + title). Mid-phase: **read
+`docs/program/ship.md`** from time to time (disk). Do **not** wait hop
+stdout. `hop light` on stdout is pad plume — **not airborne**. Lock
+live ≠ flying. Sit/MET/log disagree → one
+`python main.py screenshot --name stuck-<stem>`, then **read the PNG**.
+Lock-live `status` is a GET reader (`kspstuff-read`); it must not write
+Control or tape. Do not `read_file` the growing jsonl. Nominal hop: no
+Gene, no 15 s narration. Off-nominal (wreck flags, lithobrake, empty
+tanks + flying, heading stuck, EC=0 before dwell, crash UI): parent
+TUI reading `ship.md` — `python main.py uplink abort|hold` if wreck-class;
+spawn **Gene** if plan/`go` must change; spawn **Lars** if the living
+pulse / control; spawn **Wernher** if kRPC/telem/desk/control-blocks.
+Issue-clear → that desk. **Not `ops next`.** Gene does not take the
+stick. Os “how’s it going?” on a **nominal** hop → read `ship.md`,
+speak as Walt — no hire. Off-nominal → hire, then Walt. `ship.md` is
+radio, not chat.
 
 Spawn children **as soon as the work is independent**. Depth is one: only
 the parent calls `spawn_subagent`. A child cannot spawn another child.
@@ -116,10 +121,10 @@ Portrait kv is only the header (before the first `##`). Style numbers
 are not applied to flight. Telem gates always win. Logs:
 `docs/crew/log/<slug>.md`.
 
-**Radio + plan:** Gene owns seated `plan.md` **as a render** of the fly
-ticket (`go` / `cli` / `campaign` live on the ticket; `hop_apo` /
-`expect_*` / `emergencies` stay on the plan) and seated
-`docs/missions/<id>/briefing.md` **between exits**. Uplink
+**Radio + plan:** Gene owns seated `plan.md` **as an envelope render**
+(`hop_apo` / `expect_*` / `emergencies` stay on the plan). `go` / `cli` /
+`campaign` live on the **fly ticket** — do not copy them onto seated
+plan. Seated `docs/missions/<id>/briefing.md` **between exits**. Uplink
 (`docs/program/uplink.md`) is last-write-wins; **the Commander takes**
 (`phase` / `pad`, not `status`). Seated `loop.md` is talk, not the
 stick. Bound+fueled `abort` is refused. Parent does **not**
@@ -147,12 +152,14 @@ writer (`flight.lock`). Never a second control process. **Commander** is
 abort officer, not the PID. Hire is `commander_for`. Spawn Commander
 iff `protocol fly` prints `fly: yes` **and** `commander: jebediah`
 (crewed / `campaign: none` / firsts). Uncrewed (`commander: none`):
-**parent starts `cli:`**; watch `ship.md`; uplink abort. Lock live → no
+**parent starts `cli:`**; watch `ship.md`; do **not** wait hop stdout;
+`hop light` is not airborne; uplink abort. Lock live → no
 second Commander. Ground desks may still run on other files.
-**Nominal:** no Gene. **Off-nominal** (`ship.md`): hire Gene / Lars /
-Wernher as the issue is clear — Commander as abort officer if already
-flying, else Gene. Do not wait for `ops next` to name Gene. Do not emit
-`need_*`. Spawn specialists from **open ticket types**.
+**Nominal:** no Gene. **Off-nominal** (`ship.md`): parent TUI hires
+Gene / Lars / Wernher as the issue is clear — **not `ops next`**.
+Commander as abort officer if already flying, else Gene. Do not wait
+for `ops next` to name Gene. Do not emit `need_*`. Spawn specialists
+from **open ticket types**.
 
 Parent runs **`python main.py desk`** once per conference turn (disk,
 no kRPC). That **writes `docs/program/desk.md`**. After Gus
@@ -163,8 +170,9 @@ BOARD.md, no jsonl, no `lessons.md`, no `science.md` / `vab.md` /
 not re-run `world`/`tech`/`parts` if desk is this sit. `hangar:` is the
 Hangar call. Missing `f013` on bind / capable / `go:` / Lars miss → wait.
 Gene when **`ops next` names him** (unstamped `go`, or campaign-stop
-Learn), **or** lock live and `ship.md` is off-nominal and plan/`go`
-must change. Uncrewed hops **between** (lock free) are not Gene hires.
+Learn), **or** lock live and parent TUI reading `ship.md` is
+off-nominal and plan/`go` must change. Lock-live `ops next` is ground
+batch only. Uncrewed hops **between** (lock free) are not Gene hires.
 Uncrewed Learn is hop-exit `attach-run` (kernel overwrite of
 `payload.learn`) — do not skip tape; do not hire Gene to stamp it.
 Do not hire Gene as a merge after specialists.

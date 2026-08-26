@@ -3,7 +3,7 @@
     "23-15-52Z hop-to-water: hop_apo latch MET 79.1 thr 0 apo 18.7 km fuel 111.1; suicide MET 171 thr 1 vz -194 held through vz -65 (no TTI recut at -72); still thr 1 at vz +24.5 fuel 47; recut MET 176.5 vz +140 leftover 16.6; relight MET 208.9 vz -126 fuel 11.5; splash MET 225 sit=splashed heading 303.7 horiz 24.3 speed 221 landing catastrophic 220 m/s biome Shores EC 0 science skip no Experiment modules wanted mysteryGoo": 1,
     "ad-astra": 1,
     "aero-stiff-chute": 2,
-    "bigger-dv": 18,
+    "bigger-dv": 20,
     "bigger-dv-cone": 1,
     "bigger-dv-hs": 1,
     "burn-cutoff-minpitch": 1,
@@ -212,6 +212,42 @@
     "z200-vs-z100-chute": 1
   },
   "tickets": {
+    "C-477": {
+      "assignee": "",
+      "blockers": [],
+      "capable": "yes",
+      "category": "craft",
+      "created": "2026-08-26T10:48:37Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "bigger-dv",
+      "id": "C-477",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. NEW craft (not restamp). clone T-430 cone + craft heatshield disc. OKTO+RC_cone Nylon 50m pre 2.5 minDeployment 2500 deployAlt 700 + proceduralHeatshield 1.25x0.2 Ablative 80 + 7x proc 1.25x0.625 Default 2415 kero. Silk+HS loft hang this sit \u2014 not tanks lithobraking Stayputnik (10-22-06Z rec=yes). Not t7-wheel-pbc. Not t7-chute Mk16 (silk/4x/pitch). Omni SurfAntenna gain=2. Cape 64 bps. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO HD=1 + 3xEngineer7500 HD=0.5 = 2.5 vs PresMat 1.17+TELEMETRY 0.75+geiger 0.5. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "recover"
+      ],
+      "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
+      "type": "vehicle",
+      "updated": "2026-08-26T10:49:37Z"
+    },
     "T-001": {
       "assignee": "",
       "blockers": [],
@@ -3343,7 +3379,8 @@
         "docs/missions/uncrewed/logs/2026-08-26T09-44-55Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T10-09-22Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T10-22-06Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T10-41-43Z-hop.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3369,17 +3406,17 @@
             "broken": null,
             "chute": "none",
             "downrange": 0.448,
-            "ec": 508.549,
+            "ec": 508.356,
             "fuel": 1568.926,
             "g": 1.94,
-            "heading": 298.946,
-            "horiz": 0.006,
+            "heading": 298.926,
+            "horiz": 0.002,
             "lat": 28.6084,
             "lon": -80.5997,
-            "mass": 4669.253,
+            "mass": 4669.251,
             "met": 0.32,
             "parts_n": 27,
-            "pitch": 89.96,
+            "pitch": 90.0,
             "q": 1.456,
             "recoverable": false,
             "root": "probeCoreSphere.v2",
@@ -3391,27 +3428,27 @@
             "stage": 0,
             "throttle": 0.0
           },
-          "alt_before": 203.758,
-          "alt_max": 647.901,
+          "alt_before": 631.038,
+          "alt_max": 1007.201,
           "apex": {
-            "alt": 647.901,
-            "apo": 654.093,
+            "alt": 1007.201,
+            "apo": 1007.269,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.446,
-            "ec": 509.14,
-            "fuel": 1443.749,
+            "downrange": 0.447,
+            "ec": 509.042,
+            "fuel": 1409.981,
             "g": 0.0,
-            "heading": 298.904,
-            "horiz": 0.144,
+            "heading": 298.921,
+            "horiz": 0.151,
             "lat": 28.6084,
             "lon": -80.5998,
-            "mass": 4405.618,
-            "met": 16.54,
+            "mass": 4330.83,
+            "met": 19.44,
             "parts_n": 27,
-            "pitch": 89.972,
-            "q": 61.622,
+            "pitch": 90.0,
+            "q": 1.52,
             "recoverable": false,
             "root": "probeCoreSphere.v2",
             "sci_bank": 13.6243,
@@ -3422,31 +3459,31 @@
             "stage": 0,
             "throttle": 1.0
           },
-          "apo_max": 655.45,
+          "apo_max": 1009.564,
           "biome": "Shores",
           "biomes": [
             "Shores"
           ],
           "broken": null,
           "burnout": {
-            "alt": 203.758,
-            "apo": 652.32,
+            "alt": 631.038,
+            "apo": 1005.75,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.445,
-            "ec": 508.271,
-            "fuel": 1443.749,
-            "g": 0.01,
-            "heading": 299.187,
-            "horiz": 0.24,
+            "downrange": 0.446,
+            "ec": 508.149,
+            "fuel": 1409.981,
+            "g": 0.0,
+            "heading": 299.122,
+            "horiz": 0.248,
             "lat": 28.6084,
             "lon": -80.5998,
-            "mass": 4405.604,
-            "met": 25.02,
+            "mass": 4330.813,
+            "met": 28.32,
             "parts_n": 27,
-            "pitch": 89.641,
-            "q": 5051.059,
+            "pitch": 89.707,
+            "q": 4042.638,
             "recoverable": false,
             "root": "probeCoreSphere.v2",
             "sci_bank": 13.6243,
@@ -3462,45 +3499,44 @@
           "command": "hop",
           "debris_n": 0,
           "descent_n": 2,
-          "downrange": 0.445,
+          "downrange": 0.446,
           "dt_s": null,
-          "ec": 508.271,
+          "ec": 508.149,
           "events": [
             "start",
             "hangar",
-            "recover",
             "recoverable",
             "sci_bank",
             "landing",
             "end"
           ],
           "g_max": 1.94,
-          "gap_s": 8.68,
-          "heading": 299.187,
-          "horiz": 0.24,
-          "hz_median": 0.12,
-          "impact_ms": 96.268,
+          "gap_s": 9.56,
+          "heading": 299.122,
+          "horiz": 0.248,
+          "hz_median": 0.1,
+          "impact_ms": 88.201,
           "landing": "hard",
           "landing_synthesized": true,
           "last": {
-            "alt": 203.758,
-            "apo": 652.32,
+            "alt": 631.038,
+            "apo": 1005.75,
             "biome": "Shores",
             "broken": null,
             "chute": "none",
-            "downrange": 0.445,
-            "ec": 508.271,
-            "fuel": 1443.749,
-            "g": 0.01,
-            "heading": 299.187,
-            "horiz": 0.24,
+            "downrange": 0.446,
+            "ec": 508.149,
+            "fuel": 1409.981,
+            "g": 0.0,
+            "heading": 299.122,
+            "horiz": 0.248,
             "lat": 28.6084,
             "lon": -80.5998,
-            "mass": 4405.604,
-            "met": 25.02,
+            "mass": 4330.813,
+            "met": 28.32,
             "parts_n": 27,
-            "pitch": 89.641,
-            "q": 5051.059,
+            "pitch": 89.707,
+            "q": 4042.638,
             "recoverable": false,
             "root": "probeCoreSphere.v2",
             "sci_bank": 13.6243,
@@ -3514,10 +3550,10 @@
           "lat": 28.6084,
           "link": true,
           "lon": -80.5998,
-          "mass": 4405.604,
+          "mass": 4330.813,
           "mass_pad": 4696.312,
-          "met": 25.02,
-          "met_end": 25.02,
+          "met": 28.32,
+          "met_end": 28.32,
           "met_start": 0.0,
           "pad": {
             "alt": 85.987,
@@ -3526,17 +3562,17 @@
             "broken": null,
             "chute": "none",
             "downrange": 0.448,
-            "ec": 509.815,
+            "ec": 509.811,
             "fuel": 1575.0,
             "g": 1.0,
-            "heading": 298.935,
-            "horiz": 0.021,
+            "heading": 298.92,
+            "horiz": 0.011,
             "lat": 28.6084,
             "lon": -80.5997,
             "mass": 4696.312,
             "met": 0.0,
             "parts_n": 27,
-            "pitch": 90.0,
+            "pitch": 89.98,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreSphere.v2",
@@ -3550,12 +3586,12 @@
           },
           "parts_n": 27,
           "parts_pad": 27,
-          "path": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
-          "pitch": 89.641,
-          "q_max": 5051.059,
-          "recoverable": true,
+          "path": "docs/missions/uncrewed/logs/2026-08-26T10-41-43Z-hop.jsonl",
+          "pitch": 89.707,
+          "q_max": 5112.044,
+          "recoverable": false,
           "root": "probeCoreSphere.v2",
-          "run": "2026-08-26T10-27-52Z-hop.jsonl",
+          "run": "2026-08-26T10-41-43Z-hop.jsonl",
           "samples": 6,
           "sci_bank": 13.6243,
           "sci_delta": 0.0,
@@ -3563,35 +3599,24 @@
           "sci_rem": 0.0,
           "sci_run": false,
           "shear": false,
-          "sit": "landed",
-          "sit_mismatch": true,
-          "skip_n": 1,
-          "skips": [
-            {
-              "alt_a": 647.901,
-              "alt_b": 203.758,
-              "met_dt": 8.48,
-              "q_a": 61.622,
-              "q_b": 5051.059,
-              "rate": 1.8,
-              "t_dt": 4.6,
-              "thick": true
-            }
-          ],
-          "speed": 95.878,
+          "sit": "flying",
+          "sit_mismatch": false,
+          "skip_n": 0,
+          "skips": [],
+          "speed": 87.812,
           "stage": 0,
-          "thick_air_skip": true,
-          "v_vert": -96.268,
+          "thick_air_skip": false,
+          "v_vert": -88.201,
           "via": "US - Cape Canaveral"
         },
-        "learn": "landing: hard impact=96 m/s heading=299 horiz=0 pitch=90 sit=landed synth apo=655 biome=Shores rec=yes sci=run=0 rem=0 bank=13.62 +0",
+        "learn": "landing: hard impact=88 m/s heading=299 horiz=0 pitch=90 sit=flying synth apo=1010 biome=Shores rec=no sci=run=0 rem=0 bank=13.62 +0",
         "phase": "hop",
         "science_ids": [
           "barometerScan",
           "geigerCounter",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T10-27-52Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T10-41-43Z-hop.jsonl",
         "waste": {
           "bind": [
             {
@@ -3630,7 +3655,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T10:29:02Z"
+      "updated": "2026-08-26T10:43:42Z"
     },
     "T-082": {
       "assignee": "",
@@ -14137,6 +14162,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:49:38Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-pbc. 13-31-03Z apo 88.8 km shear=no is still the >=50 km proof (Stayputnik, no chute, 7xFL-T100 Valiant). Not the loft hang this sit. Loft is C-477 hs-cone silk+HS. Do not Hangar t7-chute / t7-chute-cone this sit. Omni SurfAntenna. Cape 64 bps. f013 2HOT+Goo+geiger on_craft TELEMETRY Stayputnik HD=0.5. Thin tape T-284. fingerprint aero-stiff-chute. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -14151,7 +14184,7 @@
       "tags": [],
       "title": "Seat t7-pbc (88.8 km proof) \u2014 Mk16 t7-chute is not lofting",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:02Z"
+      "updated": "2026-08-26T10:49:38Z"
     },
     "T-388": {
       "assignee": "",
@@ -14717,7 +14750,7 @@
     "T-400": {
       "assignee": "",
       "blockers": [],
-      "capable": "yes",
+      "capable": "no",
       "category": "craft",
       "created": "2026-08-24T20:53:06Z",
       "desk": "gus",
@@ -14799,6 +14832,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-pbc. Os: stop flying this hang. 10-22-06Z rec=yes was tanks lithobraking Stayputnik; 10-27-52Z/10-41-43Z sheared ~0.6-1 km duds. Lithobrake is not recover. Loft hang C-477 hs-cone silk+HS. Silk alt T-430 cone. Do not Hangar t7-chute Mk16. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -14813,7 +14854,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-26T10:35:46Z"
+      "updated": "2026-08-26T10:49:37Z"
     },
     "T-401": {
       "assignee": "",
@@ -15275,6 +15316,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. Delta-v alt, no chute, no silk. Not the loft hang this sit (Os: silk recover; 10-22-06Z lithobrake is not a recover system). Loft is C-477 hs-cone. 7x proc 1.25x0.625 Default 2415 kero vs 7xT100 1575. Same 4.375 m stack as 88.8 km proof. Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15291,7 +15340,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-26T10:35:46Z"
+      "updated": "2026-08-26T10:49:37Z"
     },
     "T-407": {
       "assignee": "",
@@ -15466,6 +15515,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-nose-pbc. OKTO + proceduralNoseCone Smooth Cone length 0.625. Aero, not silk. Not the loft hang this sit. Loft is C-477 hs-cone. Stayputnik has no top node. Same 7xFL-T100 Valiant + sasModule + PresMat. Omni SurfAntenna. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -15480,7 +15537,7 @@
       "tags": [],
       "title": "t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T10:49:37Z"
     },
     "T-410": {
       "assignee": "",
@@ -16348,6 +16405,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. Heat-only alt, no silk. Not the loft hang this sit. Loft is C-477 hs-cone (silk+HS). Disk: proceduralHeatshield Ablative 80 length 0.2 + 7x proc 1.25x0.625 Default 2415 kero. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16364,7 +16429,7 @@
       ],
       "title": "t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T10:35:46Z"
+      "updated": "2026-08-26T10:49:37Z"
     },
     "T-429": {
       "assignee": "",
@@ -16470,6 +16535,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. Silk-only alt (no HS). OKTO+RC_cone Nylon 50m minDeployment 2500 + 7x proc 1.25x0.625 Default 2415 kero. Loft hang this sit is C-477 hs-cone (silk+HS). Do not Hangar t7-chute Mk16. Do not Hangar t7-wheel-pbc. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16486,7 +16559,7 @@
       ],
       "title": "t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-26T10:35:46Z"
+      "updated": "2026-08-26T10:49:37Z"
     },
     "T-431": {
       "assignee": "",
@@ -16645,6 +16718,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T10:49:37Z",
+            "claim": "Re-stamp capable yes kspstuff-hop-valiant-t7-wheel-proc-nose-pbc. OKTO+proceduralNoseCone Smooth Cone length 0.625 + 7x proc 1.25x0.625 Default 2415 kero. Aero, not silk. Not the loft hang this sit. Loft is C-477 hs-cone. Stayputnik has no top node. f013 2HOT+Goo+geiger+PresMat on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -16659,7 +16740,7 @@
       "tags": [],
       "title": "t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T09:19:03Z"
+      "updated": "2026-08-26T10:49:37Z"
     },
     "T-434": {
       "assignee": "",
@@ -18359,7 +18440,18 @@
       "evidence": [],
       "fingerprint": "",
       "id": "T-476",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T10:44:42Z",
+            "claim": "Rewrote Everybody Left window beat: portrait / 55-line / one-viewport law as architecture; clip() ate census and 3 of 5 skeptics; cutover schema-only dropped tables; org-rsi named org-review, scratch, apply gated. Os is the punchline. Hero stayed everybody-left.png. Did not invent orbit.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
@@ -18372,8 +18464,32 @@
       ],
       "title": "Press: 55-line portrait law broke org-rsi",
       "type": "press",
-      "updated": "2026-08-26T10:39:56Z"
+      "updated": "2026-08-26T10:44:42Z"
+    },
+    "T-478": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T10:48:37Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "bigger-dv",
+      "id": "T-478",
+      "payload": {
+        "count": 19
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI bigger-dv \u00d719",
+      "type": "rsi",
+      "updated": "2026-08-26T10:48:37Z"
     }
   },
-  "updated": "2026-08-26T10:41:04Z"
+  "updated": "2026-08-26T10:49:38Z"
 }

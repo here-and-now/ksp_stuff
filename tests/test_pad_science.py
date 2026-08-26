@@ -1312,6 +1312,30 @@ class TestSituationCanPay(unittest.TestCase):
                 alt=50_400.0,
             )
         )
+        self.assertFalse(
+            sit_matches(
+                "flying",
+                "Shores",
+                "InSpaceLow",
+                "global",
+                alt=50_400.0,
+            )
+        )
+        self.assertTrue(
+            sit_matches(
+                "sub_orbital",
+                "Shores",
+                "InSpaceLow",
+                "",
+                alt=187_000.0,
+            )
+        )
+        self.assertTrue(
+            sit_matches("orbiting", "", "InSpaceLow", "global")
+        )
+        self.assertFalse(
+            sit_matches("flying", "Shores", "InSpaceLow", "", alt=98_000.0)
+        )
 
     def test_stop_does_not_toggle(self):
         mod = _Mod(

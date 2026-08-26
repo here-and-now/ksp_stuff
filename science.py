@@ -9,7 +9,9 @@ Stayputnik TELEMETRY PAW and GooExperiment still start. ``Module.fields`` is PAW
 remaining, else cfg ``data_rate`` × ScienceDefs size, capped by remaining
 EC / ``ec_rate``). Hop FlyingLow starts the **bound** flying card once airborne; FlyingHigh
 Toggles only at alt ≥50 km (not T+1 FlyingLow; not a second Toggle
-at the lid). Unbound leftover FlyingHigh tickets are not a lid.
+at the lid). InSpaceLow Toggles in space after lid MECO — not a High
+dwell, not sit_matches default True (16-23-52Z flying-card Toggle at
+50 km). Unbound leftover FlyingHigh tickets are not a lid.
 Do not start an experiment whose situation cannot pay (sample remaining=0,
 or bound sit/biome ≠ live sit/biome — 17-23-34Z SrfLanded bound Toggled
 FlyingLow rem=0). Splash goo is not a hop start. Stop running slots
@@ -760,7 +762,8 @@ def sit_matches(
 
     FlyingHigh pays only at alt ≥50 km. sit=flying at 1 km is not High.
     biome global / none / any is not a biome. sub_orbital at High alt
-    is still High — Forest / Grasslands / Shores: same.
+    is still High — Forest / Grasslands / Shores: same. InSpaceLow is
+    sub_orbital / orbiting / escaping, not flying at the lid.
     """
     need = _norm_sit(need_sit)
     live = _norm_sit(live_sit)
@@ -789,6 +792,17 @@ def sit_matches(
         return math.isfinite(alt_f) and alt_f >= _FLYING_HIGH_ALT_M
     if need.startswith("flying"):
         return "flying" in live
+    if "inspacehigh" in need:
+        return "inspacehigh" in live or "spacehigh" in live
+    if "inspacelow" in need or need == "inspace":
+        if "inspacehigh" in live or "spacehigh" in live:
+            return False
+        if "landed" in live or "splash" in live:
+            return False
+        return any(
+            tok in live
+            for tok in ("suborbital", "orbiting", "escaping", "inspacelow", "inspace")
+        )
     if "splash" in need:
         return "splash" in live
     if "landed" in need or "srfland" in need:

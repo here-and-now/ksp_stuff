@@ -12,6 +12,7 @@ from hop_factory import (
     _hold_start,
     _inland_burnout_sit,
     _keep_start_sit,
+    _space_low_sit,
 )
 from hop_factory_pad import (
     _cut_pad_engine,
@@ -218,6 +219,8 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _hold_start", factory)
         self.assertIn("def _flameout_sit", factory)
         self.assertIn("def _inland_burnout_sit", factory)
+        self.assertIn("def _space_low_sit", factory)
+        self.assertIn("_space_science_ids", factory)
         hold_log = factory.find('hop hold inland through burnout')
         self.assertNotEqual(hold_log, -1)
         self.assertIn("inland_burnout", factory[max(0, hold_log - 200) : hold_log])
@@ -817,6 +820,16 @@ class TestHopFactoryPad(unittest.TestCase):
         )
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertTrue(engine.independent_throttle)
+
+    def test_space_low_sit_not_flying_lid(self):
+        """16-23-52Z flying at 50 km is not InSpaceLow; sub_orbital is."""
+        self.assertFalse(_space_low_sit("flying"))
+        self.assertFalse(_space_low_sit("landed"))
+        self.assertFalse(_space_low_sit("splashed"))
+        self.assertTrue(_space_low_sit("sub_orbital"))
+        self.assertTrue(_space_low_sit("orbiting"))
+        self.assertTrue(_space_low_sit("escaping"))
+        self.assertFalse(_space_low_sit(""))
 
     def test_inland_burnout_sit_not_after_high_lid(self):
         """flyinghigh-lid: 17-01-10Z hold inland through burnout after lid is not MECO."""

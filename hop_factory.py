@@ -19,7 +19,9 @@ not a dwell at 1 km. Lid hold is throttle 1 + SAS vertical until lid;
 inland slew after. Splash bind is
 not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
-Toggle; skip-latch does not drop a bound High card. After High lid, MECO is MainThrottle 0, setpoint 0, then independent
+Toggle; skip-latch does not drop a bound High card. After lid MECO,
+InSpaceLow starts bound cards (LITE/TELEMETRY) — High cannot-pay is
+not space-done (16-23-52Z skip-latch, PresMat in space sci +0). After High lid, MECO is MainThrottle 0, setpoint 0, then independent
 off. Do not re-enable. Do not hold inland through burnout — that sit
 kept throttle 1 at 55 km (17-01-10Z). After that gate, 17-13-14Z still
 thrust 1 at 59 km and emptied tanks by MET 153 apo 270 km —
@@ -274,6 +276,33 @@ def _leftover_sit(*, down: bool, live_sit: str = "") -> bool:
     return bool(down or "landed" in live_l or "splash" in live_l)
 
 
+def _space_low_sit(live_sit: str = "") -> bool:
+    """InSpaceLow after lid. Flying at 50 km is not this.
+
+    kRPC sub_orbital / orbiting / escaping. 16-23-52Z High Toggle skip
+    never retried in space. Forest / Grasslands: same.
+    """
+    live = str(live_sit or "").lower().replace(" ", "").replace("_", "")
+    if not live or "landed" in live or "splash" in live:
+        return False
+    if "inspacehigh" in live:
+        return False
+    return any(
+        tok in live
+        for tok in ("suborbital", "orbiting", "escaping", "inspacelow", "inspace")
+    )
+
+
+def _space_science_ids() -> tuple[str, ...]:
+    """Bound InSpaceLow eids. hop_science_ids situation=flying drops these."""
+    try:
+        from tickets import science_ids_for
+
+        return science_ids_for(situation="inspacelow")
+    except Exception:
+        return ()
+
+
 def _lid_vertical_sit(
     snap: object,
     *,
@@ -423,7 +452,13 @@ def run_factory_vessel(
 ) -> str:
     """Light, flying card, recover when down or dead-with-HD. Caller Hangars."""
     log_events = events if events is not None else EventLog()
-    ids = science_ids if science_ids is not None else H.hop_science_ids()
+    if science_ids is not None:
+        ids = tuple(science_ids)
+    else:
+        try:
+            ids = H.hop_science_ids()
+        except MissionAbort:
+            ids = ()
     flying_high = _inland_high_sit()
     hop_apo = H.hop_target_apo(space=flying_high)
     ctx = Ctx(session=session, vessel=vessel, events=log_events, science_ids=ids)
@@ -957,6 +992,40 @@ def run_factory_vessel(
                 live_sit=live_now, live_biome=live_biome
             )
             started_ground: list[str] = []
+            if (
+                left_pad
+                and not down
+                and lofted
+                and reached_lid
+                and not waiting_hd
+                and _space_low_sit(live_now)
+            ):
+                space_ids = _space_science_ids()
+                need = H.bound_science_need(
+                    live_sit=live_now,
+                    live_biome=live_biome,
+                    alt=H._snap_alt(snap),
+                )
+                pending = tuple(eid for eid in space_ids if eid not in started)
+                more = (
+                    H._start_paying(vessel, pending, snap, on_log, need)
+                    if pending
+                    else []
+                )
+                if more:
+                    started.extend(more)
+                    science_attempted = True
+                    H._say("science " + ",".join(more), on_log)
+                    log_events.emit("science", ids=list(more))
+                    mission_event(
+                        "science",
+                        snap,
+                        beauty=True,
+                        pose="science",
+                        session=session,
+                    )
+                    H._say("science dwell", on_log)
+                    log_events.emit("science_dwell", phase="start")
             if left_pad and leftover_now and not waiting_hd and lofted:
                 need = H.bound_science_need(
                     live_sit=live_now,

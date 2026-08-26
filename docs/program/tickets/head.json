@@ -20448,6 +20448,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T17:57:53Z",
+            "claim": "After lid MECO, InSpaceLow starts bound cards. hop_factory _space_low_sit + _space_science_ids; science.sit_matches InSpaceLow is sub_orbital not flying-at-50 km (was default True). High cannot-pay skip-latch is not space-done. Do not burn through lid; do not inland burnout. Bind none until LITE stamped \u2014 next hop Toggles in space when that card can pay.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "lars"
           }
         ]
       },
@@ -20461,7 +20469,7 @@
       "tags": [],
       "title": "proc-loft MET 21s throttle 1 thrust 0 fuel frozen 2038 \u2014 flameout not shear",
       "type": "control",
-      "updated": "2026-08-26T17:12:36Z"
+      "updated": "2026-08-26T17:57:53Z"
     },
     "T-510": {
       "assignee": "",
@@ -20967,5 +20975,5 @@
       "updated": "2026-08-26T17:55:28Z"
     }
   },
-  "updated": "2026-08-26T17:55:40Z"
+  "updated": "2026-08-26T17:57:53Z"
 }

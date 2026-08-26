@@ -81,6 +81,59 @@ class _ColdEngine:
         return
 
 
+class _CurrentMod:
+    """kRPC Module: independentThrottlePercentage is the ignition command."""
+
+    def __init__(self, engine: "_CurrentThrottleEngine"):
+        self._engine = engine
+
+    def get_field_by_id(self, key: str):
+        if key != "independentThrottlePercentage":
+            raise ValueError(key)
+        return self._engine.pct
+
+    def set_field_float_by_id(self, key: str, value: float):
+        if key != "independentThrottlePercentage":
+            raise ValueError(key)
+        self._engine.pct = float(value)
+
+
+class _CurrentPart:
+    def __init__(self, engine: "_CurrentThrottleEngine"):
+        self.modules = [_CurrentMod(engine)]
+
+
+class _CurrentThrottleEngine:
+    """kRPC 0.6: Engine.throttle GET is currentThrottle (0 until lit)."""
+
+    def __init__(self):
+        self._independent = False
+        self.pct = 0.0
+        self.independent_sets = 0
+        self.part = _CurrentPart(self)
+
+    @property
+    def independent_throttle(self):
+        return self._independent
+
+    @independent_throttle.setter
+    def independent_throttle(self, value):
+        self.independent_sets += 1
+        value = bool(value)
+        if value:
+            self.pct = 0.0
+        self._independent = value
+
+    @property
+    def throttle(self):
+        return 0.0
+
+    @throttle.setter
+    def throttle(self, value):
+        if self._independent:
+            self.pct = float(value) * 100.0
+
+
 class TestHopFactoryPad(unittest.TestCase):
     def test_pad_module_is_the_rf_sit(self):
         factory = Path("hop_factory.py").read_text(encoding="utf-8")
@@ -93,6 +146,7 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _apply_pad_throttle", pad)
         self.assertIn("def _pad_engines", pad)
         self.assertIn("def _engine_throttle", pad)
+        self.assertIn("def _engine_setpoint", pad)
         self.assertIn("def _pad_engine_live", pad)
         self.assertIn("def _release_pad_throttle", pad)
         self.assertIn("def _pad_thrusting", pad)
@@ -140,6 +194,25 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertEqual(logs, [])
         self.assertGreater(engine.throttle, 0.05)
         self.assertEqual(engine.independent_sets, 1)
+
+    def test_pad_light_stages_on_setpoint_when_current_throttle_zero(self):
+        """rf-ignition-ullage: kRPC Engine.throttle GET is 0 until lit."""
+        vessel = _Vessel()
+        engine = _CurrentThrottleEngine()
+        vessel.parts.engines = [engine]
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(engine.independent_throttle)
+        self.assertEqual(engine.throttle, 0.0)
+        self.assertGreater(engine.pct, 5.0)
+        self.assertEqual(engine.independent_sets, 1)
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(engine.independent_sets, 1)
+        self.assertEqual(engine.throttle, 0.0)
+        self.assertTrue(any("hop light" in line for line in logs))
 
     def test_pad_hold_keeps_start_airborne_until_meco(self):
         """rf-ignition-ullage: thrusting hands stack to MainThrottle 1."""

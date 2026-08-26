@@ -12,7 +12,7 @@ bind: S-514 kerbalism_LITE InSpaceLow 10/0.03; S-516 mysteryGoo InSpaceLow 641/0
 duration_vs_high: High cannot pay; this loft sits InSpaceLow ~268 km; LITE 10s finishes; goo leftover remaining ~364s — silk recover the can
 recover: yes
 meco: lid 50 km live; independent off; Toggle InSpaceLow; silk descent — not circularize
-dynamics: MECO@50km ~271s vac / ~260s FAR in 50–140 (vz 1.29 km/s apo 137 km); T-404 305s cannot pay
+dynamics: loft-through apo 249–270 km InSpaceLow; lid-MECO 137 km High; cannot circularize ~7.7 km/s; Terrier after 45
 agreed: yes
 blocker: none
 ```
@@ -73,12 +73,28 @@ hold inland through burnout after High lid.
 
 ## Dynamics (Katherine, opt-in)
 
-Four loft-throughs agree at the lid: 50 km live vz 1.29 km/s (16-23-52Z
-1.32), pitch 87–89, heading 299–302, Q_max ~23 kPa, Shores, throttle 1
-through High. MECO at that state: vacuum apo 137 km, 50→apo→50 = 271 s
-(16-23-52Z 249 s if apo 141 km nicks InSpaceLow). FAR Q ~1.1 kPa at lid
-shaves a few seconds (~260 s), not 45. Kepler ceiling in-band (kiss
-140 km) is 276 s. MECO earlier is worse (42 km vz 1.10 → apo 106 km →
-216 s in High). Lid leftover ~290 kg hovers ~38 s, not 305. Loft-through
-High is ~56 s up / ~50 s down (17-01-10Z). T-404 305 s cannot pay. Silk
-is recover, not a High drogue.
+Phase 1 this hang cannot circularize. Two apo families, both Pe
+through the planet (sit=sub_orbital, apex horiz 39–84 m/s vs
+circular ~7.75 km/s — Δv ~7.7 km/s; leftover 0–32 kg is ~30–50 m/s,
+Valiant 100 kN / Isp 270 vac / 1 ignition spent).
+
+Loft-through (tape, tanks empty or ~30 kg): apo 249–270 km
+(16-23-52Z 268; 17-13-14Z / 18-45-23Z / 18-57-09Z 269–270;
+18-34-15Z 255 leftover 23 kg; 19-08-49Z 249 leftover 32 kg). Apex
+heading 297 pitch 65 Q=0 Shores. That is InSpaceLow. Burnout pitch
+86–89 heading 299–302 horiz <100 m/s — vertical, not a gravity
+turn. Q_max 22–24 kPa up; FAR at apo is zero. Tape rec=no (chute
+armed/stowed; last-flight shear is abort; stack intact at last
+sample). Silk recovers this loft, not orbit.
+
+Commanded lid-MECO at 50 km vz 1.29 km/s (T-523): vacuum apo 137 km
+— High, short of InSpaceLow 140 km. FAR Q ~1.1 kPa at lid shaves
+seconds, not 3 km. S-514 InSpaceLow pays loft-through, not a true
+lid-MECO.
+
+Phase 2 waits `advRocketry` 45 Terrier (LV-909). Buys a restartable
+vacuum second stage so Pe can sit above the ~140 km High lid — not
+apo 268 km. Mass ratio for 7.7 km/s at ~330 s vac is ~10.8; cannot
+bolt onto C-504 dry ~1.85 t. First stage must gravity-turn east so
+burnout horiz is km/s, not 50 m/s. Do not Hangar that stack before
+the node.

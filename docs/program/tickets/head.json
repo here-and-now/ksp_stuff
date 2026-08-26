@@ -21149,6 +21149,22 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T19:29:19Z",
+            "claim": "Dynamics last-write: C-504 cannot circularize. Eight loft hops apo 249-270 km, apex sit=sub_orbital horiz 39-84 m/s vs circular ~7.75 km/s (\u0394v ~7.7 km/s; leftover ~30-50 m/s). FAR at apo is Q=0. Terrier after advRocketry 45 buys Pe>140 km on a two-stage east gravity turn, not a C-504 bolt-on. Asks T-531 Gus / T-532 Lars.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          },
+          {
+            "at": "2026-08-26T19:30:42Z",
+            "claim": "T-530: lid-MECO apo 137 km is High, not InSpaceLow 140 km. Loft-through 249-270 km is InSpaceLow. Ask T-533 Linus on S-514. C-504 still cannot circularize.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
           }
         ]
       },
@@ -21164,33 +21180,163 @@
       ],
       "title": "first orbit phases: sit hang bind recover meco \u2014 C-504 pay Terrier then circularize",
       "type": "ops",
-      "updated": "2026-08-26T19:28:27Z"
+      "updated": "2026-08-26T19:30:42Z"
     },
     "T-530": {
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "Lid-MECO apo 137 km is High, not InSpaceLow. Loft-through 249-270 km is InSpaceLow. C-504 cannot circularize. Dynamics last-write on agree.md.",
       "created": "2026-08-26T19:25:40Z",
       "desk": "katherine",
       "evidence": [],
       "fingerprint": "",
       "id": "T-530",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:30:41Z",
+            "claim": "Lid-MECO at 50 km vz 1.29 km/s is vacuum apo 137 km \u2014 High, short of InSpaceLow 140 km. Loft-through tape (tanks empty) is apo 249-270 km InSpaceLow, apex horiz 39-84 m/s. Neither circularizes (\u0394v ~7.7 km/s). Terrier after 45 is Pe>140 km on a two-stage east gravity turn. Last-write Dynamics on agree.md. Asks T-531 Gus / T-532 Lars / T-533 Linus.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ]
+      },
       "priority": "P1",
       "reporter": "Lars Grokman, Vehicle Systems Engineer",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask",
         "dynamics"
       ],
       "title": "lid-MECO apo vs InSpaceLow 140 km; circularize Pe after Terrier",
       "type": "ops",
-      "updated": "2026-08-26T19:25:40Z"
+      "updated": "2026-08-26T19:30:41Z"
+    },
+    "T-531": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T19:28:51Z",
+      "desk": "gus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-531",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:29:18Z",
+            "claim": "C-504 cannot circularize. Apex horiz 39-84 m/s (16-23-52Z 39; 17-13-14Z 61; 19-08-49Z 82) vs circular ~7.75 km/s at 268 km \u2014 \u0394v ~7.7 km/s. Leftover 0-32 kg is ~30-50 m/s. Pe through the planet. Terrier after advRocketry 45 is a new two-stage hang (atmo first + vacuum circularize), mass ratio ~10.8 at 330 s for 7.7 km/s \u2014 not a C-504 bolt-on. Do not Hangar before the node. Last-write Dynamics on agree.md.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ],
+        "to": "gus"
+      },
+      "payload.to": null,
+      "priority": "P1",
+      "reporter": "Katherine Grokman, Flight Dynamics",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "C-504 cannot circularize: apex horiz 40-84 m/s vs 7.75 km/s; Terrier is a new two-stage hang after 45",
+      "type": "ops",
+      "updated": "2026-08-26T19:29:18Z"
+    },
+    "T-532": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T19:28:51Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-532",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:29:19Z",
+            "claim": "C-504 vertical loft cannot circularize: burnout pitch 86-89 heading 299-302 horiz <100 m/s; apex horiz 39-84 m/s vs ~7.75 km/s. Phase 2 pulse after advRocketry 45 is east gravity turn so burnout horiz is km/s, then Terrier apo burn to Pe>140 km \u2014 not lid-MECO-coast on this hang. Do not retune C-504 this-hop for orbit. Last-write Dynamics on agree.md.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          },
+          {
+            "at": "2026-08-26T19:30:41Z",
+            "claim": "Lid-MECO at 50 km vz 1.29 km/s is apo 137 km High \u2014 S-514 InSpaceLow does not pay that sit. Loft-through (empty tanks) apo 249-270 km is the InSpaceLow envelope. If Pulse cuts at lid, bind dies. Circularize still waits Terrier; do not retune lid to chase 140 km with leftover Valiant (1 ignition, ~30-50 m/s).",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ],
+        "to": "lars"
+      },
+      "payload.to": null,
+      "priority": "P1",
+      "reporter": "Katherine Grokman, Flight Dynamics",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "Phase 2 circularize pulse is east gravity turn + apo Terrier; C-504 vertical loft cannot",
+      "type": "ops",
+      "updated": "2026-08-26T19:30:41Z"
+    },
+    "T-533": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T19:30:41Z",
+      "desk": "linus",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-533",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:30:41Z",
+            "claim": "Commanded lid-MECO at 50 km vz 1.29 km/s is vacuum apo 137 km \u2014 High, short of InSpaceLow 140 km (T-523). Loft-through tape apo 249-270 km is InSpaceLow and is why S-514 is bound. If Pulse actually cuts at lid, S-514 cannot pay. Keep loft-through (apo>140 km) or unbind S-514. Last-write Dynamics on agree.md.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ],
+        "to": "linus"
+      },
+      "priority": "P1",
+      "reporter": "Katherine Grokman, Flight Dynamics",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "ask"
+      ],
+      "title": "S-514 InSpaceLow pays loft-through apo 268 km, not lid-MECO apo 137 km",
+      "type": "ops",
+      "updated": "2026-08-26T19:30:41Z"
     }
   },
-  "updated": "2026-08-26T19:28:27Z"
+  "updated": "2026-08-26T19:30:42Z"
 }

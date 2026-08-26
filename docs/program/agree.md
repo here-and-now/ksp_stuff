@@ -8,8 +8,8 @@ katherine` or `--tag dynamics`) — not every pad.
 ```
 sit: FlyingHigh
 hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
-bind: T-404 barometerScan FlyingHigh 305/0.05
-duration_vs_high: 305s file does not finish tens-of-seconds loft-through (~42s then InSpaceLow ~268 km, four hops +0); pays iff MECO/dwell ≥305s in 50–140 km
+bind: none
+duration_vs_high: MECO@50km ~260s FAR / loft-through ~56s; T-404 305s cannot pay; no High file ≤250s pays Shores
 recover: yes
 meco: lid 50 km live; independent off; High dwell coast
 dynamics: MECO@50km ~271s vac / ~260s FAR in 50–140 (vz 1.29 km/s apo 137 km); T-404 305s cannot pay
@@ -33,20 +33,17 @@ alts, not this hang. Do not replace C-504 because the last hop sheared.
 
 ## Bind (Linus)
 
-This-hop: T-404 PresMat FlyingHigh 305/0.05/2.70 only. File rem=0
-is still the card. Envelope Shores heading 297 — not Forest, not
-Water, not Grasslands. Four loft-throughs (16-23-52Z / 16-49-02Z /
-17-01-10Z / 17-13-14Z) spent High in tens of seconds then
-InSpaceLow ~268 km rec=no sci +0. **Nothing this hang finishes
-that High window:** T-404 305 s does not; T-069 Forest TELEMETRY
-25 s leftover cannot pay Shores High (capped); thermo/geiger High
-capped; T-368 goo 641 s sample rec=no loses the can. T-404 pays
-iff pulse MECO/dwells ≥305 s in 50–140 km. T-460 FlyingLow same
-eid one Toggle — stays unbound. InSpaceLow LITE S-514 10 s / 2.00
-+ TELEMETRY S-515 30 s / 2.00 + goo leftover S-516 3.41 stay
-unbound shelf (flying Toggle at 50 km does not retry in space).
-Do not drop High for splash leftover. Not Surface. Not T-461.
-recover HD 1.17 MB not TX 41 h.
+This-hop: **none**. Unbound T-404 FlyingHigh PresMat 305/0.05/2.70.
+MECO-at-lid High is ~260 s FAR / ~271 s vac (Kepler ceiling 276 s);
+loft-through ~56 s up. 305 s cannot pay. File rem=0 stays the High
+shelf until a hang holds ≥305 s in 50–140 km. No High file ≤250 s
+pays Shores: T-069 Forest TELEMETRY 25 s leftover cannot pay Shores
+High (capped); thermo/geiger High capped; goo 641 s sample. Envelope
+Shores heading 297 — not Forest, not Water, not Grasslands. T-460
+FlyingLow 305 s unbound. InSpaceLow LITE S-514 10 s / 2.00 is shelf
+(flying Toggle at 50 km does not retry in space). S-515 TELEMETRY
+30 s / 2.00 + S-516 goo leftover 3.41 shelf. Not Surface. Not T-461.
+Do not drop High for splash leftover — High itself cannot pay 305 s.
 
 ## Pulse (Lars)
 

@@ -3970,9 +3970,7 @@
         },
         "learn": "landing: catastrophic impact=1720 m/s heading=297 horiz=69 pitch=65 sit=flying synth apo=270039 biome=Shores rec=no sci=run=0 rem=0 bank=13.62 +0",
         "phase": "hop",
-        "science_ids": [
-          "barometerScan"
-        ],
+        "science_ids": [],
         "telem_run": "docs/missions/uncrewed/logs/2026-08-26T17-13-14Z-hop.jsonl",
         "waste": {
           "bind": [
@@ -4018,7 +4016,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T17:20:22Z"
+      "updated": "2026-08-26T17:51:49Z"
     },
     "T-082": {
       "assignee": "",
@@ -15567,7 +15565,7 @@
       "id": "T-404",
       "payload": {
         "biome": "",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
@@ -15669,17 +15667,24 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T17:51:59Z",
+            "claim": "Unbound FlyingHigh PresMat 305/0.05/2.70. T-525: C-504 High window MECO-at-lid ~260 s FAR / ~271 s vac (Kepler ceiling 276 s); loft-through ~56 s up. 305 s cannot pay. File rem=0 stays the High shelf. No High file \u2264250 s pays Shores \u2014 T-069 Forest TELEMETRY 25 s leftover cannot pay Shores High; thermo/geiger High capped; goo 641 s sample. This-hop none. Dropped barometerScan from T-081 science_ids so fly cannot shadow. InSpaceLow S-514 LITE 10 s stays shelf (flying Toggle at 50 km does not retry in space). Not Water. Not Grasslands. Not Surface. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop FlyingHigh PresMat seq0 on kspstuff-hop-valiant-proc-loft-pbc (C-504 capable yes). Unstarted barometerScan FlyingHigh ~2.70 (cap 3 \u00d7 0.9). file 1.17 MB / 305 s / 0.05. TX @ 64 bps = 41 h \u2014 recover HD. File rem=0 is still the card. Envelope Shores heading 297. 16-23-52Z / 16-49-02Z / 17-01-10Z / 17-13-14Z lofted High tens of seconds then InSpaceLow ~268 km rec=no sci +0. 305 s does not finish that window \u2014 pays iff MECO/dwell \u2265305 s in 50\u2013140 km. Nothing else this hang finishes Shores High (Forest TELEMETRY T-069 cannot pay Shores; thermo/geiger High capped; goo 641 s sample). T-460 same eid unbound. InSpaceLow S-514 LITE 2.00 / S-515 TELEMETRY 2.00 / S-516 goo leftover 3.41 shelf. Not Water. Not Grasslands. Not Surface. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "unbound catalog. FlyingHigh PresMat 305/0.05/2.70 cannot pay C-504 High. MECO-at-lid ~260 s FAR / ~271 s vac (Kepler ceiling 276 s); loft-through ~56 s up. File rem=0 stays the High shelf until a hang holds \u2265305 s in 50\u2013140 km. No High file \u2264250 s pays Shores (T-069 Forest TELEMETRY 25 s leftover cannot pay Shores High; thermo/geiger High capped; goo 641 s sample). This-hop none. T-460 same eid unbound. InSpaceLow S-514/S-515/S-516 shelf (flying Toggle at 50 km does not retry in space). Not Water. Not Grasslands. Not Surface. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
-        "seq": 0,
         "situation": "FlyingHigh",
         "size_mb": 1.17,
         "tech": "stability",
@@ -15711,16 +15716,16 @@
       "sci_expect": 2.7,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "flyinghigh",
         "barometer",
-        "bound"
+        "unbound"
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-26T17:36:38Z"
+      "updated": "2026-08-26T17:51:59Z"
     },
     "T-405": {
       "assignee": "",
@@ -20844,6 +20849,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "Unbound T-404. This-hop none. No High file \u2264250 s pays Shores; PresMat 305 s exceeds ~260 s FAR / 276 s Kepler. InSpaceLow LITE S-514 stays shelf.",
       "created": "2026-08-26T17:47:40Z",
       "desk": "linus",
       "evidence": [],
@@ -20858,6 +20864,14 @@
             "owner": "none",
             "real": false,
             "who": "katherine"
+          },
+          {
+            "at": "2026-08-26T17:51:59Z",
+            "claim": "Unbound T-404. This-hop none. No High file \u2264250 s pays Shores: TELEMETRY leftover is Forest 25 s (T-069 cannot pay Shores High); thermo/geiger High capped; PresMat 305 s exceeds MECO-at-lid ~260 s FAR / Kepler 276 s. InSpaceLow LITE S-514 10 s stays shelf \u2014 flying Toggle at 50 km does not retry in space. Silk is recover not dwell. sit FlyingHigh bind none. f013 PresMat stability on_craft=yes.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "to": "linus"
@@ -20868,14 +20882,14 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "T-404 305 s cannot pay C-504 High (~260 s MECO-at-lid; loft-through ~56 s up)",
       "type": "ops",
-      "updated": "2026-08-26T17:48:08Z"
+      "updated": "2026-08-26T17:52:07Z"
     }
   },
-  "updated": "2026-08-26T17:49:39Z"
+  "updated": "2026-08-26T17:52:07Z"
 }

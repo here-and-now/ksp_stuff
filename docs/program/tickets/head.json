@@ -460,6 +460,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T20:09:32Z",
+            "claim": "keep pad hang C-534 kspstuff-hop-valiant-proc-redstone-pbc. craft fuel FED last tank attN bottom=Valiant. 4x 1500 L RedstoneStripes 2700 kero, girders none, no HS. Engine istg=0 sqor=0 first fire; RC_cone Nylon 50m istg=1 sqor=0 last. One hang. Did not fill shelf. Did not restamp C-504 pad. Did not Hangar C-477 / t7-chute Mk16. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft; geiger e101 unlocked=yes on_craft; 2HOT start on_craft TELEMETRY/LITE OKTO HD=1. Omni SurfAntenna gain=2 Cape 64 bps. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -473,7 +481,7 @@
       "tags": [],
       "title": "Push generalRocketry: one proc hang, no girders, bigger tanks, Redstone stripes",
       "type": "vehicle",
-      "updated": "2026-08-26T19:48:53Z"
+      "updated": "2026-08-26T20:09:32Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -21621,7 +21629,31 @@
       "title": "ops.py tickets.py AGENTS.md inherit TUI reasoning; register iris DESKS",
       "type": "systems",
       "updated": "2026-08-26T20:01:44Z"
+    },
+    "T-542": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T20:08:09Z",
+      "desk": "hank",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-542",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "constellation"
+      ],
+      "title": "First look: Cape / RA / this hang path \u2014 Eleanor",
+      "type": "ops",
+      "updated": "2026-08-26T20:08:09Z"
     }
   },
-  "updated": "2026-08-26T20:05:04Z"
+  "updated": "2026-08-26T20:09:32Z"
 }

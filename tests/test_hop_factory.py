@@ -323,12 +323,14 @@ class TestHopFactoryPad(unittest.TestCase):
             vessel.control.current_stage -= 1
             vessel.control.staged += 1
             engine.ignitions = 0
+            engine.active = True
 
         vessel.control.activate_next_stage = stage
         self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
         self.assertEqual(vessel.control.staged, 1)
         self.assertEqual(vessel.control.current_stage, 1)
         self.assertEqual(engine.actual, 0.0)
+        self.assertTrue(engine.active)
         self.assertTrue(_pad_engine_waiting(vessel))
         self.assertFalse(_pad_plume(vessel))
         self.assertEqual(logs, [])
@@ -347,10 +349,48 @@ class TestHopFactoryPad(unittest.TestCase):
         def stage():
             vessel.control.current_stage -= 1
             vessel.control.staged += 1
+            engine.active = True
             if vessel.control.current_stage < engine.part.stage:
                 engine.ignitions = 0
                 engine.actual = 0.24
-                engine.active = True
+
+        vessel.control.activate_next_stage = stage
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 1)
+        self.assertEqual(vessel.control.current_stage, 1)
+        self.assertTrue(engine.active)
+        self.assertEqual(logs, [])
+        self.assertTrue(_pad_engine_waiting(vessel))
+        self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 2)
+        self.assertEqual(vessel.control.current_stage, 0)
+        lit = " ".join(logs)
+        self.assertIn("hop light", lit)
+        self.assertIn("currentThrottle=0.00→0.24", lit)
+        self.assertNotIn("hop abort", lit)
+
+    def test_pad_light_rf_active_on_pad_is_not_dead(self):
+        """rf-ignition-ullage: 12-18-51Z Engine.active on pad is not pad-dead."""
+        vessel = _Vessel()
+        engine = _RfEngine()
+        engine.part.stage = 1
+        engine.active = True
+        vessel.parts.engines = [engine]
+        vessel.control.current_stage = 2
+        snap = type("S", (), {"link": True, "situation": "pre_launch"})()
+        logs: list[str] = []
+        self.assertTrue(_pad_engine_waiting(vessel))
+        self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
+        self.assertEqual(vessel.control.staged, 0)
+        self.assertTrue(engine.active)
+
+        def stage():
+            vessel.control.current_stage -= 1
+            vessel.control.staged += 1
+            engine.active = True
+            if vessel.control.current_stage < engine.part.stage:
+                engine.ignitions = 0
+                engine.actual = 0.24
 
         vessel.control.activate_next_stage = stage
         self.assertFalse(_pad_light(vessel, logs.append, snap, deaf=False))
@@ -359,10 +399,8 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertEqual(logs, [])
         self.assertTrue(_pad_light(vessel, logs.append, snap, deaf=False))
         self.assertEqual(vessel.control.staged, 2)
-        self.assertEqual(vessel.control.current_stage, 0)
         lit = " ".join(logs)
         self.assertIn("hop light", lit)
-        self.assertIn("currentThrottle=0.00→0.24", lit)
         self.assertNotIn("hop abort", lit)
 
     def test_pad_light_rf_dead_engine_aborts(self):

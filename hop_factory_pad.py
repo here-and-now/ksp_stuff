@@ -9,7 +9,11 @@ and not independent True with setpoint 0. Do not gate stage on GET
 currentThrottle. Confirmed light is plume / currentThrottle rising
 after stage, not ignitions remaining 1→0 with GET still 0. An empty
 stage above the engine is not hop light — stage until the engine
-fires. hop light logs ignitions remaining, independent setpoint,
+fires. Engine.active on the pad is not already-fired (12-18-51Z
+aborted pad-dead-no-plume at STAGE 2, never hop light). Fired is
+current_stage < part.stage. Command Engine.active True with the
+live setpoint so a chute-only current stage does not eat the only
+ignition. hop light logs ignitions remaining, independent setpoint,
 and currentThrottle only when the flame is up. After confirmed
 light, MainThrottle 1 and independent setpoint 1 stay until
 loft/MECO at the lid — not a pad MECO, not a thrusting handoff.
@@ -345,7 +349,13 @@ def _pad_engine_live(vessel: object) -> bool | None:
 
 
 def _apply_pad_throttle(vessel: object) -> None:
-    """Throttle 1 on control and on the engines. Enable independent once."""
+    """Throttle 1 on control and on the engines. Enable independent once.
+
+    Engine.active True with that setpoint is the pad light when the
+    current stage is empty of engine. Do not wait for the chute stage
+    to pass — staging an empty/chute fire can spend the only ignition
+    at currentThrottle 0. Forest / Grasslands: same.
+    """
     try:
         control = vessel.control
         control.sas = True
@@ -368,6 +378,10 @@ def _apply_pad_throttle(vessel: object) -> None:
         except Exception:
             pass
         _write_engine_setpoint(eng)
+        try:
+            eng.active = True
+        except Exception:
+            pass
 
 
 def _release_pad_throttle(vessel: object) -> None:
@@ -426,7 +440,15 @@ def _pad_plume(vessel: object, snap: object | None = None) -> bool:
 
 
 def _pad_engine_waiting(vessel: object) -> bool:
-    """Engine inverse stage has not fired. Empty stages above it still wait."""
+    """Engine inverse stage has not fired. Empty stages above it still wait.
+
+    Engine.active is not this. kRPC can report active on the pad
+    before the engine stage lights; treating that as fired aborts
+    pad-dead-no-plume without restaging (12-18-51Z STAGE 2, never
+    hop light). Fired means current_stage < part.stage. stage < 0
+    is not in the fire list — still wait, do not call it dead.
+    Forest / Grasslands: same.
+    """
     try:
         current = int(
             getattr(getattr(vessel, "control", None), "current_stage")
@@ -437,13 +459,10 @@ def _pad_engine_waiting(vessel: object) -> bool:
     saw_stage = False
     for eng in _pad_engines(vessel):
         try:
-            if bool(getattr(eng, "active", False)):
-                return False
-        except Exception:
-            pass
-        try:
             istg = int(getattr(getattr(eng, "part", None), "stage"))
         except Exception:
+            continue
+        if istg < 0:
             continue
         saw_stage = True
         if current is None:
@@ -470,15 +489,16 @@ def _pad_light(
     Do not gate stage on GET currentThrottle. Confirmed light is
     plume / currentThrottle rising after stage, not ignitions 1→0
     with GET still 0. Empty stages above the engine are not hop
-    light. Re-apply on the stage pulse zeros the setpoint this tick
-    if independent is toggled — restoke throttle without re-enable.
-    Throttle 0 then 1 is a restart. Pad 1 g still lights when the
-    command is 1 at ignition. hop light logs ignitions remaining,
-    setpoint, currentThrottle when the flame is up. After confirmed
-    light, return True and let the factory hold. Engine already
-    fired with no plume is a dead pad. abort_pad cut is MainThrottle
-    only — ``_cut_pad_engine`` before process exit. Do not abort
-    after light. Forest / Grasslands: same.
+    light. Engine.active on the pad is not already-fired. Re-apply
+    on the stage pulse zeros the setpoint this tick if independent
+    is toggled — restoke throttle without re-enable. Throttle 0 then
+    1 is a restart. Pad 1 g still lights when the command is 1 at
+    ignition. hop light logs ignitions remaining, setpoint,
+    currentThrottle when the flame is up. After confirmed light,
+    return True and let the factory hold. Engine already fired with
+    no plume is a dead pad. abort_pad cut is MainThrottle only —
+    ``_cut_pad_engine`` before process exit. Do not abort after
+    light. Forest / Grasslands: same.
     """
     if deaf:
         H._light(vessel, on_log, snap)

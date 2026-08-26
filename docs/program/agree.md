@@ -78,15 +78,17 @@ Live RF ``rf_throttle.py`` (independent, not UI MainThrottle).
 ``hop.py`` parked. ``vacuum_stage_sit`` is false (no Terrier) —
 loft path: ``RF.apply`` live 1 from light until ``loft_lid_sit`` /
 ``loft_meco_sit`` (50 km **live** alt), then ``RF.cut`` independent
-off. After lid, Toggle InSpaceLow (``space_low_sit`` / ``sit_matches``).
-Coast ``apply_sit_warp``. Arm Nylon on ``chute_arm_sit`` — recover
-yes when down. Do not circularize this hang: Pe stays on the ground.
-Pulse never writes gimbal. Do not retune MECO / lid / silk to High
-305 s.
+off. While independent still 1: ``turn_live_sit`` SAS off, AP engage
+once, surface heading 90 (``_steer_east``). SAS Stability is not a
+heading. Do not wait Terrier. After lid, Toggle InSpaceLow
+(``space_low_sit`` / ``sit_matches``). Coast ``apply_sit_warp``. Arm
+Nylon on ``chute_arm_sit`` — recover yes when down. Do not
+circularize this hang: Pe stays on the ground. Pulse never writes
+gimbal. Do not retune MECO / lid / silk to High 305 s.
 
 When ``vacuum_stage_sit`` is true (Terrier on the hang): keep live
-through first-stage burnout — gravity turn **east** while thrusting,
-no lid MECO — then stage, vacuum apply live near apo until Pe ≥
+through first-stage burnout — same east turn while thrusting, no
+lid MECO — then stage, vacuum apply live near apo until Pe ≥
 ~140 km High lid. rec=no is honest if orbiting. Same compose —
 not a stamp helper. Forest / Grasslands: same.
 

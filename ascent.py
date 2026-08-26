@@ -6,8 +6,11 @@ live on parked ``hop.py``. ``python main.py hop`` still dispatches
 inland to hop_factory. ``python main.py ascent`` is this file.
 
 Valiant loft now: apply live 1 until High lid MECO, then coast.
-Terrier two-stage later: keep live through first-stage burnout
-(gravity turn east while thrusting — no lid MECO), stage, vacuum
+Heading while live is Autopilot east (SAS off, engage once, surface
+frame) — SAS Stability is not a heading. Do not wait Terrier. Keyboard
+pitch/yaw on SAS is not this. After lid MECO independent is off: no
+plume, no moment. Terrier two-stage later: keep live through
+first-stage burnout (same east turn — no lid MECO), stage, vacuum
 apply live near apo until Pe ≥ space. Do not freeze Flea / Hammer /
 4t / splash-090. Forest / Grasslands: same function. Tests lock
 these sits, not a dead hang.
@@ -127,6 +130,46 @@ def loft_meco_sit(
     if two_stage:
         return False
     return lofted_lid or loft_lid_sit(snap, hop_apo)
+
+
+def turn_live_sit(
+    *,
+    lit: bool,
+    left_pad: bool,
+    down: bool,
+    keep_live: bool,
+    deaf: bool = False,
+) -> bool:
+    """AP heading while independent still 1. SAS hold is not this.
+
+    Pad sit is still the start. After lid MECO independent is off —
+    no plume, no moment. Do not wait Terrier. Forest / Grasslands: same.
+    """
+    return bool(lit and left_pad and keep_live and not down and not deaf)
+
+
+def turn_cmd_pitch(
+    yawed: bool,
+    yaw_n: int,
+    flown_pitch: float,
+    flown_heading: float,
+    met: float,
+) -> tuple[float, bool]:
+    """Yaw 10° off zenith heading 90, then 25° from up. AP while thrusting."""
+    if yawed:
+        return H.WATER_PITCH_DEG, True
+    captured = (
+        math.isfinite(flown_heading)
+        and H._heading_err_deg(flown_heading, H.WATER_HEADING_DEG)
+        <= H.INLAND_HEADING_CAPTURE_DEG
+        and math.isfinite(flown_pitch)
+        and float(flown_pitch) <= H.INLAND_YAW_PITCH_DEG + 5.0
+    )
+    timed_out = math.isfinite(met) and float(met) >= H.INLAND_YAW_MET_S
+    unseen = not math.isfinite(flown_heading) and int(yaw_n) >= 2
+    if captured or timed_out or unseen:
+        return H.WATER_PITCH_DEG, True
+    return H.INLAND_YAW_PITCH_DEG, False
 
 
 def space_low_sit(
@@ -295,11 +338,19 @@ def run_ascent_vessel(
     started: list[str] = []
     chute_armed = False
     met0: float | None = None
+    turn_yawed = False
+    turn_yaw_n = 0
+    said_turn = False
     two_stage = vacuum_stage_sit(vessel)
     H._say(f"ascent apo={hop_apo:.0f}", on_log)
+    H._say(
+        "ascent gravity turn east while thrusting "
+        f"heading={H.WATER_HEADING_DEG:g}",
+        on_log,
+    )
     if two_stage:
         H._say(
-            "ascent gravity turn east while thrusting, no lid MECO, "
+            "ascent no lid MECO, "
             f"circularize Pe>={SPACE_PE_M:.0f}",
             on_log,
         )
@@ -394,6 +445,42 @@ def run_ascent_vessel(
                     RF.cut(vessel)
                     H._say("ascent circularized", on_log)
                     return "ascent orbit"
+            if turn_live_sit(
+                lit=lit,
+                left_pad=left_pad,
+                down=down,
+                keep_live=keep,
+                deaf=deaf,
+            ):
+                flown_p = H._snap_pitch(snap)
+                flown_h = H._snap_heading(snap)
+                try:
+                    met_slew = float(getattr(snap, "met", float("nan")))
+                except (TypeError, ValueError):
+                    met_slew = float("nan")
+                if not turn_yawed:
+                    turn_yaw_n += 1
+                cmd_pitch, turn_yawed = turn_cmd_pitch(
+                    turn_yawed,
+                    turn_yaw_n,
+                    flown_p,
+                    flown_h,
+                    met_slew,
+                )
+                H._steer_east(
+                    vessel,
+                    pitch=cmd_pitch,
+                    flown_pitch=flown_p,
+                    flown_heading=flown_h,
+                    burning=True,
+                )
+                if not said_turn:
+                    H._say(
+                        "ascent turn east while live "
+                        f"heading={H.WATER_HEADING_DEG:g}",
+                        on_log,
+                    )
+                    said_turn = True
             live_now = H._live_sit(vessel, snap)
             live_biome = H._snap_biome(snap, vessel)
             if space_low_sit(live_now, lofted_lid=lofted_lid, down=down):

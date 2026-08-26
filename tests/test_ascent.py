@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import rf_throttle as RF
+from hop import WATER_HEADING_DEG, WATER_PITCH_DEG, WATER_PITCH_UP
 from ascent import (
     circularize_sit,
     keep_live_sit,
@@ -14,6 +15,8 @@ from ascent import (
     orbit_done_sit,
     space_low_sit,
     stage_sit,
+    turn_cmd_pitch,
+    turn_live_sit,
     vacuum_stage_sit,
 )
 
@@ -192,6 +195,35 @@ def test_loft_meco_sit_is_high_lid_not_two_stage():
     assert not loft_meco_sit(below, hop_apo=50_000.0)
 
 
+def test_turn_live_sit_is_plume_not_pad_or_meco():
+    assert turn_live_sit(
+        lit=True, left_pad=True, down=False, keep_live=True, deaf=False
+    )
+    assert not turn_live_sit(
+        lit=True, left_pad=False, down=False, keep_live=True, deaf=False
+    )
+    assert not turn_live_sit(
+        lit=True, left_pad=True, down=False, keep_live=False, deaf=False
+    )
+    assert not turn_live_sit(
+        lit=True, left_pad=True, down=True, keep_live=True, deaf=False
+    )
+    assert not turn_live_sit(
+        lit=True, left_pad=True, down=False, keep_live=True, deaf=True
+    )
+
+
+def test_turn_cmd_pitch_is_east_not_sas_zenith():
+    pitch, yawed = turn_cmd_pitch(False, 0, 90.0, float("nan"), 0.0)
+    assert pitch == WATER_PITCH_UP - 10.0
+    assert not yawed
+    pitch, yawed = turn_cmd_pitch(False, 3, 80.0, WATER_HEADING_DEG, 8.0)
+    assert pitch == WATER_PITCH_DEG
+    assert yawed
+    assert WATER_HEADING_DEG == 90.0
+    assert WATER_HEADING_DEG != 270.0
+
+
 def test_keep_live_sit_loft_until_lid():
     fly = _snap(alt=12_000.0, fuel=2000.0, thrust=90_000.0, situation="flying")
     assert keep_live_sit(
@@ -261,6 +293,18 @@ def test_source_hop_parked_orbit_is_ascent():
     assert "independentThrottlePercentage" in Path("rf_throttle.py").read_text(
         encoding="utf-8"
     )
+    assert "def turn_live_sit" in ascent
+    assert "H._steer_east" in ascent
+    assert "vacuum_stage_sit" not in Path("ascent.py").read_text(
+        encoding="utf-8"
+    ).split("def turn_live_sit")[1].split("def turn_cmd_pitch")[0]
+    keep_at = ascent.find("if keep and not deaf:")
+    turn_at = ascent.find("H._steer_east")
+    two_stage_say = ascent.find("ascent gravity turn east while thrusting")
+    assert keep_at != -1 and turn_at != -1
+    assert turn_at > keep_at
+    assert two_stage_say != -1
+    assert "if two_stage:" not in ascent[two_stage_say - 40 : two_stage_say]
     assert "not UI MainThrottle" in Path("rf_throttle.py").read_text(encoding="utf-8")
     assert "def run_factory_vessel" in factory
     main = Path("main.py").read_text(encoding="utf-8")

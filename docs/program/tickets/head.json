@@ -398,6 +398,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T17:32:45Z",
+            "claim": "T-521 Hang: recover yes silk. FED. Nylon RC_cone 50m last. Engine first fire. No HS. capable yes. Did not Hangar C-477 / t7-chute Mk16.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
           }
         ]
       },
@@ -411,7 +419,7 @@
       "tags": [],
       "title": "One procedural loft hang \u2014 FED, Hangar-safe, not C-477 blob",
       "type": "vehicle",
-      "updated": "2026-08-26T16:41:45Z"
+      "updated": "2026-08-26T17:32:45Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -20660,7 +20668,43 @@
       "title": "ops.py: hire lars+gus+linus on ops --tag plan, not leftover wreck tickets",
       "type": "systems",
       "updated": "2026-08-26T17:28:45Z"
+    },
+    "T-521": {
+      "assignee": "",
+      "blockers": [],
+      "capable": "yes",
+      "category": "ops",
+      "created": "2026-08-26T17:29:36Z",
+      "desk": "hank",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-521",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T17:32:45Z",
+            "claim": "Hang last-write C-504 kspstuff-hop-valiant-proc-loft-pbc recover: yes silk. Nylon RC_cone 50m payload-side OKTO top. craft fuel FED last tank attN bottom=Valiant. Engine istg=0 sqor=0 first fire; chute istg=1 sqor=0 last. No HS (C-477 blob). agree.md recover:no / no chute was stale. Same seated file. Did not restamp C-477 capable yes. Did not Hangar. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO HD=1. Thin tape T-284. Helper T-512.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "gus"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "plan"
+      ],
+      "title": "sit hang bind recover meco \u2014 C-504 High PresMat 305s; silk vs recover no",
+      "type": "ops",
+      "updated": "2026-08-26T17:32:45Z"
     }
   },
-  "updated": "2026-08-26T17:28:50Z"
+  "updated": "2026-08-26T17:32:45Z"
 }

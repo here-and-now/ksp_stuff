@@ -10,7 +10,7 @@ sit: FlyingHigh
 hang: C-504 kspstuff-hop-valiant-proc-loft-pbc
 bind: T-404 barometerScan FlyingHigh 305/0.05; T-460 FlyingLow 305/0.05
 duration_vs_high: 305s file; loft ≥50 km then Toggle; High window is coast, not a burn
-recover: no
+recover: yes
 meco: lid then coast
 dynamics: none
 agreed: yes
@@ -23,11 +23,13 @@ hire (three in parallel on that ticket, then split).
 
 ## Hang (Gus)
 
-C-504 `kspstuff-hop-valiant-proc-loft-pbc`. FED. No HS/chute.
-`capable: yes`. Iterate this hang until `generalRocketry` 20 then
-one node after. C-477 blob is not capable. t7-wheel-pbc lithobrake
-is not recover. T-428 / T-430 stay alts (recover hangs), not this
-loft. Do not replace C-504 because the last hop sheared.
+C-504 `kspstuff-hop-valiant-proc-loft-pbc`. FED. Nylon `RC_cone` 50 m
+payload-side on OKTO (Stayputnik has no top; cone `srfAttach=0`).
+Engine `istg=0` `sqor=0` first fire; chute `istg=1` `sqor=0` last.
+No HS (C-477 blob). Recover: silk. `capable: yes`. Iterate this hang
+until `generalRocketry` 20 then one node after. C-477 blob is not
+capable. t7-wheel-pbc lithobrake is not recover. T-428 / T-430 stay
+alts, not this hang. Do not replace C-504 because the last hop sheared.
 
 ## Bind (Linus)
 

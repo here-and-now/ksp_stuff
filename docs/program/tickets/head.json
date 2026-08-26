@@ -19731,6 +19731,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "craft heatshield --payload SAS-first tank FED.",
       "created": "2026-08-26T15:13:05Z",
       "desk": "wernher",
       "evidence": [],
@@ -19745,6 +19746,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:30:57Z",
+            "claim": "craft heatshield --payload splices SAS-first tank (FED). Tank-engine remains refused (T-497). Placement is T-500 collider half, not node math.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19754,11 +19763,11 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "VAB helper: craft heatshield --payload splices SAS-first tank (FED); tank-engine already refused",
       "type": "systems",
-      "updated": "2026-08-26T15:13:21Z"
+      "updated": "2026-08-26T15:30:58Z"
     },
     "T-499": {
       "assignee": "",
@@ -19788,6 +19797,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "HS splice collider half max(length/2+0.179, catalog \u00b10.5); --payload FED SAS-tank.",
       "created": "2026-08-26T15:18:06Z",
       "desk": "wernher",
       "evidence": [],
@@ -19802,6 +19812,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:30:57Z",
+            "claim": "insert_inline / insert_heatshield place HS at max(length/2+0.179, catalog MODEL \u00b10.5), not new_half=length*0.5. STOCK_NODES match Heatshield.cfg \u00b10.5. --payload splices SAS-first tank FED (engine sqor=0, VAB dish bottomDiameter=0); tank-engine still refused. Hangar 15-14-43Z was sas-hs 0.191 / hs-tank 0.4125. Did not write GameData. No Hangar.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -19811,12 +19829,12 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "VAB helper: heatshield splice must leave collider clearance, not only a FED fuel path",
       "type": "systems",
-      "updated": "2026-08-26T15:18:16Z"
+      "updated": "2026-08-26T15:30:57Z"
     }
   },
-  "updated": "2026-08-26T15:18:16Z"
+  "updated": "2026-08-26T15:30:58Z"
 }

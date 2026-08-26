@@ -9,6 +9,8 @@ from catalog import Catalog, scan_config_cache, scan_gamedata
 from craft import (
     Craft,
     CraftError,
+    CraftPart,
+    HS_COLLIDER_OVERSHOOT,
     axial_tanks,
     chute_is_nylon_good,
     clone_craft,
@@ -19,8 +21,11 @@ from craft import (
     find_core,
     find_engine,
     girder_ring,
+    heatshield_clearance_half,
     heatshield_modules,
+    heatshield_place_half,
     insert_heatshield,
+    insert_inline,
     insert_wheel,
     liquid_cylinder,
     pad_pbc,
@@ -37,6 +42,7 @@ T7_WHEEL = CRAFTS / "kspstuff-hop-valiant-t7-wheel-pbc.craft"
 T7_CHUTE = CRAFTS / "kspstuff-hop-valiant-t7-chute-pbc.craft"
 T7_CONE = CRAFTS / "kspstuff-hop-valiant-t7-chute-cone-pbc.craft"
 T7_HS_CONE = CRAFTS / "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc.craft"
+T7_PROC_HS = CRAFTS / "kspstuff-hop-valiant-t7-wheel-proc-hs-pbc.craft"
 STIFF = CRAFTS / "kspstuff-hop-valiant-proc-stiff-pbc.craft"
 
 
@@ -262,7 +268,7 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertFalse(any(p.name == "proceduralHeatshield" for p in craft.parts))
 
     def test_c477_fuel_dump_blocked_through_inline_hs(self):
-        craft = Craft.load(T7_HS_CONE)
+        craft = Craft.load(T7_PROC_HS)
         last = axial_tanks(craft)[-1]
         engine = find_engine(craft)
         hs = next(p for p in craft.parts if p.name == "proceduralHeatshield")
@@ -277,6 +283,71 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertIn("Kerosene", text)
         self.assertIn("BLOCKED  proceduralHeatshield fuelCrossFeed=False", text)
         self.assertIn("engine starved", text)
+
+    def test_c477_payload_hs_is_node_math_not_clearance(self):
+        craft = Craft.load(T7_HS_CONE)
+        sas = next(p for p in craft.parts if p.name == "sasModule")
+        hs = next(p for p in craft.parts if p.name == "proceduralHeatshield")
+        first = axial_tanks(craft)[0]
+        last = axial_tanks(craft)[-1]
+        engine = find_engine(craft)
+        self.assertEqual(sas.att_n.get("bottom"), hs.token)
+        self.assertEqual(hs.att_n.get("top"), sas.token)
+        self.assertEqual(hs.att_n.get("bottom"), first.token)
+        self.assertEqual(last.att_n.get("bottom"), engine.token)
+        self.assertAlmostEqual(sas.pos[1] - hs.pos[1], 0.191, places=3)
+        self.assertAlmostEqual(hs.pos[1] - first.pos[1], 0.4125, places=4)
+        self.assertLess(
+            sas.pos[1] - hs.pos[1], heatshield_clearance_half(0.2) + 0.09111
+        )
+        text = dump_attach_fuel(craft, catalog=Catalog.stock())
+        self.assertIn("FED  last tank reaches engine", text)
+        self.assertNotIn("BLOCKED", text)
+
+    def test_insert_hs_payload_leaves_collider_clearance(self):
+        cat = Catalog.stock()
+        craft = Craft.load(T7_WHEEL)
+        sas = next(p for p in craft.parts if p.name == "sasModule")
+        first = axial_tanks(craft)[0]
+        last = axial_tanks(craft)[-1]
+        engine = find_engine(craft)
+        hs = insert_heatshield(craft, kind="disc", payload=True, catalog=cat)
+        cone = next(m for m in hs.modules if m.get("name") == "ProceduralShapeBezierCone")
+        self.assertEqual(cone.get("bottomDiameter"), "0")
+        min_half = heatshield_clearance_half(0.2)
+        half = heatshield_place_half(0.2, catalog=cat)
+        self.assertAlmostEqual(min_half, 0.1 + HS_COLLIDER_OVERSHOOT, places=9)
+        self.assertGreaterEqual(half, min_half)
+        self.assertAlmostEqual(half, 0.5, places=4)
+        self.assertAlmostEqual(sas.pos[1] - hs.pos[1], 0.09111 + half, places=4)
+        self.assertGreater(sas.pos[1] - hs.pos[1], 0.191)
+        tank_half = 0.3125
+        self.assertAlmostEqual(hs.pos[1] - first.pos[1], half + tank_half, places=4)
+        self.assertGreater(hs.pos[1] - first.pos[1], 0.4125)
+        self.assertEqual(sas.att_n.get("bottom"), hs.token)
+        self.assertEqual(hs.att_n.get("bottom"), first.token)
+        self.assertEqual(last.att_n.get("bottom"), engine.token)
+        self.assertEqual(engine.att_n.get("top"), last.token)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        text = dump_attach_fuel(craft, catalog=cat)
+        self.assertIn("FED  last tank reaches engine", text)
+        self.assertNotIn("BLOCKED", text)
+
+    def test_insert_inline_hs_bumps_node_half_to_clearance(self):
+        cat = Catalog.stock()
+        craft = Craft.load(T7_WHEEL)
+        sas = next(p for p in craft.parts if p.name == "sasModule")
+        first = axial_tanks(craft)[0]
+        mods, res = heatshield_modules(top=1.25, bottom=0.0, length=0.2)
+        hs = CraftPart(name="proceduralHeatshield", istg=-1, dstg=0)
+        hs.modules = mods
+        hs.resources = res
+        insert_inline(craft, sas, first, hs, catalog=cat, new_half=0.1)
+        half = heatshield_place_half(0.2, catalog=cat)
+        self.assertAlmostEqual(sas.pos[1] - hs.pos[1], 0.09111 + half, places=4)
+        self.assertGreater(hs.pos[1] - first.pos[1], 0.4125)
+        self.assertGreaterEqual(half, heatshield_clearance_half(0.2))
 
 
 class TestLiquidNotSolidFuel(unittest.TestCase):
@@ -327,12 +398,45 @@ class TestCli(unittest.TestCase):
 
         buf = io.StringIO()
         with redirect_stdout(buf):
-            rc = cmd_craft(["fuel", str(T7_HS_CONE)])
+            rc = cmd_craft(["fuel", str(T7_PROC_HS)])
         text = buf.getvalue()
         self.assertEqual(rc, 2)
         self.assertIn("BLOCKED  proceduralHeatshield fuelCrossFeed=False", text)
         self.assertIn("res=Ablator", text)
         self.assertIn("attN ", text)
+
+    def test_heatshield_payload_cli_fed_clearance(self):
+        import io
+        import tempfile
+        from contextlib import redirect_stdout
+
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "kspstuff-hop-valiant-t7-wheel-hs-payload-pbc.craft"
+            rc = cmd_craft(
+                ["clone", str(T7_WHEEL), "--name", dest.stem, "--out", str(dest)]
+            )
+            self.assertEqual(rc, 0)
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = cmd_craft(["heatshield", str(dest), "--kind", "disc", "--payload"])
+            self.assertEqual(rc, 0)
+            craft = Craft.load(dest)
+            hs = next(p for p in craft.parts if p.name == "proceduralHeatshield")
+            sas = next(p for p in craft.parts if p.name == "sasModule")
+            last = axial_tanks(craft)[-1]
+            engine = find_engine(craft)
+            min_half = heatshield_clearance_half(0.2)
+            self.assertGreaterEqual(
+                sas.pos[1] - hs.pos[1], 0.09111 + min_half - 1e-6
+            )
+            self.assertGreater(sas.pos[1] - hs.pos[1], 0.191)
+            self.assertEqual(last.att_n.get("bottom"), engine.token)
+            self.assertEqual(engine.sqor, 0)
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                rc = cmd_craft(["fuel", str(dest)])
+            self.assertEqual(rc, 0)
+            self.assertIn("FED", buf.getvalue())
 
 
 class TestFuelCrossFeedCfg(unittest.TestCase):
@@ -380,7 +484,7 @@ class TestFuelCrossFeedCfg(unittest.TestCase):
             part = cat.get("proceduralHeatshield")
             self.assertIs(part.fuel_cross_feed, False)
             self.assertEqual(part.cfg_path, str(cfg))
-            text = dump_attach_fuel(Craft.load(T7_HS_CONE), catalog=cat)
+            text = dump_attach_fuel(Craft.load(T7_PROC_HS), catalog=cat)
             self.assertIn("BLOCKED", text)
             self.assertIn("fuelCrossFeed=False", text)
             self.assertIn("Heatshield.cfg", text)
@@ -388,5 +492,7 @@ class TestFuelCrossFeedCfg(unittest.TestCase):
     def test_stock_hs_is_false_without_gamedata(self):
         hs = Catalog.stock().get("proceduralHeatshield")
         self.assertIs(hs.fuel_cross_feed, False)
+        self.assertAlmostEqual(hs.nodes["top"][1], 0.5, places=4)
+        self.assertAlmostEqual(hs.nodes["bottom"][1], -0.5, places=4)
         tank = Catalog.stock().get("proceduralTankRealFuels")
         self.assertIsNone(tank.fuel_cross_feed)

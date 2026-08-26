@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-500 HS splice uses collider half max(length/2+0.179, catalog MODEL ±0.5), not node math. insert_inline bumps new_half=0.1. --payload SAS-first tank FED; tank-engine still refused. Hangar 15-14-43Z was 0.191/0.4125. Did not write GameData. No Hangar. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-495 `craft fuel` dumps attach tree + fuelCrossFeed path from .craft+cfg (C-477 last tank→HS→Valiant BLOCKED Ablator only). T-497 insert_heatshield refuses fuelCrossFeed=False splice; tank stays on engine. Did not write GameData. No Hangar. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-479 Harmony skip-dup Kerbalism VesselData flightID (`kspstuff_kerbalism/`; Os copy, no GameData write). T-483 engine first fire istg=0 sqor=0; T-480 catalog Valiant 0.45; T-482 disc bottomDiameter=0. T-484 drop recommended/lesson/ask. T-491 ship.md thrust/stage/plume. T-493 skip-save Tracking is not Close. T-487 MOVE 442 jebediah/logs. Never leftover-ksc. Never revert.

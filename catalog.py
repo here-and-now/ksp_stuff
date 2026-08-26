@@ -48,8 +48,9 @@ STOCK_NODES: dict[str, dict[str, tuple[float, float, float]]] = {
         "bottom": (0.0, -0.3125, 0.0),
     },
     "proceduralHeatshield": {
-        "top": (0.0, 0.1, 0.0),
-        "bottom": (0.0, -0.1, 0.0),
+        # Heatshield.cfg MODEL nodes (±0.5), not length/2. PP cache matches.
+        "top": (0.0, 0.5, 0.0),
+        "bottom": (0.0, -0.5, 0.0),
     },
     "restock-engine-125-valiant": {"top": (0.0, 0.45, 0.0)},
     "RC_cone": {"bottom": (0.0, -0.1963, 0.0)},

@@ -429,6 +429,10 @@ DONOR_CONE = "kspstuff-hop-valiant-t7-chute-cone-pbc"
 T100_VOLUME = 500
 T100_HEIGHT = 0.625
 PRESMAT_OFFSET = (0.16, 0.05, 0.12)
+# T-482 puck cube extra above the attach node. Round3 dish is the same
+# class (T-500 Hangar 15-14-43Z): length/2 is node math, not collider.
+HS_COLLIDER_OVERSHOOT = 0.179
+HS_DEFAULT_LENGTH = 0.2
 
 
 class CraftError(ValueError):
@@ -748,6 +752,45 @@ def tank_diameter(part: CraftPart) -> float:
     return 1.25
 
 
+def heatshield_length(part: CraftPart) -> float:
+    cone = _mod(part, "ProceduralShapeBezierCone")
+    if cone is not None:
+        try:
+            return float(cone.get("length") or HS_DEFAULT_LENGTH)
+        except ValueError:
+            return HS_DEFAULT_LENGTH
+    return HS_DEFAULT_LENGTH
+
+
+def heatshield_clearance_half(length: float) -> float:
+    """Attach-node half plus PP convex-cube overshoot (T-482 / T-500).
+
+    ``length/2`` is node math. Hangar 15-14-43Z SAS-HS-tank used 0.1
+    (length 0.2) and detonated sit=landed parts=10 — dish collider still
+    eats the stack. Same class as T-482 puck cube +0.179 m / T-480
+    HS-engine overlap 0.1375 m.
+    """
+    return float(length) * 0.5 + HS_COLLIDER_OVERSHOOT
+
+
+def heatshield_place_half(
+    length: float,
+    *,
+    catalog: Catalog | None = None,
+    requested: float | None = None,
+) -> float:
+    """Clearance half, never smaller than catalog MODEL nodes (±0.5)."""
+    need = heatshield_clearance_half(length)
+    if catalog is not None:
+        try:
+            need = max(need, abs(catalog.node("proceduralHeatshield", "top")[1]))
+        except KeyError:
+            pass
+    if requested is not None:
+        need = max(need, float(requested))
+    return need
+
+
 def clone_craft(src: str | Path, name: str, dest: str | Path | None = None) -> Path:
     """Rename ship= and write crafts/<name>.craft. Does not Hangar."""
     path = resolve_craft_path(src)
@@ -806,8 +849,16 @@ def insert_inline(
     new_bottom: str = "bottom",
     new_half: float | None = None,
 ) -> CraftPart:
-    """Splice ``new`` between stack ``parent`` and ``child``. Shift below."""
+    """Splice ``new`` between stack ``parent`` and ``child``. Shift below.
+
+    proceduralHeatshield uses collider half (length/2 + 0.179), not node
+    math — ``new_half=length*0.5`` still detonates (T-500).
+    """
     cat = catalog or Catalog.stock()
+    if new.name == "proceduralHeatshield":
+        new_half = heatshield_place_half(
+            heatshield_length(new), catalog=cat, requested=new_half
+        )
     p_off = _node_off(cat, parent.name, parent_node)
     n_top = _node_off(cat, new.name, new_top, half=new_half)
     n_bot = _node_off(cat, new.name, new_bottom, half=new_half)
@@ -1288,15 +1339,20 @@ def insert_heatshield(
     length: float = 0.2,
     ablator: int = 80,
     catalog: Catalog | None = None,
+    payload: bool = False,
 ) -> CraftPart:
-    """Splice proceduralHeatshield between last tank and engine. No silk.
+    """Splice proceduralHeatshield. Tank-engine refuses fuelCrossFeed=False.
 
     Disc is a VAB dish (bottomDiameter=0), not a 1.25 puck. Engine child
     uses catalog top (Valiant 0.45), not tank half 0.3125.
 
-    Refuse fuelCrossFeed=False (PP HS / stock HeatShield*). An inline
-    dish starves the engine (Ablator only; pad Δv 0/0). Tank stays on
-    the engine. Do not write GameData to flip the part.
+    Refuse fuelCrossFeed=False (PP HS / stock HeatShield*) on the
+    tank-engine splice. An inline dish starves the engine (Ablator only;
+    pad Δv 0/0). Tank stays on the engine. Do not write GameData.
+
+    payload=True splices SAS-first tank (FED). Placement uses collider
+    half max(length/2+0.179, catalog MODEL ±0.5), not node math —
+    Hangar 15-14-43Z.
     """
     if kind not in {"disc", "adapter"}:
         raise CraftError("heatshield kind must be disc or adapter")
@@ -1306,15 +1362,21 @@ def insert_heatshield(
         raise CraftError("need last tank and engine to insert a heatshield")
     last = tanks[-1]
     cat = catalog or _catalog_for_feed(None)
-    if part_fuel_cross_feed("proceduralHeatshield", cat) is not True:
-        raise CraftError(
-            "refusing fuelCrossFeed=False splice: proceduralHeatshield "
-            "would starve the engine (Ablator only). Tank stays on engine. "
-            "Do not write GameData."
-        )
-    if last.att_n.get("bottom") != engine.token and engine.att_n.get("top") != last.token:
-        if any(p.name == "proceduralHeatshield" for p in craft.parts):
-            raise CraftError("heatshield already between tank and engine")
+    if any(p.name == "proceduralHeatshield" for p in craft.parts):
+        raise CraftError("heatshield already on craft")
+    if payload:
+        wheels = _find_named(craft, "sasModule")
+        if not wheels:
+            raise CraftError("payload heatshield needs sasModule (insert wheel first)")
+        parent, child = wheels[0], tanks[0]
+    else:
+        if part_fuel_cross_feed("proceduralHeatshield", cat) is not True:
+            raise CraftError(
+                "refusing fuelCrossFeed=False splice: proceduralHeatshield "
+                "would starve the engine (Ablator only). Tank stays on engine. "
+                "Do not write GameData."
+            )
+        parent, child = last, engine
     top_d = 1.25 if kind == "disc" else 1.427
     if top is not None:
         top_d = top
@@ -1328,11 +1390,11 @@ def insert_heatshield(
     hs.resources = res
     insert_inline(
         craft,
-        last,
-        engine,
+        parent,
+        child,
         hs,
         catalog=cat,
-        new_half=length * 0.5,
+        new_half=heatshield_place_half(length, catalog=cat),
     )
     stage_engine_first(craft)
     return hs
@@ -1395,7 +1457,7 @@ def cmd_craft(argv: list[str] | None = None) -> int:
     wh.add_argument("--out", default="")
     hs = sub.add_parser(
         "heatshield",
-        help="Insert proc HS disc or 1.427-to-1.25 adapter above the engine",
+        help="Insert proc HS disc or 1.427-to-1.25 adapter (payload=SAS-tank)",
     )
     hs.add_argument("src")
     hs.add_argument("--kind", choices=("disc", "adapter"), default="disc")
@@ -1403,6 +1465,11 @@ def cmd_craft(argv: list[str] | None = None) -> int:
     hs.add_argument("--bottom", type=float, default=1.25)
     hs.add_argument("--length", type=float, default=0.2)
     hs.add_argument("--ablator", type=int, default=80)
+    hs.add_argument(
+        "--payload",
+        action="store_true",
+        help="Splice SAS-first tank (FED). Tank-engine is refused (T-497).",
+    )
     hs.add_argument("--out", default="")
     fu = sub.add_parser(
         "fuel",
@@ -1460,6 +1527,7 @@ def cmd_craft(argv: list[str] | None = None) -> int:
                 bottom=args.bottom,
                 length=args.length,
                 ablator=args.ablator,
+                payload=bool(args.payload),
             )
         _write(craft, out)
         print(f"wrote {out}  {craft.summary()}")

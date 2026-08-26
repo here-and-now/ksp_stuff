@@ -39,8 +39,9 @@ link. **VAB helpers** when Gus files `vab-helper` (`craft.py` / CLI;
 Gus does not write `.py`). Catalog this sit: T-413–T-414, T-416–T-420,
 T-480 / T-482 / T-483 (engine first fire `sqor=0`; HS VAB dish not
 puck; node offset is catalog), T-495 (`craft fuel` dump), T-497
-(`insert_heatshield` refuses `fuelCrossFeed=False`). Pad flies a **fed**
-hang. Do not write GameData. Pad-RF
+(`insert_heatshield` refuses `fuelCrossFeed=False` tank-engine), T-500
+(HS collider half, not length/2; `--payload` SAS-tank FED). Pad flies a
+**fed** hang. Do not write GameData. Pad-RF
 pulse is Lars `hop_factory_pad.py` (T-471) — hop light is plume, not
 ignitions 1→0. T-421 latch already living — do not retune
 `hop_factory.py`. Commit the patch. Not sequencing. Stumble

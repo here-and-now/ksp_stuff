@@ -99,7 +99,7 @@ Eleanor (Director of Constellation Operations) is disk only: `python main.py
 comms` (ConfigCache, no Session), `docs/program/ra-rate.md`. Opt-in:
 `ops --tag ask --desk eleanor` or `--tag constellation` when Cape / ground
 / a future craft needs a path. Reports Wernher asks. Not every
-`ops next`. Kernel `DESKS` register is Wernher until `--desk eleanor` works.
+`ops next`. Kernel `DESKS` includes `eleanor`; `--desk eleanor` is a valid choice.
 
 **Git (Os 2026-08-25):** after you change the checkout, `git add` those
 paths and `git commit` a sentence. Do not wait for Hank. Do not commit

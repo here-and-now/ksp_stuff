@@ -284,7 +284,7 @@ would change agree.md) and lock free:
     hire lars + gus + linus IN PARALLEL on THAT plan ticket
     do not also hire leftover vehicle/science/control wreck tickets
     katherine only if dynamics set or --tag dynamics / ask desk=katherine
-    iris only if --tag constellation / ask desk=eleanor
+    eleanor only if --tag constellation / ask desk=eleanor
     # Gene is not this merge. Fly ready that still pays agree.md
     # still flies (plan does not empty the pad).
     return

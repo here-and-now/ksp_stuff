@@ -44,6 +44,10 @@ class TestCrew(unittest.TestCase):
         self.assertEqual(slug_for("Katherine Grokman"), "katherine")
         self.assertEqual(slug_for("Katherine Kerman"), "katherine")
 
+    def test_eleanor_slug(self):
+        self.assertEqual(slug_for("Eleanor Grokman"), "eleanor")
+        self.assertEqual(slug_for("Eleanor Kerman"), "eleanor")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -624,6 +624,7 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(tickets.commander_for(campaign="uncrewed"), "none")
         self.assertEqual(tickets.commander_for(campaign="none"), "jebediah")
         self.assertIn("katherine", tickets.DESKS)
+        self.assertIn("eleanor", tickets.DESKS)
         self.assertEqual(tickets.DEFAULT_ROUTE["recover"], "hank")
 
     def test_fly_ready_hires_katherine_only_with_inbox(self):
@@ -646,6 +647,27 @@ class TestOpsNext(unittest.TestCase):
         )
         act2 = ops.next_actions(desk={"hangar": "none"}, locked=False)
         self.assertIn("katherine", [h["desk"] for h in act2["hire"]])
+
+    def test_fly_ready_hires_eleanor_only_with_inbox(self):
+        t = tickets.open_ticket(
+            type="fly",
+            title="hop",
+            reporter="Hank",
+            desk="gene",
+            payload={"go": "yes", "cli": "python main.py hop", "campaign": "uncrewed"},
+        )
+        tickets.patch_ticket(t["id"], {"go": "yes", "status": "ready"}, who="gene")
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertNotIn("eleanor", [h["desk"] for h in act["hire"]])
+        tickets.open_ticket(
+            type="ops",
+            title="Cape path / future craft",
+            reporter="Mortimer",
+            desk="eleanor",
+            tags=["constellation"],
+        )
+        act2 = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        self.assertIn("eleanor", [h["desk"] for h in act2["hire"]])
 
     def test_fly_ready_hires_mortimer_on_rsi(self):
         t = tickets.open_ticket(
@@ -1090,7 +1112,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn(".jsonl", deep)
         self.assertNotIn('"kind": "state"', deep)
         self.assertNotIn("kind=state", skim)
-        self.assertIn("reasoning: medium", skim)
+        self.assertNotIn("reasoning:", skim)
         self.assertNotIn("xhigh", skim)
         self.assertNotIn("xhigh", deep)
         links = tickets.infer_links(tickets.show_ticket(t["id"]))
@@ -1131,7 +1153,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertNotIn("docs/program/blocks.md", out)
         self.assertNotIn(".jsonl", out)
         self.assertIn("--deep", out)
-        self.assertIn("reasoning: medium", out)
+        self.assertNotIn("reasoning:", out)
 
     def test_ops_hire_has_reasoning_and_packet(self):
         t = tickets.open_ticket(
@@ -1160,7 +1182,7 @@ class TestPacketAndReasoning(unittest.TestCase):
         self.assertIn("M-001", hire["packet"])
         self.assertNotIn("--deep", hire["packet"])
         text = ops.format_next(act)
-        self.assertIn("reasoning=", text)
+        self.assertNotIn("reasoning=", text)
         self.assertIn("packet:", text)
         self.assertNotIn("xhigh", text)
 

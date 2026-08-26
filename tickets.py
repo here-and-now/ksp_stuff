@@ -86,6 +86,7 @@ DESKS = (
     "verena",
     "walt",
     "katherine",
+    "eleanor",
 )
 GO_STAMP_DESK = "gene"
 STAMP_RULES = {
@@ -566,14 +567,12 @@ def _packet_envelope(t: dict[str, Any]) -> dict[str, Any] | None:
 def format_packet(tid: str, *, deep: bool = False) -> str:
     t = show_ticket(tid)
     links = infer_links(t)
-    lvl = reasoning_for(t)
     lines = [
         f"ticket: {t['id']}",
         f"type: {t.get('type')} {t.get('severity') or 'S3'} {t.get('priority') or 'P2'} "
         f"{t.get('status')} desk={t.get('desk')}",
         f"category: {t.get('category') or TYPE_CATEGORY.get(t.get('type') or '', 'ops')}",
         f"title: {t.get('title')}",
-        f"reasoning: {lvl}",
         f"fingerprint: {t.get('fingerprint') or 'none'}",
         f"inbox: python main.py tickets inbox --desk {t.get('desk') or 'hank'}",
     ]

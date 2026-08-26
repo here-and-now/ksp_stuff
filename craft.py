@@ -477,10 +477,12 @@ def kero_lox_amounts(volume: int) -> tuple[int, int]:
 
 
 def proc_volume(diameter: float, length: float) -> int:
-    """Liters for a cylinder. 1.25×0.625 → 767; 1.25×0.65 snaps to 800."""
+    """Liters for a cylinder. 1.25×0.625 → 767; 1.25×0.65 → 800; 1.25×1.222 → 1500."""
     raw = math.pi * (diameter * 0.5) ** 2 * length * 1000.0
     if abs(raw - 800.0) < 5.0:
         return 800
+    if abs(raw - 1500.0) < 5.0:
+        return 1500
     return max(1, int(round(raw)))
 
 
@@ -500,16 +502,22 @@ def rf_fuel_resources(volume: int) -> list[CfgNode]:
     return [_resource("Kerosene", kero), _resource("LqdOxygen", lox)]
 
 
-def liquid_cylinder(diameter: float, length: float) -> tuple[list[CfgNode], list[CfgNode]]:
+def liquid_cylinder(
+    diameter: float,
+    length: float,
+    *,
+    texture: str = "PlainWhite",
+) -> tuple[list[CfgNode], list[CfgNode]]:
     """Procedural tank MODULE+RESOURCE: Default Kero/LOx, never SolidFuel.
 
-    volumeMax on signed hangs is 0.8 kL (1500 L is generalRocketry).
+    volumeMax 1.5 kL (1500 L) is legal — generalRocketry is spent.
+    ``texture`` is ProceduralPart textureSet (PlainWhite / RedstoneStripes).
     """
     volume = proc_volume(diameter, length)
     shape = CfgNode(name="MODULE")
     shape.add("name", "ProceduralPart")
     shape.add("shapeName", "Cylinder")
-    shape.add("textureSet", "PlainWhite")
+    shape.add("textureSet", (texture or "PlainWhite").strip() or "PlainWhite")
     cyl = CfgNode(name="MODULE")
     cyl.add("name", "ProceduralShapeCylinder")
     cyl.add("diameter", f"{diameter:g}")
@@ -905,10 +913,11 @@ def _fill_tank(
     kind: str,
     diameter: float,
     length: float,
+    texture: str = "PlainWhite",
 ) -> None:
     if kind == "proc":
         part.name = "proceduralTankRealFuels"
-        mods, res = liquid_cylinder(diameter, length)
+        mods, res = liquid_cylinder(diameter, length, texture=texture)
     else:
         part.name = "fuelTankSmallFlat"
         mods, res = t100_fuel()
@@ -923,10 +932,12 @@ def replace_tanks(
     kind: str | None = None,
     diameter: float = 1.25,
     length: float | None = None,
+    texture: str = "PlainWhite",
 ) -> Craft:
     """Swap FL-T100 ↔ proc and/or change stack count. Retarget link/attN.
 
     ``kind=proc`` writes Default Kero/LOx (T-418), not SolidFuel pad_pbc.
+    ``texture`` is ProceduralPart textureSet on proc tanks (T-539).
     """
     tanks = axial_tanks(craft)
     if not tanks:
@@ -978,7 +989,13 @@ def replace_tanks(
             )
             craft.parts.append(part)
         old_token = part.token
-        _fill_tank(part, kind=kind_n, diameter=diameter, length=length_n)
+        _fill_tank(
+            part,
+            kind=kind_n,
+            diameter=diameter,
+            length=length_n,
+            texture=texture,
+        )
         part.pos = (old_first.pos[0], new_y0 - i * new_h, old_first.pos[2])
         part.att_pos0 = part.pos
         part.attm = 0
@@ -1147,6 +1164,18 @@ def copy_chute(craft: Craft, donor: Craft) -> CraftPart:
     return dst
 
 
+def strip_girders(craft: Craft) -> list[CraftPart]:
+    """Drop trussPiece1x surface parts. Tank links lose those tokens."""
+    girders = [p for p in craft.parts if p.name == "trussPiece1x"]
+    if not girders:
+        return []
+    tokens = {g.token for g in girders}
+    craft.parts = [p for p in craft.parts if p.token not in tokens]
+    for p in craft.parts:
+        p.links = [t for t in p.links if t not in tokens]
+    return girders
+
+
 def girder_ring(
     craft: Craft,
     n: int = 3,
@@ -1154,9 +1183,14 @@ def girder_ring(
     on: str = "mid",
     radius: float | None = None,
 ) -> list[CraftPart]:
-    """N× trussPiece1x Heaviest/rigid, even azimuth around a tank."""
-    if n < 1:
-        raise CraftError("girder count must be >= 1")
+    """N× trussPiece1x Heaviest/rigid, even azimuth around a tank.
+
+    ``n=0`` strips existing trussPiece1x (T-539).
+    """
+    if n == 0:
+        return strip_girders(craft)
+    if n < 0:
+        raise CraftError("girder count must be >= 0")
     tanks = axial_tanks(craft)
     if not tanks:
         raise CraftError("no tank to hang a girder ring on")
@@ -1412,7 +1446,7 @@ def _load_named(src: str) -> tuple[Craft, Path]:
 
 
 def cmd_craft(argv: list[str] | None = None) -> int:
-    """Gus CLI: clone / tanks / chute / girders / wheel / heatshield / fuel. No Hangar."""
+    """Gus CLI: clone / tanks / liquid / chute / girders / wheel / heatshield / fuel. No Hangar."""
     p = argparse.ArgumentParser(
         prog="craft",
         description="VAB helpers on crafts/*.craft. kRPC cannot place parts.",
@@ -1437,6 +1471,11 @@ def cmd_craft(argv: list[str] | None = None) -> int:
     liq.add_argument("--count", type=int, default=None)
     liq.add_argument("--diameter", type=float, default=1.25)
     liq.add_argument("--length", type=float, default=0.625)
+    liq.add_argument(
+        "--texture",
+        default="PlainWhite",
+        help="ProceduralPart textureSet (PlainWhite / RedstoneStripes)",
+    )
     liq.add_argument("--out", default="")
     ch = sub.add_parser("chute", help="Write Nylon Mk16 5/35 or RC_cone 50m MODULE")
     ch.add_argument("src")
@@ -1449,6 +1488,11 @@ def cmd_craft(argv: list[str] | None = None) -> int:
     gd = sub.add_parser("girders", help="N× trussPiece1x Heaviest/rigid around a tank")
     gd.add_argument("src")
     gd.add_argument("-n", "--n", type=int, default=3)
+    gd.add_argument(
+        "--strip",
+        action="store_true",
+        help="Drop existing trussPiece1x (same as -n 0)",
+    )
     gd.add_argument("--on", default="mid")
     gd.add_argument("--radius", type=float, default=None)
     gd.add_argument("--out", default="")
@@ -1504,6 +1548,7 @@ def cmd_craft(argv: list[str] | None = None) -> int:
                 kind="proc",
                 diameter=args.diameter,
                 length=args.length,
+                texture=args.texture,
             )
         elif args.act == "chute":
             set_nylon_chute(craft, args.kind)
@@ -1516,7 +1561,8 @@ def cmd_craft(argv: list[str] | None = None) -> int:
             donor, _ = _load_named(donor_name)
             copy_chute(craft, donor)
         elif args.act == "girders":
-            girder_ring(craft, args.n, on=args.on, radius=args.radius)
+            n = 0 if args.strip else args.n
+            girder_ring(craft, n, on=args.on, radius=args.radius)
         elif args.act == "wheel":
             insert_wheel(craft)
         elif args.act == "heatshield":

@@ -56,7 +56,7 @@ name. Not a second Gene. Ticket bus: `docs/program/OPS.md`,
 `python main.py ops next`, `python main.py tickets`. **Os** (Founder)
 talks to Hank for the loop, Mortimer for the goal. Os may still
 address anyone by name (Jeb, Gene, Gus, Lars, Hank, Verena, Walt,
-Mortimer, Wernher, Linus, Katherine, Val, Bill, Bob). Call them by
+Mortimer, Wernher, Linus, Katherine, Eleanor, Val, Bill, Bob). Call them by
 **name and title**. For talk: load `docs/crew/<slug>.md`. Do not spawn
 a child just to chat.
 
@@ -68,7 +68,8 @@ ops loop every turn (`ops next`). Ground work may run while
 `docs/program/agree.md` (one `ops --tag plan` ticket, three parallel
 hires on that id), then split to own files. Not leftover wreck
 tickets. Not Gene as merge. Katherine opt-in (`ops --tag ask --desk
-katherine` or `--tag dynamics`). Gene chairs flight layers of
+katherine` or `--tag dynamics`). Eleanor opt-in (`ops --tag ask --desk
+eleanor` or `--tag constellation`). Gene chairs flight layers of
 `docs/program/world-model.md`. Mortimer chairs **Practice**. Commander
 / Hangar / kRPC walls stay. Do not spawn a desk only to chat.
 File leftover talk as `tickets open --type ops --tag ask` (desk =
@@ -230,6 +231,11 @@ id on a miss. Commander `cli:` is fly `payload.cli` copied verbatim
   a default fly_ready hire unless that inbox exists. Disk only:
   `telem --window` / `tickets landing`. She files `ops --tag ask`;
   Gene still stamps `go:`. Stamp `verify` when waiting for more hops.
+- Open ticket `desk=eleanor` or `--tag constellation` → spawn **Eleanor**
+  (Director of Constellation Operations). Lock free or lock live on
+  other files. **Not** a default fly_ready hire unless that inbox
+  exists. Disk only: `python main.py comms` / `docs/program/ra-rate.md`.
+  Reports Wernher asks. Stamp `verify` when waiting for more hops.
 - Open `type=ctt` (paid node: bank ≥ cost, parents owned, kRPC has no
   UnlockTech) → spawn **Mortimer**. Do not dump paid unlocks onto
   `org`. Org mutation stays `type=org`. He edits `persistent.sfs`

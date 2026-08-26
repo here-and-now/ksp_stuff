@@ -214,7 +214,15 @@ def next_actions(
         }
 
     if live:
-        for desk_name in ("gus", "linus", "wernher", "lars", "verena", "katherine"):
+        for desk_name in (
+            "gus",
+            "linus",
+            "wernher",
+            "lars",
+            "verena",
+            "katherine",
+            "eleanor",
+        ):
             batch = _desk_ground(desk_name)
             if batch:
                 _hire(desk_name, batch, "lock live — ground only, batched")
@@ -260,7 +268,14 @@ def next_actions(
         org = _org_rsi_tickets()
         if org:
             _hire("mortimer", org, "rsi/org/ctt — lock free, pad still flies")
-        for desk_name in ("gus", "linus", "wernher", "lars", "katherine"):
+        for desk_name in (
+            "gus",
+            "linus",
+            "wernher",
+            "lars",
+            "katherine",
+            "eleanor",
+        ):
             batch = _desk_ground(desk_name)
             if batch:
                 _hire(
@@ -401,8 +416,7 @@ def format_next(actions: dict[str, Any]) -> str:
         tickets = ",".join(h.get("tickets") or []) or "none"
         extra = f" cli={h['cli']}" if h.get("cli") else ""
         lines.append(
-            f"  - desk: {h.get('desk')} tickets: [{tickets}] "
-            f"reasoning={h.get('reasoning', 'medium')}{extra}"
+            f"  - desk: {h.get('desk')} tickets: [{tickets}]{extra}"
         )
         if h.get("packet"):
             lines.append(f"    packet: {h.get('packet')}")

@@ -20318,6 +20318,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "recoverable ground Debris is leftover; wait recover by vessel GUID",
       "created": "2026-08-26T15:31:33Z",
       "desk": "wernher",
       "evidence": [],
@@ -20332,6 +20333,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T20:17:26Z",
+            "claim": "leftover_ship already walks recoverable ground Debris (pad Goo); _wait_recovered uses kRPC _object_id on space_center.vessels, not leftover_pad_ships names. Tests lock pad Debris leftover and GUID wait. recover() is persist-then-KSC; flying rec=0 blobs remain a no-op. Never leftover-ksc.",
+            "evidence": "",
+            "owner": "wernher",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -20341,11 +20350,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "recover() on landed Debris Goo is a no-op; leftover_ship skips Debris so walk_home never sees the pad",
       "type": "systems",
-      "updated": "2026-08-26T15:40:27Z"
+      "updated": "2026-08-26T20:17:26Z"
     },
     "T-502": {
       "assignee": "",
@@ -20944,6 +20953,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "Loft-through is the envelope. C-534 243-281 km sit=sub_orbital apex horiz 24-30 m/s; T-404 305 s cannot pay. Still loft-only; circularize is Terrier after 45.",
       "created": "2026-08-26T17:36:38Z",
       "desk": "katherine",
       "evidence": [],
@@ -20953,6 +20963,24 @@
         "craft": "kspstuff-hop-valiant-proc-loft-pbc",
         "duration_s": 305,
         "experiment_id": "barometerScan",
+        "findings": [
+          {
+            "at": "2026-08-26T20:15:54Z",
+            "claim": "C-534 still loft-only. Tape 19-48-52Z apo 243 km apex horiz 24 m/s leftover 221 shear 25->12 at 28 km q=39 kPa; 20-07-41Z apo 281 km apex horiz 30 m/s leftover 161 tape cuts flying 101 km vz -1829. Both sit=sub_orbital vs circular 7.75 km/s. Same family as C-504 249-270 km. Loft-through is the High envelope: ascent High ~60 s, T-404 305 s cannot pay. Last-flight abort/exit, not recover sit. Circularize still Terrier after 45. Last-write Dynamics.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-26T20:16:39Z",
+            "claim": "C-534 still loft-only. Tape 19-48-52Z apo 243 km horiz 24 m/s leftover 221; 20-07-41Z apo 281 km horiz 30 m/s leftover 161. sit=sub_orbital vs circular 7.75 km/s. Loft-through High ~60 s; T-404 305 s cannot pay. Last-flight abort, not recover sit. Circularize still Terrier after 45.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "katherine"
+          }
+        ],
         "note": "C-504 loft: FlyingHigh tens of seconds then InSpaceLow ~268 km. 16-23-52Z High ~42 s; 16-49-02Z / 17-01-10Z / 17-13-14Z same. T-404 PresMat file 305 s / 0.05 / 2.70 needs \u2265305 s in 50\u2013140 km. Envelope Shores heading 297 rec=no sci +0. Does this hang hold High 305 s after lid MECO, or is loft-through the envelope?",
         "sit": "FlyingHigh",
         "to": "katherine"
@@ -20963,13 +20991,13 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "High-band 305s PresMat vs loft-through tens of seconds",
       "type": "ops",
-      "updated": "2026-08-26T17:36:52Z"
+      "updated": "2026-08-26T20:16:39Z"
     },
     "T-523": {
       "assignee": "",
@@ -21524,23 +21552,35 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "liquid_cylinder texture + 1500 L; CLI on T-539",
       "created": "2026-08-26T19:46:14Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-537",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T20:17:26Z",
+            "claim": "liquid_cylinder texture= (PlainWhite/RedstoneStripes); proc_volume 1.25x1.222 snaps 1500 L; volumeMax 1.5 kL is legal (generalRocketry spent). CLI is T-539.",
+            "evidence": "",
+            "owner": "wernher",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "liquid_cylinder hardcodes PlainWhite and volumeMax 0.8 kL \u2014 need --texture RedstoneStripes and 1500 L (generalRocketry)",
       "type": "systems",
-      "updated": "2026-08-26T19:46:14Z"
+      "updated": "2026-08-26T20:17:26Z"
     },
     "T-538": {
       "assignee": "",
@@ -21581,6 +21621,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "liquid --texture RedstoneStripes; 1500 L legal; girders -n 0 strip",
       "created": "2026-08-26T19:46:44Z",
       "desk": "wernher",
       "evidence": [],
@@ -21595,6 +21636,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T20:17:25Z",
+            "claim": "craft liquid --texture RedstoneStripes; liquid_cylinder volumeMax 1.5 kL legal (1.25x1.222 -> 1500 L); girders -n 0 / --strip drops trussPiece1x.",
+            "evidence": "",
+            "owner": "wernher",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -21604,11 +21653,11 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "craft liquid --texture RedstoneStripes; volumeMax 1.5; girders -n 0 strip",
       "type": "systems",
-      "updated": "2026-08-26T19:46:57Z"
+      "updated": "2026-08-26T20:17:25Z"
     },
     "T-540": {
       "assignee": "",
@@ -21648,6 +21697,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "eleanor on DESKS; packets inherit TUI (no reasoning= print)",
       "created": "2026-08-26T20:01:36Z",
       "desk": "wernher",
       "evidence": [],
@@ -21662,6 +21712,14 @@
             "owner": "wernher",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T20:17:25Z",
+            "claim": "DESKS includes eleanor; crew.py slug Eleanor; ops lock-live + fly_ready hire eleanor like katherine (inbox only); protocol SCHEMAS tickets/net. format_next and format_packet no longer print reasoning=/reasoning: so Hank inherits TUI. --desk eleanor is a valid choice.",
+            "evidence": "",
+            "owner": "wernher",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -21671,11 +21729,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "ops.py tickets.py AGENTS.md inherit TUI reasoning; register iris DESKS",
       "type": "systems",
-      "updated": "2026-08-26T20:01:44Z"
+      "updated": "2026-08-26T20:17:25Z"
     },
     "T-542": {
       "assignee": "",
@@ -21714,5 +21772,5 @@
       "updated": "2026-08-26T20:12:38Z"
     }
   },
-  "updated": "2026-08-26T20:13:20Z"
+  "updated": "2026-08-26T20:17:26Z"
 }

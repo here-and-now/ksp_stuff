@@ -87,7 +87,11 @@ class TestPressDesk(unittest.TestCase):
         self.assertTrue(Path("docs/crew/katherine.md").is_file())
         self.assertTrue(Path(".grok/agents/katherine.md").is_file())
         self.assertIn("katherine", Path("tickets.py").read_text(encoding="utf-8"))
+        self.assertTrue(Path("docs/crew/eleanor.md").is_file())
+        self.assertTrue(Path(".grok/agents/eleanor.md").is_file())
+        self.assertIn("eleanor", Path("tickets.py").read_text(encoding="utf-8"))
         self.assertFalse(Path("docs/crew/otto.md").is_file())
+        self.assertFalse(Path("docs/crew/iris.md").is_file())
 
     def test_readme_portrait(self):
         text = Path("README.md").read_text(encoding="utf-8")

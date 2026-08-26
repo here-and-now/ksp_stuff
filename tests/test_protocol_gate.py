@@ -128,6 +128,9 @@ class TestParseReturn(unittest.TestCase):
         kath = parse_return("model: tape\ntickets: none\n", "katherine")
         self.assertEqual(kath.missing, ())
         self.assertNotIn("ask", kath.missing)
+        eleanor = parse_return("tickets: none\nnet: cape\n", "eleanor")
+        self.assertEqual(eleanor.missing, ())
+        self.assertNotIn("ask", eleanor.missing)
 
 
 class TestFlyGate(unittest.TestCase):

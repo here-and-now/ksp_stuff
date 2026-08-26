@@ -29,10 +29,12 @@ from craft import (
     insert_wheel,
     liquid_cylinder,
     pad_pbc,
+    proc_volume,
     procedural_cylinder,
     replace_tanks,
     set_nylon_chute,
     stage_engine_first,
+    strip_girders,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -217,6 +219,17 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertAlmostEqual(xs[0], -0.35, places=2)
         self.assertAlmostEqual(max(zs), 0.606, places=2)
 
+    def test_girder_n0_strips_truss(self):
+        craft = Craft.load(STIFF)
+        before = [p for p in craft.parts if p.name == "trussPiece1x"]
+        self.assertGreaterEqual(len(before), 3)
+        gone = girder_ring(craft, 0)
+        self.assertEqual(len(gone), len(before))
+        self.assertFalse([p for p in craft.parts if p.name == "trussPiece1x"])
+        for tank in axial_tanks(craft):
+            self.assertFalse(any("trussPiece" in t for t in tank.links))
+        self.assertEqual(strip_girders(craft), [])
+
     def test_insert_wheel_and_presmat(self):
         craft = Craft.load(T7)
         core = find_core(craft)
@@ -365,6 +378,15 @@ class TestLiquidNotSolidFuel(unittest.TestCase):
             "SolidFuel",
         )
 
+    def test_liquid_redstone_1500(self):
+        self.assertEqual(proc_volume(1.25, 1.222), 1500)
+        mods, _res = liquid_cylinder(1.25, 1.222, texture="RedstoneStripes")
+        shape = next(m for m in mods if m.get("name") == "ProceduralPart")
+        self.assertEqual(shape.get("textureSet"), "RedstoneStripes")
+        fuel = next(m for m in mods if m.get("name") == "ModuleFuelTanks")
+        self.assertEqual(fuel.get("volume"), "1500")
+        self.assertEqual(fuel.get("type"), "Default")
+
 
 class TestCli(unittest.TestCase):
     def test_clone_then_tanks_cli(self):
@@ -391,6 +413,48 @@ class TestCli(unittest.TestCase):
             self.assertEqual(len(tanks), 3)
             self.assertEqual(tanks[0].name, "proceduralTankRealFuels")
             self.assertEqual(_mod(tanks[0], "ModuleFuelTanks").get("type"), "Default")
+
+    def test_liquid_texture_and_girders_strip_cli(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "kspstuff-hop-valiant-proc-redstone-cli.craft"
+            rc = cmd_craft(
+                [
+                    "clone",
+                    str(STIFF),
+                    "--name",
+                    dest.stem,
+                    "--out",
+                    str(dest),
+                ]
+            )
+            self.assertEqual(rc, 0)
+            rc = cmd_craft(
+                [
+                    "liquid",
+                    str(dest),
+                    "--count",
+                    "4",
+                    "--diameter",
+                    "1.25",
+                    "--length",
+                    "1.222",
+                    "--texture",
+                    "RedstoneStripes",
+                ]
+            )
+            self.assertEqual(rc, 0)
+            rc = cmd_craft(["girders", str(dest), "-n", "0"])
+            self.assertEqual(rc, 0)
+            craft = Craft.load(dest)
+            self.assertFalse([p for p in craft.parts if p.name == "trussPiece1x"])
+            tanks = axial_tanks(craft)
+            self.assertEqual(len(tanks), 4)
+            shape = _mod(tanks[0], "ProceduralPart")
+            self.assertEqual(shape.get("textureSet"), "RedstoneStripes")
+            fuel = _mod(tanks[0], "ModuleFuelTanks")
+            self.assertEqual(fuel.get("volume"), "1500")
 
     def test_fuel_cli_c477_blocked(self):
         import io

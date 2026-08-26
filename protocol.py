@@ -17,6 +17,7 @@ SCHEMAS: dict[str, tuple[str, ...]] = {
     "wernher": ("ready_to_fly", "files"),
     "verena": ("story", "shot"),
     "katherine": ("model", "tickets"),
+    "eleanor": ("tickets", "net"),
     "pilot": ("result", "exit", "handoff"),
 }
 

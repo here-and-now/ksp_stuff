@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-26 — T-541 DESKS eleanor; format_next/format_packet no reasoning= so Hank inherits TUI. T-539 craft liquid --texture RedstoneStripes, 1500 L legal, girders -n 0 strip. T-501 leftover Debris/GUID wait already on disk. No Hangar. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-511 engine-dead vs shear: telem flags + Tape envelope + last-flight classify_abort. 16-05-34Z throttle 1 thrust 0 fuel 2038 parts=30 is engine-dead; parts 30→9 is the funeral. Compact windows carry thrust. No hop.py. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-501 leftover_ship walks recoverable ground Debris (pad Goo); wait recover by `_object_id` on vessels, not leftover_pad_ships names. kRPC Recover() is async OnVesselRecoveryRequested + persist; flying rec=0 blobs make it a no-op. No Hangar. Never leftover-ksc. Never revert.

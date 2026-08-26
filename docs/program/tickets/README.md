@@ -41,8 +41,8 @@ heading, apo, hz). No BOARD.md. No jsonl. No `lessons.md`. No
 tape CLI, not rows. First command is `tickets packet <Hank-named id>`
 (live T- stay; new S-/M-/C-). **Reasoning:** inherit current TUI
 reasoning. Hank does **not** copy `reasoning=` into spawn packets.
-Never xhigh. Warp law is Wernher. Kernel still printing `reasoning=`
-on `ops next` / packet is Wernher.
+Never xhigh. Warp law is Wernher. Kernel does not print `reasoning=`
+on `ops next` / packet.
 
 Categories replace cards: `craft`, `science_opportunity`, `bug`,
 `improvement`, plus `flight` / `recover` / `org`. Tags are free.

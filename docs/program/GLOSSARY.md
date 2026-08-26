@@ -43,6 +43,6 @@ titles. Drop RAF/spy/radio-compact.
 | **krpc.md** | Wernher’s desk briefing. Traps stay in `agent-notes.md`. Never write GameData. |
 | **tech-unlock** | Catalog CLI (kRPC). 0.6 has no purchase RPC — aborts. Paid node: Mortimer edits the save then `python main.py load rd-<node>`. **Never** `load persistent` (F-014 / I-010). |
 | **Kerman** | **Retired house name.** We are **Grokman**. Stock KSP roster may still say Kerman; Hangar aliases it. |
-| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`, `katherine.md`, `iris.md`. Shared writer: `pilot.md`. Spawn types match those names. |
+| **ksp-ceo.md** etc. | **Retired.** Agent files are `mortimer.md`, `gene.md`, `linus.md`, `gus.md`, `lars.md`, `wernher.md`, `verena.md`, `katherine.md`, `eleanor.md`. Shared writer: `pilot.md`. Spawn types match those names. |
 
 Packet field is `live_run:`, path `docs/missions/<id>/logs/`.

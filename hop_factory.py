@@ -20,9 +20,9 @@ inland slew after. Splash bind is
 not FlyingLow — factory inland still waits the High lid. Airborne
 cannot-pay: FlyingLow skip still lofts — High waits the lid, then
 Toggle; skip-latch does not drop a bound High card. After High lid, MECO is MainThrottle 0, setpoint 0, then independent
-off — independent 1 ignores MainThrottle GET 0 (16-49-02Z thrust 100
-at 54 km). Do not re-enable. High dwell is not a burn; plume still
-up is still the burn. Do not loft out of atmo. Quiet loft honors
+off. Do not re-enable. Do not hold inland through burnout — that sit
+kept throttle 1 at 55 km (17-01-10Z). High dwell is not a burn; plume
+still up is still the burn. Do not loft out of atmo. Quiet loft honors
 uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
@@ -235,13 +235,31 @@ def _flameout_sit(
 def _high_dwell_sit(*, reached_lid: bool, down: bool) -> bool:
     """After FlyingHigh lid, until down. Not a burn.
 
-    16-49-02Z lid 54 km still independent 1 thrust 100 then 4× into
-    Space. MECO at the lid (independent off after MainThrottle 0);
-    plume still up is still the burn. Do not loft out of atmo.
+    17-01-10Z science dwell then hold inland through burnout, throttle 1
+    at 55 km. MECO at the lid; inland-burnout is not this. Plume still
+    up is still the burn. Do not loft out of atmo.
     Wernher ``want_coast`` already 1× on thick air / high q / silk / burn.
     Quiet loft honors uplink ``phys-warp``. Forest / Grasslands: same.
     """
     return bool(reached_lid) and not down
+
+
+def _inland_burnout_sit(
+    *,
+    flying_high: bool,
+    reached_lid: bool,
+    down: bool,
+) -> bool:
+    """Slew inland and hold the burn. FlyingHigh after lid is not this.
+
+    17-01-10Z this sit after High Toggle, throttle 1 at 55 km. High
+    dwell is MECO, not a second start. Forest / Grasslands: same.
+    """
+    if down:
+        return False
+    if flying_high and _high_dwell_sit(reached_lid=reached_lid, down=down):
+        return False
+    return True
 
 
 def _leftover_sit(*, down: bool, live_sit: str = "") -> bool:
@@ -738,6 +756,11 @@ def run_factory_vessel(
                 deaf=deaf,
             )
 
+            inland_burnout = _inland_burnout_sit(
+                flying_high=flying_high,
+                reached_lid=reached_lid,
+                down=down,
+            )
             burning_now = (
                 H._burning(vessel, snap, lofted=lofted)
                 or _lid_burn_sit(
@@ -784,7 +807,7 @@ def run_factory_vessel(
                         pitch=inland_pitch,
                         flown_pitch=flown_p,
                         flown_heading=flown_h,
-                        burning=burning_now,
+                        burning=burning_now if inland_burnout else False,
                     )
                     if not said_slew:
                         H._say(
@@ -800,7 +823,7 @@ def run_factory_vessel(
                             on_log,
                         )
                         said_pitch = True
-                if not burning_now and not said_hold:
+                if inland_burnout and not burning_now and not said_hold:
                     H._say("hop hold inland through burnout", on_log)
                     said_hold = True
 

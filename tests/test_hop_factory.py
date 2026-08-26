@@ -5,7 +5,13 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from hop_factory import _flameout_sit, _hold_start, _keep_start_sit
+from hop_factory import (
+    _flameout_sit,
+    _high_dwell_sit,
+    _hold_start,
+    _inland_burnout_sit,
+    _keep_start_sit,
+)
 from hop_factory_pad import (
     _cut_pad_engine,
     _pad_engine_waiting,
@@ -210,6 +216,10 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertIn("def _keep_start_sit", factory)
         self.assertIn("def _hold_start", factory)
         self.assertIn("def _flameout_sit", factory)
+        self.assertIn("def _inland_burnout_sit", factory)
+        hold_log = factory.find('hop hold inland through burnout')
+        self.assertNotEqual(hold_log, -1)
+        self.assertIn("inland_burnout", factory[max(0, hold_log - 200) : hold_log])
         self.assertIn("_apply_pad_throttle(vessel)", factory)
         self.assertIn("_release_pad_throttle(vessel)", factory)
         self.assertIn("or _pad_plume(vessel, snap)", factory)
@@ -748,6 +758,31 @@ class TestHopFactoryPad(unittest.TestCase):
         self.assertFalse(engine.independent_throttle)
         self.assertLessEqual(engine.pct, 5.0)
         self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_inland_burnout_sit_not_after_high_lid(self):
+        """flyinghigh-lid: 17-01-10Z hold inland through burnout after lid is not MECO."""
+        self.assertTrue(
+            _inland_burnout_sit(
+                flying_high=True, reached_lid=False, down=False
+            )
+        )
+        self.assertFalse(
+            _inland_burnout_sit(
+                flying_high=True, reached_lid=True, down=False
+            )
+        )
+        self.assertFalse(
+            _inland_burnout_sit(
+                flying_high=True, reached_lid=True, down=True
+            )
+        )
+        self.assertTrue(
+            _inland_burnout_sit(
+                flying_high=False, reached_lid=True, down=False
+            )
+        )
+        self.assertTrue(_high_dwell_sit(reached_lid=True, down=False))
+        self.assertFalse(_high_dwell_sit(reached_lid=False, down=False))
 
     def test_flameout_sit_thrust_zero_with_fuel_left(self):
         """rf-ignition-ullage: 16-05-34Z MET 21 throttle 1 thrust 0 fuel 2038."""

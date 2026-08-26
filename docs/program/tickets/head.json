@@ -13460,6 +13460,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T14:33:45Z",
+            "claim": "Kept FlyingHigh goo leftover 641/0.18/4.75 seq2 on C-477 hs-cone silk+HS. Pad-dead-no-plume sit=pre_launch is RF miss T-471, not a High rebind. Sample mysteryGoo@EarthFlyingHigh 0.647/5.400 left=4.75. Splash/Low/landed goo capped. Recover the can (429 MB). Side-by-side T-404 PresMat High seq0 + T-460 Low seq1. Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. f013 GooExperiment start unlocked=yes on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
@@ -13496,7 +13504,7 @@
       ],
       "title": "FlyingHigh goo leftover 4.75",
       "type": "science",
-      "updated": "2026-08-26T10:57:37Z"
+      "updated": "2026-08-26T14:33:45Z"
     },
     "T-369": {
       "assignee": "linus",
@@ -15204,6 +15212,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T14:33:44Z",
+            "claim": "Kept FlyingHigh PresMat 305/0.05/2.70 seq0 on C-477 hs-cone. 12-18-51Z/12-09-06Z ABORT pad-dead-no-plume sit=pre_launch MET 0 apo=86 rec=yes sci_run=0 bank +0 is RF miss T-471, not a High rebind. Never lofted. Do not unbind High because the pad did not light. File rem=0 is still the card. Scan unstarted 2.70. Hang lofts >=50 km once RF lights. Side-by-side T-460 FlyingLow 2.10 seq1 + T-368 goo leftover 4.75 seq2. Unbound T-461 Surface (cannot pay loft). Water stays unbound (never 090). Forest High TELEMETRY 1.512 T-069 shelf. Geiger High capped. Thermo High capped. recover HD 1.17 MB not TX 41 h. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
@@ -15255,7 +15271,7 @@
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-26T10:57:37Z"
+      "updated": "2026-08-26T14:33:44Z"
     },
     "T-405": {
       "assignee": "",
@@ -17819,6 +17835,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T14:33:45Z",
+            "claim": "Kept FlyingLow PresMat 305/0.05/2.10 seq1 on C-477 hs-cone. Pad-dead-no-plume sit=pre_launch apo=86 rec=yes sci_run=0 is RF miss T-471, not a FlyingLow rebind. Loft still crosses Low once RF lights. File rem=0 is still the card. Scan REACH 2.10. Not Water. Not Grasslands. Side-by-side T-404 FlyingHigh seq0 + T-368 goo leftover seq2. Unbound T-461 Surface. recover HD. f013 sensorBarometer stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/last-flight.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
@@ -17852,7 +17876,7 @@
       ],
       "title": "FlyingLow barometer 2.10",
       "type": "science",
-      "updated": "2026-08-26T10:57:37Z"
+      "updated": "2026-08-26T14:33:45Z"
     },
     "T-461": {
       "assignee": "linus",
@@ -19028,5 +19052,5 @@
       "updated": "2026-08-26T13:53:40Z"
     }
   },
-  "updated": "2026-08-26T14:28:09Z"
+  "updated": "2026-08-26T14:33:45Z"
 }

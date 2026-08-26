@@ -1,6 +1,6 @@
 ship = kspstuff-hop-valiant-proc-loft-pbc
 version = 1.12.5
-description = PBC C-504 loft. Clone T-406 FED + 3x trussPiece1x mid Heaviest/rigid. Stayputnik+sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant; 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 2415 kero. Stack Heaviest (Stayputnik no-rigid). Engine istg=0 sqor=0 first fire. No HS (C-477 Hangar 15-52-38Z parts=397 blob). No chute, no silk. Not T-406 14-57-37Z shear. Not t7-chute Mk16. Not a Flea.
+description = PBC C-504 loft recover. OKTO+Nylon RC_cone 50m payload-side (Stayputnik has no top; RC_cone srfAttach=0) + sasModule+PresMat+4xEngineer7500+5xZ-100 Valiant; 7x proceduralTankRealFuels 1.25x0.625 Cylinder Default 2415 kero + 3x trussPiece1x mid. Stack Heaviest (core no-rigid except OKTO rigid; tanks/sas/engine rigid). Engine istg=0 sqor=0 first fire; chute istg=1 sqor=0 last. No HS (C-477 Hangar 15-52-38Z parts=397 blob). Not t7-chute Mk16. Not a Flea.
 type = VAB
 size = 2,16,2
 steamPublishedFileId = 0
@@ -10,7 +10,7 @@ missionFlag = Squad/Flags/default
 vesselType = Probe
 PART
 {
-	part = probeCoreSphere.v2_1666040601
+	part = probeCoreOcto.v2_1666040601
 	partName = Part
 	persistentId = 1612581531
 	pos = 0.0,15.1822218,0.0
@@ -22,7 +22,7 @@ PART
 	mir = 1,1,1
 	symMethod = Radial
 	autostrutMode = Heaviest
-	rigidAttachment = False
+	rigidAttachment = True
 	istg = -1
 	resPri = 0
 	dstg = 0
@@ -33,6 +33,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
+	link = RC.cone_1888000001
 	link = batteryPack_1085135241
 	link = batteryPack_1482868628
 	link = batteryPack_1910979825
@@ -44,6 +45,7 @@ PART
 	link = sensorBarometer_1885000001
 	link = sasModule_1884000001
 	attN = bottom,sasModule_1884000001
+	attN = top,RC.cone_1888000001
 	EVENTS
 	{
 	}
@@ -52,6 +54,85 @@ PART
 	}
 	PARTDATA
 	{
+	}
+	RESOURCE
+	{
+		name = ElectricCharge
+		amount = 50
+		maxAmount = 50
+	}
+}
+PART
+{
+	part = RC.cone_1888000001
+	partName = Part
+	persistentId = 1888000201
+	pos = 0.0,15.3785216,0.0
+	attPos = 0,0,0
+	attPos0 = 0.0,0.1962998,0.0
+	rot = 0.0,0.0,0.0,1.0
+	attRot = 0,0,0,1
+	attRot0 = 0,0,0,1
+	mir = 1,1,1
+	symMethod = Radial
+	autostrutMode = Off
+	rigidAttachment = False
+	istg = 1
+	resPri = 0
+	dstg = 0
+	sidx = 0
+	sqor = 0
+	sepI = -1
+	attm = 0
+	modCost = 0
+	modMass = 0
+	modSize = 0,0,0
+	attN = bottom,probeCoreOcto.v2_1666040601
+	EVENTS
+	{
+	}
+	ACTIONS
+	{
+	}
+	PARTDATA
+	{
+	}
+	MODULE
+	{
+		name = RealChuteModule
+		caseMass = 0.04
+		timer = 0
+		mustGoDown = True
+		cutSpeed = 0.5
+		spareChutes = 5
+		stagingEnabled = True
+		PARACHUTE
+		{
+			material = Nylon
+			capName = cone
+			parachuteName = RC_triple_canopy
+			preDeploymentAnimation = RC_triple_chute_semi_deploy
+			deploymentAnimation = RC_triple_chute_full_deploy
+			preDeployedDiameter = 2.5
+			deployedDiameter = 50
+			minIsPressure = false
+			minDeployment = 2500
+			deploymentAlt = 700
+			cutAlt = -1
+			preDeploymentSpeed = 2
+			deploymentSpeed = 6
+		}
+	}
+	MODULE
+	{
+		name = ProceduralChute
+		size = 2
+		lastSize = 2
+		originalSize = 0.425,0.4,0.425
+		textureLibrary = RealChute
+		type = Cone
+		currentCase = Main
+		currentCanopies = Main chute
 	}
 }
 PART
@@ -79,7 +160,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -115,7 +196,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -151,7 +232,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -187,7 +268,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -223,7 +304,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -259,7 +340,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -295,7 +376,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -331,7 +412,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -367,7 +448,7 @@ PART
 	modCost = 0
 	modMass = 0
 	modSize = 0,0,0
-	srfN = srfAttach,probeCoreSphere.v2_1666040601
+	srfN = srfAttach,probeCoreOcto.v2_1666040601
 	EVENTS
 	{
 	}
@@ -404,7 +485,7 @@ PART
 	modMass = 0
 	modSize = 0,0,0
 	link = proceduralTankRealFuels_1671050297
-	attN = top,probeCoreSphere.v2_1666040601
+	attN = top,probeCoreOcto.v2_1666040601
 	attN = bottom,proceduralTankRealFuels_1671050297
 	EVENTS
 	{

@@ -208,7 +208,7 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
-    "vab-helper": 22,
+    "vab-helper": 24,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
@@ -389,6 +389,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T16:41:45Z",
+            "claim": "capable yes kspstuff-hop-valiant-proc-loft-pbc. craft fuel FED last tank attN bottom=Valiant. Nylon RC_cone 50m minDeployment 2500 payload-side on OKTO top (Stayputnik has no top node; RC_cone attachRules srfAttach=0 so not srf on Stayputnik). Engine istg=0 sqor=0 first fire; chute istg=1 sqor=0 last \u2014 chute is not first stage. 7x proceduralTankRealFuels 1.25x0.625 Default 2415 kero + 3x girder mid Heaviest/rigid. No HS (C-477 Hangar 15-52-38Z parts=397 blob). Same seated file. Do not Hangar C-477 / t7-chute Mk16. Did not restamp C-477. Omni SurfAntenna gain=2. Cape 64 bps. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft samp=1; geiger e101 unlocked=yes on_craft; 2HOT start on_craft TELEMETRY OKTO HD=1 + 4xEngineer7500 HD=0.5. Thin tape T-284. Helper T-512 vab-helper: craft chute --kind cone must INSERT RC_cone stacked on payload core when hang has none; engine sqor=0 first fire. fingerprint bigger-dv. Did not Hangar. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -402,7 +410,7 @@
       "tags": [],
       "title": "One procedural loft hang \u2014 FED, Hangar-safe, not C-477 blob",
       "type": "vehicle",
-      "updated": "2026-08-26T16:30:13Z"
+      "updated": "2026-08-26T16:41:45Z"
     },
     "T-001": {
       "assignee": "",
@@ -20273,7 +20281,53 @@
       "title": "hop abort names parts-drop shear; radio already thrust 0 plume no",
       "type": "systems",
       "updated": "2026-08-26T16:28:35Z"
+    },
+    "T-512": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T16:41:12Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-512",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "craft chute --kind cone inserts RC_cone stacked on payload core (OKTO top; Stayputnik has no top; RC_cone srfAttach=0); Nylon 50m; engine sqor=0 first fire",
+      "type": "systems",
+      "updated": "2026-08-26T16:41:12Z"
+    },
+    "T-513": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T16:41:12Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-513",
+      "payload": {
+        "count": 23
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI vab-helper \u00d723",
+      "type": "rsi",
+      "updated": "2026-08-26T16:41:12Z"
     }
   },
-  "updated": "2026-08-26T16:38:21Z"
+  "updated": "2026-08-26T16:41:45Z"
 }

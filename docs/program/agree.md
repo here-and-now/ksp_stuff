@@ -23,13 +23,23 @@ hire (three in parallel on that ticket, then split).
 
 ## Hang (Gus)
 
-C-504 `kspstuff-hop-valiant-proc-loft-pbc`. FED. Nylon `RC_cone` 50 m
-payload-side on OKTO (Stayputnik has no top; cone `srfAttach=0`).
-Engine `istg=0` `sqor=0` first fire; chute `istg=1` `sqor=0` last.
-No HS (C-477 blob). Recover: silk. `capable: yes`. Iterate this hang
-until `advRocketry` 45. C-477 blob is not
-capable. t7-wheel-pbc lithobrake is not recover. T-428 / T-430 stay
-alts, not this hang. Do not replace C-504 because the last hop sheared.
+This tree: C-504 `kspstuff-hop-valiant-proc-loft-pbc`. FED (last tank
+attN bottom=Valiant). Nylon `RC_cone` 50 m payload-side on OKTO
+(Stayputnik has no top; cone `srfAttach=0`). Engine `istg=0` `sqor=0`
+first fire; chute `istg=1` `sqor=0` last. No HS. Recover: silk.
+`capable: yes`. Pad until `advRocketry` 45. 268 km loft is not orbit —
+Pe on the ground. Silk recover banks InSpaceLow toward 45. Do not
+replace C-504 because the last hop sheared. Do not idle the pad
+building Reliant / Thumper / TD-06 alts this sit — they stay shelf,
+not hang. C-477 blob is not capable. t7-wheel-pbc lithobrake is not
+recover. T-428 / T-430 stay alts.
+
+After `advRocketry` 45: Terrier (LV-909) vacuum hang — two-stage
+atmospheric first (Valiant / Reliant) + Terrier circularize. Orbit is
+Pe above ~140 km High lid, not apo 268 km. rec=no is honest if
+orbiting. Do not write or Hangar that stack before the node. Do not
+Hangar C-477. Leftover High / Forest / splash hangs wait a living
+orbit.
 
 ## Bind (Linus)
 

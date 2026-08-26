@@ -406,6 +406,14 @@
             "owner": "none",
             "real": false,
             "who": "gus"
+          },
+          {
+            "at": "2026-08-26T19:24:32Z",
+            "claim": "T-529 Hang: this-tree C-504 FED silk capable yes until advRocketry 45. Terrier vacuum hang after node. Did not idle Reliant alts. Did not Hangar C-477.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -419,7 +427,7 @@
       "tags": [],
       "title": "One procedural loft hang \u2014 FED, Hangar-safe, not C-477 blob",
       "type": "vehicle",
-      "updated": "2026-08-26T17:32:45Z"
+      "updated": "2026-08-26T19:24:32Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -21084,7 +21092,42 @@
       "title": "First orbit is Today \u2014 leftover science later, phased by tree",
       "type": "org",
       "updated": "2026-08-26T19:21:46Z"
+    },
+    "T-529": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T19:22:39Z",
+      "desk": "hank",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-529",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T19:24:32Z",
+            "claim": "hang: this-tree C-504 kspstuff-hop-valiant-proc-loft-pbc FED silk capable yes until advRocketry 45. After node: Terrier vacuum two-stage Pe>~140 km \u2014 do not write/Hangar before unlock. Did not idle Reliant alts. Did not Hangar C-477.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "plan"
+      ],
+      "title": "first orbit phases: sit hang bind recover meco \u2014 C-504 pay Terrier then circularize",
+      "type": "ops",
+      "updated": "2026-08-26T19:24:32Z"
     }
   },
-  "updated": "2026-08-26T19:21:46Z"
+  "updated": "2026-08-26T19:24:32Z"
 }

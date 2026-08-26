@@ -208,14 +208,14 @@
     "tundra-landed-telemetry": 1,
     "tundra-landed-thermo": 1,
     "unstarted-splash-telemetry": 1,
-    "vab-helper": 18,
+    "vab-helper": 19,
     "z200-vs-z100-chute": 1
   },
   "tickets": {
     "C-477": {
       "assignee": "",
       "blockers": [],
-      "capable": "yes",
+      "capable": "no",
       "category": "craft",
       "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
       "created": "2026-08-26T10:48:37Z",
@@ -312,6 +312,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:18:06Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. craft fuel FED last tank attN bottom=Valiant \u2014 Hangar still detonated. 15-14-43Z sit=landed parts=10 fuel=0 leftover dry hop abort leftover dry. Tanks flying debris ~20 km. Screenshot screenshots/stuck-hangar-landed.png KSC Flight wreck buried STAGE 000. Same class as old HS/engine overlap: payload OKTO+chute+radials live, tanks gone. Payload-side SAS-HS-first tank (hs y=14.62552 sas-hs dy=0.191 hs-tank dy=0.4125 dish bottomDiameter=0 length 0.2) did not stop pad explode. insert_inline new_half=0.1 is node math, not collider clearance (T-482 puck cube +0.179 m). Do not Hangar C-477. Do not Hangar t7-chute Mk16. Seated T-406 t7-wheel-proc FED loft alt (14-57-37Z lit). Helper filed vab-helper heatshield splice must leave clearance. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not lite/dv5/4t. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -327,7 +335,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T15:16:18Z"
+      "updated": "2026-08-26T15:18:06Z"
     },
     "T-001": {
       "assignee": "",
@@ -15598,6 +15606,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-26T15:18:06Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. craft fuel FED last tank attN bottom=Valiant. 14-57-37Z lit (hop light setpoint=1 fuel moving) then sheared 27-11 apo 1.3 km rec=yes \u2014 loft alt not recover. Seated uncrewed craft.md so hop will not Hangar C-477 bomb (15-14-43Z leftover dry parts=10). Do not Hangar T-406 as recover. Do not Hangar t7-chute Mk16. Do not Hangar C-477. Omni SurfAntenna. Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15614,7 +15630,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:05Z"
+      "updated": "2026-08-26T15:18:06Z"
     },
     "T-407": {
       "assignee": "",
@@ -19767,7 +19783,40 @@
       "title": "RSI vab-helper \u00d717",
       "type": "rsi",
       "updated": "2026-08-26T15:13:05Z"
+    },
+    "T-500": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T15:18:06Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "vab-helper",
+      "id": "T-500",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T15:18:16Z",
+            "claim": "Gap: insert_heatshield / payload-side insert_inline new_half=length*0.5 is node math. C-477 rebuilt SAS-HS-first tank craft fuel FED (last tank attN bottom=Valiant) then Hangar 15-14-43Z detonated sit=landed parts=10 fuel=0 leftover dry \u2014 tanks flying debris ~20 km. Screenshot screenshots/stuck-hangar-landed.png. Disk: hs y=14.62552 sas-hs dy=0.191 hs-tank dy=0.4125 dish bottomDiameter=0 length 0.2 Round3 shapePoints (1,0,1,0.5). Same class as T-482 puck cube +0.179 m / old HS-engine overlap 0.1375 m. Helper must leave collider clearance (not only FED fuel path) and engine sqor=0 / VAB dish. Do not write GameData. T-498 was --payload FED splice. Did not Hangar. Did not edit craft.py. Seated T-406.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P2",
+      "reporter": "Gus Grokman, Vehicle Engineering Lead",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "VAB helper: heatshield splice must leave collider clearance, not only a FED fuel path",
+      "type": "systems",
+      "updated": "2026-08-26T15:18:16Z"
     }
   },
-  "updated": "2026-08-26T15:16:18Z"
+  "updated": "2026-08-26T15:18:16Z"
 }

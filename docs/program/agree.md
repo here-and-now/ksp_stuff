@@ -57,19 +57,20 @@ hosted OKTO PAW on_craft=yes.
 
 ## Pulse (Lars)
 
-This-hop is loft, not orbit. `hop_factory.py` inland compose. Pad-RF
+This-hop is loft, not orbit. Successor hang still this compose —
+girders **none** in pulse. `hop_factory.py` inland. Pad-RF
 `hop_factory_pad.py` (one sit). Throttle 1 + SAS vertical until lid.
 MECO at 50 km **live** alt: MainThrottle 0, setpoint 0, independent
 off. `_hold_lid` after lid is MECO — not inland-through-burnout
 (17-01-10Z throttle 1 at 55 km; 17-13-14Z emptied tanks MET 153 apo
 270 km). After lid, Toggle InSpaceLow when the live sit is space
 (`_space_low_sit`); High cannot-pay is not space-done. Arm Nylon on
-descent (`_space_silk_arm_sit`) — recover yes, hang owns silk. Do not
-circularize: no vacuum engine; Pe stays on the ground. Circularize
-pulse waits `advRocketry` 45 Terrier — Pe above ~140 km High lid is
-that sit, not this file this hang. Leftover later. Do not retune MECO
-/ lid / silk to High 305 s or to the last shear. Log must not print
-hold inland through burnout after High lid.
+descent (`_space_silk_arm_sit`) — recover yes. Do not circularize: no
+Terrier; Pe stays on the ground. Do not write truss/girder into
+`hop_factory`. Stiffness is hang autostrut, not a pulse part. Forest
+/ Grasslands: same. Do not retune MECO / lid / silk to High 305 s or
+to the last shear. Log must not print hold inland through burnout
+after High lid.
 
 ## Dynamics (Katherine, opt-in)
 

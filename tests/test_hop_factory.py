@@ -13,6 +13,7 @@ from hop_factory import (
     _hold_start,
     _inland_burnout_sit,
     _keep_start_sit,
+    _lid_alt_reached,
     _space_low_sit,
     _space_silk_arm_sit,
 )
@@ -822,6 +823,40 @@ class TestHopFactoryPad(unittest.TestCase):
         )
         self.assertEqual(vessel.control.throttle, 1.0)
         self.assertTrue(engine.independent_throttle)
+        engine.independent_throttle = True
+        engine.pct = 100.0
+        vessel.control.throttle = 1.0
+        self.assertFalse(
+            _hold_lid(
+                vessel,
+                lid,
+                hop_apo=50_000.0,
+                flying_high=True,
+                lofted_lid=False,
+            )
+        )
+        self.assertFalse(engine.independent_throttle)
+        self.assertLessEqual(engine.pct, 5.0)
+        self.assertEqual(vessel.control.throttle, 0.0)
+
+    def test_lid_alt_reached_is_50km_live_not_space(self):
+        """20-07-41Z hop_apo 140 km must not keep throttle 1 past 50 km."""
+        lid = type("S", (), {"alt": 63_216.0, "fuel": 319.0, "apo": 192_423.0})()
+        below = type("S", (), {"alt": 48_880.0, "fuel": 496.0, "apo": 128_078.0})()
+        self.assertTrue(_lid_alt_reached(lid, 50_000.0, flying_high=True))
+        self.assertTrue(_lid_alt_reached(lid, 140_000.0, flying_high=True))
+        self.assertFalse(_lid_alt_reached(below, 50_000.0, flying_high=True))
+        self.assertFalse(_lid_alt_reached(lid, 50_000.0, flying_high=False))
+        self.assertFalse(
+            _keep_start_sit(
+                lid,
+                lit=True,
+                left_pad=True,
+                down=False,
+                hop_apo=140_000.0,
+                flying_high=True,
+            )
+        )
 
     def test_space_silk_arm_sit_descent_after_lid(self):
         """17-58-57Z Nylon stowed at 70 km vz -1.9 km/s; Arm on descent."""

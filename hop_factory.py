@@ -25,11 +25,13 @@ not space-done (16-23-52Z skip-latch, PresMat in space sci +0). After High lid, 
 off. Do not re-enable. Do not hold inland through burnout — that sit
 kept throttle 1 at 55 km (17-01-10Z). After that gate, 17-13-14Z still
 thrust 1 at 59 km and emptied tanks by MET 153 apo 270 km —
-``_hold_lid`` after lid is MECO. High dwell is not a burn; plume
-still up is still the burn. After space dwell, Arm Nylon on descent so
-HD comes home — 17-58-57Z chute=stowed at 70 km vz −1.9 km/s then
-shear, LITE rem=0 rec=no. Do not loft out of atmo. Quiet loft honors
-uplink phys-warp.
+``_hold_lid`` after lid is MECO. Last write after 50 km live is
+``_release_pad_throttle`` — ``_hold_or_cut`` hold=1 is not this sit
+(20-07-41Z throttle 1 at 63 km fuel 320, apo 281 km). High dwell is
+not a burn; plume still up is still the burn. After space dwell, Arm
+Nylon on descent so HD comes home — 17-58-57Z chute=stowed at 70 km
+vz −1.9 km/s then shear, LITE rem=0 rec=no. Do not loft out of atmo.
+Quiet loft honors uplink phys-warp.
 Wernher 1× on thick air / high q / silk / burn. FlyingLow skip may still
 4×. Then coast, chute, land leftover. Pad boost (fuel, not lofted) does not science or hop-down —
 sit=landed at pad alt with fuel is still burning. Parked water/splash
@@ -117,13 +119,27 @@ def _inland_high_sit(
 def _lid_alt_reached(
     snap: object, hop_apo: float, *, flying_high: bool | None = None
 ) -> bool:
-    """FlyingHigh hop_apo is live altitude. Predicted apo in thick air is not the lid."""
+    """FlyingHigh lid is live alt ≥50 km. Predicted apo in thick air is not the lid.
+
+    Gene hop_apo is the cut; Space 140 km is not this sit. 20-07-41Z
+    hop_apo=50000 still thrust 1 at 63 km. Forest / Grasslands: same.
+    """
     if flying_high is None:
         flying_high = _inland_high_sit()
     if not flying_high:
         return False
     alt = H._snap_alt(snap)
-    return math.isfinite(alt) and alt >= hop_apo
+    if not math.isfinite(alt):
+        return False
+    try:
+        lid = float(hop_apo)
+    except (TypeError, ValueError):
+        lid = float("nan")
+    if not math.isfinite(lid) or lid <= 0.0:
+        lid = H.FLYING_LOW_M
+    else:
+        lid = min(lid, H.FLYING_LOW_M)
+    return alt >= lid
 
 
 def _lid_burn_sit(
@@ -335,11 +351,14 @@ def _hold_lid(
     AP engage at zenith has no heading. Inland slew clears SAS and does
     not hold vertical. SAS from light holds the loft until lid alt or
     crumbs. After lid, MECO: MainThrottle 0, setpoint 0, independent
-    off — leftover LF is the coast. 17-13-14Z throttle 1 at 59 km
-    emptied tanks by MET 153. Residual vz is not this sit. Forest /
+    off — leftover LF is the coast. lofted_lid latch is not required:
+    live alt ≥50 km is MECO. 17-13-14Z throttle 1 at 59 km emptied
+    tanks by MET 153. Residual vz is not this sit. Forest /
     Grasslands: same.
     """
-    if flying_high and lofted_lid:
+    if flying_high and (
+        lofted_lid or _lid_alt_reached(snap, hop_apo, flying_high=True)
+    ):
         _release_pad_throttle(vessel)
         return False
     burn = _lid_burn_sit(
@@ -746,6 +765,14 @@ def run_factory_vessel(
                 )
                 if lid_burn:
                     apo_cut = False
+                elif flying_high and (
+                    reached_lid
+                    or _lid_alt_reached(
+                        snap, hop_apo, flying_high=True
+                    )
+                ):
+                    apo_cut = True
+                    _release_pad_throttle(vessel)
                 else:
                     apo_cut, _braking = H._hold_or_cut(
                         vessel,
@@ -1203,6 +1230,19 @@ def run_factory_vessel(
                 got = H._force_recover(vessel, on_log)
                 if got is not None:
                     return got
+
+            if (
+                left_pad
+                and not down
+                and flying_high
+                and (
+                    reached_lid
+                    or _lid_alt_reached(
+                        snap, hop_apo, flying_high=True
+                    )
+                )
+            ):
+                _release_pad_throttle(vessel)
 
             if down and not left_pad:
                 _cut_pad_engine(vessel)

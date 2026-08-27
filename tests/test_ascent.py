@@ -13,6 +13,7 @@ from ascent import (
     light,
     loft_lid_sit,
     loft_meco_sit,
+    lofted_wait_sit,
     orbit_done_sit,
     space_low_sit,
     stage_sit,
@@ -351,6 +352,17 @@ def test_source_hop_parked_orbit_is_ascent():
     assert "cmd_ascent" in main
 
 
+def test_lofted_wait_sit_not_leftover_from_high():
+    """Timeout leftover from High is silk/coast until down+recoverable."""
+    assert lofted_wait_sit(lofted=True, down=False, recoverable=False)
+    assert not lofted_wait_sit(lofted=True, down=True, recoverable=False)
+    assert not lofted_wait_sit(lofted=True, down=False, recoverable=True)
+    assert not lofted_wait_sit(lofted=False, down=False, recoverable=False)
+    assert not lofted_wait_sit(
+        lofted=True, down=False, recoverable=False, two_stage=True
+    )
+
+
 def test_timeout_leftover_uses_leftover_call_not_emergency_verb():
     """T-555: leftover_call names recover vs ksc leftover, not emergencies.call."""
     from physics_warp import leftover_call
@@ -360,13 +372,17 @@ def test_timeout_leftover_uses_leftover_call_not_emergency_verb():
     ascent = Path("ascent.py").read_text(encoding="utf-8")
     assert "leftover_call" in ascent
     assert "abort_ksc_leftover" in ascent
+    assert "lofted_wait_sit" in ascent
+    assert "ascent wait recoverable" in ascent
     assert "call(why," not in ascent
     assert 'call("ksc leftover"' not in ascent
     timeout_at = ascent.find("timeout_hit(")
     leftover_at = ascent.find("leftover_call(")
     recover_at = ascent.find('== "recover"')
+    wait_at = ascent.find("lofted_wait_sit(", leftover_at)
     abort_at = ascent.find("abort_ksc_leftover")
     assert timeout_at != -1 and leftover_at != -1
     assert leftover_at > timeout_at
     assert recover_at > leftover_at
-    assert abort_at > leftover_at
+    assert wait_at > leftover_at
+    assert abort_at > wait_at

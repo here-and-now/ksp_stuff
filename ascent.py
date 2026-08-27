@@ -15,9 +15,13 @@ is still the burn — warp follows ``RF.burning``, not the keep flag
 (06-52-19Z / 22-11-37Z UI throttle 0 thrust 100 kN past 50 km then
 4× emptied tanks apo 257–323 km). Terrier two-stage later: keep live
 through first-stage burnout (same east turn — no lid MECO), stage,
-vacuum apply live near apo until Pe ≥ space. Do not freeze Flea /
-Hammer / 4t / splash-090. Forest / Grasslands: same function. Tests
-lock these sits, not a dead hang.
+vacuum apply live near apo until Pe ≥ space. Timeout leftover from
+High is silk/coast until down+recoverable — not ``ksc leftover``
+while lofted rec=no (06-52-19Z MET 604 alt 135 km chute stowed;
+22-11-37Z chute armed still flying). Pad never-loft leftover stays
+leftover. Circularized recover no. Do not freeze Flea / Hammer /
+4t / splash-090. Forest / Grasslands: same function. Tests lock
+these sits, not a dead hang.
 """
 
 from __future__ import annotations
@@ -241,6 +245,24 @@ def orbit_done_sit(snap: object, *, two_stage: bool = False) -> bool:
     return math.isfinite(peri_f) and peri_f >= SPACE_PE_M
 
 
+def lofted_wait_sit(
+    *,
+    lofted: bool,
+    down: bool,
+    recoverable: bool,
+    two_stage: bool = False,
+) -> bool:
+    """Timeout clock is not leftover from High.
+
+    Silk/coast until down and recoverable. Pad never-loft leftover
+    stays leftover. Circularize / orbit rec=no is honest.
+    Forest / Grasslands: same.
+    """
+    if two_stage or down or recoverable or not lofted:
+        return False
+    return True
+
+
 def stage_sit(
     snap: object,
     *,
@@ -338,6 +360,7 @@ def run_ascent_vessel(
     Caller Hangars. Parked water/splash stay in hop.py.
     Timeout leftover uses leftover_call (recover vs ksc leftover), not
     emergencies.call — ``ksc leftover`` is not an emergency verb.
+    Lofted rec=no keeps silk/coast until down+recoverable.
     """
     log_events = events if events is not None else EventLog()
     hop_apo = H.hop_target_apo(space=True)
@@ -356,6 +379,7 @@ def run_ascent_vessel(
     said_coast = [""]
     started: list[str] = []
     chute_armed = False
+    said_wait = False
     met0: float | None = None
     turn_yawed = False
     turn_yaw_n = 0
@@ -545,13 +569,25 @@ def run_ascent_vessel(
             )
             met = H._vessel_met(vessel)
             if timeout_hit(met=met, met0=met0, budget=budget, down=down):
-                why = leftover_call(recoverable=H._recoverable(vessel))
-                RF.cut(vessel, abort=True)
+                rec = H._recoverable(vessel)
+                why = leftover_call(recoverable=rec)
                 if why == "recover":
+                    RF.cut(vessel, abort=True)
                     got = H._force_recover(vessel, on_log)
                     if got is not None:
                         return got
-                H.abort_ksc_leftover(vessel, on_log, why="timeout")
+                if lofted_wait_sit(
+                    lofted=lofted,
+                    down=down,
+                    recoverable=rec,
+                    two_stage=two_stage,
+                ):
+                    if not said_wait:
+                        H._say("ascent wait recoverable", on_log)
+                        said_wait = True
+                else:
+                    RF.cut(vessel, abort=True)
+                    H.abort_ksc_leftover(vessel, on_log, why="timeout")
             if left_pad and down and H._recoverable(vessel):
                 if not said_down:
                     H._say("ascent down", on_log)

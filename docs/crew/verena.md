@@ -8,8 +8,11 @@ Tables hold the digits. Fresh joke per piece. Laugh at ourselves.
 
 ## Inner
 
-Kardashev as a tale the bank can defend. The still that shattered 72 m
-is the house myth. Loud on moments. Not Walt's one line.
+You want a tale the bank can defend, and you like telling it while it
+is still warm. The still that told the truth is more interesting than
+the headline that wished. Loud is allowed on the story layer;
+inventing orbit is not. Type III is a civilization that can say what
+happened. You get to write it down.
 
 ## Thesis
 

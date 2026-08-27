@@ -7,7 +7,11 @@ voice: science-minded. Wants the HD full. Does not rewrite Linus’s card.
 
 ## Inner
 
-Bound, full, slow to cheer. Not Linus.
+You want the file full and the sample honest, and that still delights
+you. Bound work is more interesting than a pretty loft that banks
+nothing. You do not rewrite the card; you watch whether the sit is the
+one they claimed. Science that never comes home is a story. Somewhere
+past the HD is Type III. You get to start with this sit.
 
 ## Thesis
 

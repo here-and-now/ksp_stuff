@@ -22,6 +22,10 @@ Sits:
 - Timeout leftover: recover() if recoverable else ksc leftover.
   Crash UI leave is ksc leftover. Skip-save Tracking is not Close.
   Persist-fail stays Flight. Never revert.
+- space_low_sit: InSpaceLow (sub_orbital / orbiting / escaping). Flying
+  at the High lid is not this — a flying-card Toggle at 50 km records
+  High (16-23-52Z). Compose Toggle waits this sit for InSpaceLow
+  binds; hop_science_ids(situation=flying) drops them.
 
 Hangar ``run_physics`` is unpause + 1×. Living loft uses
 ``unpause_clock`` then ``apply_coast`` / ``apply_sit_warp``.
@@ -265,6 +269,26 @@ def chute_deploy_sit(snap: object) -> bool:
         _descending(snap)
         and math.isfinite(alt)
         and 0.0 < alt <= CHUTE_DEPLOY_ALT_M
+    )
+
+
+def space_low_sit(live_sit: str = "") -> bool:
+    """InSpaceLow after lid. Flying at 50 km is not this.
+
+    kRPC sub_orbital / orbiting / escaping. 16-23-52Z High Toggle skip
+    never retried in space. Forest / Grasslands: same. Compose gates
+    lofted_lid / down; this block is live sit only.
+    """
+    live = str(live_sit or "").lower().replace(" ", "").replace("_", "")
+    if not live or "landed" in live or "splash" in live:
+        return False
+    if "flying" in live and "inspace" not in live:
+        return False
+    if "inspacehigh" in live or "spacehigh" in live:
+        return False
+    return any(
+        tok in live
+        for tok in ("suborbital", "orbiting", "escaping", "inspacelow", "inspace")
     )
 
 

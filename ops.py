@@ -115,6 +115,24 @@ def _desk_ground(desk_name: str) -> list[dict[str, Any]]:
     return rows
 
 
+def _plan_tickets() -> list[dict[str, Any]]:
+    """Unsigned ops --tag plan. agreed yes is Hank close, not this hire."""
+    rows = []
+    for t in list_tickets(open_only=True):
+        if t.get("type") != "ops":
+            continue
+        if not _ready_status(t):
+            continue
+        tags = {str(x).lower() for x in (t.get("tags") or [])}
+        if "plan" not in tags:
+            continue
+        agreed = str((t.get("payload") or {}).get("agreed") or "").strip().lower()
+        if agreed in {"yes", "true", "1"}:
+            continue
+        rows.append(t)
+    return rows
+
+
 def leftover_sit(desk: dict[str, str]) -> bool:
     hangar = desk.get("hangar") or "none"
     n = leftover_n(desk)
@@ -289,6 +307,35 @@ def next_actions(
             "fly_ready": t["id"],
             "commander": who,
             "writer": "hop-pid",
+            "hire": hires,
+        }
+
+    plan = _plan_tickets()
+    if plan:
+        t = plan[0]
+        tags = {str(x).lower() for x in (t.get("tags") or [])}
+        why = "inner-circle plan — not leftover wreck tickets"
+        _hire("lars", [t], why)
+        _hire("gus", [t], why)
+        _hire("linus", [t], why)
+        want_k = "dynamics" in tags
+        want_e = "constellation" in tags
+        for row in list_tickets(open_only=True):
+            if not _ready_status(row):
+                continue
+            row_tags = {str(x).lower() for x in (row.get("tags") or [])}
+            if row.get("desk") == "katherine" or "dynamics" in row_tags:
+                want_k = True
+            if row.get("desk") == "eleanor" or "constellation" in row_tags:
+                want_e = True
+        if want_k:
+            _hire("katherine", [t], "plan dynamics opt-in")
+        if want_e:
+            _hire("eleanor", [t], "plan constellation opt-in")
+        return {
+            "lock": "free",
+            "pad": "idle",
+            "fly_ready": None,
             "hire": hires,
         }
 

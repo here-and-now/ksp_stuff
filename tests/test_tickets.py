@@ -960,6 +960,47 @@ class TestOpsNext(unittest.TestCase):
         self.assertEqual(d["leftover"], "2")
         self.assertEqual(ops.leftover_n(d), 2)
 
+    def test_plan_tag_hires_inner_circle_not_wreck(self):
+        plan = tickets.open_ticket(
+            type="ops",
+            title="sit hang bind recover meco",
+            reporter="Hank",
+            desk="hank",
+            tags=["plan"],
+        )
+        tickets.open_ticket(type="vehicle", title="leftover hang", reporter="Gus")
+        tickets.open_ticket(type="science", title="leftover goo", reporter="Linus")
+        tickets.open_ticket(
+            type="control",
+            title="leftover miss",
+            reporter="Lars",
+            desk="lars",
+            fingerprint="control-blocks",
+        )
+        act = ops.next_actions(desk={"hangar": "none"}, locked=False)
+        desks = [h["desk"] for h in act["hire"]]
+        self.assertEqual(desks, ["lars", "gus", "linus"])
+        for h in act["hire"]:
+            self.assertEqual(h["tickets"], [plan["id"]])
+            self.assertIn("not leftover wreck", h["why"])
+        self.assertNotIn("gene", desks)
+        self.assertIsNone(act.get("fly_ready"))
+
+    def test_plan_does_not_beat_leftover(self):
+        tickets.open_ticket(
+            type="ops",
+            title="sit hang bind recover meco",
+            reporter="Hank",
+            desk="hank",
+            tags=["plan"],
+        )
+        act = ops.next_actions(
+            desk={"hangar": "phase t7 sit=LANDED"},
+            locked=False,
+        )
+        self.assertEqual(act["hire"][0]["desk"], "hank")
+        self.assertEqual(act["ksc"], "leftover")
+
     def test_idle_empty_or_ops_ticket_no_fake_gene(self):
         act = ops.next_actions(desk={"hangar": "none"}, locked=False)
         self.assertEqual(act["hire"], [])

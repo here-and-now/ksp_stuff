@@ -10,8 +10,11 @@ from craft import (
     Craft,
     CraftError,
     CraftPart,
+    DECOUPLER_NAME,
     HS_COLLIDER_OVERSHOOT,
+    TERRIER_NAME,
     axial_tanks,
+    autostrut_stack,
     chute_is_nylon_good,
     clone_craft,
     cmd_craft,
@@ -26,6 +29,7 @@ from craft import (
     heatshield_place_half,
     insert_heatshield,
     insert_inline,
+    insert_two_stage,
     insert_wheel,
     liquid_cylinder,
     pad_pbc,
@@ -46,6 +50,7 @@ T7_CONE = CRAFTS / "kspstuff-hop-valiant-t7-chute-cone-pbc.craft"
 T7_HS_CONE = CRAFTS / "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc.craft"
 T7_PROC_HS = CRAFTS / "kspstuff-hop-valiant-t7-wheel-proc-hs-pbc.craft"
 STIFF = CRAFTS / "kspstuff-hop-valiant-proc-stiff-pbc.craft"
+LOFT = CRAFTS / "kspstuff-hop-valiant-proc-loft-pbc.craft"
 
 
 def _mod(part, name: str):
@@ -248,6 +253,99 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertEqual(len(pres), 1)
         self.assertEqual(pres[0].srf_n, f"srfAttach,{core.token}")
 
+    def test_wheel_count_three_heaviest(self):
+        craft = Craft.load(T7)
+        insert_wheel(craft, count=3)
+        wheels = [p for p in craft.parts if p.name == "sasModule"]
+        self.assertEqual(len(wheels), 3)
+        core = find_core(craft)
+        first = axial_tanks(craft)[0]
+        self.assertEqual(core.att_n.get("bottom"), wheels[0].token)
+        self.assertEqual(wheels[-1].att_n.get("bottom"), first.token)
+        self.assertEqual(first.att_n.get("top"), wheels[-1].token)
+        for w in wheels[1:]:
+            self.assertEqual(w.autostrut_mode, "Heaviest")
+            self.assertEqual(w.rigid_attachment, "True")
+
+    def test_autostrut_stack_without_hs_or_chute(self):
+        craft = Craft.load(T7)
+        self.assertFalse(find_chutes(craft))
+        self.assertFalse(any(p.name == "proceduralHeatshield" for p in craft.parts))
+        autostrut_stack(craft)
+        engine = find_engine(craft)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        for p in craft.parts:
+            if p.attm != 0:
+                continue
+            self.assertEqual(p.autostrut_mode, "Heaviest")
+            self.assertEqual(p.rigid_attachment, "True")
+
+    def test_cone_insert_on_okto_top(self):
+        craft = Craft.load(LOFT)
+        chute = find_chutes(craft)[0]
+        tok = chute.token
+        craft.parts = [p for p in craft.parts if p.token != tok]
+        for p in craft.parts:
+            p.links = [t for t in p.links if t != tok]
+            p.att_n = {k: v for k, v in p.att_n.items() if v != tok}
+        core = find_core(craft)
+        self.assertEqual(core.name, "probeCoreOcto_v2")
+        inserted = set_nylon_chute(craft, "cone")
+        self.assertEqual(inserted.name, "RC_cone")
+        self.assertEqual(inserted.att_n.get("bottom"), core.token)
+        self.assertEqual(core.att_n.get("top"), inserted.token)
+        engine = find_engine(craft)
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        self.assertEqual(inserted.istg, 1)
+        self.assertEqual(inserted.sqor, 0)
+        para = _mod(inserted, "RealChuteModule").of("PARACHUTE")[0]
+        self.assertEqual(para.get("deployedDiameter"), "50")
+        self.assertEqual(para.get("material"), "Nylon")
+
+    def test_cone_insert_refuses_stayputnik(self):
+        craft = Craft.load(T7)
+        with self.assertRaises(CraftError) as ctx:
+            set_nylon_chute(craft, "cone")
+        self.assertIn("no top", str(ctx.exception).lower())
+        self.assertIn("OKTO", str(ctx.exception))
+
+    def test_two_stage_refuses_locked_terrier(self):
+        craft = Craft.load(T7_WHEEL)
+        n = len(craft.parts)
+        with self.assertRaises(CraftError) as ctx:
+            insert_two_stage(craft, unlocked=set())
+        self.assertIn("LOCKED", str(ctx.exception))
+        self.assertIn(TERRIER_NAME, str(ctx.exception))
+        self.assertEqual(len(craft.parts), n)
+        self.assertFalse(any(p.name == TERRIER_NAME for p in craft.parts))
+
+    def test_two_stage_unlocked_fed_staging(self):
+        craft = Craft.load(LOFT)
+        insert_two_stage(craft, upper=1, unlocked={"advRocketry"})
+        valiant = find_engine(craft)
+        terrier = next(p for p in craft.parts if p.name == TERRIER_NAME)
+        dec = next(p for p in craft.parts if p.name == DECOUPLER_NAME)
+        chute = find_chutes(craft)[0]
+        last = axial_tanks(craft)[-1]
+        self.assertEqual(valiant.name, "restock-engine-125-valiant")
+        self.assertEqual(last.att_n.get("bottom"), valiant.token)
+        self.assertEqual(valiant.att_n.get("top"), last.token)
+        self.assertEqual(valiant.istg, 0)
+        self.assertEqual(valiant.sqor, 0)
+        self.assertEqual(dec.istg, 1)
+        self.assertEqual(dec.sqor, 0)
+        self.assertEqual(terrier.istg, 2)
+        self.assertEqual(terrier.sqor, 0)
+        self.assertEqual(chute.istg, 3)
+        self.assertEqual(chute.sqor, 0)
+        self.assertGreater(terrier.pos[1], dec.pos[1])
+        self.assertGreater(dec.pos[1], last.pos[1])
+        text = dump_attach_fuel(craft, catalog=Catalog.stock())
+        self.assertIn("FED  last tank reaches engine", text)
+        self.assertNotIn("BLOCKED", text)
+
     def test_heatshield_modules_disc_is_vab_dish(self):
         mods, res = heatshield_modules(top=1.25, bottom=0.0, length=0.2, ablator=80)
         cone = next(m for m in mods if m.get("name") == "ProceduralShapeBezierCone")
@@ -297,22 +395,30 @@ class TestGirdersWheelHs(unittest.TestCase):
         self.assertIn("BLOCKED  proceduralHeatshield fuelCrossFeed=False", text)
         self.assertIn("engine starved", text)
 
-    def test_c477_payload_hs_is_node_math_not_clearance(self):
+    def test_c477_payload_hs_is_clearance_not_node_math(self):
+        """T-503: C-477 rebuilt T-500 half 0.5 (sas-hs 0.591 / hs-tank 0.8125)."""
         craft = Craft.load(T7_HS_CONE)
         sas = next(p for p in craft.parts if p.name == "sasModule")
         hs = next(p for p in craft.parts if p.name == "proceduralHeatshield")
         first = axial_tanks(craft)[0]
         last = axial_tanks(craft)[-1]
         engine = find_engine(craft)
+        cone = next(
+            m for m in hs.modules if m.get("name") == "ProceduralShapeBezierCone"
+        )
         self.assertEqual(sas.att_n.get("bottom"), hs.token)
         self.assertEqual(hs.att_n.get("top"), sas.token)
         self.assertEqual(hs.att_n.get("bottom"), first.token)
         self.assertEqual(last.att_n.get("bottom"), engine.token)
-        self.assertAlmostEqual(sas.pos[1] - hs.pos[1], 0.191, places=3)
-        self.assertAlmostEqual(hs.pos[1] - first.pos[1], 0.4125, places=4)
-        self.assertLess(
-            sas.pos[1] - hs.pos[1], heatshield_clearance_half(0.2) + 0.09111
-        )
+        self.assertEqual(engine.istg, 0)
+        self.assertEqual(engine.sqor, 0)
+        self.assertEqual(cone.get("bottomDiameter"), "0")
+        half = heatshield_place_half(0.2, catalog=Catalog.stock())
+        self.assertAlmostEqual(half, 0.5, places=4)
+        self.assertAlmostEqual(sas.pos[1] - hs.pos[1], 0.09111 + half, places=4)
+        self.assertAlmostEqual(hs.pos[1] - first.pos[1], half + 0.3125, places=4)
+        self.assertGreater(sas.pos[1] - hs.pos[1], 0.191)
+        self.assertGreater(hs.pos[1] - first.pos[1], 0.4125)
         text = dump_attach_fuel(craft, catalog=Catalog.stock())
         self.assertIn("FED  last tank reaches engine", text)
         self.assertNotIn("BLOCKED", text)

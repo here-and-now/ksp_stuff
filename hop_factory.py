@@ -75,6 +75,7 @@ from physics_warp import (
     chute_deploy_sit,
     leftover_call,
     met_elapsed,
+    space_low_sit as _space_low_sit,
     timeout_hit,
 )
 from screenshot import mission_event
@@ -440,23 +441,6 @@ def _leftover_sit(*, down: bool, live_sit: str = "") -> bool:
     """
     live_l = str(live_sit or "").lower()
     return bool(down or "landed" in live_l or "splash" in live_l)
-
-
-def _space_low_sit(live_sit: str = "") -> bool:
-    """InSpaceLow after lid. Flying at 50 km is not this.
-
-    kRPC sub_orbital / orbiting / escaping. 16-23-52Z High Toggle skip
-    never retried in space. Forest / Grasslands: same.
-    """
-    live = str(live_sit or "").lower().replace(" ", "").replace("_", "")
-    if not live or "landed" in live or "splash" in live:
-        return False
-    if "inspacehigh" in live:
-        return False
-    return any(
-        tok in live
-        for tok in ("suborbital", "orbiting", "escaping", "inspacelow", "inspace")
-    )
 
 
 def _space_science_ids() -> tuple[str, ...]:

@@ -25,6 +25,7 @@ from physics_warp import (
     leftover_call,
     leftover_ksc_call,
     rails_zero,
+    space_low_sit,
     set_factor,
     set_rate,
     thick_air_cross_sit,
@@ -551,6 +552,19 @@ def test_timeout_is_met_not_wall():
     assert "semi_deployed" in CHUTE_OPEN
 
 
+def test_space_low_sit_not_flying_lid():
+    """16-23-52Z flying at 50 km is not InSpaceLow; sub_orbital is."""
+    assert not space_low_sit("flying")
+    assert not space_low_sit("landed")
+    assert not space_low_sit("splashed")
+    assert not space_low_sit("")
+    assert space_low_sit("sub_orbital")
+    assert space_low_sit("orbiting")
+    assert space_low_sit("escaping")
+    assert space_low_sit("InSpaceLow")
+    assert not space_low_sit("InSpaceHigh")
+
+
 def test_source_sit_blocks_not_stamp_helpers():
     warp = Path("physics_warp.py").read_text(encoding="utf-8")
     assert "def _loft_after_skip" not in warp
@@ -563,6 +577,7 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "def leftover_ksc_call" in warp
     assert "def leftover_abort_kv" in warp
     assert "def crash_ui_leave" in warp
+    assert "def space_low_sit" in warp
     assert "Skip-save Tracking is not Close" in warp
     assert "def thick_air_sit" in warp
     assert "def thick_air_cross_sit" in warp
@@ -584,6 +599,8 @@ def test_source_sit_blocks_not_stamp_helpers():
     assert "chute_deploy_sit" in factory
     assert "timeout_hit" in factory
     assert "leftover_call" in factory
+    assert "space_low_sit as _space_low_sit" in factory
+    assert "def _space_low_sit" not in factory
     assert "def _lid_alt_reached" in factory
     assert "def _lid_burn_sit" in factory
     assert "def _high_dwell_sit" in factory

@@ -20641,6 +20641,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "C-477 test pins T-500 clearance 0.591/0.8125 not 0.191",
       "created": "2026-08-26T15:51:13Z",
       "desk": "wernher",
       "evidence": [],
@@ -20655,6 +20656,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:07:27Z",
+            "claim": "C-477 pin is T-500 clearance: sas-hs 0.591 / hs-tank 0.8125 (half 0.5, dish bottomDiameter=0, engine sqor=0, FED). Node math 0.191/0.4125 is the detonated 15-14-43Z exhibit, not the living hang.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -20664,11 +20673,11 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "VAB test still pins C-477 SAS-HS 0.191 after T-500 0.5 m clearance rebuild",
       "type": "systems",
-      "updated": "2026-08-26T15:51:45Z"
+      "updated": "2026-08-27T07:07:27Z"
     },
     "T-505": {
       "assignee": "",
@@ -20709,23 +20718,35 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "craft autostrut Heaviest/rigid + engine sqor=0 without HS/chute",
       "created": "2026-08-26T16:04:05Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-506",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-27T07:07:27Z",
+            "claim": "craft autostrut writes Heaviest/rigid on axial stack and stage_engine_first sqor=0. No HS/chute required (C-504 loft). Stayputnik still gets the field.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "craft autostrut Heaviest/rigid on stack + stage-engine sqor=0 without HS/chute",
       "type": "systems",
-      "updated": "2026-08-26T16:04:05Z"
+      "updated": "2026-08-27T07:07:28Z"
     },
     "T-507": {
       "assignee": "",
@@ -21001,23 +21022,35 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "cone INSERT on OKTO top; Stayputnik refused; engine first fire",
       "created": "2026-08-26T16:41:12Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-512",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-27T07:07:28Z",
+            "claim": "craft chute --kind cone INSERTs RC_cone on OKTO top when no chute. Stayputnik has no top; RC_cone srfAttach=0 \u2014 refused. Nylon 50 m. Engine istg=0 sqor=0 first fire; chute last.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "craft chute --kind cone inserts RC_cone stacked on payload core (OKTO top; Stayputnik has no top; RC_cone srfAttach=0); Nylon 50m; engine sqor=0 first fire",
       "type": "systems",
-      "updated": "2026-08-26T16:41:12Z"
+      "updated": "2026-08-27T07:07:28Z"
     },
     "T-513": {
       "assignee": "",
@@ -21058,6 +21091,7 @@
       "assignee": "",
       "blockers": [],
       "category": "systems",
+      "close_why": "space_low_sit block; High lid Toggle is High; InSpaceLow starts in space",
       "created": "2026-08-26T16:43:46Z",
       "desk": "wernher",
       "evidence": [],
@@ -21072,6 +21106,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-27T07:07:07Z",
+            "claim": "space_low_sit extracted to physics_warp. sit_matches flying at 50 km is High, not InSpaceLow. hop_factory Toggle waits space_low_sit then science_ids_for(inspacelow). hop_science_ids(situation=flying) still drops InSpaceLow by design. 16-23-52Z skip-latch is not space-done.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ],
         "note": "16-23-52Z C-504 lofted High ~42 s then InSpaceLow to 268 km. hop_science_ids(situation=flying) drops InSpaceLow. science.sit_matches defaults True for InSpaceLow so a flying-card Toggle at 50 km records High. hop_factory skip-latch science_attempted on cannot-pay \u2014 no retry in space. This-hop stays T-404 FlyingHigh PresMat; InSpaceLow LITE 10 s / TELEMETRY 30 s are shelf until Toggle waits space. Cite like f013."
@@ -21082,14 +21124,14 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "inspacelow",
         "sit-match"
       ],
       "title": "hop Toggle is FlyingHigh lid \u2014 InSpaceLow binds never start",
       "type": "systems",
-      "updated": "2026-08-26T16:43:59Z"
+      "updated": "2026-08-27T07:07:07Z"
     },
     "T-518": {
       "assignee": "",
@@ -21166,23 +21208,35 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "plan hire is inner circle on that ticket, not wreck leftovers",
       "created": "2026-08-26T17:28:45Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "inner-circle-plan",
       "id": "T-520",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-27T07:07:28Z",
+            "claim": "ops.py unsigned ops --tag plan hires lars+gus+linus on THAT ticket, not leftover vehicle/science/control wreck tickets. Leftover and fly_ready still win. Katherine/Eleanor only if dynamics/constellation opt-in. Gene is not this merge.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Mortimer Grokman, CEO",
       "rsi_loop": "none",
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "ops.py: hire lars+gus+linus on ops --tag plan, not leftover wreck tickets",
       "type": "systems",
-      "updated": "2026-08-26T17:28:45Z"
+      "updated": "2026-08-27T07:07:28Z"
     },
     "T-521": {
       "assignee": "",
@@ -22224,6 +22278,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "two-stage CLI: extra wheels, decoupler, Terrier after unlock, refuse locked",
       "created": "2026-08-26T20:58:49Z",
       "desk": "wernher",
       "evidence": [],
@@ -22238,6 +22293,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:07:28Z",
+            "claim": "craft wheel --count extra sasModule Heaviest/rigid. craft two-stage splices proceduralStackDecoupler + upper proc tanks + Terrier. Refuses liquidEngine3_v2 until advRocketry. Valiant FED first stage; decoupler fuelCrossFeed=False; staging Valiant/decoupler/Terrier/RC_cone last. liquid/replace_tanks would flatten the split \u2014 do not. No Hangar locked Terrier.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -22247,11 +22310,11 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "VAB helper: two-stage compose \u2014 extra sasModule, proc decoupler, upper tanks, Terrier after unlock, staging",
       "type": "systems",
-      "updated": "2026-08-26T20:59:33Z"
+      "updated": "2026-08-27T07:07:29Z"
     },
     "T-547": {
       "assignee": "",
@@ -22660,6 +22723,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "leftover abort verb living in emergencies.call",
       "created": "2026-08-26T21:46:11Z",
       "desk": "wernher",
       "evidence": [],
@@ -22674,6 +22738,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:07:07Z",
+            "claim": "ksc leftover already in emergencies.call (ksc_leftover). leftover_call(False) resolves; cut + 1\u00d7; do not recover. Ascent timeout leftover is not KeyError. No ascent.py this close.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
           }
         ]
       },
@@ -22683,11 +22755,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "emergencies.call missing leftover abort verb ascent uses",
       "type": "systems",
-      "updated": "2026-08-26T21:49:35Z"
+      "updated": "2026-08-27T07:07:07Z"
     },
     "T-558": {
       "assignee": "",
@@ -22735,13 +22807,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "space_low_sit named block; High lid is High; InSpaceLow waits space",
       "created": "2026-08-26T21:59:47Z",
       "desk": "wernher",
       "evidence": [],
       "fingerprint": "control-blocks",
       "id": "T-559",
       "payload": {
-        "count": 14
+        "count": 14,
+        "findings": [
+          {
+            "at": "2026-08-27T07:07:07Z",
+            "claim": "control-blocks \u00d714: space_low_sit is the named sit (physics_warp). hop_factory/ascent import it. Flying-card Toggle at High lid records High. InSpaceLow binds start on space_low_sit. Did not retune ascent loft/MECO. T-517 closed.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "wernher"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -22749,11 +22832,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI control-blocks \u00d714",
       "type": "rsi",
-      "updated": "2026-08-26T21:59:47Z"
+      "updated": "2026-08-27T07:07:07Z"
     },
     "T-560": {
       "assignee": "",
@@ -22780,5 +22863,5 @@
       "updated": "2026-08-26T22:16:47Z"
     }
   },
-  "updated": "2026-08-27T07:03:22Z"
+  "updated": "2026-08-27T07:07:29Z"
 }

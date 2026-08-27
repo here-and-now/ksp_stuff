@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-27 — T-559/T-517 space_low_sit in physics_warp (flying at High lid is not InSpaceLow; compose Toggle waits space). T-503 C-477 pin 0.591/0.8125. T-506 autostrut no-HS. T-512 cone INSERT OKTO. T-520 plan hire lars+gus+linus. T-546 two-stage CLI refuse locked Terrier. T-557 leftover verb already living. No Hangar. Never leftover-ksc. Never revert.
+
 - 2026-08-26 — T-557 leftover abort in emergencies.call: verb `ksc leftover` (`ksc_leftover`). leftover_call(False) resolves; cut + 1×; do not recover. Ascent timeout leftover is not KeyError. No ascent.py. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-548/T-549: hop.py parked for orbit; `rf_throttle.py` live is independentThrottlePercentage not UI MainThrottle; `ascent.py` compose (`python main.py ascent`) Valiant loft now / Terrier two-stage later. Tests lock blocks. No hop_factory. Never leftover-ksc. Never revert.

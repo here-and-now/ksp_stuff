@@ -426,6 +426,9 @@ PROBE_NAMES = frozenset(
 )
 DONOR_MK16 = "kspstuff-hop-valiant-t7-chute-pbc"
 DONOR_CONE = "kspstuff-hop-valiant-t7-chute-cone-pbc"
+TERRIER_NAME = "liquidEngine3_v2"
+TERRIER_TECH = "advRocketry"
+DECOUPLER_NAME = "proceduralStackDecoupler"
 T100_VOLUME = 500
 T100_HEIGHT = 0.625
 PRESMAT_OFFSET = (0.16, 0.05, 0.12)
@@ -679,11 +682,21 @@ def axial_tanks(craft: Craft) -> list[CraftPart]:
     return tanks
 
 
+def find_engines(craft: Craft) -> list[CraftPart]:
+    return [
+        p
+        for p in craft.parts
+        if any(p.name.startswith(pref) for pref in ENGINE_PREFIXES)
+    ]
+
+
 def find_engine(craft: Craft) -> CraftPart | None:
-    for p in craft.parts:
-        if any(p.name.startswith(pref) for pref in ENGINE_PREFIXES):
-            return p
-    return None
+    """Booster / first fire: lowest stack engine (Valiant under Terrier)."""
+    engines = find_engines(craft)
+    if not engines:
+        return None
+    engines.sort(key=lambda p: p.pos[1])
+    return engines[0]
 
 
 def find_core(craft: Craft) -> CraftPart | None:
@@ -1095,16 +1108,102 @@ def replace_tanks(
 
 
 def stage_engine_first(craft: Craft) -> None:
-    """Valiant first activate_next_stage; chute last. Chute istg=0 is not empty."""
+    """Valiant first activate_next_stage; chute last. Chute istg=0 is not empty.
+
+    Two-stage: chute sits after decoupler/Terrier istg, not always 1.
+    """
     engine = find_engine(craft)
     if engine is not None:
         engine.istg = 0
         engine.sidx = 0
         engine.sqor = 0
-    for chute in find_chutes(craft):
-        chute.istg = 1 if engine is not None else 0
+    chutes = find_chutes(craft)
+    staged = [
+        p.istg
+        for p in craft.parts
+        if p.sqor >= 0
+        and p is not engine
+        and p not in chutes
+        and p.istg >= 0
+    ]
+    chute_istg = (max(staged) + 1) if staged else (1 if engine is not None else 0)
+    for chute in chutes:
+        chute.istg = chute_istg
         chute.sidx = 0
         chute.sqor = 0
+
+
+def autostrut_stack(
+    craft: Craft,
+    *,
+    mode: str = "Heaviest",
+    rigid: str = "True",
+) -> Craft:
+    """Heaviest/rigid on axial stack. No HS/chute required. Engine sqor=0.
+
+    C-504 loft is no-HS (C-504 shelf). Stayputnik may lack rigid — still
+    writes the field. Forest / Grasslands: same.
+    """
+    for p in craft.parts:
+        if p.attm != 0:
+            continue
+        p.autostrut_mode = mode
+        p.rigid_attachment = rigid
+    stage_engine_first(craft)
+    return craft
+
+
+def _stack_on_top(
+    craft: Craft,
+    parent: CraftPart,
+    child: CraftPart,
+    *,
+    catalog: Catalog,
+    parent_node: str = "top",
+    child_node: str = "bottom",
+) -> CraftPart:
+    p_off = catalog.node(parent.name, parent_node)
+    c_off = catalog.node(child.name, child_node)
+    child.pos = (
+        parent.pos[0] + p_off[0] - c_off[0],
+        parent.pos[1] + p_off[1] - c_off[1],
+        parent.pos[2] + p_off[2] - c_off[2],
+    )
+    child.att_pos0 = child.pos
+    parent.att_n[parent_node] = child.token
+    parent.links.append(child.token)
+    child.att_n[child_node] = parent.token
+    craft.parts.insert(0, child)
+    return child
+
+
+def insert_cone_chute(
+    craft: Craft, *, catalog: Catalog | None = None
+) -> CraftPart:
+    """INSERT RC_cone on payload core top. Stayputnik has no top; cone srfAttach=0."""
+    cat = catalog or Catalog.stock()
+    core = find_core(craft)
+    if core is None:
+        raise CraftError("no probe core to stack RC_cone on")
+    try:
+        cat.node(core.name, "top")
+    except KeyError as exc:
+        raise CraftError(
+            f"{core.name} has no top; RC_cone srfAttach=0 — use OKTO"
+        ) from exc
+    if core.att_n.get("top"):
+        raise CraftError(f"{core.name} top already occupied")
+    chute = CraftPart(
+        name="RC_cone",
+        istg=1,
+        dstg=0,
+        sidx=0,
+        sqor=0,
+    )
+    chute.modules = rc_cone_chute_modules()
+    _stack_on_top(craft, core, chute, catalog=cat)
+    stage_engine_first(craft)
+    return chute
 
 
 def set_nylon_chute(craft: Craft, kind: str = "mk16") -> CraftPart:
@@ -1112,15 +1211,19 @@ def set_nylon_chute(craft: Craft, kind: str = "mk16") -> CraftPart:
 
     Engine is first fire (istg=0 sqor=0). Chute is the later queued stage.
     engine.istg=1 with sqor=-1 leaves chute sqor=0 as the only queued stage.
+    --kind cone with no chute INSERTS RC_cone on OKTO top (T-512).
+    Stayputnik has no top; cone srfAttach=0.
     """
     if kind not in {"mk16", "cone"}:
         raise CraftError("chute kind must be mk16 or cone")
     chutes = find_chutes(craft)
     if not chutes:
-        raise CraftError(
-            "no chute part; clone a chute hang or copy-chute --from "
-            f"{DONOR_MK16 if kind == 'mk16' else DONOR_CONE}"
-        )
+        if kind != "cone":
+            raise CraftError(
+                "no chute part; clone a chute hang or copy-chute --from "
+                f"{DONOR_MK16}"
+            )
+        return insert_cone_chute(craft)
     chute = chutes[0]
     if kind == "mk16":
         if chute.name != "parachuteSingle":
@@ -1346,8 +1449,20 @@ def dump_attach_fuel(
     return "\n".join(lines) + "\n"
 
 
-def insert_wheel(craft: Craft, *, catalog: Catalog | None = None) -> Craft:
-    """sasModule between core and first tank; PresMat radial on the core."""
+def insert_wheel(
+    craft: Craft,
+    *,
+    catalog: Catalog | None = None,
+    count: int = 1,
+) -> Craft:
+    """sasModule between core and first tank; PresMat radial on the core.
+
+    ``count`` is total wheels (T-546 extra for FAR HDG). Idempotent at 1.
+    Extra wheels are Heaviest/rigid.
+    """
+    n = int(count)
+    if n < 1:
+        raise CraftError("wheel count must be >= 1")
     cat = catalog or Catalog.stock()
     core = find_core(craft)
     if core is None:
@@ -1356,9 +1471,18 @@ def insert_wheel(craft: Craft, *, catalog: Catalog | None = None) -> Craft:
     if not tanks:
         raise CraftError("no tank under the core")
     first = tanks[0]
-    if not _find_named(craft, "sasModule"):
-        wheel = CraftPart(name="sasModule", istg=core.istg, dstg=core.dstg)
-        insert_inline(craft, core, first, wheel, catalog=cat)
+    while len(_find_named(craft, "sasModule")) < n:
+        wheels = _find_named(craft, "sasModule")
+        parent = wheels[-1] if wheels else core
+        child = axial_tanks(craft)[0]
+        wheel = CraftPart(
+            name="sasModule",
+            istg=core.istg,
+            dstg=core.dstg,
+            autostrut_mode="Heaviest",
+            rigid_attachment="True",
+        )
+        insert_inline(craft, parent, child, wheel, catalog=cat)
     if not _find_named(craft, "sensorBarometer"):
         surface_attach(craft, core, "sensorBarometer", PRESMAT_OFFSET)
     return craft
@@ -1434,6 +1558,120 @@ def insert_heatshield(
     return hs
 
 
+def unlocked_tech(*, desk_text: str | None = None) -> set[str]:
+    """Owned CTT nodes from desk.md. Do not re-run world."""
+    if desk_text is None:
+        path = Path(__file__).resolve().parent / "docs" / "program" / "desk.md"
+        try:
+            desk_text = path.read_text(encoding="utf-8")
+        except OSError:
+            return set()
+    for line in desk_text.splitlines():
+        if line.lower().startswith("unlocked:"):
+            raw = line.split(":", 1)[1]
+            return {t.strip() for t in raw.split(",") if t.strip() and t.strip() != "(none)"}
+    return set()
+
+
+def decoupler_modules(*, diameter: float = 1.25, length: float = 0.2) -> list[CfgNode]:
+    """Procedural stack decoupler 1.25×0.2. fuelCrossFeed is cfg False."""
+    part = CfgNode(name="MODULE")
+    part.add("name", "ProceduralPart")
+    part.add("isEnabled", "True")
+    part.add("textureSet", "PlainWhite")
+    part.add("shapeName", "Fillet Cylinder")
+    shape = CfgNode(name="MODULE")
+    shape.add("name", "ProceduralShapePill")
+    shape.add("diameter", f"{diameter:g}")
+    shape.add("length", f"{length:g}")
+    shape.add("fillet", "0.05")
+    dec = CfgNode(name="MODULE")
+    dec.add("name", "ModuleDecouple")
+    dec.add("ejectionForce", "250")
+    dec.add("explosiveNodeID", "top")
+    dec.add("stagingEnabled", "True")
+    return [part, shape, dec]
+
+
+def insert_two_stage(
+    craft: Craft,
+    *,
+    upper: int = 1,
+    diameter: float = 1.25,
+    length: float = 1.222,
+    texture: str = "RedstoneStripes",
+    unlocked: set[str] | None = None,
+    catalog: Catalog | None = None,
+) -> Craft:
+    """Splice decoupler + upper proc tanks + Terrier. Refuse locked Terrier.
+
+    Valiant first stage stays FED (last tank attN bottom=Valiant).
+    Decoupler fuelCrossFeed=False between stages. Staging: Valiant
+    sqor=0 first fire / decoupler / Terrier / RC_cone last. No girders.
+    No HS. liquid/replace_tanks would flatten this split — do not call it.
+    """
+    owned = unlocked if unlocked is not None else unlocked_tech()
+    if TERRIER_TECH not in owned:
+        raise CraftError(
+            f"{TERRIER_NAME} LOCKED until {TERRIER_TECH} 45 — do not Hangar"
+        )
+    n_upper = int(upper)
+    if n_upper < 1:
+        raise CraftError("upper tank count must be >= 1")
+    cat = catalog or Catalog.stock()
+    tanks = axial_tanks(craft)
+    engine = find_engine(craft)
+    if not tanks or engine is None:
+        raise CraftError("need first-stage tanks and Valiant to splice two-stage")
+    if any(p.name == DECOUPLER_NAME for p in craft.parts):
+        raise CraftError("decoupler already on craft")
+    if any(p.name == TERRIER_NAME for p in craft.parts):
+        raise CraftError("Terrier already on craft")
+    wheels = _find_named(craft, "sasModule")
+    parent = wheels[-1] if wheels else find_core(craft)
+    if parent is None:
+        raise CraftError("no sasModule or probe core above first tank")
+    first = tanks[0]
+    dec = CraftPart(
+        name=DECOUPLER_NAME,
+        istg=1,
+        dstg=0,
+        sidx=0,
+        sqor=0,
+        autostrut_mode="Heaviest",
+        rigid_attachment="True",
+    )
+    dec.modules = decoupler_modules(diameter=diameter, length=0.2)
+    insert_inline(craft, parent, first, dec, catalog=cat, new_half=0.1)
+    terrier = CraftPart(
+        name=TERRIER_NAME,
+        istg=2,
+        dstg=0,
+        sidx=0,
+        sqor=0,
+        autostrut_mode="Heaviest",
+        rigid_attachment="True",
+    )
+    insert_inline(craft, parent, dec, terrier, catalog=cat)
+    for _ in range(n_upper):
+        tank = CraftPart(
+            name="proceduralTankRealFuels",
+            istg=-1,
+            dstg=0,
+            autostrut_mode="Heaviest",
+            rigid_attachment="True",
+        )
+        mods, res = liquid_cylinder(diameter, length, texture=texture)
+        tank.modules = mods
+        tank.resources = res
+        insert_inline(
+            craft, parent, terrier, tank, catalog=cat, new_half=length * 0.5
+        )
+        parent = tank
+    autostrut_stack(craft)
+    return craft
+
+
 def _write(craft: Craft, path: Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     craft.save(path)
@@ -1446,7 +1684,7 @@ def _load_named(src: str) -> tuple[Craft, Path]:
 
 
 def cmd_craft(argv: list[str] | None = None) -> int:
-    """Gus CLI: clone / tanks / liquid / chute / girders / wheel / heatshield / fuel. No Hangar."""
+    """Gus CLI: clone / tanks / liquid / chute / girders / wheel / autostrut / two-stage / heatshield / fuel. No Hangar."""
     p = argparse.ArgumentParser(
         prog="craft",
         description="VAB helpers on crafts/*.craft. kRPC cannot place parts.",
@@ -1477,7 +1715,10 @@ def cmd_craft(argv: list[str] | None = None) -> int:
         help="ProceduralPart textureSet (PlainWhite / RedstoneStripes)",
     )
     liq.add_argument("--out", default="")
-    ch = sub.add_parser("chute", help="Write Nylon Mk16 5/35 or RC_cone 50m MODULE")
+    ch = sub.add_parser(
+        "chute",
+        help="Nylon Mk16 5/35 or INSERT RC_cone 50m on OKTO top",
+    )
     ch.add_argument("src")
     ch.add_argument("--kind", choices=("mk16", "cone"), default="mk16")
     ch.add_argument("--out", default="")
@@ -1498,7 +1739,29 @@ def cmd_craft(argv: list[str] | None = None) -> int:
     gd.add_argument("--out", default="")
     wh = sub.add_parser("wheel", help="Insert sasModule inline + PresMat on the core")
     wh.add_argument("src")
+    wh.add_argument(
+        "--count",
+        type=int,
+        default=1,
+        help="Total sasModule count (T-546 extra for FAR HDG)",
+    )
     wh.add_argument("--out", default="")
+    st = sub.add_parser(
+        "autostrut",
+        help="Heaviest/rigid on stack + engine sqor=0 (no HS/chute required)",
+    )
+    st.add_argument("src")
+    st.add_argument("--out", default="")
+    ts = sub.add_parser(
+        "two-stage",
+        help="Decoupler + upper proc tanks + Terrier after advRocketry",
+    )
+    ts.add_argument("src")
+    ts.add_argument("--upper", type=int, default=1)
+    ts.add_argument("--diameter", type=float, default=1.25)
+    ts.add_argument("--length", type=float, default=1.222)
+    ts.add_argument("--texture", default="RedstoneStripes")
+    ts.add_argument("--out", default="")
     hs = sub.add_parser(
         "heatshield",
         help="Insert proc HS disc or 1.427-to-1.25 adapter (payload=SAS-tank)",
@@ -1564,7 +1827,17 @@ def cmd_craft(argv: list[str] | None = None) -> int:
             n = 0 if args.strip else args.n
             girder_ring(craft, n, on=args.on, radius=args.radius)
         elif args.act == "wheel":
-            insert_wheel(craft)
+            insert_wheel(craft, count=args.count)
+        elif args.act == "autostrut":
+            autostrut_stack(craft)
+        elif args.act == "two-stage":
+            insert_two_stage(
+                craft,
+                upper=args.upper,
+                diameter=args.diameter,
+                length=args.length,
+                texture=args.texture,
+            )
         elif args.act == "heatshield":
             insert_heatshield(
                 craft,

@@ -33,6 +33,10 @@ STOCK_NODES: dict[str, dict[str, tuple[float, float, float]]] = {
     "liquidEngine_v2": {"top": (0.0, 0.0, 0.0), "bottom": (0.0, -1.63, 0.0)},
     "Decoupler_1": {"top": (0.0, 0.05, 0.0), "bottom": (0.0, -0.05, 0.0)},
     "Decoupler_2": {"top": (0.0, 0.1, 0.0), "bottom": (0.0, -0.1, 0.0)},
+    "proceduralStackDecoupler": {
+        "top": (0.0, 0.1, 0.0),
+        "bottom": (0.0, -0.1, 0.0),
+    },
     "probeCoreHex_v2": {"top": (0.0, 0.1875, 0.0), "bottom": (0.0, -0.1875, 0.0)},
     "probeCoreSphere_v2": {"bottom": (0.0, -0.27448, 0.0)},
     "probeCoreOcto_v2": {
@@ -228,7 +232,10 @@ class Catalog:
         cat = cls(source="stock-nodes")
         for name, nodes in STOCK_NODES.items():
             # PP/stock heatshields do not cross-feed (Heatshield.cfg).
-            cf = False if name == "proceduralHeatshield" else None
+            cf = False if name in {
+                "proceduralHeatshield",
+                "proceduralStackDecoupler",
+            } else None
             cat.parts[name] = PartDef(
                 name=name,
                 title=name,

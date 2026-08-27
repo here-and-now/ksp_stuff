@@ -579,7 +579,7 @@
       "id": "S-514",
       "payload": {
         "biome": "global",
-        "bound": "yes",
+        "bound": "no",
         "craft": "kspstuff-hop-valiant-proc-redstone-pbc",
         "duration_s": 10,
         "ec_rate": 0.03,
@@ -641,17 +641,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-27T07:00:46Z",
+            "claim": "Unbound InSpaceLow LITE 10/0.03/2.00. T-553: T-552 ascent lid-MECO apo ~118-140 km is FlyingHigh (space 140 km); InSpaceLow cannot pay. Scan still unstarted ~2.00. Catalog shelf until a loft sits space. This-hop T-404 FlyingHigh PresMat 305/0.05/2.70 seq0. Host probeCoreOcto_v2 OKTO PAW on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "probeCoreOcto_v2",
         "instrument": "OKTO PAW (probeCoreOcto_v2, no Science-category part) \u2014 tech start \u2014 unlocked n/a \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "this-hop InSpaceLow LITE seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc OKTO PAW. T-552 ascent loft still sits InSpaceLow. Scan still unstarted kerbalism_LITE@InSpaceLow ~2.00. file 0.25 MB / 10 s / 0.03. C-534 loft-through 249-300 km InSpaceLow; lid-MECO 137 km High cannot pay. Leftover High later. Do not re-pin High 305 s. Closed S-515 TELEMETRY InSpaceLow (capped) and S-516 InSpaceLow goo (capped). High/Forest/splash shelf not this-hop: T-368 FlyingHigh goo leftover 0.293, T-069 Forest High TELEMETRY 1.512, T-404 High PresMat 2.70. Bank 8.29 need ~36.71 for advRocketry 45. Not Water. Not Grasslands. Not Surface. recover HD 0.25 MB. recover_banks yes.",
+        "note": "unbound catalog. InSpaceLow LITE 10/0.03/2.00 cannot pay T-552 ascent lid-MECO High apo ~118-140 km (space 140 km). Scan still unstarted ~2.00. File 0.25 MB / 10 s / 0.03. Shelf until a loft sits InSpaceLow (loft-through 249-300 km or circularize). Do not unbind forever. This-hop T-404 FlyingHigh PresMat. Host probeCoreOcto_v2 OKTO PAW on_craft=yes. recover_banks yes.",
         "on_craft": "yes",
         "part": "probeCoreOcto_v2",
         "recover_banks": "yes",
-        "seq": 0,
+        "seq": "",
         "situation": "InSpaceLow",
         "size_mb": 0.25,
         "tech": "start",
@@ -664,16 +672,16 @@
       "sci_expect": 2.0,
       "severity": "S3",
       "sla_s": null,
-      "status": "ready",
+      "status": "inbox",
       "tags": [
         "remaining",
         "inspacelow",
         "lite",
-        "bound"
+        "unbound"
       ],
       "title": "InSpaceLow LITE unstarted 2.00",
       "type": "science",
-      "updated": "2026-08-26T21:30:55Z"
+      "updated": "2026-08-27T07:00:46Z"
     },
     "S-515": {
       "assignee": "linus",
@@ -4021,6 +4029,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:59:58Z",
+            "claim": "06-52-19Z ascent leftover abort sit=flying rec=no chute=stowed after LITE. Tape last 135 km parts=25 apo=324 km heading=303 horiz=1.2 km/s sci +0. Hop pid died; stack sheared on the way down. Close to KSC recovered n=0 bank 8.29. Pulse leftover-while-flying is T-555 ascent.py \u2014 not Gene.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "landing": {
@@ -4249,8 +4265,7 @@
         "learn": "landing: catastrophic impact=1825 m/s heading=303 horiz=1228 pitch=65 sit=flying synth apo=323927 biome=Water rec=no sci=run=1 rem=0 bank=8.29 +0",
         "phase": "hop",
         "science_ids": [
-          "kerbalism_LITE",
-          "mysteryGoo"
+          "barometerScan"
         ],
         "telem_run": "docs/missions/uncrewed/logs/2026-08-27T06-52-19Z-ascent.jsonl",
         "waste": {
@@ -4285,7 +4300,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-27T06:57:24Z"
+      "updated": "2026-08-27T07:00:05Z"
     },
     "T-082": {
       "assignee": "",
@@ -15873,9 +15888,9 @@
       "fingerprint": "flyinghigh-barometer",
       "id": "T-404",
       "payload": {
-        "biome": "",
-        "bound": "no",
-        "craft": "kspstuff-hop-valiant-proc-loft-pbc",
+        "biome": "global",
+        "bound": "yes",
+        "craft": "kspstuff-hop-valiant-proc-redstone-pbc",
         "duration_s": 305,
         "ec_rate": 0.05,
         "est": 2.7,
@@ -15984,16 +15999,25 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-27T07:00:47Z",
+            "claim": "Bound this-hop T-404 barometerScan FlyingHigh 305/0.05/2.70 seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc PresMat. T-552 ascent lid-MECO sits FlyingHigh apo ~118-140 km. High window ~260 s; file credits while recording; 305 s will not finish 2.70. File rem=0 is still the card. Scan unstarted ~2.70. Unbound S-514 InSpaceLow LITE. Leftover High/Forest shelf: T-368 goo leftover 0.293, T-069 Forest TELEMETRY leftover 1.512. T-460 same eid unbound. T-081 science_ids barometerScan. Bank 8.29 need ~36.71 for advRocketry 45. Pulse Toggle FlyingHigh >=50 km. f013 sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+            "evidence": "docs/program/desk.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ],
         "host": "none",
         "instrument": "PresMat Barometer (sensorBarometer) \u2014 tech stability \u2014 unlocked yes \u2014 on_craft yes",
         "kind": "file",
         "leftover": "unstarted",
-        "note": "unbound catalog. FlyingHigh PresMat 305/0.05/2.70 cannot pay C-504 High. MECO-at-lid ~260 s FAR / ~271 s vac (Kepler ceiling 276 s); loft-through ~56 s up. File rem=0 stays the High shelf until a hang holds \u2265305 s in 50\u2013140 km. No High file \u2264250 s pays Shores (T-069 Forest TELEMETRY 25 s leftover cannot pay Shores High; thermo/geiger High capped; goo 641 s sample). This-hop none. T-460 same eid unbound. InSpaceLow S-514/S-515/S-516 shelf (flying Toggle at 50 km does not retry in space). Not Water. Not Grasslands. Not Surface. f013: sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+        "note": "this-hop FlyingHigh PresMat 305/0.05/2.70 seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc. T-552 ascent lid-MECO sits FlyingHigh apo ~118-140 km (space 140 km). High window ~260 s; file credits while recording; 305 s will not finish 2.70. File rem=0 is still the card. Scan unstarted ~2.70; High out is 50 km lid \u2014 this hang crosses 50 km. Unbound S-514 InSpaceLow LITE (cannot pay High). Leftover High/Forest shelf not this-hop: T-368 goo leftover 0.293, T-069 Forest TELEMETRY leftover 1.512 (cannot pay Shores). T-460 same eid one Toggle. T-461 Surface cannot pay loft. Thermo/geiger High capped. Not Water. Not Grasslands. Not Surface. recover HD 1.17 MB not TX 41 h. recover_banks yes. f013: sensorBarometer stability unlocked=yes on_craft=yes.",
         "on_craft": "yes",
         "part": "sensorBarometer",
         "recover_banks": "yes",
+        "seq": 0,
         "situation": "FlyingHigh",
         "size_mb": 1.17,
         "tech": "stability",
@@ -16025,16 +16049,16 @@
       "sci_expect": 2.7,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "ready",
       "tags": [
         "remaining",
         "flyinghigh",
         "barometer",
-        "unbound"
+        "bound"
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-26T17:51:59Z"
+      "updated": "2026-08-27T07:00:47Z"
     },
     "T-405": {
       "assignee": "",
@@ -22417,6 +22441,14 @@
             "owner": "none",
             "real": false,
             "who": "katherine"
+          },
+          {
+            "at": "2026-08-27T07:00:47Z",
+            "claim": "bind: T-404 barometerScan FlyingHigh 305/0.05/2.70 seq0 on C-534. T-552 ascent lid-MECO apo ~118-140 km is High; S-514 InSpaceLow LITE cannot pay (space 140 km). Unbound S-514 catalog. Leftover High/Forest shelf not this-hop (T-368 goo 0.293, T-069 Forest TELEMETRY 1.512). High window ~260 s vs PresMat 305 s \u2014 file credits while recording. recover yes. f013 PresMat stability unlocked=yes on_craft=yes.",
+            "evidence": "docs/program/agree.md",
+            "owner": "none",
+            "real": false,
+            "who": "linus"
           }
         ]
       },
@@ -22433,7 +22465,7 @@
       ],
       "title": "T-552 ascent lid-MECO apo ~118-140 km High; S-514 InSpaceLow cannot pay",
       "type": "ops",
-      "updated": "2026-08-26T21:34:22Z"
+      "updated": "2026-08-27T07:00:47Z"
     },
     "T-554": {
       "assignee": "",
@@ -22660,5 +22692,5 @@
       "updated": "2026-08-26T22:16:47Z"
     }
   },
-  "updated": "2026-08-27T06:57:34Z"
+  "updated": "2026-08-27T07:00:47Z"
 }

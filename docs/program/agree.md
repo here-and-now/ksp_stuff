@@ -8,10 +8,10 @@ katherine` or `--tag dynamics`) — not every pad. Eleanor last-writes
 `--tag constellation`) — not every pad. Hank talks to her directly.
 
 ```
-sit: InSpaceLow
+sit: FlyingHigh
 hang: C-534 kspstuff-hop-valiant-proc-redstone-pbc
-bind: S-514 kerbalism_LITE InSpaceLow 10/0.03
-duration_vs_high: High cannot pay; C-534 loft sits InSpaceLow ~249–300 km; LITE 10s finishes; lid-MECO 137 km High cannot pay LITE; S-516 InSpaceLow goo capped (paid)
+bind: T-404 barometerScan FlyingHigh 305/0.05
+duration_vs_high: T-552 ascent lid-MECO apo ~118–140 km is High (space 140 km); High window ~260 s; PresMat 305 s credits while recording, will not finish 2.70; S-514 InSpaceLow cannot pay
 recover: yes
 meco: python main.py ascent; this-hop Valiant loft RF live until 50 km lid MECO + independent off (vacuum_stage_sit false); Terrier two-stage later no lid-MECO — gravity turn east while thrusting, circ Pe>140 km
 dynamics: this-hop loft-only yes; C-534 ascent = Valiant lid MECO apo~118–140 km High leftover~450–530 horiz~15 m/s; hop tape still loft-through 213–276 km apex horiz 17–30 m/s; circularize still Terrier east gravity turn after 45
@@ -55,21 +55,26 @@ hangs wait a living orbit.
 
 ## Bind (Linus)
 
-This-hop: S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 (file,
-scan still unstarted ~2.00) on C-534
-`kspstuff-hop-valiant-proc-redstone-pbc` OKTO PAW. T-552 ascent loft
-still sits InSpaceLow (apo 249–300 km); LITE 10 s finishes; recover
-HD 0.25 MB. Leftover High later — do not re-pin T-404 305 s. Lid-MECO
-apo 137 km is High — cannot pay LITE; do not unbind S-514. Closed
-S-516 InSpaceLow goo — capped (paid). Closed S-515 TELEMETRY
-InSpaceLow — capped (paid). Thermo InSpaceLow capped; PresMat has no
-InSpaceLow sit. High / Forest / splash leftover stays shelf — keep
-an eye; do not unbind forever; not this-hop: T-368 FlyingHigh goo
-leftover 0.293 (crumbs), T-069 Forest High TELEMETRY leftover 1.512,
-T-404 High PresMat 2.70 (305 s cannot pay). Bank 8.29 need ~36.71
-for advRocketry 45. This-hop LITE ~2.00 still leaves ~34.71. Not
-Water. Not Grasslands. Not Surface. Pulse Toggle in space. f013 LITE
-hosted OKTO PAW on_craft=yes.
+This-hop: T-404 barometerScan FlyingHigh 305/0.05/2.70 seq0 (file,
+scan still unstarted ~2.70) on C-534
+`kspstuff-hop-valiant-proc-redstone-pbc` PresMat. T-552 ascent
+lid-MECO sits FlyingHigh (apo ~118–140 km; space 140 km). High
+window ~260 s; file credits while recording; 305 s will not finish
+2.70. File rem=0 is still the card. Recover HD 1.17 MB. Unbound
+S-514 InSpaceLow LITE 10/0.03/2.00 — lid-MECO High cannot pay
+InSpaceLow; scan still unstarted ~2.00; shelf until a loft sits
+space (loft-through 249–300 km or circularize). Do not unbind
+forever. Leftover High / Forest / splash stays shelf — not this-hop:
+T-368 FlyingHigh goo leftover 0.293 (crumbs), T-069 Forest High
+TELEMETRY leftover 1.512 (cannot pay Shores). T-460 FlyingLow
+PresMat same eid one Toggle. T-461 Surface cannot pay loft. Closed
+S-515 TELEMETRY InSpaceLow — capped (paid). Closed S-516 InSpaceLow
+goo — capped (paid). Thermo/geiger High capped. InSpaceLow
+thermo/TELEMETRY/goo capped; PresMat has no InSpaceLow sit. Bank
+8.29 need ~36.71 for advRocketry 45. This-hop PresMat ~2.70 (partial
+in ~260 s) still leaves ~34. Not Water. Not Grasslands. Not Surface.
+Pulse Toggle FlyingHigh ≥50 km. f013 PresMat sensorBarometer
+stability unlocked=yes on_craft=yes.
 
 ## Pulse (Lars)
 

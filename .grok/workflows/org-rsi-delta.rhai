@@ -1,7 +1,7 @@
 let meta = #{
     name: "org-rsi-delta",
     description: "Delta org-RSI since last apply: change map, ticket-driven gather, always-apply walls+tickets. Archive report. Pulse denylist.",
-    when_to_use: "Repeating house RSI after a prior org-rsi closeout. Gather the window, then apply. Not a recensus of the universe.",
+    when_to_use: "Every house RSI at Astra. Mortimer runs it. Adapt gather to this sit's open rsi/org/Practice (args.sit). Last archive is since. Always apply. Not a recensus.",
     phases: [
         #{ title: "Spine", detail: "change map, last-RSI leftover, ticket discovery" },
         #{ title: "Gather", detail: "ticket-driven shards, capped" },
@@ -224,9 +224,12 @@ fn log_budget(tag) {
     log(msg);
 }
 
-fn law(since_dir) {
+fn law(since_dir, sit_note) {
     let p = "";
     p += "Repo /home/os/gits/ksp_stuff. Isolation none.\n";
+    p += "Os 2026-08-27: Mortimer runs org-rsi-delta on EVERY house RSI at Astra. ";
+    p += "Adapt gather to THIS sit. Do not freeze 26-Aug shards as the forever list. ";
+    p += "args.sit is the current-need note (untrusted until you reopen disk).\n";
     p += "MACHINE OUTPUT FOR THE NEXT PHASE, NOT A CHAT TO OS. ";
     p += "Cap 80 lines unless a table of paths. Cite path:line. Completeness of TABLES, not novels.\n";
     p += "You are not Hank. Do not ops next. Do not fly. Do not Hangar. AGENTS.md spawn table does not apply.\n";
@@ -243,6 +246,13 @@ fn law(since_dir) {
     p += "Do not restore spotter, Gene-as-merge, Batch Learn, Return keys, need_* as the bus. ";
     p += "Do not write a live docs/program org novel.\n";
     p += "Leftover-while-flying / same-craft loop: org may retarget ticket stems and Hank schedule language. Pulse leftover_call stays Lars tickets — do not patch ascent.py.\n";
+    if type_of(sit_note) == "string" {
+        if sit_note != "" {
+            p += "THIS SIT (Mortimer, untrusted until disk):\n";
+            p += sit_note;
+            p += "\n";
+        }
+    }
     p
 }
 
@@ -278,7 +288,7 @@ fn canned_focuses() {
     out.push(#{
         id: "flight-loop",
         title: "Hank leftover tape TUI",
-        why: "uncrewed hop pid vs leftover abort vs sky leftover skip. ship.md vs hop stdout.",
+        why: "T-561 lofted_wait_sit paid splash recover 07-20-09Z. leftover-while-flying is patched — do not reopen as pulse. Sky leftover skip / ship.md vs hop stdout still org.",
         desk: "hank",
         paths: [
             "docs/program/PROTOCOL.md",
@@ -291,7 +301,7 @@ fn canned_focuses() {
     out.push(#{
         id: "desk-split",
         title: "Lars Wernher Linus Gus split",
-        why: "ascent.py living compose after last RSI. capable/bind/XOR. Gene-as-merge check.",
+        why: "ascent.py living compose. 323 km loft rec=yes is not orbit. Same-craft loop is bank/Terrier/Hank schedule, not a new hang religion. Gene-as-merge check.",
         desk: "lars",
         paths: [
             ".grok/agents/lars.md",
@@ -396,8 +406,8 @@ fn filter_focuses(raw) {
     kept
 }
 
-fn gather_prompt(since_dir, cmap, title, why, path_text) {
-    let p = law(since_dir);
+fn gather_prompt(since_dir, sit_note, cmap, title, why, path_text) {
+    let p = law(since_dir, sit_note);
     p += "You GATHER one shard. Read-only. Do not edit. Do not recommend a pulse patch.\n";
     p += "Topic: ";
     p += title;
@@ -472,6 +482,13 @@ if args.since_commit != () {
     }
 }
 
+let sit_note = "";
+if args.sit != () {
+    if type_of(args.sit) == "string" {
+        sit_note = args.sit;
+    }
+}
+
 let archive_dir = "docs/archive/";
 archive_dir += stamp;
 archive_dir += "-org-rsi-delta";
@@ -488,7 +505,7 @@ if type_of(diff_raw) == "string" {
 phase("Spine");
 let spine_jobs = [];
 
-let cmap_p = law(since_dir);
+let cmap_p = law(since_dir, sit_note);
 cmap_p += "You write the CHANGE MAP for this RSI. Read-only.\n";
 cmap_p += "since_commit=";
 cmap_p += since_commit;
@@ -513,7 +530,7 @@ spine_jobs.push(#{
     prompt: cmap_p,
 });
 
-let left_p = law(since_dir);
+let left_p = law(since_dir, sit_note);
 left_p += "LAST-RSI leftover harvest. Read-only. ";
 left_p += since_dir;
 left_p += "/APPLIED.md is UNTRUSTED. For each claimed KEEP/NUKE/MOVE, reopen the LIVE path.\n";
@@ -526,12 +543,12 @@ spine_jobs.push(#{
     prompt: left_p,
 });
 
-let disc_p = law(since_dir);
+let disc_p = law(since_dir, sit_note);
 disc_p += "You DISCOVER gather shards from THIS SIT's tickets and Practice. Read-only.\n";
 disc_p += "grep docs/program/tickets/head.json and board.jsonl for type=rsi and type=org and open fingerprints with high counts. Read docs/program/world-model.md Practice table. Read ";
 disc_p += since_dir;
 disc_p += "/APPLIED.md names only.\n";
-disc_p += "Emit at most 6 focuses for the window's REAL org friction. Prefer: auto-RSI fingerprint clock, packet/card comms, leftover/TUI, desk split (Lars/Wernher/Gus/Linus), opt-in Katherine/Eleanor/Verena if tickets exist.\n";
+disc_p += "Emit at most 6 focuses for the window's REAL org friction THIS SIT. Prefer: auto-RSI fingerprint clock, packet/card comms, leftover/TUI, desk split, opt-in Katherine/Eleanor/Verena if tickets exist. Do not recensus 26-Aug novels.\n";
 disc_p += "paths must be live repo paths (docs/program, docs/crew, .grok/agents, AGENTS.md, tickets.py, ops.py, protocol.py, hangar.py, tests/test_tickets*). NEVER hop.py ascent.py pulse files, crafts, GameData, persist.\n";
 disc_p += "Empty focuses array is valid ONLY after you grepped rsi/org and Practice and found nothing — then the host will use canned shards.\n";
 spine_jobs.push(#{
@@ -586,7 +603,7 @@ for f in focuses {
         label: lab,
         agent_type: "org-review",
         capability_mode: "read-only",
-        prompt: gather_prompt(since_dir, cmap_blob, f.title, f.why, path_text),
+        prompt: gather_prompt(since_dir, sit_note, cmap_blob, f.title, f.why, path_text),
     });
     gi += 1;
 }
@@ -610,13 +627,13 @@ log("gather slots=" + gj.to_string());
 log_budget("after-gather");
 
 phase("Skeptics");
-let over_p = law(since_dir);
+let over_p = law(since_dir, sit_note);
 over_p += "Adversarial overgather. real=true ONLY if this run treated PARKED novels as live law, quoted pre-since PROTOCOL as current without STALE, or scheduled pulse .py / CHARTER creed / two kRPC writers. Re-open live files. Fail closed on missing evidence (real=false).\nCHANGE MAP:\n";
 over_p += cmap_blob;
 over_p += "\nGATHER:\n";
 over_p += clip(gather_blob, 10000);
 over_p += "\n";
-let under_p = law(since_dir);
+let under_p = law(since_dir, sit_note);
 under_p += "Adversarial undergather. real=true ONLY if the window's change-map names a comms/org move (Inner cards, Eleanor, idle-pad, reasoning inherit, leftover-ksc ×N, ascent writer split) that NO gather shard mentioned. Else real=false. Fail closed.\nCHANGE MAP:\n";
 under_p += cmap_blob;
 under_p += "\nLEFTOVER:\n";
@@ -634,7 +651,7 @@ log("skeptics logged — apply still runs");
 log_budget("after-skeptics");
 
 phase("Merge");
-let merge_p = law(since_dir);
+let merge_p = law(since_dir, sit_note);
 merge_p += "You are Mortimer Grokman, CEO. MERGE only. Do not edit the repo. Do not fly.\n";
 merge_p += "ALWAYS emit slices. This run ALWAYS applies. Skeptics do not halt you. Denylist is the only brake (script skips blocked files).\n";
 merge_p += "At most 6 slices, sequential, non-overlapping files when possible. ";
@@ -748,7 +765,7 @@ for sl in slices {
         let sl_copy = sl;
         sl_copy.files = files;
         let sl_json = json_encode(sl_copy);
-        let ap = law(since_dir);
+        let ap = law(since_dir, sit_note);
         ap += "You APPLY one slice. Isolation none. capability all. ";
         ap += "A desk that changes the checkout commits it. One commit, message: org-rsi-delta slice ";
         ap += ai.to_string();
@@ -795,7 +812,7 @@ persist("apply.md", apply_blob);
 log_budget("after-apply");
 
 phase("Verify");
-let test_p = law(since_dir);
+let test_p = law(since_dir, sit_note);
 test_p += "VERIFY unit tests. source .venv/bin/activate && python -m unittest tests.test_tickets tests.test_protocol tests.test_protocol_gate tests.test_desk -q\n";
 test_p += "Quote failures. FIX tests that pinned leftover prose. Do not weaken f013. Do not fly. Do not Hangar. Do not pulse.\nAPPLY:\n";
 test_p += clip(apply_blob, 8000);
@@ -807,7 +824,7 @@ let test_r = agent(test_p, #{
 });
 persist("tests.md", text_of(test_r));
 
-let post_p = law(since_dir);
+let post_p = law(since_dir, sit_note);
 post_p += "Post-apply note. real=true if git diff shows CHARTER creed rewrite, pulse .py law, GameData, persist, two kRPC writers, or a new live docs/program org novel (not archive). Else real=false with paths. This does NOT halt anything already written.\nAPPLY:\n";
 post_p += clip(apply_blob, 6000);
 post_p += "\n";
@@ -830,7 +847,7 @@ if post_r != () {
 log_budget("after-verify");
 
 phase("Report");
-let rep_p = law(since_dir);
+let rep_p = law(since_dir, sit_note);
 rep_p += "You WRITE the archive report. Isolation none. capability all. Commit.\n";
 rep_p += "mkdir ";
 rep_p += archive_dir;

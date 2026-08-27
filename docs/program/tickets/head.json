@@ -94,7 +94,7 @@
     "land-or-splash": 1,
     "learn-rsi-jump": 1,
     "leftover-hides-unstarted": 1,
-    "leftover-ksc": 7,
+    "leftover-ksc": 9,
     "leftover-ksc-docs": 1,
     "leftover-ksc-voodoo": 1,
     "leftover-lf-suicide-recut": 1,
@@ -346,6 +346,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:01Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. Hangar 15-52-38Z parts=397 blob. FED is not enough. Did not restamp yes. Do not Hangar. Pad is C-534. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -361,7 +369,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:37Z"
+      "updated": "2026-08-27T07:16:01Z"
     },
     "C-504": {
       "assignee": "",
@@ -431,6 +439,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:01Z",
+            "claim": "shelf kspstuff-hop-valiant-proc-loft-pbc capable yes. craft fuel FED last tank attN bottom=Valiant. 7x proc 1.25x0.625 Default 2415 kero + 3x girder mid. Nylon RC_cone 50m last. Engine first fire. No HS. Pad is C-534. 268 km loft is not orbit. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -444,7 +460,7 @@
       "tags": [],
       "title": "One procedural loft hang \u2014 FED, Hangar-safe, not C-477 blob",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:37Z"
+      "updated": "2026-08-27T07:16:01Z"
     },
     "C-534": {
       "assignee": "",
@@ -508,6 +524,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:01Z",
+            "claim": "pad hang kspstuff-hop-valiant-proc-redstone-pbc capable yes this sit. craft fuel FED last tank attN bottom=Valiant. 4x 1500 L RedstoneStripes 2700 kero, girders none, no HS. Engine istg=0 sqor=0 first fire; RC_cone Nylon 50m istg=1 sqor=0 last. Did not replace C-534. Did not Hangar. C-504 shelf. C-544 donor capable no (Terrier LOCKED advRocketry 45). C-477 blob capable no. Omni SurfAntenna Cape 64 bps. f013 PresMat stability unlocked=yes on_craft=yes; Goo start on_craft; geiger e101 on_craft; 2HOT start on_craft TELEMETRY/LITE OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -521,7 +545,7 @@
       "tags": [],
       "title": "Push generalRocketry: one proc hang, no girders, bigger tanks, Redstone stripes",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:37Z"
+      "updated": "2026-08-27T07:16:01Z"
     },
     "C-544": {
       "assignee": "",
@@ -551,6 +575,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:01Z",
+            "claim": "capable no kspstuff-hop-valiant-proc-orbit-pbc. craft fuel FED last tank attN bottom=Valiant. Clone C-534 + 2 extra sasModule. Terrier liquidEngine3_v2 LOCKED advRocketry 45 \u2014 not on file; first-stage donor only, not two-stage circularize. Pad stays C-534. Did not Hangar locked part. Reliant/TD-06 Available now is an alt, not pad empty. Helper T-546 two-stage compose after unlock. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY/LITE OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -566,7 +598,7 @@
       ],
       "title": "Orbit first-stage donor: extra wheels, Valiant; Terrier upper after advRocketry 45",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:37Z"
+      "updated": "2026-08-27T07:16:01Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -14899,6 +14931,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:02Z",
+            "claim": "shelf kspstuff-hop-valiant-t7-pbc capable yes. 13-31-03Z apo 88.8 km is still the >=50 km proof. Not the pad hang. Pad is C-534. Do not Hangar t7-chute Mk16. Did not Hangar. fingerprint aero-stiff-chute. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14913,7 +14953,7 @@
       "tags": [],
       "title": "Seat t7-pbc (88.8 km proof) \u2014 Mk16 t7-chute is not lofting",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:59Z"
+      "updated": "2026-08-27T07:16:02Z"
     },
     "T-388": {
       "assignee": "",
@@ -15601,6 +15641,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:02Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-pbc. lithobrake is not recover. Did not restamp yes. Pad is C-534. Do not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15615,7 +15663,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:37Z"
+      "updated": "2026-08-27T07:16:02Z"
     },
     "T-401": {
       "assignee": "",
@@ -15753,6 +15801,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:02Z",
+            "claim": "capable no t7-wheel-hs. HS BLOCKED Ablator-only / Hangar-detonating splice. Did not restamp yes. Pad is C-534. Do not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15769,7 +15825,7 @@
       ],
       "title": "t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:37Z"
+      "updated": "2026-08-27T07:16:02Z"
     },
     "T-403": {
       "assignee": "",
@@ -15872,6 +15928,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:02Z",
+            "claim": "shelf t7-wheel-cone capable yes FED silk. Not pad. Pad is C-534. Do not Hangar this sit. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15888,7 +15952,7 @@
       ],
       "title": "t7-wheel-cone: RC_cone 50m recover alt of t7-wheel \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:59Z"
+      "updated": "2026-08-27T07:16:02Z"
     },
     "T-404": {
       "assignee": "linus",
@@ -16024,6 +16088,14 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-27T07:16:23Z",
+            "claim": "Kept this-hop T-404 barometerScan FlyingHigh 305/0.05/2.70 seq0 on C-534 kspstuff-hop-valiant-proc-redstone-pbc PresMat. T-552 ascent lid-MECO sits FlyingHigh apo ~118-140 km (space 140 km). Did not rebind S-514 InSpaceLow LITE \u2014 High cannot pay InSpaceLow. Scan still unstarted ~2.70; file rem=0 still the card. High window ~260 s; file credits while recording; 305 s will not finish 2.70. Leftover High/Forest shelf not this-hop: T-368 goo leftover 0.293, T-069 Forest TELEMETRY leftover 1.512. T-460 same eid unbound. T-461 Surface cannot pay loft. Bank 8.29 need ~36.71 for advRocketry 45. recover HD 1.17 MB. Pulse Toggle FlyingHigh >=50 km. f013 sensorBarometer stability unlocked=yes on_craft=yes. recover_banks yes.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "host": "none",
@@ -16075,7 +16147,7 @@
       ],
       "title": "FlyingHigh barometer unstarted 2.70",
       "type": "science",
-      "updated": "2026-08-27T07:00:47Z"
+      "updated": "2026-08-27T07:16:23Z"
     },
     "T-405": {
       "assignee": "",
@@ -16255,6 +16327,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:03Z",
+            "claim": "shelf kspstuff-hop-valiant-t7-wheel-proc-pbc capable yes FED. Not pad. Pad is C-534. Do not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16271,7 +16351,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-27T06:57:00Z"
+      "updated": "2026-08-27T07:16:03Z"
     },
     "T-407": {
       "assignee": "",
@@ -16401,6 +16481,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:03Z",
+            "claim": "shelf t7-wheel-oxstat capable yes. Dwell EC alt not loft. Pad is C-534. Did not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16415,7 +16503,7 @@
       "tags": [],
       "title": "t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-27T06:57:00Z"
+      "updated": "2026-08-27T07:16:03Z"
     },
     "T-409": {
       "assignee": "",
@@ -16518,6 +16606,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:03Z",
+            "claim": "shelf t7-wheel-nose capable yes. Aero alt not silk. Pad is C-534. Did not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16532,7 +16628,7 @@
       "tags": [],
       "title": "t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-27T06:57:00Z"
+      "updated": "2026-08-27T07:16:03Z"
     },
     "T-410": {
       "assignee": "",
@@ -17440,6 +17536,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:02Z",
+            "claim": "capable no t7-wheel-proc-hs. HS BLOCKED Ablator-only / Hangar-detonating splice. Did not restamp yes. Pad is C-534. Do not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17456,7 +17560,7 @@
       ],
       "title": "t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-27T06:56:38Z"
+      "updated": "2026-08-27T07:16:02Z"
     },
     "T-429": {
       "assignee": "",
@@ -17602,6 +17706,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:03Z",
+            "claim": "shelf t7-wheel-proc-cone capable yes FED silk. Not pad. Pad is C-534. Do not Hangar this sit. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17618,7 +17730,7 @@
       ],
       "title": "t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-27T06:57:00Z"
+      "updated": "2026-08-27T07:16:03Z"
     },
     "T-431": {
       "assignee": "",
@@ -17705,6 +17817,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:03Z",
+            "claim": "shelf t7-wheel-proc-oxstat capable yes. Dwell EC alt not loft. Pad is C-534. Did not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17719,7 +17839,7 @@
       "tags": [],
       "title": "t7-wheel-proc-oxstat: 4x OX-STAT on t7-wheel-proc for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-27T06:57:00Z"
+      "updated": "2026-08-27T07:16:03Z"
     },
     "T-432": {
       "assignee": "",
@@ -17849,6 +17969,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:03Z",
+            "claim": "shelf t7-wheel-proc-nose capable yes. Aero alt not silk. Pad is C-534. Did not Hangar. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17863,7 +17991,7 @@
       "tags": [],
       "title": "t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-27T06:57:00Z"
+      "updated": "2026-08-27T07:16:03Z"
     },
     "T-434": {
       "assignee": "",
@@ -21763,6 +21891,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:16:02Z",
+            "claim": "C-534 still cannot circularize. Pad hang C-534 kspstuff-hop-valiant-proc-redstone-pbc capable yes FED silk no HS. Orbit donor C-544 kspstuff-hop-valiant-proc-orbit-pbc capable no \u2014 Terrier liquidEngine3_v2 LOCKED advRocketry 45 not on file. Apex horiz tens of m/s vs 7.75 km/s. Pe on the ground. Did not Hangar locked part. Did not replace C-534. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "to": "gus"
@@ -21780,7 +21916,7 @@
       ],
       "title": "C-504 cannot circularize: apex horiz 40-84 m/s vs 7.75 km/s; Terrier is a new two-stage hang after 45",
       "type": "ops",
-      "updated": "2026-08-27T06:57:01Z"
+      "updated": "2026-08-27T07:16:02Z"
     },
     "T-532": {
       "assignee": "",
@@ -22585,6 +22721,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "T-404 FlyingHigh PresMat 305/0.05/2.70 seq0 is this-hop bind on C-534 lid-MECO High (apo ~118-140 km). S-514 InSpaceLow LITE unbound catalog \u2014 cannot pay High. Shelf T-368 goo leftover 0.293 and T-069 Forest TELEMETRY leftover 1.512. recover yes.",
       "created": "2026-08-26T21:34:15Z",
       "desk": "linus",
       "evidence": [],
@@ -22617,13 +22754,13 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "T-552 ascent lid-MECO apo ~118-140 km High; S-514 InSpaceLow cannot pay",
       "type": "ops",
-      "updated": "2026-08-27T07:00:47Z"
+      "updated": "2026-08-27T07:16:23Z"
     },
     "T-554": {
       "assignee": "",
@@ -22886,7 +23023,53 @@
       "title": "Tomorrow: first orbit \u2014 bank advRocketry 45, rec HD, east turn, Terrier two-stage",
       "type": "ops",
       "updated": "2026-08-26T22:16:47Z"
+    },
+    "T-561": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-27T07:13:32Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "leftover-ksc",
+      "id": "T-561",
+      "payload": {},
+      "priority": "P2",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S3",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "ascent timeout leftover while flying rec=no",
+      "type": "control",
+      "updated": "2026-08-27T07:13:32Z"
+    },
+    "T-562": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-27T07:13:32Z",
+      "desk": "mortimer",
+      "evidence": [],
+      "fingerprint": "leftover-ksc",
+      "id": "T-562",
+      "payload": {
+        "count": 8
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI leftover-ksc \u00d78",
+      "type": "rsi",
+      "updated": "2026-08-27T07:13:32Z"
     }
   },
-  "updated": "2026-08-27T07:11:53Z"
+  "updated": "2026-08-27T07:16:23Z"
 }

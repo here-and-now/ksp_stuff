@@ -16,4 +16,8 @@ Live cutover work is the `org-pristine-cutover` workflow, not those notes.
 program shims, world-model dump, org-flow). Parked — not dispatch.
 Chair stub stays live at `docs/program/world-model.md`.
 
+`2026-08-27-org-rsi-delta/` is parked apply report (T-562 clock+stem,
+Chair+Verena Inner). Parked — not dispatch. Ticket bus remains
+`python main.py tickets`.
+
 Agents, kRPC traps (`docs/agent-notes.md`), and `.py` stay in the tree.

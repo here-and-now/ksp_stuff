@@ -23084,16 +23084,25 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "lofted_wait paid; stem leftover-while-flying; do not reopen as pulse",
       "created": "2026-08-27T07:13:32Z",
       "desk": "lars",
       "evidence": [],
-      "fingerprint": "leftover-ksc",
+      "fingerprint": "leftover-while-flying",
       "id": "T-561",
       "payload": {
         "findings": [
           {
             "at": "2026-08-27T07:18:28Z",
             "claim": "ascent.py lofted_wait_sit: timeout leftover from High silks/coasts until down+recoverable, not ksc leftover while lofted rec=no. 06-52-19Z MET 604 alt 135 km chute stowed parts 25; 22-11-37Z chute armed still flying leftover then shear. leftover_call still recover vs ksc leftover once down or never lofted. Circularize rec=no stays leftover.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-27T08:24:35Z",
+            "claim": "pulse paid 07-20-09Z splash rec=yes +0; retarget leftover-while-flying; leftover-ksc is load RIP not lofted timeout",
             "evidence": "",
             "owner": "none",
             "real": false,
@@ -23107,16 +23116,17 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "ascent timeout leftover while flying rec=no",
       "type": "control",
-      "updated": "2026-08-27T07:18:28Z"
+      "updated": "2026-08-27T08:24:35Z"
     },
     "T-562": {
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "clock+stem; leftover-ksc load RIP; leftover-while-flying sibling; rsi tickets do not bump x3",
       "created": "2026-08-27T07:13:32Z",
       "desk": "mortimer",
       "evidence": [],
@@ -23132,6 +23142,22 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T08:22:12Z",
+            "claim": "PROTOCOL leftover walk: leftover-ksc load RIP; lofted timeout rec=no is leftover-while-flying (silk/coast until down+recoverable) not leftover-ksc not leftover-prelaunch-ghost. \u00d73 work-only; rsi do not bump; remint 3 new work after last rsi. OPS leftover table: lock-free recover()+Close; airborne rec=0 occupancy. BRIEF/GLOSSARY sibling; leftover-while-flying does not alias. Chair+Verena Inner this apply. Pad still flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-27T08:24:36Z",
+            "claim": "auto-RSI eat: leftover-ksc grab-bag + rsi counted in fps; kernel work-only + 3 new work after rsi close",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -23141,12 +23167,12 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI leftover-ksc \u00d78",
       "type": "rsi",
-      "updated": "2026-08-27T08:16:01Z"
+      "updated": "2026-08-27T08:24:36Z"
     }
   },
-  "updated": "2026-08-27T08:16:02Z"
+  "updated": "2026-08-27T08:24:36Z"
 }

@@ -1,5 +1,6 @@
 # Hank Grokman — log
 
+- 2026-08-27 — leftover-while-flying is not leftover-ksc; lock-free recover()+Close; do not Close while lofted rec=no. T-561 retarget+close; T-562 close. Did not fly. Did not Hangar.
 - 2026-08-27 — 07-04-36Z exit 2 leftover-while-flying. Os warp — tape not a pulse sample. Close recovered n=0; sky wreck leftover later. No Lars from this run. Pad sat.
 - 2026-08-27 — Os timewarp on 07-09Z ascent. T-081 / T-509: tape may be wonky. Do not overfit lid MECO or leftover from this run.
 - 2026-08-27 — T-081 06-52-19Z ascent exit 2 leftover-while-flying rec=no chute=stowed after LITE. Tape last 135 km parts=25 apo=324 km heading=303 +0. Close to KSC recovered n=0. Pad leftover 0. Sit hop; Lars already on T-555 ascent.py. Not Gene.

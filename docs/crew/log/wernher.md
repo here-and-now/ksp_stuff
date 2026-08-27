@@ -1,5 +1,7 @@
 # Wernher Grokman — log
 
+- 2026-08-27 — T-562 leftover-ksc auto-RSI clock: fps work-only; rsi does not bump; remint after 3 new work since last rsi. Practice leftover-ksc 6 work-only (T-396/479/501/555/557 + T-561 open). No pulse. Never leftover-ksc. Never revert.
+
 - 2026-08-27 — T-559/T-517 space_low_sit in physics_warp (flying at High lid is not InSpaceLow; compose Toggle waits space). T-503 C-477 pin 0.591/0.8125. T-506 autostrut no-HS. T-512 cone INSERT OKTO. T-520 plan hire lars+gus+linus. T-546 two-stage CLI refuse locked Terrier. T-557 leftover verb already living. No Hangar. Never leftover-ksc. Never revert.
 
 - 2026-08-26 — T-557 leftover abort in emergencies.call: verb `ksc leftover` (`ksc_leftover`). leftover_call(False) resolves; cut + 1×; do not recover. Ascent timeout leftover is not KeyError. No ascent.py. Never leftover-ksc. Never revert.

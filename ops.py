@@ -93,6 +93,7 @@ def _ready_status(t: dict[str, Any]) -> bool:
 
 
 def _org_rsi_tickets() -> list[dict[str, Any]]:
+    """Open rsi/org/ctt. No stem skip — fly_ready still hires Mortimer."""
     return [
         t
         for t in list_tickets(open_only=True)

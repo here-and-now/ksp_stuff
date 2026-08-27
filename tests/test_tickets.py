@@ -152,6 +152,82 @@ class TestTickets(unittest.TestCase):
         self.assertEqual(len(rsi_rows), 1)
         self.assertIsNone(tickets.maybe_open_rsi("ec=0-after-loft"))
 
+    def test_rsi_open_does_not_raise_fingerprint_count(self):
+        for i in range(3):
+            tickets.open_ticket(
+                type="control",
+                title=f"clock {i}",
+                reporter="Jebediah",
+                fingerprint="heading-never-090",
+            )
+        self.assertEqual(tickets.fingerprint_count("heading-never-090"), 3)
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(len(rsi_rows), 1)
+        self.assertEqual(tickets.fingerprint_count("heading-never-090"), 3)
+        ghost = tickets.open_ticket(
+            type="rsi",
+            title="RSI ghost",
+            reporter="Hank",
+            desk="mortimer",
+        )
+        tickets.patch_ticket(
+            ghost["id"], {"fingerprint": "heading-never-090"}, who="hank"
+        )
+        self.assertEqual(tickets.fingerprint_count("heading-never-090"), 3)
+
+    def test_rsi_close_one_more_does_not_remint(self):
+        for i in range(3):
+            tickets.open_ticket(
+                type="control",
+                title=f"clock {i}",
+                reporter="Jebediah",
+                fingerprint="heading-never-090",
+            )
+        rsi = [t for t in tickets.list_tickets() if t.get("type") == "rsi"][0]
+        tickets.close_ticket(rsi["id"], why="clock", who="hank")
+        tickets.open_ticket(
+            type="control",
+            title="clock again",
+            reporter="Jebediah",
+            fingerprint="heading-never-090",
+        )
+        self.assertEqual(
+            [t for t in tickets.list_tickets() if t.get("type") == "rsi"],
+            [],
+        )
+        self.assertIsNone(tickets.maybe_open_rsi("heading-never-090"))
+
+    def test_rsi_third_work_after_close_remints(self):
+        for i in range(3):
+            tickets.open_ticket(
+                type="control",
+                title=f"clock {i}",
+                reporter="Jebediah",
+                fingerprint="heading-never-090",
+            )
+        rsi = [t for t in tickets.list_tickets() if t.get("type") == "rsi"][0]
+        tickets.close_ticket(rsi["id"], why="clock", who="hank")
+        for i in range(2):
+            tickets.open_ticket(
+                type="control",
+                title=f"clock after {i}",
+                reporter="Jebediah",
+                fingerprint="heading-never-090",
+            )
+        self.assertEqual(
+            [t for t in tickets.list_tickets() if t.get("type") == "rsi"],
+            [],
+        )
+        tickets.open_ticket(
+            type="control",
+            title="clock after 2",
+            reporter="Jebediah",
+            fingerprint="heading-never-090",
+        )
+        rsi_rows = [t for t in tickets.list_tickets() if t.get("type") == "rsi"]
+        self.assertEqual(len(rsi_rows), 1)
+        self.assertEqual(rsi_rows[0]["fingerprint"], "heading-never-090")
+
     def test_rsi_software_desk_wernher(self):
         for i in range(3):
             tickets.open_ticket(

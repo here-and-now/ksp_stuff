@@ -281,7 +281,7 @@ def _rebuild() -> dict[str, Any]:
             t = dict(ev["ticket"])
             tickets[t["id"]] = t
             fp = t.get("fingerprint") or ""
-            if fp:
+            if fp and t.get("type") != "rsi":
                 fps[fp] = fps.get(fp, 0) + 1
         elif kind == "patch":
             tid = ev["id"]
@@ -291,7 +291,7 @@ def _rebuild() -> dict[str, Any]:
             tickets[tid] = {**tickets[tid], **ev.get("fields", {})}
             tickets[tid]["updated"] = ev.get("at") or tickets[tid].get("updated")
             new_fp = tickets[tid].get("fingerprint") or ""
-            if new_fp and not prev_fp:
+            if new_fp and not prev_fp and tickets[tid].get("type") != "rsi":
                 fps[new_fp] = fps.get(new_fp, 0) + 1
         elif kind == "fp":
             fp = ev.get("fp") or ""
@@ -1572,13 +1572,88 @@ def fingerprint_count(fp: str) -> int:
     return int(fps.get(fp, 0))
 
 
+_RSI_CLOSED = frozenset({"done", "wont"})
+
+
+def _work_hits_since_last_rsi(fp: str) -> int | None:
+    """Work opens/first-set after the last rsi open/close for this stem.
+
+    None if no rsi for this stem exists. rsi tickets do not count.
+    """
+    events = _load_events()
+    state: dict[str, dict[str, Any]] = {}
+    last: int | None = None
+    for i, ev in enumerate(events):
+        kind = ev.get("op")
+        if kind == "open":
+            t = dict(ev.get("ticket") or {})
+            tid = t.get("id") or ""
+            if tid:
+                state[tid] = t
+            if t.get("type") == "rsi" and (t.get("fingerprint") or "") == fp:
+                last = i
+            continue
+        if kind != "patch":
+            continue
+        tid = ev.get("id")
+        if tid not in state:
+            continue
+        prev_status = str(state[tid].get("status") or "")
+        prev_fp = state[tid].get("fingerprint") or ""
+        state[tid] = {**state[tid], **ev.get("fields", {})}
+        if state[tid].get("type") != "rsi":
+            continue
+        new_fp = state[tid].get("fingerprint") or ""
+        if new_fp != fp:
+            continue
+        new_status = str(state[tid].get("status") or "")
+        if new_fp and not prev_fp:
+            last = i
+        elif new_status in _RSI_CLOSED and prev_status not in _RSI_CLOSED:
+            last = i
+    if last is None:
+        return None
+    n = 0
+    seen: dict[str, dict[str, Any]] = {}
+    for i, ev in enumerate(events):
+        kind = ev.get("op")
+        if kind == "open":
+            t = dict(ev.get("ticket") or {})
+            tid = t.get("id") or ""
+            if tid:
+                seen[tid] = t
+            if i <= last or t.get("type") == "rsi":
+                continue
+            if (t.get("fingerprint") or "") == fp:
+                n += 1
+            continue
+        if kind != "patch":
+            continue
+        tid = ev.get("id")
+        if tid not in seen:
+            continue
+        prev_fp = seen[tid].get("fingerprint") or ""
+        seen[tid] = {**seen[tid], **ev.get("fields", {})}
+        if i <= last or seen[tid].get("type") == "rsi":
+            continue
+        new_fp = seen[tid].get("fingerprint") or ""
+        if new_fp == fp and not prev_fp:
+            n += 1
+    return n
+
+
 def maybe_open_rsi(
     fp: str,
     *,
     reporter: str = "Hank Grokman, COO",
     rsi_loop: str | None = None,
 ) -> dict[str, Any] | None:
-    """At 3 hits, open an RSI ticket if none open for this fingerprint."""
+    """Open type=rsi at 3 work hits if none open for this fingerprint.
+
+    rsi tickets do not bump the clock. After any rsi for this stem exists,
+    remint only when 3 work tickets with this fingerprint were created
+    after that last rsi.
+    """
     fp = normalize_fingerprint(fp)
     if not fp:
         return None
@@ -1588,6 +1663,9 @@ def maybe_open_rsi(
     for t in list_tickets(open_only=True):
         if t.get("type") == "rsi" and t.get("fingerprint") == fp:
             return None
+    since = _work_hits_since_last_rsi(fp)
+    if since is not None and since < 3:
+        return None
     loop = (rsi_loop or "").strip()
     if not loop:
         loop = "ops"

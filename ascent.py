@@ -7,13 +7,17 @@ inland to hop_factory. ``python main.py ascent`` is this file.
 
 Valiant loft now: apply live 1 until High lid MECO, then coast.
 Heading while live is Autopilot east (SAS off, engage once, surface
-frame) — SAS Stability is not a heading. Do not wait Terrier. Keyboard
+frame) — SAS Stability is not a heading. ``RF.apply`` paints SAS on;
+hold_live clears it once left_pad. Do not wait Terrier. Keyboard
 pitch/yaw on SAS is not this. After lid MECO independent is off: no
-plume, no moment. Terrier two-stage later: keep live through
-first-stage burnout (same east turn — no lid MECO), stage, vacuum
-apply live near apo until Pe ≥ space. Do not freeze Flea / Hammer /
-4t / splash-090. Forest / Grasslands: same function. Tests lock
-these sits, not a dead hang.
+plume, no moment. Last write after lid is ``RF.cut``. Plume still up
+is still the burn — warp follows ``RF.burning``, not the keep flag
+(06-52-19Z / 22-11-37Z UI throttle 0 thrust 100 kN past 50 km then
+4× emptied tanks apo 257–323 km). Terrier two-stage later: keep live
+through first-stage burnout (same east turn — no lid MECO), stage,
+vacuum apply live near apo until Pe ≥ space. Do not freeze Flea /
+Hammer / 4t / splash-090. Forest / Grasslands: same function. Tests
+lock these sits, not a dead hang.
 """
 
 from __future__ import annotations
@@ -30,6 +34,7 @@ from physics_warp import (
     chute_arm_sit,
     chute_deploy_sit,
     leftover_call,
+    space_low_sit as space_low_block,
     timeout_hit,
     unpause_clock,
 )
@@ -95,8 +100,9 @@ def keep_live_sit(
     """After light, keep independent live until MECO.
 
     Airborne UI MainThrottle GET 0 is not MECO. Loft: lid alt or
-    crumbs. Two-stage: leftover LF is still the first-stage burn —
-    no lid MECO. Pad sit after light is still the start.
+    crumbs — 06-52-19Z 59 km still thrusting is this sit, not keep.
+    Two-stage: leftover LF is still the first-stage burn — no lid
+    MECO. Pad sit after light is still the start.
     """
     if not lit or down:
         return False
@@ -180,11 +186,12 @@ def space_low_sit(
 ) -> bool:
     """InSpaceLow after lid. Flying at 50 km is not this.
 
-    kRPC sub_orbital / orbiting / escaping. Forest / Grasslands: same.
+    Compose gate is lofted_lid / down. Live sit is physics_warp.
+    Forest / Grasslands: same.
     """
     if not lofted_lid or down:
         return False
-    return H.sit_matches(live_sit, "", "InSpaceLow", "")
+    return space_low_block(live_sit)
 
 
 def circularize_sit(
@@ -297,9 +304,21 @@ def light(
     return True
 
 
-def hold_live(vessel: object) -> None:
-    """Restoke independent 1 without re-enable."""
+def hold_live(vessel: object, *, sas: bool = False) -> None:
+    """Restoke independent 1 without re-enable.
+
+    ``RF.apply`` paints SAS on. SAS Stability is not a heading — pad
+    sit may keep it; the east turn clears it. Forest / Grasslands: same.
+    """
     RF.apply(vessel, 1.0)
+    if sas:
+        return
+    try:
+        control = getattr(vessel, "control", None)
+        if control is not None:
+            control.sas = False
+    except Exception:
+        pass
 
 
 def run_ascent_vessel(
@@ -411,7 +430,7 @@ def run_ascent_vessel(
                 lofted_lid=lofted_lid,
             )
             if keep and not deaf:
-                hold_live(vessel)
+                hold_live(vessel, sas=not left_pad)
             elif lit and not deaf:
                 if loft_meco_sit(
                     snap,
@@ -514,7 +533,7 @@ def run_ascent_vessel(
                 chute_armed = True
             if lofted_lid and not down and chute_deploy_sit(snap):
                 H.deploy_chutes(vessel, on_log)
-            burning_now = RF.burning(vessel, snap, lofted=lofted) if keep else False
+            burning_now = RF.burning(vessel, snap, lofted=lofted)
             apply_sit_warp(
                 session,
                 snap,

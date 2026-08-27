@@ -1,5 +1,6 @@
 # Lars Grokman — log
 
+- 2026-08-27 — T-509 T-558: ascent.py last write after 50 km live is RF.cut; warp follows RF.burning not the keep flag. 06-52-19Z/22-11-37Z UI throttle 0 thrust 100 kN past 50 km then 4× emptied tanks. hold_live clears SAS once left_pad — RF.apply SAS Stability is not a heading. Do not Hangar.
 - 2026-08-26 — T-558 turn_live: ascent.py loft SAS off, AP engage once, `_steer_east` heading 90 while independent still 1. Heading 297 was SAS Stability, not FAR/gimbal. Do not wait Terrier. Lid MECO still 50 km. Do not Hangar.
 - 2026-08-26 — T-555 leftover-ksc: ascent.py timeout leftover uses leftover_call then recover / abort_ksc_leftover — not emergencies.call("ksc leftover"). Chute-armed leftover is MissionAbort leftover, not SESSION KeyError. Do not Hangar.
 - 2026-08-26 — T-552 Pulse: this-hop `python main.py ascent` C-534 Valiant loft. Helper `ascent.py`. RF live until 50 km lid MECO (`vacuum_stage_sit` false). Toggle InSpaceLow after lid. `chute_arm_sit` silk. recover yes. hop.py parked. Do not Hangar.

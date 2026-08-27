@@ -19380,6 +19380,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "hop_factory_pad is one RF pad sit. Last hops ascent light. Loft cutoff is T-509.",
       "created": "2026-08-25T22:10:10Z",
       "desk": "lars",
       "evidence": [],
@@ -19466,6 +19467,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "hop_factory_pad is one RF pad sit. Last hops python main.py ascent light. Loft cutoff with a burn still owed is T-509 ascent.py. Do not raise ignitions.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -19475,11 +19484,11 @@
       "sci_expect": null,
       "severity": "S1",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "T-469 live scrap: never hop light, engine dead on pad, Os abort",
       "type": "control",
-      "updated": "2026-08-26T14:51:11Z"
+      "updated": "2026-08-27T07:03:21Z"
     },
     "T-472": {
       "assignee": "",
@@ -19983,6 +19992,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-27T07:03:01Z",
+            "claim": "Not this pulse. Bound S-514 is tickets. science.md fallback stays parked hop/pad/splash. Empty bound abort is not the loft MECO miss.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -19996,7 +20013,7 @@
       "tags": [],
       "title": "Empty bound science aborts; drop seated science.md pulse fallback",
       "type": "control",
-      "updated": "2026-08-26T13:54:11Z"
+      "updated": "2026-08-27T07:03:01Z"
     },
     "T-487": {
       "assignee": "",
@@ -20093,6 +20110,14 @@
             "owner": "none",
             "real": false,
             "who": "wernher"
+          },
+          {
+            "at": "2026-08-27T07:03:01Z",
+            "claim": "Living compose is ascent.py from Wernher RF/warp blocks. hop_factory.run_factory_vessel stays inland. Did not retire the factory this sit.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -20106,7 +20131,7 @@
       "tags": [],
       "title": "Compose one living t7-wheel pulse from Wernher catalog; retire immortal run_factory_vessel",
       "type": "control",
-      "updated": "2026-08-26T13:54:11Z"
+      "updated": "2026-08-27T07:03:01Z"
     },
     "T-490": {
       "assignee": "",
@@ -20775,6 +20800,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "ascent.py last write after 50 km live is RF.cut; warp follows RF.burning not the keep flag. 06-52-19Z/22-11-37Z 4x with plume up emptied tanks.",
       "created": "2026-08-26T16:12:06Z",
       "desk": "lars",
       "evidence": [],
@@ -20869,6 +20895,14 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-27T07:02:59Z",
+            "claim": "ascent.py keep_live_sit / loft_meco_sit / hold_live: last write after 50 km live is RF.cut. 06-52-19Z/22-11-37Z UI throttle 0 thrust 100 kN past 50 km then 4x emptied tanks apo 257-323 km \u2014 warp used keep flag not plume. Plume still up is still the burn (RF.burning). Not hop_factory. Not rf_throttle.py.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -20878,11 +20912,11 @@
       "sci_expect": null,
       "severity": "S1",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "proc-loft MET 21s throttle 1 thrust 0 fuel frozen 2038 \u2014 flameout not shear",
       "type": "control",
-      "updated": "2026-08-26T21:03:47Z"
+      "updated": "2026-08-27T07:03:20Z"
     },
     "T-510": {
       "assignee": "",
@@ -21292,6 +21326,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "Pulse stays lid MECO 50 km live. T-404 305 s cannot pay. meco unchanged.",
       "created": "2026-08-26T17:47:40Z",
       "desk": "lars",
       "evidence": [],
@@ -21314,6 +21349,14 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "Pulse stays lid MECO 50 km live + independent off. Do not chase earlier MECO for High time. T-404 305 s cannot pay that sit. meco: unchanged.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "to": "lars"
@@ -21324,13 +21367,13 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "MECO at 50 km coast is ~271 s in 50-140; T-404 305 s does not pay",
       "type": "ops",
-      "updated": "2026-08-26T17:49:39Z"
+      "updated": "2026-08-27T07:03:21Z"
     },
     "T-525": {
       "assignee": "",
@@ -21381,6 +21424,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "Pulse still Toggle InSpaceLow via space_low_sit after lid. Flying at 50 km is not space.",
       "created": "2026-08-26T17:55:17Z",
       "desk": "lars",
       "evidence": [],
@@ -21404,6 +21448,14 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "Pulse still Toggle InSpaceLow via space_low_sit after lid; flying at 50 km is not space. 22-11-37Z started LITE in space. High cannot-pay skip is not space-done.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "note": "This-hop S-514 kerbalism_LITE InSpaceLow 10/0.03/2.00 seq0 + S-515 TELEMETRY 30/0.052/2.00 seq1. hop_factory Toggles at alt >= FLYING_LOW_M (50 km) when flying_high, then science_attempted latch. science.py sit_matches defaults True for InSpaceLow at High; skip (situation cannot pay) at 50 km does not retry in space. C-504 loft sits InSpaceLow ~268 km every hop. Pulse must Toggle in space (sub_orbital >=140 km), not at High lid.",
@@ -21416,13 +21468,13 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "Toggle InSpaceLow in space not 50 km High lid",
       "type": "ops",
-      "updated": "2026-08-26T20:27:46Z"
+      "updated": "2026-08-27T07:03:21Z"
     },
     "T-527": {
       "assignee": "",
@@ -21655,6 +21707,7 @@
       "assignee": "",
       "blockers": [],
       "category": "ops",
+      "close_why": "this-hop C-534 lid MECO 50 km + InSpaceLow Toggle + silk. Circularize waits Terrier.",
       "created": "2026-08-26T19:28:51Z",
       "desk": "lars",
       "evidence": [],
@@ -21709,6 +21762,14 @@
             "owner": "none",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "this-hop C-534 still lid MECO 50 km live + InSpaceLow Toggle + silk recover yes. Circularize waits Terrier (vacuum_stage_sit). Did not retune lid to 140 km or write a stamp helper.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "to": "lars"
@@ -21720,13 +21781,13 @@
       "sci_expect": null,
       "severity": "S3",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [
         "ask"
       ],
       "title": "Phase 2 circularize pulse is east gravity turn + apo Terrier; C-504 vertical loft cannot",
       "type": "ops",
-      "updated": "2026-08-26T21:03:47Z"
+      "updated": "2026-08-27T07:03:22Z"
     },
     "T-533": {
       "assignee": "",
@@ -22300,6 +22361,7 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "ascent hold_live is independent RF.apply, not UI MainThrottle. GET 0 is a drop. C-534 loft still lid-MECO.",
       "created": "2026-08-26T21:14:49Z",
       "desk": "lars",
       "evidence": [],
@@ -22314,6 +22376,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "ascent hold_live / RF.apply is independent, not UI MainThrottle. GET 0 is a drop \u2014 last hops throttle GET 0 thrust 90-100 kN through the burn. C-534 loft still lid-MECO. Not hop.py.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -22323,11 +22393,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "Ascent pulse: do not drive UI MainThrottle as the RF burn",
       "type": "control",
-      "updated": "2026-08-26T21:20:33Z"
+      "updated": "2026-08-27T07:03:21Z"
     },
     "T-551": {
       "assignee": "",
@@ -22505,6 +22575,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "ascent timeout leftover uses leftover_call. Last hop MissionAbort leftover, not SESSION KeyError.",
       "created": "2026-08-26T21:46:11Z",
       "desk": "lars",
       "evidence": [],
@@ -22527,6 +22598,14 @@
             "owner": "lars",
             "real": false,
             "who": "lars"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "ascent.py timeout leftover uses leftover_call then recover / abort_ksc_leftover. Last hop MissionAbort leftover exit 2, not SESSION KeyError unknown emergency ksc leftover.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -22536,11 +22615,11 @@
       "sci_expect": null,
       "severity": "S1",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "ascent.py call(ksc leftover) KeyError \u2014 SESSION exit 1 after chute armed",
       "type": "control",
-      "updated": "2026-08-26T21:49:03Z"
+      "updated": "2026-08-27T07:03:21Z"
     },
     "T-556": {
       "assignee": "",
@@ -22614,6 +22693,7 @@
       "assignee": "",
       "blockers": [],
       "category": "bug",
+      "close_why": "hold_live clears SAS after RF.apply once left_pad. SAS Stability is not a heading. AP east while live.",
       "created": "2026-08-26T21:59:46Z",
       "desk": "lars",
       "evidence": [],
@@ -22628,6 +22708,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:03:00Z",
+            "claim": "ascent.py hold_live clears SAS after RF.apply once left_pad. SAS Stability is not a heading. 06-52-19Z heading 301 pitch 65 while independent 1. AP east while live. Do not wait Terrier. Lid MECO still 50 km.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -22637,11 +22725,11 @@
       "sci_expect": null,
       "severity": "S1",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "ascent loft never steers \u2014 SAS hold only; Os keyboard-turns, not FAR/gimbal",
       "type": "control",
-      "updated": "2026-08-26T22:04:18Z"
+      "updated": "2026-08-27T07:03:21Z"
     },
     "T-559": {
       "assignee": "",
@@ -22692,5 +22780,5 @@
       "updated": "2026-08-26T22:16:47Z"
     }
   },
-  "updated": "2026-08-27T07:00:47Z"
+  "updated": "2026-08-27T07:03:22Z"
 }

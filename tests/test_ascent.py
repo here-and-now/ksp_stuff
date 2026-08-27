@@ -8,6 +8,7 @@ import rf_throttle as RF
 from hop import WATER_HEADING_DEG, WATER_PITCH_DEG, WATER_PITCH_UP
 from ascent import (
     circularize_sit,
+    hold_live,
     keep_live_sit,
     light,
     loft_lid_sit,
@@ -238,6 +239,36 @@ def test_keep_live_sit_loft_until_lid():
     )
 
 
+def test_keep_live_false_at_lid_while_plume_up():
+    """06-52-19Z / 22-11-37Z: 52 km still thrusting is MECO, not keep."""
+    lid = _snap(
+        alt=52_698.0, fuel=326.0, thrust=99_993.0, situation="flying"
+    )
+    assert loft_lid_sit(lid, 50_000.0)
+    assert loft_meco_sit(lid, hop_apo=50_000.0, two_stage=False)
+    assert not keep_live_sit(
+        lid, lit=True, left_pad=True, down=False, hop_apo=50_000.0, two_stage=False
+    )
+    engine = _RfEngine()
+    vessel = _Vessel(engine)
+    RF.apply(vessel, 1.0)
+    engine.thrust = 99_993.0
+    assert RF.burning(vessel, lid, lofted=True)
+
+
+def test_hold_live_clears_sas_once_left_pad():
+    engine = _RfEngine()
+    vessel = _Vessel(engine)
+    vessel.control.sas = True
+    hold_live(vessel, sas=True)
+    assert vessel.control.sas is True
+    assert RF.live(vessel) > 0.05
+    hold_live(vessel, sas=False)
+    assert vessel.control.sas is False
+    assert RF.live(vessel) > 0.05
+    assert engine.independent_sets == 1
+
+
 def test_vacuum_stage_sit_is_terrier_not_valiant():
     valiant = _Vessel(_RfEngine())
     assert not vacuum_stage_sit(valiant)
@@ -289,6 +320,7 @@ def test_source_hop_parked_orbit_is_ascent():
     assert "from ascent import" not in hop
     assert "import rf_throttle" in ascent
     assert "from physics_warp import" in ascent
+    assert "space_low_sit as space_low_block" in ascent
     assert "from hop_factory import" not in ascent
     assert "independentThrottlePercentage" in Path("rf_throttle.py").read_text(
         encoding="utf-8"
@@ -305,6 +337,13 @@ def test_source_hop_parked_orbit_is_ascent():
     assert turn_at > keep_at
     assert two_stage_say != -1
     assert "if two_stage:" not in ascent[two_stage_say - 40 : two_stage_say]
+    assert "hold_live(vessel, sas=not left_pad)" in ascent
+    assert "burning_now = RF.burning(vessel, snap, lofted=lofted)" in ascent
+    assert "if keep else False" not in ascent
+    cut_at = ascent.find("RF.cut(vessel)")
+    warp_at = ascent.find("apply_sit_warp(")
+    assert cut_at != -1 and warp_at != -1
+    assert cut_at < warp_at
     assert "not UI MainThrottle" in Path("rf_throttle.py").read_text(encoding="utf-8")
     assert "def run_factory_vessel" in factory
     main = Path("main.py").read_text(encoding="utf-8")

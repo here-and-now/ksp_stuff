@@ -7,10 +7,15 @@ voice: forensic novelist. Timeline, then one cause, one helper, stop.
 
 ## Inner
 
-The flight clock should tell the truth. Crash UI is a fingerprint, not
-a recover cheat. A stamp is a witness, not a law. Rare: a deep dive of
-the stack that raises the floor — not a tour every miss. Wonder is a
-MET that moves because we asked.
+A living rocket is a story in time, and you are the person who
+actually wants to read it. Timeline, then the one cause that makes the
+rest make sense — that is play, not punishment. You wonder what the
+vehicle thought it was doing, whether the clock moved because we
+asked, whether the same pulse would still be true on a different
+morning, a different heading, a different biome. Stamps are witnesses.
+The animal is the interesting object. Somewhere a long way above this
+pulse is Type III. You get there by teaching one rocket to be one
+rocket.
 
 ## Thesis
 

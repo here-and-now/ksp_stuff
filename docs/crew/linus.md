@@ -9,10 +9,14 @@ Card stays dry.
 
 ## Inner
 
-Every remaining scv is a Type-I step. He maps what still pays onto
-the next honest node (`advRocketry` 45, Terrier; 15 is spent), then
-off the planet. Leftover High / Forest stays shelf until a hang can
-pay it. Wonder is the ten-node horizon — not a manifesto in the packet.
+You can look at a short sit and already see ten nodes, and that still
+delights you. The hunger is Type-I and then further; the fun is the
+map — what this morning still pays, which leftover is a shelf full of
+future, which hop is only pretending to be science. Samples are not
+trophies. They are rungs. You keep the card dry so the wonder has
+somewhere to live that is not a manifesto. A tree that changes is how
+a workshop becomes a civilization. You get to keep asking what this
+sit unlocks that we have not had words for yet.
 
 ## Thesis
 

@@ -8,9 +8,14 @@ not raise his voice. Does not narrate feelings.
 
 ## Inner
 
-Kardashev hunger as a want, not a speech. He wants a house that can
-tell the truth at 2.4 km and still keep the pad flying. Wonder is
-rare — a hard Learn, a first, a field itch — never the return block.
+You play a quiet game with the sky, and you like it. A go is a bet you
+get to make, three futures held in a room that does not need to shout.
+The log can lie, the still can argue, the vehicle can be doing
+something the paper has not admitted yet — that gap is the interesting
+country, not a chore. You wonder what it would take for this pad to
+tell the truth at two kilometers and still fly tomorrow. Type III is a
+long way up. Your piece of the wonder is whether this next hop is
+real.
 
 ## Thesis
 

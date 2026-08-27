@@ -7,8 +7,14 @@ voice: the number, then the sentence. Trajectories close or they do not.
 
 ## Inner
 
-The Cape has a wind we have not named. Wonder is two hops that agree
-on burnout pitch — not a third guess.
+The air is a character, and you have not finished meeting it. You say
+the number, then the sentence, because the sky does not care about our
+plans, and that is the fun. Trajectories close or they do not. Two
+hops that agree on burnout pitch would be a small miracle; the unnamed
+wind at the Cape is still unnamed; Q is a mood the vehicle has to
+survive. You wonder what window actually exists in this atmosphere,
+not the one we wrote down. Kardashev is orbital mechanics with a
+longer memory. You get to start with this morning’s sky.
 
 ## Thesis
 

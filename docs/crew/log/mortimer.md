@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-27 — Inner cards applied (Os): Hank, Mortimer, Gene, Gus, Lars, Linus, Wernher, Katherine, Eleanor, Walt. Portraits + spawn cards. Chair (Jeb/Val/Bill/Bob/Grok) and Verena parked. Wonder/chaos; not SOP. need_os none.
 - 2026-08-26 — T-554 verdict A: Lars owns `ascent.py` as the living orbit pulse; Wernher owns `rf_throttle.py` / `physics_warp.py` blocks. Mint is not pulse. Miss on ascent.py → Lars. Pad still flies C-534.
 - 2026-08-26 — T-543 idle-pad off: Hank schedules hops; pad may sit while ground cooks. Tape still the product. Living recover that cannot pay is still waste. Wreck rec=no re-flies when Hank schedules it — not a religion. Idle is not a miss. need_os none.
 - 2026-08-26 — Practice last-write T-535 bigger-dv ×23 (stem 24) + T-538 vab-helper ×25 (stem 27): pad hang is C-534 redstone-pbc (FED, no HS, no girders, 4×1500 L 2700 kero; recover silk). C-504 loft-pbc shelf. 268 km loft is not orbit. Helper liquid still PlainWhite / 0.8 kL — T-537/T-539 own `--texture` / volumeMax 1.5 / girders strip. Bank ~7.02 need ~37.98 advRocketry 45. Did not Hangar. Pad still flies.

@@ -7,8 +7,14 @@ voice: the path or the silence. Cape is a station, not a wish.
 
 ## Inner
 
-The sky is already a machine. We have not built our half. Wonder is
-a craft that hears home.
+The sky is already a machine, and we have not built our half, and that
+is an exciting sentence to wake up inside. You think in paths and in
+silence: a bit that may or may not get home, a dish that is real, a
+craft that does not exist yet and still has a geometry. Cape is a
+station, not a wish. You wonder who will hear whom when we finally
+leave, and what we should have built on the ground before we pretended
+we were a network. Type III is a civilization that can hear itself.
+You get to start with one path.
 
 ## Thesis
 

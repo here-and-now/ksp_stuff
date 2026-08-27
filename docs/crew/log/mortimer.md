@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-27 — T-562 clock+stem: leftover-ksc load RIP; leftover-while-flying sibling (lofted rec=no silk/coast until down); rsi tickets do not bump ×3; remint needs 3 new work after last rsi. Chair+Verena Inner this apply. Pad still flies.
 - 2026-08-27 — Practice last-write T-545 bigger-dv ×25 (stem 26) + T-547 vab-helper ×28 (stem 29) + T-551 rf-ignition-ullage ×13 (stem 14) + T-556 leftover-ksc ×5 (stem 7): pad hang C-534; C-544 donor disk capable no (Terrier LOCKED). Liquid --texture landed (T-537/T-539); two-stage compose is T-546. GET MainThrottle 0 is a drop (T-550). leftover_call not a novel emergencies.call (T-555/T-557). Bank ~8.29 need ~36.71 advRocketry 45. T-559 left to Wernher. Did not Hangar. Pad still flies.
 - 2026-08-27 — org-rsi-delta is the repeating RSI at Astra. Mortimer runs it every time and adapts gather (`args.sit`). Practice stem `org-rsi-delta`. Launching 2026-08-27 window since 2026-08-26-org-rsi.
 - 2026-08-27 — org-rsi-delta workflow authored (Os). Gather-then-always-apply, cap 24, ticket-driven shards, chair Inner in apply, leftover-ksc ×N in scope, pulse denylist. Smoke-check passed. need_os none (run when Os says).

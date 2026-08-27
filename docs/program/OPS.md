@@ -63,8 +63,8 @@ Three RSI clocks, all **tickets**:
    (desk, leftover, crash UI, telem frame). Vehicle control patches
    stay Lars. XOR: one of them patches `.py` per miss.
 
-Each **open** with fingerprint `F` increments `tickets/fingerprints.json`.
-Reuse the existing stem (longer kebab aliases onto the shortest
+Each **work** open with fingerprint `F` increments `tickets/fingerprints.json`.
+`type=rsi` does not bump. Reuse the existing stem (longer kebab aliases onto the shortest
 prefix). Empty fp is refused on `control` / `systems` /
 `ops --tag feedback` (`legacy-twin` exempt) so the clock can tick.
 Abort novels, timestamps, and `hop-<digits>` do not count. A patch
@@ -78,10 +78,12 @@ recovered dud (655 m landed rec=yes sci_run=0): not this bump; re-fly
 last `cli:` — High cannot pay 655 m and that does not idle the loft
 or turn High into a Surface card (T-475). Do not make High a pad
 card. At
-count **3**, kernel opens `type=rsi` P1. `rsi_loop=software` → desk
+count **3 work** hits, kernel opens `type=rsi` P1. After any rsi for
+that stem exists, remint needs **3 new work** created after that last
+rsi. `rsi_loop=software` → desk
 **wernher**; else **Mortimer**. `open_ticket` trips RSI (not only the
 CLI). `ops next` prints `rsi:` and hires Mortimer lock-free; lock
-live skips org; fly_ready still hires him without emptying the pad
+live skips org; fly_ready still hires him on a real rsi without emptying the pad
 as a religion. Idle is not a miss.
 That is the imperative: the loop *must* open the ticket; no LLM “we
 should maybe improve.”
@@ -127,7 +129,7 @@ Every ticket:
 - `priority` — **P0** now  **P1** this sit  **P2** this slate  **P3** backlog
 - `status` — `inbox` `triage` `ready` `assigned` `in_progress` `blocked` `verify` `done` `wont`
 - `blockers` — other ticket ids
-- `fingerprint` — stable class (`heading-never-090`, `ec=0-after-loft`, `leftover-prelaunch-ghost`, `science-skip-no-modules`, `hangar-can-revert`)
+- `fingerprint` — stable class (`heading-never-090`, `ec=0-after-loft`, `leftover-ksc`, `leftover-while-flying`, `leftover-prelaunch-ghost`, `science-skip-no-modules`, `hangar-can-revert`). leftover-while-flying does not alias onto leftover-ksc.
 - `category` — `craft` | `science_opportunity` | `bug` | `improvement` | `flight` | `recover` | `org` | `control` | `systems` | `press` | `ops` (replaces cards)
 - `tags` — free list (`hard-splash`, `heading-090`, `east-t3`)
 - `rsi_loop` — `org` | `ops` | `software` | `vehicle` | `science` | `none`
@@ -253,6 +255,9 @@ if lock live:
 
 # lock free — leftover hygiene before pad occupancy
 if leftover (desk hangar recover/blocked, live probe, crash UI):
+    # airborne rec=0 is occupancy, not leftover-ksc. Do not Close while
+    # lofted rec=no (leftover-while-flying: silk/coast until down+recoverable).
+    # leftover-ksc stays retired as a load.
     open/boost recover ticket S1 desk=hank
     Hank runs (not Commander):
       recover-probe                    # signal only
@@ -263,9 +268,9 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
     # Recoverable ground Debris is leftover. Os disabled reverting
     # flights. Never revert. Never leftover-ksc save/load
     # (that looked like a reload / return to pre-launch).
-    # Hop timeout leftover is leftover_call (recover vs ksc leftover),
-    # not a novel emergencies.call string. `ksc leftover` is the
-    # registered leftover abort verb.
+    # Hop timeout leftover is leftover_call (recover vs ksc leftover)
+    # once down or never lofted, not a novel emergencies.call string.
+    # `ksc leftover` is the registered leftover abort verb.
     # pad occupancy after leftover is clean
     return
 
@@ -321,7 +326,7 @@ idle: Hank files ops ticket "pad idle" if lock free and no fly_ready
 |---|---|---|
 | Lock live, `ship.md` off-nominal | **parent TUI** (not `ops next`) then Gene / Lars / Wernher as the issue | uplink wreck-class; Gene if plan/`go`; Lars living pulse (`ascent.py` / hop_factory) / flameout (`rf-ignition-ullage`); Wernher kRPC/control-blocks (`physics_warp.py` / `rf_throttle.py`) / hop abort still named shear — **no stick**. Eyes: `ship.md` **thrust / plume / parts_n / fuel**. `status` GET (`kspstuff-read`) does not write jsonl. Sit/MET/log disagree → one `stuck-<stem>` PNG then read it. Engine dead + stack intact is not `far-shear` |
 | Lock live, nominal | ground desks via `ops next` (not Commander, not Gene) | inventory; Hank reads `ship.md` from time to time (thrust/plume/fuel vs parts). Do not wait hop stdout. `hop light` is not airborne |
-| Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP that sit. Never revert. Never leftover-ksc load |
+| Lock free, leftover live / crash UI | **Hank** | recover ticket; `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP that sit. Never revert. Never leftover-ksc load. Airborne rec=0 is occupancy not leftover-ksc (`leftover-while-flying`: silk/coast until down+recoverable) |
 | Commander CLI just returned | **Hank** (tape, not a Jeb hire) | `desk`, `attach-run` (stamps uncrewed `learn`), `landing`; control from last-flight if miss (`--fingerprint`) |
 | Lock free, fly ready, hangar none | Commander | that fly ticket — CLI only, no review |
 | Open `ops --tag plan` (unsigned, or hang/bind/pulse would change `agree.md`) | **Lars + Gus + Linus** (parallel, same ticket) | that plan ticket — **not** leftover wreck tickets. Katherine only if `dynamics` / `--tag ask --desk katherine` / `--tag dynamics`. Eleanor only if `--tag constellation` / `--tag ask --desk eleanor`. Gene is not this merge. Fly ready that still pays `agree.md` still flies |
@@ -469,7 +474,7 @@ Last-flight `shear` is the wreck, not the cause. After CLI: `telem --window`.
 Os does not click crash UI. Commander does not recover leftover or
 Close the crash dialog — hop abort `ksc leftover` is a handoff to
 Hank. Commander does not review after CLI exit. Hank leftover (lock
-**free**) is `recover()` + Close — persist-then-KSC; never leftover-ksc load. Clean-pad
+**free**) is `recover()` + Close — persist-then-KSC; never leftover-ksc load. Airborne rec=0 is occupancy not leftover-ksc. Clean-pad
 Hangar of the seated craft for the sortie may stay inside hop
 (`install_and_launch`) — launch, not leftover hygiene. Splash HD
 recover of **this** hop after a briefed dwell stays mission.

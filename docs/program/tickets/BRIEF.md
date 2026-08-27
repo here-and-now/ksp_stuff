@@ -19,15 +19,23 @@ only (crewed / `campaign: none` / firsts): **one line** from
 **Fingerprint:** lookup `docs/program/tickets/fingerprints.json`. Reuse
 the class (`heading-never-090`, `sci-unchanged-recovered`,
 `flyinghigh-lid`, `forest-splashed-thermo`, `hold-ground-card`,
-`hop-coast-phys-warp`, `bigger-dv`, `far-shear`). Longer kebab aliases onto the shortest existing
+`hop-coast-phys-warp`, `bigger-dv`, `far-shear`, `leftover-ksc`,
+`leftover-while-flying`). Longer kebab aliases onto the shortest existing
 prefix (`flyinghigh-lid-18km-hop` → `flyinghigh-lid`). Do not invent a
 stem per T-id, `hop-<digits>`, or a timestamp novel. Do not map inland
-heading 299 → `heading-never-090` (Water-dead). `control` / `systems` /
+heading 299 → `heading-never-090` (Water-dead). **leftover-ksc** is
+persist/KSC/load class (Harmony skip-dup, recoverable ground Debris,
+`leftover_call` recover vs `ksc leftover` once down or never lofted).
+**leftover-while-flying** is lofted timeout rec=no (silk/coast until
+down+recoverable). It does **not** alias onto leftover-ksc. Do not
+reuse leftover-ksc as a grab-bag. `control` / `systems` /
 `ops --tag feedback` **require** `--fingerprint` (empty is refused;
 error prints `reuse (count):` plus a copy line). `legacy-twin` seed is
 exempt. Stumble → that stem, not a log shrug. Do not tell another desk
 in prose — `ops --tag ask` and `payload.to`. House friction *during*
-work is `ops --tag feedback --fingerprint <existing>` (×3 → rsi).
+work is `ops --tag feedback --fingerprint <existing>` (×3 work → rsi;
+rsi tickets do not bump; remint needs 3 new work after the last rsi
+for that stem).
 After the hire, file on the **work ticket** (not Return keys):
 `python main.py tickets feedback T-NNN --claim "…"`.
 Kernel appends `payload.findings`. Close harvests `close_why` if empty.

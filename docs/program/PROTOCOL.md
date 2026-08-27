@@ -24,7 +24,7 @@ exit **ends** the hop — Commander does not review.
 | Gene | fly ticket | `go` stamp | Gene only | `go: yes\|wait` on that ticket |
 | Hank | hop pid | `fly: yes` | exact `cli` (parent starts it when `commander: none`) | last-flight; lock on that **control** pid |
 | Hank | Commander | `commander: jebediah` (crewed / firsts / `campaign: none`) | fly ticket + exact `cli`; abort officer | `result:` `exit:` `handoff:` |
-| Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP. Never revert. Never leftover-ksc load | pad clean |
+| Hank | leftover / KSC | lock free, leftover or crash UI | desk then `recover()` + Close (`recover-probe --recover` if recoverable). Recoverable ground Debris is leftover. Persist throw → quit KSP. Never revert. Never leftover-ksc load. Airborne rec=0 is occupancy (`leftover-while-flying`), not leftover-ksc | pad clean |
 | Hank | tape | Commander CLI returned | `desk`, leftover, `attach-run`, `landing` | `ops next` — no Jeb debrief |
 | Commander | Hank | hop abort leftover / crash UI | `ksc leftover` — do **not** recover or Close | Hank hygiene |
 | Hank | Gus, Vehicle Engineering Lead | open vehicle tickets | ids (batch) | `capable:` on those tickets |
@@ -156,9 +156,11 @@ inland heading 299 onto `heading-never-090` (Water-dead). Empty fp
 is **refused** on new `control` / `systems` / `ops --tag feedback`
 (`legacy-twin` seed exempt) — `tickets open` prints `reuse (count):`
 plus a copy line. Hop-class friction is that bump, not a remembered
-CLI. Third hit opens `type=rsi` (software → Wernher, else Mortimer).
-Lock live skips org; fly_ready still hires Mortimer without emptying
-the pad as a religion. Idle is not a miss. Do not tell another desk in Return prose — open `ops --tag
+CLI. The ×3 clock is **work tickets only**; rsi tickets do not bump.
+Third work hit opens `type=rsi` (software → Wernher, else Mortimer).
+After any rsi for that stem exists, remint needs **3 new work** after
+that last rsi. Lock live skips org; fly_ready still hires Mortimer on
+a real rsi without emptying the pad as a religion. Idle is not a miss. Do not tell another desk in Return prose — open `ops --tag
 ask` (`payload.to` / `--desk` = addressee). **Landing envelope wins**
 over fly `payload.learn` (uncrewed: hop-exit `attach-run` overwrites
 it; Gene stamps only when `ops next` hires him).
@@ -361,8 +363,10 @@ false. Do not restore Batch Learn.
 After a hop: **Hank leftover first.** Walk home: `recover()` the ship
 and **Close** to KSC (`recover-probe --recover` if recoverable). Os
 disabled reverting flights. Never revert. Never leftover-ksc save/load
-(that looked like a reload / return to pre-launch). Hop timeout leftover
-is **leftover_call** (recover vs ksc leftover), not a novel
+(that looked like a reload / return to pre-launch). leftover-ksc stays
+**retired as a load** — persist/KSC/Harmony/Debris/`leftover_call` class,
+not a grab-bag. Hop timeout leftover is **leftover_call** (recover vs
+ksc leftover) once down or never lofted, not a novel
 `emergencies.call` string (T-555). `ksc leftover` is the registered
 leftover abort verb (`ksc_leftover`); leftover_call(False) resolves;
 cut + 1×; do not recover (T-557). Recoverable ground
@@ -374,7 +378,11 @@ quit KSP is walk home that sit (leftover-probe first after restart; no
 Hangar on dirty persist). Crash-UI rec=0 MET frozen is **not** pad
 occupancy (Os will not click Recover). Living SUB_ORBITAL leftover:
 wait land on MET then `recover()`; Close while flying does not drop it
-(`leftover-prelaunch-ghost`).
+(`leftover-prelaunch-ghost`). Lofted timeout while flying rec=no is
+**leftover-while-flying** (silk/coast until down+recoverable) —
+occupancy, not leftover-ksc, not leftover-prelaunch-ghost. leftover_call
+still recover vs ksc leftover once down or never lofted. Do not Close
+while lofted rec=no.
 Then: clean 0 → re-fly last `cli:` **when Hank schedules it and
 that bind can still pay** (envelope sit/biome/apo matches bound
 tickets; FlyingHigh ≥50 km). Living recover + `sci_run=0` is **not**

@@ -17,7 +17,7 @@
     "chute-workshop-hop": 1,
     "commander-no-review": 1,
     "communotron16-vs-16s": 1,
-    "control-blocks": 13,
+    "control-blocks": 15,
     "ctt-stability": 2,
     "desert-flyinghigh-telemetry": 1,
     "desert-flyinglow-telemetry": 1,
@@ -217,7 +217,7 @@
     "C-477": {
       "assignee": "",
       "blockers": [],
-      "capable": "yes",
+      "capable": "no",
       "category": "craft",
       "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc",
       "created": "2026-08-26T10:48:37Z",
@@ -338,6 +338,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:37Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc. craft fuel FED last tank attN bottom=Valiant \u2014 Hangar 15-52-38Z parts=397 blob even after T-500 payload dish. FED is not enough. Did not restamp yes. Do not Hangar. Pad is C-534. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -353,7 +361,7 @@
       ],
       "title": "t7-wheel-proc-hs-cone: RC_cone Nylon 50m + proc HS Ablative 80 silk loft \u2014 not lithobrake",
       "type": "vehicle",
-      "updated": "2026-08-26T15:55:08Z"
+      "updated": "2026-08-27T06:56:37Z"
     },
     "C-504": {
       "assignee": "",
@@ -415,6 +423,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:37Z",
+            "claim": "shelf kspstuff-hop-valiant-proc-loft-pbc capable yes. craft fuel FED last tank attN bottom=Valiant. 7x proc 1.25x0.625 Default 2415 kero + 3x girder mid. Nylon RC_cone 50m last. Engine first fire. No HS. Pad is C-534. 268 km loft is not orbit. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -428,7 +444,7 @@
       "tags": [],
       "title": "One procedural loft hang \u2014 FED, Hangar-safe, not C-477 blob",
       "type": "vehicle",
-      "updated": "2026-08-26T19:24:32Z"
+      "updated": "2026-08-27T06:56:37Z"
     },
     "C-534": {
       "assignee": "",
@@ -484,6 +500,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:37Z",
+            "claim": "pad hang kspstuff-hop-valiant-proc-redstone-pbc capable yes. craft fuel FED last tank attN bottom=Valiant. 4x 1500 L RedstoneStripes 2700 kero, girders none, no HS. Engine istg=0 sqor=0 first fire; RC_cone Nylon 50m istg=1 sqor=0 last. Did not replace C-534. Did not Hangar. C-504 shelf. C-544 donor capable no. C-477 blob capable no. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY/LITE OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -497,13 +521,14 @@
       "tags": [],
       "title": "Push generalRocketry: one proc hang, no girders, bigger tanks, Redstone stripes",
       "type": "vehicle",
-      "updated": "2026-08-26T21:29:48Z"
+      "updated": "2026-08-27T06:56:37Z"
     },
     "C-544": {
       "assignee": "",
       "blockers": [],
       "capable": "no",
       "category": "craft",
+      "craft": "kspstuff-hop-valiant-proc-orbit-pbc",
       "created": "2026-08-26T20:58:49Z",
       "desk": "gus",
       "evidence": [],
@@ -514,6 +539,14 @@
           {
             "at": "2026-08-26T20:59:32Z",
             "claim": "capable no kspstuff-hop-valiant-proc-orbit-pbc. craft fuel FED last tank attN bottom=Valiant. Clone C-534 + 2 extra sasModule (3 total Heaviest/rigid). 4x 1500 L RedstoneStripes 2700 kero, girders none, no HS. Engine istg=0 sqor=0 first fire; RC_cone Nylon 50m istg=1 sqor=0 last. Valiant gimbal 5 (Reliant none; Swivel 3 worse). Terrier liquidEngine3_v2 LOCKED advRocketry 45 \u2014 not on file; did not Hangar locked part. First-stage donor only, not two-stage circularize. Pad stays C-534. Helper T-546 vab-helper two-stage compose. Omni SurfAntenna gain=2 Cape 64 bps. f013 PresMat stability unlocked=yes on_craft; Goo start unlocked=yes on_craft; geiger e101 unlocked=yes on_craft; 2HOT start on_craft TELEMETRY/LITE OKTO HD=1. Thin tape T-284. fingerprint bigger-dv. Did not Hangar. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:37Z",
+            "claim": "capable no kspstuff-hop-valiant-proc-orbit-pbc. craft fuel FED last tank attN bottom=Valiant. Clone C-534 + 2 extra sasModule. Terrier liquidEngine3_v2 LOCKED advRocketry 45 \u2014 not on file; first-stage donor only, not two-stage circularize. Pad stays C-534. Did not Hangar locked part. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY/LITE OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
             "evidence": "",
             "owner": "none",
             "real": false,
@@ -533,7 +566,7 @@
       ],
       "title": "Orbit first-stage donor: extra wheels, Valiant; Terrier upper after advRocketry 45",
       "type": "vehicle",
-      "updated": "2026-08-26T20:59:32Z"
+      "updated": "2026-08-27T06:56:37Z"
     },
     "S-514": {
       "assignee": "linus",
@@ -3943,7 +3976,12 @@
         "docs/missions/uncrewed/logs/2026-08-26T20-41-53Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T20-54-37Z-hop.jsonl",
         "docs/missions/uncrewed/logs/2026-08-26T21-05-13Z-hop.jsonl",
-        "docs/missions/uncrewed/logs/2026-08-26T21-10-50Z-hop.jsonl"
+        "docs/missions/uncrewed/logs/2026-08-26T21-10-50Z-hop.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T21-50-36Z-ascent.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T21-57-11Z-ascent.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T22-05-30Z-ascent.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-26T22-11-37Z-ascent.jsonl",
+        "docs/missions/uncrewed/logs/2026-08-27T06-52-19Z-ascent.jsonl"
       ],
       "fingerprint": "chute-workshop-hop",
       "go": "yes",
@@ -3975,29 +4013,37 @@
             "owner": "none",
             "real": false,
             "who": "linus"
+          },
+          {
+            "at": "2026-08-26T22:16:47Z",
+            "claim": "Ops closed 2026-08-26 night. Last: python main.py ascent east-while-live heading=90, horiz~1 km/s, Water, apo~266 km, rec=no, bank 8.29. Need ~37 for Terrier. C-534 pad. C-544 Terrier wait. Loop tomorrow.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "landing": {
           "airborne": {
-            "alt": 198.706,
-            "apo": 229.257,
+            "alt": 292.022,
+            "apo": 350.529,
             "biome": "Shores",
             "broken": null,
             "chute": "stowed",
-            "downrange": 0.447,
+            "downrange": 0.449,
             "ec": 550.0,
             "engine_dead": null,
-            "fuel": 2529.865,
-            "g": 1.28,
-            "heading": 298.906,
-            "horiz": 0.163,
+            "fuel": 2474.61,
+            "g": 1.31,
+            "heading": 298.952,
+            "horiz": 0.199,
             "lat": 28.6084,
-            "lon": -80.5998,
-            "mass": 7078.262,
-            "met": 9.02,
+            "lon": -80.5997,
+            "mass": 6955.893,
+            "met": 12.26,
             "parts_n": 25,
-            "pitch": 89.972,
-            "q": 345.233,
+            "pitch": 89.931,
+            "q": 665.805,
             "recoverable": false,
             "root": "probeCoreOcto.v2",
             "sci_bank": 8.2947,
@@ -4006,30 +4052,30 @@
             "shear": false,
             "sit": "flying",
             "stage": 2,
-            "throttle": 0.0,
-            "thrust": 89193.156
+            "throttle": 1.0,
+            "thrust": 89332.094
           },
-          "alt_before": 90651.176,
-          "alt_max": 211791.963,
+          "alt_before": 134800.396,
+          "alt_max": 322797.651,
           "apex": {
-            "alt": 211791.963,
-            "apo": 213059.982,
-            "biome": "Shores",
+            "alt": 322797.651,
+            "apo": 323843.429,
+            "biome": "Water",
             "broken": null,
             "chute": "stowed",
-            "downrange": 4.774,
-            "ec": 525.855,
+            "downrange": 308.344,
+            "ec": 530.585,
             "engine_dead": null,
-            "fuel": 276.677,
+            "fuel": 6.54,
             "g": 0.0,
-            "heading": 297.092,
-            "horiz": 17.366,
-            "lat": 28.6392,
-            "lon": -80.5703,
-            "mass": 2100.382,
-            "met": 336.537,
+            "heading": 302.396,
+            "horiz": 1169.624,
+            "lat": 28.5448,
+            "lon": -77.4474,
+            "mass": 1501.724,
+            "met": 378.178,
             "parts_n": 25,
-            "pitch": 65.49,
+            "pitch": 64.665,
             "q": 0.0,
             "recoverable": false,
             "root": "probeCoreOcto.v2",
@@ -4042,32 +4088,33 @@
             "throttle": 0.0,
             "thrust": 0.0
           },
-          "apo_max": 213111.082,
-          "biome": "Shores",
+          "apo_max": 323927.21,
+          "biome": "Water",
           "biomes": [
-            "Shores"
+            "Shores",
+            "Water"
           ],
           "broken": null,
           "burnout": {
-            "alt": 51673.925,
-            "apo": 139707.089,
+            "alt": 292.022,
+            "apo": 350.529,
             "biome": "Shores",
             "broken": null,
             "chute": "stowed",
-            "downrange": 1.156,
+            "downrange": 0.449,
             "ec": 550.0,
             "engine_dead": null,
-            "fuel": 457.791,
-            "g": 4.06,
-            "heading": 300.417,
-            "horiz": 16.739,
-            "lat": 28.6068,
-            "lon": -80.5926,
-            "mass": 2488.547,
-            "met": 130.54,
+            "fuel": 2474.61,
+            "g": 1.31,
+            "heading": 298.952,
+            "horiz": 0.199,
+            "lat": 28.6084,
+            "lon": -80.5997,
+            "mass": 6955.893,
+            "met": 12.26,
             "parts_n": 25,
-            "pitch": 88.197,
-            "q": 721.734,
+            "pitch": 89.931,
+            "q": 665.805,
             "recoverable": false,
             "root": "probeCoreOcto.v2",
             "sci_bank": 8.2947,
@@ -4077,16 +4124,16 @@
             "sit": "flying",
             "stage": 2,
             "throttle": 1.0,
-            "thrust": 99992.852
+            "thrust": 89332.094
           },
-          "burnout_n": 10,
-          "chute": "armed",
-          "command": "hop",
-          "debris_n": 7,
-          "descent_n": 5,
-          "downrange": 7.466,
+          "burnout_n": 1,
+          "chute": "stowed",
+          "command": "ascent",
+          "debris_n": 12,
+          "descent_n": 7,
+          "downrange": 565.456,
           "dt_s": null,
-          "ec": 512.975,
+          "ec": 510.738,
           "engine_dead": false,
           "events": [
             "start",
@@ -4096,34 +4143,34 @@
             "landing",
             "end"
           ],
-          "g_max": 4.057,
-          "gap_s": 65.49,
-          "heading": 297.055,
-          "horiz": 25.604,
-          "hz_median": 0.07,
-          "impact_ms": 1521.159,
+          "g_max": 5.012,
+          "gap_s": 70.78,
+          "heading": 303.329,
+          "horiz": 1228.371,
+          "hz_median": 0.06,
+          "impact_ms": 1825.012,
           "landing": "catastrophic",
           "landing_synthesized": true,
           "last": {
-            "alt": 90651.176,
-            "apo": 213030.372,
-            "biome": "Shores",
+            "alt": 134800.396,
+            "apo": 323848.616,
+            "biome": "Water",
             "broken": null,
-            "chute": "armed",
-            "downrange": 7.466,
-            "ec": 512.975,
+            "chute": "stowed",
+            "downrange": 565.456,
+            "ec": 510.738,
             "engine_dead": null,
-            "fuel": 276.677,
-            "g": 0.0,
-            "heading": 297.055,
-            "horiz": 25.604,
-            "lat": 28.6593,
-            "lon": -80.5544,
-            "mass": 2099.796,
-            "met": 482.837,
+            "fuel": 6.54,
+            "g": 0.04,
+            "heading": 303.329,
+            "horiz": 1228.371,
+            "lat": 28.3888,
+            "lon": -74.8227,
+            "mass": 1500.28,
+            "met": 603.636,
             "parts_n": 25,
-            "pitch": 65.5,
-            "q": 3.721,
+            "pitch": 64.635,
+            "q": 0.005,
             "recoverable": false,
             "root": "probeCoreOcto.v2",
             "sci_bank": 8.2947,
@@ -4135,33 +4182,33 @@
             "throttle": 0.0,
             "thrust": 0.0
           },
-          "lat": 28.6593,
+          "lat": 28.3888,
           "link": true,
-          "lon": -80.5544,
-          "mass": 2099.796,
+          "lon": -74.8227,
+          "mass": 1500.28,
           "mass_pad": 7467.886,
-          "met": 482.837,
-          "met_end": 482.837,
+          "met": 603.636,
+          "met_end": 603.636,
           "met_start": 0.0,
           "pad": {
-            "alt": 86.179,
-            "apo": 86.179,
+            "alt": 86.757,
+            "apo": 86.757,
             "biome": "Shores",
             "broken": null,
             "chute": "stowed",
-            "downrange": 0.447,
+            "downrange": 0.448,
             "ec": 549.831,
             "engine_dead": null,
             "fuel": 2700.0,
             "g": 1.0,
-            "heading": 298.882,
-            "horiz": 0.014,
+            "heading": 298.938,
+            "horiz": 0.011,
             "lat": 28.6084,
-            "lon": -80.5998,
+            "lon": -80.5997,
             "mass": 7467.886,
             "met": 0.0,
             "parts_n": 25,
-            "pitch": 89.948,
+            "pitch": 89.96,
             "q": 0.0,
             "recoverable": true,
             "root": "probeCoreOcto.v2",
@@ -4176,13 +4223,13 @@
           },
           "parts_n": 25,
           "parts_pad": 25,
-          "path": "docs/missions/uncrewed/logs/2026-08-26T21-10-50Z-hop.jsonl",
-          "pitch": 65.5,
-          "q_max": 22860.795,
+          "path": "docs/missions/uncrewed/logs/2026-08-27T06-52-19Z-ascent.jsonl",
+          "pitch": 64.635,
+          "q_max": 27638.316,
           "recoverable": false,
           "root": "probeCoreOcto.v2",
-          "run": "2026-08-26T21-10-50Z-hop.jsonl",
-          "samples": 23,
+          "run": "2026-08-27T06-52-19Z-ascent.jsonl",
+          "samples": 25,
           "sci_bank": 8.2947,
           "sci_delta": 0.0,
           "sci_paid": false,
@@ -4193,41 +4240,29 @@
           "sit_mismatch": false,
           "skip_n": 0,
           "skips": [],
-          "speed": 1519.853,
+          "speed": 2198.833,
           "stage": 2,
           "thick_air_skip": false,
-          "v_vert": -1521.159,
+          "v_vert": -1825.012,
           "via": "US - Cape Canaveral"
         },
-        "learn": "landing: catastrophic impact=1521 m/s heading=297 horiz=26 pitch=66 sit=flying synth apo=213111 biome=Shores rec=no sci=run=1 rem=0 bank=8.29 +0",
+        "learn": "landing: catastrophic impact=1825 m/s heading=303 horiz=1228 pitch=65 sit=flying synth apo=323927 biome=Water rec=no sci=run=1 rem=0 bank=8.29 +0",
         "phase": "hop",
         "science_ids": [
           "kerbalism_LITE",
           "mysteryGoo"
         ],
-        "telem_run": "docs/missions/uncrewed/logs/2026-08-26T21-10-50Z-hop.jsonl",
+        "telem_run": "docs/missions/uncrewed/logs/2026-08-27T06-52-19Z-ascent.jsonl",
         "waste": {
           "bind": [
             {
               "biome": "global",
-              "eid": "mysteryGoo",
-              "id": "T-368",
-              "situation": "FlyingHigh"
-            },
-            {
-              "biome": "",
-              "eid": "barometerScan",
-              "id": "T-404",
-              "situation": "FlyingHigh"
-            },
-            {
-              "biome": "",
-              "eid": "barometerScan",
-              "id": "T-460",
-              "situation": "FlyingLow"
+              "eid": "kerbalism_LITE",
+              "id": "S-514",
+              "situation": "InSpaceLow"
             }
           ],
-          "craft": "kspstuff-hop-valiant-t7-wheel-proc-hs-cone-pbc"
+          "craft": "kspstuff-hop-valiant-proc-redstone-pbc"
         }
       },
       "priority": "P0",
@@ -4250,7 +4285,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-26T21:28:33Z"
+      "updated": "2026-08-27T06:57:24Z"
     },
     "T-082": {
       "assignee": "",
@@ -14824,6 +14859,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:59Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-pbc. 13-31-03Z apo 88.8 km still the >=50 km proof. craft fuel FED last tank attN bottom=Valiant. Not the pad hang \u2014 pad is C-534. Do not Hangar t7-chute / t7-chute-cone. Omni SurfAntenna Cape 64 bps. f013 2HOT+Goo+geiger on_craft TELEMETRY Stayputnik HD=0.5. Thin tape T-284. fingerprint aero-stiff-chute. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -14838,7 +14881,7 @@
       "tags": [],
       "title": "Seat t7-pbc (88.8 km proof) \u2014 Mk16 t7-chute is not lofting",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:06Z"
+      "updated": "2026-08-27T06:56:59Z"
     },
     "T-388": {
       "assignee": "",
@@ -15518,6 +15561,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:37Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-pbc. lithobrake is not recover (10-22-06Z tanks lithobraked Stayputnik). craft fuel FED. Did not restamp yes. Pad is C-534. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15532,7 +15583,7 @@
       "tags": [],
       "title": "Stability shelf: PresMat / inline wheel on a hang that still pays FlyingHigh leftover",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:06Z"
+      "updated": "2026-08-27T06:56:37Z"
     },
     "T-401": {
       "assignee": "",
@@ -15662,6 +15713,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:37Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-hs-pbc. craft fuel BLOCKED proceduralHeatshield fuelCrossFeed=False Ablator only; engine starved. Hangar-detonating HS class. Pad is C-534. Did not Hangar. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15678,7 +15737,7 @@
       ],
       "title": "t7-wheel-hs: proc HS 1.25 disc recover alt of t7-wheel (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:06Z"
+      "updated": "2026-08-27T06:56:37Z"
     },
     "T-403": {
       "assignee": "",
@@ -15773,6 +15832,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:59Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-cone-pbc. craft fuel FED last tank attN bottom=Valiant. OKTO+RC_cone Nylon 50m last. Silk recover alt, not the pad hang \u2014 pad is C-534. Do not Hangar this sit (silk/4x/pitch). Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -15789,7 +15856,7 @@
       ],
       "title": "t7-wheel-cone: RC_cone 50m recover alt of t7-wheel \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:06Z"
+      "updated": "2026-08-27T06:56:59Z"
     },
     "T-404": {
       "assignee": "linus",
@@ -16139,6 +16206,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:00Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-pbc. craft fuel FED last tank attN bottom=Valiant. 7x proc 1.25x0.625 Default 2415 kero. No chute. Shelf loft alt, not the pad hang \u2014 pad is C-534. Do not Hangar 1.3 km shear. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16155,7 +16230,7 @@
       ],
       "title": "t7-wheel-proc: 7x proc 1.25x0.625 2415 kero same 4.375 m stack as t7-wheel",
       "type": "vehicle",
-      "updated": "2026-08-26T15:18:06Z"
+      "updated": "2026-08-27T06:57:00Z"
     },
     "T-407": {
       "assignee": "",
@@ -16277,6 +16352,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:00Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-oxstat-pbc. craft fuel FED last tank attN bottom=Valiant. 4x solarPanels5. Dwell EC, not the loft. Pad is C-534. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint ec=0-after-loft. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16291,7 +16374,7 @@
       "tags": [],
       "title": "t7-wheel-oxstat: 4x OX-STAT on t7-wheel for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:07Z"
+      "updated": "2026-08-27T06:57:00Z"
     },
     "T-409": {
       "assignee": "",
@@ -16386,6 +16469,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:00Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-nose-pbc. craft fuel FED last tank attN bottom=Valiant. OKTO+proceduralNoseCone aero, not silk. Pad is C-534. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -16400,7 +16491,7 @@
       "tags": [],
       "title": "t7-wheel-nose: proceduralNoseCone stability aero alt of t7-wheel (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:07Z"
+      "updated": "2026-08-27T06:57:00Z"
     },
     "T-410": {
       "assignee": "",
@@ -17300,6 +17391,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:56:38Z",
+            "claim": "capable no kspstuff-hop-valiant-t7-wheel-proc-hs-pbc. craft fuel BLOCKED proceduralHeatshield fuelCrossFeed=False Ablator only; engine starved. Pad is C-534. Did not Hangar. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17316,7 +17415,7 @@
       ],
       "title": "t7-wheel-proc-hs: proc HS 1.25 disc recover alt of t7-wheel-proc (no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:07Z"
+      "updated": "2026-08-27T06:56:38Z"
     },
     "T-429": {
       "assignee": "",
@@ -17454,6 +17553,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:00Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-cone-pbc. craft fuel FED last tank attN bottom=Valiant. OKTO+RC_cone Nylon 50m last. Silk recover alt, not the pad hang \u2014 pad is C-534. Do not Hangar this sit (silk/4x/pitch). Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint bigger-dv. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17470,7 +17577,7 @@
       ],
       "title": "t7-wheel-proc-cone: RC_cone 50m recover alt of t7-wheel-proc \u2014 do not Hangar this sit",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:05Z"
+      "updated": "2026-08-27T06:57:00Z"
     },
     "T-431": {
       "assignee": "",
@@ -17549,6 +17656,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:00Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-oxstat-pbc. craft fuel FED last tank attN bottom=Valiant. 4x solarPanels5. Dwell EC, not the loft. Pad is C-534. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY Stayputnik. Thin tape T-284. fingerprint ec=0-after-loft. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17563,7 +17678,7 @@
       "tags": [],
       "title": "t7-wheel-proc-oxstat: 4x OX-STAT on t7-wheel-proc for Goo 641 s dwell EC",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:07Z"
+      "updated": "2026-08-27T06:57:00Z"
     },
     "T-432": {
       "assignee": "",
@@ -17685,6 +17800,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:00Z",
+            "claim": "capable yes kspstuff-hop-valiant-t7-wheel-proc-nose-pbc. craft fuel FED last tank attN bottom=Valiant. OKTO+proceduralNoseCone aero, not silk. Pad is C-534. Did not Hangar. Omni SurfAntenna Cape 64 bps. f013 PresMat+Goo+geiger+2HOT on_craft TELEMETRY OKTO. Thin tape T-284. fingerprint far-shear. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ]
       },
@@ -17699,7 +17822,7 @@
       "tags": [],
       "title": "t7-wheel-proc-nose: proceduralNoseCone aero alt of t7-wheel-proc (OKTO, no silk)",
       "type": "vehicle",
-      "updated": "2026-08-26T15:13:08Z"
+      "updated": "2026-08-27T06:57:00Z"
     },
     "T-434": {
       "assignee": "",
@@ -21477,6 +21600,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T06:57:01Z",
+            "claim": "C-534 still cannot circularize. Pad hang C-534 kspstuff-hop-valiant-proc-redstone-pbc capable yes FED silk no HS. Orbit donor C-544 kspstuff-hop-valiant-proc-orbit-pbc capable no \u2014 Terrier liquidEngine3_v2 LOCKED advRocketry 45 not on file. Apex horiz tens of m/s vs 7.75 km/s. Pe on the ground. Did not Hangar locked part. Did not replace C-534. Not a Flea.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "to": "gus"
@@ -21494,7 +21625,7 @@
       ],
       "title": "C-504 cannot circularize: apex horiz 40-84 m/s vs 7.75 km/s; Terrier is a new two-stage hang after 45",
       "type": "ops",
-      "updated": "2026-08-26T20:59:32Z"
+      "updated": "2026-08-27T06:57:01Z"
     },
     "T-532": {
       "assignee": "",
@@ -21973,13 +22104,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write bigger-dv \u00d725: pad C-534; C-544 donor disk capable no. Pad still flies.",
       "created": "2026-08-26T20:58:49Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "bigger-dv",
       "id": "T-545",
       "payload": {
-        "count": 25
+        "count": 25,
+        "findings": [
+          {
+            "at": "2026-08-27T06:57:33Z",
+            "claim": "Practice last-write bigger-dv \u00d725 (stem 26): pad hang C-534; C-544 orbit donor disk capable no (Terrier LOCKED); 268 km loft is not orbit. Did not Hangar. Pad still flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -21987,11 +22129,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI bigger-dv \u00d725",
       "type": "rsi",
-      "updated": "2026-08-26T20:58:49Z"
+      "updated": "2026-08-27T06:57:33Z"
     },
     "T-546": {
       "assignee": "",
@@ -22030,13 +22172,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write vab-helper \u00d728: liquid --texture landed; two-stage compose is T-546. Pad flies C-534.",
       "created": "2026-08-26T20:58:49Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "vab-helper",
       "id": "T-547",
       "payload": {
-        "count": 28
+        "count": 28,
+        "findings": [
+          {
+            "at": "2026-08-27T06:57:33Z",
+            "claim": "Practice last-write vab-helper \u00d728 (stem 29): FED / collider / no-HS autostrut / silk INSERT still hold. liquid --texture / volumeMax 1.5 / girders strip landed (T-537/T-539). Next gap two-stage compose T-546. Did not open a duplicate systems ticket. Pad flies C-534 \u2014 do not idle for helpers.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -22044,11 +22197,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI vab-helper \u00d728",
       "type": "rsi",
-      "updated": "2026-08-26T20:58:49Z"
+      "updated": "2026-08-27T06:57:34Z"
     },
     "T-548": {
       "assignee": "",
@@ -22156,13 +22309,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write rf-ignition-ullage \u00d713: GET MainThrottle 0 is a drop (T-550). Pad still flies.",
       "created": "2026-08-26T21:14:49Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "rf-ignition-ullage",
       "id": "T-551",
       "payload": {
-        "count": 13
+        "count": 13,
+        "findings": [
+          {
+            "at": "2026-08-27T06:57:34Z",
+            "claim": "Practice last-write rf-ignition-ullage \u00d713 (stem 14): hop light is plume; GET throttle is not the burn; GET MainThrottle 0 is a drop not MECO (T-550). Did not open a duplicate control ticket. Pad still flies.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -22170,11 +22334,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI rf-ignition-ullage \u00d713",
       "type": "rsi",
-      "updated": "2026-08-26T21:14:49Z"
+      "updated": "2026-08-27T06:57:34Z"
     },
     "T-552": {
       "assignee": "",
@@ -22350,13 +22514,24 @@
       "assignee": "",
       "blockers": [],
       "category": "improvement",
+      "close_why": "Practice last-write leftover-ksc \u00d75: leftover_call / registered ksc leftover verb. Never leftover-ksc load.",
       "created": "2026-08-26T21:46:11Z",
       "desk": "mortimer",
       "evidence": [],
       "fingerprint": "leftover-ksc",
       "id": "T-556",
       "payload": {
-        "count": 5
+        "count": 5,
+        "findings": [
+          {
+            "at": "2026-08-27T06:57:34Z",
+            "claim": "Practice last-write leftover-ksc \u00d75 (stem 7): leftover_call not a novel emergencies.call (T-555); ksc leftover is the registered leftover abort verb (T-557). Never leftover-ksc load. Never revert. Did not open a duplicate systems ticket.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "mortimer"
+          }
+        ]
       },
       "priority": "P1",
       "reporter": "Hank Grokman, COO",
@@ -22364,11 +22539,11 @@
       "sci_expect": null,
       "severity": "S2",
       "sla_s": null,
-      "status": "inbox",
+      "status": "done",
       "tags": [],
       "title": "RSI leftover-ksc \u00d75",
       "type": "rsi",
-      "updated": "2026-08-26T21:46:11Z"
+      "updated": "2026-08-27T06:57:34Z"
     },
     "T-557": {
       "assignee": "",
@@ -22379,7 +22554,18 @@
       "evidence": [],
       "fingerprint": "leftover-ksc",
       "id": "T-557",
-      "payload": {},
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T21:49:35Z",
+            "claim": "Registered ksc leftover (ksc_leftover) in emergencies.call. leftover_call(False) resolves; cut + 1\u00d7; do not recover. Ascent timeout leftover is not KeyError. No ascent.py.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
       "priority": "P2",
       "reporter": "Hank Grokman, COO",
       "rsi_loop": "none",
@@ -22390,8 +22576,89 @@
       "tags": [],
       "title": "emergencies.call missing leftover abort verb ascent uses",
       "type": "systems",
-      "updated": "2026-08-26T21:46:11Z"
+      "updated": "2026-08-26T21:49:35Z"
+    },
+    "T-558": {
+      "assignee": "",
+      "blockers": [],
+      "category": "bug",
+      "created": "2026-08-26T21:59:46Z",
+      "desk": "lars",
+      "evidence": [],
+      "fingerprint": "control-blocks",
+      "id": "T-558",
+      "payload": {
+        "findings": [
+          {
+            "at": "2026-08-26T22:04:18Z",
+            "claim": "ascent loft held SAS Stability (heading 297\u2013360); Os keyboard-turns, not FAR/gimbal. turn_live_sit: SAS off, AP engage once, surface _steer_east heading 90 while independent still 1. Do not wait Terrier. Lid MECO still 50 km. hop.py parked.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
+          }
+        ]
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "ascent loft never steers \u2014 SAS hold only; Os keyboard-turns, not FAR/gimbal",
+      "type": "control",
+      "updated": "2026-08-26T22:04:18Z"
+    },
+    "T-559": {
+      "assignee": "",
+      "blockers": [],
+      "category": "improvement",
+      "created": "2026-08-26T21:59:47Z",
+      "desk": "wernher",
+      "evidence": [],
+      "fingerprint": "control-blocks",
+      "id": "T-559",
+      "payload": {
+        "count": 14
+      },
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "software",
+      "sci_expect": null,
+      "severity": "S2",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [],
+      "title": "RSI control-blocks \u00d714",
+      "type": "rsi",
+      "updated": "2026-08-26T21:59:47Z"
+    },
+    "T-560": {
+      "assignee": "",
+      "blockers": [],
+      "category": "ops",
+      "created": "2026-08-26T22:16:47Z",
+      "desk": "hank",
+      "evidence": [],
+      "fingerprint": "",
+      "id": "T-560",
+      "payload": {},
+      "priority": "P1",
+      "reporter": "Hank Grokman, COO",
+      "rsi_loop": "none",
+      "sci_expect": null,
+      "severity": "S1",
+      "sla_s": null,
+      "status": "inbox",
+      "tags": [
+        "plan"
+      ],
+      "title": "Tomorrow: first orbit \u2014 bank advRocketry 45, rec HD, east turn, Terrier two-stage",
+      "type": "ops",
+      "updated": "2026-08-26T22:16:47Z"
     }
   },
-  "updated": "2026-08-26T21:49:03Z"
+  "updated": "2026-08-27T06:57:34Z"
 }

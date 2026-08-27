@@ -4046,6 +4046,14 @@
             "owner": "none",
             "real": false,
             "who": "hank"
+          },
+          {
+            "at": "2026-08-27T07:11:53Z",
+            "claim": "07-04-36Z Os timewarp. leftover abort while flying. Tape not a pulse sample. Close recovered n=0. Do not retune from this run.",
+            "evidence": "",
+            "owner": "none",
+            "real": false,
+            "who": "hank"
           }
         ],
         "landing": {
@@ -4309,7 +4317,7 @@
       ],
       "title": "chute workshop hop: living recover Forest/Grasslands FlyingLow",
       "type": "fly",
-      "updated": "2026-08-27T07:10:50Z"
+      "updated": "2026-08-27T07:11:53Z"
     },
     "T-082": {
       "assignee": "",
@@ -22880,5 +22888,5 @@
       "updated": "2026-08-26T22:16:47Z"
     }
   },
-  "updated": "2026-08-27T07:10:50Z"
+  "updated": "2026-08-27T07:11:53Z"
 }

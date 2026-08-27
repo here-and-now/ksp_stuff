@@ -263,6 +263,9 @@ if leftover (desk hangar recover/blocked, live probe, crash UI):
     # Recoverable ground Debris is leftover. Os disabled reverting
     # flights. Never revert. Never leftover-ksc save/load
     # (that looked like a reload / return to pre-launch).
+    # Hop timeout leftover is leftover_call (recover vs ksc leftover),
+    # not a novel emergencies.call string. `ksc leftover` is the
+    # registered leftover abort verb.
     # pad occupancy after leftover is clean
     return
 

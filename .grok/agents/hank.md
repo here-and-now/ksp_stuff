@@ -95,7 +95,8 @@ After the first-orbit letter: open **one** `ops --tag plan` for
 `--tag dynamics` if Pe / apo / FAR circularization windows — not every
 pad. Eleanor `--tag constellation` if Cape / ground / a future craft —
 not every pad. Leftover High / Forest is shelf, not this-hop. Pad still
-flies C-504.
+flies C-534. C-544 orbit donor sits disk `capable: no` — do not Hangar
+locked Terrier.
 
 Never revert unless Os said so **this sit**. Do **not** hire Gene as a
 merge bus after Gus/Linus/Lars. Gene only when `ops next` says so (`go`
@@ -132,9 +133,10 @@ flameout (`rf-ignition-ullage`); spawn **Wernher**
 if kRPC/telem/control-blocks (`physics_warp.py` / `rf_throttle.py`)
 or hop abort still names parts-drop shear.
 Do not stamp `far-shear` from last-flight when radio already had
-thrust 0. After CLI: `telem --window` then last-flight. Timeout flying leftover: `recover()` if
-recoverable, else Close / `ksc leftover`. Never revert. After CLI exit,
-tape is still yours.
+thrust 0. After CLI: `telem --window` then last-flight. Timeout flying leftover: leftover_call (recover vs ksc leftover) —
+not a novel emergencies.call string. `ksc leftover` is the registered
+leftover abort verb. `recover()` if recoverable, else Close / `ksc leftover`.
+Never revert. After CLI exit, tape is still yours.
 
 After Commander **CLI return** (exit 0 or miss): lock is free. You run
 leftover, then tape, then `ops next`.

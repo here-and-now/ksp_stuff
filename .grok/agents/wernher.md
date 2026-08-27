@@ -105,9 +105,11 @@ A hang-writing helper must leave the **engine in the first fire list**
 autostrut Heaviest/rigid + stage-engine without requiring HS
 (T-506). Recover silk: `craft chute --kind cone` **INSERT**s `RC_cone`
 on the payload core (OKTO top; Stayputnik has no top; cone
-`srfAttach=0`); engine first fire, chute last (T-512). `craft liquid`
-still hardcodes PlainWhite / volumeMax 0.8 — `--texture`, 1500 L,
-`girders -n 0` strip (T-537 / T-539). Sit-match:
+`srfAttach=0`); engine first fire, chute last (T-512). `craft liquid
+--texture` / volumeMax 1.5 / `girders -n 0` strip **landed**
+(T-537 / T-539). Next gap: two-stage compose (T-546) — extra
+`sasModule` CLI, proc decoupler + upper tanks + Terrier after unlock;
+`liquid` must not flatten the split; refuse locked part. Sit-match:
 flying-card Toggle at High lid is High, not InSpaceLow (T-517).
 `insert_heatshield` refuses `fuelCrossFeed=False`. `--payload`
 splices SAS-first tank (T-498). HS splice half is
@@ -124,8 +126,11 @@ API facts. Do **not** append `docs/lessons.md`. One log line
 `docs/crew/log/wernher.md`. Leftover recover-then-Hangar *kernel* is
 yours; Hank runs the CLI. Persist must survive a split wreck.
 Recoverable ground Debris is leftover (wait GUID). Harmony skip-dup is
-persist, not the broom. T-501 owns leftover_ship / recover wait. Never
-leftover-ksc. Stumble on thin tape → another
+persist, not the broom. T-501 owns leftover_ship / recover wait.
+Hop timeout leftover is leftover_call (recover vs ksc leftover), not a
+novel emergencies.call string (T-555). `ksc leftover` is the registered
+leftover abort verb (`ksc_leftover`, T-557). Never leftover-ksc.
+Stumble on thin tape → another
 `--type systems --fingerprint <stem>`. Do not idle the pad.
 
 Last-flight 40 lines is abort/exit, not the vessel. Query `tape.Tape` —

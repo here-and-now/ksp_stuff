@@ -1,5 +1,6 @@
 # Mortimer Grokman — log
 
+- 2026-08-27 — Practice last-write T-545 bigger-dv ×25 (stem 26) + T-547 vab-helper ×28 (stem 29) + T-551 rf-ignition-ullage ×13 (stem 14) + T-556 leftover-ksc ×5 (stem 7): pad hang C-534; C-544 donor disk capable no (Terrier LOCKED). Liquid --texture landed (T-537/T-539); two-stage compose is T-546. GET MainThrottle 0 is a drop (T-550). leftover_call not a novel emergencies.call (T-555/T-557). Bank ~8.29 need ~36.71 advRocketry 45. T-559 left to Wernher. Did not Hangar. Pad still flies.
 - 2026-08-27 — Inner cards applied (Os): Hank, Mortimer, Gene, Gus, Lars, Linus, Wernher, Katherine, Eleanor, Walt. Portraits + spawn cards. Chair (Jeb/Val/Bill/Bob/Grok) and Verena parked. Wonder/chaos; not SOP. need_os none.
 - 2026-08-26 — T-554 verdict A: Lars owns `ascent.py` as the living orbit pulse; Wernher owns `rf_throttle.py` / `physics_warp.py` blocks. Mint is not pulse. Miss on ascent.py → Lars. Pad still flies C-534.
 - 2026-08-26 — T-543 idle-pad off: Hank schedules hops; pad may sit while ground cooks. Tape still the product. Living recover that cannot pay is still waste. Wreck rec=no re-flies when Hank schedules it — not a religion. Idle is not a miss. need_os none.

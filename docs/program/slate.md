@@ -4,12 +4,12 @@
 **Today (Os 2026-08-26):** first orbit. Leftover science later — keep
 an eye out; do not unbind the shelf; do not make it this-hop. Split
 into phases the tree can actually fly. Ad astra. `generalRocketry`
-**spent**. Next CTT is `advRocketry` **45** (Terrier). Bank ~7.02 does
+**spent**. Next CTT is `advRocketry` **45** (Terrier). Bank ~8.29 does
 not pay 45. Do not spend crumbs. Do not spend the next 45 on aviation
 / basicScience / flightControl while Terrier is the orbit engine.
 268 km loft is not orbit.
 
-**Bank:** desk **sci 7.0168**. Tree **start,engineering101,basicRocketry,survivability,stability,generalRocketry**. `advRocketry` (45) LOCKED — need ~**37.98**. `load persistent` is forbidden (F-014).
+**Bank:** desk **sci 8.2947**. Tree **start,engineering101,basicRocketry,survivability,stability,generalRocketry**. `advRocketry` (45) LOCKED — need ~**36.71**. `load persistent` is forbidden (F-014).
 **Aero (2026-08-21):** FAR, RealChute, RealHeat **installed**. Kerbalism
 Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
 
@@ -20,7 +20,10 @@ Default. Not RO. Chute parts **unlocked**. No FAR kRPC in this repo.
    suborbital. Pad this sit belongs to **C-534**
    `kspstuff-hop-valiant-proc-redstone-pbc` (FED, no HS, no girders;
    4×1500 L 2700 kero; recover silk) until `advRocketry` 45 or a
-   signed alt is `capable: yes`. C-504 loft-pbc stays shelf. Reliant /
+   signed alt is `capable: yes`. C-504 loft-pbc stays shelf. **C-544**
+   `kspstuff-hop-valiant-proc-orbit-pbc` is first-stage donor on disk
+   (`capable: no`) — extra wheels, same Valiant; Terrier LOCKED until
+   45. Do not Hangar a locked part. Pad stays C-534. Reliant /
    Thumper / TD-06 / FL-T200 / proc 1500 L are Available now — a
    two-stage loft may pay more Δv; do not idle the pad for it. Science
    this loft can bank when silk recovers (InSpaceLow the envelope

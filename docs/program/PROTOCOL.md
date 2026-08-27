@@ -207,7 +207,9 @@ module). Do **not** paste a part→N ignition table here or in spawn
 prompts. Confirmed pad light is **plume** / currentThrottle rising
 after the engine fires — not ignitions remaining 1→0, not kRPC
 `Engine.throttle` GET. Independent setpoint is the RF live
-(`rf_throttle.apply` — not UI MainThrottle). Staging
+(`rf_throttle.apply` — not UI MainThrottle). GET MainThrottle 0 is a
+**drop**, not MECO — dual-write the bar + independent; after lid MECO
+zero MainThrottle then independent (T-550). Staging
 a chute (or any empty-of-engine stage) is not hop light.
 Pad-dead-no-plume with a **fed** engine is Lars `hop_factory_pad.py`
 (`rf-ignition-ullage`) — not loft, not Wernher, not a GameData raise.
@@ -247,6 +249,9 @@ chute Arm shears t7 — `chute_arm_sit` 1× is Arm, **not** apo
 / dv5 / girderless lite / a 4×-sheared t7 / t7-chute Mk16 / **C-477**
 this sit. Do not Hangar **t7-wheel-nose** (T-409) as silk. Pad this
 sit belongs to **C-534** until `advRocketry` 45.
+**C-544** `kspstuff-hop-valiant-proc-orbit-pbc` is first-stage donor
+on disk (`capable: no`) — extra wheels, same Valiant; Terrier LOCKED
+until the node. Do not Hangar a locked part. Pad stays C-534.
 C-504 tape 16-23-52Z held through burnout apo 268 km rec=no — C-534
 iterates that family.
 268 km loft is not orbit. Today is **first orbit** (phased): pay
@@ -356,7 +361,11 @@ false. Do not restore Batch Learn.
 After a hop: **Hank leftover first.** Walk home: `recover()` the ship
 and **Close** to KSC (`recover-probe --recover` if recoverable). Os
 disabled reverting flights. Never revert. Never leftover-ksc save/load
-(that looked like a reload / return to pre-launch). Recoverable ground
+(that looked like a reload / return to pre-launch). Hop timeout leftover
+is **leftover_call** (recover vs ksc leftover), not a novel
+`emergencies.call` string (T-555). `ksc leftover` is the registered
+leftover abort verb (`ksc_leftover`); leftover_call(False) resolves;
+cut + 1×; do not recover (T-557). Recoverable ground
 Debris (pad Goo) is leftover — leftover_ship must see it; wait recover
 by GUID not name. `recover()` is persist-then-KSC; Python RPC returning
 is not despawn. Harmony skip-dup is persist fail-open, not the broom.

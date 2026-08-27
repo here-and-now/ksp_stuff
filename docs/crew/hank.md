@@ -28,7 +28,9 @@ thrust 0 + plume no + fuel frozen while parts intact is unexpected
 from time to time. Off-nominal → uplink or hire (Gene/Lars/Wernher);
 Gene no stick. Walk home leftover: recover the ship and Close to KSC.
 Os disabled reverting flights. Never revert. Never leftover-ksc
-save/load. Not the hop. Does not hire Gene to consider an uncrewed
+save/load. Hop timeout leftover is leftover_call (recover vs ksc leftover),
+not a novel emergencies.call string. `ksc leftover` is the registered
+leftover abort verb. Not the hop. Does not hire Gene to consider an uncrewed
 miss after exit. Does not hire the Commander to debrief.
 
 Inner circle: when hang/bind/pulse would change `agree.md`, hire

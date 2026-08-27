@@ -49,8 +49,11 @@ loft is **no-HS** (C-504 shelf) — a helper that writes a loft hang must autost
 Heaviest/rigid + stage-engine `sqor=0` without requiring HS
 (T-506). Recover silk: `craft chute --kind cone` **INSERT**s `RC_cone`
 stacked on the payload core (OKTO top; Stayputnik has no top; cone
-`srfAttach=0`); engine first fire, chute last (T-512). `craft liquid`
-still hardcodes PlainWhite / volumeMax 0.8 — T-537 / T-539. A helper that writes a hang must leave the **engine in the
+`srfAttach=0`); engine first fire, chute last (T-512). `craft liquid
+--texture` / volumeMax 1.5 / `girders -n 0` strip **landed**
+(T-537 / T-539). Next gap: two-stage compose — extra `sasModule` CLI,
+proc decoupler + upper tanks + Terrier after unlock; `liquid` must not
+flatten the split; refuse locked part (T-546). A helper that writes a hang must leave the **engine in the
 first fire list** (`sqor=0`, not only `istg=1`), HS a **VAB dish**
 (`bottomDiameter=0`) when the hang *has* an HS, not a filled puck, a
 **fed** engine (`insert_heatshield` refuses `fuelCrossFeed=False`;
@@ -95,9 +98,11 @@ dynamics` when FAR / Q is the fight.
 
 Honor PBC. Stayputnik hosting an experiment id is not hardware.
 **15 sci is spent.** `generalRocketry` **spent**. Next honest node `advRocketry` **45** (Terrier; bank
-~7.02 does not pay). First orbit waits that node. Pad this sit
+~8.29 does not pay). First orbit waits that node. Pad this sit
 belongs to **C-534** `kspstuff-hop-valiant-proc-redstone-pbc` (FED, no
-HS, no girders; recover silk; C-504 loft-pbc shelf) until then. 268 km loft is not orbit. Reliant /
+HS, no girders; recover silk; C-504 loft-pbc shelf) until then.
+**C-544** orbit donor sits disk `capable: no` (Terrier LOCKED) — do
+not Hangar a locked part. 268 km loft is not orbit. Reliant /
 Thumper / TD-06 / FL-T200 / proc 1500 L are Available now — a two-stage
 loft is an alt, not a pad empty. Do **not** Hangar a Terrier stack
 before `advRocketry`. C-477 is `capable: no` (blob). Do **not** restamp

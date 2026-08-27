@@ -61,8 +61,10 @@ rising after the engine fires — not ignitions remaining 1→0, not
 kRPC `Engine.throttle` GET. Independent setpoint is the RF live.
 Staging a chute (empty-of-engine stage) is not hop light.
 Pad-dead-no-plume is this file, not loft. Do not abort-after-light.
-Pad thrusting is not a handoff — keep MainThrottle 1 until lid MECO;
-`_cut_pad_engine` only on abort. Failed coast/suicide relight with
+Pad thrusting is not a handoff — keep independent live until lid MECO;
+GET MainThrottle 0 is a **drop**, not MECO — dual-write bar +
+independent; after lid MECO zero MainThrottle then independent
+(T-550). `_cut_pad_engine` only on abort. Failed coast/suicide relight with
 fuel left is engine physics (`rf-ignition-ullage`) until you have
 read that engine. Cartoon MECO / lid / `_hold_or_cut` suicide relight
 is false. **Honest MECO is not engine-dead** (16-23-52Z burnout fuel
@@ -99,8 +101,10 @@ Do not tell Gus or Linus in Return — they have the same ticket.
 Katherine: `ops --tag ask --desk katherine` or `--tag dynamics` when
 High-band / FAR / circularization Pe-apo is the fight.
 Circularization pulse waits Terrier (`advRocketry` 45). Phase 1 is
-still loft / silk on C-504. 268 km loft is not orbit. Do not retune
-MECO to leftover High 305 s.
+still loft / silk on C-534. 268 km loft is not orbit. Do not retune
+MECO to leftover High 305 s. Ascent timeout leftover is leftover_call
+(recover vs ksc leftover), not a novel emergencies.call string
+(T-555).
 
 ## First command
 

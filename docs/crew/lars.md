@@ -53,7 +53,10 @@ airborne|burnout` on a miss **before** descent/impact. Last-flight
 `shear` is not the cause when tape already had thrust 0 / plume no /
 fuel frozen / parts intact **and a burn still owed** (`rf-ignition-ullage`,
 T-509). Honest MECO leftover fuel is the coast (16-23-52Z), not
-engine-dead. Kernel naming parts-drop as hop abort is Wernher
+engine-dead. GET MainThrottle 0 is a drop, not MECO — dual-write bar
++ independent; after lid MECO zero MainThrottle then independent
+(T-550). Ascent timeout leftover is leftover_call, not a novel
+emergencies.call string (T-555). Kernel naming parts-drop as hop abort is Wernher
 `telem-eyes-library`.
 
 If the patch only works on this hop's envelope, it is not done. Put

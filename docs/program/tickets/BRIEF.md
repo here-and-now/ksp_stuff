@@ -119,9 +119,11 @@ that writes a loft hang must autostrut Heaviest/rigid + stage-engine
 `sqor=0` **without** requiring HS (T-506). Recover silk: `craft chute
 --kind cone` **INSERT**s `RC_cone` stacked on the payload core (OKTO
 top; Stayputnik has no top; cone `srfAttach=0`); Nylon 50 m; engine
-first fire, chute last (T-512). `craft liquid` still hardcodes
-PlainWhite and comments volumeMax 0.8 kL — 1500 L is legal; need
-`--texture` and `girders -n 0` strip (T-537 / T-539). `python main.py
+first fire, chute last (T-512). `craft liquid --texture` / volumeMax
+1.5 / `girders -n 0` strip **landed** (T-537 / T-539). Next gap:
+two-stage compose — extra `sasModule` CLI, proc decoupler + upper
+tanks + Terrier after unlock; `liquid` must not flatten the split;
+refuse locked part (T-546). `python main.py
 craft fuel <craft>` dumps attach
 + `fuelCrossFeed` (BLOCKED = starved). A helper that writes a hang
 must leave the **engine in the first fire list** (`sqor=0`, not only

@@ -1,6 +1,6 @@
 # Hank Grokman — log
 
-- 2026-08-27 — Mortie Inner cards on disk. T-081 `python main.py ascent` live (uncrewed, C-534, east-while-live lid 50 km). Ground: Mortimer RSI, Gus, Linus, Lars, Wernher. Chair/Verena Inner parked. Ad astra.
+- 2026-08-27 — T-081 06-52-19Z ascent exit 2 leftover-while-flying rec=no chute=stowed after LITE. Tape last 135 km parts=25 apo=324 km heading=303 +0. Close to KSC recovered n=0. Pad leftover 0. Sit hop; Lars already on T-555 ascent.py. Not Gene.
 - 2026-08-25 — Os locked Verena press voice (`docs/press/STYLE.md`): tables hold digits, firsts in words, sit-bands table-only, fresh joke per article, two house-owns, no CDN. Ticket for corpus rewrite from first-space.
 
 - 2026-08-25 — Mortie: tape Practice. last-flight 40 lines is not the vessel. T-448 org, T-449 telem-eyes-library. 09-01Z jsonl last snap flying 6 km 214 m/s rec=no; splash TELEMETRY capped; sci_rem=0. Did not hop.
